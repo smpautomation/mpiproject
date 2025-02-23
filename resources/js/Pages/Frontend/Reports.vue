@@ -5,14 +5,32 @@
 
         <!-- Report Content -->
             <div class="flex flex-col bg-blue-100 py-[50px] mx-[400px]">
-                <div class="flex flex-row justify-evenly">
+                <div class="flex flex-row mb-4 justify-evenly">
+                    <div class="flex flex-row items-baseline">
+                        <label class="text-sm font-semibold">Model:</label>&nbsp;
+                        <input type="text" name="pulseTracerMachineNo" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                    </div>
+                    <div class="flex flex-row items-baseline">
+                        <label class="text-sm font-semibold">Material Code:</label>&nbsp;
+                        <input type="text" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                    </div>
+                    <div class="flex flex-row items-baseline">
+                        <label class="text-sm font-semibold">Partial No.:</label>&nbsp;
+                        <input type="text" name="shift" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                    </div>
+                    <div class="flex flex-row items-baseline">
+                        <label class="text-sm font-semibold">Total Quantity:</label>&nbsp;
+                        <input type="number" name="operator" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                    </div>
+                </div>
+                <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Pulse Tracer Machine No:</label>&nbsp;
                         <input type="text" name="pulseTracerMachineNo" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Date:</label>&nbsp;
-                        <input type="text" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input type="date" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Shift:</label>&nbsp;
@@ -49,7 +67,7 @@
                                 <td class="px-4 py-1 border"><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
                             </tr>
                             <tr>
-                                <td class="px-4 py-1 border">MPI&nbsp;Sample&nbsp;Qty.</td>
+                                <td class="px-4 py-1 border">MPI&nbsp;SAMPLE&nbsp;QTY.</td>
                                 <td class="px-4 py-1 border"><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
                             </tr>
                         </tbody>
