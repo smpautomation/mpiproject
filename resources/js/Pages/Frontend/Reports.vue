@@ -1,10 +1,10 @@
 <template>
     <Frontend>
-      <div class="bg-gray-100 container-fluid">
-        <div>This is the Reports page</div><br><br><br><br><br>
+      <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
+        <div>This is the Reports page</div>
 
         <!-- Report Content -->
-            <div class="flex flex-col bg-blue-100 py-[50px] mx-[400px]">
+            <div class="flex flex-col justify-center py-10 mx-20 my-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Model:</label>&nbsp;
