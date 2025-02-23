@@ -73,15 +73,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border">Br (G)</td>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
@@ -89,7 +81,30 @@
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
                             </tr>
                             <tr>
+                                <td class="px-4 py-2 border">iHc (Oe)</td>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2 border">iHk (Oe)</td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                            </tr>
+                            <tr class="bg-blue-200">
+                                <th rowspan="2" class="px-4 border">Br Cpk</th>
+                                <th class="px-4 border">STD DEV</th>
+                                <th class="px-4 border">Cpu</th>
+                                <th class="px-4 border">Cpl</th>
+                                <th class="px-4 border">Cpk</th>
+                                <th class="px-4 border">Remarks</th>
+                            </tr>
+                            <tr>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
                                 <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
