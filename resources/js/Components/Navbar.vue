@@ -29,11 +29,12 @@
   <script setup>
   import { Link } from '@inertiajs/vue3';
 
-// Define the navigation lists here..
-const navItems = [
-  { label: 'Home', route: 'homePage' },
-  { label: 'Manage', route: 'manage' },
-  { label: 'View List', route: 'viewList' },
-  { label: 'Settings', route: 'settings' }
-];
+    // Define the navigation lists here..
+    const navItems = [
+    { label: 'Home', route: 'homePage' },
+    { label: 'Manage', route: 'manage' },
+    { label: 'Report', route: 'reports' },
+    { label: 'View List', route: 'viewList' },
+    { label: 'Settings', route: 'settings' }
+    ];
   </script>

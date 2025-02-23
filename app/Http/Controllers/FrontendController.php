@@ -19,6 +19,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Manage');
     }
 
+    public function reports(){
+        return Inertia::render('Frontend/Reports');
+    }
+
     public function settings(){
         return Inertia::render('Frontend/Settings');
     }
