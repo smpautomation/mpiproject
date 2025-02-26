@@ -14,20 +14,22 @@
                     <input
                         id="file-upload"
                         type="file"
-                        accept=".tpm"
+                        accept=".txt"
                         class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <input type="submit" id="submitRawdata" class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-
 
                     <!-- Optional Instruction Text -->
-                    <p class="mt-2 text-sm text-gray-500">Only .tpm files are allowed</p>
+                    <p class="mt-2 text-sm text-gray-500">Only .txt files are allowed</p>
                 </div>
             </div>
 
             <!-- Chart Container -->
-            <div class="w-[1000px] h-[550px] bg-blue-100 rounded-xl">
-                <canvas id="myChart"></canvas>
+            <div class="w-2/3 bg-blue-100 rounded-xl">
+                <apexchart
+                    type="line"
+                    :series="lineChartSeries"
+                    :options="lineChartOptions"
+                />
             </div>
             <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
                 <label class="block mb-4 text-2xl font-semibold text-gray-800 shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-36">FIRST LAYER</label>
@@ -256,99 +258,55 @@
 
   <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, onMounted } from 'vue';
-    import { Chart, registerables } from 'chart.js'; // Import all required components
+    import { ref } from 'vue';
 
-    // Register all components from Chart.js
-    Chart.register(...registerables); // Register the necessary components (e.g., linear scale, etc.)
+    // Multiple groups of data (3 data sets)
+    const lineChartSeries = ref([
+    {
+        name: 'Group 1',        // Name of the first line
+        data: [10, 20, 30, 40, 50, 100, 14000], // Y values for Group 1
+    },
+    {
+        name: 'Group 2',        // Name of the second line
+        data: [15, 25, 35, 45, 55, 65, 75], // Y values for Group 2
+    },
+    {
+        name: 'Group 3',        // Name of the third line
+        data: [5, 15, 25, 35, 45, 55, 65], // Y values for Group 3
+    }
+    ]);
 
-    onMounted(() => {
-    const ctx = document.getElementById('myChart').getContext('2d');
-
-    // Initialize Chart.js with static data
-    new Chart(ctx, {
-        type: 'line', // Line chart type
-        data: {
-        datasets: [
-            {
-            label: 'Dataset 1',
-            data: [
-                { x: 4783.843, y: -0.234 },
-                { x: 4784.391, y: 12747.743 },
-                { x: 4894.063, y: 13747.097 },
-                { x: 5094.673, y: 14747.050 },
-                { x: 5294.509, y: 14847.401 },
-                { x: 20100.481, y: 14947.628 },
-                { x: 23400.450, y: 15147.370 },
-                { x: 23421.419, y: 15147.449 },
-            ],
-            borderColor: 'blue',
-            fill: false,
-            xAxisID: 'x1', // Link to the first x-axis
-            },
-            {
-            label: 'Dataset 2',
-            data: [
-                { x: 0, y: -2500 },
-                { x: 0, y: 14500 },
-                { x: 1500, y: 15600 },
-                { x: 3000, y: 16500 },
-                { x: 19000, y: 17000 }
-            ],
-            borderColor: 'green',
-            fill: false,
-            xAxisID: 'x2', // Link to the second x-axis
-            },
-            {
-            label: 'Dataset 3',
-            data: [
-                { x: -5000, y: 2500 },
-                { x: -5000, y: 17500 },
-                { x: 6500, y: 19600 },
-                { x: 19000, y: 19600 },
-                { x: 19000, y: 19600 }
-            ],
-            borderColor: 'yellow',
-            fill: false,
-            xAxisID: 'x3', // Link to the second x-axis
-            }
-        ]
+    const lineChartOptions = ref({
+    chart: {
+        height: 350,
+        type: 'line',
+        zoom: {
+        enabled: false,
         },
-        options: {
-        responsive: true,
-        scales: {
-            x1: {
-            type: 'linear', // Linear scale for the first x-axis
-            position: 'bottom', // Position it at the bottom
-            min: -50000,   // Set the minimum value for the x-axis
-            max: 50000,  // Set the maximum value for the x-axis
-            },
-            x2: {
-            type: 'linear', // Linear scale for the second x-axis
-            position: 'top', // Position it at the top
-            min: -50000,   // Set the minimum value for the x-axis
-            max: 50000,  // Set the maximum value for the x-axis
-            ticks: {
-                display: false, // Hide the x-axis ticks (labels)
-            },
-            },
-            x3: {
-            type: 'linear', // Linear scale for the second x-axis
-            //position: 'top', // Position it at the top
-            min: -50000,   // Set the minimum value for the x-axis
-            max: 50000,  // Set the maximum value for the x-axis
-            ticks: {
-                display: false, // Hide the x-axis ticks (labels)
-            },
-            },
-            y: {
-            type: 'linear', // Use a linear scale for the y-axis
-            position: 'left', // Position it on the left
-            min: -20000,   // Set the minimum value for the x-axis
-            max: 20000,  // Set the maximum value for the x-axis
-            },
+    },
+    stroke: {
+        width: [4, 4, 4],  // Stroke width for each line (adjust as needed)
+        curve: 'smooth',   // Smooth curves for each line
+    },
+    xaxis: {
+        categories: [1000, 3000, 5000, 7000, 10000, 13000, 15000],  // X-axis categories
+        title: {
+        text: 'X Axis Label',  // Label for X-axis
+        }
+    },
+    yaxis: {
+        title: {
+        text: 'Y Axis Label',  // Label for Y-axis
+        }
+    },
+    title: {
+        text: 'Multi-Line Chart',
+        align: 'center',
+        style: {
+        fontSize: '18px',
+        fontWeight: 'bold',
+        color: '#333',
         },
-        },
-    });
+    },
     });
   </script>

@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center mt-12 font-bold">This is the View List page</div>
+        <div class="flex flex-col items-center justify-center mt-12 font-bold">Lists of reports are located here</div>
     </Frontend>
 </template>
 
