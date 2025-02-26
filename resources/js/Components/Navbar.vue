@@ -31,10 +31,10 @@
 
     // Define the navigation lists here..
     const navItems = [
-    { label: 'Home', route: 'homePage' },
-    { label: 'Manage', route: 'manage' },
-    { label: 'Report', route: 'reports' },
-    { label: 'View List', route: 'viewList' },
-    { label: 'Settings', route: 'settings' }
+        { label: 'Home', route: 'homePage' },
+        { label: 'Manage', route: 'manage' },
+        { label: 'Report', route: 'reports' },
+        { label: 'View List', route: 'viewList' },
+        { label: 'Settings', route: 'settings' }
     ];
   </script>
