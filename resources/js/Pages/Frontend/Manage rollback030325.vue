@@ -241,6 +241,8 @@
                 convertToJSON();
                 //console.log('Graph Axis:', graphAxis); //GET GRAPH AXIS VALUE
 
+
+
                 // Concatenate data10, data12, and data14 (this is lot number)
                 const concatenatedValue = [
                     parsedData[`data10`],
@@ -480,7 +482,7 @@
                 { x: -5000, y: 17500 },
                 { x: 6500, y: 19600 },
                 { x: 19000, y: 19600 },
-                { x: 19000, y: 19700 }
+                { x: 19000, y: 19600 }
             ],
             borderColor: 'yellow',
             fill: false,
