@@ -14,6 +14,7 @@ Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::post('/tpmdata', [TPMDataController::class, 'store']);
 Route::put('/tpmdata/{id}', [TPMDataController::class, 'update']);
+Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);

@@ -247,11 +247,19 @@ class TPMDataController extends Controller
     }
 
     public function destroy($id){
-        $tpmData = TPMData::find($id);
-        $tpmData->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'tmp Data deleted successfully'
-        ], 200);
+        try{
+            $tpmData = TPMData::find($id);
+            $tpmData->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'tmp Data deleted successfully'
+            ], 200);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => 'Error deleting tmp Data',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
