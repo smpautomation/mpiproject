@@ -24,7 +24,7 @@
                 type="submit"
                 id="submitRawdata"
                 class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                @click="submitFile"
+                @click="fetchDataFromApi"
             />
 
             <!-- Optional Instruction Text -->
@@ -44,71 +44,12 @@
                         <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
                             <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                 <tr>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Date</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Code&nbsp;No</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Order&nbsp;No</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Type</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Lot&nbsp;No</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Furnace&nbsp;No</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Coating&nbsp;No</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Zone</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Pass&nbsp;No</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">Br</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">iHc</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">iHk</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">BHMax</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">Hr95</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">Hr98</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">iHciHk</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">Br4pai</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">bHc</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">Squareness</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">4paild</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">4pails</th>
-                                    <th colspan="2" class="px-3 py-2 text-sm font-medium text-center border border-white">4paila</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Tracer</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center border border-white">Sample with&nbsp;Variance</th>
+                                    <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders" :key="tableLayerColumnHeader.name" :colspan="tableLayerColumnHeader.colspan" class="px-3 py-2 text-sm font-medium text-center border border-white">{{ tableLayerColumnHeader.name }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
                                 <tr class="border-b hover:bg-gray-50">
-                                    <td id="tableDate" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableCodeNo" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableOrderNo" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableType" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableLotNo" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableFurnaceNo" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableCoatingNo" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableZone" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tablePassNo" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableBr" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableBrRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableiHc" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableiHcRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableiHk" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableiHkRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableBHMax" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableBHMaxRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableHr95" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableHr95Remarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableHr98" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableHr98Remarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableiHciHk" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableiHciHkRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableBr4pai" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableBr4paiRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tablebHc" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tablebHcRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableSquareness" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableSquarenessRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="table4paild" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="table4paildRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="table4pails" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="table4pailsRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="table4paila" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="table4pailaRemarks" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableTracer" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    <td id="tableSampleWithVariance" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
+                                    <td v-for="tableLayerDataCell in tableLayerDataCells" :key="tableLayerDataCell" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ tableLayerDataCell }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -118,20 +59,7 @@
                         <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
                             <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                 <tr>
-                                    <th class="px-3 py-2 text-sm font-medium text-center"></th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">Br</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">iHc</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">iHk</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">BHMax</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">Hr95</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">Hr98</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">iHciHk</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">Br4pai</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">bHc</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">Squareness</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">4paild</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">4pails</th>
-                                    <th class="px-3 py-2 text-sm font-medium text-center">4paila</th>
+                                    <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-3 py-2 text-sm font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -199,13 +127,113 @@
 
   <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, onMounted } from 'vue';
+    import { ref, watch } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
 
+    //table dynamic variables
+    const tableDate = ref('');
+    const tableCodeNo = ref('');
+    const tableOrderNo = ref('');
+    const tableType = ref('');
+    const tableLotNo = ref('');
+    const tableFurnaceNo = ref('');
+    const tableCoatingNo = ref('');
+    const tableZone = ref('');
+    const tablePassNo = ref('');
+    const tableBr = ref('');
+    const tableBrRemarks = ref('');
+    const tableiHc = ref('');
+    const tableiHcRemarks = ref('');
+    const tableiHk = ref('');
+    const tableiHkRemarks = ref('');
+    const tableBHMax = ref('');
+    const tableBHMaxRemarks = ref('');
+    const tableHr95 = ref('');
+    const tableHr95Remarks = ref('');
+    const tableHr98 = ref('');
+    const tableHr98Remarks = ref('');
+    const tableiHciHk = ref('');
+    const tableiHciHkRemarks = ref('');
+    const tableBr4pai = ref('');
+    const tableBr4paiRemarks = ref('');
+    const tablebHc = ref('');
+    const tablebHcRemarks = ref('');
+    const tableSquareness = ref('');
+    const tableSquarenessRemarks = ref('');
+    const table4paild = ref('');
+    const table4paildRemarks = ref('');
+    const table4pails = ref('');
+    const table4pailsRemarks = ref('');
+    const table4paila = ref('');
+    const table4pailaRemarks = ref('');
+    const tableTracer = ref('');
+    const tableSampleWithVariance = ref('');
+    //table dynamic variables end...
+
+    //table main layer header dynamic
+    const tableLayerColumnHeaders = ref([
+        {name: 'Date', colspan: 1},
+        {name: 'Code No', colspan: 1},
+        {name: 'Order No', colspan: 1},
+        {name: 'Type', colspan: 1},
+        {name: 'Lot No', colspan: 1},
+        {name: 'Furnace No', colspan: 1},
+        {name: 'Coating No', colspan: 1},
+        {name: 'Zone', colspan: 1},
+        {name: 'Pass No', colspan: 1},
+        {name: 'Br', colspan: 2},
+        {name: 'iHc', colspan: 2},
+        {name: 'iHk', colspan: 2},
+        {name: 'BHMax', colspan: 2},
+        {name: 'Hr95', colspan: 2},
+        {name: 'Hr98', colspan: 2},
+        {name: 'iHciHk', colspan: 2},
+        {name: 'Br4pai', colspan: 2},
+        {name: 'bHc', colspan: 2},
+        {name: 'Squareness', colspan: 2},
+        {name: '4paild', colspan: 2},
+        {name: '4pails', colspan: 2},
+        {name: '4paila', colspan: 2},
+        {name: 'Tracer', colspan: 1},
+        {name: 'Sample with Variance', colspan: 1}
+    ]);
+        //table main layer header dynamic end
+
+    //table cell data dynamic
+    const tableLayerDataCells = ref([
+        tableDate,tableCodeNo,tableOrderNo,tableType,tableLotNo,tableFurnaceNo,tableCoatingNo,tableZone,tablePassNo,tableBr,
+        tableBrRemarks,tableiHc,tableiHcRemarks,tableiHk,tableiHkRemarks,tableBHMax,tableBHMaxRemarks,tableHr95,tableHr95Remarks,
+        tableHr98,tableHr98Remarks,tableiHciHk,tableiHciHkRemarks,tableBr4pai,tableBr4paiRemarks,tablebHc,tablebHcRemarks,tableSquareness,
+        tableSquarenessRemarks,table4paild,table4paildRemarks,table4pails,table4pailsRemarks,table4paila,table4pailaRemarks,tableTracer,
+        tableSampleWithVariance
+    ]);
+    //table cell data dynamic end
+
+    //2nd table cell data dynamic
+    const secondTableLayerColumnHeaders = ref([
+        {name: '', colspan: 1},
+        {name: 'Br', colspan: 1},
+        {name: 'iHc', colspan: 1},
+        {name: 'iHk', colspan: 1},
+        {name: 'BHMax', colspan: 1},
+        {name: 'Hr95', colspan: 1},
+        {name: 'Hr98', colspan: 1},
+        {name: 'iHciHk', colspan: 1},
+        {name: 'Br4pai', colspan: 1},
+        {name: 'bHc', colspan: 1},
+        {name: 'Squareness', colspan: 1},
+        {name: '4paild', colspan: 1},
+        {name: '4pails', colspan: 1},
+        {name: '4paila', colspan: 1},
+    ]);
+    //2nd table cell data dynamic end
+
     const fileData = ref(null); // This will hold the selected file data
-    const rowCell = ref([]);  // Declare the rowHeader array
-    const graphAxis = ref([]);
-    const graphAxisJSON = ref(''); // JSON representation of graphAxis
+    const xAxis = ref([]);
+    const yAxis = ref([]);
+    const xJsonOutput = ref(""); // JSON for X-axis
+    const yJsonOutput = ref(""); // JSON for Y-axis
+    const rowCell = ref([]);
 
     // Method to handle file upload
     const handleFileUpload = (event) => {
@@ -222,155 +250,155 @@
 
                 // Parse the content into variables
                 const parsedData = parseFileContent(content);
-
+                //debug
                 console.log('Parsed Data:', parsedData);
 
                 // Use a loop to add the data dynamically
                 const dataKeysValue = [
-                    2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 25, 30, 31, 45, 46, 36, 37, 60, 61, 63, 64,
-                    54, 55, 57, 58, 33, 34, 39, 40, 27, 28, 42, 43, 48, 49, 66
+                    2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
+                    22, 24, 27, 30, 33, 36, 39, 42, 45,
+                    48, 51, 54, 57, 60, 63, 66, 68, 71,
+                    74, 76, 78, 81, 83, 86, 88, 91, 93,
+                    96
                 ];
-
-                const graphCoordinates = Array.from({ length: 3543 - 100 + 1 }, (_, i) => i + 100);
-
-                // Update graphAxis with the new values
-                graphAxis.value = graphCoordinates
-                    .map((i) => parsedData[`data${i}`]) // Extract corresponding parsed data
-                    .filter(Boolean); // Remove undefined or falsy values
-                // Convert graphAxis to JSON
-                convertToJSON();
-                //console.log('Graph Axis:', graphAxis); //GET GRAPH AXIS VALUE
-
-                // Concatenate data10, data12, and data14 (this is lot number)
-                const concatenatedValue = [
-                    parsedData[`data10`],
-                    parsedData[`data12`],
-                    parsedData[`data14`]
-                ].filter(Boolean).join(' '); // Concatenate and remove any falsy values (e.g., undefined)
 
                 // Now, let's create the rowValues, and add the concatenated value to the right position
                 const newRowValues = dataKeysValue
                     .map(i => {
-                        if (i === 10 || i === 12 || i === 14) {
-                            return null; // Skip these keys, we'll add the concatenated value instead
-                        }
                         return parsedData[`data${i}`]; // Return the rest of the data
                     })
                     .filter(Boolean); // Filter out undefined or falsy values
 
-                // Add the concatenated value in place of data10, data12, and data14 (this is lot number)
-                newRowValues.splice(4, 0, concatenatedValue); // Insert concatenated value at the appropriate index (index 4 corresponds to data10)
+                    //-------------------------------------GRAPH
+                // Process coordinates starting from data100
+                const xValues = [];
+                const yValues = [];
+                for (const key in parsedData) {
+                    if (
+                        parsedData.hasOwnProperty(key) &&
+                        key.startsWith('data') &&
+                        parseInt(key.replace('data', ''), 10) >= 100
+                    ) {
+                        const [x, y] = parsedData[key].split(',').map(Number); // Split and parse
+                        xValues.push(x);
+                        yValues.push(y);
+                    }
+                }
 
-                // Update rowCell with the new values
+                // Update reactive variables
+                xAxis.value = xValues;
+                yAxis.value = yValues;
+
+                // Convert x and y into separate JSON format
+                xJsonOutput.value = JSON.stringify(xValues, null, 2);
+                yJsonOutput.value = JSON.stringify(yValues, null, 2);
+
+                console.log('X Axis JSON:', xJsonOutput.value);
+                console.log('Y Axis JSON:', yJsonOutput.value);
+
+                //-------------------------------------GRAPH END
+
                 rowCell.value = newRowValues;
 
-                // Get All THIS variables
                 const layerData = {
-                    layerDate: rowCell.value[0],
-                    layerCodeNo: rowCell.value[1],
-                    layerOrderNo: rowCell.value[2],
-                    layerType: rowCell.value[3],
-                    layerLotNo: rowCell.value[4],
-                    layerFurnaceNo: rowCell.value[5],
-                    layerCoatingNo: rowCell.value[6],
-                    layerZone: rowCell.value[7],
-                    layerPassNo: rowCell.value[8],
-                    layerBr: Math.round(rowCell.value[9]),
-                    layerBrRemarks: rowCell.value[10] == 1 ? 'E' : rowCell.value[10] == 0 ? '' : rowCell.value[10],
-                    layeriHc: Math.round(rowCell.value[11]),
-                    layeriHcRemarks: rowCell.value[12] == 1 ? 'E' : rowCell.value[12] == 0 ? '' : rowCell.value[12],
-                    layeriHk: Math.round(rowCell.value[13]),
-                    layeriHkRemarks: rowCell.value[14] == 1 ? 'E' : rowCell.value[14] == 0 ? '' : rowCell.value[14],
-                    layerBHMax: parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
-                    layerBHMaxRemarks: rowCell.value[16] == 1 ? 'E' : rowCell.value[16] == 0 ? '' : rowCell.value[16],
-                    layerHr95: Math.round(rowCell.value[17]),
-                    layerHr95Remarks: rowCell.value[18] == 1 ? 'E' : rowCell.value[18] == 0 ? '' : rowCell.value[18],
-                    layerHr98: Math.round(rowCell.value[19]),
-                    layerHr98Remarks: rowCell.value[20] == 1 ? 'E' : rowCell.value[20] == 0 ? '' : rowCell.value[20],
-                    layeriHciHk: Math.round(rowCell.value[21]),
-                    layeriHciHkRemarks: rowCell.value[22] == 1 ? 'E' : rowCell.value[22] == 0 ? '' : rowCell.value[22],
-                    layerBr4pai: Math.round(rowCell.value[23]),
-                    layerBr4paiRemarks: rowCell.value[24] == 1 ? 'E' : rowCell.value[24] == 0 ? '' : rowCell.value[24],
-                    layerbHc: Math.round(rowCell.value[25]),
-                    layerbHcRemarks: rowCell.value[26] == 1 ? 'E' : rowCell.value[26] == 0 ? '' : rowCell.value[26],
-                    layerSquareness: parseFloat(parseFloat(rowCell.value[27]).toFixed(3)) || 0,
-                    layerSquarenessRemarks: rowCell.value[28] == 1 ? 'E' : rowCell.value[28] == 0 ? '' : rowCell.value[28],
-                    layer4paild: Math.round(rowCell.value[29]),
-                    layer4paildRemarks: rowCell.value[30] == 1 ? 'E' : rowCell.value[30] == 0 ? '' : rowCell.value[30],
-                    layer4pails: Math.round(rowCell.value[31]),
-                    layer4pailsRemarks: rowCell.value[32] == 1 ? 'E' : rowCell.value[32] == 0 ? '' : rowCell.value[32],
-                    layer4paila: Math.round(rowCell.value[33]),
-                    layer4pailaRemarks: rowCell.value[34] == 1 ? 'E' : rowCell.value[34] == 0 ? '' : rowCell.value[34],
-                    layerTracer: rowCell.value[35],
-                    graphAxis: graphAxis.value, // Include graphAxis JSON data here
+                    "date": rowCell.value[0],
+                    "code_no": rowCell.value[1],
+                    "order_no": rowCell.value[2],
+                    "type": rowCell.value[3],
+                    "press_1": rowCell.value[4],
+                    "press_2": rowCell.value[5],
+                    "machine_no": rowCell.value[6],
+                    "sintering_furnace_no": rowCell.value[7],
+                    "furnace_no": rowCell.value[8],
+                    "zone": rowCell.value[9],
+                    "pass_no": rowCell.value[10],
+                    "Br": Math.round(rowCell.value[11]),
+                    "4paiId": Math.round(rowCell.value[12]),
+                    "iHc": Math.round(rowCell.value[13]),
+                    "bHc": Math.round(rowCell.value[14]),
+                    "BHMax": parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
+                    "Squareness": parseFloat(parseFloat(rowCell.value[16]).toFixed(3)) || 0,
+                    "4paiIs": Math.round(rowCell.value[17]),
+                    "iHk": Math.round(rowCell.value[18]),
+                    "4paiIa": Math.round(rowCell.value[19]),
+                    "Density": rowCell.value[20],
+                    "iHkiHc": Math.round(rowCell.value[21]),
+                    "Br4pai": Math.round(rowCell.value[22]),
+                    "iHr95": Math.round(rowCell.value[23]),
+                    "iHr98": Math.round(rowCell.value[24]),
+                    "Tracer": rowCell.value[25],
+                    "HRX": rowCell.value[26],
+                    "MRX": rowCell.value[27],
+                    "HRY": rowCell.value[28],
+                    "MRY": rowCell.value[29],
+                    "IHKA": rowCell.value[30],
+                    "MRA": rowCell.value[31],
+                    "IHKB": rowCell.value[32],
+                    "MRB": rowCell.value[33],
+                    "IHKC": rowCell.value[34],
+                    "MRC": rowCell.value[35],
+                    "HR": rowCell.value[36],
+                    "HRO": rowCell.value[37],
+                    "x": xJsonOutput.value,
+                    "y": yJsonOutput.value,
+                    "Br_remarks": parsedData.data25 == 1 ? 'E' : parsedData.data25 == 0 ? '' : parsedData.data25,
+                    "4paiId_remarks": parsedData.data28 == 1 ? 'E' : parsedData.data28 == 0 ? '' : parsedData.data28,
+                    "iHc_remarks": parsedData.data31 == 1 ? 'E' : parsedData.data31 == 0 ? '' : parsedData.data31,
+                    "bHc_remarks": parsedData.data34 == 1 ? 'E' : parsedData.data34 == 0 ? '' : parsedData.data34,
+                    "BHMax_remarks": parsedData.data37 == 1 ? 'E' : parsedData.data37 == 0 ? '' : parsedData.data37,
+                    "Squareness_remarks": parsedData.data40 == 1 ? 'E' : parsedData.data40 == 0 ? '' : parsedData.data40,
+                    "4paiIs_remarks": parsedData.data43 == 1 ? 'E' : parsedData.data43 == 0 ? '' : parsedData.data43,
+                    "iHk_remarks": parsedData.data46 == 1 ? 'E' : parsedData.data46 == 0 ? '' : parsedData.data46,
+                    "4paiIa_remarks": parsedData.data49 == 1 ? 'E' : parsedData.data49 == 0 ? '' : parsedData.data49,
+                    "Density_remarks": parsedData.data52 == 1 ? 'E' : parsedData.data52 == 0 ? '' : parsedData.data52,
+                    "iHkiHc_remarks": parsedData.data55 == 1 ? 'E' : parsedData.data55 == 0 ? '' : parsedData.data55,
+                    "Br4pai_remarks": parsedData.data58 == 1 ? 'E' : parsedData.data58 == 0 ? '' : parsedData.data58,
+                    "iHr95_remarks": parsedData.data61 == 1 ? 'E' : parsedData.data61 == 0 ? '' : parsedData.data61,
+                    "iHr98_remarks": parsedData.data64 == 1 ? 'E' : parsedData.data64 == 0 ? '' : parsedData.data64,
                 };
 
+                const lotNo = layerData.press_1 + layerData.press_2 + layerData.machine_no;//concatenate to form lot number
                 /* temporary for display */
-                document.getElementById("tableDate").textContent = layerData.layerDate;
-                document.getElementById("tableCodeNo").textContent = layerData.layerCodeNo;
-                document.getElementById("tableOrderNo").textContent = layerData.layerOrderNo;
-                document.getElementById("tableType").textContent = layerData.layerType;
-                document.getElementById("tableLotNo").textContent = layerData.layerLotNo;
-                document.getElementById("tableFurnaceNo").textContent = layerData.layerFurnaceNo;
-                document.getElementById("tableCoatingNo").textContent = layerData.layerCoatingNo;
-                document.getElementById("tableZone").textContent = layerData.layerZone;
-                document.getElementById("tablePassNo").textContent = layerData.layerPassNo;
-                document.getElementById("tableBr").textContent = layerData.layerBr;
-                document.getElementById("tableBrRemarks").textContent = layerData.layerBrRemarks;
-                document.getElementById("tableiHc").textContent = layerData.layeriHc;
-                document.getElementById("tableiHcRemarks").textContent = layerData.layeriHcRemarks;
-                document.getElementById("tableiHk").textContent = layerData.layeriHk;
-                document.getElementById("tableiHkRemarks").textContent = layerData.layeriHkRemarks;
-                document.getElementById("tableBHMax").textContent = layerData.layerBHMax;
-                document.getElementById("tableBHMaxRemarks").textContent = layerData.layerBHMaxRemarks;
-                document.getElementById("tableHr95").textContent = layerData.layerHr95;
-                document.getElementById("tableHr95Remarks").textContent = layerData.layerHr95Remarks;
-                document.getElementById("tableHr98").textContent = layerData.layerHr98;
-                document.getElementById("tableHr98Remarks").textContent = layerData.layerHr98Remarks;
-                document.getElementById("tableiHciHk").textContent = layerData.layeriHciHk;
-                document.getElementById("tableiHciHkRemarks").textContent = layerData.layeriHciHkRemarks;
-                document.getElementById("tableBr4pai").textContent = layerData.layerBr4pai;
-                document.getElementById("tableBr4paiRemarks").textContent = layerData.layerBr4paiRemarks;
-                document.getElementById("tablebHc").textContent = layerData.layerbHc;
-                document.getElementById("tablebHcRemarks").textContent = layerData.layerbHcRemarks;
-                document.getElementById("tableSquareness").textContent = layerData.layerSquareness;
-                document.getElementById("tableSquarenessRemarks").textContent = layerData.layerSquarenessRemarks;
-                document.getElementById("table4paild").textContent = layerData.layer4paild;
-                document.getElementById("table4paildRemarks").textContent = layerData.layer4paildRemarks;
-                document.getElementById("table4pails").textContent = layerData.layer4pails;
-                document.getElementById("table4pailsRemarks").textContent = layerData.layer4pailsRemarks;
-                document.getElementById("table4paila").textContent = layerData.layer4paila;
-                document.getElementById("table4pailaRemarks").textContent = layerData.layer4pailaRemarks;
-                document.getElementById("tableTracer").textContent = layerData.layerTracer;
+                tableDate.value = layerData.date;
+                tableCodeNo.value = layerData.code_no;
+                tableOrderNo.value = layerData.order_no;
+                tableType.value = layerData.type;
+                tableLotNo.value = lotNo;
+                tableFurnaceNo.value = layerData.sintering_furnace_no;
+                tableCoatingNo.value = layerData.furnace_no;
+                tableZone.value = layerData.zone;
+                tablePassNo.value = layerData.pass_no;
+                tableBr.value = layerData.Br;
+                tableBrRemarks.value = layerData.Br_remarks;
+                table4paild.value = layerData["4paiId"];
+                table4paildRemarks.value = layerData["4paiId_remarks"];
+                tableiHc.value = layerData.iHc;
+                tableiHcRemarks.value = layerData.iHc_remarks;
+                tablebHc.value = layerData.bHc;
+                tablebHcRemarks.value = layerData.bHc_remarks;
+                tableBHMax.value = layerData.BHMax;
+                tableBHMaxRemarks.value = layerData.BHMax_remarks;
+                tableSquareness.value = layerData.Squareness;
+                tableSquarenessRemarks.value = layerData.Squareness_remarks;
+                table4pails.value = layerData["4paiIs"];
+                table4pailsRemarks.value = layerData["4paiIs_remarks"];
+                tableiHk.value = layerData.iHk;
+                tableiHkRemarks.value = layerData.iHk_remarks;
+                table4paila.value = layerData["4paiIa"];
+                table4pailaRemarks.value = layerData["4paiIa_remarks"];
+                tableiHciHk.value = layerData.iHkiHc;
+                tableiHciHkRemarks.value = layerData.iHkiHc_remarks;
+                tableBr4pai.value = layerData.Br4pai;
+                tableBr4paiRemarks.value = layerData.Br4pai_remarks;
+                tableHr95.value = layerData.iHr95;
+                tableHr95Remarks.value = layerData.iHr95_remarks;
+                tableHr98.value = layerData.iHr98;
+                tableHr98Remarks.value = layerData.iHr98_remarks;
+                tableTracer.value = layerData.Tracer;
 
-            console.log("Layer Data:", layerData);
+                console.log("Layer Data:", layerData);
 
-            // Send data to API
-            sendLayerData(layerData);
-                //Get All THIS variables
-                /*var layerDate = rowCell.value[0];
-                var layerCodeNo = rowCell.value[1];
-                var layerOrderNo = rowCell.value[2];
-                var layerType = rowCell.value[3];
-                var layerLotNo = rowCell.value[4];
-                var layerFurnaceNo = rowCell.value[5];
-                var layerCoatingNo = rowCell.value[6];
-                var layerZone = rowCell.value[7];
-                var layerPassNo = rowCell.value[8];
-                var layerBr = rowCell.value[9];
-                var layeriHc = rowCell.value[10];
-                var layeriHk = rowCell.value[11];
-                var layerBHMax = rowCell.value[12];
-                var layerHr95 = rowCell.value[13];
-                var layerHr98 = rowCell.value[14];
-                var layeriHciHk = rowCell.value[15];
-                var layerBr4pai = rowCell.value[16];
-                var layerbHc = rowCell.value[17];
-                var layerSquareness = rowCell.value[18];
-                var layer4paild = rowCell.value[19];
-                var layer4pails = rowCell.value[20];
-                var layer4paila = rowCell.value[21];
-                var layerTracer = rowCell.value[22];*/
+                sendLayerData(layerData);
 
             };
 
@@ -386,21 +414,25 @@
     // Function to send raw data via API
     const sendLayerData = async (layerData) => {
         try {
-            const response = await axios.post('/api/endpoint', layerData); // Replace '/api/endpoint' with your API endpoint
+            const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
             console.log('API Response:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error);
         }
     };
 
-    // Function to convert graphAxis to JSON
-    const convertToJSON = () => {
-        if (graphAxis.value.length > 0) {
-            graphAxisJSON.value = JSON.stringify(graphAxis.value);
-            console.log('Graph Axis as JSON:', graphAxisJSON.value);
-        } else {
-            console.error('Graph Axis is empty!');
-        }
+    // State for storing fetched data and error
+    const tpmData = ref(null);
+    const error = ref(null);
+
+    const fetchDataFromApi = async () => {
+    try {
+        const response = await axios.get('/api/tpmdata/43');
+        const createdAt = response.data.data.x; // Extract the created_at column
+        console.log('Created At:', createdAt);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
     };
 
     // Function to parse the file content
@@ -418,113 +450,20 @@
                 variables[`data${i + 1}`] = line;
             }
         }
-
         return variables;
     };
 
     // Method to submit the file (you can add additional logic to send the file to a server)
-    const submitFile = () => {
+    /*const submitFile = () => {
     if (fileData.value) {
         // Here, you can process the fileData, send it to a server, or read its content
         console.log('File ready for submission:', fileData.value);
     } else {
         alert('Please select a file first.');
     }
-    };
-
-    // Register all components from Chart.js
-    Chart.register(...registerables); // Register the necessary components (e.g., linear scale, etc.)
-
-    onMounted(() => {
-    const ctx = document.getElementById('myChart').getContext('2d');
+    };*/
 
 
-    // Initialize Chart.js with static data
-    new Chart(ctx, {
-        type: 'line', // Line chart type
-        data: {
-        datasets: [
-            {
-            label: 'Dataset 1',
-            data: [
-                { x: 4783.843, y: -0.234 },
-                { x: 4784.391, y: 12747.743 },
-                { x: 4894.063, y: 13747.097 },
-                { x: 5094.673, y: 14747.050 },
-                { x: 5294.509, y: 14847.401 },
-                { x: 20100.481, y: 14947.628 },
-                { x: 23400.450, y: 15147.370 },
-                { x: 23421.419, y: 15147.449 },
-            ],
-            borderColor: 'blue',
-            fill: false,
-            xAxisID: 'x1', // Link to the first x-axis
-            },
-            {
-            label: 'Dataset 2',
-            data: [
-                { x: 0, y: -2500 },
-                { x: 0, y: 14500 },
-                { x: 1500, y: 15600 },
-                { x: 3000, y: 16500 },
-                { x: 19000, y: 17000 }
-            ],
-            borderColor: 'green',
-            fill: false,
-            xAxisID: 'x2', // Link to the second x-axis
-            },
-            {
-            label: 'Dataset 3',
-            data: [
-                { x: -5000, y: 2500 },
-                { x: -5000, y: 17500 },
-                { x: 6500, y: 19600 },
-                { x: 19000, y: 19600 },
-                { x: 19000, y: 19700 }
-            ],
-            borderColor: 'yellow',
-            fill: false,
-            xAxisID: 'x3', // Link to the second x-axis
-            }
-        ]
-        },
-        options: {
-        responsive: true,
-        scales: {
-            x1: {
-            type: 'linear', // Linear scale for the first x-axis
-            position: 'bottom', // Position it at the bottom
-            min: -50000,   // Set the minimum value for the x-axis
-            max: 50000,  // Set the maximum value for the x-axis
-            },
-            x2: {
-            type: 'linear', // Linear scale for the second x-axis
-            position: 'top', // Position it at the top
-            min: -50000,   // Set the minimum value for the x-axis
-            max: 50000,  // Set the maximum value for the x-axis
-            ticks: {
-                display: false, // Hide the x-axis ticks (labels)
-            },
-            },
-            x3: {
-            type: 'linear', // Linear scale for the second x-axis
-            //position: 'top', // Position it at the top
-            min: -50000,   // Set the minimum value for the x-axis
-            max: 50000,  // Set the maximum value for the x-axis
-            ticks: {
-                display: false, // Hide the x-axis ticks (labels)
-            },
-            },
-            y: {
-            type: 'linear', // Use a linear scale for the y-axis
-            position: 'left', // Position it on the left
-            min: -20000,   // Set the minimum value for the x-axis
-            max: 20000,  // Set the maximum value for the x-axis
-            },
-        },
-        },
-    });
 
 
-    });
   </script>
