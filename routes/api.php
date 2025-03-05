@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
+Route::post('/tpmdata', [TPMDataController::class, 'store']);
+Route::put('/tpmdata/{id}', [TPMDataController::class, 'update']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
