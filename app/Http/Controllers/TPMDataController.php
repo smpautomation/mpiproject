@@ -96,6 +96,8 @@ class TPMDataController extends Controller
                 'MRC' => $request->input('MRC', null),
                 'HR' => $request->input('HR', null),
                 'HRO' => $request->input('HRO', null),
+                'x' => $request->input('x', null),
+                'y' => $request->input('y', null)
             ];
             $tpmData = TPMData::create($tpmDataInputs);
             $remarkData = [
