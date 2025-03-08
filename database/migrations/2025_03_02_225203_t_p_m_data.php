@@ -89,6 +89,17 @@ return new class extends Migration
             $table->string('HRO_remarks')->nullable();
             $table->foreign('tpm_data_id')->references('id')->on('tpm_data')->onDelete('cascade');
         });
+
+        Schema::create('tpm_data_aggregate_functions', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->unsignedBigInteger('tpm_data_id');
+            $table->json('average')->nullable();
+            $table->json('maximum')->nullable();
+            $table->json('minimum')->nullable();
+            $table->json('ng_counter')->nullable();
+            $table->foreign('tpm_data_id')->references('id')->on('tpm_data')->onDelete('cascade');
+        });
     }
 
     /**
@@ -96,7 +107,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tmp_data');
-        Schema::dropIfExists('tmp_data_remarks');
+        Schema::dropIfExists('tpm_data');
+        Schema::dropIfExists('tpm_data_remarks');
+        Schema::dropIfExists('tpm_data_aggregate_functions');
     }
 };

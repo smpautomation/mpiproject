@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TPMData;
 use App\Models\TPMDataRemark;
+use App\Models\TPMDataAggregateFunctions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,11 +13,12 @@ class TPMDataController extends Controller
 {
     public function index(){
         try{
-            $tmpData = TPMData::all();
+            $tpmData = TPMData::all();
+            $remarks = TPMDataRemark::all();
             return response()->json([
                 'status' => true,
                 'message' => 'TPM Datas retrieved successfully',
-                'data' => $tmpData
+                'data' => $tpmData, $remarks
             ], 200);
         }catch(\Exception $e){
             return response()->json([
@@ -29,14 +31,16 @@ class TPMDataController extends Controller
 
     public function show($id){
         try{
-            $tmpData = TPMData::find($id);
+            $tpmData = TPMData::find($id);
 
-            if(!empty($tmpData)){
-                $remark = $tmpData->remark;
+            if(!empty($tpmData)){
+                $remark = $tpmData->remark;
+                $tpmAggragateFunctions = $tpmData->aggregateFunctions;
+
                 return response()->json([
                     'status' => true,
                     'message' => 'tmp Data found successfully',
-                    'data' => $tmpData
+                    'data' => $tpmData
                 ], 200);
             }else{
                 return response()->json([
@@ -130,15 +134,22 @@ class TPMDataController extends Controller
                 'HR_remarks' => $request->input('HR_remarks', null),
                 'HRO_remarks' => $request->input('HRO_remarks', null),
             ];
-
             $remark = TPMDataRemark::create($remarkData);
+            $tpmAggragateFunctionsInput = [
+                'tpm_data_id' => $tpmData->id,
+                'average' => $request->input('average', null),
+                'maximum' => $request->input('maximum', null),
+                'minimum' => $request->input('minimum', null),
+                'ng_counter' => $request->input('ng_counter', null)
+            ];
+            $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
 
             DB::commit();
 
             return response()->json([
                 'status' => true,
                 'message' => 'tmp Data created successfully',
-                'data' => [$tpmData, $remark]
+                'data' => [$tpmData, $remark, $tpmAggragateFunctions]
             ], 201);
         }catch(\Exception $e){
             // If an error occurs, roll back the transaction
@@ -229,6 +240,14 @@ class TPMDataController extends Controller
                 'HRO_remarks' => $request->input('HRO_remarks', $remarks->HRO_remarks),
             ];
             $remarks->update($remarkData);
+            $tpmAggragateFunctions = $tpmData->aggregateFunctions;
+            $tpmAggragateFunctionsInput = [
+                'average' => $request->input('average', $tpmAggragateFunctions->average),
+                'maximum' => $request->input('maximum', $tpmAggragateFunctions->maximum),
+                'minimum' => $request->input('minimum', $tpmAggragateFunctions->minimum),
+                'ng_counter' => $request->input('ng_counter', $tpmAggragateFunctions->ng_counter)
+            ];
+            $tpmAggragateFunctions->update($tpmAggragateFunctionsInput);
 
             DB::commit();
 
