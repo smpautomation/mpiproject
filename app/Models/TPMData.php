@@ -8,9 +8,17 @@ class TPMData extends Model
 {
     protected $table = 'tpm_data';
     protected $guarded = [];
+    protected $casts = [
+        'x' => 'array',
+        'y' => 'array'
+    ];
 
     public function remark()
     {
-        return $this->hasOne(TPMDataRemark::class, 'id'); // assuming 'tpm_data_id' is the foreign key in tpm_data_remarks
+        return $this->hasOne(TPMDataRemark::class, 'id');
+    }
+    public function aggregateFunctions()
+    {
+        return $this->hasOne(TPMDataAggregateFunctions::class, 'id');
     }
 }
