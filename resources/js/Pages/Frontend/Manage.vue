@@ -440,7 +440,6 @@
             console.log('Selected files:', fileData.value);
 
             Array.from(files).forEach((file) => {
-                const test = ref(null);
 
                 const reader = new FileReader();
 
@@ -549,45 +548,6 @@
                         "iHr98_remarks": parsedData.data64 == 1 ? 'E' : parsedData.data64 == 0 ? '' : parsedData.data64,
                     };
 
-                    /* temporary for testing table data *//*
-                    const lotNo = layerData.press_1 + layerData.press_2 + layerData.machine_no;//concatenate to form lot number
-                    tableDate.value = layerData.date;
-                    tableCodeNo.value = layerData.code_no;
-                    tableOrderNo.value = layerData.order_no;
-                    tableType.value = layerData.type;
-                    tableLotNo.value = lotNo;
-                    tableFurnaceNo.value = layerData.sintering_furnace_no;
-                    tableCoatingNo.value = layerData.furnace_no;
-                    tableZone.value = layerData.zone;
-                    tablePassNo.value = layerData.pass_no;
-                    tableBr.value = layerData.Br;
-                    tableBrRemarks.value = layerData.Br_remarks;
-                    table4paild.value = layerData["4paiId"];
-                    table4paildRemarks.value = layerData["4paiId_remarks"];
-                    tableiHc.value = layerData.iHc;
-                    tableiHcRemarks.value = layerData.iHc_remarks;
-                    tablebHc.value = layerData.bHc;
-                    tablebHcRemarks.value = layerData.bHc_remarks;
-                    tableBHMax.value = layerData.BHMax;
-                    tableBHMaxRemarks.value = layerData.BHMax_remarks;
-                    tableSquareness.value = layerData.Squareness;
-                    tableSquarenessRemarks.value = layerData.Squareness_remarks;
-                    table4pails.value = layerData["4paiIs"];
-                    table4pailsRemarks.value = layerData["4paiIs_remarks"];
-                    tableiHk.value = layerData.iHk;
-                    tableiHkRemarks.value = layerData.iHk_remarks;
-                    table4paila.value = layerData["4paiIa"];
-                    table4pailaRemarks.value = layerData["4paiIa_remarks"];
-                    tableiHciHk.value = layerData.iHkiHc;
-                    tableiHciHkRemarks.value = layerData.iHkiHc_remarks;
-                    tableBr4pai.value = layerData.Br4pai;
-                    tableBr4paiRemarks.value = layerData.Br4pai_remarks;
-                    tableHr95.value = layerData.iHr95;
-                    tableHr95Remarks.value = layerData.iHr95_remarks;
-                    tableHr98.value = layerData.iHr98;
-                    tableHr98Remarks.value = layerData.iHr98_remarks;
-                    tableTracer.value = layerData.Tracer;*/
-
                     console.log("Layer Data:", layerData);
 
                     sendLayerData(layerData); // Send the parsed data to the server
@@ -664,6 +624,7 @@
                 // Create a formatted object for each row
                 const layerData = {
                     date: row.date,
+                    serialNo: "",
                     code_no: row.code_no,
                     order_no: row.order_no,
                     type: row.type,
@@ -674,31 +635,30 @@
                     pass_no: row.pass_no,
                     Br: row.Br,
                     Br_remarks: row.data25 === 1 ? "E" : row.data25 === 0 ? "" : row.data25,
-                    "4paiId": row["4paiId"],
-                    "4paiId_remarks": row.data28 === 1 ? "E" : row.data28 === 0 ? "" : row.data28,
                     iHc: row.iHc,
                     iHc_remarks: row.data31 === 1 ? "E" : row.data31 === 0 ? "" : row.data31,
-                    bHc: row.bHc,
-                    bHc_remarks: row.data34 === 1 ? "E" : row.data34 === 0 ? "" : row.data34,
-                    BHMax: row.BHMax,
-                    BHMax_remarks: row.data37 === 1 ? "E" : row.data37 === 0 ? "" : row.data37,
-                    Squareness: row.Squareness,
-                    Squareness_remarks: row.data40 === 1 ? "E" : row.data40 === 0 ? "" : row.data40,
-                    "4paiIs": row["4paiIs"],
-                    "4paiIs_remarks": row.data43 === 1 ? "E" : row.data43 === 0 ? "" : row.data43,
                     iHk: row.iHk,
                     iHk_remarks: row.data46 === 1 ? "E" : row.data46 === 0 ? "" : row.data46,
-                    "4paiIa": row["4paiIa"],
-                    "4paiIa_remarks": row.data49 === 1 ? "E" : row.data49 === 0 ? "" : row.data49,
-                    Density_remarks: row.data52 === 1 ? "E" : row.data52 === 0 ? "" : row.data52,
-                    iHkiHc: row.iHkiHc,
-                    iHkiHc_remarks: row.data55 === 1 ? "E" : row.data55 === 0 ? "" : row.data55,
-                    Br4pai: row.Br4pai,
-                    Br4pai_remarks: row.data58 === 1 ? "E" : row.data58 === 0 ? "" : row.data58,
+                    BHMax: row.BHMax,
+                    BHMax_remarks: row.data37 === 1 ? "E" : row.data37 === 0 ? "" : row.data37,
                     iHr95: row.iHr95,
                     iHr95_remarks: row.data61 === 1 ? "E" : row.data61 === 0 ? "" : row.data61,
                     iHr98: row.iHr98,
                     iHr98_remarks: row.data64 === 1 ? "E" : row.data64 === 0 ? "" : row.data64,
+                    iHkiHc: row.iHkiHc,
+                    iHkiHc_remarks: row.data55 === 1 ? "E" : row.data55 === 0 ? "" : row.data55,
+                    Br4pai: row.Br4pai,
+                    Br4pai_remarks: row.data58 === 1 ? "E" : row.data58 === 0 ? "" : row.data58,
+                    bHc: row.bHc,
+                    bHc_remarks: row.data34 === 1 ? "E" : row.data34 === 0 ? "" : row.data34,
+                    Squareness: row.Squareness,
+                    Squareness_remarks: row.data40 === 1 ? "E" : row.data40 === 0 ? "" : row.data40,
+                    "4paiId": row["4paiId"],
+                    "4paiId_remarks": row.data28 === 1 ? "E" : row.data28 === 0 ? "" : row.data28,
+                    "4paiIs": row["4paiIs"],
+                    "4paiIs_remarks": row.data43 === 1 ? "E" : row.data43 === 0 ? "" : row.data43,
+                    "4paiIa": row["4paiIa"],
+                    "4paiIa_remarks": row.data49 === 1 ? "E" : row.data49 === 0 ? "" : row.data49,
                     tracer: row.tracer,
                 };
 
