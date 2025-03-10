@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->date('date')->nullable();
+            $table->string('serial_no');
             $table->string('code_no')->nullable();
             $table->string('order_no')->nullable();
             $table->string('type')->nullable();

@@ -15,10 +15,10 @@ class TPMData extends Model
 
     public function remark()
     {
-        return $this->hasOne(TPMDataRemark::class, 'id');
+        return $this->hasOne(TPMDataRemark::class, 'tpm_data_id', 'id');
     }
     public function aggregateFunctions()
     {
-        return $this->hasOne(TPMDataAggregateFunctions::class, 'id');
+        return $this->hasOne(TPMDataAggregateFunctions::class, 'tpm_data_id', 'id');
     }
 }
