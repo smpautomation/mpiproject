@@ -11,6 +11,6 @@ class TPMDataRemark extends Model
 
     public function tpmData()
     {
-        return $this->belongsTo(TPMData::class, 'tpm_data_id'); // foreign key
+        return $this->belongsTo(TPMData::class, 'tpm_data_id', 'id'); // foreign key
     }
 }

@@ -11,49 +11,83 @@ use Illuminate\Support\Facades\Validator;
 
 class TPMDataController extends Controller
 {
-    public function index(){
-        try{
-            $tpmData = TPMData::all();
-            $remarks = TPMDataRemark::all();
-            return response()->json([
-                'status' => true,
-                'message' => 'TPM Datas retrieved successfully',
-                'data' => $tpmData, $remarks
-            ], 200);
-        }catch(\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => 'Error retrieving tmp Data',
-                'error' => $e->getMessage(),
-            ], 500);
+    public function index(Request $request){
+        $serial_no = $request->query('serial');
+        if (!$serial_no) {
+            try{
+                $tpmData = TPMData::all();
+                $remarks = TPMDataRemark::all();
+                $aggregateFunctions = TPMDataAggregateFunctions::all();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'TPM Datas retrieved successfully',
+                    'data' => [
+                        'tpmData' => $tpmData,
+                        'remarks' => $remarks,
+                        'aggregateFunctions' =>  $aggregateFunctions
+                    ]
+                ], 200);
+            }catch(\Exception $e){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Error retrieving tmp Data',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+        }else{
+            try{
+                $tpmData = TPMData::with(['remark', 'aggregateFunctions'])
+                                    ->where('serial_no',  $serial_no)->get();
+
+                if(!$tpmData->isEmpty()){
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'TPM data found successfully',
+                        'data' => $tpmData
+                    ], 200);
+                }else{
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'TPM data not found for this serial number.'
+                    ], 404);
+                }
+            }catch(\Exception $e){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'An error occurred while retrieving TPM data',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
         }
     }
 
     public function show($id){
         try{
-            $tpmData = TPMData::find($id);
+            $tpmData = TPMData::with(['remark', 'aggregateFunctions'])
+                                ->find($id);
 
             if(!empty($tpmData)){
-                $remark = $tpmData->remark;
-                $tpmAggragateFunctions = $tpmData->aggregateFunctions;
+                $remark = $tpmData->remark ?? 'No remark available';
+                $tpmAggragateFunctions = $tpmData->aggregateFunctions ?? 'No aggregate functions available';
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'tmp Data found successfully',
+                    'message' => 'TPM data found successfully',
                     'data' => $tpmData
                 ], 200);
             }else{
                 return response()->json([
                     'status' => false,
-                    'message' => 'tmp Data not found'
+                    'message' => 'TPM data not found for this serial number.'
                 ], 404);
             }
         }catch(\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => 'tmp Data not found',
+                'message' => 'An error occurred while retrieving TPM data',
                 'error' => $e->getMessage(),
-            ], 404);
+            ], 500);
         }
     }
 
@@ -63,6 +97,7 @@ class TPMDataController extends Controller
         try{
             $tpmDataInputs = [
                 'date' => $request->input('date', null),
+                'serial_no' => $request->input('serial_no', null),
                 'code_no' => $request->input('code_no', null),
                 'order_no' => $request->input('order_no', null),
                 'type' => $request->input('type', null),
@@ -105,7 +140,7 @@ class TPMDataController extends Controller
             ];
             $tpmData = TPMData::create($tpmDataInputs);
             $remarkData = [
-                'tpm_data_id' => $tpmData->id, // Reference the newly created TPMData ID
+                'tpm_data_id' => $tpmData->id,
                 'Br_remarks' => $request->input('Br_remarks', null),
                 '4paiId_remarks' => $request->input('4paiId_remarks', null),
                 'iHc_remarks' => $request->input('iHc_remarks', null),
@@ -164,10 +199,10 @@ class TPMDataController extends Controller
 
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $serial_no){
         DB::beginTransaction();
         try{
-            $tpmData = TPMData::find($id);
+            $tpmData = TPMData::find($serial_no);
             $tpmDataInputs = [
                 'date' => $request->input('date', $tpmData->date),
                 'code_no' => $request->input('code_no', $tpmData->code_no),
@@ -267,9 +302,9 @@ class TPMDataController extends Controller
 
     }
 
-    public function destroy($id){
+    public function destroy($serial_no){
         try{
-            $tpmData = TPMData::find($id);
+            $tpmData = TPMData::find($serial_no);
             $tpmData->delete();
             return response()->json([
                 'status' => true,
