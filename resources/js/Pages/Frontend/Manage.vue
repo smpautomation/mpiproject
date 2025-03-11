@@ -55,10 +55,11 @@
 
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
                         <p>Files: </p>
-                        <div class="p-2 text-white bg-blue-400 rounded-3xl">test file name here</div>
+                        <div v-for="(fileList, index) in fileLists" :key="index" class="p-2 m-2 text-white bg-blue-400 rounded-3xl">
+                            {{ fileList }}
+                        </div>
                     </div>
                 </div>
-
                 <div>
                     <div v-show="showProceed" class="flex flex-col items-center justify-center">
                         <p>UPLOAD SUCCESSFULLY COMPLETED!</p>
@@ -479,6 +480,7 @@
 
     const sampleWithVariances = ref([]);
 
+    const fileLists = ref([]);
     const fileData = ref([]); // This will hold the selected file data
     const xAxis = ref([]);
     const yAxis = ref([]);
@@ -489,6 +491,7 @@
     // Store the file list when the input changes
     const storeFileList = (event) => {
         fileData.value = Array.from(event.target.files);
+        fileLists.value = fileData.value.map(file => file.name); // Extract and store file names
         console.log('Files stored:', fileData.value);
     };
 
