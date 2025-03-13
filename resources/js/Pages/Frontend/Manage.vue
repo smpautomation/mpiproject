@@ -144,80 +144,171 @@
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Br }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.Br_remarks }}
+                                                <td
+                                                    v-if="item.remarks.Br_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.Br_remarks == 0 ? '' : item.remarks.Br_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHc }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.iHc_remarks }}
+                                                <td
+                                                    v-if="item.remarks.iHc_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHc_remarks == 0 ? '' : item.remarks.iHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHk }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.iHk_remarks }}
+                                                <td
+                                                    v-if="item.remarks.iHk_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHk_remarks == 0 ? '' : item.remarks.iHk_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.BHMax }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.BHMax_remarks }}
+                                                <td
+                                                    v-if="item.remarks.BHMax_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.BHMax_remarks == 0 ? '' : item.remarks.BHMax_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHr95 }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.iHr95_remarks }}
+                                                <td
+                                                    v-if="item.remarks.iHr95_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHr95_remarks == 0 ? '' : item.remarks.iHr95_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHr98 }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.iHr98_remarks }}
+                                                <td
+                                                    v-if="item.remarks.iHr98_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHr98_remarks == 0 ? '' : item.remarks.iHr98_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHkiHc }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.iHkiHc_remarks }}
+                                                <td
+                                                    v-if="item.remarks.iHkiHc_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHkiHc_remarks == 0 ? '' : item.remarks.iHkiHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Br4pai }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.Br4pai_remarks }}
+                                                <td
+                                                    v-if="item.remarks.Br4pai_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.Br4pai_remarks == 0 ? '' : item.remarks.Br4pai_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.bHc }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.bHc_remarks }}
+                                                <td
+                                                    v-if="item.remarks.bHc_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.bHc_remarks == 0 ? '' : item.remarks.bHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Squareness }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks.Squareness_remarks }}
+                                                <td
+                                                    v-if="item.remarks.Squareness_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.Squareness_remarks == 0 ? '' : item.remarks.Squareness_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiId'] }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks['4paiId'] }}
+                                                <td
+                                                    v-if="item.remarks['4paiId'] == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks['4paiId'] == 0 ? '' : item.remarks['4paiId'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiIs'] }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks['4paiIs'] }}
+                                                <td
+                                                    v-if="item.remarks['4paiIs'] == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks['4paiIs'] == 0 ? '' : item.remarks['4paiIs'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiIa'] }}
                                                 </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.remarks['4paiIa'] }}
+                                                <td
+                                                    v-if="item.remarks['4paiIa'] == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks['4paiIa'] == 0 ? '' : item.remarks['4paiIa'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Tracer }}
@@ -273,19 +364,19 @@
                                         </tr>
                                         <tr>
                                             <td class="px-3 py-2 font-extrabold text-center text-white bg-red-800 text-md">NG COUNTER</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHc }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHk }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBHMax }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr95 }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr98 }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHciHk }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr4pai }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngbHc }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngSquareness }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paild }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4pails }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paila }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -426,6 +517,19 @@
     const max4paild = ref();
     const max4pails = ref();
     const max4paila = ref();
+    const ngBr = ref();
+    const ngiHc = ref();
+    const ngiHk = ref();
+    const ngBHMax = ref();
+    const ngiHr95 = ref();
+    const ngiHr98 = ref();
+    const ngiHciHk = ref();
+    const ngBr4pai = ref();
+    const ngbHc = ref();
+    const ngSquareness = ref();
+    const ng4paild = ref();
+    const ng4pails = ref();
+    const ng4paila = ref();
 
     // Grouping variables into arrays
     const aggAveValues = ref([
@@ -474,6 +578,22 @@
         min4paild,
         min4pails,
         min4paila,
+    ]);
+
+    const aggNGCounts = ref([
+        ngBr,
+        ngiHc,
+        ngiHk,
+        ngBHMax,
+        ngiHr95,
+        ngiHr98,
+        ngiHciHk,
+        ngBr4pai,
+        ngbHc,
+        ngSquareness,
+        ng4paild,
+        ng4pails,
+        ng4paila,
     ]);
 
     //Variables for ave max min ng counter end
@@ -546,8 +666,8 @@
                 xJsonOutput.value = JSON.stringify(xValues, null, 2);
                 yJsonOutput.value = JSON.stringify(yValues, null, 2);
 
-                console.log('X Axis JSON:', xJsonOutput.value);
-                console.log('Y Axis JSON:', yJsonOutput.value);
+                //console.log('X Axis JSON:', xJsonOutput.value);
+                //console.log('Y Axis JSON:', yJsonOutput.value);
 
                 //-------------------------------------GRAPH END
 
@@ -595,22 +715,22 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "Br_remarks": parsedData.data25 == 1 ? 'E' : parsedData.data25 == 0 ? '' : parsedData.data25,
-                    "4paiId_remarks": parsedData.data28 == 1 ? 'E' : parsedData.data28 == 0 ? '' : parsedData.data28,
-                    "iHc_remarks": parsedData.data31 == 1 ? 'E' : parsedData.data31 == 0 ? '' : parsedData.data31,
-                    "bHc_remarks": parsedData.data34 == 1 ? 'E' : parsedData.data34 == 0 ? '' : parsedData.data34,
-                    "BHMax_remarks": parsedData.data37 == 1 ? 'E' : parsedData.data37 == 0 ? '' : parsedData.data37,
-                    "Squareness_remarks": parsedData.data40 == 1 ? 'E' : parsedData.data40 == 0 ? '' : parsedData.data40,
-                    "4paiIs_remarks": parsedData.data43 == 1 ? 'E' : parsedData.data43 == 0 ? '' : parsedData.data43,
-                    "iHk_remarks": parsedData.data46 == 1 ? 'E' : parsedData.data46 == 0 ? '' : parsedData.data46,
-                    "4paiIa_remarks": parsedData.data49 == 1 ? 'E' : parsedData.data49 == 0 ? '' : parsedData.data49,
-                    "Density_remarks": parsedData.data52 == 1 ? 'E' : parsedData.data52 == 0 ? '' : parsedData.data52,
-                    "iHkiHc_remarks": parsedData.data55 == 1 ? 'E' : parsedData.data55 == 0 ? '' : parsedData.data55,
-                    "Br4pai_remarks": parsedData.data58 == 1 ? 'E' : parsedData.data58 == 0 ? '' : parsedData.data58,
-                    "iHr95_remarks": parsedData.data61 == 1 ? 'E' : parsedData.data61 == 0 ? '' : parsedData.data61,
-                    "iHr98_remarks": parsedData.data64 == 1 ? 'E' : parsedData.data64 == 0 ? '' : parsedData.data64,
+                    "Br_remarks": parsedData.data25,
+                    "4paiId_remarks": parsedData.data28,
+                    "iHc_remarks": parsedData.data31,
+                    "bHc_remarks": parsedData.data34,
+                    "BHMax_remarks": parsedData.data37,
+                    "Squareness_remarks": parsedData.data40,
+                    "4paiIs_remarks": parsedData.data43,
+                    "iHk_remarks": parsedData.data46,
+                    "4paiIa_remarks": parsedData.data49,
+                    "Density_remarks": parsedData.data52,
+                    "iHkiHc_remarks": parsedData.data55,
+                    "Br4pai_remarks": parsedData.data58,
+                    "iHr95_remarks": parsedData.data61,
+                    "iHr98_remarks": parsedData.data64,
                 };
-                console.log("Layer Data:", layerData);
+                //console.log("Layer Data:", layerData);
 
                 sendLayerData(layerData); // Send the parsed data to the server
             };
@@ -645,6 +765,7 @@
     // Method to clear the file upload
     const clearFileUpload = () => {
     fileData.value = null; // Reset the file data
+    fileLists.value = null;
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = ''; // Clear the input field
     console.log('File upload cleared');
@@ -670,23 +791,39 @@
     const items = ref([]); // Holds the fetched data
     const tpmData = ref([]); // Holds the tpmData array
     const tpmRemarks = ref([]); // Holds the remarks array
-    const tpmAggregate = ref([]); // Holds the aggregateFunctions array
+    const tpmAggregateAve = ref([]); // Holds the aggregateFunctions array
+    const tpmAggregateMax = ref([]); // Holds the aggregateFunctions array
+    const tpmAggregateMin = ref([]); // Holds the aggregateFunctions array
     const combinedData = ref([]); // Holds the combined array
 
     // Variables for aggregate
     const getAllBrValues = ref([]);
+    const getAllBrRemarks = ref([]);
     const getAlliHcValues = ref([]);
+    const getAlliHcRemarks = ref([]);
     const getAlliHkValues = ref([]);
+    const getAlliHkRemarks = ref([]);
     const getAllBHMaxValues = ref([]);
+    const getAllBHMaxRemarks = ref([]);
     const getAlliHr95Values = ref([]);
+    const getAlliHr95Remarks = ref([]);
     const getAlliHr98Values = ref([]);
+    const getAlliHr98Remarks = ref([]);
     const getAlliHciHkValues = ref([]);
+    const getAlliHciHkRemarks = ref([]);
     const getAllBr4paiValues = ref([]);
+    const getAllBr4paiRemarks = ref([]);
     const getAllbHcValues = ref([]);
+    const getAllbHcRemarks = ref([]);
     const getAllSquarenessValues = ref([]);
+    const getAllSquarenessRemarks = ref([]);
     const getAll4paildValues = ref([]);
+    const getAll4paildRemarks = ref([]);
     const getAll4pailsValues = ref([]);
+    const getAll4pailsRemarks = ref([]);
     const getAll4pailaValues = ref([]);
+    const getAll4pailaRemarks = ref([]);
+
     // Variables for aggregate end
 
     // Function to fetch data from the API
@@ -701,28 +838,39 @@
             // Extract arrays from the response
             tpmData.value = response.data.data.tpmData || []; // Fallback to an empty array if undefined
             tpmRemarks.value = response.data.data.remarks || [];
-            tpmAggregate.value = response.data.data.aggregateFunctions || [];
 
             // Extract individual values from tpmData for aggregate
             getAllBrValues.value = tpmData.value.map(item => item.Br || null);
+            getAllBrRemarks.value = tpmRemarks.value.map(item => item.Br_remarks || null);
             getAlliHcValues.value = tpmData.value.map(item => item.iHc || null);
+            getAlliHcRemarks.value = tpmRemarks.value.map(item => item.iHc_remarks || null);
             getAlliHkValues.value = tpmData.value.map(item => item.iHk || null);
+            getAlliHkRemarks.value = tpmRemarks.value.map(item => item.iHk_remarks || null);
             getAllBHMaxValues.value = tpmData.value.map(item => item.BHMax || null);
+            getAllBHMaxRemarks.value = tpmRemarks.value.map(item => item.BHMax_remarks || null);
             getAlliHr95Values.value = tpmData.value.map(item => item.iHr95 || null);
+            getAlliHr95Remarks.value = tpmRemarks.value.map(item => item.iHr95_remarks || null);
             getAlliHr98Values.value = tpmData.value.map(item => item.iHr98 || null);
+            getAlliHr98Remarks.value = tpmRemarks.value.map(item => item.iHr98_remarks || null);
             getAlliHciHkValues.value = tpmData.value.map(item => item.iHkiHc || null);
+            getAlliHciHkRemarks.value = tpmRemarks.value.map(item => item.iHkiHc_remarks || null);
             getAllBr4paiValues.value = tpmData.value.map(item => item.Br4pai || null);
+            getAllBr4paiRemarks.value = tpmRemarks.value.map(item => item.Br4pai_remarks || null);
             getAllbHcValues.value = tpmData.value.map(item => item.bHc || null);
+            getAllbHcRemarks.value = tpmRemarks.value.map(item => item.bHc_remarks || null);
             getAllSquarenessValues.value = tpmData.value.map(item => item.Squareness || null);
+            getAllSquarenessRemarks.value = tpmRemarks.value.map(item => item.Squareness_remarks || null);
             getAll4paildValues.value = tpmData.value.map(item => item["4paiId"] || null);
+            getAll4paildRemarks.value = tpmRemarks.value.map(item => item["4paiId_remarks"] || null);
             getAll4pailsValues.value = tpmData.value.map(item => item["4paiIs"] || null);
+            getAll4pailsRemarks.value = tpmRemarks.value.map(item => item["4paiIs_remarks"] || null);
             getAll4pailaValues.value = tpmData.value.map(item => item["4paiIa"] || null);
+            getAll4pailaRemarks.value = tpmRemarks.value.map(item => item["4paiIa_remarks"] || null);
+
+            console.log("get all ng count Hr95: ",getAlliHr95Remarks.value);
 
             //console.log('tpmData: ', tpmData.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
-            //console.log('tpmAggregate: ', tpmAggregate.value);
-
-            console.log("get ALL iHciHk values: ", getAlliHciHkValues.value);
 
             //get average function
             const calculateAverage = (array) => {
@@ -787,6 +935,17 @@
                 return numbers.map(num => maxValue - num);
             };
 
+            // Function to sum up all the data in an array
+            const calculateSum = (numericStringsArray) => {
+                // Convert the array of numeric strings to numbers
+                const numbers = numericStringsArray
+                    .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                    .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+                // Sum up all the valid numbers in the array
+                return numbers.reduce((sum, num) => sum + num, 0);
+            };
+
             //average values
             aveBr.value = calculateAverage(getAllBrValues.value);
             aveiHc.value = calculateAverage(getAlliHcValues.value);
@@ -834,7 +993,23 @@
             max4pails.value = getMaxValue(getAll4pailsValues.value);
             max4paila.value = getMaxValue(getAll4pailaValues.value);
 
+            //NG count values
+            ngBr.value = calculateSum(getAllBrRemarks.value);
+            ngiHc.value = calculateSum(getAlliHcRemarks.value);
+            ngiHk.value = calculateSum(getAlliHkRemarks.value);
+            ngBHMax.value = calculateSum(getAllBHMaxRemarks.value);
+            ngiHr95.value = calculateSum(getAlliHr95Remarks.value);
+            ngiHr98.value = calculateSum(getAlliHr98Remarks.value);
+            ngiHciHk.value = calculateSum(getAlliHciHkRemarks.value);
+            ngBr4pai.value = calculateSum(getAllBr4paiRemarks.value);
+            ngbHc.value = calculateSum(getAllbHcRemarks.value);
+            ngSquareness.value = calculateSum(getAllSquarenessRemarks.value);
+            ng4paild.value = calculateSum(getAll4paildRemarks.value);
+            ng4pails.value = calculateSum(getAll4pailsRemarks.value);
+            ng4paila.value = calculateSum(getAll4pailaRemarks.value);
+
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
+            console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
@@ -843,7 +1018,6 @@
             combinedData.value = tpmData.value.map((item, index) => ({
                 ...item,
                 remarks: tpmRemarks.value[index] || null,
-                aggregate: tpmAggregate.value[index] || null,
             }));
 
             //console.log('Combined Data: ', combinedData.value);
@@ -851,6 +1025,7 @@
             console.error('Error fetching data:', error);
         } finally {
             layerTableRowLoading.value = false;
+            showProceed.value = false;
         }
 
         fetchDataCreateGraph();
@@ -889,8 +1064,8 @@ const generateColor = (index) => {
 const renderChart = () => {
     const ctx = document.getElementById("myChart").getContext("2d");
 
-    const x_offset = 2000; // The amount to offset subsequent datasets
-    const y_offset = 3000; // The amount to offset subsequent datasets
+    const x_offset = 4000; // The amount to offset subsequent datasets
+    const y_offset = 6000; // The amount to offset subsequent datasets
 
     const chartDatasets = datasets.value.map((dataset, index) => {
         return {
@@ -937,6 +1112,9 @@ const renderChart = () => {
                         text: "X-Axis",
                         color: "#333",
                     },
+                    ticks: {
+                        display: false, // Hides the values
+                    },
                 },
                 y: {
                     type: "linear",
@@ -948,6 +1126,9 @@ const renderChart = () => {
                         display: true,
                         text: "Y-Axis",
                         color: "#333",
+                    },
+                    ticks: {
+                        display: false, // Hides the values
                     },
                 },
             },

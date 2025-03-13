@@ -10,6 +10,12 @@ export default {
         './resources/js/**/*.vue',
     ],
 
+    safelist: [
+        'bg-red-500',
+        'text-white',
+        'text-gray-700', // Add any other dynamic classes you use
+    ],
+
     theme: {
         extend: {
             fontFamily: {
