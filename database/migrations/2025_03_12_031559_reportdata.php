@@ -11,7 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('report_data', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('serial');
+            $table->string('model');
+            $table->string('material_code');
+            $table->string('partial_number');
+            $table->string('total_quantity');
+            $table->string('pulse_tracer_machine_number');
+            $table->date('date');
+            $table->string('shift');
+            $table->string('operator');
+            $table->json('magnetic_property_data');
+            $table->json('standard_sample_dimension_and_material_grade');
+        });
+
     }
 
     /**
@@ -19,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('report_data');
     }
 };
