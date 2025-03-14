@@ -598,6 +598,21 @@
 
     //Variables for ave max min ng counter end
 
+    //Reject Remarks 
+
+    const perform = ref(null);
+    const withinSpecs = ref(null);
+    const rejectNG = ref(null);
+    const holdNG = ref(null);
+    const lotReject = ref(null);
+    const lotPass = ref(null);
+    const ok = ref("OK");
+    const rejectInstructions = computed([
+        ok.value,
+    ]);
+
+    //Reject Remarks end
+
     const sampleWithVariances = ref([]);
 
     const fileLists = ref([]);
