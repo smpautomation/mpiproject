@@ -8,7 +8,7 @@
             </div>
             <div v-if="toggleManageForm" class="flex flex-col items-center justify-center">
                 <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
-                <div class="flex flex-row items-center justify-center">
+                <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
                         <!-- Upload Section Title -->
                         <p class="mb-4 text-xl font-semibold text-gray-800">Upload Raw Data:</p>
@@ -25,7 +25,7 @@
                                 accept=".tpm"
                                 multiple
                                 class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                @change="handleFileUpload"
+                                @change="storeFileList"
                             />
 
                             <div>
@@ -42,7 +42,7 @@
                                 type="submit"
                                 id="submitRawdata"
                                 class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                @click="fetchDataFromApi"
+                                @click="saveToDatabase"
                             />
                             <!-- Button to Redo Upload -->
 
@@ -55,137 +55,365 @@
 
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
                         <p>Files: </p>
-                        <div class="p-2 text-white bg-blue-400 rounded-3xl">test file name here</div>
+                        <div v-for="(fileList, index) in fileLists" :key="index" class="p-2 m-2 text-white bg-blue-400 rounded-3xl">
+                            {{ fileList }}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div v-show="showProceed" class="flex flex-col items-center justify-center">
+                        <p>UPLOAD SUCCESSFULLY COMPLETED!</p>
+                        <button
+                            class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                            @click="showAllData"
+                            >
+                                Proceed
+                        </button>
                     </div>
                 </div>
 
+               <!-- Loading Indicator -->
+                <div
+                v-if="layerTableRowLoading"
+                class="flex items-center justify-center"
+                >
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 border-t-4 border-blue-500 rounded-full animate-spin"></div>
+                    <span class="mt-4 text-lg font-medium text-white">Loading...</span>
+                </div>
+                </div>
 
+            <div v-show="showGraphAndTables">
                 <!-- Chart Container -->
-                <div class="w-[1000px] h-[550px] bg-blue-100 rounded-xl">
+                <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
                     <canvas id="myChart"></canvas>
                 </div>
-                <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                    <label class="block p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">FIRST LAYER</label>
-                    <div class="flex flex-col items-center justify-center">
-                        <div class="mb-20">
-                            <!-- Table with Full Width -->
-                            <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
-                                <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
-                                    <tr>
-                                        <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders" :key="tableLayerColumnHeader.name" :colspan="tableLayerColumnHeader.colspan" class="px-3 py-2 text-sm font-medium text-center border border-white">{{ tableLayerColumnHeader.name }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white">
-                                    <tr class="border-b hover:bg-gray-50"
-                                        v-for="(row, index) in tableRows"
-                                        :key="index"
-                                    >
-                                        <td v-for="(value, key) in row" :key="key" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ value }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
+                        <label class="block p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">FIRST LAYER</label>
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="flex flex-row items-center justify-center">
+                                <div class="mb-20">
+                                    <!-- Table with Full Width -->
+                                    <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                            <tr>
+                                                <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
+                                                :key="tableLayerColumnHeader.name" :colspan="tableLayerColumnHeader.colspan"
+                                                class="px-3 py-2 text-sm font-medium text-center border border-white"
+                                                >
+                                                    {{ tableLayerColumnHeader.name }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white">
+                                            <tr
+                                                v-for="item in combinedData"
+                                                :key="item.id"
+                                                class="border-b hover:bg-gray-50"
+                                            >
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.date }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.serial_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.code_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.order_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.type }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.sintering_furnace_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.furnace_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.zone }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.pass_no }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.Br }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.Br_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.Br_remarks == 0 ? '' : item.remarks.Br_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.iHc }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.iHc_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHc_remarks == 0 ? '' : item.remarks.iHc_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.iHk }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.iHk_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHk_remarks == 0 ? '' : item.remarks.iHk_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.BHMax }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.BHMax_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.BHMax_remarks == 0 ? '' : item.remarks.BHMax_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.iHr95 }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.iHr95_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHr95_remarks == 0 ? '' : item.remarks.iHr95_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.iHr98 }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.iHr98_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHr98_remarks == 0 ? '' : item.remarks.iHr98_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.iHkiHc }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.iHkiHc_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.iHkiHc_remarks == 0 ? '' : item.remarks.iHkiHc_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.Br4pai }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.Br4pai_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.Br4pai_remarks == 0 ? '' : item.remarks.Br4pai_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.bHc }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.bHc_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.bHc_remarks == 0 ? '' : item.remarks.bHc_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.Squareness }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks.Squareness_remarks == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks.Squareness_remarks == 0 ? '' : item.remarks.Squareness_remarks }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item['4paiId'] }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks['4paiId'] == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks['4paiId'] == 0 ? '' : item.remarks['4paiId'] }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item['4paiIs'] }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks['4paiIs'] == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks['4paiIs'] == 0 ? '' : item.remarks['4paiIs'] }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item['4paiIa'] }}
+                                                </td>
+                                                <td
+                                                    v-if="item.remarks['4paiIa'] == 1"
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
+                                                    E
+                                                </td>
+                                                <td
+                                                    v-else
+                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
+                                                    {{ item.remarks['4paiIa'] == 0 ? '' : item.remarks['4paiIa'] }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ item.Tracer }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table class="ml-5 overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                            <tr>
+                                                <th class="px-3 py-2 text-sm font-medium text-center border border-white">Sample&nbsp;with&nbsp;Variance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white">
+                                            <tr v-for="(variance, index) in sampleWithVariances" :key="index">
+                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                    {{ variance }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                        <div class="mb-16">
-                            <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
-                                <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
-                                    <tr>
-                                        <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-3 py-2 text-sm font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">AVERAGE</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">MAXIMUM</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">MINIMUM</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-extrabold text-center text-white bg-red-800 text-md">NG COUNTER</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                        <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">0</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="p-10 mb-10 bg-yellow-100 shadow-lg rounded-xl">
-                            <label class="text-lg font-bold">Dynamic Notification Div</label><br>
-                            <label>OK = </label><span id="okRemarksList">Br, iHc, BHMax</span><br>
-                            <span id="rejectRemarks">Reject, N.G BH(Max)</span>
+                            <div class="flex flex-row">
+                                <div class="mb-16">
+                                <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                        <tr>
+                                            <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-3 py-2 text-sm font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">AVERAGE</td>
+                                            <td v-for="(aggAveValue, index) in aggAveValues" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                {{ aggAveValue.value }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">MAXIMUM</td>
+                                            <td v-for="(aggMaxValue, index) in aggMaxValues" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                {{ aggMaxValue.value }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">MINIMUM</td>
+                                            <td v-for="(aggMinValue, index) in aggMinValues" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                {{ aggMinValue.value }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-red-800 text-md">NG COUNTER</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHc }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHk }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBHMax }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr95 }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr98 }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHciHk }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr4pai }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngbHc }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngSquareness }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paild }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4pails }}</td>
+                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paila }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                                <div class="p-10 mb-10 ml-5 bg-yellow-100 shadow-lg rounded-xl">
+                                    <label class="text-lg font-bold">Dynamic Notification Div</label><br>
+                                    <label>OK = </label><span id="okRemarksList">Br, iHc, BHMax</span><br>
+                                    <span id="rejectRemarks">Reject, N.G BH(Max)</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </Frontend>
   </template>
 
   <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, watch, onMounted } from 'vue';
+    import { ref } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
+
+    //UI VISIBILITY variables...
+    const showGraphAndTables = ref(false);
+    const showUploadData = ref(true);
+    const showProceed = ref(false);
 
     const toggleManageForm = ref(false);
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
         generateSerialNumber();
     }
+
+    //UI VISIBILITY variables end ...
 
     const serialNo = ref(null);
     const generateSerialNumber = () => {
@@ -203,15 +431,15 @@
     //table main layer header dynamic
     const tableLayerColumnHeaders = ref([
         {name: 'Date', colspan: 1},
-        {name: 'Serial No', colspan: 1},
-        {name: 'Code No', colspan: 1},
-        {name: 'Order No', colspan: 1},
+        {name: 'Serial\u00A0No', colspan: 1},
+        {name: 'Code\u00A0No', colspan: 1},
+        {name: 'Order\u00A0No', colspan: 1},
         {name: 'Type', colspan: 1},
-        {name: 'Lot No', colspan: 1},
-        {name: 'Furnace No', colspan: 1},
-        {name: 'Coating No', colspan: 1},
+        {name: 'Lot\u00A0No', colspan: 1},
+        {name: 'Furnace\u00A0No', colspan: 1},
+        {name: 'Coating\u00A0No', colspan: 1},
         {name: 'Zone', colspan: 1},
-        {name: 'Pass No', colspan: 1},
+        {name: 'Pass\u00A0No', colspan: 1},
         {name: 'Br', colspan: 2},
         {name: 'iHc', colspan: 2},
         {name: 'iHk', colspan: 2},
@@ -226,7 +454,6 @@
         {name: '4pails', colspan: 2},
         {name: '4paila', colspan: 2},
         {name: 'Tracer', colspan: 1},
-        {name: 'Sample with Variance', colspan: 1}
     ]);
         //table main layer header dynamic end
 
@@ -237,8 +464,8 @@
         {name: 'iHc', colspan: 1},
         {name: 'iHk', colspan: 1},
         {name: 'BHMax', colspan: 1},
-        {name: 'Hr95', colspan: 1},
-        {name: 'Hr98', colspan: 1},
+        {name: 'iHr95', colspan: 1},
+        {name: 'iHr98', colspan: 1},
         {name: 'iHciHk', colspan: 1},
         {name: 'Br4pai', colspan: 1},
         {name: 'bHc', colspan: 1},
@@ -249,32 +476,162 @@
     ]);
     //2nd table cell data dynamic end
 
+    //Variables for ave max min ng counter
+
+    const aveBr = ref();
+    const aveiHc = ref();
+    const aveiHk = ref();
+    const aveBHMax = ref();
+    const aveiHr95 = ref();
+    const aveiHr98 = ref();
+    const aveiHciHk = ref();
+    const aveBr4pai = ref();
+    const avebHc = ref();
+    const aveSquareness = ref();
+    const ave4paild = ref();
+    const ave4pails = ref();
+    const ave4paila = ref();
+    const minBr = ref();
+    const miniHc = ref();
+    const miniHk = ref();
+    const minBHMax = ref();
+    const miniHr95 = ref();
+    const miniHr98 = ref();
+    const miniHciHk = ref();
+    const minBr4pai = ref();
+    const minbHc = ref();
+    const minSquareness = ref();
+    const min4paild = ref();
+    const min4pails = ref();
+    const min4paila = ref();
+    const maxBr = ref();
+    const maxiHc = ref();
+    const maxiHk = ref();
+    const maxBHMax = ref();
+    const maxiHr95 = ref();
+    const maxiHr98 = ref();
+    const maxiHciHk = ref();
+    const maxBr4pai = ref();
+    const maxbHc = ref();
+    const maxSquareness = ref();
+    const max4paild = ref();
+    const max4pails = ref();
+    const max4paila = ref();
+    const ngBr = ref();
+    const ngiHc = ref();
+    const ngiHk = ref();
+    const ngBHMax = ref();
+    const ngiHr95 = ref();
+    const ngiHr98 = ref();
+    const ngiHciHk = ref();
+    const ngBr4pai = ref();
+    const ngbHc = ref();
+    const ngSquareness = ref();
+    const ng4paild = ref();
+    const ng4pails = ref();
+    const ng4paila = ref();
+
+    // Grouping variables into arrays
+    const aggAveValues = ref([
+        aveBr,
+        aveiHc,
+        aveiHk,
+        aveBHMax,
+        aveiHr95,
+        aveiHr98,
+        aveiHciHk,
+        aveBr4pai,
+        avebHc,
+        aveSquareness,
+        ave4paild,
+        ave4pails,
+        ave4paila,
+    ]);
+
+    const aggMaxValues = ref([
+        maxBr,
+        maxiHc,
+        maxiHk,
+        maxBHMax,
+        maxiHr95,
+        maxiHr98,
+        maxiHciHk,
+        maxBr4pai,
+        maxbHc,
+        maxSquareness,
+        max4paild,
+        max4pails,
+        max4paila,
+    ]);
+
+    const aggMinValues = ref([
+        minBr,
+        miniHc,
+        miniHk,
+        minBHMax,
+        miniHr95,
+        miniHr98,
+        miniHciHk,
+        minBr4pai,
+        minbHc,
+        minSquareness,
+        min4paild,
+        min4pails,
+        min4paila,
+    ]);
+
+    const aggNGCounts = ref([
+        ngBr,
+        ngiHc,
+        ngiHk,
+        ngBHMax,
+        ngiHr95,
+        ngiHr98,
+        ngiHciHk,
+        ngBr4pai,
+        ngbHc,
+        ngSquareness,
+        ng4paild,
+        ng4pails,
+        ng4paila,
+    ]);
+
+    //Variables for ave max min ng counter end
+
+    const sampleWithVariances = ref([]);
+
+    const fileLists = ref([]);
     const fileData = ref([]); // This will hold the selected file data
     const xAxis = ref([]);
     const yAxis = ref([]);
-    const xJsonOutput = ref(""); // JSON for X-axis
-    const yJsonOutput = ref(""); // JSON for Y-axis
+    const xJsonOutput = ref(null);
+    const yJsonOutput = ref(null);
     const rowCell = ref([]);
 
-    // Method to handle file upload
-    /*const handleFileUpload = (event) => {
-        const files = event.target.files; // Get the first file selected
-        if (files.length) {
-            // Store the file in the fileData variable
-            fileData.value = Array.from(files);
-            console.log('Selected files:', fileData.value);
+    // Store the file list when the input changes
+    const storeFileList = (event) => {
+        fileData.value = Array.from(event.target.files);
+        fileLists.value = fileData.value.map(file => file.name); // Extract and store file names
+        console.log('Files stored:', fileData.value);
+    };
+
+    const saveToDatabase = () => {
+        if (fileData.value.length === 0) {
+            console.error("No file selected! fileData is empty.");
+            return; // Exit the function if fileData is empty
+        }
+        layerTableRowLoading.value = true;
+        fileData.value.forEach((file) => {
 
             const reader = new FileReader();
-            reader.onload = () => {
-                // The file content is now in reader.result
-                const content = reader.result;
 
-                // Parse the content into variables
-                const parsedData = parseFileContent(content);
-                //debug
+            reader.onload = () => {
+                const content = reader.result; // Read file content
+                const parsedData = parseFileContent(content); // Parse content
+
                 console.log('Parsed Data:', parsedData);
 
-                // Use a loop to add the data dynamically
+                // Map specific keys to extract relevant values
                 const dataKeysValue = [
                     2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
                     22, 24, 27, 30, 33, 36, 39, 42, 45,
@@ -283,40 +640,34 @@
                     96
                 ];
 
-                // Now, let's create the rowValues, and add the concatenated value to the right position
                 const newRowValues = dataKeysValue
-                    .map(i => {
-                        return parsedData[`data${i}`]; // Return the rest of the data
-                    })
-                    .filter(Boolean); // Filter out undefined or falsy values
+                    .map((i) => parsedData[`data${i}`])
+                    .filter(Boolean);
 
-                    //-------------------------------------GRAPH
-                // Process coordinates starting from data100
+                //-------------------------------------GRAPH
                 const xValues = [];
                 const yValues = [];
                 for (const key in parsedData) {
                     if (
                         parsedData.hasOwnProperty(key) &&
                         key.startsWith('data') &&
-                        parseInt(key.replace('data', ''), 10) >= 1700 && // Greater than or equal to 1700
-                        parseInt(key.replace('data', ''), 10) <= 2050    // Less than or equal to 2030
+                        parseInt(key.replace('data', ''), 10) >= 1700 &&
+                        parseInt(key.replace('data', ''), 10) <= 2050
                     ) {
-                        const [x, y] = parsedData[key].split(',').map(Number); // Split and parse
+                        const [x, y] = parsedData[key].split(',').map(Number);
                         xValues.push(x);
                         yValues.push(y);
                     }
                 }
 
-                // Update reactive variables
                 xAxis.value = xValues;
                 yAxis.value = yValues;
 
-                // Convert x and y into separate JSON format
                 xJsonOutput.value = JSON.stringify(xValues, null, 2);
                 yJsonOutput.value = JSON.stringify(yValues, null, 2);
 
-                console.log('X Axis JSON:', xJsonOutput.value);
-                console.log('Y Axis JSON:', yJsonOutput.value);
+                //console.log('X Axis JSON:', xJsonOutput.value);
+                //console.log('Y Axis JSON:', yJsonOutput.value);
 
                 //-------------------------------------GRAPH END
 
@@ -324,6 +675,7 @@
 
                 const layerData = {
                     "date": rowCell.value[0],
+                    "serial_no": serialNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
                     "type": rowCell.value[3],
@@ -363,348 +715,33 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "Br_remarks": parsedData.data25 == 1 ? 'E' : parsedData.data25 == 0 ? '' : parsedData.data25,
-                    "4paiId_remarks": parsedData.data28 == 1 ? 'E' : parsedData.data28 == 0 ? '' : parsedData.data28,
-                    "iHc_remarks": parsedData.data31 == 1 ? 'E' : parsedData.data31 == 0 ? '' : parsedData.data31,
-                    "bHc_remarks": parsedData.data34 == 1 ? 'E' : parsedData.data34 == 0 ? '' : parsedData.data34,
-                    "BHMax_remarks": parsedData.data37 == 1 ? 'E' : parsedData.data37 == 0 ? '' : parsedData.data37,
-                    "Squareness_remarks": parsedData.data40 == 1 ? 'E' : parsedData.data40 == 0 ? '' : parsedData.data40,
-                    "4paiIs_remarks": parsedData.data43 == 1 ? 'E' : parsedData.data43 == 0 ? '' : parsedData.data43,
-                    "iHk_remarks": parsedData.data46 == 1 ? 'E' : parsedData.data46 == 0 ? '' : parsedData.data46,
-                    "4paiIa_remarks": parsedData.data49 == 1 ? 'E' : parsedData.data49 == 0 ? '' : parsedData.data49,
-                    "Density_remarks": parsedData.data52 == 1 ? 'E' : parsedData.data52 == 0 ? '' : parsedData.data52,
-                    "iHkiHc_remarks": parsedData.data55 == 1 ? 'E' : parsedData.data55 == 0 ? '' : parsedData.data55,
-                    "Br4pai_remarks": parsedData.data58 == 1 ? 'E' : parsedData.data58 == 0 ? '' : parsedData.data58,
-                    "iHr95_remarks": parsedData.data61 == 1 ? 'E' : parsedData.data61 == 0 ? '' : parsedData.data61,
-                    "iHr98_remarks": parsedData.data64 == 1 ? 'E' : parsedData.data64 == 0 ? '' : parsedData.data64,
+                    "Br_remarks": parsedData.data25,
+                    "4paiId_remarks": parsedData.data28,
+                    "iHc_remarks": parsedData.data31,
+                    "bHc_remarks": parsedData.data34,
+                    "BHMax_remarks": parsedData.data37,
+                    "Squareness_remarks": parsedData.data40,
+                    "4paiIs_remarks": parsedData.data43,
+                    "iHk_remarks": parsedData.data46,
+                    "4paiIa_remarks": parsedData.data49,
+                    "Density_remarks": parsedData.data52,
+                    "iHkiHc_remarks": parsedData.data55,
+                    "Br4pai_remarks": parsedData.data58,
+                    "iHr95_remarks": parsedData.data61,
+                    "iHr98_remarks": parsedData.data64,
                 };
+                //console.log("Layer Data:", layerData);
 
-                const lotNo = layerData.press_1 + layerData.press_2 + layerData.machine_no;//concatenate to form lot number
-                /* temporary for display
-                tableDate.value = layerData.date;
-                tableCodeNo.value = layerData.code_no;
-                tableOrderNo.value = layerData.order_no;
-                tableType.value = layerData.type;
-                tableLotNo.value = lotNo;
-                tableFurnaceNo.value = layerData.sintering_furnace_no;
-                tableCoatingNo.value = layerData.furnace_no;
-                tableZone.value = layerData.zone;
-                tablePassNo.value = layerData.pass_no;
-                tableBr.value = layerData.Br;
-                tableBrRemarks.value = layerData.Br_remarks;
-                table4paild.value = layerData["4paiId"];
-                table4paildRemarks.value = layerData["4paiId_remarks"];
-                tableiHc.value = layerData.iHc;
-                tableiHcRemarks.value = layerData.iHc_remarks;
-                tablebHc.value = layerData.bHc;
-                tablebHcRemarks.value = layerData.bHc_remarks;
-                tableBHMax.value = layerData.BHMax;
-                tableBHMaxRemarks.value = layerData.BHMax_remarks;
-                tableSquareness.value = layerData.Squareness;
-                tableSquarenessRemarks.value = layerData.Squareness_remarks;
-                table4pails.value = layerData["4paiIs"];
-                table4pailsRemarks.value = layerData["4paiIs_remarks"];
-                tableiHk.value = layerData.iHk;
-                tableiHkRemarks.value = layerData.iHk_remarks;
-                table4paila.value = layerData["4paiIa"];
-                table4pailaRemarks.value = layerData["4paiIa_remarks"];
-                tableiHciHk.value = layerData.iHkiHc;
-                tableiHciHkRemarks.value = layerData.iHkiHc_remarks;
-                tableBr4pai.value = layerData.Br4pai;
-                tableBr4paiRemarks.value = layerData.Br4pai_remarks;
-                tableHr95.value = layerData.iHr95;
-                tableHr95Remarks.value = layerData.iHr95_remarks;
-                tableHr98.value = layerData.iHr98;
-                tableHr98Remarks.value = layerData.iHr98_remarks;
-                tableTracer.value = layerData.Tracer;
-
-                console.log("Layer Data:", layerData);
-
-                sendLayerData(layerData);
-
+                sendLayerData(layerData); // Send the parsed data to the server
             };
 
             reader.onerror = () => {
-                console.error('Error reading file');
+                console.error('Error reading file:', file.name);
             };
 
-            // Read the file as text
-            reader.readAsText(file);
-        }
-    };*/
-
-    const handleFileUpload = (event) => {
-        const files = event.target.files; // Get all selected files
-        if (files.length) {
-            fileData.value = Array.from(files); // Store files in the reactive variable
-            console.log('Selected files:', fileData.value);
-
-            Array.from(files).forEach((file) => {
-
-                const reader = new FileReader();
-
-                reader.onload = () => {
-                    const content = reader.result; // Read file content
-                    const parsedData = parseFileContent(content); // Parse content
-
-                    console.log('Parsed Data:', parsedData);
-
-                    // Map specific keys to extract relevant values
-                    const dataKeysValue = [
-                        2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
-                        22, 24, 27, 30, 33, 36, 39, 42, 45,
-                        48, 51, 54, 57, 60, 63, 66, 68, 71,
-                        74, 76, 78, 81, 83, 86, 88, 91, 93,
-                        96
-                    ];
-
-                    const newRowValues = dataKeysValue
-                        .map((i) => parsedData[`data${i}`])
-                        .filter(Boolean);
-
-                    //-------------------------------------GRAPH
-                    const xValues = [];
-                    const yValues = [];
-                    for (const key in parsedData) {
-                        if (
-                            parsedData.hasOwnProperty(key) &&
-                            key.startsWith('data') &&
-                            parseInt(key.replace('data', ''), 10) >= 1700 &&
-                            parseInt(key.replace('data', ''), 10) <= 2050
-                        ) {
-                            const [x, y] = parsedData[key].split(',').map(Number);
-                            xValues.push(x);
-                            yValues.push(y);
-                        }
-                    }
-
-                    xAxis.value = xValues;
-                    yAxis.value = yValues;
-
-                    xJsonOutput.value = JSON.stringify(xValues, null, 2);
-                    yJsonOutput.value = JSON.stringify(yValues, null, 2);
-
-                    console.log('X Axis JSON:', xJsonOutput.value);
-                    console.log('Y Axis JSON:', yJsonOutput.value);
-
-                    //-------------------------------------GRAPH END
-
-                    rowCell.value = newRowValues;
-
-                    const layerData = {
-                        "date": rowCell.value[0],
-                        "code_no": rowCell.value[1],
-                        "order_no": rowCell.value[2],
-                        "type": rowCell.value[3],
-                        "press_1": rowCell.value[4],
-                        "press_2": rowCell.value[5],
-                        "machine_no": rowCell.value[6],
-                        "sintering_furnace_no": rowCell.value[7],
-                        "furnace_no": rowCell.value[8],
-                        "zone": rowCell.value[9],
-                        "pass_no": rowCell.value[10],
-                        "Br": Math.round(rowCell.value[11]),
-                        "4paiId": Math.round(rowCell.value[12]),
-                        "iHc": Math.round(rowCell.value[13]),
-                        "bHc": Math.round(rowCell.value[14]),
-                        "BHMax": parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
-                        "Squareness": parseFloat(parseFloat(rowCell.value[16]).toFixed(3)) || 0,
-                        "4paiIs": Math.round(rowCell.value[17]),
-                        "iHk": Math.round(rowCell.value[18]),
-                        "4paiIa": Math.round(rowCell.value[19]),
-                        "Density": rowCell.value[20],
-                        "iHkiHc": Math.round(rowCell.value[21]),
-                        "Br4pai": Math.round(rowCell.value[22]),
-                        "iHr95": Math.round(rowCell.value[23]),
-                        "iHr98": Math.round(rowCell.value[24]),
-                        "Tracer": rowCell.value[25],
-                        "HRX": rowCell.value[26],
-                        "MRX": rowCell.value[27],
-                        "HRY": rowCell.value[28],
-                        "MRY": rowCell.value[29],
-                        "IHKA": rowCell.value[30],
-                        "MRA": rowCell.value[31],
-                        "IHKB": rowCell.value[32],
-                        "MRB": rowCell.value[33],
-                        "IHKC": rowCell.value[34],
-                        "MRC": rowCell.value[35],
-                        "HR": rowCell.value[36],
-                        "HRO": rowCell.value[37],
-                        "x": xJsonOutput.value,
-                        "y": yJsonOutput.value,
-                        "Br_remarks": parsedData.data25 == 1 ? 'E' : parsedData.data25 == 0 ? '' : parsedData.data25,
-                        "4paiId_remarks": parsedData.data28 == 1 ? 'E' : parsedData.data28 == 0 ? '' : parsedData.data28,
-                        "iHc_remarks": parsedData.data31 == 1 ? 'E' : parsedData.data31 == 0 ? '' : parsedData.data31,
-                        "bHc_remarks": parsedData.data34 == 1 ? 'E' : parsedData.data34 == 0 ? '' : parsedData.data34,
-                        "BHMax_remarks": parsedData.data37 == 1 ? 'E' : parsedData.data37 == 0 ? '' : parsedData.data37,
-                        "Squareness_remarks": parsedData.data40 == 1 ? 'E' : parsedData.data40 == 0 ? '' : parsedData.data40,
-                        "4paiIs_remarks": parsedData.data43 == 1 ? 'E' : parsedData.data43 == 0 ? '' : parsedData.data43,
-                        "iHk_remarks": parsedData.data46 == 1 ? 'E' : parsedData.data46 == 0 ? '' : parsedData.data46,
-                        "4paiIa_remarks": parsedData.data49 == 1 ? 'E' : parsedData.data49 == 0 ? '' : parsedData.data49,
-                        "Density_remarks": parsedData.data52 == 1 ? 'E' : parsedData.data52 == 0 ? '' : parsedData.data52,
-                        "iHkiHc_remarks": parsedData.data55 == 1 ? 'E' : parsedData.data55 == 0 ? '' : parsedData.data55,
-                        "Br4pai_remarks": parsedData.data58 == 1 ? 'E' : parsedData.data58 == 0 ? '' : parsedData.data58,
-                        "iHr95_remarks": parsedData.data61 == 1 ? 'E' : parsedData.data61 == 0 ? '' : parsedData.data61,
-                        "iHr98_remarks": parsedData.data64 == 1 ? 'E' : parsedData.data64 == 0 ? '' : parsedData.data64,
-                    };
-
-                    console.log("Layer Data:", layerData);
-
-                    sendLayerData(layerData); // Send the parsed data to the server
-                };
-
-                reader.onerror = () => {
-                    console.error('Error reading file:', file.name);
-                };
-
-                reader.readAsText(file); // Read the file as text
-            });
-        }
+            reader.readAsText(file); // Read the file as text
+        });
     };
-
-
-    // Method to clear the file upload
-    const clearFileUpload = () => {
-    fileData.value = null; // Reset the file data
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = ''; // Clear the input field
-    console.log('File upload cleared');
-    };
-
-    // Function to send raw data via API
-    const sendLayerData = async (layerData) => {
-        try {
-            const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response:', response.data);
-        } catch (error) {
-            console.error('Error sending data to API:', error);
-        }
-    };
-
-    const items = ref([]); // Store all items
-    const selectedFileID = ref(null); // Store the latest item
-    const tableRows = ref([]); // Store all rows for the dynamic table
-
-    const fetchItems = async () => {
-        try {
-            const response = await axios.get("/api/tpmdata");
-            console.log("API Response:", response.data);
-
-            // Access the array inside the `data` property
-            items.value = response.data.data; // Now, this is the array
-
-            // Ensure items.value is an array before proceeding
-            if (Array.isArray(items.value)) {
-                // Sort items by ID (or `created_at`) in descending order
-                items.value.sort((a, b) => b.id - a.id);
-
-                // Set selectedFileID to the `id` of the latest row
-                selectedFileID.value = items.value[0]?.id || null; // Fallback to null if array is empty
-                console.log("Latest item ID:", selectedFileID.value);
-
-                // Process items into tableRows
-                processItems();
-            } else {
-                console.error("Error: items.value is not an array:", items.value);
-            }
-        } catch (error) {
-            console.error("Error fetching items:", error);
-        }
-    };
-
-    const processItems = () => {
-        if (Array.isArray(items.value)) {
-            tableRows.value = []; // Clear previous data before processing
-
-            // Iterate over each row in items.value
-            items.value.forEach((row) => {
-                // Process each row
-                const lotNo = row.press_1 + row.press_2 + row.machine_no; // Concatenate to form lot number
-
-                // Create a formatted object for each row
-                const layerData = {
-                    date: row.date,
-                    serialNo: "",
-                    code_no: row.code_no,
-                    order_no: row.order_no,
-                    type: row.type,
-                    lotNo,
-                    furnace_no: row.sintering_furnace_no,
-                    coating_no: row.furnace_no,
-                    zone: row.zone,
-                    pass_no: row.pass_no,
-                    Br: row.Br,
-                    Br_remarks: row.data25 === 1 ? "E" : row.data25 === 0 ? "" : row.data25,
-                    iHc: row.iHc,
-                    iHc_remarks: row.data31 === 1 ? "E" : row.data31 === 0 ? "" : row.data31,
-                    iHk: row.iHk,
-                    iHk_remarks: row.data46 === 1 ? "E" : row.data46 === 0 ? "" : row.data46,
-                    BHMax: row.BHMax,
-                    BHMax_remarks: row.data37 === 1 ? "E" : row.data37 === 0 ? "" : row.data37,
-                    iHr95: row.iHr95,
-                    iHr95_remarks: row.data61 === 1 ? "E" : row.data61 === 0 ? "" : row.data61,
-                    iHr98: row.iHr98,
-                    iHr98_remarks: row.data64 === 1 ? "E" : row.data64 === 0 ? "" : row.data64,
-                    iHkiHc: row.iHkiHc,
-                    iHkiHc_remarks: row.data55 === 1 ? "E" : row.data55 === 0 ? "" : row.data55,
-                    Br4pai: row.Br4pai,
-                    Br4pai_remarks: row.data58 === 1 ? "E" : row.data58 === 0 ? "" : row.data58,
-                    bHc: row.bHc,
-                    bHc_remarks: row.data34 === 1 ? "E" : row.data34 === 0 ? "" : row.data34,
-                    Squareness: row.Squareness,
-                    Squareness_remarks: row.data40 === 1 ? "E" : row.data40 === 0 ? "" : row.data40,
-                    "4paiId": row["4paiId"],
-                    "4paiId_remarks": row.data28 === 1 ? "E" : row.data28 === 0 ? "" : row.data28,
-                    "4paiIs": row["4paiIs"],
-                    "4paiIs_remarks": row.data43 === 1 ? "E" : row.data43 === 0 ? "" : row.data43,
-                    "4paiIa": row["4paiIa"],
-                    "4paiIa_remarks": row.data49 === 1 ? "E" : row.data49 === 0 ? "" : row.data49,
-                    tracer: row.tracer,
-                };
-
-                // Push the formatted object to tableRows
-                tableRows.value.push(layerData);
-            });
-
-            console.log("Processed Table Rows:", tableRows.value);
-        } else {
-            console.error("Error: items.value is not an array.");
-        }
-    };
-
-// Call fetchItems to fetch and process data when needed
-//fetchItems();
-
-    // State for storing fetched data and error
-    const error = ref(null);
-    const graph_xAxis = ref(null);
-    const graph_yAxis = ref(null);
-
-    const fetchDataFromApi = async () => {
-    try {
-        // Wait for fetchItems to complete
-        await fetchItems();
-
-        // Check if selectedFileID is valid before making the API call
-        if (selectedFileID.value) {
-        const response = await axios.get(`/api/tpmdata/${selectedFileID.value}`);
-
-        // Parse the "longtext" JSON string into actual arrays
-        graph_xAxis.value = JSON.parse(response.data.data.x || "[]");
-        graph_yAxis.value = JSON.parse(response.data.data.y || "[]");
-
-        // Render the chart with updated data
-        renderChart();
-        } else {
-        console.error("Error: No valid file ID found for fetching data.");
-        }
-    } catch (err) {
-        error.value = err;
-        console.error("Error fetching data:", err);
-    }
-    };
-
-
 
     // Function to parse the file content
     const parseFileContent = (content) => {
@@ -724,66 +761,379 @@
         return variables;
     };
 
-    // Method to submit the file (you can add additional logic to send the file to a server)
-    /*const submitFile = () => {
-    if (fileData.value) {
-        // Here, you can process the fileData, send it to a server, or read its content
-        console.log('File ready for submission:', fileData.value);
-    } else {
-        alert('Please select a file first.');
-    }
-    };*/
 
-    const renderChart = () => {
+    // Method to clear the file upload
+    const clearFileUpload = () => {
+    fileData.value = null; // Reset the file data
+    fileLists.value = null;
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = ''; // Clear the input field
+    console.log('File upload cleared');
+    };
+
+    // Function to send raw data via API
+    const sendLayerData = async (layerData) => {
+        try {
+            const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
+            console.log('API Response:', response.data);
+        } catch (error) {
+            console.error('Error sending data to API:', error.response?.data || error.message);
+        } finally {
+            layerTableRowLoading.value = false;
+            showProceed.value = true;
+            showUploadData.value = false;
+        }
+    };
+
+    //const selectedFileID = ref(null); // Store the latest item
+    // Reactive variables
+    const layerTableRowLoading = ref(false);
+    const items = ref([]); // Holds the fetched data
+    const tpmData = ref([]); // Holds the tpmData array
+    const tpmRemarks = ref([]); // Holds the remarks array
+    const tpmAggregateAve = ref([]); // Holds the aggregateFunctions array
+    const tpmAggregateMax = ref([]); // Holds the aggregateFunctions array
+    const tpmAggregateMin = ref([]); // Holds the aggregateFunctions array
+    const combinedData = ref([]); // Holds the combined array
+
+    // Variables for aggregate
+    const getAllBrValues = ref([]);
+    const getAllBrRemarks = ref([]);
+    const getAlliHcValues = ref([]);
+    const getAlliHcRemarks = ref([]);
+    const getAlliHkValues = ref([]);
+    const getAlliHkRemarks = ref([]);
+    const getAllBHMaxValues = ref([]);
+    const getAllBHMaxRemarks = ref([]);
+    const getAlliHr95Values = ref([]);
+    const getAlliHr95Remarks = ref([]);
+    const getAlliHr98Values = ref([]);
+    const getAlliHr98Remarks = ref([]);
+    const getAlliHciHkValues = ref([]);
+    const getAlliHciHkRemarks = ref([]);
+    const getAllBr4paiValues = ref([]);
+    const getAllBr4paiRemarks = ref([]);
+    const getAllbHcValues = ref([]);
+    const getAllbHcRemarks = ref([]);
+    const getAllSquarenessValues = ref([]);
+    const getAllSquarenessRemarks = ref([]);
+    const getAll4paildValues = ref([]);
+    const getAll4paildRemarks = ref([]);
+    const getAll4pailsValues = ref([]);
+    const getAll4pailsRemarks = ref([]);
+    const getAll4pailaValues = ref([]);
+    const getAll4pailaRemarks = ref([]);
+
+    // Variables for aggregate end
+
+    // Function to fetch data from the API
+    const showAllData = async () => {
+        try {
+            showProceed.value = false;
+            showGraphAndTables.value = true;
+            const response = await axios.get('/api/tpmdata');
+            console.log('API Response:', response.data);
+            items.value = response.data;
+
+            // Extract arrays from the response
+            tpmData.value = response.data.data.tpmData || []; // Fallback to an empty array if undefined
+            tpmRemarks.value = response.data.data.remarks || [];
+
+            // Extract individual values from tpmData for aggregate
+            getAllBrValues.value = tpmData.value.map(item => item.Br || null);
+            getAllBrRemarks.value = tpmRemarks.value.map(item => item.Br_remarks || null);
+            getAlliHcValues.value = tpmData.value.map(item => item.iHc || null);
+            getAlliHcRemarks.value = tpmRemarks.value.map(item => item.iHc_remarks || null);
+            getAlliHkValues.value = tpmData.value.map(item => item.iHk || null);
+            getAlliHkRemarks.value = tpmRemarks.value.map(item => item.iHk_remarks || null);
+            getAllBHMaxValues.value = tpmData.value.map(item => item.BHMax || null);
+            getAllBHMaxRemarks.value = tpmRemarks.value.map(item => item.BHMax_remarks || null);
+            getAlliHr95Values.value = tpmData.value.map(item => item.iHr95 || null);
+            getAlliHr95Remarks.value = tpmRemarks.value.map(item => item.iHr95_remarks || null);
+            getAlliHr98Values.value = tpmData.value.map(item => item.iHr98 || null);
+            getAlliHr98Remarks.value = tpmRemarks.value.map(item => item.iHr98_remarks || null);
+            getAlliHciHkValues.value = tpmData.value.map(item => item.iHkiHc || null);
+            getAlliHciHkRemarks.value = tpmRemarks.value.map(item => item.iHkiHc_remarks || null);
+            getAllBr4paiValues.value = tpmData.value.map(item => item.Br4pai || null);
+            getAllBr4paiRemarks.value = tpmRemarks.value.map(item => item.Br4pai_remarks || null);
+            getAllbHcValues.value = tpmData.value.map(item => item.bHc || null);
+            getAllbHcRemarks.value = tpmRemarks.value.map(item => item.bHc_remarks || null);
+            getAllSquarenessValues.value = tpmData.value.map(item => item.Squareness || null);
+            getAllSquarenessRemarks.value = tpmRemarks.value.map(item => item.Squareness_remarks || null);
+            getAll4paildValues.value = tpmData.value.map(item => item["4paiId"] || null);
+            getAll4paildRemarks.value = tpmRemarks.value.map(item => item["4paiId_remarks"] || null);
+            getAll4pailsValues.value = tpmData.value.map(item => item["4paiIs"] || null);
+            getAll4pailsRemarks.value = tpmRemarks.value.map(item => item["4paiIs_remarks"] || null);
+            getAll4pailaValues.value = tpmData.value.map(item => item["4paiIa"] || null);
+            getAll4pailaRemarks.value = tpmRemarks.value.map(item => item["4paiIa_remarks"] || null);
+
+            console.log("get all ng count Hr95: ",getAlliHr95Remarks.value);
+
+            //console.log('tpmData: ', tpmData.value);
+            //console.log('tpmRemarks: ', tpmRemarks.value);
+
+            //get average function
+            const calculateAverage = (array) => {
+                // Convert numeric strings to numbers and filter out invalid values
+                const numbers = array
+                    .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                    .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+                // If no valid numbers, return 0
+                if (numbers.length === 0) return 0;
+
+                // Calculate the sum and divide by the count
+                const sum = numbers.reduce((total, value) => total + value, 0);
+                const average = sum / numbers.length;
+
+                // Check the maximum number of decimals present in the input
+                const maxDecimals = Math.max(
+                    ...numbers.map(value => {
+                        const parts = value.toString().split(".");
+                        return parts[1] ? parts[1].length : 0; // Length of the decimal part
+                    })
+                );
+
+                // Round the average to match the maximum number of decimals in the input
+                const factor = Math.pow(10, maxDecimals);
+                return Math.round(average * factor) / factor;
+            };
+            //get maximum function
+            const getMaxValue = (array) => {
+                // Convert numeric strings to numbers and filter out invalid values
+                const numbers = array
+                    .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                    .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+                // If no valid numbers, return null
+                if (numbers.length === 0) return null;
+
+                // Return the highest value using Math.max
+                return Math.max(...numbers);
+            };
+            //get minimum function
+            const getMinValue = (array) => {
+                // Convert numeric strings to numbers and filter out invalid values
+                const numbers = array
+                    .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                    .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+                // If no valid numbers, return null
+                if (numbers.length === 0) return null;
+
+                // Return the lowest value using Math.min
+                return Math.min(...numbers);
+            };
+            //get Sample with Variance data
+            const calculateVariance = (numericStringsArray, maxValue) => {
+                // Convert the array of numeric strings to numbers
+                const numbers = numericStringsArray
+                    .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                    .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+                // Subtract each value from maxValue and return the resulting array
+                return numbers.map(num => maxValue - num);
+            };
+
+            // Function to sum up all the data in an array
+            const calculateSum = (numericStringsArray) => {
+                // Convert the array of numeric strings to numbers
+                const numbers = numericStringsArray
+                    .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                    .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+                // Sum up all the valid numbers in the array
+                return numbers.reduce((sum, num) => sum + num, 0);
+            };
+
+            //average values
+            aveBr.value = calculateAverage(getAllBrValues.value);
+            aveiHc.value = calculateAverage(getAlliHcValues.value);
+            aveiHk.value = calculateAverage(getAlliHkValues.value);
+            aveBHMax.value = calculateAverage(getAllBHMaxValues.value);
+            aveiHr95.value = calculateAverage(getAlliHr95Values.value);
+            aveiHr98.value = calculateAverage(getAlliHr98Values.value);
+            aveiHciHk.value = calculateAverage(getAlliHciHkValues.value);
+            aveBr4pai.value = calculateAverage(getAllBr4paiValues.value);
+            avebHc.value = calculateAverage(getAllbHcValues.value);
+            aveSquareness.value = calculateAverage(getAllSquarenessValues.value);
+            ave4paild.value = calculateAverage(getAll4paildValues.value);
+            ave4pails.value = calculateAverage(getAll4pailsValues.value);
+            ave4paila.value = calculateAverage(getAll4pailaValues.value);
+
+            //console.log("iHciHk average value: ", aveiHciHk.value);
+
+            // Minimum values
+            minBr.value = getMinValue(getAllBrValues.value);
+            miniHc.value = getMinValue(getAlliHcValues.value);
+            miniHk.value = getMinValue(getAlliHkValues.value);
+            minBHMax.value = getMinValue(getAllBHMaxValues.value);
+            miniHr95.value = getMinValue(getAlliHr95Values.value);
+            miniHr98.value = getMinValue(getAlliHr98Values.value);
+            miniHciHk.value = getMinValue(getAlliHciHkValues.value);
+            minBr4pai.value = getMinValue(getAllBr4paiValues.value);
+            minbHc.value = getMinValue(getAllbHcValues.value);
+            minSquareness.value = getMinValue(getAllSquarenessValues.value);
+            min4paild.value = getMinValue(getAll4paildValues.value);
+            min4pails.value = getMinValue(getAll4pailsValues.value);
+            min4paila.value = getMinValue(getAll4pailaValues.value);
+
+            // Maximum values
+            maxBr.value = getMaxValue(getAllBrValues.value);
+            maxiHc.value = getMaxValue(getAlliHcValues.value);
+            maxiHk.value = getMaxValue(getAlliHkValues.value);
+            maxBHMax.value = getMaxValue(getAllBHMaxValues.value);
+            maxiHr95.value = getMaxValue(getAlliHr95Values.value);
+            maxiHr98.value = getMaxValue(getAlliHr98Values.value);
+            maxiHciHk.value = getMaxValue(getAlliHciHkValues.value);
+            maxBr4pai.value = getMaxValue(getAllBr4paiValues.value);
+            maxbHc.value = getMaxValue(getAllbHcValues.value);
+            maxSquareness.value = getMaxValue(getAllSquarenessValues.value);
+            max4paild.value = getMaxValue(getAll4paildValues.value);
+            max4pails.value = getMaxValue(getAll4pailsValues.value);
+            max4paila.value = getMaxValue(getAll4pailaValues.value);
+
+            //NG count values
+            ngBr.value = calculateSum(getAllBrRemarks.value);
+            ngiHc.value = calculateSum(getAlliHcRemarks.value);
+            ngiHk.value = calculateSum(getAlliHkRemarks.value);
+            ngBHMax.value = calculateSum(getAllBHMaxRemarks.value);
+            ngiHr95.value = calculateSum(getAlliHr95Remarks.value);
+            ngiHr98.value = calculateSum(getAlliHr98Remarks.value);
+            ngiHciHk.value = calculateSum(getAlliHciHkRemarks.value);
+            ngBr4pai.value = calculateSum(getAllBr4paiRemarks.value);
+            ngbHc.value = calculateSum(getAllbHcRemarks.value);
+            ngSquareness.value = calculateSum(getAllSquarenessRemarks.value);
+            ng4paild.value = calculateSum(getAll4paildRemarks.value);
+            ng4pails.value = calculateSum(getAll4pailsRemarks.value);
+            ng4paila.value = calculateSum(getAll4pailaRemarks.value);
+
+            //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
+            console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
+
+            sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
+            //console.log('Sample with Variance:', sampleWithVariances.value);
+
+            // Combine the arrays
+            combinedData.value = tpmData.value.map((item, index) => ({
+                ...item,
+                remarks: tpmRemarks.value[index] || null,
+            }));
+
+            //console.log('Combined Data: ', combinedData.value);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            layerTableRowLoading.value = false;
+            showProceed.value = false;
+        }
+
+        fetchDataCreateGraph();
+    };
+
+// State for storing fetched data and error
+const error = ref(null);
+const datasets = ref([]); // Array to hold multiple datasets
+
+const fetchDataCreateGraph = async () => {
+    try {
+        const response = await axios.get("/api/tpmdata");
+        const tableRows = response.data.data.tpmData; // Assuming API returns an array of rows
+
+        // Parse each row and dynamically generate datasets
+        datasets.value = tableRows.map((row, index) => ({
+            xAxis: JSON.parse(row.x || "[]"), // Parse x values
+            yAxis: JSON.parse(row.y || "[]"), // Parse y values
+            color: generateColor(index), // Assign a unique color
+        }));
+
+        // Render the chart with updated data
+        renderChart();
+    } catch (err) {
+        error.value = err;
+        console.error("Error fetching data:", err);
+    }
+};
+
+// Generate a unique color for each dataset
+const generateColor = (index) => {
+    const colors = ["green", "blue", "red", "orange", "purple", "cyan", "magenta", "yellow", "teal", "pink", "lime"];
+    return colors[index % colors.length]; // Cycle through predefined colors
+};
+
+const renderChart = () => {
     const ctx = document.getElementById("myChart").getContext("2d");
 
-    const chartData = [];
-    for (let i = 0; i < graph_xAxis.value.length; i++) {
-    chartData.push({
-        x: graph_xAxis.value[i],
-        y: graph_yAxis.value[i] || 0, // Default to 0 if no corresponding y-value
-    });
-    }
+    const x_offset = 4000; // The amount to offset subsequent datasets
+    const y_offset = 6000; // The amount to offset subsequent datasets
 
-    console.log("CHART DATA: ", chartData)
+    const chartDatasets = datasets.value.map((dataset, index) => {
+        return {
+            label: `Dataset ${index + 1}`,
+            data: dataset.xAxis.map((x, i) => ({
+                x: x + index * x_offset, // Apply offset dynamically
+                y: (dataset.yAxis[i] || 0) - index * y_offset, // Apply offset dynamically
+            })),
+            borderColor: dataset.color,
+            borderWidth: 2,
+            fill: false,
+            pointBackgroundColor: dataset.color,
+            pointBorderColor: dataset.color,
+        };
+    });
 
     new Chart(ctx, {
         type: "line",
         data: {
-        datasets: [
-            {
-            label: "Dynamic Dataset",
-            data: chartData,
-            borderColor: "green",
-            borderWidth: 2,
-            fill: false,
-            pointBackgroundColor: "green",
-            pointBorderColor: "green",
-            },
-        ],
+            datasets: chartDatasets,
         },
         options: {
-        responsive: true,
-        scales: {
-            x: {
-            type: "linear",
-            position: "bottom",
-            title: {
-                display: true,
-                text: "X-Axis",
+            responsive: true,
+            animation: {
+                duration: 1000,
+                easing: "easeOutQuart",
             },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `Value: ${context.raw.y}`,
+                    },
+                },
             },
-            y: {
-            type: "linear",
-            position: "left",
-            title: {
-                display: true,
-                text: "Y-Axis",
+            scales: {
+                x: {
+                    type: "linear",
+                    position: "bottom",
+                    grid: {
+                        color: "rgba(0, 0, 0, 0.1)",
+                    },
+                    title: {
+                        display: true,
+                        text: "X-Axis",
+                        color: "#333",
+                    },
+                    ticks: {
+                        display: false, // Hides the values
+                    },
+                },
+                y: {
+                    type: "linear",
+                    position: "left",
+                    grid: {
+                        color: "rgba(0, 0, 0, 0.1)",
+                    },
+                    title: {
+                        display: true,
+                        text: "Y-Axis",
+                        color: "#333",
+                    },
+                    ticks: {
+                        display: false, // Hides the values
+                    },
+                },
             },
-            },
-        },
         },
     });
-    };
+};
 
   </script>
