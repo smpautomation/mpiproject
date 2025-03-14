@@ -1,12 +1,12 @@
 <template>
     <Frontend>
-        <div class="flex flex-col justify-center items-center px-24 py-[100px] container-fluid bg-gray-100">
+        <div class="w-full flex flex-col justify-center items-center px-24 py-[100px] container bg-gray-100 mx-auto">
             <div v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
                     Add New
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center">
+            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center w-full">
                 <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
@@ -88,19 +88,22 @@
                 <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
                     <canvas id="myChart"></canvas>
                 </div>
-                    <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                        <label class="block p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">FIRST LAYER</label>
-                        <div class="flex flex-col items-center justify-center">
-                            <div class="flex flex-row items-center justify-center">
-                                <div class="mb-20">
+                <div class="w-full p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
+                    <label class="w-full block p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">
+                        FIRST LAYER
+                    </label>
+
+                        <div class="w-full flex flex-col items-center justify-center">
+                            <div class="w-full flex flex-row items-center justify-center">
+                                <div class="mb-20 w-full overflow-x-auto"> <!-- Added overflow-x-auto for scrollable table -->
                                     <!-- Table with Full Width -->
-                                    <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <table class="w-full table-auto border border-gray-300 rounded-lg shadow-2xl">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
-                                                :key="tableLayerColumnHeader.name" :colspan="tableLayerColumnHeader.colspan"
-                                                class="px-3 py-2 text-sm font-medium text-center border border-white"
-                                                >
+                                                    :key="tableLayerColumnHeader.name"
+                                                    :colspan="tableLayerColumnHeader.colspan"
+                                                    class="px-3 py-2 text-sm font-medium text-center border border-white sm:px-4 sm:py-3 sm:text-base md:px-5 md:py-4 md:text-lg">
                                                     {{ tableLayerColumnHeader.name }}
                                                 </th>
                                             </tr>
@@ -364,19 +367,9 @@
                                         </tr>
                                         <tr>
                                             <td class="px-3 py-2 font-extrabold text-center text-white bg-red-800 text-md">NG COUNTER</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHc }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHk }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBHMax }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr95 }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr98 }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHciHk }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr4pai }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngbHc }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngSquareness }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paild }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4pails }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paila }}</td>
+                                            <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                {{ ngCount }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
