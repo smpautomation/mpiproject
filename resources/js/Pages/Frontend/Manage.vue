@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="w-full flex flex-col justify-center items-center px-24 py-[100px] container bg-gray-100 mx-auto">
+        <div class="flex flex-col justify-center items-center px-64 py-24 container bg-gray-100 mx-auto">
             <div v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
                     Add New
@@ -148,170 +148,170 @@
                                                     {{ item.Br }}
                                                 </td>
                                                 <td
-                                                    v-if="item.Br_remarks == 1"
+                                                    v-if="item.remark.Br_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.Br_remarks == 0 ? '' : item.Br_remarks }}
+                                                    {{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHc }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.iHc_remarks == 1"
+                                                    v-if="item.remark.iHc_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.iHc_remarks == 0 ? '' : item.remarks.iHc_remarks }}
+                                                    {{ item.remark.iHc_remarks == 0 ? '' : item.remark.iHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHk }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.iHk_remarks == 1"
+                                                    v-if="item.remark.iHk_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.iHk_remarks == 0 ? '' : item.remarks.iHk_remarks }}
+                                                    {{ item.remark.iHk_remarks == 0 ? '' : item.remark.iHk_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.BHMax }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.BHMax_remarks == 1"
+                                                    v-if="item.remark.BHMax_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.BHMax_remarks == 0 ? '' : item.remarks.BHMax_remarks }}
+                                                    {{ item.remark.BHMax_remarks == 0 ? '' : item.remark.BHMax_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHr95 }}
                                                 </td>
                                                 <td
-                                                    v-if="item.iHr95_remarks == 1"
+                                                    v-if="item.remark.iHr95_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.iHr95_remarks == 0 ? '' : item.iHr95_remarks }}
+                                                    {{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHr98 }}
                                                 </td>
                                                 <td
-                                                    v-if="item.iHr98_remarks == 1"
+                                                    v-if="item.remark.iHr98_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.iHr98_remarks == 0 ? '' : item.iHr98_remarks }}
+                                                    {{ item.remark.iHr98_remarks == 0 ? '' : item.remark.iHr98_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHkiHc }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.iHkiHc_remarks == 1"
+                                                    v-if="item.remark.iHkiHc_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.iHkiHc_remarks == 0 ? '' : item.remarks.iHkiHc_remarks }}
+                                                    {{ item.remark.iHkiHc_remarks == 0 ? '' : item.remark.iHkiHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Br4pai }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.Br4pai_remarks == 1"
+                                                    v-if="item.remark.Br4pai_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.Br4pai_remarks == 0 ? '' : item.remarks.Br4pai_remarks }}
+                                                    {{ item.remark.Br4pai_remarks == 0 ? '' : item.remark.Br4pai_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.bHc }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.bHc_remarks == 1"
+                                                    v-if="item.remark.bHc_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.bHc_remarks == 0 ? '' : item.remarks.bHc_remarks }}
+                                                    {{ item.remark.bHc_remarks == 0 ? '' : item.remark.bHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Squareness }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.Squareness_remarks == 1"
+                                                    v-if="item.remark.Squareness_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.Squareness_remarks == 0 ? '' : item.remarks.Squareness_remarks }}
+                                                    {{ item.remark.Squareness_remarks == 0 ? '' : item.remark.Squareness_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiId'] }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks['4paiId'] == 1"
+                                                    v-if="item.remark['4paiId_remarks'] == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks['4paiId'] == 0 ? '' : item.remarks['4paiId'] }}
+                                                    {{ item.remark['4paiId_remarks'] == 0 ? '' : item.remark['4paiId_remarks'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiIs'] }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks['4paiIs'] == 1"
+                                                    v-if="item.remark['4paiIs_remarks'] == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks['4paiIs'] == 0 ? '' : item.remarks['4paiIs'] }}
+                                                    {{ item.remark['4paiIs_remarks'] == 0 ? '' : item.remark['4paiIs_remarks'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiIa'] }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks['4paiIa'] == 1"
+                                                    v-if="item.remark['4paiIa_remarks'] == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks['4paiIa'] == 0 ? '' : item.remarks['4paiIa'] }}
+                                                    {{ item.remark['4paiIa_remarks'] == 0 ? '' : item.remark['4paiIa_remarks'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Tracer }}
@@ -500,7 +500,7 @@
                 serialNo.value = `${year}${month}${paddedNumber}`;
 
                 console.log('Generated Serial Number:', serialNo.value);
-                alert(`Generated Serial Number: ${serialNo.value}`);
+                //alert(`Generated Serial Number: ${//serialNo.value}`);
             } else {
                 // Step 4: If no serial number exists, generate the first one
                 const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
@@ -974,7 +974,7 @@
 
             // Extract arrays from the response
             tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
-            tpmRemarks.value = response.data.data || [];
+            tpmRemarks.value = response.data.remark || [];
 
             // Extract individual values from tpmData for aggregate
             getAllBrValues.value = tpmData.value.map(item => item.Br || null);
@@ -1231,14 +1231,10 @@
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
             // Combine the arrays
-            combinedData.value = tpmData.value.map((item, index) => ({
-                ...item,
-                remarks: tpmRemarks.value[index] || null,
-            }));
-
-
-
-            //console.log('Combined Data: ', combinedData.value);
+            combinedData.value = tpmData.value;
+            console.log('tpmData: ', tpmData.value);
+            console.log('tpmRemarks: ', tpmRemarks.value);
+            console.log('Combined Data: ', combinedData.value);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
