@@ -976,33 +976,39 @@
             tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
             tpmRemarks.value = response.data.remark || [];
 
+            // Combine the arrays
+            combinedData.value = tpmData.value;
+            console.log('tpmData: ', tpmData.value);
+            console.log('tpmRemarks: ', tpmRemarks.value);
+            console.log('Combined Data: ', combinedData.value);
+
             // Extract individual values from tpmData for aggregate
-            getAllBrValues.value = tpmData.value.map(item => item.Br || null);
-            getAllBrRemarks.value = tpmRemarks.value.map(item => item.Br_remarks || null);
-            getAlliHcValues.value = tpmData.value.map(item => item.iHc || null);
-            getAlliHcRemarks.value = tpmRemarks.value.map(item => item.iHc_remarks || null);
-            getAlliHkValues.value = tpmData.value.map(item => item.iHk || null);
-            getAlliHkRemarks.value = tpmRemarks.value.map(item => item.iHk_remarks || null);
-            getAllBHMaxValues.value = tpmData.value.map(item => item.BHMax || null);
-            getAllBHMaxRemarks.value = tpmRemarks.value.map(item => item.BHMax_remarks || null);
-            getAlliHr95Values.value = tpmData.value.map(item => item.iHr95 || null);
-            getAlliHr95Remarks.value = tpmRemarks.value.map(item => item.iHr95_remarks || null);
-            getAlliHr98Values.value = tpmData.value.map(item => item.iHr98 || null);
-            getAlliHr98Remarks.value = tpmRemarks.value.map(item => item.iHr98_remarks || null);
-            getAlliHciHkValues.value = tpmData.value.map(item => item.iHkiHc || null);
-            getAlliHciHkRemarks.value = tpmRemarks.value.map(item => item.iHkiHc_remarks || null);
-            getAllBr4paiValues.value = tpmData.value.map(item => item.Br4pai || null);
-            getAllBr4paiRemarks.value = tpmRemarks.value.map(item => item.Br4pai_remarks || null);
-            getAllbHcValues.value = tpmData.value.map(item => item.bHc || null);
-            getAllbHcRemarks.value = tpmRemarks.value.map(item => item.bHc_remarks || null);
-            getAllSquarenessValues.value = tpmData.value.map(item => item.Squareness || null);
-            getAllSquarenessRemarks.value = tpmRemarks.value.map(item => item.Squareness_remarks || null);
-            getAll4paildValues.value = tpmData.value.map(item => item["4paiId"] || null);
-            getAll4paildRemarks.value = tpmRemarks.value.map(item => item["4paiId_remarks"] || null);
-            getAll4pailsValues.value = tpmData.value.map(item => item["4paiIs"] || null);
-            getAll4pailsRemarks.value = tpmRemarks.value.map(item => item["4paiIs_remarks"] || null);
-            getAll4pailaValues.value = tpmData.value.map(item => item["4paiIa"] || null);
-            getAll4pailaRemarks.value = tpmRemarks.value.map(item => item["4paiIa_remarks"] || null);
+            getAllBrValues.value = combinedData.value.map(item => item.Br || null);
+            getAllBrRemarks.value = combinedData.value.map(item => item.remark.Br_remarks || null);
+            getAlliHcValues.value = combinedData.value.map(item => item.iHc || null);
+            getAlliHcRemarks.value = combinedData.value.map(item => item.remark.iHc_remarks || null);
+            getAlliHkValues.value = combinedData.value.map(item => item.iHk || null);
+            getAlliHkRemarks.value = combinedData.value.map(item => item.remark.iHk_remarks || null);
+            getAllBHMaxValues.value = combinedData.value.map(item => item.BHMax || null);
+            getAllBHMaxRemarks.value = combinedData.value.map(item => item.remark.BHMax_remarks || null);
+            getAlliHr95Values.value = combinedData.value.map(item => item.iHr95 || null);
+            getAlliHr95Remarks.value = combinedData.value.map(item => item.remark.iHr95_remarks || null);
+            getAlliHr98Values.value = combinedData.value.map(item => item.iHr98 || null);
+            getAlliHr98Remarks.value = combinedData.value.map(item => item.remark.iHr98_remarks || null);
+            getAlliHciHkValues.value = combinedData.value.map(item => item.iHkiHc || null);
+            getAlliHciHkRemarks.value = combinedData.value.map(item => item.remark.iHkiHc_remarks || null);
+            getAllBr4paiValues.value = combinedData.value.map(item => item.Br4pai || null);
+            getAllBr4paiRemarks.value = combinedData.value.map(item => item.remark.Br4pai_remarks || null);
+            getAllbHcValues.value = combinedData.value.map(item => item.bHc || null);
+            getAllbHcRemarks.value = combinedData.value.map(item => item.remark.bHc_remarks || null);
+            getAllSquarenessValues.value = combinedData.value.map(item => item.Squareness || null);
+            getAllSquarenessRemarks.value = combinedData.value.map(item => item.remark.Squareness_remarks || null);
+            getAll4paildValues.value = combinedData.value.map(item => item["4paiId"] || null);
+            getAll4paildRemarks.value = combinedData.value.map(item => item.remark["4paiId_remarks"] || null);
+            getAll4pailsValues.value = combinedData.value.map(item => item["4paiIs"] || null);
+            getAll4pailsRemarks.value = combinedData.value.map(item => item.remark["4paiIs_remarks"] || null);
+            getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
+            getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
 
             //console.log('tpmData: ', tpmData.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
@@ -1230,11 +1236,6 @@
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
-            // Combine the arrays
-            combinedData.value = tpmData.value;
-            console.log('tpmData: ', tpmData.value);
-            console.log('tpmRemarks: ', tpmRemarks.value);
-            console.log('Combined Data: ', combinedData.value);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
