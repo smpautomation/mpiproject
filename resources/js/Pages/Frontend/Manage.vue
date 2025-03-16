@@ -1,12 +1,12 @@
 <template>
     <Frontend>
-        <div class="flex flex-col justify-center items-center px-24 py-[100px] container-fluid bg-gray-100">
+        <div class="w-full flex flex-col justify-center items-center px-24 py-[100px] container bg-gray-100 mx-auto">
             <div v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
                     Add New
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center">
+            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center w-full">
                 <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
@@ -88,19 +88,22 @@
                 <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
                     <canvas id="myChart"></canvas>
                 </div>
-                    <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                        <label class="block p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">FIRST LAYER</label>
-                        <div class="flex flex-col items-center justify-center">
-                            <div class="flex flex-row items-center justify-center">
-                                <div class="mb-20">
+                <div class="w-full p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
+                    <label class="block w-full p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">
+                        FIRST LAYER
+                    </label>
+
+                        <div class="flex flex-col items-center justify-center w-full">
+                            <div class="flex flex-row items-center justify-center w-full">
+                                <div class="w-full mb-20 overflow-x-auto"> <!-- Added overflow-x-auto for scrollable table -->
                                     <!-- Table with Full Width -->
-                                    <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <table class="w-full border border-gray-300 rounded-lg shadow-2xl table-auto">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
-                                                :key="tableLayerColumnHeader.name" :colspan="tableLayerColumnHeader.colspan"
-                                                class="px-3 py-2 text-sm font-medium text-center border border-white"
-                                                >
+                                                    :key="tableLayerColumnHeader.name"
+                                                    :colspan="tableLayerColumnHeader.colspan"
+                                                    class="px-3 py-2 text-sm font-medium text-center border border-white sm:px-4 sm:py-3 sm:text-base md:px-5 md:py-4 md:text-lg">
                                                     {{ tableLayerColumnHeader.name }}
                                                 </th>
                                             </tr>
@@ -364,27 +367,37 @@
                                         </tr>
                                         <tr>
                                             <td class="px-3 py-2 font-extrabold text-center text-white bg-red-800 text-md">NG COUNTER</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHc }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHk }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBHMax }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr95 }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHr98 }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngiHciHk }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngBr4pai }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngbHc }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ngSquareness }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paild }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4pails }}</td>
-                                            <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">{{ ng4paila }}</td>
+                                            <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
+                                                {{ ngCount }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                                <div class="p-10 mb-10 ml-5 bg-yellow-100 shadow-lg rounded-xl">
-                                    <label class="text-lg font-bold">Dynamic Notification Div</label><br>
-                                    <label>OK = </label><span id="okRemarksList">Br, iHc, BHMax</span><br>
-                                    <span id="rejectRemarks">Reject, N.G BH(Max)</span>
+                                <div class="flex flex-col items-center justify-center p-5 mb-10 bg-yellow-100 shadow-lg ml-60 rounded-xl">
+                                    <div class="flex flex-row items-center px-16 py-6 bg-white">
+                                        <p class="mr-2 text-4xl font-extrabold text-green-500 ">
+                                            {{ rejectOKNG }}
+                                        </p>
+                                        <p class="ml-2 text-2xl text-blue-500 ">
+                                            {{ rejectInstruction }}
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-row items-center mt-4 mb-0 align-baseline">
+                                        <div class="flex flex-col items-center px-4 py-4 mr-2 bg-white">
+                                            <p class="text-2xl font-semibold text-blue-600">
+                                                {{ rejectiHcRemarks }}
+                                            </p>
+                                            <p class="text-4xl font-extrabold text-blue-600">
+                                                {{ getHighestSampleVariance }}
+                                            </p>
+                                        </div>
+                                        <div class="flex px-4 py-8 ml-2 bg-white">
+                                            <p class="text-4xl font-extrabold text-blue-600">
+                                                {{ rejectLotRemarks }}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -478,58 +491,58 @@
 
     //Variables for ave max min ng counter
 
-    const aveBr = ref();
-    const aveiHc = ref();
-    const aveiHk = ref();
-    const aveBHMax = ref();
-    const aveiHr95 = ref();
-    const aveiHr98 = ref();
-    const aveiHciHk = ref();
-    const aveBr4pai = ref();
-    const avebHc = ref();
-    const aveSquareness = ref();
-    const ave4paild = ref();
-    const ave4pails = ref();
-    const ave4paila = ref();
-    const minBr = ref();
-    const miniHc = ref();
-    const miniHk = ref();
-    const minBHMax = ref();
-    const miniHr95 = ref();
-    const miniHr98 = ref();
-    const miniHciHk = ref();
-    const minBr4pai = ref();
-    const minbHc = ref();
-    const minSquareness = ref();
-    const min4paild = ref();
-    const min4pails = ref();
-    const min4paila = ref();
-    const maxBr = ref();
-    const maxiHc = ref();
-    const maxiHk = ref();
-    const maxBHMax = ref();
-    const maxiHr95 = ref();
-    const maxiHr98 = ref();
-    const maxiHciHk = ref();
-    const maxBr4pai = ref();
-    const maxbHc = ref();
-    const maxSquareness = ref();
-    const max4paild = ref();
-    const max4pails = ref();
-    const max4paila = ref();
-    const ngBr = ref();
-    const ngiHc = ref();
-    const ngiHk = ref();
-    const ngBHMax = ref();
-    const ngiHr95 = ref();
-    const ngiHr98 = ref();
-    const ngiHciHk = ref();
-    const ngBr4pai = ref();
-    const ngbHc = ref();
-    const ngSquareness = ref();
-    const ng4paild = ref();
-    const ng4pails = ref();
-    const ng4paila = ref();
+    const aveBr = ref(null);
+    const aveiHc = ref(null);
+    const aveiHk = ref(null);
+    const aveBHMax = ref(null);
+    const aveiHr95 = ref(null);
+    const aveiHr98 = ref(null);
+    const aveiHciHk = ref(null);
+    const aveBr4pai = ref(null);
+    const avebHc = ref(null);
+    const aveSquareness = ref(null);
+    const ave4paild = ref(null);
+    const ave4pails = ref(null);
+    const ave4paila = ref(null);
+    const minBr = ref(null);
+    const miniHc = ref(null);
+    const miniHk = ref(null);
+    const minBHMax = ref(null);
+    const miniHr95 = ref(null);
+    const miniHr98 = ref(null);
+    const miniHciHk = ref(null);
+    const minBr4pai = ref(null);
+    const minbHc = ref(null);
+    const minSquareness = ref(null);
+    const min4paild = ref(null);
+    const min4pails = ref(null);
+    const min4paila = ref(null);
+    const maxBr = ref(null);
+    const maxiHc = ref(null);
+    const maxiHk = ref(null);
+    const maxBHMax = ref(null);
+    const maxiHr95 = ref(null);
+    const maxiHr98 = ref(null);
+    const maxiHciHk = ref(null);
+    const maxBr4pai = ref(null);
+    const maxbHc = ref(null);
+    const maxSquareness = ref(null);
+    const max4paild = ref(null);
+    const max4pails = ref(null);
+    const max4paila = ref(null);
+    const ngBr = ref(null);
+    const ngiHc = ref(null);
+    const ngiHk = ref(null);
+    const ngBHMax = ref(null);
+    const ngiHr95 = ref(null);
+    const ngiHr98 = ref(null);
+    const ngiHciHk = ref(null);
+    const ngBr4pai = ref(null);
+    const ngbHc = ref(null);
+    const ngSquareness = ref(null);
+    const ng4paild = ref(null);
+    const ng4pails = ref(null);
+    const ng4paila = ref(null);
 
     // Grouping variables into arrays
     const aggAveValues = ref([
@@ -598,6 +611,7 @@
 
     //Variables for ave max min ng counter end
 
+<<<<<<< HEAD
     //Reject Remarks 
 
     const perform = ref(null);
@@ -612,8 +626,39 @@
     ]);
 
     //Reject Remarks end
+=======
+    // Reject Remarks variables
+
+    /*rejectOKNG.value = "No data available";
+    rejectInstruction.value = "No data available";
+    rejectiHcRemarks.value = "No data available";
+    rejectLotRemarks.value = "No data available";*/
+
+    const ok = "OK";
+    const reject = "REJECT, N.G";
+    const hold = "HOLD, N.G";
+    const within = "within internal specs";
+
+    const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
+    const noRejIns = "No reject instructions";
+
+    const lotReject = "THIS LOT IS REJECT";
+    const lotPass = "THIS LOT IS PASS";
+    const lotHold = "THIS LOT IS HOLD";
+
+    const iHcOK = "iHc variance OK";
+    const iHcNG = "Process right side with iHc variance more than 1500 Oe";
+
+    const rejectOKNG = ref([]);
+    const rejectInstruction = ref([]);
+    const rejectLotRemarks = ref([]);
+    const rejectiHcRemarks = ref(null);
+
+    // Reject remarks variables end
+>>>>>>> 2c7932ddca79010802222fcfecae2530d092bec7
 
     const sampleWithVariances = ref([]);
+    const getHighestSampleVariance = ref(null);
 
     const fileLists = ref([]);
     const fileData = ref([]); // This will hold the selected file data
@@ -882,8 +927,6 @@
             getAll4pailaValues.value = tpmData.value.map(item => item["4paiIa"] || null);
             getAll4pailaRemarks.value = tpmRemarks.value.map(item => item["4paiIa_remarks"] || null);
 
-            console.log("get all ng count Hr95: ",getAlliHr95Remarks.value);
-
             //console.log('tpmData: ', tpmData.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
 
@@ -961,6 +1004,7 @@
                 return numbers.reduce((sum, num) => sum + num, 0);
             };
 
+
             //average values
             aveBr.value = calculateAverage(getAllBrValues.value);
             aveiHc.value = calculateAverage(getAlliHcValues.value);
@@ -1023,11 +1067,28 @@
             ng4pails.value = calculateSum(getAll4pailsRemarks.value);
             ng4paila.value = calculateSum(getAll4pailaRemarks.value);
 
+            //ng calculations for NG remarks
+            if(getHighestSampleVariance <= 1500){
+
+
+
+            }else{
+                rejectOKNG.value = "No data available";
+                rejectInstruction.value = "No data available";
+                rejectiHcRemarks.value = "No data available";
+                rejectLotRemarks.value = "No data available";
+            }
+
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
+
+            // Convert each item in sampleWithVariances to a string
+            const sampleWithVariancesAsString = sampleWithVariances.value.map(String);
+            //Getting the highest sample with variances (iHc Variance)
+            getHighestSampleVariance.value = getMaxValue(sampleWithVariancesAsString);
 
             // Combine the arrays
             combinedData.value = tpmData.value.map((item, index) => ({
