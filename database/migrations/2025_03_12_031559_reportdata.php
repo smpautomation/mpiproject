@@ -14,17 +14,19 @@ return new class extends Migration
         Schema::create('report_data', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('serial');
-            $table->string('model');
-            $table->string('material_code');
-            $table->string('partial_number');
-            $table->string('total_quantity');
-            $table->string('pulse_tracer_machine_number');
-            $table->date('date');
-            $table->string('shift');
-            $table->string('operator');
-            $table->json('magnetic_property_data');
-            $table->json('standard_sample_dimension_and_material_grade');
+            $table->unsignedBigInteger('tpm_data_id');
+            $table->string('model')->nullable();
+            $table->string('material_code')->nullable();
+            $table->string('partial_number')->nullable();
+            $table->string('total_quantity')->nullable();
+            $table->string('pulse_tracer_machine_number')->nullable();
+            $table->date('date')->nullable();
+            $table->string('shift')->nullable();
+            $table->string('operator')->nullable();
+            $table->json('magnetic_property_data')->nullable();
+            $table->json('standard_sample_dimension_and_material_grade')->nullable();
+            $table->json('br_cpk')->nullable();
+            $table->foreign('tpm_data_id')->references('id')->on('report_data')->onDelete('cascade');
         });
 
     }

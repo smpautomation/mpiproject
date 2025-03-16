@@ -13,8 +13,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::post('/tpmdata', [TPMDataController::class, 'store']);
-Route::put('/tpmdata/{id}', [TPMDataController::class, 'update']);
+Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
+Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
+Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
+
+
+
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
