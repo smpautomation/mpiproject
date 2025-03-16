@@ -95,9 +95,9 @@
 
                         <div class="flex flex-col items-center justify-center w-full">
                             <div class="flex flex-row items-center justify-center w-full">
-                                <div class="w-full mb-20 overflow-x-auto"> <!-- Added overflow-x-auto for scrollable table -->
+                                <div class="w-full mb-20 overflow-x-auto shadow-2xl"> <!-- Added overflow-x-auto for scrollable table -->
                                     <!-- Table with Full Width -->
-                                    <table class="w-full border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <table class="w-full overflow-hidden border border-gray-300 table-auto rounded-xl">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
@@ -148,14 +148,14 @@
                                                     {{ item.Br }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.Br_remarks == 1"
+                                                    v-if="item.Br_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.Br_remarks == 0 ? '' : item.remarks.Br_remarks }}
+                                                    {{ item.Br_remarks == 0 ? '' : item.Br_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHc }}
@@ -200,27 +200,27 @@
                                                     {{ item.iHr95 }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.iHr95_remarks == 1"
+                                                    v-if="item.iHr95_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.iHr95_remarks == 0 ? '' : item.remarks.iHr95_remarks }}
+                                                    {{ item.iHr95_remarks == 0 ? '' : item.iHr95_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHr98 }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remarks.iHr98_remarks == 1"
+                                                    v-if="item.iHr98_remarks == 1"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remarks.iHr98_remarks == 0 ? '' : item.remarks.iHr98_remarks }}
+                                                    {{ item.iHr98_remarks == 0 ? '' : item.iHr98_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHkiHc }}
@@ -324,7 +324,7 @@
                                     <table class="ml-5 overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
-                                                <th class="px-3 py-2 text-sm font-medium text-center border border-white">Sample&nbsp;with&nbsp;Variance</th>
+                                                <th class="px-3 py-6 text-xl font-extrabold text-center border border-white">Sample&nbsp;with&nbsp;Variance</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white">
@@ -340,61 +340,64 @@
 
                             <div class="flex flex-row">
                                 <div class="mb-16">
-                                <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
-                                    <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
-                                        <tr>
-                                            <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-3 py-2 text-sm font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">AVERAGE</td>
-                                            <td v-for="(aggAveValue, index) in aggAveValues" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                {{ aggAveValue.value }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">MAXIMUM</td>
-                                            <td v-for="(aggMaxValue, index) in aggMaxValues" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                {{ aggMaxValue.value }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-blue-700 text-md">MINIMUM</td>
-                                            <td v-for="(aggMinValue, index) in aggMinValues" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                {{ aggMinValue.value }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-3 py-2 font-extrabold text-center text-white bg-red-800 text-md">NG COUNTER</td>
-                                            <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                {{ ngCount }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                                <div class="flex flex-col items-center justify-center p-5 mb-10 bg-yellow-100 shadow-lg ml-60 rounded-xl">
-                                    <div class="flex flex-row items-center px-16 py-6 bg-white">
-                                        <p class="mr-2 text-4xl font-extrabold text-green-500 ">
-                                            {{ rejectOKNG }}
+                                    <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                            <tr>
+                                                <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-3 py-2 text-2xl font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-blue-700">AVERAGE</td>
+                                                <td v-for="(aggAveValue, index) in aggAveValues" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
+                                                    {{ aggAveValue.value }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-blue-700">MAXIMUM</td>
+                                                <td v-for="(aggMaxValue, index) in aggMaxValues" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
+                                                    {{ aggMaxValue.value }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-blue-700">MINIMUM</td>
+                                                <td v-for="(aggMinValue, index) in aggMinValues" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
+                                                    {{ aggMinValue.value }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-red-800">NG COUNTER</td>
+                                                <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
+                                                    {{ ngCount }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="flex flex-col items-center justify-center p-5 mb-10 ml-40 bg-blue-200 shadow-lg rounded-xl">
+                                    <div class="flex flex-row justify-center">
+                                        <p class="px-12 mb-4 text-3xl font-extrabold text-white bg-blue-900 shadow-xl rounded-xl">Data Results:</p>
+                                    </div>
+                                    <div class="flex flex-row items-center px-16 py-6 bg-white rounded-3xl">
+                                        <p class="mr-2 text-4xl font-extrabold">
+                                            <span :class="adjustColor_rejectOKNG(rejectOKNGlist)" v-for="(rejectOKNGlist, index) in rejectOKNG" :key="index"> {{ rejectOKNGlist }} </span>
                                         </p>
-                                        <p class="ml-2 text-2xl text-blue-500 ">
-                                            {{ rejectInstruction }}
+                                        <p class="ml-2 text-2xl">
+                                            <span :class="adjustColor_rejectInstructions"> {{ rejectInstruction }} </span>
                                         </p>
                                     </div>
                                     <div class="flex flex-row items-center mt-4 mb-0 align-baseline">
-                                        <div class="flex flex-col items-center px-4 py-4 mr-2 bg-white">
-                                            <p class="text-2xl font-semibold text-blue-600">
-                                                {{ rejectiHcRemarks }}
+                                        <div class="flex flex-col items-center px-4 py-4 mr-2 bg-white rounded-3xl">
+                                            <p class="text-2xl font-semibold">
+                                                <span :class="adjustColor_rejectiHc"> {{ rejectiHcRemarks }} </span>
                                             </p>
-                                            <p class="text-4xl font-extrabold text-blue-600">
-                                                {{ getHighestSampleVariance }}
+                                            <p class="text-4xl font-extrabold">
+                                                <span :class="adjustColor_iHcValue"> {{ getHighestSampleVariance }} </span>
                                             </p>
                                         </div>
-                                        <div class="flex px-4 py-8 ml-2 bg-white">
-                                            <p class="text-4xl font-extrabold text-blue-600">
-                                                {{ rejectLotRemarks }}
+                                        <div class="flex px-4 py-8 ml-2 bg-white rounded-3xl">
+                                            <p class="text-4xl font-extrabold">
+                                                <span :class="adjustColor_rejectLotRemarks(rejectLotRemarksList)" v-for="(rejectLotRemarksList, index) in rejectLotRemarks" :key="index"> {{ rejectLotRemarksList }} </span>
                                             </p>
                                         </div>
                                     </div>
@@ -410,7 +413,7 @@
 
   <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
@@ -428,18 +431,97 @@
 
     //UI VISIBILITY variables end ...
 
-    const serialNo = ref(null);
-    const generateSerialNumber = () => {
-        const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
-        const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
-        const newNumber = 1; // Static number for demonstration
-        const paddedNumber = newNumber.toString().padStart(6, "0"); // Pad to 6 digits
+    //UI Dynamic Color adjustments
 
-        serialNo.value = `${year}${month}${paddedNumber}`;
+    const adjustColor_rejectOKNG = (arrayString_OKNG) => {
+        console.log(arrayString_OKNG); // Log the value to see what it is
+        if (arrayString_OKNG && arrayString_OKNG.includes) {
+            return arrayString_OKNG.includes("Status OK") ? "text-green-500" : "text-red-500";
+        }
+        return "text-yellow-500"; // or any fallback class
+    }
 
-        // Display the serial numbers in an alert
-        alert(`Successfully created a new serial: ${serialNo.value} (preview sample only)`);
+    const adjustColor_rejectLotRemarks = (arrayString_lotRem) => {
+        return arrayString_lotRem.includes("THIS LOT IS PASS") ? "text-green-600" : "text-red-500";
+    }
+
+    const adjustColor_rejectInstructions = computed(() => {
+        // Check if rejectInstruction is not null and is a string before calling includes
+        return rejectInstruction.value && rejectInstruction.value.includes("No reject instructions")
+            ? "text-blue-600"
+            : "text-green-500";
+    });
+
+    const adjustColor_rejectiHc = computed(() => {
+        // Check if rejectiHcRemarks is not null and is a string before calling includes
+        return rejectiHcRemarks.value && rejectiHcRemarks.value.includes("iHc variance OK")
+            ? "text-blue-600"
+            : "text-red-500";
+    });
+
+    const adjustColor_iHcValue = computed(() => {
+        if(getHighestSampleVariance.value <= 1500){
+            return "text-blue-500";
+        }else{
+            return "text-red-500";
+        }
+    });
+
+    //UI Dynamic Color adjustments end
+
+    //Serial Generation
+
+    const serialNo = ref(null);  // Reactive variable to hold the generated serial number
+    const generateSerialNumber = async () => {
+        try {
+            // Step 1: Fetch the data from the API
+            const response = await axios.get("/api/tpmdata"); // Adjust this URL to your API endpoint
+            const tpmData = response.data.data.tpmData || [];  // Fallback to an empty array if undefined
+
+            if (tpmData.length > 0) {
+                // Step 2: Loop through tpmData to find serial_no values and find the maximum serial_no
+                const serialNumbers = tpmData.map(item => item.serial_no).filter(serial => serial);  // Get all serial_no values
+                // Step 3: Find the highest serial number
+                const highestSerial = serialNumbers.reduce((max, current) => {
+                    return parseInt(current.slice(4), 10) > parseInt(max.slice(4), 10) ? current : max;
+                });
+
+                const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
+                const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
+
+                // Extract numeric part of the serial number and increment by 1
+                const numericPart = parseInt(highestSerial.slice(4), 10);
+                const newSerialNumber = numericPart + 1;
+
+                // Generate the new serial number with zero-padding
+                const paddedNumber = newSerialNumber.toString().padStart(6, "0");
+
+                // Combine year, month, and the new incremented serial number
+                serialNo.value = `${year}${month}${paddedNumber}`;
+
+                console.log('Generated Serial Number:', serialNo.value);
+                alert(`Generated Serial Number: ${serialNo.value}`);
+            } else {
+                // Step 4: If no serial number exists, generate the first one
+                const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
+                const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
+
+                // Start with 1 if there's no serial number in the database
+                const firstSerialNumber = '000001';
+
+                // Generate the first serial number
+                serialNo.value = `${year}${month}${firstSerialNumber}`;
+
+                console.log('Generated First Serial Number:', serialNo.value);
+                alert(`Generated First Serial Number: ${serialNo.value}`);
+            }
+        } catch (error) {
+            console.error('Error generating serial number:', error);
+        }
     };
+
+
+    //Serial Generation end
 
     //table main layer header dynamic
     const tableLayerColumnHeaders = ref([
@@ -618,7 +700,7 @@
     rejectiHcRemarks.value = "No data available";
     rejectLotRemarks.value = "No data available";*/
 
-    const ok = "OK";
+    const ok = "Status OK";
     const reject = "REJECT, N.G";
     const hold = "HOLD, N.G";
     const within = "within internal specs";
@@ -634,7 +716,7 @@
     const iHcNG = "Process right side with iHc variance more than 1500 Oe";
 
     const rejectOKNG = ref([]);
-    const rejectInstruction = ref([]);
+    const rejectInstruction = ref(null);
     const rejectLotRemarks = ref([]);
     const rejectiHcRemarks = ref(null);
 
@@ -818,13 +900,23 @@
     const sendLayerData = async (layerData) => {
         try {
             const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response:', response.data);
+            console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         } finally {
             layerTableRowLoading.value = false;
             showProceed.value = true;
             showUploadData.value = false;
+        }
+    };
+
+    // Function to send raw data via PUT API
+    const saveAggregates = async (saveData) => {
+        try {
+            const response = await axios.put('/api/tpmdata', saveData); // Replace '/api/endpoint' with your API endpoint
+            console.log('API Response:', response.data);
+        } catch (error) {
+            console.error('Error sending data to API:', error.response?.data || error.message);
         }
     };
 
@@ -871,16 +963,18 @@
 
     // Function to fetch data from the API
     const showAllData = async () => {
+        layerTableRowLoading.value = true;
         try {
             showProceed.value = false;
             showGraphAndTables.value = true;
-            const response = await axios.get('/api/tpmdata');
-            console.log('API Response:', response.data);
+            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
+            console.log('API Response showallData:', response.data);
+            console.log('Serial No value = ', serialNo.value);
             items.value = response.data;
 
             // Extract arrays from the response
-            tpmData.value = response.data.data.tpmData || []; // Fallback to an empty array if undefined
-            tpmRemarks.value = response.data.data.remarks || [];
+            tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
+            tpmRemarks.value = response.data.data || [];
 
             // Extract individual values from tpmData for aggregate
             getAllBrValues.value = tpmData.value.map(item => item.Br || null);
@@ -1050,21 +1144,6 @@
             ng4pails.value = calculateSum(getAll4pailsRemarks.value);
             ng4paila.value = calculateSum(getAll4pailaRemarks.value);
 
-            //ng calculations for NG remarks
-            if(getHighestSampleVariance <= 1500){
-
-
-
-            }else{
-                rejectOKNG.value = "No data available";
-                rejectInstruction.value = "No data available";
-                rejectiHcRemarks.value = "No data available";
-                rejectLotRemarks.value = "No data available";
-            }
-
-            //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
-            console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
-
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
 
@@ -1073,11 +1152,91 @@
             //Getting the highest sample with variances (iHc Variance)
             getHighestSampleVariance.value = getMaxValue(sampleWithVariancesAsString);
 
+            //Conditions for NG remarks
+
+            const addRejectLotRemarks = (lotRemarks) => {
+                if(!rejectLotRemarks.value.includes(lotRemarks + "  ")){
+                    rejectLotRemarks.value.push(lotRemarks + "  ");
+                }
+            }
+
+            if(getHighestSampleVariance.value <= 1500){
+                rejectiHcRemarks.value = iHcOK;
+            }else{
+                rejectiHcRemarks.value = iHcNG;
+            }
+
+            if(ngBr.value == 0 && ngiHc.value == 0 && ngiHk.value == 0 && ngBHMax.value == 0 && ngiHr95.value == 0 && ngiHr98.value == 0 && ngiHciHk.value == 0 && ngBr4pai.value == 0 && ngbHc.value == 0){
+                rejectOKNG.value.push(ok);
+                addRejectLotRemarks(lotPass);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotReject + "  ");
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotHold + "  ");
+                rejectInstruction.value = noRejIns;
+            }else{
+
+                if(ngBr.value > 0){
+                    rejectOKNG.value.push("Br " + within + "  ");
+                    addRejectLotRemarks(lotPass);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotReject + "  ");
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotHold + "  ");
+                }
+                if(ngiHc.value > 0) {
+                    rejectOKNG.value.push("iHc " + reject + "  ");
+                    addRejectLotRemarks(lotReject);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                    rejectInstruction.value = perform;
+                }
+                if(ngiHk.value > 0) {
+                    rejectOKNG.value.push("iHk " + reject + "  ");
+                    addRejectLotRemarks(lotReject);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                    rejectInstruction.value = perform;
+                }
+                if(ngBHMax.value > 0) {
+                    rejectOKNG.value.push("BHMax " + reject + "  ");
+                    addRejectLotRemarks(lotReject);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                }
+                if(ngiHr95.value > 0) {
+                    rejectOKNG.value.push("Hr95 " + hold + "  ");
+                    addRejectLotRemarks(lotHold);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                }
+                if(ngiHr98.value > 0) {
+                    rejectOKNG.value.push("Hr98 " + hold + "  ");
+                    addRejectLotRemarks(lotHold);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                }
+                if(ngiHciHk.value > 0) {
+                    rejectOKNG.value.push("HciHk " + hold + "  ");
+                    addRejectLotRemarks(lotHold);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                }
+                if(ngBr4pai.value > 0) {
+                    rejectOKNG.value.push("Br4pai " + hold + "  ");
+                    addRejectLotRemarks(lotHold);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                }
+                if(ngbHc.value > 0) {
+                    rejectOKNG.value.push("bHc " + hold + "  ");
+                    addRejectLotRemarks(lotHold);
+                    rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                }
+            }
+
+            //ng conditions for NG remarks end...
+
+
+            //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
+            //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
+
             // Combine the arrays
             combinedData.value = tpmData.value.map((item, index) => ({
                 ...item,
                 remarks: tpmRemarks.value[index] || null,
             }));
+
+
 
             //console.log('Combined Data: ', combinedData.value);
         } catch (error) {
@@ -1085,6 +1244,7 @@
         } finally {
             layerTableRowLoading.value = false;
             showProceed.value = false;
+            layerTableRowLoading.value = false;
         }
 
         fetchDataCreateGraph();
@@ -1096,8 +1256,17 @@ const datasets = ref([]); // Array to hold multiple datasets
 
 const fetchDataCreateGraph = async () => {
     try {
-        const response = await axios.get("/api/tpmdata");
-        const tableRows = response.data.data.tpmData; // Assuming API returns an array of rows
+        const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
+
+        // Log the response structure to check
+        console.log("API Response:", response.data);
+
+        const tableRows = response.data.data; // Assuming API returns an array of rows
+
+        // Check if tableRows is not undefined or null before proceeding
+        if (!tableRows) {
+            throw new Error("No data found in tpmData");
+        }
 
         // Parse each row and dynamically generate datasets
         datasets.value = tableRows.map((row, index) => ({
@@ -1194,5 +1363,8 @@ const renderChart = () => {
         },
     });
 };
+
+
+
 
   </script>
