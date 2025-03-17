@@ -89,9 +89,9 @@
                     <canvas id="myChart"></canvas>
                 </div>
                 <div class="w-full p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                    <label class="block w-full p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">
-                        FIRST LAYER
-                    </label>
+                    <p class="flex p-4 mb-8 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100">
+                        LAYER
+                    </p>
 
                         <div class="flex flex-col items-center justify-center w-full">
                             <div class="flex flex-row items-center justify-center w-full">
@@ -776,7 +776,7 @@
                     if (
                         parsedData.hasOwnProperty(key) &&
                         key.startsWith('data') &&
-                        parseInt(key.replace('data', ''), 10) >= 1700 &&
+                        parseInt(key.replace('data', ''), 10) >= 1700 && //Adjust
                         parseInt(key.replace('data', ''), 10) <= 2050
                     ) {
                         const [x, y] = parsedData[key].split(',').map(Number);
@@ -1232,7 +1232,6 @@
 
             //ng conditions for NG remarks end...
 
-
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
@@ -1310,7 +1309,19 @@ const renderChart = () => {
     new Chart(ctx, {
         type: "line",
         data: {
-            datasets: chartDatasets,
+            datasets: chartDatasets.map(dataset => ({
+                ...dataset, // Copy over existing dataset properties
+                pointRadius: 0, // Increase point size for better visibility
+            })),
+            /*
+            datasets: chartDatasets.map(dataset => ({
+                ...dataset, // Copy over existing dataset properties
+                pointRadius: 3, // Increase point size for better visibility
+                pointHoverRadius: 4, // Hover radius
+                tension: 0.8, // Slightly reduced tension for smoother line
+                borderWidth: 4, // Thicker line
+            })),
+            */
         },
         options: {
             responsive: true,
