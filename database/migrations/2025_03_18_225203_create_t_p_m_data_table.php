@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->date('date')->nullable();
-            $table->string('serial_no');
+            $table->string('serial_no')->index();
             $table->string('code_no')->nullable();
             $table->string('order_no')->nullable();
             $table->string('type')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('press_2')->nullable();
             $table->string('machine_no')->nullable();
             $table->string('sintering_furnace_no')->nullable();
-            $table->string('furnace_no')->nullable();
+            $table->unsignedBigInteger('furnace_no')->nullable();
             $table->string('zone')->nullable();
             $table->string('pass_no')->nullable();
             $table->string('Br')->nullable();
@@ -55,6 +55,8 @@ return new class extends Migration
             $table->string('HRO')->nullable();
             $table->json('x')->nullable();
             $table->json('y')->nullable();
+            $table->unsignedBigInteger('layer_no')->nullable();
+            $table->foreign('furnace_no')->references('furnace_no')->on('furnace_data')->onUpdate('cascade');
         });
 
         Schema::create('tpm_data_remarks', function (Blueprint $table) {

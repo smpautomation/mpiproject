@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReportData extends Model
 {
-    //
+    protected $table = 'report_data';
+    protected $guarded = [];
+
+    public function tpmData()
+    {
+        return $this->belongsTo(TPMData::class, 'tpm_data_id', 'id'); // foreign key
+    }
 }

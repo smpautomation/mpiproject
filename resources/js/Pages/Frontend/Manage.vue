@@ -804,6 +804,22 @@
 
     //Variables for ave max min ng counter end
 
+<<<<<<< HEAD
+    //Reject Remarks 
+
+    const perform = ref(null);
+    const withinSpecs = ref(null);
+    const rejectNG = ref(null);
+    const holdNG = ref(null);
+    const lotReject = ref(null);
+    const lotPass = ref(null);
+    const ok = ref("OK");
+    const rejectInstructions = computed([
+        ok.value,
+    ]);
+
+    //Reject Remarks end
+=======
     // Reject Remarks variables
 
     /*rejectOKNG.value = "No data available";
@@ -832,6 +848,7 @@
     const rejectiHcRemarks = ref(null);
 
     // Reject remarks variables end
+>>>>>>> 2c7932ddca79010802222fcfecae2530d092bec7
 
     const sampleWithVariances = ref([]);
     const getHighestSampleVariance = ref(null);

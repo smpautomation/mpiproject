@@ -21,4 +21,14 @@ class TPMData extends Model
     {
         return $this->hasOne(TPMDataAggregateFunctions::class, 'tpm_data_id', 'id');
     }
+
+    public function reportData()
+    {
+        return $this->hasOne(ReportData::class, 'tpm_data_id', 'id');
+    }
+
+    public function furnaceData()
+    {
+        return $this->hasOne(FurnaceData::class, 'furnace_no', 'furnace_no');
+    }
 }
