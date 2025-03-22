@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col justify-center items-center px-64 py-24 container-fluid bg-gray-100 mx-auto">
+        <div class="flex flex-col items-center justify-center px-64 py-24 mx-auto bg-gray-100 container-fluid">
             <div v-show="showStartManageDiv">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-center py-4 space-y-4">
                     <div>
@@ -17,7 +17,7 @@
                 <div v-show="showSelectFurnace" class="flex flex-col items-center justify-center align-middle">
                     <div class="flex flex-row items-center justify-center align-baseline">
                         <p>Select a furnace:</p>
-                        <select v-model="currentFurnaceName" class="px-auto py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <select v-model="currentFurnaceName" class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="New Furnace 1">New Furnace 1</option>
                             <option value="New Furnace 2">New Furnace 2</option>
                             <option value="New Furnace 3">New Furnace 3</option>
@@ -38,7 +38,7 @@
                     <p>{{ currentFurnaceName }}</p>
                     <div class="flex flex-row items-center justify-center align-baseline">
                         <p>Select a layer:</p>
-                        <select v-model="currentLayerName" class="px-auto py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <select v-model="currentLayerName" class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="Layer 1">Layer 1</option>
                             <option value="Layer 2">Layer 2</option>
                             <option value="Layer 3">Layer 3</option>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
-                <div class="flex flex-col justify-center align-middle items-center space-x-4">
+                <div class="flex flex-col items-center justify-center space-x-4 align-middle">
                     <p>Currently selected: </p>
                     <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
                 </div>
@@ -844,6 +844,26 @@
     const yJsonOutput = ref(null);
     const rowCell = ref([]);
 
+    // set of new variables for the 2nd save ( the aggregates and remarks )
+
+    const saveBrRemarks = ref(null);
+    const save4paiIdRemarks = ref(null);
+    const saveIHcRemarks = ref(null);
+    const saveBHcRemarks = ref(null);
+    const saveBHMaxRemarks = ref(null);
+    const saveSquarenessRemarks = ref(null);
+    const save4paiIsRemarks = ref(null);
+    const saveIHkRemarks = ref(null);
+    const save4paiIaRemarks = ref(null);
+    const saveDensityRemarks = ref(null);
+    const saveIHkiHcRemarks = ref(null);
+    const saveBr4paiRemarks = ref(null);
+    const saveIHr95Remarks = ref(null);
+    const saveIHr98Remarks = ref(null);
+
+
+    // set of new variables for the 2nd save end
+
     // Store the file list when the input changes
     const storeFileList = (event) => {
         fileData.value = Array.from(event.target.files);
@@ -930,6 +950,21 @@
 
                 rowCell.value = newRowValues;
 
+                saveBrRemarks.value = parsedData.data25;
+                save4paiIdRemarks.value = parsedData.data28;
+                saveIHcRemarks.value = parsedData.data31;
+                saveBHcRemarks.value = parsedData.data34;
+                saveBHMaxRemarks.value = parsedData.data37;
+                saveSquarenessRemarks.value = parsedData.data40;
+                save4paiIsRemarks.value = parsedData.data43;
+                saveIHkRemarks.value = parsedData.data46;
+                save4paiIaRemarks.value = parsedData.data49;
+                saveDensityRemarks.value = parsedData.data52;
+                saveIHkiHcRemarks.value = parsedData.data55;
+                saveBr4paiRemarks.value = parsedData.data58;
+                saveIHr95Remarks.value = parsedData.data61;
+                saveIHr98Remarks.value = parsedData.data64;
+
                 const layerData = {
                     "date": rowCell.value[0],
                     "serial_no": serialNo.value,
@@ -972,20 +1007,20 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "Br_remarks": parsedData.data25,
-                    "4paiId_remarks": parsedData.data28,
-                    "iHc_remarks": parsedData.data31,
-                    "bHc_remarks": parsedData.data34,
-                    "BHMax_remarks": parsedData.data37,
-                    "Squareness_remarks": parsedData.data40,
-                    "4paiIs_remarks": parsedData.data43,
-                    "iHk_remarks": parsedData.data46,
-                    "4paiIa_remarks": parsedData.data49,
-                    "Density_remarks": parsedData.data52,
-                    "iHkiHc_remarks": parsedData.data55,
-                    "Br4pai_remarks": parsedData.data58,
-                    "iHr95_remarks": parsedData.data61,
-                    "iHr98_remarks": parsedData.data64,
+                    "Br_remarks": saveBrRemarks.value,
+                    "4paiId_remarks": save4paiIdRemarks.value,
+                    "iHc_remarks": saveIHcRemarks.value,
+                    "bHc_remarks": saveBHcRemarks.value,
+                    "BHMax_remarks": saveBHMaxRemarks.value,
+                    "Squareness_remarks": saveSquarenessRemarks.value,
+                    "4paiIs_remarks": save4paiIsRemarks.value,
+                    "iHk_remarks": saveIHkRemarks.value,
+                    "4paiIa_remarks": save4paiIaRemarks.value,
+                    "Density_remarks": saveDensityRemarks.value,
+                    "iHkiHc_remarks": saveIHkiHcRemarks.value,
+                    "Br4pai_remarks": saveBr4paiRemarks.value,
+                    "iHr95_remarks": saveIHr95Remarks.value,
+                    "iHr98_remarks": saveIHr98Remarks.value,
                 };
                 //console.log("Layer Data:", layerData);
 
@@ -1042,12 +1077,13 @@
         }
     };
 
-    // Function to send raw data via PUT API
-    const saveAggregates = async (saveData) => {
-        try {
-            const response = await axios.put('/api/tpmdata', saveData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response:', response.data);
-        } catch (error) {
+    const saveAggregates = async (saveData) => {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
+        try {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
+            for (const id of getAllIDValues.value) {  // Loop through all IDs
+                const response = await axios.put(`/api/tpmdata/${id}`, saveData);
+                console.log(`API Response for ID ${id}:`, response.data);
+            }
+        } catch (error) {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
             console.error('Error sending data to API:', error.response?.data || error.message);
         }
     };
@@ -1062,6 +1098,7 @@
     const tpmAggregateMax = ref([]); // Holds the aggregateFunctions array
     const tpmAggregateMin = ref([]); // Holds the aggregateFunctions array
     const combinedData = ref([]); // Holds the combined array
+    const getAllIDValues = ref([]);
 
     // Variables for aggregate
     const getAllBrValues = ref([]);
@@ -1101,7 +1138,9 @@
             showGraphAndTables.value = true;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
             //console.log('API Response showallData:', response.data);
+
             console.log('Serial No value = ', serialNo.value);
+
             items.value = response.data;
 
             // Extract arrays from the response
@@ -1110,11 +1149,13 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
+            const responseID = tpmData.value.map(item => item.id);
             //console.log('tpmData: ', tpmData.value);
-            //console.log('tpmRemarks: ', tpmRemarks.value);
+            console.log('test id val: ', responseID);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
+            getAllIDValues.value = combinedData.value.map(item => item.id);
             getAllBrValues.value = combinedData.value.map(item => item.Br || null);
             getAllBrRemarks.value = combinedData.value.map(item => item.remark.Br_remarks || null);
             getAlliHcValues.value = combinedData.value.map(item => item.iHc || null);
@@ -1142,7 +1183,7 @@
             getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
             getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
 
-            //console.log('tpmData: ', tpmData.value);
+            console.log('gettheIDs: ', getAllIDValues.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
 
             //get average function
@@ -1366,6 +1407,25 @@
 
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
+
+            const saveAggregateData = { // last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
+                "Br_remarks": saveBrRemarks.value,
+                "4paiId_remarks": save4paiIdRemarks.value,
+                "iHc_remarks": saveIHcRemarks.value,
+                "bHc_remarks": saveBHcRemarks.value,
+                "BHMax_remarks": saveBHMaxRemarks.value,
+                "Squareness_remarks": saveSquarenessRemarks.value,
+                "4paiIs_remarks": save4paiIsRemarks.value,
+                "iHk_remarks": saveIHkRemarks.value,
+                "4paiIa_remarks": save4paiIaRemarks.value,
+                "Density_remarks": saveDensityRemarks.value,
+                "iHkiHc_remarks": saveIHkiHcRemarks.value,
+                "Br4pai_remarks": saveBr4paiRemarks.value,
+                "iHr95_remarks": saveIHr95Remarks.value,
+                "iHr98_remarks": saveIHr98Remarks.value,
+            };
+
+            saveAggregates(saveAggregateData);
 
         } catch (error) {
             console.error('Error fetching data:', error);
