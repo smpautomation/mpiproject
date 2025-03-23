@@ -43,7 +43,9 @@ class TPMDataController extends Controller
         }else{
             try{
                 $tpmData = TPMData::with($report ? ['remark', 'aggregateFunctions', 'reportData'] : ['remark', 'aggregateFunctions'])
-                                    ->where('serial_no',  $serial_no)->get();
+                                    ->where('serial_no',  $serial_no)
+                                    ->orderBy('zone', 'asc')
+                                    ->get();
 
                 if(!$tpmData->isEmpty()){
 
