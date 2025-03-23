@@ -13,7 +13,7 @@ class FurnaceDataFactory extends Factory
     public function definition(): array
     {
         return [
-            'furnace_no' => $this->faker->randomNumber(),
+            'furnace_id' => $this->faker->randomNumber(),
             'furnace_name' => $this->faker->word(),
             'description' => $this->faker->sentence()
         ];
