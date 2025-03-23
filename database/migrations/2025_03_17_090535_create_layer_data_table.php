@@ -17,8 +17,8 @@ return new class extends Migration
             $table->bigInteger('layer_no');
             $table->string('layer_name');
             $table->string('description');
-            $table->unsignedBigInteger('furnace_no');
-            $table->foreign('furnace_no')->references('furnace_no')->on('furnace_data')->onUpdate('cascade');
+            $table->unsignedBigInteger('furnace_id');
+            $table->foreign('furnace_id')->references('furnace_id')->on('furnace_data')->onUpdate('cascade');
         });
     }
 

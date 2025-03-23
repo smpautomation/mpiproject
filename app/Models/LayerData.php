@@ -14,6 +14,6 @@ class LayerData extends Model
     }
     public function furnaceData()
     {
-        return $this->belongsTo(FurnaceData::class, 'furnace_no', 'furnace_no');
+        return $this->belongsTo(FurnaceData::class, 'furnace_id', 'furnace_id');
     }
 }

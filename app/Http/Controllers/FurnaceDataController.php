@@ -88,7 +88,7 @@ class FurnaceDataController extends Controller
         DB::beginTransaction();
         try{
             $furnaceData = FurnaceData::create([
-                'furnace_no' => $request->input('furnace_no'),
+                'furnace_id' => $request->input('furnace_id'),
                 'furnace_name' => $request->input('furnace_name'),
                 'description' => $request->input('description')
             ]);

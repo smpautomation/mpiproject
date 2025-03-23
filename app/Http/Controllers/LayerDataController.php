@@ -17,7 +17,7 @@ class LayerDataController extends Controller
         $furnace_no = $request->query("furnace");
         if($layer_no && $furnace_no){
             try{
-                $layerData = LayerData::where(['furnace_no', 'layer_no'],  [$furnace_no, $layer_no])->get();
+                $layerData = LayerData::where(['furnace_id', 'layer_no'],  [$furnace_no, $layer_no])->get();
 
                 if(!$layerData->isEmpty()){
                     return response()->json([
@@ -88,7 +88,7 @@ class LayerDataController extends Controller
         DB::beginTransaction();
         try{
             $layerData = LayerData::create([
-                'furnace_no' => $request->input('furnace_no'),
+                'furnace_id' => $request->input('furnace_id'),
                 'layer_no' => $request->input('layer_no'),
                 'layer_name' => $request->input('layer_name'),
                 'description'=> $request->input('description')
