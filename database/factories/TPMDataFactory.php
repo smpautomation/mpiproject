@@ -24,7 +24,7 @@ class TPMDataFactory extends Factory
             'press_2'=> $this->faker->word(),
             'machine_no'=> $this->faker->numerify('machine###'),
             'sintering_furnace_no' => $this->faker->numerify('###'),
-            'furnace_no' => FurnaceData::inRandomOrder()->first()->furnace_no,
+            'furnace_no' => $this->faker->word(),
             'zone' => $this->faker->word(),
             'pass_no' => $this->faker->word(),
             'Br' => $this->faker->randomFloat(),
@@ -56,6 +56,7 @@ class TPMDataFactory extends Factory
             'HRO' => $this->faker->randomFloat(),
             'x' => json_encode([1, 1, 1, 1, 1, 1, 1]),
             'y' => json_encode([2, 2, 2, 2, 2, 2]),
+            'furnace_id' => FurnaceData::inRandomOrder()->first()->furnace_id,
             'layer_no' => $this->faker->numerify('###')
         ];
     }

@@ -17,7 +17,7 @@ class LayerDataFactory extends Factory
             'layer_no' => $this->faker->randomNumber(),
             'layer_name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
-            'furnace_no' => FurnaceData::inRandomOrder()->first()->furnace_no
+            'furnace_id' => FurnaceData::inRandomOrder()->first()->furnace_id
         ];
     }
 }
