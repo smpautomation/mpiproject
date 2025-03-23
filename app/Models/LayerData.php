@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LayerData extends Model
 {
+    use HasFactory;
     protected $table = "layer_data";
     protected $guarded = [];
     public function tpmData()

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TPMData extends Model
 {
+    use HasFactory;
     protected $table = 'tpm_data';
     protected $guarded = [];
     protected $casts = [
