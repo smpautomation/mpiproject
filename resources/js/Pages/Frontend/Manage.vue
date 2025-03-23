@@ -1792,6 +1792,10 @@ const renderChart = () => {
                         display: true,
                         text: "←  kOe  →",
                         color: "#333",
+                        font: {
+                            size: 22,  // Increase font size
+                            weight: "bold", // Make it bold
+                        },
                     },
                     ticks: {
                         display: false, // Hides the values
@@ -1807,6 +1811,10 @@ const renderChart = () => {
                         display: true,
                         text: "←  kG  →",
                         color: "#333",
+                        font: {
+                            size: 22,  // Increase font size
+                            weight: "bold", // Make it bold
+                        },
                     },
                     ticks: {
                         display: false, // Hides the values
