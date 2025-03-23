@@ -1,9 +1,68 @@
 <template>
     <Frontend>
-        <div class="flex flex-col justify-center items-center px-64 py-24 container bg-gray-100 mx-auto">
-            <div v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
+        <div class="flex flex-col justify-center items-center px-64 py-24 container-fluid bg-gray-100 mx-auto">
+            <div v-show="showStartManageDiv">
+                <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-center py-4 space-y-4">
+                    <div>
+                        <button @click="addNewFurnaceBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Quick Add Furnace
+                        </button>
+                    </div>
+                    <div>
+                        <button @click="existingFurnaceBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Existing Furnaces
+                        </button>
+                    </div>
+                </div>
+                <div v-show="showSelectFurnace" class="flex flex-col items-center justify-center align-middle">
+                    <div class="flex flex-row items-center justify-center align-baseline">
+                        <p>Select a furnace:</p>
+                        <select v-model="currentFurnaceName" class="px-auto py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="New Furnace 1">New Furnace 1</option>
+                            <option value="New Furnace 2">New Furnace 2</option>
+                            <option value="New Furnace 3">New Furnace 3</option>
+                            <option value="New Furnace 4">New Furnace 4</option>
+                            <option value="New Furnace 5">New Furnace 5</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-row items-center justify-center m-2 space-x-16">
+                        <button @click="existingBackBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Back
+                        </button>
+                        <button @click="existingProceedBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Proceed
+                        </button>
+                    </div>
+                </div>
+                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-center py-4 space-y-4">
+                    <p>{{ currentFurnaceName }}</p>
+                    <div class="flex flex-row items-center justify-center align-baseline">
+                        <p>Select a layer:</p>
+                        <select v-model="currentLayerName" class="px-auto py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="Layer 1">Layer 1</option>
+                            <option value="Layer 2">Layer 2</option>
+                            <option value="Layer 3">Layer 3</option>
+                            <option value="Layer 4">Layer 4</option>
+                            <option value="Layer 5">Layer 5</option>
+                            <option value="Layer 6">Layer 6</option>
+                            <option value="Layer 7">Layer 7</option>
+                            <option value="Layer 8">Layer 8</option>
+                            <option value="Layer 9">Layer 9</option>
+                            <option value="Layer 10">Layer 10</option>
+                        </select>
+                    </div>
+                    <button @click="proceedLayerBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                        Proceed
+                    </button>
+                </div>
+            </div>
+            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
+                <div class="flex flex-col justify-center align-middle items-center space-x-4">
+                    <p>Currently selected: </p>
+                    <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
+                </div>
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
-                    Add New
+                    Begin Process
                 </button>
             </div>
             <div v-if="toggleManageForm" class="flex flex-col items-center justify-center w-full">
@@ -89,9 +148,9 @@
                     <canvas id="myChart"></canvas>
                 </div>
                 <div class="w-full p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                    <label class="block w-full p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">
-                        FIRST LAYER
-                    </label>
+                    <p class="flex p-4 mb-8 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100">
+                        LAYER
+                    </p>
 
                         <div class="flex flex-col items-center justify-center w-full">
                             <div class="flex flex-row items-center justify-center w-full">
@@ -422,11 +481,52 @@
     const showGraphAndTables = ref(false);
     const showUploadData = ref(true);
     const showProceed = ref(false);
-
+    const showAddNewDataLayer = ref(false);
+    const showAddNewLayer = ref(false);
+    const showStartManageDiv = ref(true);
+    const showAddNewFurnace = ref(true);
+    const showSelectFurnace = ref(false);
+    const showCreateExistingFurnaceBtn = ref(true);
+    const currentFurnaceName = ref('');
     const toggleManageForm = ref(false);
+    const currentLayerName = ref('');
+
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
         generateSerialNumber();
+    }
+
+    const addNewFurnaceBtn = () => {
+        saveNewFurnace();
+    }
+
+    const proceedLayerBtn = () => {
+        if(currentLayerName.value === ''){
+            alert('Please select a layer');
+        }else{
+            showStartManageDiv.value = false;
+            showAddNewDataLayer.value = true;
+            saveNewLayer();
+        }
+    }
+
+    const existingFurnaceBtn = () => {
+        showSelectFurnace.value = true;
+        showCreateExistingFurnaceBtn.value = false;
+    }
+
+    const existingProceedBtn = () => {
+        if(currentFurnaceName.value === ''){
+            alert('Please select a furnace');
+        }else{
+            showAddNewLayer.value = true;
+            showSelectFurnace.value = false;
+        }
+    }
+
+    const existingBackBtn = () => {
+        showCreateExistingFurnaceBtn.value = true;
+        showSelectFurnace.value = false;
     }
 
     //UI VISIBILITY variables end ...
@@ -434,7 +534,7 @@
     //UI Dynamic Color adjustments
 
     const adjustColor_rejectOKNG = (arrayString_OKNG) => {
-        console.log(arrayString_OKNG); // Log the value to see what it is
+        //console.log(arrayString_OKNG); // Log the value to see what it is
         if (arrayString_OKNG && arrayString_OKNG.includes) {
             return arrayString_OKNG.includes("Status OK") ? "text-green-500" : "text-red-500";
         }
@@ -520,8 +620,19 @@
         }
     };
 
-
     //Serial Generation end
+
+    //New Furnace , New Layers
+
+    const saveNewFurnace = () => {
+        alert('New Furnace 1 has been Added');
+    }
+
+    const saveNewLayer = () => {
+        alert('New Layer Added');
+    }
+
+    //New Furnace , New Layers end
 
     //table main layer header dynamic
     const tableLayerColumnHeaders = ref([
@@ -762,6 +873,11 @@
             console.error("No file selected! fileData is empty.");
             return; // Exit the function if fileData is empty
         }
+
+         // Sort the files alphabetically by their name
+        fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
+        console.log('Sorted Files:', fileData.value);
+
         layerTableRowLoading.value = true;
         fileData.value.forEach((file) => {
 
@@ -771,7 +887,15 @@
                 const content = reader.result; // Read file content
                 const parsedData = parseFileContent(content); // Parse content
 
-                console.log('Parsed Data:', parsedData);
+                //console.log('Parsed Data:', parsedData);
+
+
+                // Dynamically handle rows based on the length of the file content
+                const lines = content.split("\n"); // Split content into lines (assuming newline delimiter)
+                const rows = lines.map(line => line.split("\t")); // Split each line by tabs (if TSV)
+
+                const numberOfRows = rows.length; // This gives the total number of rows in the file
+                console.log(`The file contains ${numberOfRows} rows.`);
 
                 // Map specific keys to extract relevant values
                 const dataKeysValue = [
@@ -793,14 +917,22 @@
                     if (
                         parsedData.hasOwnProperty(key) &&
                         key.startsWith('data') &&
-                        parseInt(key.replace('data', ''), 10) >= 1700 &&
-                        parseInt(key.replace('data', ''), 10) <= 2050
+                        parseInt(key.replace('data', ''), 10) >= 150 && //Adjust
+                        parseInt(key.replace('data', ''), 10) <= numberOfRows
                     ) {
                         const [x, y] = parsedData[key].split(',').map(Number);
+
+                         // Custom condition: x must be less than 100 and y must be greater than -1000
+                        if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
+                            //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
+                            continue; // Skip this iteration if condition is not met
+                        }
+
                         xValues.push(x);
                         yValues.push(y);
                     }
                 }
+
 
                 xAxis.value = xValues;
                 yAxis.value = yValues;
@@ -917,7 +1049,7 @@
     const sendLayerData = async (layerData) => {
         try {
             const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response sendlayerdata:', response.data);
+            //console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         } finally {
@@ -985,7 +1117,7 @@
             showProceed.value = false;
             showGraphAndTables.value = true;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
-            console.log('API Response showallData:', response.data);
+            //console.log('API Response showallData:', response.data);
             console.log('Serial No value = ', serialNo.value);
             items.value = response.data;
 
@@ -995,8 +1127,8 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            console.log('tpmData: ', tpmData.value);
-            console.log('tpmRemarks: ', tpmRemarks.value);
+            //console.log('tpmData: ', tpmData.value);
+            //console.log('tpmRemarks: ', tpmRemarks.value);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
@@ -1249,7 +1381,6 @@
 
             //ng conditions for NG remarks end...
 
-
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
@@ -1273,7 +1404,7 @@ const fetchDataCreateGraph = async () => {
         const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
 
         // Log the response structure to check
-        console.log("API Response:", response.data);
+        //console.log("API Response:", response.data);
 
         const tableRows = response.data.data; // Assuming API returns an array of rows
 
@@ -1306,8 +1437,8 @@ const generateColor = (index) => {
 const renderChart = () => {
     const ctx = document.getElementById("myChart").getContext("2d");
 
-    const x_offset = 4000; // The amount to offset subsequent datasets
-    const y_offset = 6000; // The amount to offset subsequent datasets
+    const x_offset = 1000; // The amount to offset subsequent datasets
+    const y_offset = 2500; // The amount to offset subsequent datasets
 
     const chartDatasets = datasets.value.map((dataset, index) => {
         return {
@@ -1327,7 +1458,20 @@ const renderChart = () => {
     new Chart(ctx, {
         type: "line",
         data: {
-            datasets: chartDatasets,
+            datasets: chartDatasets.map(dataset => ({
+                ...dataset, // Copy over existing dataset properties
+                pointRadius: 0, // Increase point size for better visibility
+                tension: 0.6,
+            })),
+            /*
+            datasets: chartDatasets.map(dataset => ({
+                ...dataset, // Copy over existing dataset properties
+                pointRadius: 3, // Increase point size for better visibility
+                pointHoverRadius: 4, // Hover radius
+                tension: 0.8, // Slightly reduced tension for smoother line
+                borderWidth: 4, // Thicker line
+            })),
+            */
         },
         options: {
             responsive: true,
@@ -1351,7 +1495,7 @@ const renderChart = () => {
                     },
                     title: {
                         display: true,
-                        text: "X-Axis",
+                        text: "←  kOe  →",
                         color: "#333",
                     },
                     ticks: {
@@ -1366,7 +1510,7 @@ const renderChart = () => {
                     },
                     title: {
                         display: true,
-                        text: "Y-Axis",
+                        text: "←  kG  →",
                         color: "#333",
                     },
                     ticks: {
