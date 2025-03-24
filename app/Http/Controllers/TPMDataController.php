@@ -29,8 +29,7 @@ class TPMDataController extends Controller
                     'data' => [
                         'tpmData' => $tpmData,
                         'remarks' => $remarks,
-                        'aggregateFunctions' =>  $aggregateFunctions,
-                        'reportData' => $reportData
+                        'aggregateFunctions' =>  $aggregateFunctions
                     ]
                 ], 200);
             }catch(\Exception $e){

@@ -31,6 +31,6 @@ class TPMData extends Model
 
     public function furnaceData()
     {
-        return $this->hasOne(FurnaceData::class, 'furnace_no', 'furnace_no');
+        return $this->hasOne(FurnaceData::class, 'furnace_id', 'furnace_id');
     }
 }

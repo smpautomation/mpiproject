@@ -1,9 +1,71 @@
 <template>
     <Frontend>
-        <div class="flex flex-col justify-center items-center px-64 py-24 container bg-gray-100 mx-auto">
-            <div v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
+        <div class="flex flex-col items-center justify-center px-64 py-24 mx-auto bg-gray-100 container-fluid">
+            <div v-show="showStartManageDiv">
+                <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-center py-4 space-y-4">
+                    <div>
+                        <button @click="addNewFurnaceBtn" :disabled="isLoadingForAddFurnaces" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            {{ isLoadingForAddFurnaces ? "On going..." : "Quick Add Furnace" }}
+                        </button>
+                    </div>
+                    <div>
+                        <button @click="existingFurnaceBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Existing Furnaces
+                        </button>
+                    </div>
+                    <p v-if="isLoadingForAddFurnaces">Loading... Please wait.</p>
+                </div>
+                <div v-show="showSelectFurnace" class="flex flex-col items-center justify-center align-middle">
+                    <div class="flex flex-row items-center justify-center align-baseline">
+                        <p>Select a furnace:</p>
+                        <select
+                        v-model="currentFurnaceName"
+                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                        <option v-for="furnace in furnaceList" :key="furnace.id" :value="furnace.furnace_name">
+                            {{ furnace.furnace_name }}
+                        </option>
+                        </select>
+                    </div>
+                    <div class="flex flex-row items-center justify-center m-2 space-x-16">
+                        <button @click="existingBackBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Back
+                        </button>
+                        <button @click="existingProceedBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Proceed
+                        </button>
+                    </div>
+                </div>
+                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-center py-4 space-y-4">
+                    <p>{{ currentFurnaceName }}</p>
+                    <div class="flex flex-row items-center justify-center align-baseline">
+                        <p>Select a layer:</p>
+                        <select
+                        v-model="currentLayerName"
+                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                        <option v-for="layer in layerList" :key="layer.id" :value="layer.layer_name">
+                            {{ layer.layer_name }}
+                        </option>
+                        </select>
+                    </div>
+                    <div class="flex flex-row items-center justify-center m-2 space-x-16">
+                        <button @click="proceedLayerBackBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Back
+                        </button>
+                        <button @click="proceedLayerBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                            Proceed
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
+                <div class="flex flex-col items-center justify-center space-x-4 align-middle">
+                    <p>Currently selected: </p>
+                    <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
+                </div>
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
-                    Add New
+                    Begin Process
                 </button>
             </div>
             <div v-if="toggleManageForm" class="flex flex-col items-center justify-center w-full">
@@ -89,9 +151,9 @@
                     <canvas id="myChart"></canvas>
                 </div>
                 <div class="w-full p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                    <label class="block w-full p-2 mb-4 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100 max-w-40">
-                        FIRST LAYER
-                    </label>
+                    <p class="flex p-4 mb-8 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100">
+                        LAYER
+                    </p>
 
                         <div class="flex flex-col items-center justify-center w-full">
                             <div class="flex flex-row items-center justify-center w-full">
@@ -413,7 +475,7 @@
 
   <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
@@ -422,11 +484,242 @@
     const showGraphAndTables = ref(false);
     const showUploadData = ref(true);
     const showProceed = ref(false);
-
+    const showAddNewDataLayer = ref(false);
+    const showAddNewLayer = ref(false);
+    const showStartManageDiv = ref(true);
+    const showAddNewFurnace = ref(true);
+    const showSelectFurnace = ref(false);
+    const showCreateExistingFurnaceBtn = ref(true);
+    const currentFurnaceName = ref('');
+    const currentFurnaceNo = ref(null);
     const toggleManageForm = ref(false);
+    const currentLayerName = ref('');
+    const currentLayerNo = ref(null);
+
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
         generateSerialNumber();
+    }
+
+    const isLoadingForAddFurnaces = ref(false); // Initialize loading state
+
+    const addNewFurnaceBtn = async () => {
+        isLoadingForAddFurnaces.value = true; // Start loading
+
+        try {
+            // Fetch existing furnace data
+            const response = await axios.get('/api/furnacedata');
+            //console.log("API Response:", response.data.data["Furnace Data"]); // Debugging: Check the response structure
+
+            // Extract the correct array from the API response
+            const existingFurnaces = response.data.data["Furnace Data"] || []; // Adjust this if needed
+            //console.log("Extracted Furnaces:", existingFurnaces); // Debugging: Check if it's an array
+
+            // Ensure existingFurnaces is an array
+            if (!Array.isArray(existingFurnaces)) {
+                console.error("Error: Fetched data is not an array, received:", existingFurnaces);
+                return; // Stop execution if data is not an array
+            }
+
+            // Process existing furnace names and extract numbers
+            const furnaceNumbers = existingFurnaces
+                .map(item => item.furnace_name)
+                .filter(name => name && /^New Furnace \d+$/.test(name)) // Ensure it matches "New Furnace X"
+                .map(name => {
+                    const match = name.match(/\d+$/);
+                    return match ? parseInt(match[0], 10) : 1;
+                });
+
+            // Determine the next furnace number
+            const nextFurnaceNumber = furnaceNumbers.length > 0
+                ? Math.max(...furnaceNumbers) + 1
+                : 1;
+
+            const newFurnaceName = `New Furnace ${nextFurnaceNumber}`;
+
+            // Prepare the new furnace data
+            const newFurnaceData = {
+                furnace_name: newFurnaceName,
+                description: "Enter description here"
+            };
+
+            console.log("Saving Furnace:", newFurnaceData); // Debugging log before sending
+
+            await saveNewFurnace(newFurnaceData);
+
+            alert(`${newFurnaceName} has been added`);
+        } catch (error) {
+            console.error("Error fetching furnace data:", error);
+        } finally {
+            isLoadingForAddFurnaces.value = false; // Stop loading
+            console.log("Loading state reset.");
+        }
+    };
+
+    const furnaceList = ref([]); // Stores all fetched furnaces
+
+    // Function to fetch furnace data
+    const fetchFurnaces = async () => {
+    try {
+        const response = await axios.get("/api/furnacedata");
+        //console.log("API Response:", response.data.data["Furnace Data"]);
+
+        // Extract furnace data dynamically
+        const extractedFurnaces = response.data.data["Furnace Data"] || response.data.furnaces || response.data.data || [];
+
+        // Ensure data is an array
+        if (!Array.isArray(extractedFurnaces)) {
+        console.error("Error: Fetched data is not an array.", extractedFurnaces);
+        return;
+        }
+
+        // Update the reactive variable
+        furnaceList.value = extractedFurnaces;
+
+        // Set default selection to first furnace, if available
+        if (furnaceList.value.length > 0) {
+            currentFurnaceName.value = furnaceList.value[0].furnace_name;
+        }
+
+    } catch (error) {
+        console.error("Error fetching furnace data:", error);
+    }
+    };
+    //Makes sure furnace lists is loaded on start.
+    onMounted(fetchFurnaces);
+
+    const layerList = ref([]); // Stores fetched layers\
+    const currentFurnaceNoForLayer = ref(null);
+
+    // Function to fetch layer data
+    const fetchLayers = async () => {
+        try {
+            console.log("Fetching layer data from /api/layerdata...");
+
+            const response = await axios.get("/api/layerdata");
+            //console.log("API Response:", response.data.data["Layer Data"]);
+
+            // Extract layer data safely
+            const extractedLayers = response.data.data["Layer Data"] || response.data?.layers || response.data?.data || [];
+
+            //console.log("Extracted Layers:", extractedLayers);
+
+            // Ensure extractedLayers is an array
+            if (!Array.isArray(extractedLayers)) {
+                console.error("Error: Fetched data is not an array.", extractedLayers);
+                return;
+            }
+
+            currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
+            console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
+            // 🔍 **Filter the data
+            const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
+
+            console.log("Filtered Layers:", filteredLayers);
+
+            // Update the reactive layer list
+            layerList.value = filteredLayers;
+
+            // Set default selection to first layer, if available
+            if (layerList.value.length > 0) {
+                currentLayerName.value = layerList.value[0].layer_name;
+            } else {
+                console.warn("No matching layers found.");
+            }
+        } catch (error) {
+            console.error("Error fetching layer data:", error);
+
+            if (error.response) {
+                console.error("Server responded with:", error.response.status, error.response.data);
+            } else if (error.request) {
+                console.error("No response received from API. Request details:", error.request);
+            } else {
+                console.error("Error setting up request:", error.message);
+            }
+        }
+    };
+
+    const getFurnaceNoByName = async (furnaceName) => {
+        try {
+            console.log("Fetching furnace_id for furnace:", furnaceName);
+
+            // Fetch all furnaces from the API
+            const response = await axios.get('/api/furnacedata');
+            const furnaces = response.data.data["Furnace Data"] || [];
+
+            // Find the furnace with the matching name
+            const foundFurnace = furnaces.find(f => f.furnace_name === furnaceName);
+
+            if (foundFurnace) {
+                console.log("Furnace found:", foundFurnace);
+                return foundFurnace.furnace_id; // Return the furnace_no
+            } else {
+                console.warn("Furnace not found:", furnaceName);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching furnace_no:", error);
+            return null;
+        }
+    };
+
+    const getLayerNoByName = async (layerName) => {
+        try {
+            console.log("Fetching layer_no for layer:", layerName);
+
+            // Fetch all layers from the API
+            const response = await axios.get('/api/layerdata');
+            const layers = response.data.data["Layer Data"] || [];
+
+            // Find the layer with the matching name
+            const foundLayer = layers.find(f => f.layer_name === layerName);
+
+            if (foundLayer) {
+                console.log("Layer found:", foundLayer.layer_no);
+                return foundLayer.layer_no; // Return the layer_no
+            } else {
+                console.warn("Layer not found:", layerName);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching layer_no:", error);
+            return null;
+        }
+    };
+
+    const proceedLayerBtn = () => {
+        if(currentLayerName.value === ''){
+            alert('Please select a layer');
+        }else{
+            showStartManageDiv.value = false;
+            showAddNewDataLayer.value = true;
+            saveNewLayer();
+        }
+    }
+
+    const existingFurnaceBtn = () => {
+        showSelectFurnace.value = true;
+        showCreateExistingFurnaceBtn.value = false;
+    }
+
+    const existingProceedBtn = () => {
+        if(currentFurnaceName.value === ''){
+            alert('Please select a furnace');
+        }else{
+            showAddNewLayer.value = true;
+            showSelectFurnace.value = false;
+            fetchLayers();
+        }
+    }
+
+    const existingBackBtn = () => {
+        showCreateExistingFurnaceBtn.value = true;
+        showSelectFurnace.value = false;
+    }
+
+    const proceedLayerBackBtn = () => {
+        showAddNewLayer.value = false;
+        showSelectFurnace.value = true;
     }
 
     //UI VISIBILITY variables end ...
@@ -434,7 +727,7 @@
     //UI Dynamic Color adjustments
 
     const adjustColor_rejectOKNG = (arrayString_OKNG) => {
-        console.log(arrayString_OKNG); // Log the value to see what it is
+        //console.log(arrayString_OKNG); // Log the value to see what it is
         if (arrayString_OKNG && arrayString_OKNG.includes) {
             return arrayString_OKNG.includes("Status OK") ? "text-green-500" : "text-red-500";
         }
@@ -520,8 +813,76 @@
         }
     };
 
-
     //Serial Generation end
+
+    //New Furnace , New Layers
+
+    const saveNewFurnace = async (newFurnace) => {
+        try {
+            console.log("Attempting to save new furnace:", JSON.stringify(newFurnace, null, 2));
+
+            // First, check if the furnace already exists
+            const checkResponse = await axios.get('/api/furnacedata');
+            const existingFurnaces = checkResponse.data.data["Furnace Data"] || [];
+
+            // Check if the furnace already exists
+            if (existingFurnaces.some(f => f.furnace_name === newFurnace.furnace_name)) {
+                alert("Furnace name already exists! Try a different name.");
+                return;
+            }
+
+            // Send the new furnace data
+            const response = await axios.post('/api/furnacedata', newFurnace);
+            console.log("Furnace created successfully:", response.data);
+
+            // Extract furnace_id from response (assuming API returns the created furnace object)
+            const newFurnaceNo = response.data.data.id; // Adjust based on API response
+            console.log("Get furnace no: ", newFurnaceNo);
+            // Now, create default layers under this furnace
+            await createDefaultLayers(newFurnaceNo);
+
+            // Refresh the furnace list
+            fetchFurnaces();
+            fetchLayers();
+
+        } catch (error) {
+            console.error("Error sending data to API:", error);
+            if (error.response) {
+                console.error("Server responded with:", error.response.status, error.response.data);
+            } else if (error.request) {
+                console.error("No response received from API. Request details:", error.request);
+            } else {
+                console.error("Error setting up request:", error.message);
+            }
+        }
+    };
+
+    const createDefaultLayers = async (furnaceNo) => {
+        for (let i = 1; i <= 10; i++) {
+            const layerDatabase = {
+                layer_no: i,
+                layer_name: `Layer ${i}`,
+                furnace_id: furnaceNo,
+                description: "Enter description here"
+            };
+
+            try {
+                console.log(`Sending Layer ${i}:`, layerDatabase);
+                const response = await axios.post('/api/layerdata', layerDatabase);
+                console.log(`Layer ${i} created:`, response.data.data["Layer Name"]);
+            } catch (error) {
+                console.error(`Failed to create Layer ${i}:`, error);
+            }
+        }
+    };
+
+    const saveNewLayer = () => {
+        currentLayerNo.value = getLayerNoByName(currentLayerName.value);
+        console.log("Current layer no : ", currentLayerNo.value);
+        alert('New Layer Added');
+    }
+
+    //New Furnace , New Layers end
 
     //table main layer header dynamic
     const tableLayerColumnHeaders = ref([
@@ -693,51 +1054,34 @@
 
     //Variables for ave max min ng counter end
 
-<<<<<<< HEAD
-    //Reject Remarks 
-
-    const perform = ref(null);
-    const withinSpecs = ref(null);
-    const rejectNG = ref(null);
-    const holdNG = ref(null);
-    const lotReject = ref(null);
-    const lotPass = ref(null);
-    const ok = ref("OK");
-    const rejectInstructions = computed([
-        ok.value,
-    ]);
-
-    //Reject Remarks end
-=======
     // Reject Remarks variables
 
-    /*rejectOKNG.value = "No data available";
-    rejectInstruction.value = "No data available";
-    rejectiHcRemarks.value = "No data available";
-    rejectLotRemarks.value = "No data available";*/
+        /*rejectOKNG.value = "No data available";
+        rejectInstruction.value = "No data available";
+        rejectiHcRemarks.value = "No data available";
+        rejectLotRemarks.value = "No data available";*/
 
-    const ok = "Status OK";
-    const reject = "REJECT, N.G";
-    const hold = "HOLD, N.G";
-    const within = "within internal specs";
+        const ok = "Status OK";
+        const reject = "REJECT, N.G";
+        const hold = "HOLD, N.G";
+        const within = "within internal specs";
 
-    const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
-    const noRejIns = "No reject instructions";
+        const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
+        const noRejIns = "No reject instructions";
 
-    const lotReject = "THIS LOT IS REJECT";
-    const lotPass = "THIS LOT IS PASS";
-    const lotHold = "THIS LOT IS HOLD";
+        const lotReject = "THIS LOT IS REJECT";
+        const lotPass = "THIS LOT IS PASS";
+        const lotHold = "THIS LOT IS HOLD";
 
-    const iHcOK = "iHc variance OK";
-    const iHcNG = "Process right side with iHc variance more than 1500 Oe";
+        const iHcOK = "iHc variance OK";
+        const iHcNG = "Process right side with iHc variance more than 1500 Oe";
 
-    const rejectOKNG = ref([]);
-    const rejectInstruction = ref(null);
-    const rejectLotRemarks = ref([]);
-    const rejectiHcRemarks = ref(null);
+        const rejectOKNG = ref([]);
+        const rejectInstruction = ref(null);
+        const rejectLotRemarks = ref([]);
+        const rejectiHcRemarks = ref(null);
 
-    // Reject remarks variables end
->>>>>>> 2c7932ddca79010802222fcfecae2530d092bec7
+        // Reject remarks variables end
 
     const sampleWithVariances = ref([]);
     const getHighestSampleVariance = ref(null);
@@ -749,6 +1093,26 @@
     const xJsonOutput = ref(null);
     const yJsonOutput = ref(null);
     const rowCell = ref([]);
+
+    // set of new variables for the 2nd save ( the aggregates and remarks )
+
+    const saveBrRemarks = ref(null);
+    const save4paiIdRemarks = ref(null);
+    const saveIHcRemarks = ref(null);
+    const saveBHcRemarks = ref(null);
+    const saveBHMaxRemarks = ref(null);
+    const saveSquarenessRemarks = ref(null);
+    const save4paiIsRemarks = ref(null);
+    const saveIHkRemarks = ref(null);
+    const save4paiIaRemarks = ref(null);
+    const saveDensityRemarks = ref(null);
+    const saveIHkiHcRemarks = ref(null);
+    const saveBr4paiRemarks = ref(null);
+    const saveIHr95Remarks = ref(null);
+    const saveIHr98Remarks = ref(null);
+
+
+    // set of new variables for the 2nd save end
 
     // Store the file list when the input changes
     const storeFileList = (event) => {
@@ -762,6 +1126,11 @@
             console.error("No file selected! fileData is empty.");
             return; // Exit the function if fileData is empty
         }
+
+         // Sort the files alphabetically by their name
+        fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
+        console.log('Sorted Files:', fileData.value);
+
         layerTableRowLoading.value = true;
         fileData.value.forEach((file) => {
 
@@ -771,7 +1140,15 @@
                 const content = reader.result; // Read file content
                 const parsedData = parseFileContent(content); // Parse content
 
-                console.log('Parsed Data:', parsedData);
+                //console.log('Parsed Data:', parsedData);
+
+
+                // Dynamically handle rows based on the length of the file content
+                const lines = content.split("\n"); // Split content into lines (assuming newline delimiter)
+                const rows = lines.map(line => line.split("\t")); // Split each line by tabs (if TSV)
+
+                const numberOfRows = rows.length; // This gives the total number of rows in the file
+                console.log(`The file contains ${numberOfRows} rows.`);
 
                 // Map specific keys to extract relevant values
                 const dataKeysValue = [
@@ -793,14 +1170,22 @@
                     if (
                         parsedData.hasOwnProperty(key) &&
                         key.startsWith('data') &&
-                        parseInt(key.replace('data', ''), 10) >= 1700 &&
-                        parseInt(key.replace('data', ''), 10) <= 2050
+                        parseInt(key.replace('data', ''), 10) >= 150 && //Adjust
+                        parseInt(key.replace('data', ''), 10) <= numberOfRows
                     ) {
                         const [x, y] = parsedData[key].split(',').map(Number);
+
+                         // Custom condition: x must be less than 100 and y must be greater than -1000
+                        if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
+                            //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
+                            continue; // Skip this iteration if condition is not met
+                        }
+
                         xValues.push(x);
                         yValues.push(y);
                     }
                 }
+
 
                 xAxis.value = xValues;
                 yAxis.value = yValues;
@@ -815,9 +1200,26 @@
 
                 rowCell.value = newRowValues;
 
+                saveBrRemarks.value = parsedData.data25;
+                save4paiIdRemarks.value = parsedData.data28;
+                saveIHcRemarks.value = parsedData.data31;
+                saveBHcRemarks.value = parsedData.data34;
+                saveBHMaxRemarks.value = parsedData.data37;
+                saveSquarenessRemarks.value = parsedData.data40;
+                save4paiIsRemarks.value = parsedData.data43;
+                saveIHkRemarks.value = parsedData.data46;
+                save4paiIaRemarks.value = parsedData.data49;
+                saveDensityRemarks.value = parsedData.data52;
+                saveIHkiHcRemarks.value = parsedData.data55;
+                saveBr4paiRemarks.value = parsedData.data58;
+                saveIHr95Remarks.value = parsedData.data61;
+                saveIHr98Remarks.value = parsedData.data64;
+
                 const layerData = {
                     "date": rowCell.value[0],
                     "serial_no": serialNo.value,
+                    "furnace_id": currentFurnaceNo.value,
+                    "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
                     "type": rowCell.value[3],
@@ -857,20 +1259,20 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "Br_remarks": parsedData.data25,
-                    "4paiId_remarks": parsedData.data28,
-                    "iHc_remarks": parsedData.data31,
-                    "bHc_remarks": parsedData.data34,
-                    "BHMax_remarks": parsedData.data37,
-                    "Squareness_remarks": parsedData.data40,
-                    "4paiIs_remarks": parsedData.data43,
-                    "iHk_remarks": parsedData.data46,
-                    "4paiIa_remarks": parsedData.data49,
-                    "Density_remarks": parsedData.data52,
-                    "iHkiHc_remarks": parsedData.data55,
-                    "Br4pai_remarks": parsedData.data58,
-                    "iHr95_remarks": parsedData.data61,
-                    "iHr98_remarks": parsedData.data64,
+                    "Br_remarks": saveBrRemarks.value,
+                    "4paiId_remarks": save4paiIdRemarks.value,
+                    "iHc_remarks": saveIHcRemarks.value,
+                    "bHc_remarks": saveBHcRemarks.value,
+                    "BHMax_remarks": saveBHMaxRemarks.value,
+                    "Squareness_remarks": saveSquarenessRemarks.value,
+                    "4paiIs_remarks": save4paiIsRemarks.value,
+                    "iHk_remarks": saveIHkRemarks.value,
+                    "4paiIa_remarks": save4paiIaRemarks.value,
+                    "Density_remarks": saveDensityRemarks.value,
+                    "iHkiHc_remarks": saveIHkiHcRemarks.value,
+                    "Br4pai_remarks": saveBr4paiRemarks.value,
+                    "iHr95_remarks": saveIHr95Remarks.value,
+                    "iHr98_remarks": saveIHr98Remarks.value,
                 };
                 //console.log("Layer Data:", layerData);
 
@@ -917,7 +1319,7 @@
     const sendLayerData = async (layerData) => {
         try {
             const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response sendlayerdata:', response.data);
+            //console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         } finally {
@@ -927,12 +1329,13 @@
         }
     };
 
-    // Function to send raw data via PUT API
-    const saveAggregates = async (saveData) => {
-        try {
-            const response = await axios.put('/api/tpmdata', saveData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response:', response.data);
-        } catch (error) {
+    const saveAggregates = async (saveData) => {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
+        try {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
+            for (const id of getAllIDValues.value) {  // Loop through all IDs
+                const response = await axios.put(`/api/tpmdata/${id}`, saveData);
+                console.log(`API Response for ID ${id}:`, response.data);
+            }
+        } catch (error) {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
             console.error('Error sending data to API:', error.response?.data || error.message);
         }
     };
@@ -947,6 +1350,7 @@
     const tpmAggregateMax = ref([]); // Holds the aggregateFunctions array
     const tpmAggregateMin = ref([]); // Holds the aggregateFunctions array
     const combinedData = ref([]); // Holds the combined array
+    const getAllIDValues = ref([]);
 
     // Variables for aggregate
     const getAllBrValues = ref([]);
@@ -985,8 +1389,10 @@
             showProceed.value = false;
             showGraphAndTables.value = true;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
-            console.log('API Response showallData:', response.data);
+            //console.log('API Response showallData:', response.data);
+
             console.log('Serial No value = ', serialNo.value);
+
             items.value = response.data;
 
             // Extract arrays from the response
@@ -995,11 +1401,13 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            console.log('tpmData: ', tpmData.value);
-            console.log('tpmRemarks: ', tpmRemarks.value);
+            const responseID = tpmData.value.map(item => item.id);
+            //console.log('tpmData: ', tpmData.value);
+            console.log('test id val: ', responseID);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
+            getAllIDValues.value = combinedData.value.map(item => item.id);
             getAllBrValues.value = combinedData.value.map(item => item.Br || null);
             getAllBrRemarks.value = combinedData.value.map(item => item.remark.Br_remarks || null);
             getAlliHcValues.value = combinedData.value.map(item => item.iHc || null);
@@ -1027,7 +1435,7 @@
             getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
             getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
 
-            //console.log('tpmData: ', tpmData.value);
+            console.log('gettheIDs: ', getAllIDValues.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
 
             //get average function
@@ -1249,9 +1657,27 @@
 
             //ng conditions for NG remarks end...
 
-
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
+
+            const saveAggregateData = { // last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
+                "Br_remarks": saveBrRemarks.value,
+                "4paiId_remarks": save4paiIdRemarks.value,
+                "iHc_remarks": saveIHcRemarks.value,
+                "bHc_remarks": saveBHcRemarks.value,
+                "BHMax_remarks": saveBHMaxRemarks.value,
+                "Squareness_remarks": saveSquarenessRemarks.value,
+                "4paiIs_remarks": save4paiIsRemarks.value,
+                "iHk_remarks": saveIHkRemarks.value,
+                "4paiIa_remarks": save4paiIaRemarks.value,
+                "Density_remarks": saveDensityRemarks.value,
+                "iHkiHc_remarks": saveIHkiHcRemarks.value,
+                "Br4pai_remarks": saveBr4paiRemarks.value,
+                "iHr95_remarks": saveIHr95Remarks.value,
+                "iHr98_remarks": saveIHr98Remarks.value,
+            };
+
+            saveAggregates(saveAggregateData);
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -1273,7 +1699,7 @@ const fetchDataCreateGraph = async () => {
         const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
 
         // Log the response structure to check
-        console.log("API Response:", response.data);
+        //console.log("API Response:", response.data);
 
         const tableRows = response.data.data; // Assuming API returns an array of rows
 
@@ -1306,8 +1732,8 @@ const generateColor = (index) => {
 const renderChart = () => {
     const ctx = document.getElementById("myChart").getContext("2d");
 
-    const x_offset = 4000; // The amount to offset subsequent datasets
-    const y_offset = 6000; // The amount to offset subsequent datasets
+    const x_offset = 1000; // The amount to offset subsequent datasets
+    const y_offset = 2500; // The amount to offset subsequent datasets
 
     const chartDatasets = datasets.value.map((dataset, index) => {
         return {
@@ -1327,7 +1753,20 @@ const renderChart = () => {
     new Chart(ctx, {
         type: "line",
         data: {
-            datasets: chartDatasets,
+            datasets: chartDatasets.map(dataset => ({
+                ...dataset, // Copy over existing dataset properties
+                pointRadius: 0, // Increase point size for better visibility
+                tension: 0.6,
+            })),
+            /*
+            datasets: chartDatasets.map(dataset => ({
+                ...dataset, // Copy over existing dataset properties
+                pointRadius: 3, // Increase point size for better visibility
+                pointHoverRadius: 4, // Hover radius
+                tension: 0.8, // Slightly reduced tension for smoother line
+                borderWidth: 4, // Thicker line
+            })),
+            */
         },
         options: {
             responsive: true,
@@ -1351,8 +1790,12 @@ const renderChart = () => {
                     },
                     title: {
                         display: true,
-                        text: "X-Axis",
+                        text: "←  kOe  →",
                         color: "#333",
+                        font: {
+                            size: 22,  // Increase font size
+                            weight: "bold", // Make it bold
+                        },
                     },
                     ticks: {
                         display: false, // Hides the values
@@ -1366,8 +1809,12 @@ const renderChart = () => {
                     },
                     title: {
                         display: true,
-                        text: "Y-Axis",
+                        text: "←  kG  →",
                         color: "#333",
+                        font: {
+                            size: 22,  // Increase font size
+                            weight: "bold", // Make it bold
+                        },
                     },
                     ticks: {
                         display: false, // Hides the values
