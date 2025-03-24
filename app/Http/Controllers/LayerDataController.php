@@ -14,10 +14,10 @@ class LayerDataController extends Controller
     public function index(Request $request)
     {
         $layer_no = $request->query("layer");
-        $furnace_no = $request->query("furnace");
-        if($layer_no && $furnace_no){
+        $furnace_id = $request->query("furnace");
+        if($layer_no && $furnace_id){
             try{
-                $layerData = LayerData::where(['furnace_id', 'layer_no'],  [$furnace_no, $layer_no])->get();
+                $layerData = LayerData::where(['furnace_id', 'layer_no'],  [$furnace_id, $layer_no])->get();
 
                 if(!$layerData->isEmpty()){
                     return response()->json([

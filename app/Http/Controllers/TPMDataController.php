@@ -42,7 +42,9 @@ class TPMDataController extends Controller
         }else{
             try{
                 $tpmData = TPMData::with($report ? ['remark', 'aggregateFunctions', 'reportData'] : ['remark', 'aggregateFunctions'])
-                                    ->where('serial_no',  $serial_no)->get();
+                                    ->where('serial_no',  $serial_no)
+                                    ->orderBy('zone', 'asc')
+                                    ->get();
 
                 if(!$tpmData->isEmpty()){
 
@@ -110,7 +112,7 @@ class TPMDataController extends Controller
                 'press_2' => $request->input('press_2', null),
                 'machine_no' => $request->input('machine_no', null),
                 'sintering_furnace_no' => $request->input('sintering_furnace_no', null),
-                'furnace_no' => $request->input('furnace_no', null),
+                'furnace_id' => $request->input('furnace_id', null),
                 'zone' => $request->input('zone', null),
                 'pass_no' => $request->input('pass_no', null),
                 'Br' => $request->input('Br', null),
