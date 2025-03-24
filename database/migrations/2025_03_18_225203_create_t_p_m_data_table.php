@@ -55,6 +55,9 @@ return new class extends Migration
             $table->string('HRO')->nullable();
             $table->json('x')->nullable();
             $table->json('y')->nullable();
+            $table->unsignedBigInteger('furnace_id')->nullable();
+            $table->unsignedBigInteger('layer_no')->nullable();
+            $table->foreign('furnace_id')->references('furnace_id')->on('furnace_data')->onUpdate('cascade');
         });
 
         Schema::create('tpm_data_remarks', function (Blueprint $table) {
