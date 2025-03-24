@@ -611,6 +611,7 @@
             }
 
             currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
+            currentFurnaceNo.value = currentFurnaceNoForLayer.value;
             console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
             // 🔍 **Filter the data
             const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
@@ -652,13 +653,13 @@
 
             if (foundFurnace) {
                 console.log("Furnace found:", foundFurnace);
-                return foundFurnace.furnace_id; // Return the furnace_no
+                return foundFurnace.furnace_id; // Return the furnace_id
             } else {
                 console.warn("Furnace not found:", furnaceName);
                 return null;
             }
         } catch (error) {
-            console.error("Error fetching furnace_no:", error);
+            console.error("Error fetching furnace_id:", error);
             return null;
         }
     };
@@ -1222,7 +1223,7 @@
                 const layerData = {
                     "date": rowCell.value[0],
                     "serial_no": serialNo.value,
-                    "furnace_no": currentFurnaceNo.value,
+                    "furnace_id": currentFurnaceNo.value,
                     "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
@@ -1263,8 +1264,6 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "furnace_id": "",
-                    "layer_no": "",
                     "Br_remarks": saveBrRemarks.value,
                     "4paiId_remarks": save4paiIdRemarks.value,
                     "iHc_remarks": saveIHcRemarks.value,
@@ -1396,9 +1395,6 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            const responseID = tpmData.value.map(item => item.id);
-            //console.log('tpmData: ', tpmData.value);
-            console.log('test id val: ', responseID);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
