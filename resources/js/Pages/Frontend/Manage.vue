@@ -1329,17 +1329,6 @@
         }
     };
 
-    const saveAggregates = async (saveData) => {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
-        try {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
-            for (const id of getAllIDValues.value) {  // Loop through all IDs
-                const response = await axios.put(`/api/tpmdata/${id}`, saveData);
-                console.log(`API Response for ID ${id}:`, response.data);
-            }
-        } catch (error) {// last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
-            console.error('Error sending data to API:', error.response?.data || error.message);
-        }
-    };
-
     //const selectedFileID = ref(null); // Store the latest item
     // Reactive variables
     const layerTableRowLoading = ref(false);
@@ -1660,25 +1649,6 @@
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
 
-            const saveAggregateData = { // last note try tomorrow saveData.Br_remarks use the ID concept so no loop needed
-                "Br_remarks": saveBrRemarks.value,
-                "4paiId_remarks": save4paiIdRemarks.value,
-                "iHc_remarks": saveIHcRemarks.value,
-                "bHc_remarks": saveBHcRemarks.value,
-                "BHMax_remarks": saveBHMaxRemarks.value,
-                "Squareness_remarks": saveSquarenessRemarks.value,
-                "4paiIs_remarks": save4paiIsRemarks.value,
-                "iHk_remarks": saveIHkRemarks.value,
-                "4paiIa_remarks": save4paiIaRemarks.value,
-                "Density_remarks": saveDensityRemarks.value,
-                "iHkiHc_remarks": saveIHkiHcRemarks.value,
-                "Br4pai_remarks": saveBr4paiRemarks.value,
-                "iHr95_remarks": saveIHr95Remarks.value,
-                "iHr98_remarks": saveIHr98Remarks.value,
-            };
-
-            ///saveAggregates(saveAggregateData);
-
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -1798,7 +1768,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: false, // Hides the values
+                        display: true, // Hides the values
                     },
                 },
                 y: {
@@ -1817,7 +1787,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: false, // Hides the values
+                        display: true, // Hides the values
                     },
                 },
             },
