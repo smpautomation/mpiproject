@@ -12,10 +12,10 @@ class FurnaceData extends Model
     protected $guarded = [];
     public function tpmData()
     {
-        return $this->belongsTo(TPMData::class, 'furnace_no', 'furnace_no'); // foreign key
+        return $this->belongsTo(TPMData::class, 'furnace_id', 'furnace_id'); // foreign key
     }
     public function layerData()
     {
-        return $this->hasMany(LayerData::class,'furnace_no','furnace_no');
+        return $this->hasMany(LayerData::class,'furnace_id','furnace_id');
     }
 }
