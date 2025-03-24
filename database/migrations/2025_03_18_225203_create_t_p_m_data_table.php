@@ -55,8 +55,8 @@ return new class extends Migration
             $table->string('HRO')->nullable();
             $table->json('x')->nullable();
             $table->json('y')->nullable();
-            $table->unsignedBigInteger('furnace_id')->nullable();
-            $table->unsignedBigInteger('layer_no')->nullable();
+            $table->unsignedBigInteger('furnace_id');
+            $table->unsignedBigInteger('layer_no');
             $table->foreign('furnace_id')->references('furnace_id')->on('furnace_data')->onUpdate('cascade');
         });
 
