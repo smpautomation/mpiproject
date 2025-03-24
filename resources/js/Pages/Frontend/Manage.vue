@@ -1677,7 +1677,7 @@
                 "iHr98_remarks": saveIHr98Remarks.value,
             };
 
-            saveAggregates(saveAggregateData);
+            ///saveAggregates(saveAggregateData);
 
         } catch (error) {
             console.error('Error fetching data:', error);
