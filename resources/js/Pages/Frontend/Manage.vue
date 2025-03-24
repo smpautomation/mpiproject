@@ -1222,7 +1222,7 @@
                 const layerData = {
                     "date": rowCell.value[0],
                     "serial_no": serialNo.value,
-                    "furnace_id": currentFurnaceNo.value,
+                    "furnace_no": currentFurnaceNo.value,
                     "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
@@ -1263,6 +1263,8 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
+                    "furnace_id": "",
+                    "layer_no": "",
                     "Br_remarks": saveBrRemarks.value,
                     "4paiId_remarks": save4paiIdRemarks.value,
                     "iHc_remarks": saveIHcRemarks.value,
