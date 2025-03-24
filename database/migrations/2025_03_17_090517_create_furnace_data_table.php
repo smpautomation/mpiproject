@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('furnace_data', function (Blueprint $table) {
             $table->id('furnace_id');
-            $table->string('furnace_name');
-            $table->string('description');
+            $table->string('furnace_name')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

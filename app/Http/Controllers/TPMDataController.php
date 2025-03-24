@@ -112,7 +112,7 @@ class TPMDataController extends Controller
                 'press_2' => $request->input('press_2', null),
                 'machine_no' => $request->input('machine_no', null),
                 'sintering_furnace_no' => $request->input('sintering_furnace_no', null),
-                'furnace_id' => $request->input('furnace_id', null),
+                'furnace_no' => $request->input('furnace_no', null),
                 'zone' => $request->input('zone', null),
                 'pass_no' => $request->input('pass_no', null),
                 'Br' => $request->input('Br', null),
@@ -143,7 +143,9 @@ class TPMDataController extends Controller
                 'HR' => $request->input('HR', null),
                 'HRO' => $request->input('HRO', null),
                 'x' => $request->input('x', null),
-                'y' => $request->input('y', null)
+                'y' => $request->input('y', null),
+                'furnace_id' => $request->input('furnace_id', null),
+                'layer_no' => $request->input('layer_no', null)
             ];
             $tpmData = TPMData::create($tpmDataInputs);
             $remarkData = [

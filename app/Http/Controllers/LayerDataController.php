@@ -18,7 +18,6 @@ class LayerDataController extends Controller
         if($layer_no && $furnace_id){
             try{
                 $layerData = LayerData::where(['furnace_id', 'layer_no'],  [$furnace_id, $layer_no])->get();
-
                 if(!$layerData->isEmpty()){
                     return response()->json([
                         'status' => true,

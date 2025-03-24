@@ -1772,7 +1772,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: false, // Hides the values
+                        display: true, // Hides the values
                     },
                 },
                 y: {
@@ -1791,7 +1791,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: false, // Hides the values
+                        display: true, // Hides the values
                     },
                 },
             },

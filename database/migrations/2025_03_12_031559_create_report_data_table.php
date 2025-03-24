@@ -26,7 +26,7 @@ return new class extends Migration
             $table->json('magnetic_property_data')->nullable();
             $table->json('standard_sample_dimension_and_material_grade')->nullable();
             $table->json('br_cpk')->nullable();
-            $table->foreign('tpm_data_id')->references('id')->on('report_data')->onDelete('cascade');
+            //$table->foreign('tpm_data_id')->references('id')->on('report_data')->onDelete('cascade'); removed temporarily, due to getting sql error constraints
         });
 
     }
