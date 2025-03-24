@@ -10,11 +10,11 @@ class FurnaceDataController extends Controller
 {
     public function index(Request $request)
     {
-        $furnace_no = $request->query("furnace");
-        if($furnace_no){
+        $furnace_id = $request->query("furnace");
+        if($furnace_id){
             try{
                 $furnaceData = FurnaceData::with(['layerData'])
-                                    ->where('furnace_no',  $furnace_no)->get();
+                                    ->where('furnace_id',  $furnace_id)->get();
 
                 if(!$furnaceData->isEmpty()){
 
