@@ -1383,7 +1383,7 @@
             showProceed.value = false;
             showGraphAndTables.value = true;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
-            //console.log('API Response showallData:', response.data);
+            console.log('API Response showallData:', response.data);
 
             console.log('Serial No value = ', serialNo.value);
 
@@ -1566,6 +1566,73 @@
             ng4pails.value = calculateSum(getAll4pailsRemarks.value);
             ng4paila.value = calculateSum(getAll4pailaRemarks.value);
 
+            const aggregateData = {
+                "aggregate_functions": {
+                    "average": {
+                        "Br": aveBr.value,
+                        "bHc": avebHc.value,
+                        "iHc": aveiHc.value,
+                        "iHk": aveiHk.value,
+                        "Hr95": aveiHr95.value,
+                        "Hr98": aveiHr98.value,
+                        "BHMax": aveBHMax.value,
+                        "4paila": ave4paila.value,
+                        "4paild": ave4paild.value,
+                        "4pails": ave4pails.value,
+                        "Br4pai": aveBr4pai.value,
+                        "iHciHk": aveiHciHk.value,
+                        "Squareness": aveSquareness.value
+                    },
+                    "maximum": {
+                        "Br": maxBr.value,
+                        "bHc": maxbHc.value,
+                        "iHc": maxiHc.value,
+                        "iHk": maxiHk.value,
+                        "Hr95": maxiHr95.value,
+                        "Hr98": maxiHr98.value,
+                        "BHMax": maxBHMax.value,
+                        "4paila": max4paila.value,
+                        "4paild": max4paild.value,
+                        "4pails": max4pails.value,
+                        "Br4pai": maxBr4pai.value,
+                        "iHciHk": maxiHciHk.value,
+                        "Squareness": maxSquareness.value
+                    },
+                    "minimum": {
+                        "Br": minBr.value,
+                        "bHc": minbHc.value,
+                        "iHc": miniHc.value,
+                        "iHk": miniHk.value,
+                        "Hr95": miniHr95.value,
+                        "Hr98": miniHr98.value,
+                        "BHMax": minBHMax.value,
+                        "4paila": min4paila.value,
+                        "4paild": min4paild.value,
+                        "4pails": min4pails.value,
+                        "Br4pai": minBr4pai.value,
+                        "iHciHk": miniHciHk.value,
+                        "Squareness": minSquareness.value
+                    },
+                    "ng_counter": {
+                        "Br": ngBr.value,
+                        "bHc": ngbHc.value,
+                        "iHc": ngiHc.value,
+                        "iHk": ngiHk.value,
+                        "Hr95": ngiHr95.value,
+                        "Hr98": ngiHr98.value,
+                        "BHMax": ngBHMax.value,
+                        "4paila": ng4paila.value,
+                        "4paild": ng4paild.value,
+                        "4pails": ng4pails.value,
+                        "Br4pai": ngBr4pai.value,
+                        "iHciHk": ngiHciHk.value,
+                        "Squareness": ngSquareness.value
+                    }
+                }
+            };
+
+            sendAggregateData(aggregateData);
+
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
 
@@ -1660,6 +1727,15 @@
         }
 
         fetchDataCreateGraph();
+    };
+
+    const sendAggregateData = async (aggData) => {
+        try {
+            const response = await axios.patch('/api/tpmdata', aggData);
+            console.log('API Response sendAggregateData:', response.data);
+        } catch (error) {
+            console.error('Error sending data to API:', error.response?.data || error.message);
+        }
     };
 
 // State for storing fetched data and error
