@@ -72,17 +72,17 @@ class TPMDataController extends Controller
 
     public function show($id){
         try{
-            $tpmData = TPMData::with(['remark', 'aggregateFunctions'])
+            $tpmData = TPMData::with(['remark'])
                                 ->find($id);
 
             if(!empty($tpmData)){
                 $remark = $tpmData->remark ?? 'No remark available';
-                $tpmAggragateFunctions = $tpmData->aggregateFunctions ?? 'No aggregate functions available';
+                $tpmAggregateData = TPMDataAggregateFunctions::where('serial_no', $tpmData->serial_no)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'TPM data found successfully',
-                    'data' => $tpmData
+                    'data' => $tpmData, $tpmAggregateData
                 ], 200);
             }else{
                 return response()->json([
