@@ -3,6 +3,10 @@
       <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
         <div>This is the Reports page</div>
 
+        <div>
+
+        </div>
+
         <!-- Report Content -->
             <div class="flex flex-col justify-center py-10 mx-20 my-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row mb-4 justify-evenly">
