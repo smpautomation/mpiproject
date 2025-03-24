@@ -8,6 +8,7 @@ use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
 
 class TPMDataController extends Controller
@@ -179,25 +180,31 @@ class TPMDataController extends Controller
                 'HRO_remarks' => $request->input('HRO_remarks', null),
             ];
             $remark = TPMDataRemark::create($remarkData);
-            $tpmAggragateFunctionsInput = [
-                'tpm_data_id' => $tpmData->id,
-                'average' => $request->input('average', null),
-                'maximum' => $request->input('maximum', null),
-                'minimum' => $request->input('minimum', null),
-                'ng_counter' => $request->input('ng_counter', null)
-            ];
-            $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
+            $checkTpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkTpmDataAggregateFunctions){
+                try{
+                    $tpmAggragateFunctionsInput = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                        'average' => $request->input('average', null),
+                        'maximum' => $request->input('maximum', null),
+                        'minimum' => $request->input('minimum', null),
+                        'ng_counter' => $request->input('ng_counter', null)
+                    ];
+                    $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput); 
+                }catch(\Exception $e){
+
+                }          
+            }
             $reportData = [
                 'tpm_data_id' => $tpmData->id,
             ];
             $report = ReportData::create($reportData);
 
             DB::commit();
-
             return response()->json([
                 'status' => true,
                 'message' => 'tmp Data created successfully',
-                'data' => [$tpmData, $remark, $tpmAggragateFunctions]
+                'data' => [$tpmData, $remark, $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions]
             ], 201);
         }catch(\Exception $e){
             // If an error occurs, roll back the transaction
@@ -205,7 +212,7 @@ class TPMDataController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Error creating tmp Data and remark',
+                'message' => 'Error creating TPM Data and remark',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -329,9 +336,8 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $tpmData = TPMData::findorfail( $id );
-
-            $aggregateFunctions = $tpmData->aggregateFunctions;
+            $aggregateFunctions = TPMDataAggregateFunctions::where( 'tpm_data_serial',$id )
+                                ->first();
             $aggregateFields = $request->all();
             $aggregateFunctions->update($aggregateFields);
 
@@ -340,7 +346,7 @@ class TPMDataController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Aggregate Functions updated successfully',
-                'data' => $tpmData->aggregateFunctions
+                'data' => $aggregateFunctions
             ], 200);
 
         } catch (\Exception $e) {
