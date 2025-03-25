@@ -4,7 +4,7 @@
             <div class="flex flex-col items-center justify-center mt-12 font-bold ">This is the inspection page.</div>
             <div class="flex items-center justify-center m-10 bg-gray-100">
                 <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
-                    <thead class="text-white bg-gradient-to-r from-orange-300 to-orange-500">
+                    <thead class="text-white bg-gradient-to-l from-orange-300 to-orange-500">
                         <tr>
                             <th class="px-4 py-2 text-center border">Model</th>
                             <th class="px-4 py-2 text-center border">L</th>
