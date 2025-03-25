@@ -611,6 +611,7 @@
             }
 
             currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
+            currentFurnaceNo.value = currentFurnaceNoForLayer.value;
             console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
             // 🔍 **Filter the data
             const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
