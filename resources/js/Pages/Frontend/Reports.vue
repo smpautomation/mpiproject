@@ -3,9 +3,14 @@
       <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
         <div>This is the Reports page</div>
 
-        <div>
+        <div class="flex flex-row items-center m-10">
             <p>Select Serial No: </p>
-            <p>test</p>
+            <select class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
         </div>
 
         <!-- Report Content -->
