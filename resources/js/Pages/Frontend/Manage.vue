@@ -611,6 +611,7 @@
             }
 
             currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
+            currentFurnaceNo.value = currentFurnaceNoForLayer.value;
             console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
             // 🔍 **Filter the data
             const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
@@ -652,13 +653,13 @@
 
             if (foundFurnace) {
                 console.log("Furnace found:", foundFurnace);
-                return foundFurnace.furnace_id; // Return the furnace_no
+                return foundFurnace.furnace_id; // Return the furnace_id
             } else {
                 console.warn("Furnace not found:", furnaceName);
                 return null;
             }
         } catch (error) {
-            console.error("Error fetching furnace_no:", error);
+            console.error("Error fetching furnace_id:", error);
             return null;
         }
     };
@@ -772,40 +773,52 @@
             const tpmData = response.data.data.tpmData || [];  // Fallback to an empty array if undefined
 
             if (tpmData.length > 0) {
-                // Step 2: Loop through tpmData to find serial_no values and find the maximum serial_no
-                const serialNumbers = tpmData.map(item => item.serial_no).filter(serial => serial);  // Get all serial_no values
-                // Step 3: Find the highest serial number
-                const highestSerial = serialNumbers.reduce((max, current) => {
-                    return parseInt(current.slice(4), 10) > parseInt(max.slice(4), 10) ? current : max;
-                });
+                // Step 2: Loop through tpmData to find serial_no values and filter out invalid serial numbers
+                const serialNumbers = tpmData
+                    .map(item => item.serial_no)
+                    .filter(serial => typeof serial === 'number');  // Ensure serial_no is a number
 
-                const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
-                const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
+                if (serialNumbers.length > 0) {
+                    // Step 3: Find the highest serial number (no need for slice, handle it as a full number)
+                    const highestSerial = serialNumbers.reduce((max, current) => {
+                        return current > max ? current : max;  // Compare the numbers directly
+                    });
 
-                // Extract numeric part of the serial number and increment by 1
-                const numericPart = parseInt(highestSerial.slice(4), 10);
-                const newSerialNumber = numericPart + 1;
+                    const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
+                    const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
 
-                // Generate the new serial number with zero-padding
-                const paddedNumber = newSerialNumber.toString().padStart(6, "0");
+                    // Extract the numeric part of the serial number (last part after year and month)
+                    const numericPart = highestSerial.toString().slice(4);  // Take everything after the first 4 digits (YYYYMM)
+                    const newNumericPart = parseInt(numericPart, 10) + 1; // Increment the numeric part
 
-                // Combine year, month, and the new incremented serial number
-                serialNo.value = `${year}${month}${paddedNumber}`;
+                    // Ensure the new numeric part is padded to 6 digits (e.g., 000001)
+                    const paddedNumericPart = newNumericPart.toString().padStart(6, "0");
 
-                console.log('Generated Serial Number:', serialNo.value);
-                //alert(`Generated Serial Number: ${//serialNo.value}`);
+                    // Combine year, month, and the new incremented serial number
+                    serialNo.value = `${year}${month}${paddedNumericPart}`;
+
+                    console.log('Generated Serial Number:', serialNo.value);
+                } else {
+                    // Step 4: If no valid serial number exists, generate the first one
+                    const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
+                    const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
+
+                    // Start with 1 if there's no serial number in the database
+                    const firstSerialNumber = '000001';
+
+                    // Generate the first serial number
+                    serialNo.value = `${year}${month}${firstSerialNumber}`;
+
+                    console.log('Generated First Serial Number:', serialNo.value);
+                    alert(`Generated First Serial Number: ${serialNo.value}`);
+                }
             } else {
-                // Step 4: If no serial number exists, generate the first one
+                // Handle case where there's no data
+                console.log('No data available in tpmData');
                 const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
-
-                // Start with 1 if there's no serial number in the database
                 const firstSerialNumber = '000001';
-
-                // Generate the first serial number
                 serialNo.value = `${year}${month}${firstSerialNumber}`;
-
-                console.log('Generated First Serial Number:', serialNo.value);
                 alert(`Generated First Serial Number: ${serialNo.value}`);
             }
         } catch (error) {
@@ -876,11 +889,15 @@
         }
     };
 
-    const saveNewLayer = () => {
-        currentLayerNo.value = getLayerNoByName(currentLayerName.value);
-        console.log("Current layer no : ", currentLayerNo.value);
-        alert('New Layer Added');
-    }
+    const saveNewLayer = async () => {
+        try {
+            currentLayerNo.value = await getLayerNoByName(currentLayerName.value);
+            console.log("Current layer no from save new layer: ", currentLayerNo.value);
+            alert('New Layer Added');
+        } catch (error) {
+            console.error('Error fetching layer number:', error);
+        }
+    };
 
     //New Furnace , New Layers end
 
@@ -1218,8 +1235,6 @@
                 const layerData = {
                     "date": rowCell.value[0],
                     "serial_no": serialNo.value,
-                    "furnace_no": currentFurnaceNo.value,
-                    "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
                     "type": rowCell.value[3],
@@ -1259,8 +1274,8 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "furnace_id": "",
-                    "layer_no": "",
+                    "furnace_id": currentFurnaceNo.value,
+                    "layer_no": currentLayerNo.value,
                     "Br_remarks": saveBrRemarks.value,
                     "4paiId_remarks": save4paiIdRemarks.value,
                     "iHc_remarks": saveIHcRemarks.value,
@@ -1276,7 +1291,7 @@
                     "iHr95_remarks": saveIHr95Remarks.value,
                     "iHr98_remarks": saveIHr98Remarks.value,
                 };
-                //console.log("Layer Data:", layerData);
+                console.log("Layer Data:", layerData);
 
                 sendLayerData(layerData); // Send the parsed data to the server
             };
@@ -1380,7 +1395,7 @@
             showProceed.value = false;
             showGraphAndTables.value = true;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
-            //console.log('API Response showallData:', response.data);
+            console.log('API Response showallData:', response.data);
 
             console.log('Serial No value = ', serialNo.value);
 
@@ -1392,9 +1407,6 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            const responseID = tpmData.value.map(item => item.id);
-            //console.log('tpmData: ', tpmData.value);
-            console.log('test id val: ', responseID);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
@@ -1565,6 +1577,72 @@
             ng4paild.value = calculateSum(getAll4paildRemarks.value);
             ng4pails.value = calculateSum(getAll4pailsRemarks.value);
             ng4paila.value = calculateSum(getAll4pailaRemarks.value);
+
+            const aggregateData = {
+                "aggregate_functions": {
+                    "average": {
+                        "Br": aveBr.value,
+                        "bHc": avebHc.value,
+                        "iHc": aveiHc.value,
+                        "iHk": aveiHk.value,
+                        "Hr95": aveiHr95.value,
+                        "Hr98": aveiHr98.value,
+                        "BHMax": aveBHMax.value,
+                        "4paila": ave4paila.value,
+                        "4paild": ave4paild.value,
+                        "4pails": ave4pails.value,
+                        "Br4pai": aveBr4pai.value,
+                        "iHciHk": aveiHciHk.value,
+                        "Squareness": aveSquareness.value
+                    },
+                    "maximum": {
+                        "Br": maxBr.value,
+                        "bHc": maxbHc.value,
+                        "iHc": maxiHc.value,
+                        "iHk": maxiHk.value,
+                        "Hr95": maxiHr95.value,
+                        "Hr98": maxiHr98.value,
+                        "BHMax": maxBHMax.value,
+                        "4paila": max4paila.value,
+                        "4paild": max4paild.value,
+                        "4pails": max4pails.value,
+                        "Br4pai": maxBr4pai.value,
+                        "iHciHk": maxiHciHk.value,
+                        "Squareness": maxSquareness.value
+                    },
+                    "minimum": {
+                        "Br": minBr.value,
+                        "bHc": minbHc.value,
+                        "iHc": miniHc.value,
+                        "iHk": miniHk.value,
+                        "Hr95": miniHr95.value,
+                        "Hr98": miniHr98.value,
+                        "BHMax": minBHMax.value,
+                        "4paila": min4paila.value,
+                        "4paild": min4paild.value,
+                        "4pails": min4pails.value,
+                        "Br4pai": minBr4pai.value,
+                        "iHciHk": miniHciHk.value,
+                        "Squareness": minSquareness.value
+                    },
+                    "ng_counter": {
+                        "Br": ngBr.value,
+                        "bHc": ngbHc.value,
+                        "iHc": ngiHc.value,
+                        "iHk": ngiHk.value,
+                        "Hr95": ngiHr95.value,
+                        "Hr98": ngiHr98.value,
+                        "BHMax": ngBHMax.value,
+                        "4paila": ng4paila.value,
+                        "4paild": ng4paild.value,
+                        "4pails": ng4pails.value,
+                        "Br4pai": ngBr4pai.value,
+                        "iHciHk": ngiHciHk.value,
+                        "Squareness": ngSquareness.value
+                    }
+                }
+            };
+
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
