@@ -1135,7 +1135,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const storeFileList = (event) => {
         fileData.value = Array.from(event.target.files);
         fileLists.value = fileData.value.map(file => file.name); // Extract and store file names
-        console.log('Files stored:', fileData.value);
+        //console.log('Files stored:', fileData.value);
     };
 
     const saveToDatabase = () => {
@@ -1146,7 +1146,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
          // Sort the files alphabetically by their name
         fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
-        console.log('Sorted Files:', fileData.value);
+        //console.log('Sorted Files:', fileData.value);
 
         layerTableRowLoading.value = true;
         fileData.value.forEach((file) => {
@@ -1165,7 +1165,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 const rows = lines.map(line => line.split("\t")); // Split each line by tabs (if TSV)
 
                 const numberOfRows = rows.length; // This gives the total number of rows in the file
-                console.log(`The file contains ${numberOfRows} rows.`);
+                //console.log(`The file contains ${numberOfRows} rows.`);
 
                 // Map specific keys to extract relevant values
                 const dataKeysValue = [
@@ -1291,7 +1291,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     "iHr95_remarks": saveIHr95Remarks.value,
                     "iHr98_remarks": saveIHr98Remarks.value,
                 };
-                console.log("Layer Data:", layerData);
+                //console.log("Layer Data:", layerData);
 
                 sendLayerData(layerData); // Send the parsed data to the server
             };
@@ -1359,6 +1359,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const getAllIDValues = ref([]);
 
     // Variables for aggregate
+    const getAggregateID = ref([]);
+
     const getAllBrValues = ref([]);
     const getAllBrRemarks = ref([]);
     const getAlliHcValues = ref([]);
@@ -1404,13 +1406,12 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             // Extract arrays from the response
             tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
             tpmRemarks.value = response.data.remark || [];
+            getAggregateID.value = response.data[0][0].id || [];
+            console.log("Aggregate ID: ", getAggregateID.value);
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            const responseID = tpmData.value.map(item => item.id);
-            //console.log('tpmData: ', tpmData.value);
-            console.log('test id val: ', responseID);
-            console.log('Combined Data: ', combinedData.value);
+            //console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
             getAllIDValues.value = combinedData.value.map(item => item.id);
@@ -1441,7 +1442,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
             getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
 
-            console.log('gettheIDs: ', getAllIDValues.value);
+            //console.log('gettheIDs: ', getAllIDValues.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
 
             //get average function
@@ -1582,69 +1583,70 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             ng4paila.value = calculateSum(getAll4pailaRemarks.value);
 
             const aggregateData = {
-                "aggregate_functions": {
-                    "average": {
-                        "Br": aveBr.value,
-                        "bHc": avebHc.value,
-                        "iHc": aveiHc.value,
-                        "iHk": aveiHk.value,
-                        "Hr95": aveiHr95.value,
-                        "Hr98": aveiHr98.value,
-                        "BHMax": aveBHMax.value,
-                        "4paila": ave4paila.value,
-                        "4paild": ave4paild.value,
-                        "4pails": ave4pails.value,
-                        "Br4pai": aveBr4pai.value,
-                        "iHciHk": aveiHciHk.value,
-                        "Squareness": aveSquareness.value
-                    },
-                    "maximum": {
-                        "Br": maxBr.value,
-                        "bHc": maxbHc.value,
-                        "iHc": maxiHc.value,
-                        "iHk": maxiHk.value,
-                        "Hr95": maxiHr95.value,
-                        "Hr98": maxiHr98.value,
-                        "BHMax": maxBHMax.value,
-                        "4paila": max4paila.value,
-                        "4paild": max4paild.value,
-                        "4pails": max4pails.value,
-                        "Br4pai": maxBr4pai.value,
-                        "iHciHk": maxiHciHk.value,
-                        "Squareness": maxSquareness.value
-                    },
-                    "minimum": {
-                        "Br": minBr.value,
-                        "bHc": minbHc.value,
-                        "iHc": miniHc.value,
-                        "iHk": miniHk.value,
-                        "Hr95": miniHr95.value,
-                        "Hr98": miniHr98.value,
-                        "BHMax": minBHMax.value,
-                        "4paila": min4paila.value,
-                        "4paild": min4paild.value,
-                        "4pails": min4pails.value,
-                        "Br4pai": minBr4pai.value,
-                        "iHciHk": miniHciHk.value,
-                        "Squareness": minSquareness.value
-                    },
-                    "ng_counter": {
-                        "Br": ngBr.value,
-                        "bHc": ngbHc.value,
-                        "iHc": ngiHc.value,
-                        "iHk": ngiHk.value,
-                        "Hr95": ngiHr95.value,
-                        "Hr98": ngiHr98.value,
-                        "BHMax": ngBHMax.value,
-                        "4paila": ng4paila.value,
-                        "4paild": ng4paild.value,
-                        "4pails": ng4pails.value,
-                        "Br4pai": ngBr4pai.value,
-                        "iHciHk": ngiHciHk.value,
-                        "Squareness": ngSquareness.value
-                    }
-                }
+                "average": JSON.stringify({
+                    "Br": aveBr.value,
+                    "bHc": avebHc.value,
+                    "iHc": aveiHc.value,
+                    "iHk": aveiHk.value,
+                    "Hr95": aveiHr95.value,
+                    "Hr98": aveiHr98.value,
+                    "BHMax": aveBHMax.value,
+                    "4paila": ave4paila.value,
+                    "4paild": ave4paild.value,
+                    "4pails": ave4pails.value,
+                    "Br4pai": aveBr4pai.value,
+                    "iHciHk": aveiHciHk.value,
+                    "Squareness": aveSquareness.value
+                }),
+                "maximum": JSON.stringify({
+                    "Br": maxBr.value,
+                    "bHc": maxbHc.value,
+                    "iHc": maxiHc.value,
+                    "iHk": maxiHk.value,
+                    "Hr95": maxiHr95.value,
+                    "Hr98": maxiHr98.value,
+                    "BHMax": maxBHMax.value,
+                    "4paila": max4paila.value,
+                    "4paild": max4paild.value,
+                    "4pails": max4pails.value,
+                    "Br4pai": maxBr4pai.value,
+                    "iHciHk": maxiHciHk.value,
+                    "Squareness": maxSquareness.value
+                }),
+                "minimum": JSON.stringify({
+                    "Br": minBr.value,
+                    "bHc": minbHc.value,
+                    "iHc": miniHc.value,
+                    "iHk": miniHk.value,
+                    "Hr95": miniHr95.value,
+                    "Hr98": miniHr98.value,
+                    "BHMax": minBHMax.value,
+                    "4paila": min4paila.value,
+                    "4paild": min4paild.value,
+                    "4pails": min4pails.value,
+                    "Br4pai": minBr4pai.value,
+                    "iHciHk": miniHciHk.value,
+                    "Squareness": minSquareness.value
+                }),
+                "ng_counter": JSON.stringify({
+                    "Br": ngBr.value,
+                    "bHc": ngbHc.value,
+                    "iHc": ngiHc.value,
+                    "iHk": ngiHk.value,
+                    "Hr95": ngiHr95.value,
+                    "Hr98": ngiHr98.value,
+                    "BHMax": ngBHMax.value,
+                    "4paila": ng4paila.value,
+                    "4paild": ng4paild.value,
+                    "4pails": ng4pails.value,
+                    "Br4pai": ngBr4pai.value,
+                    "iHciHk": ngiHciHk.value,
+                    "Squareness": ngSquareness.value
+                })
             };
+
+            console.log('Aggregate Data:', aggregateData);
+            sendAggData(aggregateData, serialNo.value);
 
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
@@ -1742,6 +1744,19 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
         fetchDataCreateGraph();
     };
+
+// Function to send raw data via API
+const sendAggData = async (aggData, id) => {  // Make sure to pass 'id' as a parameter
+    try {
+        // Correct string interpolation for the URL
+        const response = await axios.patch(`/api/tpmaggregateupdate/${id}`, aggData); // Proper string interpolation for URL
+        // Uncomment this to see the response
+        console.log('API Response sendAggData:', response.data);
+    } catch (error) {
+        console.error('Error sending aggregate data to API:', error.response?.data || error.message);
+    }
+};
+
 
 // State for storing fetched data and error
 const error = ref(null);
