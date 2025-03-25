@@ -611,7 +611,6 @@
             }
 
             currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
-            currentFurnaceNo.value = currentFurnaceNoForLayer.value;
             console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
             // 🔍 **Filter the data
             const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
@@ -653,13 +652,13 @@
 
             if (foundFurnace) {
                 console.log("Furnace found:", foundFurnace);
-                return foundFurnace.furnace_id; // Return the furnace_id
+                return foundFurnace.furnace_id; // Return the furnace_no
             } else {
                 console.warn("Furnace not found:", furnaceName);
                 return null;
             }
         } catch (error) {
-            console.error("Error fetching furnace_id:", error);
+            console.error("Error fetching furnace_no:", error);
             return null;
         }
     };
@@ -763,9 +762,9 @@
 
     //UI Dynamic Color adjustments end
 
-    //Serial Generation
+//Serial Generation
 
-    const serialNo = ref(null);  // Reactive variable to hold the generated serial number
+const serialNo = ref(null);  // Reactive variable to hold the generated serial number
     const generateSerialNumber = async () => {
         try {
             // Step 1: Fetch the data from the API
@@ -1395,6 +1394,9 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
+            const responseID = tpmData.value.map(item => item.id);
+            //console.log('tpmData: ', tpmData.value);
+            console.log('test id val: ', responseID);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
@@ -1770,7 +1772,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: true, // Hides the values
+                        display: false, // Hides the values
                     },
                 },
                 y: {
@@ -1789,7 +1791,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: true, // Hides the values
+                        display: false, // Hides the values
                     },
                 },
             },
