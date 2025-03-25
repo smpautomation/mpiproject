@@ -1631,7 +1631,6 @@
                 }
             };
 
-            sendAggregateData(aggregateData);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
@@ -1727,15 +1726,6 @@
         }
 
         fetchDataCreateGraph();
-    };
-
-    const sendAggregateData = async (aggData) => {
-        try {
-            const response = await axios.patch('/api/tpmdata', aggData);
-            console.log('API Response sendAggregateData:', response.data);
-        } catch (error) {
-            console.error('Error sending data to API:', error.response?.data || error.message);
-        }
     };
 
 // State for storing fetched data and error
