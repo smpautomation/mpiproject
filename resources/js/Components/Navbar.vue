@@ -34,6 +34,7 @@
         { label: 'Home', route: 'homePage' },
         { label: 'Manage', route: 'manage' },
         { label: 'Report', route: 'reports' },
+        { label: 'Inspection', route: 'inspection' },
         { label: 'View List', route: 'viewList' },
         { label: 'Settings', route: 'settings' }
     ];

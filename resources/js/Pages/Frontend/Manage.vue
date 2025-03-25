@@ -653,13 +653,13 @@
 
             if (foundFurnace) {
                 console.log("Furnace found:", foundFurnace);
-                return foundFurnace.furnace_id; // Return the furnace_id
+                return foundFurnace.furnace_id; // Return the furnace_no
             } else {
                 console.warn("Furnace not found:", furnaceName);
                 return null;
             }
         } catch (error) {
-            console.error("Error fetching furnace_id:", error);
+            console.error("Error fetching furnace_no:", error);
             return null;
         }
     };
@@ -763,9 +763,9 @@
 
     //UI Dynamic Color adjustments end
 
-    //Serial Generation
+//Serial Generation
 
-    const serialNo = ref(null);  // Reactive variable to hold the generated serial number
+const serialNo = ref(null);  // Reactive variable to hold the generated serial number
     const generateSerialNumber = async () => {
         try {
             // Step 1: Fetch the data from the API
@@ -1235,6 +1235,8 @@
                 const layerData = {
                     "date": rowCell.value[0],
                     "serial_no": serialNo.value,
+                    "furnace_id": currentFurnaceNo.value,
+                    "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
                     "type": rowCell.value[3],
@@ -1274,8 +1276,6 @@
                     "HRO": rowCell.value[37],
                     "x": xJsonOutput.value,
                     "y": yJsonOutput.value,
-                    "furnace_id": currentFurnaceNo.value,
-                    "layer_no": currentLayerNo.value,
                     "Br_remarks": saveBrRemarks.value,
                     "4paiId_remarks": save4paiIdRemarks.value,
                     "iHc_remarks": saveIHcRemarks.value,
@@ -1407,6 +1407,9 @@
 
             // Combine the arrays
             combinedData.value = tpmData.value;
+            const responseID = tpmData.value.map(item => item.id);
+            //console.log('tpmData: ', tpmData.value);
+            console.log('test id val: ', responseID);
             console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
@@ -1848,7 +1851,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: true, // Hides the values
+                        display: false, // Hides the values
                     },
                 },
                 y: {
@@ -1867,7 +1870,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: true, // Hides the values
+                        display: false, // Hides the values
                     },
                 },
             },
