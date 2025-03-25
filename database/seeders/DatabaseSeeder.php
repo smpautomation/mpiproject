@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        FurnaceData::factory(10)->create();
-        LayerData::factory(20)->create();
+        FurnaceData::factory(50)->create();
+        LayerData::factory(50)->create();
         TPMData::factory(50)->create()->each(function ($tpmData) {
             // Create related remarks and aggregate functions for each TpmData
             TPMDataRemark::factory()->create([
