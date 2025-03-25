@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->date('date')->nullable();
-            $table->string('serial_no')->index();
+            $table->unsignedBigInteger('serial_no')->index();
             $table->string('code_no')->nullable();
             $table->string('order_no')->nullable();
             $table->string('type')->nullable();
@@ -91,18 +91,17 @@ return new class extends Migration
             $table->string('MRC_remarks')->nullable();
             $table->string('HR_remarks')->nullable();
             $table->string('HRO_remarks')->nullable();
-            $table->foreign('tpm_data_id')->references('id')->on('tpm_data')->onDelete('cascade');
         });
 
         Schema::create('tpm_data_aggregate_functions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_id');
+            $table->unsignedBigInteger('tpm_data_serial')->unique();
             $table->json('average')->nullable();
             $table->json('maximum')->nullable();
             $table->json('minimum')->nullable();
             $table->json('ng_counter')->nullable();
-            $table->foreign('tpm_data_id')->references('id')->on('tpm_data')->onDelete('cascade');
+            $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
         });
     }
 
