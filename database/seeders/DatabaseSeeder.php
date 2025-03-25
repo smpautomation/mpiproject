@@ -7,6 +7,7 @@ use App\Models\TPMData;
 use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\FurnaceData;
+use App\Models\InspectionData;
 use App\Models\LayerData;
 use Illuminate\Database\Seeder;
 
@@ -33,5 +34,6 @@ class DatabaseSeeder extends Seeder
                 'tpm_data_id' => $tpmData->id,
             ]);
         });
+        InspectionData::factory(50)->create();
     }
 }
