@@ -14,25 +14,25 @@ return new class extends Migration
         Schema::create('inspection_data', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('model');
-            $table->float('lenght');
-            $table->float('width');
-            $table->float('thickness');
-            $table->string('material_grade');
-            $table->string('br');
-            $table->string('ihc');
-            $table->string('ihk');
-            $table->string('oven_machine_no');
-            $table->time('time_loading');
-            $table->float('temperature_1');
-            $table->date('date');
-            $table->time('time_unloading');
-            $table->float('temperature_2');
-            $table->string('shift');
-            $table->string('operator');
-            $table->string('mpi_sample');
-            $table->string('ihc_ihk');
-            $table->string('br_4-pie-la');
+            $table->string('model')->nullable();
+            $table->float('length')->nullable();
+            $table->float('width')->nullable();
+            $table->float('thickness')->nullable();
+            $table->string('material_grade')->nullable();
+            $table->string('br')->nullable();
+            $table->string('ihc')->nullable();
+            $table->string('ihk')->nullable();
+            $table->string('oven_machine_no')->nullable();
+            $table->time('time_loading')->nullable();
+            $table->float('temperature_1')->nullable();
+            $table->date('date')->nullable();
+            $table->time('time_unloading')->nullable();
+            $table->float('temperature_2')->nullable();
+            $table->string('shift')->nullable();
+            $table->string('operator')->nullable();
+            $table->string('mpi_sample')->nullable();
+            $table->string('ihc_ihk')->nullable();
+            $table->string('br_4-pie-la')->nullable();
         });
     }
 

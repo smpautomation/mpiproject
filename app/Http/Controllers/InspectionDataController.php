@@ -16,7 +16,7 @@ class InspectionDataController extends Controller
                 'status' => true,
                 'message' => 'Inspection Data fetched successfully',
                 'data'=> $inspectionData
-            ], 200); 
+            ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'status' => false,
@@ -41,13 +41,13 @@ class InspectionDataController extends Controller
                     "message"=> "Inspection Data with ID: {$id} not found",
                 ], 404);
             }
-            
+
         }catch(\Exception $e){
             return response()->json([
                 'status' => false,
                 'message'=> "Inspection Data could not be fetched",
                 "error"=> $e->getMessage()
-            ], 500);    
+            ], 500);
         }
     }
     public function store(Request $request)
@@ -57,7 +57,7 @@ class InspectionDataController extends Controller
         try{
             $inspectionDataInputs = [
                 "model" => $request->input("model"),
-                "lenght" => $request->input("lenght"),
+                "length" => $request->input("length"),
                 "width" => $request->input("width"),
                 "thickness" => $request->input("thickness"),
                 "material_grade" => $request->input("material_grade"),
