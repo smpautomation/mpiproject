@@ -33,26 +33,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="bg-gray-50">
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
-                                <td class="px-4 py-2 text-center border">null</td>
+                            <tr
+                                v-for="item in inspectionDataList"
+                                :key="item.id"
+                                class="bg-gray-50"
+                            >
+                                <td class="px-4 py-2 text-center border">{{ item.model || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.length || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.width || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.thickness || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.material_grade || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.br || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.ihc || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.ihk || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.oven_machine_no || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.time_loading || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.temperature_1 || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.date || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.time_unloading || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.temperature_2 || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.shift || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.operator || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.mpi_sample || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item.ihc_ihk || 'null' }}</td>
+                                <td class="px-4 py-2 text-center border">{{ item["br_4-pie-la"] || 'null' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -73,7 +77,7 @@
                     <!-- Model Input -->
                     <div class="w-full mb-6">
                         <label class="block mb-1 font-medium text-gray-600">Model:</label>
-                        <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                        <input @input="convertToUppercase" v-model="formData.model" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                     </div>
 
                     <!-- Grid for Inputs -->
@@ -81,30 +85,30 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block font-medium text-gray-600">Length:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input v-model="formData.length" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Width:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input v-model="formData.width" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Thickness:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input v-model="formData.thickness" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
 
                         <div class="space-y-4">
                             <div>
                                 <label class="block font-medium text-gray-600">Material&nbsp;Grade:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.material_grade" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block font-medium text-gray-600">Br: (ex: 1234 ~ 5678 )</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block font-medium text-gray-600">Br:&nbsp;(ex:&nbsp;1234&nbsp;~&nbsp;5678&nbsp;)</label>
+                                <input @input="convertToUppercase" v-model="formData.br" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">iHc:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.ihc" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
 
                         </div>
@@ -112,65 +116,65 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block font-medium text-gray-600">iHk:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.ihk" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Oven&nbsp;Machine&nbsp;No:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.oven_machine_no" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Time&nbsp;Loading:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input v-model="formData.time_loading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature(TL):</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block font-medium text-gray-600">Temperature(load):</label>
+                                <input v-model="formData.temperature_1" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Date:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input v-model="formData.date" type="date" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Time&nbsp;Unloading:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input v-model="formData.time_unloading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature(TU):</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block font-medium text-gray-600">Temperature(unload):</label>
+                                <input v-model="formData.temperature_2" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Shift:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.shift" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Operator:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.operator" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
                         <div class="space-y-4">
                             <div>
                                 <label class="block font-medium text-gray-600">MPI&nbsp;Sample:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">iHc&#8209;iHk:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData.ihc_ihk" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-600">Br&#8209;4πla:</label>
-                                <input type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <input @input="convertToUppercase" v-model="formData['br_4-pie-la']" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-center">
-                    <button class="flex flex-row items-center px-6 py-3 m-10 overflow-hidden text-xl font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
+                    <button @click="submitData" class="flex flex-row items-center px-6 py-3 m-10 overflow-hidden text-xl font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
                         Register
                     </button>
                 </div>
@@ -183,6 +187,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted } from 'vue';
+import axios from "axios";
 
 //UI Visibility Variables
 
@@ -190,7 +195,7 @@ const showMainUI = ref(true);
 const showInputData = ref(false);
 
 //UI Visibility Variables end
-
+// UI visibility functions
 const insertBtn = () => {
     showMainUI.value = false;
     showInputData.value = true;
@@ -200,5 +205,83 @@ const registerBackBtn = () => {
     showMainUI.value = true;
     showInputData.value = false;
 }
+
+// UI visibility functions end
+
+function convertToUppercase() { //make sure textinputs are upper case
+    const fields = [
+    'model',
+    'material_grade',
+    'br',
+    'ihc',
+    'ihk',
+    'oven_machine_no',
+    'shift',
+    'operator',
+    'mpi_sample',
+    'ihc_ihk',
+    'br_4-pie-la'
+  ];
+
+  fields.forEach(field => {
+    if (formData.value[field] && typeof formData.value[field] === 'string') {
+      formData.value[field] = formData.value[field].toUpperCase();
+    }
+  });
+}
+
+// Reactive state for user input
+const formData = ref({
+    model: null,
+    length: null,
+    width: null,
+    thickness: null,
+    material_grade: null,
+    br: null,
+    ihc: null,
+    ihk: null,
+    oven_machine_no: null,
+    time_loading: null,
+    temperature_1: null,
+    date: null,
+    time_unloading: null,
+    temperature_2: null,
+    shift: null,
+    operator: null,
+    mpi_sample: null,
+    ihc_ihk: null,
+    "br_4-pie-la": null,
+});
+
+// Function to send data using Axios
+const submitData = async () => {
+    console.log("Form Data: ", formData.value);
+    try {
+        const response = await axios.post("/api/inspectiondata", formData.value);
+        // Handle response
+        console.log("Insection api post Data submitted successfully!");
+        console.log("API Response:", response.data);
+        showMainUI.value = true;
+        showInputData.value = false;
+    } catch (error) {
+        console.log("Error submitting data!");
+        console.error("API Error:", error);
+    }
+};
+
+const inspectionDataList = ref([]);
+
+const showInspectionData = async () => {
+    try{
+        const response = await axios.get("/api/inspectiondata");
+        console.log("Show All inspection data API respone: ",response.data);
+        inspectionDataList.value = response.data.data || [];
+        console.log("Show All inspection data list : ",inspectionDataList.value);
+    }catch{
+        console.error("API get request showInspectionData Error:", error);
+    }
+}
+
+onMounted(showInspectionData);
 
 </script>

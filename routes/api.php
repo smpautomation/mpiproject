@@ -40,11 +40,11 @@ Route::post('/layerdata', [LayerDataController::class, 'store']);
 Route::patch('/layerdata/{id}', [LayerDataController::class, 'update']);
 Route::delete('/layerdata/{id}', [LayerDataController::class, 'destroy']);
 
-Route::get('/inspcetiondata', [InspectionDataController::class, 'index']);
-Route::get('/inspcetiondata/{id}', [InspectionDataController::class, 'show']);
-Route::post('/inspcetiondata', [InspectionDataController::class, 'store']);
-Route::patch('/inspcetiondata/{id}', [InspectionDataController::class, 'update']);
-Route::delete('/inspcetiondata/{id}', [InspectionDataController::class, 'destroy']);
+Route::get('/inspectiondata', [InspectionDataController::class, 'index']);
+Route::get('/inspectiondata/{id}', [InspectionDataController::class, 'show']);
+Route::post('/inspectiondata', [InspectionDataController::class, 'store']);
+Route::patch('/inspectiondata/{id}', [InspectionDataController::class, 'update']);
+Route::delete('/inspectiondata/{id}', [InspectionDataController::class, 'destroy']);
 
 
 Route::get('/users', [UserController::class, 'index']);
