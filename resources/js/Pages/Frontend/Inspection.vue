@@ -263,6 +263,7 @@ const submitData = async () => {
         console.log("API Response:", response.data);
         showMainUI.value = true;
         showInputData.value = false;
+        showInspectionData();
     } catch (error) {
         console.log("Error submitting data!");
         console.error("API Error:", error);

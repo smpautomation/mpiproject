@@ -14,7 +14,7 @@
         </div>
 
         <!-- Report Content -->
-            <div class="flex flex-col justify-center py-10 mx-20 my-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+            <div class="flex flex-col justify-center py-10 mx-20 mt-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Model:</label>&nbsp;
@@ -142,6 +142,33 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="flex flex-row items-center justify-center align-middle m-5">
+                    <p class="m-5">Remarks:</p>
+                    <input type="text" class="w-full px-2 py-1 text-sm border rounded-md" />
+                    <p class="mx-20 text-3xl text-blue-500">OK</p>
+                </div>
+
+            </div>
+
+            <div class="flex flex-col justify-center py-8 px-8 my-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+                <div class="flex flex-row">
+                    <div class="flex flex-col mr-8">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">SMP Judgement</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Prepared By:</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Check By:</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Approve By:</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                </div>
             </div>
 
       </div>
@@ -156,6 +183,17 @@ import { ref, computed, onMounted } from 'vue';
 const tpmData = ref([]);
 const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
+
+const reportModel = ref('');
+const reportPulseTracerMachineNo = ref('');
+const reportMaterialCode = ref('');
+const reportDate = ref('');
+const reportPartialNo = ref('');
+const reportShift = ref('');
+const reportTotalQuantity = ref('');
+const reportOperator = ref('');
+const reportStandardSampleDimension = ref('');
+const reportMagneticPropertyData = ref('');
 
 const createReport = async () => {
     try {
