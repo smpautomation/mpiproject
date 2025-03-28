@@ -129,7 +129,7 @@
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
                             @click="showAllData"
                             >
-                                Proceed
+                                Proceed ( Show Data )
                         </button>
                     </div>
                 </div>
@@ -150,9 +150,9 @@
                 <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
                     <canvas id="myChart"></canvas>
                 </div>
-                <div class="w-full p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
+                <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
                     <p class="flex p-4 mb-8 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100">
-                        LAYER
+                        PROPERTY DATA
                     </p>
 
                         <div class="flex flex-col items-center justify-center w-full">
@@ -575,7 +575,7 @@
 
         // Update the reactive variable
         furnaceList.value = extractedFurnaces;
-
+        console.log("Furnace list: ", furnaceList.value);
         // Set default selection to first furnace, if available
         if (furnaceList.value.length > 0) {
             currentFurnaceName.value = furnaceList.value[0].furnace_name;
@@ -1411,7 +1411,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            //console.log('Combined Data: ', combinedData.value);
+            console.log('Combined Data: ', combinedData.value);
 
             // Extract individual values from tpmData for aggregate
             getAllIDValues.value = combinedData.value.map(item => item.id);
@@ -1866,7 +1866,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: false, // Hides the values
+                        display: true, // Hides the values
                     },
                 },
                 y: {
@@ -1885,7 +1885,7 @@ const renderChart = () => {
                         },
                     },
                     ticks: {
-                        display: false, // Hides the values
+                        display: true, // Hides the values
                     },
                 },
             },

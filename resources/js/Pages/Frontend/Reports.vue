@@ -2,19 +2,19 @@
     <Frontend>
       <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
         <div>This is the Reports page</div>
-
-        <div class="flex flex-row items-center m-10">
-            <p>Select Serial No: </p>
-            <select class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
+        <div> <!-- Selection Panel -->
+            <div class="flex flex-row items-center justify-center align-baseline">
+                <p>Select Serial No: </p>
+                <select
+                v-model="currentSerialSelected"
+                class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
+                </select>
+            </div>
         </div>
 
         <!-- Report Content -->
-            <div class="flex flex-col justify-center py-10 mx-20 my-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+            <div class="flex flex-col justify-center py-10 mx-20 mt-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Model:</label>&nbsp;
@@ -142,6 +142,33 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="flex flex-row items-center justify-center align-middle m-5">
+                    <p class="m-5">Remarks:</p>
+                    <input type="text" class="w-full px-2 py-1 text-sm border rounded-md" />
+                    <p class="mx-20 text-3xl text-blue-500">OK</p>
+                </div>
+
+            </div>
+
+            <div class="flex flex-col justify-center py-8 px-8 my-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+                <div class="flex flex-row">
+                    <div class="flex flex-col mr-8">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">SMP Judgement</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Prepared By:</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Check By:</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Approve By:</p>
+                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                    </div>
+                </div>
             </div>
 
       </div>
@@ -150,4 +177,67 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
+import { ref, computed, onMounted } from 'vue';
+
+
+const tpmData = ref([]);
+const serialList = ref([]); // Stores all fetched furnaces
+const currentSerialSelected = ref('');
+
+const reportModel = ref('');
+const reportPulseTracerMachineNo = ref('');
+const reportMaterialCode = ref('');
+const reportDate = ref('');
+const reportPartialNo = ref('');
+const reportShift = ref('');
+const reportTotalQuantity = ref('');
+const reportOperator = ref('');
+const reportStandardSampleDimension = ref('');
+const reportMagneticPropertyData = ref('');
+
+const createReport = async () => {
+    try {
+
+    } catch {
+
+    }
+}
+
+// Fetching the serial start
+
+    // Function to fetch serial data
+// Function to fetch serial data
+const fetchSerial = async () => {
+  try {
+    const response = await axios.get("/api/tpmdata");
+    //console.log("API Response:", response.data);
+
+    // Extract furnace data dynamically
+    tpmData.value = response.data.data["tpmData"] || [];
+    console.log("TPM DATA response: ", tpmData.value);
+
+    // Extract unique serial numbers by using a Set
+    serialList.value = [...new Set(tpmData.value.map(item => item.serial_no))];
+
+    // Sort the serialList in descending order (highest value first)
+    serialList.value = serialList.value.sort((a, b) => {
+      return Number(b) - Number(a); // Convert to number for proper sorting
+    });
+
+    console.log("Unique Serial lists (Descending):", serialList.value);
+
+    // Set default selection to first serial, if available
+    if (serialList.value.length > 0) {
+      currentSerialSelected.value = serialList.value[0];
+    }
+
+  } catch (error) {
+    console.error("Error fetching serial data:", error);
+  }
+};
+// Fetching the serial start end
+
+//Makes sure furnace lists is loaded on start.
+onMounted(fetchSerial);
+
 </script>
