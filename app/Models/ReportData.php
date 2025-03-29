@@ -11,6 +11,6 @@ class ReportData extends Model
 
     public function tpmData()
     {
-        return $this->belongsTo(TPMData::class, 'tpm_data_id', 'id'); // foreign key
+        return $this->belongsTo(TPMData::class, 'tpm_data_serial', 'serial_no'); // foreign key
     }
 }

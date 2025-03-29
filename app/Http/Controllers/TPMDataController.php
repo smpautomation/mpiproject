@@ -180,31 +180,41 @@ class TPMDataController extends Controller
                 'HRO_remarks' => $request->input('HRO_remarks', null),
             ];
             $remark = TPMDataRemark::create($remarkData);
+
             $checkTpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $tpmData->serial_no)->exists();
             if(!$checkTpmDataAggregateFunctions){
                 try{
                     $tpmAggragateFunctionsInput = [
                         'tpm_data_serial' => $tpmData->serial_no,
-                        'average' => $request->input('average', null),
-                        'maximum' => $request->input('maximum', null),
-                        'minimum' => $request->input('minimum', null),
-                        'ng_counter' => $request->input('ng_counter', null)
                     ];
                     $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput); 
                 }catch(\Exception $e){
 
                 }          
             }
-            $reportData = [
-                'tpm_data_id' => $tpmData->id,
-            ];
-            $report = ReportData::create($reportData);
+
+            $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkReportData){
+                try{
+                    $reportDataInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $reportData = ReportData::create($reportDataInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
 
             DB::commit();
             return response()->json([
                 'status' => true,
                 'message' => 'tmp Data created successfully',
-                'data' => [$tpmData, $remark, $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions]
+                'data' => [
+                    $tpmData, 
+                    $remark, 
+                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions, 
+                    $checkReportData ?? $reportData
+                    ]
             ], 201);
         }catch(\Exception $e){
             // If an error occurs, roll back the transaction
