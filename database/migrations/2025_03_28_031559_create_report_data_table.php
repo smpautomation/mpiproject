@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('report_data', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_id');
+            $table->unsignedBigInteger('tpm_data_serial')->unique();
             $table->string('model')->nullable();
             $table->string('material_code')->nullable();
             $table->string('partial_number')->nullable();
@@ -24,9 +24,22 @@ return new class extends Migration
             $table->string('shift')->nullable();
             $table->string('operator')->nullable();
             $table->json('magnetic_property_data')->nullable();
-            $table->json('standard_sample_dimension_and_material_grade')->nullable();
-            $table->json('br_cpk')->nullable();
-            //$table->foreign('tpm_data_id')->references('id')->on('report_data')->onDelete('cascade'); removed temporarily, due to getting sql error constraints
+            $table->float('lenght')->nullable();
+            $table->float('width')->nullable();
+            $table->float('thickness')->nullable();
+            $table->string('material_grade')->nullable();
+            $table->integer('mpi_sample_quantity')->nullable();
+            $table->float('std_dev')->nullable();
+            $table->float('cpu')->nullable();
+            $table->float('cpl')->nullable();
+            $table->float('cpk')->nullable();
+            $table->float('br_cpk_remarks')->nullable();
+            $table->string('remarks')->nullable();
+            $table->string('smp_judgement')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('checked_by')->nullable();
+            $table->string('approved_by')->nullable();
+            $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
         });
 
     }
