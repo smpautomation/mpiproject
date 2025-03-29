@@ -1,9 +1,8 @@
 <template>
     <Frontend>
       <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
-        <div>This is the Reports page</div>
         <div> <!-- Selection Panel -->
-            <div class="flex flex-row items-center justify-center align-baseline">
+            <div class="flex flex-row items-center justify-center mt-10 align-baseline">
                 <p>Select Serial No: </p>
                 <select
                 v-model="currentSerialSelected"
@@ -14,7 +13,7 @@
         </div>
 
         <!-- Report Content -->
-            <div class="flex flex-col justify-center py-10 mx-20 mt-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+            <div class="flex flex-col justify-center py-10 mx-20 mt-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Model:</label>&nbsp;
@@ -142,7 +141,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="flex flex-row items-center justify-center align-middle m-5">
+                <div class="flex flex-row items-center justify-center mx-5 mt-5 align-middle">
                     <p class="m-5">Remarks:</p>
                     <input type="text" class="w-full px-2 py-1 text-sm border rounded-md" />
                     <p class="mx-20 text-3xl text-blue-500">OK</p>
@@ -150,23 +149,23 @@
 
             </div>
 
-            <div class="flex flex-col justify-center py-8 px-8 my-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+            <div class="flex flex-col justify-center px-8 py-8 my-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row">
                     <div class="flex flex-col mr-8">
-                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">SMP Judgement</p>
-                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">SMP Judgement</p>
+                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
                     </div>
                     <div class="flex flex-col">
-                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Prepared By:</p>
-                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Prepared By:</p>
+                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
                     </div>
                     <div class="flex flex-col">
-                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Check By:</p>
-                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Check By:</p>
+                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
                     </div>
                     <div class="flex flex-col">
-                        <p class="border border-black p-2 text-center text-xl font-extrabold bg-blue-300">Approve By:</p>
-                        <p class="border border-black p-10 text-center"><span>(Insert Stamp here)</span></p>
+                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Approve By:</p>
+                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
                     </div>
                 </div>
             </div>
