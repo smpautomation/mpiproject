@@ -10,6 +10,11 @@
                 <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
                 </select>
             </div>
+            <div class="flex flex-row justify-center">
+                <button @click="generateReport" class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    Generate Report
+                </button>
+            </div>
         </div>
 
         <!-- Report Content -->
@@ -61,23 +66,23 @@
                         <tbody>
                             <tr>
                                 <td class="px-4 py-1 border">LENGTH&nbsp;(mm)</td>
-                                <td class="px-4 py-1 border"><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-1 border">NA</td>
                             </tr>
                             <tr>
                                 <td class="px-4 py-1 border">WIDTH&nbsp;(mm)</td>
-                                <td class="px-4 py-1 border"><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-1 border">NA</td>
                             </tr>
                             <tr>
                                 <td class="px-4 py-1 border">THICKNESS&nbsp;(mm)</td>
-                                <td class="px-4 py-1 border "><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-1 border ">NA</td>
                             </tr>
                             <tr>
                                 <td class="px-4 py-1 border">MATERIAL&nbsp;GRADE</td>
-                                <td class="px-4 py-1 border"><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-1 border">NA</td>
                             </tr>
                             <tr>
                                 <td class="px-4 py-1 border">MPI&nbsp;SAMPLE&nbsp;QTY.</td>
-                                <td class="px-4 py-1 border"><input type="text" class="w-[10rem] py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-1 border">NA</td>
                             </tr>
                         </tbody>
                     </table>
@@ -99,13 +104,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr class="text-center">
                                 <td class="px-4 py-2 border">Br (G)</td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
                             </tr>
                             <tr>
                                 <td class="px-4 py-2 border">iHc (Oe)</td>
@@ -180,9 +185,12 @@ import { ref, computed, onMounted } from 'vue';
 
 
 const tpmData = ref([]);
+const getTpmModel = ref('');
+const inspectionDataList = ref([]);
 const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 
+/// to be put in the form
 const reportModel = ref('');
 const reportPulseTracerMachineNo = ref('');
 const reportMaterialCode = ref('');
@@ -191,16 +199,176 @@ const reportPartialNo = ref('');
 const reportShift = ref('');
 const reportTotalQuantity = ref('');
 const reportOperator = ref('');
-const reportStandardSampleDimension = ref('');
-const reportMagneticPropertyData = ref('');
 
-const createReport = async () => {
+const reportLength = ref('');
+const reportWidth = ref('');
+const reportThickness = ref('');
+const reportMaterialGrade = ref('');
+const reportMPISampleQty = ref('');
+
+const reportBrStandard = ref('');
+const reportBrAverage = ref('');
+const reportBrMaximum = ref('');
+const reportBrMinimum = ref('');
+const reportihcStandard = ref('');
+const reportihcAverage = ref('');
+const reportihcMaximum = ref('');
+const reportihcMinimum = ref('');
+const reportihkStandard = ref('');
+const reportihkAverage = ref('');
+const reportihkMaximum = ref('');
+const reportihkMinimum = ref('');
+
+const inspectionLength = ref('');
+const inspectionWidth = ref('');
+const inspectionThickness = ref('');
+const inspectionMaterialGrade = ref('');
+const inspectionMpiSampleQty = ref('');
+const inspectionModel = ref('');
+const inspectionBrStandard = ref('');
+const inspectioniHcStandard = ref('');
+const inspectioniHkStandard = ref('');
+
+const tpmData_brAve = ref('');
+const tpmData_brMax = ref('');
+const tpmData_brMin = ref('');
+const tpmData_ihcAve = ref('');
+const tpmData_ihcMax = ref('');
+const tpmData_ihcMin = ref('');
+const tpmData_ihkAve = ref('');
+const tpmData_ihkMax = ref('');
+const tpmData_ihkMin = ref('');
+
+const generateReport = async () => {
+    fetchAllData();
+}
+
+const fetchAllData = async () => {
     try {
+        const responseTpm = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value);
+        //console.log("Show All tpm data API response: ", responseTpm.data);
 
-    } catch {
+        // Filter the data to include only rows with serial_no like '0002'
+        tpmData.value = responseTpm.data[0] || [];
+        //console.log("Filtered tpm aggregate data list: ", tpmData.value);
+        getTpmModel.value = responseTpm.data.data || [];
+        //console.log("GetModelValue: ", getTpmModel.value[0].code_no);
 
+        const tpm_current_model = getTpmModel.value[0].code_no;
+
+        //console.log("currently selected serial: ",currentSerialSelected.value);
+        //console.log("Aggregate Averages: ",tpmData.value[0].average);
+        // Access the 'average' property (which is a stringified JSON)
+        const averageJsonString = tpmData.value[0].average;
+        const maximumJsonString = tpmData.value[0].maximum;
+        const minimumJsonString = tpmData.value[0].minimum;
+
+        // Parse the stringified JSON into an actual JavaScript object
+        const averageData = JSON.parse(averageJsonString);
+        const maximumData = JSON.parse(maximumJsonString);
+        const minimumData = JSON.parse(minimumJsonString);
+
+        // Now you can access the variables inside the parsed object
+        //console.log("Parsed Aggregate Averages: ", averageData);
+        tpmData_brAve.value = averageData.Br;
+        tpmData_brMax.value = maximumData.Br;
+        tpmData_brMin.value = minimumData.Br;
+        tpmData_ihcAve.value = averageData.iHc;
+        tpmData_ihcMax.value = maximumData.iHc;
+        tpmData_ihcMin.value = minimumData.iHc;
+        tpmData_ihkAve.value = averageData.iHk;
+        tpmData_ihkMax.value = maximumData.iHk;
+        tpmData_ihkMin.value = minimumData.iHk;
+
+        const responseInsp = await axios.get("/api/inspectiondata");
+        console.log("Show All inspection data API response: ", responseInsp.data);
+        inspectionDataList.value = responseInsp.data.data || [];
+        console.log("Show All inspection data list : ", inspectionDataList.value);
+
+        const getAllInspModels = inspectionDataList.value.map(item => item.model);
+        console.log("List of models in inspection: ", getAllInspModels);
+        console.log("Current model in tpm: ",tpm_current_model)
+
+        // Check if tpm_current_model exists in getAllInspModels
+        if (getAllInspModels.includes(tpm_current_model)) {
+            const filteredInspectionData = inspectionDataList.value.filter(item => item.model == tpm_current_model);
+            console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
+            // Access the `br` value for each item in filteredInspectionData
+            filteredInspectionData.forEach(item => {
+                inspectionBrStandard.value = item.br;
+                inspectioniHcStandard.value = item.ihc;
+                inspectioniHkStandard.value = item.ihk;
+                inspectionLength.value = item.length;
+                inspectionWidth.value = item.width;
+                inspectionThickness.value = item.thickness;
+                inspectionMaterialGrade.value = item.material_grade;
+                inspectionMpiSampleQty.value = item.mpi_sample;
+            });
+
+        } else {
+            console.log("The model does not exist in the inspection data!");
+        }
+
+        console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
+
+
+        const repData = {
+            "approved_by": null,
+            "br_crpk_remarks": null,
+            "checked_by": null,
+            "cpk": null,
+            "cpl": null,
+            "cpu": null,
+            "date": reportDate.value,
+            "length": inspectionLength.value,
+            "magnetic_property_data": JSON.stringify({
+                "brStandard": inspectionBrStandard.value,
+                "brAverage": tpmData_brAve.value,
+                "brMaximum": tpmData_brMax.value,
+                "brMinimum": tpmData_brMin.value,
+                "ihcStandard": inspectioniHcStandard.value,
+                "ihcAverage": tpmData_ihcAve.value,
+                "ihcMaximum": tpmData_ihcMax.value,
+                "ihcMinimum": tpmData_ihcMin.value,
+                "ihkStandard": inspectioniHkStandard.value,
+                "ihkAverage": tpmData_ihkAve.value,
+                "ihkMaximum": tpmData_ihkMax.value,
+                "ihkMinimum": tpmData_ihkMin.value,
+            }),
+            "material_code": null,
+            "material_grade": inspectionMaterialGrade.value,
+            "model": tpm_current_model,
+            "mpi_sample_quantity": inspectionMpiSampleQty.value,
+            "operator": null,
+            "partial_number": null,
+            "prepared_by": null,
+            "pulse_tracer_machine_number": reportPulseTracerMachineNo.value,
+            "remarks": null,
+            "shift": null,
+            "smp_judgement": null,
+            "std_dev": null,
+            "thickness": inspectionThickness.value,
+            "total_quantity": null,
+            "width": inspectionWidth.value
+        }
+
+        console.log("Rep Data: ",repData);
+        createReport(repData, currentSerialSelected.value);
+
+    } catch (error) {
+        console.error("API get request showTpmData Error:", error);
+    }
+};
+
+const createReport = async (reportData, serial) => {
+    try {
+        const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
+        console.log("Patched report data: ",response.data);
+    } catch (error) {
+        console.error("Patch report data Error:", error);
     }
 }
+
 
 // Fetching the serial start
 
@@ -213,7 +381,7 @@ const fetchSerial = async () => {
 
     // Extract furnace data dynamically
     tpmData.value = response.data.data["tpmData"] || [];
-    console.log("TPM DATA response: ", tpmData.value);
+    //console.log("TPM DATA response: ", tpmData.value);
 
     // Extract unique serial numbers by using a Set
     serialList.value = [...new Set(tpmData.value.map(item => item.serial_no))];
@@ -223,7 +391,7 @@ const fetchSerial = async () => {
       return Number(b) - Number(a); // Convert to number for proper sorting
     });
 
-    console.log("Unique Serial lists (Descending):", serialList.value);
+    //console.log("Unique Serial lists (Descending):", serialList.value);
 
     // Set default selection to first serial, if available
     if (serialList.value.length > 0) {

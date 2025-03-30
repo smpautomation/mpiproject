@@ -1648,6 +1648,33 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             console.log('Aggregate Data:', aggregateData);
             sendAggData(aggregateData, serialNo.value);
 
+            const repData = {
+                "approved_by": null,
+                "br_crpk_remarks": null,
+                "checked_by": null,
+                "cpk": null,
+                "cpl": null,
+                "cpu": null,
+                "date": null,
+                "length": null,
+                "magnetic_property_data": null,
+                "material_code": null,
+                "material_grade": null,
+                "model": null,
+                "mpi_sample_quantity": null,
+                "operator": null,
+                "partial_number": null,
+                "prepared_by": null,
+                "pulse_tracer_machine_number": null,
+                "remarks": null,
+                "shift": null,
+                "smp_judgement": null,
+                "std_dev": null,
+                "thickness": null,
+                "total_quantity": null,
+                "width": null
+            }
+
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
@@ -1757,6 +1784,16 @@ const sendAggData = async (aggData, id) => {  // Make sure to pass 'id' as a par
     }
 };
 
+const sendReportData = async (repData, id) => {
+    try{
+        // Correct string interpolation for the URL
+        const response = await axios.patch(`/api/reportdata/${id}`, aggData); // Proper string interpolation for URL
+        // Uncomment this to see the response
+        console.log('API Response sendReportData:', response.data);
+    }catch{
+        console.error('Error sending report data to API:', error.response?.data || error.message);
+    }
+}
 
 // State for storing fetched data and error
 const error = ref(null);
