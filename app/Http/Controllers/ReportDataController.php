@@ -118,7 +118,7 @@ class ReportDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $reportData = ReportData::where('tpm_data_serial', $id )->get();
+            $reportData = ReportData::where('tpm_data_serial', $id)->first();
 
             $inputData = $request->all();
             $reportData->update($inputData);
