@@ -33,7 +33,7 @@ return new class extends Migration
             $table->float('cpu')->nullable();
             $table->float('cpl')->nullable();
             $table->float('cpk')->nullable();
-            $table->float('br_cpk_remarks')->nullable();
+            $table->string('br_cpk_remarks')->nullable();
             $table->string('remarks')->nullable();
             $table->string('smp_judgement')->nullable();
             $table->string('prepared_by')->nullable();
