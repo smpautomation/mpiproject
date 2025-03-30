@@ -24,11 +24,11 @@ return new class extends Migration
             $table->string('shift')->nullable();
             $table->string('operator')->nullable();
             $table->json('magnetic_property_data')->nullable();
-            $table->float('lenght')->nullable();
+            $table->float('length')->nullable();
             $table->float('width')->nullable();
             $table->float('thickness')->nullable();
             $table->string('material_grade')->nullable();
-            $table->integer('mpi_sample_quantity')->nullable();
+            $table->string('mpi_sample_quantity')->nullable();
             $table->float('std_dev')->nullable();
             $table->float('cpu')->nullable();
             $table->float('cpl')->nullable();

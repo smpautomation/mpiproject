@@ -112,21 +112,21 @@
                                 <td class="px-4 py-2 border">NA</td>
                                 <td class="px-4 py-2 border">NA</td>
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <td class="px-4 py-2 border">iHc (Oe)</td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <td class="px-4 py-2 border">iHk (Oe)</td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
                             </tr>
                             <tr class="bg-blue-200">
                                 <th rowspan="2" class="px-4 border">Br Cpk</th>
@@ -136,12 +136,12 @@
                                 <th class="px-4 border">Cpk</th>
                                 <th class="px-4 border">Remarks</th>
                             </tr>
-                            <tr>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
-                                <td class="px-4 py-2 border"><input type="text" class="w-full px-2 py-1 text-sm border rounded-md"></td>
+                            <tr class="text-center">
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
+                                <td class="px-4 py-2 border">NA</td>
                             </tr>
                         </tbody>
                     </table>
@@ -173,6 +173,12 @@
                         <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
                     </div>
                 </div>
+            </div>
+
+            <div>
+                <button class="px-6 py-4 m-10 bg-green-500 shadow-xl rounded-xl">
+                    SAVE
+                </button>
             </div>
 
       </div>
@@ -313,12 +319,6 @@ const fetchAllData = async () => {
 
 
         const repData = {
-            "approved_by": null,
-            "br_crpk_remarks": null,
-            "checked_by": null,
-            "cpk": null,
-            "cpl": null,
-            "cpu": null,
             "date": reportDate.value,
             "length": inspectionLength.value,
             "magnetic_property_data": JSON.stringify({
@@ -335,20 +335,11 @@ const fetchAllData = async () => {
                 "ihkMaximum": tpmData_ihkMax.value,
                 "ihkMinimum": tpmData_ihkMin.value,
             }),
-            "material_code": null,
             "material_grade": inspectionMaterialGrade.value,
             "model": tpm_current_model,
             "mpi_sample_quantity": inspectionMpiSampleQty.value,
-            "operator": null,
-            "partial_number": null,
-            "prepared_by": null,
             "pulse_tracer_machine_number": reportPulseTracerMachineNo.value,
-            "remarks": null,
-            "shift": null,
-            "smp_judgement": null,
-            "std_dev": null,
             "thickness": inspectionThickness.value,
-            "total_quantity": null,
             "width": inspectionWidth.value
         }
 
