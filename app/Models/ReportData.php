@@ -8,5 +8,5 @@ class ReportData extends Model
 {
     protected $table = 'report_data';
     protected $guarded = [];
-
+    //resolve git conflict
 }
