@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TPMData extends Model
 {
+    use HasFactory;
     protected $table = 'tpm_data';
     protected $guarded = [];
     protected $casts = [
@@ -20,5 +22,15 @@ class TPMData extends Model
     public function aggregateFunctions()
     {
         return $this->hasOne(TPMDataAggregateFunctions::class, 'tpm_data_id', 'id');
+    }
+
+    public function reportData()
+    {
+        return $this->hasOne(ReportData::class, 'tpm_data_id', 'id');
+    }
+
+    public function furnaceData()
+    {
+        return $this->hasOne(FurnaceData::class, 'furnace_id', 'furnace_id');
     }
 }

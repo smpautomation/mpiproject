@@ -6,18 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\TPMData;
 use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
+use App\Models\ReportData;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
 
 class TPMDataController extends Controller
 {
     public function index(Request $request){
         $serial_no = $request->query('serial');
+        $report = $request->query('report');
         if (!$serial_no) {
             try{
                 $tpmData = TPMData::all();
                 $remarks = TPMDataRemark::all();
                 $aggregateFunctions = TPMDataAggregateFunctions::all();
+                if($report){
+                    $reportData = ReportData::all();
+                }
                 return response()->json([
                     'status' => true,
                     'message' => 'TPM Datas retrieved successfully',
@@ -36,15 +42,17 @@ class TPMDataController extends Controller
             }
         }else{
             try{
-                $tpmData = TPMData::with(['remark', 'aggregateFunctions'])
-                                    ->where('serial_no',  $serial_no)->get();
-
+                $tpmData = TPMData::with($report ? ['remark', 'reportData'] : ['remark'])
+                                    ->where('serial_no',  $serial_no)
+                                    ->orderBy('zone', 'asc')
+                                    ->get();
+                
                 if(!$tpmData->isEmpty()){
-
+                    $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
                         'message' => 'TPM data found successfully',
-                        'data' => $tpmData
+                        'data' => $tpmData, $tpmDataAggregateFunctions
                     ], 200);
                 }else{
                     return response()->json([
@@ -64,17 +72,17 @@ class TPMDataController extends Controller
 
     public function show($id){
         try{
-            $tpmData = TPMData::with(['remark', 'aggregateFunctions'])
+            $tpmData = TPMData::with(['remark'])
                                 ->find($id);
 
             if(!empty($tpmData)){
                 $remark = $tpmData->remark ?? 'No remark available';
-                $tpmAggragateFunctions = $tpmData->aggregateFunctions ?? 'No aggregate functions available';
+                $tpmAggregateData = TPMDataAggregateFunctions::where('serial_no', $tpmData->serial_no)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'TPM data found successfully',
-                    'data' => $tpmData
+                    'data' => $tpmData, $tpmAggregateData
                 ], 200);
             }else{
                 return response()->json([
@@ -136,7 +144,9 @@ class TPMDataController extends Controller
                 'HR' => $request->input('HR', null),
                 'HRO' => $request->input('HRO', null),
                 'x' => $request->input('x', null),
-                'y' => $request->input('y', null)
+                'y' => $request->input('y', null),
+                'furnace_id' => $request->input('furnace_id', null),
+                'layer_no' => $request->input('layer_no', null)
             ];
             $tpmData = TPMData::create($tpmDataInputs);
             $remarkData = [
@@ -170,21 +180,41 @@ class TPMDataController extends Controller
                 'HRO_remarks' => $request->input('HRO_remarks', null),
             ];
             $remark = TPMDataRemark::create($remarkData);
-            $tpmAggragateFunctionsInput = [
-                'tpm_data_id' => $tpmData->id,
-                'average' => $request->input('average', null),
-                'maximum' => $request->input('maximum', null),
-                'minimum' => $request->input('minimum', null),
-                'ng_counter' => $request->input('ng_counter', null)
-            ];
-            $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
+
+            $checkTpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkTpmDataAggregateFunctions){
+                try{
+                    $tpmAggragateFunctionsInput = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput); 
+                }catch(\Exception $e){
+
+                }          
+            }
+
+            $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkReportData){
+                try{
+                    $reportDataInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $reportData = ReportData::create($reportDataInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
 
             DB::commit();
-
             return response()->json([
                 'status' => true,
                 'message' => 'tmp Data created successfully',
-                'data' => [$tpmData, $remark, $tpmAggragateFunctions]
+                'data' => [
+                    $tpmData, 
+                    $remark, 
+                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions, 
+                    $checkReportData ?? $reportData
+                    ]
             ], 201);
         }catch(\Exception $e){
             // If an error occurs, roll back the transaction
@@ -192,119 +222,156 @@ class TPMDataController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Error creating tmp Data and remark',
+                'message' => 'Error creating TPM Data and remark',
                 'error' => $e->getMessage(),
             ], 500);
         }
 
     }
 
-    public function update(Request $request, $serial_no){
+    // public function update(Request $request, $serial_no){
+    //     DB::beginTransaction();
+    //     try {
+    //         $tpmData = TPMData::find($serial_no);
+
+    //         $tpmDataInputs = [];
+    //         foreach ($request->all() as $key => $value) {
+    //             // Skip remarks and aggregate function fields (they will be handled separately)
+    //             if (strpos($key, 'remarks') === false && !in_array($key, ['average', 'maximum', 'minimum', 'ng_counter'])) {
+    //                 $tpmDataInputs[$key] = $value;
+    //             }
+    //         }
+    //         if (!empty($tpmDataInputs)) {
+    //             $tpmData->update($tpmDataInputs);
+    //         }
+
+    //         $remarks = $tpmData->remark;
+    //         $remarksFields = collect($request->all())
+    //             ->filter(function ($value, $key) {
+    //                 return strpos($key, '_remarks') !== false;  // Check if the field is a 'remarks' field
+    //             });
+    //         foreach ($remarksFields as $key => $value) {
+    //             $remarks->$key = $value;
+    //         }
+    //         if ($remarksFields->isNotEmpty()) {
+    //             $remarks->save();
+    //         }
+
+    //         $aggregateFields = ['average', 'maximum', 'minimum', 'ng_counter'];
+    //         $aggregateFunctions = $tpmData->aggregateFunctions;
+    //         foreach ($aggregateFields as $field) {
+    //             if ($request->has($field)) {
+    //                 $aggregateFunctions->$field = $request->input($field);
+    //             }
+    //         }
+    //         $aggregateFunctions->save();
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'tmp Data updated successfully',
+    //             'data' => $tpmData
+    //         ], 200);
+    //     }catch(\Exception $e){
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Error updating tmp Data and remark',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+
+    // }
+
+
+    public function updateTpmData(Request $request, $id)
+    {
         DB::beginTransaction();
-        try{
-            $tpmData = TPMData::find($serial_no);
-            $tpmDataInputs = [
-                'date' => $request->input('date', $tpmData->date),
-                'code_no' => $request->input('code_no', $tpmData->code_no),
-                'order_no' => $request->input('order_no', $tpmData->order_no),
-                'type' => $request->input('type', $tpmData->type),
-                'press_1' => $request->input('press_1', default: $tpmData->press_1),
-                'press_2' => $request->input('press_2', $tpmData->press_2),
-                'machine_no' => $request->input('machine_no', $tpmData->machine_no),
-                'sintering_furnace_no' => $request->input('sintering_furnace_no', $tpmData->sintering_furnace_no),
-                'furnace_no' => $request->input('furnace_no', $tpmData->furnace_no),
-                'zone' => $request->input('zone', $tpmData->zone),
-                'pass_no' => $request->input('pass_no', $tpmData->pass_no),
-                'Br' => $request->input('Br', $tpmData->Br),
-                '4paiId' => $request->input('4paiId', $tpmData['4paiId']),
-                'iHc' => $request->input('iHc', $tpmData->iHc),
-                'bHc' => $request->input('bHc', default: $tpmData->bHc),
-                'BHMax' => $request->input('BHMax', $tpmData->BHMax),
-                'Squareness' => $request->input('Squareness', $tpmData->Squareness),
-                '4paiIs' => $request->input('4paiIs', $tpmData['4paiIs']),
-                'iHk' => $request->input('iHk', $tpmData->iHk),
-                '4paiIa' => $request->input('4paiIa', $tpmData['4paiIa']),
-                'Density' => $request->input('Density', $tpmData->Density),
-                'iHkiHc' => $request->input('iHkiHc', $tpmData->iHkiHc),
-                'Br4pai' => $request->input('Br4pai', $tpmData->Br4pai),
-                'iHr95' => $request->input('iHr95', $tpmData->iHr95),
-                'iHr98' => $request->input('iHr98', $tpmData->iHr98),
-                'Tracer' => $request->input('Tracer', $tpmData->Tracer),
-                'HRX' => $request->input('HRX', $tpmData->HRX),
-                'MRX' => $request->input('MRX', $tpmData->MRX),
-                'HRY' => $request->input('HRY', $tpmData->HRY),
-                'MRY' => $request->input('MRY', $tpmData->MRY),
-                'IHKA' => $request->input('IHKA', $tpmData->IHKA),
-                'MRA' => $request->input('MRA', $tpmData->MRA),
-                'IHKB' => $request->input('IHKB', $tpmData->IHKB),
-                'MRB' => $request->input('MRB', $tpmData->MRB),
-                'IHKC' => $request->input('IHKC', $tpmData->IHKC),
-                'MRC' => $request->input('MRC', $tpmData->MRC),
-                'HR' => $request->input('HR', $tpmData->HR),
-                'HRO' => $request->input('HRO', $tpmData->HRO),
-            ];
-            $tpmData->update($tpmDataInputs);
-            $remarks = $tpmData->remark;
-            $remarkData = [
-                'Br_remarks' => $request->input('Br_remarks', $remarks->Br_remarks),
-                '4paiId_remarks' => $request->input('4paiId_remarks', $remarks['4paiId_remarks']),
-                'iHc_remarks' => $request->input('iHc_remarks', $remarks->iHc_remarks),
-                'bHc_remarks' => $request->input('bHc_remarks', $remarks->bHc_remarks),
-                'BHMax_remarks' => $request->input('BHMax_remarks', $remarks->BHMax_remarks),
-                'Squareness_remarks' => $request->input('Squareness_remarks', $remarks->Squareness_remarks),
-                '4paiIs_remarks' => $request->input('4paiIs_remarks', $remarks['4paiIs_remarks']),
-                'iHk_remarks' => $request->input('iHk_remarks', $remarks->iHk_remarks),
-                '4paiIa_remarks' => $request->input('4paiIa_remarks', $remarks['4paiIa_remarks']),
-                'Density_remarks' => $request->input('Density_remarks', $remarks->Density_remarks),
-                'iHkiHc_remarks' => $request->input('iHkiHc_remarks', $remarks->iHkiHc_remarks),
-                'Br4pai_remarks' => $request->input('Br4pai_remarks', $remarks->Br4pai_remarks),
-                'iHr95_remarks' => $request->input('iHr95_remarks', $remarks->iHr95_remarks),
-                'iHr98_remarks' => $request->input('iHr98_remarks', $remarks->iHr98_remarks),
-                'Tracer_remarks' => $request->input('Tracer_remarks', $remarks->Tracer_remarks),
-                'HRX_remarks' => $request->input('HRX_remarks', $remarks->HRX_remarks),
-                'MRX_remarks' => $request->input('MRX_remarks', $remarks->MRX_remarks),
-                'HRY_remarks' => $request->input('HRY_remarks', $remarks->HRY_remarks),
-                'MRY_remarks' => $request->input('MRY_remarks', $remarks->MRY_remarks),
-                'IHKA_remarks' => $request->input('IHKA_remarks', $remarks->IHKA_remarks),
-                'MRA_remarks' => $request->input('MRA_remarks', $remarks->MRA_remarks),
-                'IHKB_remarks' => $request->input('IHKB_remarks', $remarks->IHKB_remarks),
-                'MRB_remarks' => $request->input('MRB_remarks', $remarks->MRB_remarks),
-                'IHKC_remarks' => $request->input('IHKC_remarks', $remarks->IHKC_remarks),
-                'MRC_remarks' => $request->input('MRC_remarks', $remarks->MRC_remarks),
-                'HR_remarks' => $request->input('HR_remarks', $remarks->HR_remarks),
-                'HRO_remarks' => $request->input('HRO_remarks', $remarks->HRO_remarks),
-            ];
-            $remarks->update($remarkData);
-            $tpmAggragateFunctions = $tpmData->aggregateFunctions;
-            $tpmAggragateFunctionsInput = [
-                'average' => $request->input('average', $tpmAggragateFunctions->average),
-                'maximum' => $request->input('maximum', $tpmAggragateFunctions->maximum),
-                'minimum' => $request->input('minimum', $tpmAggragateFunctions->minimum),
-                'ng_counter' => $request->input('ng_counter', $tpmAggragateFunctions->ng_counter)
-            ];
-            $tpmAggragateFunctions->update($tpmAggragateFunctionsInput);
+        try {
+            $tpmData = TPMData::findorfail( $id );
+
+            $inputData = $request->all();
+            $tpmData->update($inputData);
 
             DB::commit();
 
             return response()->json([
                 'status' => true,
-                'message' => 'tmp Data updated successfully',
+                'message' => 'TPM Data updated successfully',
                 'data' => $tpmData
             ], 200);
-        }catch(\Exception $e){
+
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Error updating tmp Data and remark',
+                'message' => 'Error updating TPM Data',
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
 
-    public function destroy($serial_no){
+    // Update Remarks
+    public function updateRemarks(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $tpmData = TPMData::findorfail( $id );
+
+            $remarks = $tpmData->remark;
+            $remarksData = $request->all();
+            $remarks->update($remarksData);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Remarks updated successfully',
+                'data' => $tpmData->remark
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Error updating Remarks',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Update Aggregate Functions
+    public function updateAggregateFunctions(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $aggregateFunctions = TPMDataAggregateFunctions::where( 'tpm_data_serial',$id )
+                                ->first();
+            $aggregateFields = $request->all();
+            $aggregateFunctions->update($aggregateFields);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Aggregate Functions updated successfully',
+                'data' => $aggregateFunctions
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Error updating Aggregate Functions',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroy($id){
         try{
-            $tpmData = TPMData::find($serial_no);
+            $tpmData = TPMData::findorfail($id);
             $tpmData->delete();
             return response()->json([
                 'status' => true,
