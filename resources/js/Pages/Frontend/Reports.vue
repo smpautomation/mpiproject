@@ -22,37 +22,37 @@
                 <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Model:</label>&nbsp;
-                        <input type="text" name="pulseTracerMachineNo" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <span>NA</span>
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Material Code:</label>&nbsp;
-                        <input type="text" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input v-model="save_material_code" type="text" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Partial No.:</label>&nbsp;
-                        <input type="text" name="shift" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input v-model="save_partial_number" type="text" name="shift" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Total Quantity:</label>&nbsp;
-                        <input type="number" name="operator" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input v-model="save_total_quantity" type="number" name="operator" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                 </div>
                 <div class="flex flex-row mb-4 justify-evenly">
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Pulse Tracer Machine No:</label>&nbsp;
-                        <input type="text" name="pulseTracerMachineNo" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <span>NA</span>
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Date:</label>&nbsp;
-                        <input type="date" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input v-model="save_date" type="date" name="date" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Shift:</label>&nbsp;
-                        <input type="text" name="shift" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input v-model="save_shift" type="text" name="shift" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                     <div class="flex flex-row items-baseline">
                         <label class="text-sm font-semibold">Operator:</label>&nbsp;
-                        <input type="text" name="operator" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
+                        <input v-model="save_operator" type="text" name="operator" class="w-[12rem] h-[1.5rem] p-2 mt-1 text-sm border rounded-md">
                     </div>
                 </div>
 
@@ -148,10 +148,14 @@
                 </div>
                 <div class="flex flex-row items-center justify-center mx-5 mt-5 align-middle">
                     <p class="m-5">Remarks:</p>
-                    <input type="text" class="w-full px-2 py-1 text-sm border rounded-md" />
+                    <input v-model="save_remarks" type="text" class="w-full px-2 py-1 text-sm border rounded-md" />
                     <p class="mx-20 text-3xl text-blue-500">OK</p>
                 </div>
-
+                <div class="flex flex-row items-center justify-center">
+                    <button @click="saveReport" class="px-6 py-4 mt-4 font-semibold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                        SAVE
+                    </button>
+                </div>
             </div>
 
             <div class="flex flex-col justify-center px-8 py-8 my-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
@@ -175,20 +179,13 @@
                 </div>
             </div>
 
-            <div>
-                <button class="px-6 py-4 m-10 bg-green-500 shadow-xl rounded-xl">
-                    SAVE
-                </button>
-            </div>
-
       </div>
     </Frontend>
 </template>
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted } from 'vue';
-
+import { ref, computed, onMounted, toRaw  } from 'vue';
 
 const tpmData = ref([]);
 const getTpmModel = ref('');
@@ -245,8 +242,17 @@ const tpmData_ihkAve = ref('');
 const tpmData_ihkMax = ref('');
 const tpmData_ihkMin = ref('');
 
+const save_material_code = ref('');
+const save_date = ref('');
+const save_partial_number = ref('');
+const save_shift = ref('');
+const save_total_quantity = ref('');
+const save_operator = ref('');
+const save_remarks = ref('');
+
 const generateReport = async () => {
     fetchAllData();
+    showReportData();
 }
 
 const fetchAllData = async () => {
@@ -293,7 +299,7 @@ const fetchAllData = async () => {
 
         const getAllInspModels = inspectionDataList.value.map(item => item.model);
         console.log("List of models in inspection: ", getAllInspModels);
-        console.log("Current model in tpm: ",tpm_current_model)
+        console.log("Current model in tpm: ",tpm_current_model);
 
         // Check if tpm_current_model exists in getAllInspModels
         if (getAllInspModels.includes(tpm_current_model)) {
@@ -354,16 +360,48 @@ const fetchAllData = async () => {
 const createReport = async (reportData, serial) => {
     try {
         const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-        console.log("Patched report data: ",response.data);
+        console.log("Patched report data: ", response.data);
     } catch (error) {
         console.error("Patch report data Error:", error);
     }
 }
 
+const showReportData = async () => {
+    try {
+        const response = await axios.get(`/api/reportdata/${3}`);
+        console.log("Getting report data API result: ", response.data);
+    } catch (error) {
+        console.error("API get request showReportData Error:", error);
+    }
+}
+
+const saveReport = async () => {
+    const saveReportData = {
+        "material_code": save_material_code.value,
+        "date": save_date.value,
+        "partial_number": save_partial_number.value,
+        "shift": save_shift.value,
+        "total_quantity": save_total_quantity.value,
+        "operator": save_operator.value,
+        "remarks": save_remarks.value,
+    }
+
+    console.log("Save report data: ", saveReportData);
+
+    saveReportUpdate(saveReportData, currentSerialSelected.value);
+}
+
+const saveReportUpdate = async (saveData, serial) => {
+    try{
+        const responseSave = await axios.patch(`/api/reportdata/${serial}`, saveData);
+        console.log("Saved Report data: ", responseSave.data);
+    }catch (error){
+        console.error("Patch report data Error:", error);
+    }
+}
 
 // Fetching the serial start
 
-    // Function to fetch serial data
 // Function to fetch serial data
 const fetchSerial = async () => {
   try {
@@ -386,7 +424,7 @@ const fetchSerial = async () => {
 
     // Set default selection to first serial, if available
     if (serialList.value.length > 0) {
-      currentSerialSelected.value = serialList.value[0];
+        currentSerialSelected.value = serialList.value[0];
     }
 
   } catch (error) {
