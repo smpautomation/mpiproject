@@ -160,13 +160,13 @@
                 <div class="flex flex-row items-center justify-center mx-5 mt-5 align-middle">
                     <p class="m-5">Remarks:</p>
                     <input v-model="reportRemarks" type="text" class="w-full px-2 py-1 text-sm border rounded-md" />
-                    <p class="mx-20 text-3xl font-extrabold" :class="{'text-red-500': reportRemarksDisplay === 'E', 'text-green-500': reportRemarksDisplay !== 'E'}">
+                    <p class="mx-20 text-3xl font-extrabold" :class="{'text-red-500': reportRemarksDisplay === 'E', 'text-green-500': reportRemarksDisplay !== 'E', 'text-red-500': reportRemarksDisplay === 'HOLD'}">
                         {{ reportRemarksDisplay }}
                     </p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button @click="saveReport" class="px-6 py-4 mt-4 font-semibold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
-                        SAVE
+                    <button @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                        {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                 </div>
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
@@ -184,6 +184,8 @@
                                 :style="{
                                     backgroundImage: reportRemarksDisplay === 'E'
                                         ? 'url(\'/photo/reject_stamp.png\')'
+                                        : reportRemarksDisplay === 'HOLD'
+                                        ? 'url(\'/photo/hold_stamp.png\')'
                                         : 'url(\'/photo/pass_stamp.png\')',
                                     backgroundSize: '150%'
                                 }">
@@ -278,6 +280,9 @@ const reportBrVariance = ref('NA');
 const reportiHcVariance = ref('NA');
 const reportiHkVariance = ref('NA');
 
+const reportSMPJudgement = ref('');
+const reportExistingSMPJudgement = ref(null);
+
 /// to be put in the form end
 
 const inspectionLength = ref('');
@@ -334,13 +339,30 @@ const fetchAllData = async () => {
         const getAllBrNG = getTpmModel.value.map(item => item.remark.Br_remarks || null);
         const getAlliHcNG = getTpmModel.value.map(item => item.remark.iHc_remarks || null);
         const getAlliHkNG = getTpmModel.value.map(item => item.remark.iHk_remarks || null);
+        const getAll4paildNG = getTpmModel.value.map(item => item.remark["4paild_remarks"] || null);
+        const getAll4pailsNG = getTpmModel.value.map(item => item.remark["4pails_remarks"] || null);
+        const getAll4pailaNG = getTpmModel.value.map(item => item.remark["4paila_remarks"] || null);
+        const getAllbHcNG = getTpmModel.value.map(item => item.remark.bHc_remarks || null);
+        const getAllBHMaxNG = getTpmModel.value.map(item => item.remark.BHMax_remarks || null);
+        const getAllSquarenessNG = getTpmModel.value.map(item => item.remark.Squareness_remarks || null);
+        const getAllDensityNG = getTpmModel.value.map(item => item.remark.Density_remarks || null);
+        const getAlliHkiHcNG = getTpmModel.value.map(item => item.remark.iHkiHc_remarks || null);
+        const getAllBr4paiNG = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
+        const getAlliHr95NG = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
+        const getAlliHr98NG = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
         console.log("check br remarks: ", getAllBrNG);
         // Check if "1" exists in getAllBrNG
-        if (getAllBrNG.includes("1") || getAlliHcNG.includes("1") || getAlliHkNG.includes("1")) {
+        if (getAllBrNG.includes("1") || getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1") || getAllBHMaxNG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")) {
             // Perform your action here (leave it blank for now)
-            reportRemarksDisplay.value = "E"
+            reportRemarksDisplay.value = "E";
+            reportSMPJudgement.value = "REJECT";
+            if(getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")){
+                reportRemarksDisplay.value = "HOLD";
+                reportSMPJudgement.value = reportRemarksDisplay.value;
+            }
         }else{
-            reportRemarksDisplay.value = "OK"
+            reportRemarksDisplay.value = "OK";
+            reportSMPJudgement.value = "PASSED";
         }
         //Remarks checking end
 
@@ -466,6 +488,7 @@ const showReportData = async () => {
         reportMaterialGrade.value = filterBySerial[0].material_grade;
         reportMPISampleQty.value = filterBySerial[0].mpi_sample_quantity;
         reportRemarks.value = filterBySerial[0].remarks;
+        reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
 
         //console.log("Report Data Model", reportModel.value);
 
@@ -509,11 +532,17 @@ const saveReport = async () => {
         "total_quantity": reportTotalQuantity.value,
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
+        "smp_judgement":reportSMPJudgement.value,
     }
 
     console.log("Save report data: ", saveReportData);
 
     saveReportUpdate(saveReportData, currentSerialSelected.value);
+
+    setTimeout(() => {
+        showReportContent.value = false;
+        showSelectionPanel.value = true;
+    },1000);
 }
 
 const saveReportUpdate = async (saveData, serial) => {
