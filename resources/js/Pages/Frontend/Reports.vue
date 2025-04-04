@@ -196,15 +196,27 @@
                     <!-- Additional Columns -->
                     <div class="flex flex-col">
                         <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Prepared By:</p>
-                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
+                        <div class="p-10 text-center border border-black">
+                            <button class="px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                Click to Stamp
+                            </button>
+                        </div>
                     </div>
                     <div class="flex flex-col">
                         <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Check By:</p>
-                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
+                        <div class="p-10 text-center border border-black">
+                            <button class="px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                Click to Stamp
+                            </button>
+                        </div>
                     </div>
                     <div class="flex flex-col">
                         <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Approve By:</p>
-                        <p class="p-10 text-center border border-black"><span>(Insert Stamp here)</span></p>
+                        <div class="p-10 text-center border border-black">
+                            <button class="px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                Click to Stamp
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

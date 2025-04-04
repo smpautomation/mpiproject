@@ -11,6 +11,7 @@ Route::get('/view', [FrontendController::class,'viewList'])->name('viewList');
 Route::get('/manage', [FrontendController::class,'manage'])->name('manage');
 Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspection');
 Route::get('/reports', [FrontendController::class,'reports'])->name('reports');
+Route::get('/approval', [FrontendController::class,'approval'])->name('approval');
 Route::get('/settings', [FrontendController::class,'settings'])->name('settings');
 
 Route::get('/dashboard', function () {

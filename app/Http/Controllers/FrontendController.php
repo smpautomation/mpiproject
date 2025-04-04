@@ -27,6 +27,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Inspection');
     }
 
+    public function approval(){
+        return Inertia::render('Frontend/Approval');
+    }
+
     public function settings(){
         return Inertia::render('Frontend/Settings');
     }
