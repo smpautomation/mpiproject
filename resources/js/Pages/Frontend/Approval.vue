@@ -31,7 +31,9 @@
                             <td class="px-4 py-2 text-sm border border-gray-300">{{ report.prepared_by }}</td>
                             <td class="px-4 py-2 text-sm border border-gray-300">{{ report.checked_by }}</td>
                             <td class="px-4 py-2 text-sm text-center border border-gray-300">
-                                <button class="px-4 py-2 text-blue-500 transition duration-200 border border-blue-500 rounded-md cursor-pointer hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+                                <!-- View Report Button, passing the serial number -->
+                                <button @click="viewReport(report.tpm_data_serial)"
+                                        class="px-4 py-2 text-blue-500 transition duration-200 border border-blue-500 rounded-md cursor-pointer hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
                                     View Report
                                 </button>
                             </td>
@@ -61,6 +63,11 @@ const selectedRows = ref([]); // Track selected rows by their serial numbers
 watch(selectedRows, (newValue) => {
     console.log("Currently selected rows:", newValue);
 }, { deep: true });
+
+// Function to handle "View Report" button click
+const viewReport = (serial) => {
+  console.log('Viewing report for serial:', serial);
+};
 
 const showReportData = async () => {
     try {
