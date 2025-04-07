@@ -168,6 +168,9 @@
                     <button @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
+                    <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
+                        View Property Data
+                    </button>
                 </div>
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
@@ -229,6 +232,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, toRaw  } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
 //UI Control start
 
@@ -245,9 +249,12 @@ const showSelectionPanel = ref(true);
 const exitReport = () => {
     showReportContent.value = false;
     showSelectionPanel.value = true;
+    fetchSerial();
 }
 
 //UI Control end
+
+//general variables start
 
 const tpmData = ref([]);
 const getTpmModel = ref('');
@@ -257,6 +264,9 @@ const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 
 const reportNotificationMessage = ref('');
+
+//general variables end
+
 
 /// to be put in the form
 const reportModel = ref('NA');
@@ -536,6 +546,12 @@ const showReportData = async () => {
 }
 
 const saveReport = async () => {
+    //transform to uppercase first
+    reportMaterialCode.value = reportMaterialCode.value.toUpperCase();
+    reportPartialNo.value = reportPartialNo.value.toUpperCase();
+    reportShift.value = reportShift.value.toUpperCase();
+    reportOperator.value = reportOperator.value.toUpperCase();
+
     const saveReportData = {
         "material_code": reportMaterialCode.value,
         "date": reportDate.value,
@@ -600,7 +616,37 @@ const fetchSerial = async () => {
 };
 // Fetching the serial start end
 
-//Makes sure furnace lists is loaded on start.
-onMounted(fetchSerial);
+// Define the prop that will receive the serialParam
+const props = defineProps({
+  serialParam: String,  // Expecting the serialParam to be a string
+});
 
+console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
+
+const viewPropertyData = (serial) => {
+  console.log('Navigating to manage with serial:', serial);
+  Inertia.visit('/manage', {
+    method: 'get',   // You can keep 'get' since we are not modifying any data
+    data: { manageSerialParam: serial },   // Passing the serialParam here
+    preserveState: true,
+    preserveScroll: true,
+  });
+};
+
+// onMounted logic to call the function based on serialParam existence
+onMounted(() => {
+  if (props.serialParam) {
+    // If serialParam has a value, do not fetch serial
+    // Placeholder for additional actions when serialParam exists
+    currentSerialSelected.value = props.serialParam;
+    showReportContent.value = true;
+    showSelectionPanel.value = false;
+    fetchAllData();
+    showReportData();
+    console.log('serialParam is provided, skipping fetchSerial.');
+  } else {
+    // If serialParam does not have a value, proceed with fetchSerial
+    fetchSerial();
+  }
+});
 </script>

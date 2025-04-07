@@ -146,9 +146,10 @@
                 </div>
 
             <div v-show="showGraphAndTables">
-                <!-- Chart Container -->
-                <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
-                    <canvas id="myChart"></canvas>
+                 <!-- Chart Container -->
+                 <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
+                    <!-- Ensure canvas is rendered only when data is ready -->
+                    <canvas v-if="dataReady" ref="myChartCanvas" width="1000" height="550"></canvas>
                 </div>
                 <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
                     <p class="flex p-4 mb-8 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100">
@@ -475,7 +476,7 @@
 
   <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, computed, onMounted } from 'vue';
+    import { ref, computed, onMounted, nextTick } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
@@ -495,6 +496,9 @@
     const toggleManageForm = ref(false);
     const currentLayerName = ref('');
     const currentLayerNo = ref(null);
+
+    const dataReady = ref(false); // Flag to track if data is ready
+    const myChartCanvas = ref(null); // Ref for the canvas
 
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
@@ -585,8 +589,6 @@
         console.error("Error fetching furnace data:", error);
     }
     };
-    //Makes sure furnace lists is loaded on start.
-    onMounted(fetchFurnaces);
 
     const layerList = ref([]); // Stores fetched layers\
     const currentFurnaceNoForLayer = ref(null);
@@ -1390,6 +1392,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     // Variables for aggregate end
 
+
     // Function to fetch data from the API
     const showAllData = async () => {
         layerTableRowLoading.value = true;
@@ -1737,7 +1740,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             showProceed.value = false;
             showGraphAndTables.value = true;
         }
-        fetchDataCreateGraph();
+        await fetchDataCreateGraph();
     };
 
 // Function to send raw data via API
@@ -1776,9 +1779,20 @@ const fetchDataCreateGraph = async () => {
             yAxis: JSON.parse(row.y || "[]"), // Parse y values
             color: generateColor(index), // Assign a unique color
         }));
+        showGraphAndTables.value = true;  // Set this to true after data is loaded
 
-        // Render the chart with updated data
-        renderChart();
+        // Set dataReady to true once the data is ready
+        dataReady.value = true;
+        console.log("dataReady ", dataReady.value);
+        // Ensure DOM updates before rendering
+        nextTick(() => {
+            console.log("myChartCanvas reference:", myChartCanvas.value); // Debug the canvas ref
+            if (myChartCanvas.value) {
+                renderChart();  // Proceed to render the chart if the canvas is available
+            } else {
+                console.error("Canvas element is not available.");
+            }
+        });
         layerTableRowLoading.value = false;
     } catch (err) {
         error.value = err;
@@ -1793,102 +1807,117 @@ const generateColor = (index) => {
 };
 
 const renderChart = () => {
-    const ctx = document.getElementById("myChart").getContext("2d");
+    // Ensure myChartCanvas is not null
+    if (!myChartCanvas.value) {
+        console.error("Canvas element is not available.");
+        return;
+    }
+    // Ensure the canvas is accessible
+    console.log("Rendering chart with canvas:", myChartCanvas.value);
 
-    const x_offset = 1000; // The amount to offset subsequent datasets
-    const y_offset = 2500; // The amount to offset subsequent datasets
+    // Ensure datasets are available before creating the chart
+    console.log("Datasets available for chart:", datasets.value);
 
-    const chartDatasets = datasets.value.map((dataset, index) => {
-        return {
-            label: `Dataset ${index + 1}`,
-            data: dataset.xAxis.map((x, i) => ({
-                x: x + index * x_offset, // Apply offset dynamically
-                y: (dataset.yAxis[i] || 0) - index * y_offset, // Apply offset dynamically
-            })),
-            borderColor: dataset.color,
-            borderWidth: 2,
-            fill: false,
-            pointBackgroundColor: dataset.color,
-            pointBorderColor: dataset.color,
-        };
-    });
+    if (dataReady.value && myChartCanvas.value) {
+        const ctx = myChartCanvas.value.getContext("2d");
 
-    new Chart(ctx, {
-        type: "line",
-        data: {
-            datasets: chartDatasets.map(dataset => ({
-                ...dataset, // Copy over existing dataset properties
-                pointRadius: 0, // Increase point size for better visibility
-                tension: 0.6,
-            })),
-            /*
-            datasets: chartDatasets.map(dataset => ({
-                ...dataset, // Copy over existing dataset properties
-                pointRadius: 3, // Increase point size for better visibility
-                pointHoverRadius: 4, // Hover radius
-                tension: 0.8, // Slightly reduced tension for smoother line
-                borderWidth: 4, // Thicker line
-            })),
-            */
-        },
-        options: {
-            responsive: true,
-            animation: {
-                duration: 1000,
-                easing: "easeOutQuart",
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: (context) => `Value: ${context.raw.y}`,
-                    },
+        // Check if the context is obtained
+        if (!ctx) {
+            console.error("Failed to get 2D context for canvas.");
+            return;
+        }
+
+        console.log("2D Context obtained, proceeding to render the chart.");
+
+        const x_offset = 1000;
+        const y_offset = 2500;
+
+        const chartDatasets = datasets.value.map((dataset, index) => {
+            return {
+                label: `Dataset ${index + 1}`,
+                data: dataset.xAxis.map((x, i) => ({
+                    x: x + index * x_offset,
+                    y: (dataset.yAxis[i] || 0) - index * y_offset,
+                })),
+                borderColor: dataset.color,
+                borderWidth: 2,
+                fill: false,
+                pointBackgroundColor: dataset.color,
+                pointBorderColor: dataset.color,
+            };
+        });
+
+        console.log("Final Chart Datasets:", chartDatasets);
+
+        try {
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    datasets: chartDatasets.map(dataset => ({
+                        ...dataset,
+                        pointRadius: 0,
+                        tension: 0.6,
+                    })),
                 },
-            },
-            scales: {
-                x: {
-                    type: "linear",
-                    position: "bottom",
-                    grid: {
-                        color: "rgba(0, 0, 0, 0.1)",
+                options: {
+                    responsive: true,
+                    animation: {
+                        duration: 1000,
+                        easing: "easeOutQuart",
                     },
-                    title: {
-                        display: true,
-                        text: "←  kOe  →",
-                        color: "#333",
-                        font: {
-                            size: 22,  // Increase font size
-                            weight: "bold", // Make it bold
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `Value: ${context.raw.y}`,
+                            },
                         },
                     },
-                    ticks: {
-                        display: true, // Hides the values
-                    },
-                },
-                y: {
-                    type: "linear",
-                    position: "left",
-                    grid: {
-                        color: "rgba(0, 0, 0, 0.1)",
-                    },
-                    title: {
-                        display: true,
-                        text: "←  kG  →",
-                        color: "#333",
-                        font: {
-                            size: 22,  // Increase font size
-                            weight: "bold", // Make it bold
+                    scales: {
+                        x: {
+                            type: "linear",
+                            position: "bottom",
+                        },
+                        y: {
+                            type: "linear",
                         },
                     },
-                    ticks: {
-                        display: true, // Hides the values
-                    },
                 },
-            },
-        },
-    });
+            });
+        } catch (error) {
+            console.error("Error initializing Chart.js:", error);
+        }
+    } else {
+        console.error("Chart cannot be rendered: Missing data or canvas context.");
+    }
 };
 
+   // Define props that Inertia will pass to the component
+    const props = defineProps({
+        manageSerialParam: String,  // Expecting the serialParam to be a string
+    });
 
+    console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
+
+    // onMounted logic to call the function based on serialParam existence
+    onMounted(() => {
+    // Log the value to check if it's being passed correctly
+    console.log('Serial Param in Manage.vue:', props.manageSerialParam);
+
+    if (props.manageSerialParam) {
+        showStartManageDiv.value = false;
+        // If serialParam has a value, do not fetch serial
+        serialNo.value = props.manageSerialParam;
+        toggleManageForm.value = true;
+        showGraphAndTables.value = true;
+        showUploadData.value = false;
+        console.log("Showdiv graphs ",showGraphAndTables.value);
+        showAllData();
+        console.log('serialParam is provided, skipping fetchSerial.');
+    } else {
+        // If serialParam does not have a value, proceed with fetchSerial
+        fetchFurnaces();
+    }
+    });
 
 
   </script>
