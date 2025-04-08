@@ -6,6 +6,7 @@ use App\Http\Controllers\FurnaceDataController;
 use App\Http\Controllers\LayerDataController;
 use App\Http\Controllers\InspectionDataController;
 use App\Http\Controllers\ReportDataController;
+use App\Models\Approvers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,12 @@ Route::get('/inspectiondata/{id}', [InspectionDataController::class, 'show']);
 Route::post('/inspectiondata', [InspectionDataController::class, 'store']);
 Route::patch('/inspectiondata/{id}', [InspectionDataController::class, 'update']);
 Route::delete('/inspectiondata/{id}', [InspectionDataController::class, 'destroy']);
+
+Route::get('/approver', [Approvers::class, 'index']);
+Route::get('/approver/{id}', [Approvers::class, 'show']);
+Route::post('/approver', [Approvers::class, 'store']);
+Route::patch('/approver/{id}', [Approvers::class, 'update']);
+Route::delete('/approver/{id}', [Approvers::class, 'destroy']);
 
 
 Route::get('/users', [UserController::class, 'index']);
