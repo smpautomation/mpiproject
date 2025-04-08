@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class FrontendController extends Controller
 {
@@ -25,13 +26,30 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function reports(Request $request){
+    public function reports(Request $request)
+    {
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
 
-        // Return the Inertia response and pass serialParam to the Reports.vue component
+        // Debug: Log all the headers
+        Log::debug($request->headers->all());  // <-- Now the Log class will work
+
+        // Get the real client IP address
+        $xForwardedFor = $request->header('X-Forwarded-For');
+        if ($xForwardedFor) {
+            // The first IP address in the X-Forwarded-For list is the real client IP
+            $ipAddress = explode(',', $xForwardedFor)[0];
+        } else {
+            // Fallback to REMOTE_ADDR if X-Forwarded-For is not present
+            $ipAddress = $request->server('REMOTE_ADDR');
+        }
+
+        Log::debug('Client IP Address: ' . $ipAddress);  // Log the IP Address
+
+        // Return the Inertia response and pass both serialParam and ipAddress to the Reports.vue component
         return Inertia::render('Frontend/Reports', [
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
+            'ipAddress' => $ipAddress  // Pass ipAddress as a prop to the Reports.vue component
         ]);
     }
 

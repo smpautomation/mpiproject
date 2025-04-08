@@ -39,6 +39,7 @@ return new class extends Migration
             $table->string('prepared_by')->nullable();
             $table->string('checked_by')->nullable();
             $table->string('approved_by')->nullable();
+            $table->boolean('checked')->default(false);
             $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
         });
 

@@ -17,6 +17,9 @@
                     Generate Report
                 </button>
             </div>
+            <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 mx-auto my-10 text-white bg-orange-700 rounded-md shadow-lg px-28">
+                <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+            </div>
         </div>
         </div>
 
@@ -243,6 +246,7 @@ function toggleSwitch() {
 }
 
 const showNotif = ref(false);
+const showNotif2 = ref(false);
 const showReportContent = ref(false);
 const showSelectionPanel = ref(true);
 
@@ -262,6 +266,7 @@ const inspectionDataList = ref([]);
 const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
+const ipAddress = ref('');
 
 const reportNotificationMessage = ref('');
 
@@ -336,6 +341,17 @@ const showNotification = (message) => {
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         showNotif.value = false;
+    }, 3000);  // 3000ms = 3 seconds
+}
+
+const showNotification2 = (message) => {
+    // Show notification and set the message
+    showNotif2.value = true;
+    reportNotificationMessage.value = message;
+
+    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
+    setTimeout(() => {
+        showNotif2.value = false;
     }, 3000);  // 3000ms = 3 seconds
 }
 
@@ -442,7 +458,10 @@ const fetchAllData = async () => {
             });
 
         } else {
-            console.log("The model does not exist in the inspection data!");
+            showNotification2("The model does not exist in the inspection data!")
+            showReportContent.value = false;
+            showSelectionPanel.value = true;
+            return;
         }
 
         console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
@@ -546,11 +565,11 @@ const showReportData = async () => {
 }
 
 const saveReport = async () => {
-    //transform to uppercase first
-    reportMaterialCode.value = reportMaterialCode.value.toUpperCase();
-    reportPartialNo.value = reportPartialNo.value.toUpperCase();
-    reportShift.value = reportShift.value.toUpperCase();
-    reportOperator.value = reportOperator.value.toUpperCase();
+    // Use default values (empty string) or check for null/undefined before calling toUpperCase
+    reportMaterialCode.value = (reportMaterialCode.value || '').toUpperCase();
+    reportPartialNo.value = (reportPartialNo.value || '').toUpperCase();
+    reportShift.value = (reportShift.value || '').toUpperCase();
+    reportOperator.value = (reportOperator.value || '').toUpperCase();
 
     const saveReportData = {
         "material_code": reportMaterialCode.value,
@@ -619,8 +638,11 @@ const fetchSerial = async () => {
 // Define the prop that will receive the serialParam
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
+  ipAddress: String,
 });
 
+ipAddress.value = props.ipAddress;
+console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
 
 const viewPropertyData = (serial) => {
