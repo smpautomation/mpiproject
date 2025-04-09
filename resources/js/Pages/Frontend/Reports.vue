@@ -14,7 +14,7 @@
             </div>
             <div class="flex flex-row justify-center">
                 <button @click="generateReport" class="px-4 py-2 m-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    Generate Report
+                    View Report
                 </button>
             </div>
             <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 mx-auto my-10 text-white bg-orange-700 rounded-md shadow-lg px-28">
@@ -168,7 +168,7 @@
                     </p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-show="showReportSaveButton" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
@@ -201,27 +201,48 @@
 
                     <!-- Additional Columns -->
                     <div class="flex flex-col">
-                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Prepared By:</p>
-                        <div class="p-10 text-center border border-black">
-                            <button class="px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Prepared By:</p>
+                    <div class="p-2 text-center border border-black">
+                        <button @click="preparedByStamp" v-show="preparedByButton" class="px-6 py-3 m-10 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            Click to Stamp
+                        </button>
+                        <span v-show="preparedByStampPhoto"
+                            class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
+                            :style="{
+                                backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
+                                backgroundSize: '150%'
+                            }">
+                            2025-04-09
+                        </span>
+                    </div>
+                </div>
+                    <div class="flex flex-col">
+                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Checked By:</p>
+                        <div class="p-2 text-center border border-black">
+                            <button @click="checkedByStamp" v-show="checkedByButton" class="px-6 py-3 m-10 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                                 Click to Stamp
                             </button>
+                            <span v-show="checkedByStampPhoto"
+                                class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
+                                :style="{
+                                    backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
+                                    backgroundSize: '150%'
+                                }">
+                                2025-04-09
+                            </span>
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Check By:</p>
-                        <div class="p-10 text-center border border-black">
-                            <button class="px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                Click to Stamp
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Approve By:</p>
-                        <div class="p-10 text-center border border-black">
-                            <button class="px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                Click to Stamp
-                            </button>
+                        <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Approved By:</p>
+                        <div class="p-2 text-center border border-black">
+                            <span v-show="approvedByStampPhoto"
+                                class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
+                                :style="{
+                                    backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
+                                    backgroundSize: '150%'
+                                }">
+                                2025-04-09
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -249,6 +270,14 @@ const showNotif = ref(false);
 const showNotif2 = ref(false);
 const showReportContent = ref(false);
 const showSelectionPanel = ref(true);
+const showReportSaveButton = ref(true);
+
+const preparedByButton = ref(true);
+const checkedByButton = ref(true);
+const approvedByButton = ref(true);
+const preparedByStampPhoto = ref(false);
+const checkedByStampPhoto = ref(false);
+const approvedByStampPhoto = ref(false);
 
 const exitReport = () => {
     showReportContent.value = false;
@@ -267,6 +296,9 @@ const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
+const preparedByPerson = ref('');
+const checkedByPerson = ref('');
+const approvedByPerson = ref('');
 
 const reportNotificationMessage = ref('');
 
@@ -358,8 +390,8 @@ const showNotification2 = (message) => {
 const generateReport = async () => {
     showReportContent.value = true;
     showSelectionPanel.value = false;
-    fetchAllData();
-    showReportData();
+    await fetchAllData();
+    await showReportData();
 }
 
 const fetchAllData = async () => {
@@ -531,6 +563,8 @@ const showReportData = async () => {
         reportRemarks.value = filterBySerial[0].remarks;
         reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
 
+        console.log("Model value: ",reportModel.value);
+
         //console.log("Report Data Model", reportModel.value);
 
         const magneticProperty = JSON.parse(filterBySerial[0].magnetic_property_data);
@@ -559,6 +593,8 @@ const showReportData = async () => {
         reportBrVariance.value = parseFloat(reportBrMaximum.value) - parseFloat(reportBrMinimum.value);
         reportiHcVariance.value = parseFloat(reportihcMaximum.value) - parseFloat(reportihcMinimum.value);
         reportiHkVariance.value = parseFloat(reportihkMaximum.value) - parseFloat(reportihkMinimum.value);
+
+        checkApprovalStates();
     } catch (error) {
         console.error("API get request showReportData Error:", error);
     }
@@ -580,6 +616,9 @@ const saveReport = async () => {
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
         "smp_judgement":reportSMPJudgement.value,
+        "prepared_by": preparedByPerson.value,
+        "checked_by": checkedByPerson.value,
+        "approved_by": approvedByPerson.value
     }
 
     console.log("Save report data: ", saveReportData);
@@ -596,6 +635,7 @@ const saveReportUpdate = async (saveData, serial) => {
     try{
         const responseSave = await axios.patch(`/api/reportdata/${serial}`, saveData);
         console.log("Saved Report data: ", responseSave.data);
+        checkApprovalStates();
         showNotification("Saved Successfully");
     }catch (error){
         console.error("Patch report data Error:", error);
@@ -655,14 +695,72 @@ const viewPropertyData = (serial) => {
   });
 };
 
+const preparedByStamp = () => {
+    preparedByPerson.value = "IRISH MERCADO"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
+    preparedByButton.value = false;
+    preparedByStampPhoto.value = true;
+    console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
+}
+
+const checkedByStamp = () => {
+    checkedByPerson.value = "CHECKED BY PERSON"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
+    checkedByButton.value = false;
+    checkedByStampPhoto.value = true;
+    console.log("Checked By Has been stamped by -> ", checkedByPerson.value);
+}
+
+const checkApprovalStates = async () => {
+    try{
+        console.log("Checking approval states...");
+        const response = await axios.get(`/api/reportdata/`);
+        //console.log("Getting report data API result: ", response.data.data);
+        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
+        //console.log("Filtered data: ", filterBySerial);
+
+        const prepared_by = filterBySerial[0].prepared_by;
+        const checked_by = filterBySerial[0].checked_by;
+        const approved_by = filterBySerial[0].approved_by;
+
+        console.log("prepared by: ",prepared_by);
+        console.log("checked by: ",checked_by);
+        console.log("approved by: ",approved_by);
+
+        if(prepared_by == "" || prepared_by == null){
+            preparedByButton.value = true;
+            preparedByStampPhoto.value = false;
+        }else{
+            preparedByButton.value = false;
+            preparedByStampPhoto.value = true;
+        }
+        if(checked_by == "" || checked_by == null){
+            checkedByButton.value = true;
+            checkedByStampPhoto.value = false;
+        }else{
+            checkedByButton.value = false;
+            checkedByStampPhoto.value = true;
+        }
+        if(approved_by == "" || approved_by == null){
+            approvedByButton.value = true;
+            approvedByStampPhoto.value = false;
+        }else{
+            approvedByButton.value = false;
+            approvedByStampPhoto.value = true;
+        }
+    }catch(error){
+
+    }
+}
+
 // onMounted logic to call the function based on serialParam existence
 onMounted(() => {
+
   if (props.serialParam) {
     // If serialParam has a value, do not fetch serial
     // Placeholder for additional actions when serialParam exists
     currentSerialSelected.value = props.serialParam;
     showReportContent.value = true;
     showSelectionPanel.value = false;
+    showReportSaveButton.value = false;
     fetchAllData();
     showReportData();
     console.log('serialParam is provided, skipping fetchSerial.');

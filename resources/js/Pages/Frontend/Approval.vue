@@ -27,7 +27,9 @@
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.partial_number }}</td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.total_quantity }}</td>
-                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.smp_judgement }}</td>
+                            <td class="px-6 py-3 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
+                                {{ report.smp_judgement }}
+                            </td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.prepared_by }}</td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.checked_by }}</td>
                             <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
@@ -40,7 +42,9 @@
                                 <input type="checkbox"
                                     :value="report.tpm_data_serial"
                                     v-model="selectedRows"
+                                    :disabled="report.checked == 0"
                                     class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded-md cursor-pointer focus:ring-blue-500 focus:ring-2">
+
                             </td>
                         </tr>
                     </tbody>
@@ -69,13 +73,14 @@ watch(selectedRows, (newValue) => {
 }, { deep: true });
 
 const viewReport = (serial) => {
-  console.log('Navigating to report with serial:', serial);
-  Inertia.visit('/reports', {
-    method: 'get',   // You can keep 'get' since we are not modifying any data
-    data: { serialParam: serial },   // Passing the serialParam here
-    preserveState: true,
-    preserveScroll: true,
-  });
+    saveReportChecked(serial);
+    console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/reports', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { serialParam: serial },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 const showReportData = async () => {
@@ -84,13 +89,32 @@ const showReportData = async () => {
         console.log("Getting report data API result: ", response.data);
 
         // Filter out rows where smp_judgement is null or an empty string
-        reportDataList.value = response.data.data.filter(report => report.smp_judgement && report.smp_judgement.trim() !== '');
+        reportDataList.value = response.data.data.filter(report =>
+            report.smp_judgement && report.smp_judgement.trim() !== '' &&
+            report.checked_by && report.checked_by.trim() !== '' &&
+            report.prepared_by && report.prepared_by.trim() !== ''
+        );
+
+
 
         console.log("Filtered report data arrays: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
     }
 };
+
+const saveReportChecked = async (serial) => {
+    const reportData = {
+        "checked": 1
+    }
+
+    try {
+        const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
+        console.log("Patched checked report data: ", response.data);
+    } catch (error) {
+        console.error("Patch report data Error:", error);
+    }
+}
 
 onMounted(showReportData);
 

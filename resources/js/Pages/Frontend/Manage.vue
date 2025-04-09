@@ -1234,8 +1234,13 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 saveIHr95Remarks.value = parsedData.data61;
                 saveIHr98Remarks.value = parsedData.data64;
 
+                const rawDate = rowCell.value[0]; // The raw date from rowCell.value[0]
+
+                // Check if the date is in a valid format and reformat it to YYYY-MM-DD
+                const formattedDate = new Date(rawDate).toISOString().split('T')[0];  // Converts to 'YYYY-MM-DD' format
+
                 const layerData = {
-                    "date": rowCell.value[0],
+                    "date": formattedDate,
                     "serial_no": serialNo.value,
                     "furnace_id": currentFurnaceNo.value,
                     "layer_no": currentLayerNo.value,
@@ -1736,6 +1741,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
         } catch (error) {
             console.error('Error fetching data:', error);
+            return;
         } finally {
             showProceed.value = false;
             showGraphAndTables.value = true;
