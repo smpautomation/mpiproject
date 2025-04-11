@@ -42,7 +42,7 @@
                                 <input type="checkbox"
                                     :value="report.tpm_data_serial"
                                     v-model="selectedRows"
-                                    :disabled="report.checked == 0"
+                                    :disabled="report.checked == 0 || report.checked == null"
                                     class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded-md cursor-pointer focus:ring-blue-500 focus:ring-2">
 
                             </td>
@@ -51,7 +51,8 @@
                 </table>
             </div>
             <div class="mb-10">
-                <button class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
+                <button @click="approveSelected"
+                        class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
                     Approve Selected
                 </button>
             </div>
@@ -95,8 +96,6 @@ const showReportData = async () => {
             report.prepared_by && report.prepared_by.trim() !== ''
         );
 
-
-
         console.log("Filtered report data arrays: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
@@ -115,6 +114,31 @@ const saveReportChecked = async (serial) => {
         console.error("Patch report data Error:", error);
     }
 }
+
+const approveSelected = async () => {
+    if (selectedRows.value.length === 0) {
+        console.log("No rows selected for approval");
+        return;
+    }
+
+    try {
+        // Loop through each selected serial number
+        for (let serial of selectedRows.value) {
+            const reportData = {
+                approved_by: "ITADANI SAN" // Set the approved_by field to "ITADANI SAN"
+            };
+
+            // Send a PATCH request to update the 'approved_by' field
+            const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
+            console.log(`Successfully approved report with serial ${serial}:`, response.data);
+        }
+
+        //await showReportData();
+
+    } catch (error) {
+        console.error("Error approving selected reports:", error);
+    }
+};
 
 onMounted(showReportData);
 
