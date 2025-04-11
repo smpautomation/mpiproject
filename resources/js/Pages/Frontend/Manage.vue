@@ -1401,6 +1401,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     // Function to fetch data from the API
     const showAllData = async () => {
         layerTableRowLoading.value = true;
+        showProceed.value = false;
         try {
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
             console.log('API Response showallData:', response.data);
@@ -1733,7 +1734,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }
             }
-
+            showProceed.value = false;
             //ng conditions for NG remarks end...
 
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
