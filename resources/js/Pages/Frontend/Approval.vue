@@ -55,6 +55,9 @@
                         class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
                     Approve Selected
                 </button>
+                <div v-show="approveNotif" class="flex items-center p-4 mt-10 text-green-800 bg-green-100 rounded-md shadow-md">
+                    <p>Approved Successfully</p>
+                </div>
             </div>
         </div>
     </Frontend>
@@ -64,6 +67,12 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, toRaw, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
+
+// UI
+
+const approveNotif = ref(false);
+
+// UI end
 
 const reportDataList = ref([]);
 const selectedRows = ref([]); // Track selected rows by their serial numbers
@@ -125,12 +134,13 @@ const approveSelected = async () => {
         // Loop through each selected serial number
         for (let serial of selectedRows.value) {
             const reportData = {
-                approved_by: "ITADANI SAN" // Set the approved_by field to "ITADANI SAN"
+                approved_by: "ITADANI KAZUYA" // Set the approved_by field to "ITADANI KAZUYA"
             };
 
             // Send a PATCH request to update the 'approved_by' field
             const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
             console.log(`Successfully approved report with serial ${serial}:`, response.data);
+            approveNotif.value = true;
         }
 
         //await showReportData();

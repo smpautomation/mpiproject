@@ -1403,6 +1403,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         layerTableRowLoading.value = true;
         showProceed.value = false;
         try {
+            showProceed.value = false;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
             console.log('API Response showallData:', response.data);
 
