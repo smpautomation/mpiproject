@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('approver_name')->nullable();
             $table->string('ip_address')->nullable();
+            $table->string('approval_stage')->nullable();
         });
     }
 

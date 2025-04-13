@@ -72,7 +72,8 @@ class ApproversController extends Controller
         try{
             $approverData = Approvers::create([
                 'approver_name' => $request->input('approver_name'),
-                'ip_address' => $request->input('ip_address')
+                'ip_address' => $request->input('ip_address'),
+                'approval_stage' => $request->input('approval_stage')
             ]);
             DB::commit();
             return response()->json([
