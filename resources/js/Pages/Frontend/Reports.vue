@@ -25,7 +25,7 @@
 
         <div v-show="showReportContent">
             <div class="flex flex-row items-center justify-center mt-10">
-                <button @click="exitReport" class="px-8 py-2 mt-4 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <button v-show="showExitButton" @click="exitReport" class="px-8 py-2 mt-4 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                     Exit
                 </button>
             </div>
@@ -206,13 +206,24 @@
                         <button @click="preparedByStamp" v-show="preparedByButton" class="px-6 py-3 m-10 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                             Click to Stamp
                         </button>
+                        <!-- Confirmation Buttons -->
+                        <div class="flex flex-col justify-center gap-4" v-show="preparedByStampConfirmation">
+                            <button
+                                class="px-5 py-2 font-medium text-white transition bg-green-500 rounded-md hover:bg-green-600">
+                                Confirm Stamp
+                            </button>
+                            <button
+                                class="px-5 py-2 font-medium text-white transition bg-red-500 rounded-md hover:bg-red-600">
+                                Cancel
+                            </button>
+                        </div>
                         <span v-show="preparedByStampPhoto"
                             class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
                             :style="{
                                 backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
                                 backgroundSize: '150%'
                             }">
-                            2025-04-09
+                            {{ reportPreparedByDate }}
                         </span>
                     </div>
                 </div>
@@ -222,13 +233,24 @@
                             <button @click="checkedByStamp" v-show="checkedByButton" class="px-6 py-3 m-10 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                                 Click to Stamp
                             </button>
+                            <!-- Confirmation Buttons -->
+                            <div class="flex flex-col justify-center gap-4" v-show="checkedByStampConfirmation">
+                                <button
+                                    class="px-5 py-2 font-medium text-white transition bg-green-500 rounded-md hover:bg-green-600">
+                                    Confirm Stamp
+                                </button>
+                                <button
+                                    class="px-5 py-2 font-medium text-white transition bg-red-500 rounded-md hover:bg-red-600">
+                                    Cancel
+                                </button>
+                            </div>
                             <span v-show="checkedByStampPhoto"
                                 class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
                                 :style="{
-                                    backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
+                                    backgroundImage: 'url(\'/photo/Checked_by_stamp.png\')',
                                     backgroundSize: '150%'
                                 }">
-                                2025-04-09
+                                {{ reportCheckedByDate }}
                             </span>
                         </div>
                     </div>
@@ -241,13 +263,15 @@
                                     backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
                                     backgroundSize: '150%'
                                 }">
-                                2025-04-09
+                                {{ reportApprovedByDate }}
                             </span>
                         </div>
                     </div>
                 </div>
+                <div v-show="showNotif3" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
+                    <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                </div>
             </div>
-
         </div>
       </div>
     </Frontend>
@@ -268,9 +292,14 @@ function toggleSwitch() {
 
 const showNotif = ref(false);
 const showNotif2 = ref(false);
+const showNotif3 = ref(false);
 const showReportContent = ref(false);
 const showSelectionPanel = ref(true);
 const showReportSaveButton = ref(true);
+const showExitButton = ref(true);
+
+const preparedByStampConfirmation = ref(false);
+const checkedByStampConfirmation = ref(false);
 
 const preparedByButton = ref(true);
 const checkedByButton = ref(true);
@@ -341,6 +370,9 @@ const reportiHkVariance = ref('NA');
 
 const reportSMPJudgement = ref('');
 const reportExistingSMPJudgement = ref(null);
+const reportPreparedByDate = ref(null);
+const reportCheckedByDate = ref(null);
+const reportApprovedByDate = ref(null);
 
 /// to be put in the form end
 
@@ -562,6 +594,17 @@ const showReportData = async () => {
         reportMPISampleQty.value = filterBySerial[0].mpi_sample_quantity;
         reportRemarks.value = filterBySerial[0].remarks;
         reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
+        reportPreparedByDate.value = filterBySerial[0].prepared_by_date
+        ? filterBySerial[0].prepared_by_date.split(' ')[0]
+        : '';
+        reportCheckedByDate.value = filterBySerial[0].checked_by_date
+        ? filterBySerial[0].checked_by_date.split(' ')[0]
+        : '';
+        reportApprovedByDate.value = filterBySerial[0].approved_by_date
+        ? filterBySerial[0].approved_by_date.split(' ')[0]
+        : '';
+
+
 
         console.log("Model value: ",reportModel.value);
 
@@ -616,9 +659,6 @@ const saveReport = async () => {
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
         "smp_judgement":reportSMPJudgement.value,
-        "prepared_by": preparedByPerson.value,
-        "checked_by": checkedByPerson.value,
-        "approved_by": approvedByPerson.value
     }
 
     console.log("Save report data: ", saveReportData);
@@ -695,18 +735,51 @@ const viewPropertyData = (serial) => {
   });
 };
 
-const preparedByStamp = () => {
+const preparedByStamp = async () => {
     preparedByPerson.value = "IRISH MERCADO"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
     preparedByButton.value = false;
     preparedByStampPhoto.value = true;
+    const dateNow = datenow();
     console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
+    const preparedByData = {
+        prepared_by: preparedByPerson.value, // Set the approved_by field to "ITADANI KAZUYA"
+        prepared_by_date: dateNow
+    };
+
+    const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
+    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    showReportData();
 }
 
-const checkedByStamp = () => {
+const datenow = () => {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+
+    const year = now.getFullYear();
+    const month = pad(now.getMonth() + 1); // Months are zero-based
+    const day = pad(now.getDate());
+
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+    const seconds = pad(now.getSeconds());
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+const checkedByStamp = async () => {
     checkedByPerson.value = "CHECKED BY PERSON"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
     checkedByButton.value = false;
     checkedByStampPhoto.value = true;
+    const dateNow = datenow();
     console.log("Checked By Has been stamped by -> ", checkedByPerson.value);
+    const checkedByData = {
+        checked_by: checkedByPerson.value, // Set the approved_by field to "ITADANI KAZUYA"
+        checked_by_date: dateNow
+    };
+
+    const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, checkedByData);
+    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    showReportData();
 }
 
 const checkApprovalStates = async () => {
@@ -745,6 +818,7 @@ const checkApprovalStates = async () => {
         }else{
             approvedByButton.value = false;
             approvedByStampPhoto.value = true;
+            showReportSaveButton.value = false;
         }
     }catch(error){
 
@@ -761,6 +835,7 @@ onMounted(() => {
     showReportContent.value = true;
     showSelectionPanel.value = false;
     showReportSaveButton.value = false;
+    showExitButton.value = false;
     fetchAllData();
     showReportData();
     console.log('serialParam is provided, skipping fetchSerial.');

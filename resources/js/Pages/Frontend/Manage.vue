@@ -1884,9 +1884,34 @@ const renderChart = () => {
                         x: {
                             type: "linear",
                             position: "bottom",
+                            grid: {
+                                color: "rgba(0, 0, 0, 0.1)",
+                            },
+                            title: {
+                                display: true,
+                                text: "←  kOe  →",
+                                color: "#333",
+                                font: {
+                                    size: 22,  // Increase font size
+                                    weight: "bold", // Make it bold
+                                },
+                            },
                         },
                         y: {
                             type: "linear",
+                            position: "left",
+                            grid: {
+                                color: "rgba(0, 0, 0, 0.1)",
+                            },
+                            title: {
+                                display: true,
+                                text: "←  kG  →",
+                                color: "#333",
+                                font: {
+                                    size: 22,  // Increase font size
+                                    weight: "bold", // Make it bold
+                                },
+                            },
                         },
                     },
                 },

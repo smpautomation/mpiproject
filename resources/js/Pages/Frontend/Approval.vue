@@ -16,6 +16,7 @@
                             <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Prepared By</th>
                             <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Checked By</th>
                             <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300">Action</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-800 border-b border-gray-300">Status</th>
                             <th class="px-6 py-3 text-lg font-extrabold text-center bg-red-400 border-b border-gray-300">Approval</th>
                         </tr>
                     </thead>
@@ -38,25 +39,45 @@
                                     View Report
                                 </button>
                             </td>
+                            <td class="px-6 py-3 text-lg font-extrabold text-gray-700 border-b border-gray-300">
+                                <span v-if="report.approved_by === 'ITADANI KAZUYA'" class="text-green-600">APPROVED</span>
+                                <span v-else class="text-yellow-600">PENDING</span>
+                            </td>
                             <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
                                 <input type="checkbox"
                                     :value="report.tpm_data_serial"
                                     v-model="selectedRows"
-                                    :disabled="report.checked == 0 || report.checked == null"
+                                    :disabled="report.checked == 0 || report.checked == null || report.approved_by == 'ITADANI KAZUYA'"
                                     class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded-md cursor-pointer focus:ring-blue-500 focus:ring-2">
-
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="mb-10">
-                <button @click="approveSelected"
-                        class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
+            <div class="mb-10 space-y-6">
+                <!-- Approve Button -->
+                <button v-show="showApproveButton" @click="approveSelected"
+                    class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
                     Approve Selected
                 </button>
-                <div v-show="approveNotif" class="flex items-center p-4 mt-10 text-green-800 bg-green-100 rounded-md shadow-md">
-                    <p>Approved Successfully</p>
+
+                <!-- Confirmation Box -->
+                <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
+                    <p class="mb-4 text-lg font-semibold text-gray-800">Are you sure?</p>
+                    <div class="flex justify-center gap-4">
+                        <button @click="confirmationApprove" class="px-5 py-2 text-white transition bg-green-500 rounded-md hover:bg-green-600">
+                            Yes
+                        </button>
+                        <button @click="cancelApprove" class="px-5 py-2 text-white transition bg-red-500 rounded-md hover:bg-red-600">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notification -->
+                <div v-show="approveNotif"
+                    class="flex items-center max-w-md p-4 mx-auto text-green-800 bg-green-100 rounded-md shadow-md">
+                    <p class="text-sm font-medium">{{ reportNotificationMessage }}</p>
                 </div>
             </div>
         </div>
@@ -70,12 +91,26 @@ import { Inertia } from '@inertiajs/inertia';
 
 // UI
 
+const showApproveButton = ref(true);
+const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
+const reportNotificationMessage = ref('');
 
 // UI end
 
 const reportDataList = ref([]);
 const selectedRows = ref([]); // Track selected rows by their serial numbers
+
+const showApprovedNotification = (message) => {
+    // Show notification and set the message
+    approveNotif.value = true;
+    reportNotificationMessage.value = message;
+
+    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
+    setTimeout(() => {
+        approveNotif.value = false;
+    }, 3000);  // 3000ms = 3 seconds
+}
 
 // Watcher to observe changes to selectedRows and log them
 watch(selectedRows, (newValue) => {
@@ -128,19 +163,50 @@ const approveSelected = async () => {
     if (selectedRows.value.length === 0) {
         console.log("No rows selected for approval");
         return;
+    }else{
+        showApproveButton.value = false;
+        showApproveConfirmation.value = true;
     }
+};
+
+const cancelApprove = () => {
+    showApproveButton.value = true;
+    showApproveConfirmation.value = false;
+}
+
+const datenow = () => {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+
+    const year = now.getFullYear();
+    const month = pad(now.getMonth() + 1); // Months are zero-based
+    const day = pad(now.getDate());
+
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+    const seconds = pad(now.getSeconds());
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+const confirmationApprove = async () => {
 
     try {
         // Loop through each selected serial number
         for (let serial of selectedRows.value) {
+            const dateNow = datenow();
             const reportData = {
-                approved_by: "ITADANI KAZUYA" // Set the approved_by field to "ITADANI KAZUYA"
+                approved_by: "ITADANI KAZUYA", // Set the approved_by field to "ITADANI KAZUYA"
+                approved_by_date: dateNow
             };
 
             // Send a PATCH request to update the 'approved_by' field
             const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
             console.log(`Successfully approved report with serial ${serial}:`, response.data);
-            approveNotif.value = true;
+            showApprovedNotification("Approved Successfully");
+            showReportData();
+            showApproveButton.value = true;
+            showApproveConfirmation.value = false;
         }
 
         //await showReportData();
@@ -148,7 +214,7 @@ const approveSelected = async () => {
     } catch (error) {
         console.error("Error approving selected reports:", error);
     }
-};
+}
 
 onMounted(showReportData);
 
