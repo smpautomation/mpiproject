@@ -97,6 +97,9 @@ class ReportDataController extends Controller
                 "prepared_by"=> $request->input("prepared_by"),
                 "checked_by"=> $request->input("checked_by"),
                 "approved_by" => $request->input("approved_by"),
+                "prepared_by_date"=> $request->input("prepared_by_date"),
+                "checked_by_date"=> $request->input("checked_by_date"),
+                "approved_by_date" => $request->input("approved_by_date"),
             ];
             $reportData = ReportData::create($reportDataInputs);
             DB::commit();

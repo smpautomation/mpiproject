@@ -39,6 +39,9 @@ return new class extends Migration
             $table->string('prepared_by')->nullable();
             $table->string('checked_by')->nullable();
             $table->string('approved_by')->nullable();
+            $table->datetime('prepared_by_date')->nullable();
+            $table->datetime('checked_by_date')->nullable();
+            $table->datetime('approved_by_date')->nullable();
             $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
         });
 
