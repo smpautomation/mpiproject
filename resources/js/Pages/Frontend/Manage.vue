@@ -13,7 +13,7 @@
                             Existing Furnaces
                         </button>
                     </div>
-                    <p v-if="isLoadingForAddFurnaces">Loading... Please wait.</p>
+                    <p v-if="isLoadingForAddFurnaces" class="text-xl text-black">Loading... Please wait.</p>
                 </div>
                 <div v-show="showSelectFurnace" class="flex flex-col items-center justify-center align-middle">
                     <div class="flex flex-row items-center justify-center align-baseline">
@@ -1340,9 +1340,9 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         } finally {
-            layerTableRowLoading.value = false;
             showProceed.value = true;
             showUploadData.value = false;
+            layerTableRowLoading.value = false;
         }
     };
 
@@ -1394,8 +1394,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const showAllData = async () => {
         layerTableRowLoading.value = true;
         try {
-            showProceed.value = false;
-            showGraphAndTables.value = true;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
             console.log('API Response showallData:', response.data);
 
@@ -1648,7 +1646,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             console.log('Aggregate Data:', aggregateData);
             sendAggData(aggregateData, serialNo.value);
 
-
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
 
@@ -1737,11 +1734,9 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
-            layerTableRowLoading.value = false;
             showProceed.value = false;
-            layerTableRowLoading.value = false;
+            showGraphAndTables.value = true;
         }
-
         fetchDataCreateGraph();
     };
 
@@ -1756,7 +1751,6 @@ const sendAggData = async (aggData, id) => {  // Make sure to pass 'id' as a par
         console.error('Error sending aggregate data to API:', error.response?.data || error.message);
     }
 };
-
 
 // State for storing fetched data and error
 const error = ref(null);
@@ -1785,6 +1779,7 @@ const fetchDataCreateGraph = async () => {
 
         // Render the chart with updated data
         renderChart();
+        layerTableRowLoading.value = false;
     } catch (err) {
         error.value = err;
         console.error("Error fetching data:", err);

@@ -96,10 +96,14 @@ class ReportDataController extends Controller
                 "smp_judgement"=> $request->input("smp_judgement"),
                 "prepared_by"=> $request->input("prepared_by"),
                 "checked_by"=> $request->input("checked_by"),
+<<<<<<< HEAD
                 "approved_by" => $request->input("approved_by"),
                 "prepared_by_date"=> $request->input("prepared_by_date"),
                 "checked_by_date"=> $request->input("checked_by_date"),
                 "approved_by_date" => $request->input("approved_by_date"),
+=======
+                "approved_by" => $request->input("approved_by")
+>>>>>>> 9dc4a34067542dea197731ba9d1fcc051f3df20a
             ];
             $reportData = ReportData::create($reportDataInputs);
             DB::commit();

@@ -36,6 +36,7 @@
         { label: 'Report', route: 'reports' },
         { label: 'Inspection', route: 'inspection' },
         { label: 'View List', route: 'viewList' },
+        { label: 'Approval', route: 'approval' },
         { label: 'Settings', route: 'settings' }
     ];
   </script>

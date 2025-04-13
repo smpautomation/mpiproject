@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ReportData extends Model
+class Approvers extends Model
 {
-    protected $table = 'report_data';
+    protected $table = 'approvers';
     protected $guarded = [];
-    //resolve git conflict
 }

@@ -24,11 +24,11 @@ return new class extends Migration
             $table->string('shift')->nullable();
             $table->string('operator')->nullable();
             $table->json('magnetic_property_data')->nullable();
-            $table->float('lenght')->nullable();
+            $table->float('length')->nullable();
             $table->float('width')->nullable();
             $table->float('thickness')->nullable();
             $table->string('material_grade')->nullable();
-            $table->integer('mpi_sample_quantity')->nullable();
+            $table->string('mpi_sample_quantity')->nullable();
             $table->float('std_dev')->nullable();
             $table->float('cpu')->nullable();
             $table->float('cpl')->nullable();
@@ -39,9 +39,13 @@ return new class extends Migration
             $table->string('prepared_by')->nullable();
             $table->string('checked_by')->nullable();
             $table->string('approved_by')->nullable();
+<<<<<<< HEAD
             $table->datetime('prepared_by_date')->nullable();
             $table->datetime('checked_by_date')->nullable();
             $table->datetime('approved_by_date')->nullable();
+=======
+            $table->boolean('checked')->default(false);
+>>>>>>> 9dc4a34067542dea197731ba9d1fcc051f3df20a
             $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
         });
 
