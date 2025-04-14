@@ -167,33 +167,22 @@
                         {{ reportRemarksDisplay }}
                     </p>
                 </div>
-                <div class="flex flex-row items-center justify-center">
-                    <button v-show="showReportSaveButton" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
-                        {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
-                    </button>
-                    <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
-                        View Property Data
-                    </button>
-                </div>
-                <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
-                    <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
-                </div>
-            </div>
 
-            <div class="flex flex-col items-center justify-center px-8 py-8 my-10 align-middle bg-blue-100 shadow-2xl rounded-3xl">
-                <div class="flex flex-row">
+                <!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE -->
+
+                <div class="flex flex-row mt-10 mb-10 mx-5 p-10 justify-center items-center border-blue-800 border-2 rounded-lg">
                     <div class="flex flex-col mr-8">
                         <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">SMP Judgement</p>
                         <p class="p-2 text-center border border-black">
                             <span
-                                class="inline-block w-40 bg-center h-44"
+                                class="inline-block w-40 h-40 bg-center bg-no-repeat"
                                 :style="{
                                     backgroundImage: reportRemarksDisplay === 'E'
                                         ? 'url(\'/photo/reject_stamp.png\')'
                                         : reportRemarksDisplay === 'HOLD'
                                         ? 'url(\'/photo/hold_stamp.png\')'
                                         : 'url(\'/photo/pass_stamp.png\')',
-                                    backgroundSize: '150%'
+                                    backgroundSize: '101%'
                                 }">
                             </span>
                         </p>
@@ -209,19 +198,22 @@
                         <!-- Confirmation Buttons -->
                         <div class="flex flex-col justify-center gap-4" v-show="preparedByStampConfirmation">
                             <button
+                                @click="confirmPreparedByStamp"
                                 class="px-5 py-2 font-medium text-white transition bg-green-500 rounded-md hover:bg-green-600">
-                                Confirm Stamp
+                                    Confirm Stamp
                             </button>
                             <button
+                                @click="cancelPreparedByStamp"
                                 class="px-5 py-2 font-medium text-white transition bg-red-500 rounded-md hover:bg-red-600">
-                                Cancel
+                                    Cancel
                             </button>
                         </div>
-                        <span v-show="preparedByStampPhoto"
-                            class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
+                        <span
+                            v-show="preparedByStampPhoto"
+                            class="w-40 h-40 bg-center bg-no-repeat flex items-center justify-center text-2xl font-extrabold text-red-600 text-center"
                             :style="{
                                 backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
-                                backgroundSize: '150%'
+                                backgroundSize: '101%'
                             }">
                             {{ reportPreparedByDate }}
                         </span>
@@ -236,19 +228,21 @@
                             <!-- Confirmation Buttons -->
                             <div class="flex flex-col justify-center gap-4" v-show="checkedByStampConfirmation">
                                 <button
+                                    @click="confirmCheckedByStamp"
                                     class="px-5 py-2 font-medium text-white transition bg-green-500 rounded-md hover:bg-green-600">
-                                    Confirm Stamp
+                                        Confirm Stamp
                                 </button>
                                 <button
+                                    @click="cancelCheckedByStamp"
                                     class="px-5 py-2 font-medium text-white transition bg-red-500 rounded-md hover:bg-red-600">
-                                    Cancel
+                                        Cancel
                                 </button>
                             </div>
                             <span v-show="checkedByStampPhoto"
-                                class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
+                                class="w-40 h-40 bg-center bg-no-repeat flex items-center justify-center text-2xl font-extrabold text-red-600 text-center"
                                 :style="{
                                     backgroundImage: 'url(\'/photo/Checked_by_stamp.png\')',
-                                    backgroundSize: '150%'
+                                    backgroundSize: '101%'
                                 }">
                                 {{ reportCheckedByDate }}
                             </span>
@@ -258,20 +252,35 @@
                         <p class="p-2 text-xl font-extrabold text-center bg-blue-300 border border-black">Approved By:</p>
                         <div class="p-2 text-center border border-black">
                             <span v-show="approvedByStampPhoto"
-                                class="flex items-center justify-center w-40 text-2xl font-extrabold text-red-600 bg-center h-44"
+                                class="w-40 h-40 bg-center bg-no-repeat flex items-center justify-center text-2xl font-extrabold text-red-600 text-center"
                                 :style="{
                                     backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
-                                    backgroundSize: '150%'
+                                    backgroundSize: '101%'
                                 }">
                                 {{ reportApprovedByDate }}
                             </span>
                         </div>
                     </div>
                 </div>
+
+                <!-- SAVE AND VIEW PROPERTY DATA START here --><!-- SAVE AND VIEW PROPERTY DATA START here --><!-- SAVE AND VIEW PROPERTY DATA START here --><!-- SAVE AND VIEW PROPERTY DATA START here -->
+
                 <div v-show="showNotif3" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
+                <div class="flex flex-row items-center justify-center">
+                    <button v-show="showReportSaveButton" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                        {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
+                    </button>
+                    <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
+                        View Property Data
+                    </button>
+                </div>
+                <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
+                    <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                </div>
             </div>
+            
         </div>
       </div>
     </Frontend>
@@ -735,10 +744,20 @@ const viewPropertyData = (serial) => {
   });
 };
 
-const preparedByStamp = async () => {
-    preparedByPerson.value = "IRISH MERCADO"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
+const preparedByStamp = () => {
     preparedByButton.value = false;
+    preparedByStampConfirmation.value = true;
+}
+
+const cancelPreparedByStamp = () => {
+    preparedByButton.value = true;
+    preparedByStampConfirmation.value = false;
+}
+
+const confirmPreparedByStamp = async () => {
+    preparedByPerson.value = "IRISH MERCADO"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
     preparedByStampPhoto.value = true;
+    preparedByStampConfirmation.value = false;
     const dateNow = datenow();
     console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
     const preparedByData = {
@@ -766,14 +785,24 @@ const datenow = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-const checkedByStamp = async () => {
-    checkedByPerson.value = "CHECKED BY PERSON"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
+const checkedByStamp = () => {
     checkedByButton.value = false;
+    checkedByStampConfirmation.value = true;
+}
+
+const cancelCheckedByStamp = () => {
+    checkedByButton.value = true;
+    checkedByStampConfirmation.value = false;
+}
+
+const confirmCheckedByStamp = async () => {
+    checkedByPerson.value = "CHECKED BY PERSON"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
     checkedByStampPhoto.value = true;
+    checkedByStampConfirmation.value = false;
     const dateNow = datenow();
     console.log("Checked By Has been stamped by -> ", checkedByPerson.value);
     const checkedByData = {
-        checked_by: checkedByPerson.value, // Set the approved_by field to "ITADANI KAZUYA"
+        checked_by: checkedByPerson.value,
         checked_by_date: dateNow
     };
 

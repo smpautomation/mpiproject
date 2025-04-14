@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center px-64 py-24 mx-auto bg-gray-100 container-fluid">
+        <div class="flex flex-col items-center justify-center px-8 py-12 mx-auto bg-gray-100 h-screen overflow-y-auto">
             <div v-show="showStartManageDiv">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-center py-4 space-y-4">
                     <div>
