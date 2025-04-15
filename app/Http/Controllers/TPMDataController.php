@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataInstructions;
 use Illuminate\Http\Request;
 use App\Models\TPMData;
 use App\Models\TPMDataRemark;
@@ -218,6 +219,18 @@ class TPMDataController extends Controller
                 }
             }
 
+            $checkDataInstructions = DataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkDataInstructions){
+                try{
+                    $dataInstructionsInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $dataInstructions = DataInstructions::create($dataInstructionsInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
+
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -227,7 +240,8 @@ class TPMDataController extends Controller
                     $remark, 
                     $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions, 
                     $checkReportData ?? $reportData,
-                    $checkStandardData ?? $standardData
+                    $checkStandardData ?? $standardData,
+                    $checkDataInstructions ?? $dataInstructions
                     ]
             ], 201);
         }catch(\Exception $e){

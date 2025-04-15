@@ -35,4 +35,9 @@ class TPMData extends Model
     {
         return $this->hasOne(StandardData::class, 'tpm_data_serial', 'serial_no');
     }
+    public function dataInstructions()
+    {
+        return $this->hasOne(DataInstructions::class, 'tpm_data_serial', 'serial_no');
+    }
+    
 }
