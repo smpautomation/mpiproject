@@ -7,6 +7,7 @@ use App\Models\TPMData;
 use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
+use App\Models\StandardData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
@@ -205,6 +206,18 @@ class TPMDataController extends Controller
                 }
             }
 
+            $checkStandardData = StandardData::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkStandardData){
+                try{
+                    $standardDataInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $standardData = StandardData::create($standardDataInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
+
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -213,7 +226,8 @@ class TPMDataController extends Controller
                     $tpmData, 
                     $remark, 
                     $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions, 
-                    $checkReportData ?? $reportData
+                    $checkReportData ?? $reportData,
+                    $checkStandardData ?? $standardData
                     ]
             ], 201);
         }catch(\Exception $e){
