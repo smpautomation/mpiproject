@@ -8,7 +8,6 @@ use App\Http\Controllers\InspectionDataController;
 use App\Http\Controllers\ReportDataController;
 use App\Models\Approvers;
 use App\Models\StandardData;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -59,7 +58,6 @@ Route::get('/standardData/{id}', [StandardData::class, 'show']);
 Route::post('/standardData', [StandardData::class, 'store']);
 Route::patch('/standardData/{id}', [StandardData::class, 'update']);
 Route::delete('/standardData/{id}', [StandardData::class, 'destroy']);
-
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
