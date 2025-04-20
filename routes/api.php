@@ -7,6 +7,7 @@ use App\Http\Controllers\LayerDataController;
 use App\Http\Controllers\InspectionDataController;
 use App\Http\Controllers\ReportDataController;
 use App\Models\Approvers;
+use App\Models\DataInstructions;
 use App\Models\StandardData;
 use Illuminate\Support\Facades\Route;
 
@@ -53,11 +54,17 @@ Route::post('/approver', [Approvers::class, 'store']);
 Route::patch('/approver/{id}', [Approvers::class, 'update']);
 Route::delete('/approver/{id}', [Approvers::class, 'destroy']);
 
-Route::get('/standardData', [StandardData::class, 'index']);
-Route::get('/standardData/{id}', [StandardData::class, 'show']);
-Route::post('/standardData', [StandardData::class, 'store']);
-Route::patch('/standardData/{id}', [StandardData::class, 'update']);
-Route::delete('/standardData/{id}', [StandardData::class, 'destroy']);
+Route::get('/standarddata', [StandardData::class, 'index']);
+Route::get('/standarddata/{id}', [StandardData::class, 'show']);
+Route::post('/standarddata', [StandardData::class, 'store']);
+Route::patch('/standarddata/{id}', [StandardData::class, 'update']);
+Route::delete('/standarddata/{id}', [StandardData::class, 'destroy']);
+
+Route::get('/datainstructions', [DataInstructions::class, 'index']);
+Route::get('/datainstructions/{id}', [DataInstructions::class, 'show']);
+Route::post('/datainstructions', [DataInstructions::class, 'store']);
+Route::patch('/datainstructions/{id}', [DataInstructions::class, 'update']);
+Route::delete('/datainstructions/{id}', [DataInstructions::class, 'destroy']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);

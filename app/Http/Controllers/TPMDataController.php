@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DataInstructions;
+use App\Models\DataInstructionsAggregate;
 use Illuminate\Http\Request;
 use App\Models\TPMData;
 use App\Models\TPMDataRemark;
@@ -231,6 +232,18 @@ class TPMDataController extends Controller
                 }
             }
 
+            $checkDataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkDataInstructionsAggregate){
+                try{
+                    $dataInstructionsAggregateInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $dataInstructionsAggregate = DataInstructionsAggregate::create($dataInstructionsAggregateInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
+
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -241,7 +254,8 @@ class TPMDataController extends Controller
                     $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions, 
                     $checkReportData ?? $reportData,
                     $checkStandardData ?? $standardData,
-                    $checkDataInstructions ?? $dataInstructions
+                    $checkDataInstructions ?? $dataInstructions,
+                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate
                     ]
             ], 201);
         }catch(\Exception $e){
