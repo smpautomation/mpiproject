@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DataInstructions;
 use App\Models\DataInstructionsAggregate;
+use App\Models\MieGxDataInstructions;
+use App\Models\MieGxDataInstructionsAggregate;
 use Illuminate\Http\Request;
 use App\Models\TPMData;
 use App\Models\TPMDataRemark;
@@ -244,6 +246,29 @@ class TPMDataController extends Controller
                 }
             }
 
+            $checkMieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkMieGxDataInstructions){
+                try{
+                    $mieGxDataInstructionsInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $mieGxDataInstructions = MieGxDataInstructions::create($mieGxDataInstructionsInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
+            $checkMieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkMieGxDataInstructionsAggregate){
+                try{
+                    $mieGxDataInstructionsAggregateInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $mieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::create($mieGxDataInstructionsAggregateInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
+
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -255,7 +280,9 @@ class TPMDataController extends Controller
                     $checkReportData ?? $reportData,
                     $checkStandardData ?? $standardData,
                     $checkDataInstructions ?? $dataInstructions,
-                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate
+                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
+                    $checkMieGxDataInstructions ?? $mieGxDataInstructions,
+                    $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
                     ]
             ], 201);
         }catch(\Exception $e){

@@ -44,5 +44,14 @@ class TPMData extends Model
     {
         return $this->hasOne(DataInstructionsAggregate::class, 'tpm_data_serial', 'serial_no');
     }
+
+    public function mieGxDataInstructions()
+    {
+        return $this->hasOne(MieGxDataInstructions::class, 'tpm_data_serial', 'serial_no');
+    }
+    public function mieGxDataInstructionsAggregate()
+    {
+        return $this->hasOne(MieGxDataInstructionsAggregate::class, 'tpm_data_serial', 'serial_no');
+    }
     
 }
