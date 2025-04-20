@@ -2,56 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DataInstructionsAggregate;
+use App\Models\MieGxDataInstructions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-class DataInstructionsAggregateController extends Controller
+class MieGxDataInstructionsController extends Controller
 {
     public function index(Request $request)
     {
         $serial = $request->query('serial');
         if ($serial) {
             try {
-                $dataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $serial)->first();
-                if (!$dataInstructionsAggregate) {
+                $MieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $serial)->first();
+                if (!$MieGxDataInstructions) {
                     return response()->json([
                         'status' => false,
-                        'message' => "Data Instructions Aggregate with serial: {$serial} not found",
+                        'message' => "Mie Gx Data Instructions with serial: {$serial} not found",
                     ], 404);
                 }
                 return response()->json([
                     'status' => true,
-                    'message' => "Data Instructions Aggregate with serial: {$serial} found successfully",
+                    'message' => "Mie Gx Data Instructions with serial: {$serial} found successfully",
                     'data' => [
-                        $dataInstructionsAggregate
+                        $MieGxDataInstructions
                     ]
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Error retrieving Data Instructions Aggregate',
+                    'message' => 'Error retrieving Mie Gx Data Instructions',
                     'error' => $e->getMessage(),
                 ], 500);
             }
         } else {
             try {
-                $dataInstructionsAggregate = DataInstructionsAggregate::all();
-                if ($dataInstructionsAggregate->isEmpty()) {
+                $MieGxDataInstructions = MieGxDataInstructions::all();
+                if ($MieGxDataInstructions->isEmpty()) {
                     return response()->json([
                         'status' => false,
-                        'message' => "No Data Instructions Aggregatefound",
+                        'message' => "No Mie Gx Data Instructions found",
                     ], 404);
                 }
                 return response()->json([
                     'status' => true,
-                    'message' => "Data Instructions Aggregateretrieved successfully",
-                    'data' => $dataInstructionsAggregate
+                    'message' => "Mie Gx Data Instructions retrieved successfully",
+                    'data' => $MieGxDataInstructions
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Error retrieving Data Instructions Aggregate',
+                    'message' => 'Error retrieving Mie Gx Data Instructions',
                     'error' => $e->getMessage(),
                 ], 500);
             }
@@ -60,24 +60,24 @@ class DataInstructionsAggregateController extends Controller
     public function show($id)
     {
         try{
-            $dataInstructionsAggregate = DataInstructionsAggregate::find($id);
-            if (!$dataInstructionsAggregate) {
+            $MieGxDataInstructions = MieGxDataInstructions::find($id);
+            if (!$MieGxDataInstructions) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Data Instructions Aggregate with id: {$id} not found",
+                    'message' => "Mie Gx Data Instructions with id: {$id} not found",
                 ], 404);
             }
             return response()->json([
                 'status' => true,
-                'message' => "Data Instructions Aggregate with id: {$id} found successfully",
+                'message' => "Mie Gx Data Instructions with id: {$id} found successfully",
                 'data' => [
-                    $dataInstructionsAggregate
+                    $MieGxDataInstructions
                 ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Error retrieving Data Instructions Aggregate',
+                'message' => 'Error retrieving Mie Gx Data Instructions',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -87,27 +87,24 @@ class DataInstructionsAggregateController extends Controller
         DB::beginTransaction();
         try{
             $dataInstructionsInput = [
-                'average' => $request->input('average'),
-                'minimum' => $request->input('minimum'),
-                'maximum' => $request->input('maximum'),
-                'cpk' => $request->input('cpk'),
-                'judgement' => $request->input('judgement'),
-                'judgement_remarks' => $request->input('judgement_remarks'),
+                'gx_br' => $request->input('ihc'),
+                'gx_ihc' => $request->input('gx_ihc'),
+                'gx_ihk' => $request->input('gx_ihk'),
             ];
-            $dataInstructionsAggregate = DataInstructionsAggregate::create($dataInstructionsInput);
+            $MieGxDataInstructions = MieGxDataInstructions::create($dataInstructionsInput);
             DB::commit();
             return response()->json([
                 'status' => true,
-                'message' => "Data Instructions Aggregatecreated successfully",
+                'message' => "Mie Gx Data Instructions created successfully",
                 'data' => [
-                    $dataInstructionsAggregate
+                    $MieGxDataInstructions
                 ]
             ], 201);
         }catch(\Exception $e){
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Error creating Data Instructions Aggregate',
+                'message' => 'Error creating Mie Gx Data Instructions',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -117,28 +114,28 @@ class DataInstructionsAggregateController extends Controller
     {
         DB::beginTransaction();
         try{
-            $dataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $id)->first();
-            if (!$dataInstructionsAggregate) {
+            $MieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $id)->first();
+            if (!$MieGxDataInstructions) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Data Instructions Aggregate with serial: {$id} not found",
+                    'message' => "Mie Gx Data Instructions with serial: {$id} not found",
                 ], 404);
             }
             $inputData = $request->all();
-            $dataInstructionsAggregate->update($inputData);
+            $MieGxDataInstructions->update($inputData);
             DB::commit();
             return response()->json([
                 'status' => true,
-                'message' => "Data Instructions Aggregateupdated successfully",
+                'message' => "Mie Gx Data Instructions updated successfully",
                 'data' => [
-                    $dataInstructionsAggregate
+                    $MieGxDataInstructions
                 ]
             ], 200);
         }catch(\Exception $e){
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Error updating Data Instructions Aggregate',
+                'message' => 'Error updating Mie Gx Data Instructions',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -146,22 +143,22 @@ class DataInstructionsAggregateController extends Controller
     public function destroy($id)
     {
         try{
-            $dataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $id)->first();
-            if (!$dataInstructionsAggregate) {
+            $MieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $id)->first();
+            if (!$MieGxDataInstructions) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Data Instructions Aggregate with serial: {$id} not found",
+                    'message' => "Mie Gx Data Instructions with serial: {$id} not found",
                 ], 404);
             }
-            $dataInstructionsAggregate->delete();
+            $MieGxDataInstructions->delete();
             return response()->json([
                 'status' => true,
-                'message' => 'Data Instructions Aggregate deleted successfully'
+                'message' => 'Mie Gx Data Instructions deleted successfully'
             ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => 'Error deleting Data Instructions Aggregate',
+                'message' => 'Error deleting Mie Gx Data Instructions',
                 'error' => $e->getMessage(),
             ], 500);
         }

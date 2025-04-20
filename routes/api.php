@@ -8,6 +8,7 @@ use App\Http\Controllers\InspectionDataController;
 use App\Http\Controllers\ReportDataController;
 use App\Models\Approvers;
 use App\Models\DataInstructions;
+use App\Models\MieGxDataInstructions;
 use App\Models\StandardData;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +66,12 @@ Route::get('/datainstructions/{id}', [DataInstructions::class, 'show']);
 Route::post('/datainstructions', [DataInstructions::class, 'store']);
 Route::patch('/datainstructions/{id}', [DataInstructions::class, 'update']);
 Route::delete('/datainstructions/{id}', [DataInstructions::class, 'destroy']);
+
+Route::get('/miegxdatainstructions', [MieGxDataInstructions::class, 'index']);
+Route::get('/miegxdatainstructions/{id}', [MieGxDataInstructions::class, 'show']);
+Route::post('/miegxdatainstructions', [MieGxDataInstructions::class, 'store']);
+Route::patch('/miegxdatainstructions/{id}', [MieGxDataInstructions::class, 'update']);
+Route::delete('/miegxdatainstructions/{id}', [MieGxDataInstructions::class, 'destroy']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
