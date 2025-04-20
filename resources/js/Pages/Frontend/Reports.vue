@@ -12,12 +12,26 @@
                 <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
                 </select>
             </div>
-            <div class="flex flex-row justify-center">
-                <button @click="generateReport" class="px-4 py-2 m-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    View Report
-                </button>
+            <div class="flex flex-row items-center justify-center m-10 space-x-8">
+            <!-- Button -->
+            <button
+                @click="generateReport"
+                class="px-6 py-3 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+                View Report
+            </button>
+
+            <!-- Checkbox + Label -->
+            <label class="flex items-center space-x-3 text-lg">
+                <input
+                v-model="isTTM_model"
+                type="checkbox"
+                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span>(Tick this box if the TTM model applies.)</span>
+            </label>
             </div>
-            <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 mx-auto my-10 text-white bg-yellow-500 rounded-2xl shadow-lg px-28">
+            <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 mx-auto my-10 text-white bg-yellow-500 shadow-lg rounded-2xl px-28">
                 <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
             </div>
         </div>
@@ -26,20 +40,35 @@
         <div v-show="showReportContent">
              <!-- Report Content -->
              <div class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
-                <p
-                    class="mb-10 text-center text-xl font-extrabold text-blue-800 tracking-wider bg-white/30 px-6 py-3 rounded-lg shadow-md border border-white/50 backdrop-blur-md
-                            hover:shadow-lg hover:border-white/70 transition duration-300 ease-in-out"
-                    >
-                    Serial: <span class="text-blue-900">{{ currentSerialSelected }}</span>
-                </p>
-                <div class="border-white border-2 rounded-lg mx-10 p-5 shadow-xl">
+                <div class="w-full max-w-4xl px-4 mx-auto mb-10">
+                    <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
+
+                        <!-- Serial -->
+                        <div class="text-center sm:text-left">
+                        <p class="text-sm font-bold text-blue-800">Serial</p>
+                        <p class="text-xl font-extrabold text-blue-900">{{ currentSerialSelected }}</p>
+                        </div>
+
+                        <!-- Furnace -->
+                        <div class="text-center sm:text-left">
+                        <p class="text-sm font-bold text-blue-800">Furnace</p>
+                        <p class="text-lg font-semibold text-blue-900">{{ currentFurnaceName }}</p>
+                        </div>
+
+                        <!-- Layer -->
+                        <div class="text-center sm:text-left">
+                        <p class="text-sm font-bold text-blue-800">Layer</p>
+                        <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl">
                     <div class="flex flex-row mb-4 justify-evenly">
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-extrabold">Model:</label>&nbsp;
                             <span
-                                class="bg-white px-4 py-1 rounded-md text-gray-800
-                                        hover:ring-1 hover:ring-blue-500 hover:shadow-md
-                                        transition duration-200 ease-in-out cursor-default"
+                                class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
                                 >
                                 {{ reportModel }}
                             </span>
@@ -74,9 +103,7 @@
                     <div class="flex flex-row mb-4 justify-evenly">
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Pulse Tracer Machine No:</label>&nbsp;
-                            <span class="bg-white px-4 py-1 rounded-md text-gray-800
-                                        hover:ring-1 hover:ring-blue-500 hover:shadow-md
-                                        transition duration-200 ease-in-out cursor-default">{{ reportPulseTracerMachineNo }}</span>
+                            <span class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md">{{ reportPulseTracerMachineNo }}</span>
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Date:</label>&nbsp;
@@ -110,86 +137,119 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">LENGTH&nbsp;(mm)</td>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">{{ reportLength }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">LENGTH&nbsp;(mm)</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportLength }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">WIDTH&nbsp;(mm)</td>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">{{ reportWidth }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">WIDTH&nbsp;(mm)</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportWidth }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">THICKNESS&nbsp;(mm)</td>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">{{ reportThickness }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">THICKNESS&nbsp;(mm)</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportThickness }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">MATERIAL&nbsp;GRADE</td>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">{{ reportMaterialGrade }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">MATERIAL&nbsp;GRADE</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportMaterialGrade }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">MPI&nbsp;SAMPLE&nbsp;QTY.</td>
-                                    <td class="px-4 py-1 border-4 text-blue-600 border-white">{{ reportMPISampleQty }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">MPI&nbsp;SAMPLE&nbsp;QTY.</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportMPISampleQty }}</td>
                                 </tr>
                             </tbody>
                         </table>
                         <table class="ml-2 mt-[1rem] border-collapse table-auto border-4 border-white">
                             <thead>
                                 <tr class="bg-blue-400">
-                                    <th colspan="6" class="py-4 text-lg font-semibold border-4 border-white text-center text-white">MAGNETIC&nbsp;PROPERTY&nbsp;DATA(磁気特性データ)</th>
+                                    <th colspan="7" class="py-4 text-lg font-semibold text-center text-white border-4 border-white">MAGNETIC&nbsp;PROPERTY&nbsp;DATA(磁気特性データ)</th>
                                 </tr>
-                                <tr class="bg-blue-200">
-                                    <th rowspan="2" class="px-4 border-4 border-white text-white">ITEMS</th>
-                                    <th rowspan="2" class="px-4 border-4 border-white text-white">STANDARD</th>
-                                    <th colspan="4" class="px-4 text-center border-4 border-white text-white">ACTUAL DATA</th>
+                                <tr class="bg-blue-300">
+                                    <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
+                                    <th rowspan="2" class="px-4 text-white border-4 border-white">STANDARD</th>
+                                    <th colspan="5" class="px-4 text-center text-white border-4 border-white">ACTUAL DATA</th>
                                 </tr>
-                                <tr class="bg-blue-200">
-                                    <th class="px-4 border-4 border-white text-white">AVERAGE</th>
-                                    <th class="px-4 border-4 border-white text-white">MAXIMUM</th>
-                                    <th class="px-4 border-4 border-white text-white">MINIMUM</th>
-                                    <th class="px-4 border-4 border-white text-white">VARIANCE<br>(max-min)</th>
+                                <tr class="bg-blue-300">
+                                    <th class="px-4 text-white border-4 border-white">AVERAGE</th>
+                                    <th class="px-4 text-white border-4 border-white">MAXIMUM</th>
+                                    <th class="px-4 text-white border-4 border-white">MINIMUM</th>
+                                    <th colspan="2" class="px-4 text-white border-4 border-white">VARIANCE<br>(max-min)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="text-center">
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">Br (G)</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportBrStandard }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportBrAverage }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportBrMaximum }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportBrMinimum }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportBrVariance }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">Br (G)</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrStandard }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrAverage }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrMaximum }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrMinimum }}</td>
+                                    <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">iHc (Oe)</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihcStandard }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihcAverage }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihcMaximum }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihcMinimum }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportiHcVariance }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">iHc (Oe)</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcStandard }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcAverage }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMaximum }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMinimum }}</td>
+                                    <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHcVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">iHk (Oe)</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihkStandard }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihkAverage }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihkMaximum }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportihkMinimum }}</td>
-                                    <td class="px-4 py-2 border-4 border-white text-blue-600">{{ reportiHkVariance }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">iHk (Oe)</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkStandard }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkAverage }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMaximum }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMinimum }}</td>
+                                    <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHkVariance }}</td>
                                 </tr>
-                                <!--
-                                    <tr class="bg-blue-200">
-                                        <th rowspan="2" class="px-4 border">Br Cpk</th>
-                                        <th class="px-4 border">STD DEV</th>
-                                        <th class="px-4 border">Cpu</th>
-                                        <th class="px-4 border">Cpl</th>
-                                        <th class="px-4 border">Cpk</th>
-                                        <th class="px-4 border">Remarks</th>
-                                    </tr>
-                                    <tr class="text-center">
-                                        <td class="px-4 py-2 border">NA</td>
-                                        <td class="px-4 py-2 border">NA</td>
-                                        <td class="px-4 py-2 border">NA</td>
-                                        <td class="px-4 py-2 border">NA</td>
-                                        <td class="px-4 py-2 border">NA</td>
-                                    </tr>
-                                -->
+                                <tr v-show="isTTM_model" class="bg-blue-300">
+                                    <th rowspan="2" class="px-4 py-2 text-xl text-white border-4 border-white">Br Cpk</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white">STD DEV</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white">Cpu</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white">Cpl</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white">Cpk</th>
+                                    <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
+                                </tr>
+                                <tr v-show="isTTM_model" class="text-center">
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                </tr>
+                                <tr v-show="show1x1x1Data" class="text-center bg-blue-300">
+                                    <td colspan="2" class="px-4 py-2 font-extrabold text-white border-4 border-white">Data of 1x1x1 mm samples</td>
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white">AVERAGE</td>
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white">MAXIMUM</td>
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white">MINIMUM</td>
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white">Cpk</td>
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white">Remarks</td>
+                                </tr>
+                                <tr v-show="show1x1x1Data" class="text-center">
+                                    <th class="px-4 py-2 font-extrabold text-white bg-blue-300 border-4 border-white">Corner</th>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                </tr>
+                                <tr v-show="show1x1x1Data" class="text-center">
+                                    <th class="px-4 py-2 font-extrabold text-white bg-blue-300 border-4 border-white">Surface</th>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                </tr>
+                                <tr v-show="show1x1x1Data" class="text-center">
+                                    <th class="px-4 py-2 font-extrabold text-white bg-blue-300 border-4 border-white">Core</th>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -198,27 +258,32 @@
                         <input
                             v-model="reportRemarks"
                             type="text"
-                            class="w-full px-2 py-1 text-sm border border-white bg-transparent bg-white text-white rounded-md
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                    transition duration-200 ease-in-out"
+                            class="w-full px-2 py-1 text-sm transition duration-200 ease-in-out bg-transparent bg-white border border-white rounded-md hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white"
                         />
-                        <p class="mx-20 text-3xl font-extrabold" :class="{'text-red-500': reportRemarksDisplay === 'E', 'text-green-500': reportRemarksDisplay !== 'E', 'text-red-500': reportRemarksDisplay === 'HOLD'}">
-                            {{ reportRemarksDisplay }}
-                        </p>
+                        <div class="px-0 py-5 mx-5 bg-blue-300 shadow-xl rounded-2xl">
+                            <p
+                                class="mx-10 text-5xl font-extrabold transition-opacity duration-1000 animate-pulse"
+                                :class="{
+                                    'text-red-500': reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD',
+                                    'text-green-500': reportRemarksDisplay !== 'E' && reportRemarksDisplay !== 'HOLD'
+                                }"
+                                >
+                                {{ reportRemarksDisplay }}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE -->
 
-                <div class="flex flex-row mt-10 mb-10 mx-10 p-10 justify-center items-start gap-x-10 bg-blue-100 shadow-xl border-white border-2 rounded-lg">
+                <div class="flex flex-row items-start justify-center p-10 mx-10 mt-10 mb-10 bg-blue-100 border-2 border-white rounded-lg shadow-xl gap-x-10">
 
                 <!-- SMP Judgement -->
                 <div class="flex flex-col mr-16">
-                <p class="p-2 text-xl font-extrabold text-center bg-blue-400 border-4 border-white text-white">
+                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">
                     SMP Judgement
                 </p>
-                <p class="p-2 text-center border-b-4 border-r-4 border-l-4 border-white">
+                <p class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
                     <span
                     class="inline-block w-40 h-40 bg-center bg-no-repeat"
                     :style="{
@@ -235,10 +300,10 @@
 
                 <!-- Prepared By -->
                 <div class="flex flex-col">
-                <p class="p-2 text-xl font-extrabold text-center bg-blue-400 border-4 border-white text-white">Prepared By:</p>
-                <div class="p-1 text-center border-b-4 border-r-4 border-l-4 border-white">
+                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Prepared By:</p>
+                <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                     <div v-show="showPreparedByDefault" class="px-2 py-[67px]">
-                    <span class="animate-pulse text-blue-700 font-extrabold opacity-100">
+                    <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
                         Waiting for stamp...
                     </span>
                     </div>
@@ -247,7 +312,7 @@
                     v-show="preparedByButton"
                     class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
                     >
-                    <span class="inline-block transform transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:opacity-90">
+                    <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
                         Click&nbsp;to&nbsp;Stamp
                     </span>
                     </button>
@@ -256,13 +321,13 @@
                     <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="preparedByStampConfirmation">
                     <button
                         @click="confirmPreparedByStamp"
-                        class="px-3 py-4 font-medium text-white bg-green-500/40 hover:bg-green-500/90 rounded-md border border-white/30 hover:border-white/60 shadow-md hover:shadow-green-400 hover:shadow-lg backdrop-blur-md transition duration-300 ease-in-out"
+                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
                     >
                         Confirm Stamp
                     </button>
                     <button
                         @click="cancelPreparedByStamp"
-                        class="px-3 py-4 font-medium text-white bg-red-500/40 hover:bg-red-500/90 rounded-md border border-white/30 hover:border-white/60 shadow-md hover:shadow-red-400 hover:shadow-lg backdrop-blur-md transition duration-300 ease-in-out"
+                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-red-500/40 hover:bg-red-500/90 border-white/30 hover:border-white/60 hover:shadow-red-400 hover:shadow-lg backdrop-blur-md"
                     >
                         Cancel
                     </button>
@@ -270,7 +335,7 @@
 
                     <span
                     v-show="preparedByStampPhoto"
-                    class="w-40 h-40 bg-center bg-no-repeat flex items-center justify-center text-2xl font-extrabold text-red-600 text-center"
+                    class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
                     :style="{
                         backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
                         backgroundSize: '101%'
@@ -282,10 +347,10 @@
 
                 <!-- Checked By -->
                 <div class="flex flex-col">
-                <p class="p-2 text-xl font-extrabold text-center bg-blue-400 border-4 border-white text-white">Checked By:</p>
-                <div class="p-1 text-center border-b-4 border-r-4 border-l-4 border-white">
+                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Checked By:</p>
+                <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                     <div v-show="showCheckedByDefault" class="px-2 py-[67px]">
-                    <span class="animate-pulse text-blue-700 font-extrabold opacity-100">
+                    <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
                         Waiting for stamp...
                     </span>
                     </div>
@@ -294,7 +359,7 @@
                     v-show="checkedByButton"
                     class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
                     >
-                    <span class="inline-block transform transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:opacity-90">
+                    <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
                         Click&nbsp;to&nbsp;Stamp
                     </span>
                     </button>
@@ -303,13 +368,13 @@
                     <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="checkedByStampConfirmation">
                     <button
                         @click="confirmCheckedByStamp"
-                        class="px-3 py-4 font-medium text-white bg-green-500/40 hover:bg-green-500/90 rounded-md border border-white/30 hover:border-white/60 shadow-md hover:shadow-green-400 hover:shadow-lg backdrop-blur-md transition duration-300 ease-in-out"
+                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
                     >
                         Confirm Stamp
                     </button>
                     <button
                         @click="cancelCheckedByStamp"
-                        class="px-3 py-4 font-medium text-white bg-red-500/40 hover:bg-red-500/90 rounded-md border border-white/30 hover:border-white/60 shadow-md hover:shadow-red-400 hover:shadow-lg backdrop-blur-md transition duration-300 ease-in-out"
+                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-red-500/40 hover:bg-red-500/90 border-white/30 hover:border-white/60 hover:shadow-red-400 hover:shadow-lg backdrop-blur-md"
                     >
                         Cancel
                     </button>
@@ -317,7 +382,7 @@
 
                     <span
                     v-show="checkedByStampPhoto"
-                    class="w-40 h-40 bg-center bg-no-repeat flex items-center justify-center text-2xl font-extrabold text-red-600 text-center"
+                    class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
                     :style="{
                         backgroundImage: 'url(\'/photo/Checked_by_stamp.png\')',
                         backgroundSize: '101%'
@@ -329,16 +394,16 @@
 
                 <!-- Approved By -->
                 <div class="flex flex-col">
-                <p class="p-2 text-xl font-extrabold text-center bg-blue-400 border-4 border-white text-white">Approved By:</p>
-                <div class="p-2 text-center border-b-4 border-r-4 border-l-4 border-white">
+                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Approved By:</p>
+                <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
                     <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
-                    <span class="animate-pulse text-blue-700 font-extrabold opacity-100">
+                    <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
                         Waiting for stamp...
                     </span>
                     </div>
                     <span
                     v-show="approvedByStampPhoto"
-                    class="w-40 h-40 bg-center bg-no-repeat flex items-center justify-center text-2xl font-extrabold text-red-600 text-center"
+                    class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
                     :style="{
                         backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
                         backgroundSize: '101%'
@@ -361,6 +426,13 @@
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
                         View Property Data
+                    </button>
+                    <!-- Apply Data 1x1x1 Button (New Styled Button) -->
+                    <button
+                        @click="applyData1x1x1"
+                        class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-700 transition duration-300 ease-in-out transform border border-yellow-700 shadow-xl rounded-xl hover:text-white hover:bg-yellow-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                        >
+                        Apply Data 1x1x1
                     </button>
                     <button v-show="showExitButton" @click="exitReport" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -404,7 +476,7 @@ const showPreparedByDefault = ref(true);
 const preparedByStampConfirmation = ref(false);
 const checkedByStampConfirmation = ref(false);
 
-const preparedByButton = ref(true);
+const preparedByButton = ref(false);
 const checkedByButton = ref(false);
 const approvedByButton = ref(false);
 const preparedByStampPhoto = ref(false);
@@ -417,10 +489,16 @@ const exitReport = () => {
     fetchSerial();
 }
 
+
+const isTTM_model = ref(false);
+const show1x1x1Data = ref(true);
+
 //UI Control end
 
 //general variables start
 
+const currentFurnaceName = ref('');
+const currentLayerName = ref('');
 const tpmData = ref([]);
 const getTpmModel = ref('');
 const inspectionDataList = ref([]);
@@ -555,7 +633,7 @@ const fetchAllData = async () => {
         const getAllBr4paiNG = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
         const getAlliHr95NG = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
         const getAlliHr98NG = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
-        console.log("check br remarks: ", getAllBrNG);
+        //console.log("check br remarks: ", getAllBrNG);
         // Check if "1" exists in getAllBrNG
         if (getAllBrNG.includes("1") || getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1") || getAllBHMaxNG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")) {
             // Perform your action here (leave it blank for now)
@@ -574,6 +652,28 @@ const fetchAllData = async () => {
 
         const tpm_current_model = getTpmModel.value[0].code_no;
         tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
+        const thisLayerId = getTpmModel.value[0].layer_no;
+        const thisfurnaceId = getTpmModel.value[0].furnace_id;
+        console.log("Finding layer no: ", thisLayerId);
+        console.log("Finding furnace id: ",thisfurnaceId);
+
+        const responseFurnaceAPI = await axios.get(`/api/furnacedata/`); //getting furnace Name
+        //console.log("Show All furnace id API response: ", responseFurnaceAPI.data);
+        const furnaceNames = responseFurnaceAPI.data.data["Furnace Data"];
+        //console.log("Furnaces arrays: ",furnaceNames);
+        const filteredFurnaceName = furnaceNames.find(f => f.furnace_id === thisfurnaceId);
+        //console.log("filtered furnace Names: ",filteredFurnaceName);
+        currentFurnaceName.value = filteredFurnaceName.furnace_name;
+
+        const responseLayerAPI = await axios.get(`/api/layerdata/`);
+        console.log("Show All layer id API response: ", responseLayerAPI.data);
+        const layerNames = responseLayerAPI.data.data["Layer Data"];
+        console.log("Layer arrays: ",layerNames);
+        const filteredLayerName = layerNames.find(f =>
+            f.layer_no == thisLayerId && f.furnace_id == thisfurnaceId
+        );
+        console.log("filtered Layer Names: ",filteredLayerName);
+        currentLayerName.value = filteredLayerName.layer_name;
 
         //console.log("currently selected serial: ",currentSerialSelected.value);
         //console.log("Aggregate Averages: ",tpmData.value[0].average);
@@ -600,9 +700,9 @@ const fetchAllData = async () => {
         tpmData_ihkMin.value = minimumData.iHk;
 
         const responseInsp = await axios.get("/api/inspectiondata");
-        console.log("Show All inspection data API response: ", responseInsp.data);
+        //console.log("Show All inspection data API response: ", responseInsp.data);
         inspectionDataList.value = responseInsp.data.data || [];
-        console.log("Show All inspection data list : ", inspectionDataList.value);
+        //console.log("Show All inspection data list : ", inspectionDataList.value);
 
         const getAllInspModels = inspectionDataList.value.map(item => item.model);
         console.log("List of models in inspection: ", getAllInspModels);
@@ -611,7 +711,7 @@ const fetchAllData = async () => {
         // Check if tpm_current_model exists in getAllInspModels
         if (getAllInspModels.includes(tpm_current_model)) {
             const filteredInspectionData = inspectionDataList.value.filter(item => item.model == tpm_current_model);
-            console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
+            //console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
             // Access the `br` value for each item in filteredInspectionData
             filteredInspectionData.forEach(item => {
                 inspectionBrStandard.value = item.br;
@@ -631,7 +731,7 @@ const fetchAllData = async () => {
             return;
         }
 
-        console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
+        //console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
 
 
         const repData = {
@@ -659,7 +759,7 @@ const fetchAllData = async () => {
             "width": inspectionWidth.value
         }
 
-        console.log("Rep Data: ",repData);
+        //console.log("Rep Data: ",repData);
         createReport(repData, currentSerialSelected.value);
 
     } catch (error) {
@@ -679,9 +779,9 @@ const createReport = async (reportData, serial) => {
 const showReportData = async () => {
     try {
         const response = await axios.get(`/api/reportdata/`);
-        console.log("Getting report data API result: ", response.data.data);
+        //console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        console.log("Filtered data: ", filterBySerial);
+        //console.log("Filtered data: ", filterBySerial);
         reportModel.value = filterBySerial[0].model;
         reportPulseTracerMachineNo.value = filterBySerial[0].pulse_tracer_machine_number;
         reportMaterialCode.value = filterBySerial[0].material_code;

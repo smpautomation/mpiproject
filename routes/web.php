@@ -13,6 +13,7 @@ Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspe
 Route::get('/reports', [FrontendController::class,'reports'])->name('reports');
 Route::get('/approval', [FrontendController::class,'approval'])->name('approval');
 Route::get('/settings', [FrontendController::class,'settings'])->name('settings');
+Route::get('/data_ins', [FrontendController::class,'data_ins'])->name('data_ins');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

@@ -64,4 +64,8 @@ class FrontendController extends Controller
     public function settings(){
         return Inertia::render('Frontend/Settings');
     }
+
+    public function data_ins(){
+        return Inertia::render('Frontend/Data_INS');
+    }
 }
