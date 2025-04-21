@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center px-8 py-12 mx-auto bg-gray-100 h-screen overflow-y-auto">
+        <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto overflow-y-auto bg-gray-100">
             <div v-show="showStartManageDiv">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-center py-4 space-y-4">
                     <div>
@@ -68,7 +68,7 @@
                     Begin Process
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center w-full">
+            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center px-10 shadow-xl rounded-xl">
                 <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
