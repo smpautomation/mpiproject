@@ -2,22 +2,74 @@
     <Frontend>
         <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto overflow-y-auto bg-gray-100">
             <div v-show="showStartManageDiv">
-                <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-center py-4 space-y-4">
-                    <div>
-                        <button @click="addNewFurnaceBtn" :disabled="isLoadingForAddFurnaces" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
+                    <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
+                        <span
+                            class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
+                            :style="{
+                            backgroundImage: 'url(\'/photo/manage_logo.png\')',
+                            backgroundSize: '80%'
+                            }"
+                        ></span>
+                        <p class="text-2xl font-bold text-blue-900">MANAGE</p>
+                    </div>
+                    <div class="flex flex-row">
+                        <!-- Quick Add Furnace -->
+                        <div
+                            @click="addNewFurnaceBtn"
+                            :class="{ 'opacity-50 pointer-events-none': isLoadingForAddFurnaces }"
+                            class="group relative cursor-pointer flex flex-col mr-20 justify-center items-center shadow-xl bg-white/10 backdrop-blur-lg border border-white/10 w-[400px] h-[230px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner"
+                        >
+                            <span
+                            class="w-40 h-40 transition duration-300 bg-center bg-no-repeat bg-cover"
+                            :style="{
+                                backgroundImage: 'url(\'/photo/furnace_logo.png\')',
+                                backgroundSize: '100%'
+                            }"
+                            ></span>
+                            <p class="mt-2 text-lg font-bold text-blue-900 transition group-hover:text-blue-700">
                             {{ isLoadingForAddFurnaces ? "On going..." : "Quick Add Furnace" }}
-                        </button>
+                            </p>
+                        </div>
+
+                        <!-- Existing Furnaces -->
+                        <div
+                            @click="existingFurnaceBtn"
+                            :class="{
+                                'opacity-50 pointer-events-none': isLoadingForAddFurnaces,
+                                'cursor-pointer hover:scale-105 active:scale-95 active:shadow-inner': !isLoadingForAddFurnaces
+                            }"
+                            class="group relative flex flex-col justify-center items-center shadow-xl bg-white/20 backdrop-blur-lg border border-white/30 w-[400px] h-[230px] rounded-xl transform transition duration-300 ease-in-out"
+                        >
+                            <span
+                                class="w-[200px] h-[170px] bg-center bg-no-repeat bg-cover transition duration-300"
+                                :style="{
+                                    backgroundImage: 'url(\'/photo/existing_furnaces_logo.png\')',
+                                    backgroundSize: '100%'
+                                }"
+                            ></span>
+                            <p class="text-lg font-bold text-blue-900 transition group-hover:text-blue-700">
+                                Existing Furnaces
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <button @click="existingFurnaceBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                            Existing Furnaces
-                        </button>
-                    </div>
-                    <p v-if="isLoadingForAddFurnaces" class="text-xl text-black">Loading... Please wait.</p>
+                    <p v-if="isLoadingForAddFurnaces" class="mt-10 text-xl text-center text-black animate-pulse">Creating... Please wait.</p>
+                    <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-black animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
+                    <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-black animate-pulse">No furnace detected in the system. Create one by clicking Quick Add Furnace first.</p>
                 </div>
-                <div v-show="showSelectFurnace" class="flex flex-col items-center justify-center align-middle">
+                <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl border-4">
+                    <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
+                        <span
+                            class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
+                            :style="{
+                            backgroundImage: 'url(\'/photo/manage_logo.png\')',
+                            backgroundSize: '80%'
+                            }"
+                        ></span>
+                        <p class="text-2xl font-bold text-blue-900">MANAGE</p>
+                    </div>
                     <div class="flex flex-row items-center justify-center align-baseline">
-                        <p>Select a furnace:</p>
+                        <p class="text-xl font-extrabold">Select a furnace:</p>
                         <select
                         v-model="currentFurnaceName"
                         class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -36,7 +88,17 @@
                         </button>
                     </div>
                 </div>
-                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-center py-4 space-y-4">
+                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl border-4">
+                    <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
+                        <span
+                            class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
+                            :style="{
+                            backgroundImage: 'url(\'/photo/manage_logo.png\')',
+                            backgroundSize: '80%'
+                            }"
+                        ></span>
+                        <p class="text-2xl font-bold text-blue-900">MANAGE</p>
+                    </div>
                     <p>{{ currentFurnaceName }}</p>
                     <div class="flex flex-row items-center justify-center align-baseline">
                         <p>Select a layer:</p>
@@ -59,7 +121,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4">
+            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl border-4">
                 <div class="flex flex-col items-center justify-center space-x-4 align-middle">
                     <p>Currently selected: </p>
                     <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
@@ -68,7 +130,7 @@
                     Begin Process
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center px-10 shadow-xl rounded-xl">
+            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4">
                 <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
@@ -116,9 +178,20 @@
                     </div>
 
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
-                        <p>Files: </p>
-                        <div v-for="(fileList, index) in fileLists" :key="index" class="p-2 m-2 text-white bg-blue-400 rounded-3xl">
-                            {{ fileList }}
+                        <div v-if="fileLists.length > 0" class="w-[410px] h-[230px] overflow-auto">
+                            <p><span class="text-lg font-extrabold">Files:</span> ( You have selected {{ fileLists.length }} files. ) </p>
+                            <div
+                                v-for="(fileList, index) in fileLists"
+                                :key="index"
+                                class="p-2 m-2 text-white bg-blue-400 rounded-3xl"
+                            >
+                                {{ fileList }}
+                            </div>
+                        </div>
+
+                        <!-- This div shows when there are no files -->
+                        <div v-else class="flex flex-row justify-center items-center w-[410px] h-[230px]">
+                            <span class="text-2xl animate-pulse">No files selected</span>
                         </div>
                     </div>
                 </div>
@@ -147,7 +220,7 @@
 
             <div v-show="showGraphAndTables">
                  <!-- Chart Container -->
-                 <div class="w-full max-w-[1000px] h-[550px] bg-blue-100 rounded-xl mx-auto">
+                 <div class="w-full max-w-[1500px] h-[850px] bg-blue-100 rounded-xl mx-auto">
                     <!-- Ensure canvas is rendered only when data is ready -->
                     <canvas v-if="dataReady" ref="myChartCanvas" width="1000" height="550"></canvas>
                 </div>
@@ -482,6 +555,8 @@
     Chart.register(...registerables);
 
     //UI VISIBILITY variables...
+    const showFurnaceCreatedNotif = ref(false);
+    const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
     const showUploadData = ref(true);
     const showProceed = ref(false);
@@ -496,6 +571,7 @@
     const toggleManageForm = ref(false);
     const currentLayerName = ref('');
     const currentLayerNo = ref(null);
+    const showFurnaceName = ref('');
 
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
@@ -551,12 +627,20 @@
 
             await saveNewFurnace(newFurnaceData);
 
-            alert(`${newFurnaceName} has been added`);
+            //alert(`${newFurnaceName} has been added`);
+            showFurnaceName.value = newFurnaceName;
         } catch (error) {
             console.error("Error fetching furnace data:", error);
         } finally {
             isLoadingForAddFurnaces.value = false; // Stop loading
             console.log("Loading state reset.");
+
+            showFurnaceCreatedNotif.value = true;
+
+            // Hide the notification after 5 seconds
+            setTimeout(() => {
+                showFurnaceCreatedNotif.value = false;
+            }, 5000); // 5000 milliseconds = 5 seconds
         }
     };
 
@@ -895,7 +979,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         try {
             currentLayerNo.value = await getLayerNoByName(currentLayerName.value);
             console.log("Current layer no from save new layer: ", currentLayerNo.value);
-            alert('New Layer Added');
+            //alert('New Layer Added');
         } catch (error) {
             console.error('Error fetching layer number:', error);
         }
@@ -1333,7 +1417,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     // Method to clear the file upload
     const clearFileUpload = () => {
     fileData.value = null; // Reset the file data
-    fileLists.value = null;
+    fileLists.value = [];
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = ''; // Clear the input field
     console.log('File upload cleared');
