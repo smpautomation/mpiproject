@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataInstructions;
+use App\Models\DataInstructionsAggregate;
+use App\Models\MieGxDataInstructions;
+use App\Models\MieGxDataInstructionsAggregate;
 use Illuminate\Http\Request;
 use App\Models\TPMData;
 use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
+use App\Models\StandardData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
@@ -42,17 +47,21 @@ class TPMDataController extends Controller
             }
         }else{
             try{
-                $tpmData = TPMData::with($report ? ['remark', 'reportData'] : ['remark'])
-                                    ->where('serial_no',  $serial_no)
+                $tpmData = TPMData::where('serial_no',  $serial_no)
                                     ->orderBy('zone', 'asc')
                                     ->get();
-                
+
                 if(!$tpmData->isEmpty()){
+                    $tpmDataRemarks = TPMDataRemark::where('tpm_data_serial', $serial_no)->get();
                     $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
                         'message' => 'TPM data found successfully',
-                        'data' => $tpmData, $tpmDataAggregateFunctions
+                        'data' => [
+                            'tpmData' => $tpmData,
+                            'remarks' => $tpmDataRemarks,
+                            'aggregateFunctions' =>  $tpmDataAggregateFunctions
+                        ]
                     ], 200);
                 }else{
                     return response()->json([
@@ -150,7 +159,7 @@ class TPMDataController extends Controller
             ];
             $tpmData = TPMData::create($tpmDataInputs);
             $remarkData = [
-                'tpm_data_id' => $tpmData->id,
+                'tpm_data_serial' => $tpmData->serial_no,
                 'Br_remarks' => $request->input('Br_remarks', null),
                 '4paiId_remarks' => $request->input('4paiId_remarks', null),
                 'iHc_remarks' => $request->input('iHc_remarks', null),
@@ -187,10 +196,10 @@ class TPMDataController extends Controller
                     $tpmAggragateFunctionsInput = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
-                    $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput); 
+                    $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
                 }catch(\Exception $e){
 
-                }          
+                }
             }
 
             $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
@@ -201,7 +210,66 @@ class TPMDataController extends Controller
                     ];
                     $reportData = ReportData::create($reportDataInputs);
                 }catch(\Exception $e){
-                    
+
+                }
+            }
+
+            $checkStandardData = StandardData::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkStandardData){
+                try{
+                    $standardDataInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $standardData = StandardData::create($standardDataInputs);
+                }catch(\Exception $e){
+
+                }
+            }
+
+            $checkDataInstructions = DataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkDataInstructions){
+                try{
+                    $dataInstructionsInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $dataInstructions = DataInstructions::create($dataInstructionsInputs);
+                }catch(\Exception $e){
+
+                }
+            }
+
+            $checkDataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkDataInstructionsAggregate){
+                try{
+                    $dataInstructionsAggregateInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $dataInstructionsAggregate = DataInstructionsAggregate::create($dataInstructionsAggregateInputs);
+                }catch(\Exception $e){
+
+                }
+            }
+
+            $checkMieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkMieGxDataInstructions){
+                try{
+                    $mieGxDataInstructionsInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $mieGxDataInstructions = MieGxDataInstructions::create($mieGxDataInstructionsInputs);
+                }catch(\Exception $e){
+
+                }
+            }
+            $checkMieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkMieGxDataInstructionsAggregate){
+                try{
+                    $mieGxDataInstructionsAggregateInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $mieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::create($mieGxDataInstructionsAggregateInputs);
+                }catch(\Exception $e){
+
                 }
             }
 
@@ -210,10 +278,15 @@ class TPMDataController extends Controller
                 'status' => true,
                 'message' => 'tmp Data created successfully',
                 'data' => [
-                    $tpmData, 
-                    $remark, 
-                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions, 
-                    $checkReportData ?? $reportData
+                    $tpmData,
+                    $remark,
+                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
+                    $checkReportData ?? $reportData,
+                    $checkStandardData ?? $standardData,
+                    $checkDataInstructions ?? $dataInstructions,
+                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
+                    $checkMieGxDataInstructions ?? $mieGxDataInstructions,
+                    $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
                     ]
             ], 201);
         }catch(\Exception $e){

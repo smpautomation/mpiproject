@@ -239,7 +239,7 @@
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
                                                     :key="tableLayerColumnHeader.name"
                                                     :colspan="tableLayerColumnHeader.colspan"
-                                                    class="px-3 py-2 text-sm font-medium text-center border border-white sm:px-4 sm:py-3 sm:text-base md:px-5 md:py-4 md:text-lg">
+                                                    class="px-2 py-2 text-sm font-medium text-center border border-white">
                                                     {{ tableLayerColumnHeader.name }}
                                                 </th>
                                             </tr>
@@ -297,40 +297,40 @@
                                                     {{ item.iHc }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.iHc_remarks == 1"
+                                                    v-if="item.remark.iHc_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHc_remarks == 0 ? '' : item.remark.iHc_remarks }}
+                                                    {{ item.remark.iHc_remarks == '0' ? '' : item.remark.iHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHk }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.iHk_remarks == 1"
+                                                    v-if="item.remark.iHk_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHk_remarks == 0 ? '' : item.remark.iHk_remarks }}
+                                                    {{ item.remark.iHk_remarks == '0' ? '' : item.remark.iHk_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.BHMax }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.BHMax_remarks == 1"
+                                                    v-if="item.remark.BHMax_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.BHMax_remarks == 0 ? '' : item.remark.BHMax_remarks }}
+                                                    {{ item.remark.BHMax_remarks == '0' ? '' : item.remark.BHMax_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHr95 }}
@@ -349,105 +349,105 @@
                                                     {{ item.iHr98 }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.iHr98_remarks == 1"
+                                                    v-if="item.remark.iHr98_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHr98_remarks == 0 ? '' : item.remark.iHr98_remarks }}
+                                                    {{ item.remark.iHr98_remarks == '0' ? '' : item.remark.iHr98_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.iHkiHc }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.iHkiHc_remarks == 1"
+                                                    v-if="item.remark.iHkiHc_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHkiHc_remarks == 0 ? '' : item.remark.iHkiHc_remarks }}
+                                                    {{ item.remark.iHkiHc_remarks == '0' ? '' : item.remark.iHkiHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Br4pai }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.Br4pai_remarks == 1"
+                                                    v-if="item.remark.Br4pai_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.Br4pai_remarks == 0 ? '' : item.remark.Br4pai_remarks }}
+                                                    {{ item.remark.Br4pai_remarks == '0' ? '' : item.remark.Br4pai_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.bHc }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.bHc_remarks == 1"
+                                                    v-if="item.remark.bHc_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.bHc_remarks == 0 ? '' : item.remark.bHc_remarks }}
+                                                    {{ item.remark.bHc_remarks == '0' ? '' : item.remark.bHc_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Squareness }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark.Squareness_remarks == 1"
+                                                    v-if="item.remark.Squareness_remarks == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.Squareness_remarks == 0 ? '' : item.remark.Squareness_remarks }}
+                                                    {{ item.remark.Squareness_remarks == '0' ? '' : item.remark.Squareness_remarks }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiId'] }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark['4paiId_remarks'] == 1"
+                                                    v-if="item.remark['4paiId_remarks'] == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark['4paiId_remarks'] == 0 ? '' : item.remark['4paiId_remarks'] }}
+                                                    {{ item.remark['4paiId_remarks'] == '0' ? '' : item.remark['4paiId_remarks'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiIs'] }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark['4paiIs_remarks'] == 1"
+                                                    v-if="item.remark['4paiIs_remarks'] == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark['4paiIs_remarks'] == 0 ? '' : item.remark['4paiIs_remarks'] }}
+                                                    {{ item.remark['4paiIs_remarks'] == '0' ? '' : item.remark['4paiIs_remarks'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item['4paiIa'] }}
                                                 </td>
                                                 <td
-                                                    v-if="item.remark['4paiIa_remarks'] == 1"
+                                                    v-if="item.remark['4paiIa_remarks'] == '1'"
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
                                                     E
                                                 </td>
                                                 <td
                                                     v-else
                                                     :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark['4paiIa_remarks'] == 0 ? '' : item.remark['4paiIa_remarks'] }}
+                                                    {{ item.remark['4paiIa_remarks'] == '0' ? '' : item.remark['4paiIa_remarks'] }}
                                                 </td>
                                                 <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
                                                     {{ item.Tracer }}
@@ -623,7 +623,7 @@
                 description: "Enter description here"
             };
 
-            console.log("Saving Furnace:", newFurnaceData); // Debugging log before sending
+            //console.log("Saving Furnace:", newFurnaceData); // Debugging log before sending
 
             await saveNewFurnace(newFurnaceData);
 
@@ -663,7 +663,7 @@
 
         // Update the reactive variable
         furnaceList.value = extractedFurnaces;
-        console.log("Furnace list: ", furnaceList.value);
+        //console.log("Furnace list: ", furnaceList.value);
         // Set default selection to first furnace, if available
         if (furnaceList.value.length > 0) {
             currentFurnaceName.value = furnaceList.value[0].furnace_name;
@@ -698,11 +698,11 @@
 
             currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
             currentFurnaceNo.value = currentFurnaceNoForLayer.value;
-            console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
+            //console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
             // 🔍 **Filter the data
             const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
 
-            console.log("Filtered Layers:", filteredLayers);
+            //console.log("Filtered Layers:", filteredLayers);
 
             // Update the reactive layer list
             layerList.value = filteredLayers;
@@ -738,7 +738,7 @@
             const foundFurnace = furnaces.find(f => f.furnace_name === furnaceName);
 
             if (foundFurnace) {
-                console.log("Furnace found:", foundFurnace);
+                //console.log("Furnace found:", foundFurnace);
                 return foundFurnace.furnace_id; // Return the furnace_no
             } else {
                 console.warn("Furnace not found:", furnaceName);
@@ -762,7 +762,7 @@
             const foundLayer = layers.find(f => f.layer_name === layerName);
 
             if (foundLayer) {
-                console.log("Layer found:", foundLayer.layer_no);
+                //console.log("Layer found:", foundLayer.layer_no);
                 return foundLayer.layer_no; // Return the layer_no
             } else {
                 console.warn("Layer not found:", layerName);
@@ -896,7 +896,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     serialNo.value = `${year}${month}${firstSerialNumber}`;
 
                     console.log('Generated First Serial Number:', serialNo.value);
-                    alert(`Generated First Serial Number: ${serialNo.value}`);
+                    //alert(`Generated First Serial Number: ${serialNo.value}`);
                 }
             } else {
                 // Handle case where there's no data
@@ -1496,43 +1496,50 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             items.value = response.data;
 
             // Extract arrays from the response
-            tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
-            tpmRemarks.value = response.data.remark || [];
-            getAggregateID.value = response.data[0][0].id || [];
+            tpmData.value = response.data.data["tpmData"] || []; // Fallback to an empty array if undefined
+            tpmRemarks.value = response.data.data["remarks"] || [];
+            getAggregateID.value = response.data.data["aggregateFunctions"][0].id || [];
             console.log("Aggregate ID: ", getAggregateID.value);
 
             // Combine the arrays
-            combinedData.value = tpmData.value;
-            console.log('Combined Data: ', combinedData.value);
+            //combinedData.value = tpmData.value;
+            //console.log('Combined Data: ', combinedData.value);
+            // Combine both arrays based on index
+            combinedData.value = tpmData.value.map((item, index) => {
+                return {
+                    ...item,
+                    remark: tpmRemarks.value[index] || {} // fallback to empty object if missing
+                };
+            });
 
             // Extract individual values from tpmData for aggregate
-            getAllIDValues.value = combinedData.value.map(item => item.id);
-            getAllBrValues.value = combinedData.value.map(item => item.Br || null);
-            getAllBrRemarks.value = combinedData.value.map(item => item.remark.Br_remarks || null);
-            getAlliHcValues.value = combinedData.value.map(item => item.iHc || null);
-            getAlliHcRemarks.value = combinedData.value.map(item => item.remark.iHc_remarks || null);
-            getAlliHkValues.value = combinedData.value.map(item => item.iHk || null);
-            getAlliHkRemarks.value = combinedData.value.map(item => item.remark.iHk_remarks || null);
-            getAllBHMaxValues.value = combinedData.value.map(item => item.BHMax || null);
-            getAllBHMaxRemarks.value = combinedData.value.map(item => item.remark.BHMax_remarks || null);
-            getAlliHr95Values.value = combinedData.value.map(item => item.iHr95 || null);
-            getAlliHr95Remarks.value = combinedData.value.map(item => item.remark.iHr95_remarks || null);
-            getAlliHr98Values.value = combinedData.value.map(item => item.iHr98 || null);
-            getAlliHr98Remarks.value = combinedData.value.map(item => item.remark.iHr98_remarks || null);
-            getAlliHciHkValues.value = combinedData.value.map(item => item.iHkiHc || null);
-            getAlliHciHkRemarks.value = combinedData.value.map(item => item.remark.iHkiHc_remarks || null);
-            getAllBr4paiValues.value = combinedData.value.map(item => item.Br4pai || null);
-            getAllBr4paiRemarks.value = combinedData.value.map(item => item.remark.Br4pai_remarks || null);
-            getAllbHcValues.value = combinedData.value.map(item => item.bHc || null);
-            getAllbHcRemarks.value = combinedData.value.map(item => item.remark.bHc_remarks || null);
-            getAllSquarenessValues.value = combinedData.value.map(item => item.Squareness || null);
-            getAllSquarenessRemarks.value = combinedData.value.map(item => item.remark.Squareness_remarks || null);
-            getAll4paildValues.value = combinedData.value.map(item => item["4paiId"] || null);
-            getAll4paildRemarks.value = combinedData.value.map(item => item.remark["4paiId_remarks"] || null);
-            getAll4pailsValues.value = combinedData.value.map(item => item["4paiIs"] || null);
-            getAll4pailsRemarks.value = combinedData.value.map(item => item.remark["4paiIs_remarks"] || null);
-            getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
-            getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
+            getAllIDValues.value = tpmData.value.map(item => item.id);
+            getAllBrValues.value = tpmData.value.map(item => item.Br || null);
+            getAllBrRemarks.value = tpmRemarks.value.map(item => item.Br_remarks || null);
+            getAlliHcValues.value = tpmData.value.map(item => item.iHc || null);
+            getAlliHcRemarks.value = tpmRemarks.value.map(item => item.iHc_remarks || null);
+            getAlliHkValues.value = tpmData.value.map(item => item.iHk || null);
+            getAlliHkRemarks.value = tpmRemarks.value.map(item => item.iHk_remarks || null);
+            getAllBHMaxValues.value = tpmData.value.map(item => item.BHMax || null);
+            getAllBHMaxRemarks.value = tpmRemarks.value.map(item => item.BHMax_remarks || null);
+            getAlliHr95Values.value = tpmData.value.map(item => item.iHr95 || null);
+            getAlliHr95Remarks.value = tpmRemarks.value.map(item => item.iHr95_remarks || null);
+            getAlliHr98Values.value = tpmData.value.map(item => item.iHr98 || null);
+            getAlliHr98Remarks.value = tpmRemarks.value.map(item => item.iHr98_remarks || null);
+            getAlliHciHkValues.value = tpmData.value.map(item => item.iHkiHc || null);
+            getAlliHciHkRemarks.value = tpmRemarks.value.map(item => item.iHkiHc_remarks || null);
+            getAllBr4paiValues.value = tpmData.value.map(item => item.Br4pai || null);
+            getAllBr4paiRemarks.value = tpmRemarks.value.map(item => item.Br4pai_remarks || null);
+            getAllbHcValues.value = tpmData.value.map(item => item.bHc || null);
+            getAllbHcRemarks.value = tpmRemarks.value.map(item => item.bHc_remarks || null);
+            getAllSquarenessValues.value = tpmData.value.map(item => item.Squareness || null);
+            getAllSquarenessRemarks.value = tpmRemarks.value.map(item => item.Squareness_remarks || null);
+            getAll4paildValues.value = tpmData.value.map(item => item["4paiId"] || null);
+            getAll4paildRemarks.value = tpmRemarks.value.map(item => item["4paiId_remarks"] || null);
+            getAll4pailsValues.value = tpmData.value.map(item => item["4paiIs"] || null);
+            getAll4pailsRemarks.value = tpmRemarks.value.map(item => item["4paiIs_remarks"] || null);
+            getAll4pailaValues.value = tpmData.value.map(item => item["4paiIa"] || null);
+            getAll4pailaRemarks.value = tpmRemarks.value.map(item => item["4paiIa_remarks"] || null);
 
             //console.log('gettheIDs: ', getAllIDValues.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
@@ -1858,7 +1865,7 @@ const fetchDataCreateGraph = async () => {
         // Log the response structure to check
         //console.log("API Response:", response.data);
 
-        const tableRows = response.data.data; // Assuming API returns an array of rows
+        const tableRows = response.data.data["tpmData"]; // Assuming API returns an array of rows
 
         // Check if tableRows is not undefined or null before proceeding
         if (!tableRows) {
@@ -1875,10 +1882,10 @@ const fetchDataCreateGraph = async () => {
 
         // Set dataReady to true once the data is ready
         dataReady.value = true;
-        console.log("dataReady ", dataReady.value);
+        //console.log("dataReady ", dataReady.value);
         // Ensure DOM updates before rendering
         nextTick(() => {
-            console.log("myChartCanvas reference:", myChartCanvas.value); // Debug the canvas ref
+            //console.log("myChartCanvas reference:", myChartCanvas.value); // Debug the canvas ref
             if (myChartCanvas.value) {
                 renderChart();  // Proceed to render the chart if the canvas is available
             } else {
@@ -1905,10 +1912,10 @@ const renderChart = () => {
         return;
     }
     // Ensure the canvas is accessible
-    console.log("Rendering chart with canvas:", myChartCanvas.value);
+    //console.log("Rendering chart with canvas:", myChartCanvas.value);
 
     // Ensure datasets are available before creating the chart
-    console.log("Datasets available for chart:", datasets.value);
+    //console.log("Datasets available for chart:", datasets.value);
 
     if (dataReady.value && myChartCanvas.value) {
         const ctx = myChartCanvas.value.getContext("2d");
@@ -1919,7 +1926,7 @@ const renderChart = () => {
             return;
         }
 
-        console.log("2D Context obtained, proceeding to render the chart.");
+        //console.log("2D Context obtained, proceeding to render the chart.");
 
         const x_offset = 1000;
         const y_offset = 2500;
@@ -1939,7 +1946,7 @@ const renderChart = () => {
             };
         });
 
-        console.log("Final Chart Datasets:", chartDatasets);
+        //console.log("Final Chart Datasets:", chartDatasets);
 
         try {
             new Chart(ctx, {
@@ -2027,7 +2034,7 @@ const renderChart = () => {
         toggleManageForm.value = true;
         showGraphAndTables.value = true;
         showUploadData.value = false;
-        console.log("Showdiv graphs ",showGraphAndTables.value);
+        //console.log("Showdiv graphs ",showGraphAndTables.value);
         showAllData();
         console.log('serialParam is provided, skipping fetchSerial.');
     } else {

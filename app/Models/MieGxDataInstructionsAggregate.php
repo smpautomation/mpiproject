@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TPMDataRemark extends Model
+class MieGxDataInstructionsAggregate extends Model
 {
-    use HasFactory;
-    protected $table = 'tpm_data_remarks';
+    protected $table = 'mie_gx_data_instructions_aggregates';
     protected $guarded = [];
-
     public function tpmData()
     {
         return $this->belongsTo(TPMData::class, 'tpm_data_serial', 'serial_no'); // foreign key

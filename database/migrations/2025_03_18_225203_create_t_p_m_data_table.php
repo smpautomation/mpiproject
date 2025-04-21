@@ -63,7 +63,7 @@ return new class extends Migration
         Schema::create('tpm_data_remarks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_id');
+            $table->unsignedBigInteger('tpm_data_serial')->index();
             $table->string('Br_remarks')->nullable();
             $table->string('4paiId_remarks')->nullable();
             $table->string('iHc_remarks')->nullable();
@@ -91,6 +91,7 @@ return new class extends Migration
             $table->string('MRC_remarks')->nullable();
             $table->string('HR_remarks')->nullable();
             $table->string('HRO_remarks')->nullable();
+            $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
         });
 
         Schema::create('tpm_data_aggregate_functions', function (Blueprint $table) {

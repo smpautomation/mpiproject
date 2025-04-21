@@ -6,8 +6,11 @@ use App\Http\Controllers\FurnaceDataController;
 use App\Http\Controllers\LayerDataController;
 use App\Http\Controllers\InspectionDataController;
 use App\Http\Controllers\ReportDataController;
-use App\Models\Approvers;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ApproversController;
+use App\Http\Controllers\DataInstructionsController;
+use App\Http\Controllers\MieGxDataInstructionsController;
+use App\Http\Controllers\MieGxDataInstructionsAggregateController;
+use App\Http\Controllers\StandardDataController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -47,12 +50,35 @@ Route::post('/inspectiondata', [InspectionDataController::class, 'store']);
 Route::patch('/inspectiondata/{id}', [InspectionDataController::class, 'update']);
 Route::delete('/inspectiondata/{id}', [InspectionDataController::class, 'destroy']);
 
-Route::get('/approver', [Approvers::class, 'index']);
-Route::get('/approver/{id}', [Approvers::class, 'show']);
-Route::post('/approver', [Approvers::class, 'store']);
-Route::patch('/approver/{id}', [Approvers::class, 'update']);
-Route::delete('/approver/{id}', [Approvers::class, 'destroy']);
+Route::get('/approver', [ApproversController::class, 'index']);
+Route::get('/approver/{id}', [ApproversController::class, 'show']);
+Route::post('/approver', [ApproversController::class, 'store']);
+Route::patch('/approver/{id}', [ApproversController::class, 'update']);
+Route::delete('/approver/{id}', [ApproversController::class, 'destroy']);
 
+Route::get('/standarddata', [StandardDataController::class, 'index']);
+Route::get('/standarddata/{id}', [StandardDataController::class, 'show']);
+Route::post('/standarddata', [StandardDataController::class, 'store']);
+Route::patch('/standarddata/{id}', [StandardDataController::class, 'update']);
+Route::delete('/standarddata/{id}', [StandardDataController::class, 'destroy']);
+
+Route::get('/datainstructions', [DataInstructionsController::class, 'index']);
+Route::get('/datainstructions/{id}', [DataInstructionsController::class, 'show']);
+Route::post('/datainstructions', [DataInstructionsController::class, 'store']);
+Route::patch('/datainstructions/{id}', [DataInstructionsController::class, 'update']);
+Route::delete('/datainstructions/{id}', [DataInstructionsController::class, 'destroy']);
+
+Route::get('/miegxdatainstructions', [MieGxDataInstructionsController::class, 'index']);
+Route::get('/miegxdatainstructions/{id}', [MieGxDataInstructionsController::class, 'show']);
+Route::post('/miegxdatainstructions', [MieGxDataInstructionsController::class, 'store']);
+Route::patch('/miegxdatainstructions/{id}', [MieGxDataInstructionsController::class, 'update']);
+Route::delete('/miegxdatainstructions/{id}', [MieGxDataInstructionsController::class, 'destroy']);
+
+Route::get('/miegxdatainstructionsaggregate', [MieGxDataInstructionsAggregateController::class, 'index']);
+Route::get('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggregateController::class, 'show']);
+Route::post('/miegxdatainstructionsaggregate', [MieGxDataInstructionsAggregateController::class, 'store']);
+Route::patch('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggregateController::class, 'update']);
+Route::delete('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggregateController::class, 'destroy']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
