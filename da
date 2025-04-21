@@ -1,0 +1,145 @@
+[33m32afa08[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mFrontend[m[33m, [m[1;31morigin/backend[m[33m)[m HEAD@{0}: pull origin backend: Fast-forward
+[33m1116b4e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Frontend[m[33m, [m[1;32mbackend[m[33m)[m HEAD@{1}: checkout: moving from backend to Frontend
+[33m1116b4e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Frontend[m[33m, [m[1;32mbackend[m[33m)[m HEAD@{2}: checkout: moving from backend to backend
+[33m1116b4e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Frontend[m[33m, [m[1;32mbackend[m[33m)[m HEAD@{3}: checkout: moving from Frontend to backend
+[33m1116b4e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Frontend[m[33m, [m[1;32mbackend[m[33m)[m HEAD@{4}: merge backend: Fast-forward
+[33m7894e69[m HEAD@{5}: checkout: moving from backend to Frontend
+[33m1116b4e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Frontend[m[33m, [m[1;32mbackend[m[33m)[m HEAD@{6}: checkout: moving from Frontend to backend
+[33m7894e69[m HEAD@{7}: pull origin Frontend: Fast-forward
+[33maa5a537[m HEAD@{8}: checkout: moving from backend to Frontend
+[33m1116b4e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Frontend[m[33m, [m[1;32mbackend[m[33m)[m HEAD@{9}: commit: on going report.vue UI adjustments
+[33m7894e69[m HEAD@{10}: pull origin master: Fast-forward
+[33m9dc4a34[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{11}: checkout: moving from master to backend
+[33m9dc4a34[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{12}: checkout: moving from backend to master
+[33m9dc4a34[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{13}: merge master: Fast-forward
+[33m609f53c[m HEAD@{14}: checkout: moving from master to backend
+[33m9dc4a34[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{15}: commit: Added column 'checked' in reportdata table and added new table named approvers with corresponding api responses
+[33m609f53c[m HEAD@{16}: checkout: moving from backend to master
+[33m609f53c[m HEAD@{17}: merge master: Fast-forward
+[33m46d5c8a[m HEAD@{18}: checkout: moving from master to backend
+[33m609f53c[m HEAD@{19}: checkout: moving from backend to master
+[33m46d5c8a[m HEAD@{20}: checkout: moving from Frontend to backend
+[33maa5a537[m HEAD@{21}: checkout: moving from master to Frontend
+[33m609f53c[m HEAD@{22}: merge Frontend: Merge made by the 'ort' strategy.
+[33m46d5c8a[m HEAD@{23}: checkout: moving from Frontend to master
+[33maa5a537[m HEAD@{24}: pull origin Frontend: Fast-forward
+[33maae1c06[m HEAD@{25}: checkout: moving from backend to Frontend
+[33m46d5c8a[m HEAD@{26}: checkout: moving from master to backend
+[33m46d5c8a[m HEAD@{27}: checkout: moving from backend to master
+[33m46d5c8a[m HEAD@{28}: merge master: Fast-forward
+[33m71c78f5[m HEAD@{29}: checkout: moving from master to backend
+[33m46d5c8a[m HEAD@{30}: merge backend: Merge made by the 'ort' strategy.
+[33maae1c06[m HEAD@{31}: merge Frontend: Fast-forward
+[33meb89d0b[m HEAD@{32}: checkout: moving from Frontend to master
+[33maae1c06[m HEAD@{33}: pull origin Frontend: Fast-forward
+[33m3927058[m HEAD@{34}: checkout: moving from master to Frontend
+[33meb89d0b[m HEAD@{35}: pull origin master: Fast-forward
+[33m91eea73[m HEAD@{36}: checkout: moving from backend to master
+[33m71c78f5[m HEAD@{37}: commit: Resolve Git Conflict in Merging
+[33mca4e325[m HEAD@{38}: commit (merge): Resolve merge conflict
+[33m5c8b5a4[m HEAD@{39}: checkout: moving from Frontend to backend
+[33m3927058[m HEAD@{40}: commit: created view list table
+[33m7916f8f[m HEAD@{41}: commit: On going report data saving not done
+[33m73e1d12[m HEAD@{42}: commit: Inspection data saving successfully, Showing Data successfully
+[33m9257ab3[m HEAD@{43}: pull origin Frontend: Fast-forward
+[33m96f5cd7[m HEAD@{44}: commit: commit before push working on inspection
+[33m9799868[m HEAD@{45}: pull origin master: Merge made by the 'ort' strategy.
+[33m88242ea[m HEAD@{46}: commit: All layer data now saving successfully
+[33m7f6f25b[m HEAD@{47}: commit: change author test
+[33m33a6b6b[m HEAD@{48}: commit: Change author
+[33m6cd7c55[m HEAD@{49}: commit: test push
+[33mb6dc22b[m HEAD@{50}: commit: select serial no on report
+[33m2f3260b[m HEAD@{51}: pull origin Frontend: Merge made by the 'ort' strategy.
+[33m8cf752d[m HEAD@{52}: pull origin master: Merge made by the 'ort' strategy.
+[33mb5ea760[m HEAD@{53}: pull origin master: Merge made by the 'ort' strategy.
+[33ma7100b1[m HEAD@{54}: commit (merge): bug
+[33m05fe5b1[m HEAD@{55}: reset: moving to 05fe5b1c2e62c909f151b6ed2541108c65db1b77
+[33ma8b1794[m HEAD@{56}: commit (merge): resolve merge conflict
+[33m05fe5b1[m HEAD@{57}: commit: current no errors 3/25/25 8:13AM
+[33m59e0e96[m HEAD@{58}: commit: All is working
+[33md4c5dc5[m HEAD@{59}: pull origin master: Merge made by the 'ort' strategy.
+[33mc59db35[m HEAD@{60}: commit: commit before pull
+[33mebaf8e5[m HEAD@{61}: commit: fixed missing coating no added some debugging in console
+[33m9e49d92[m HEAD@{62}: pull origin master: Fast-forward
+[33m54702b8[m HEAD@{63}: commit: Data alphabetical order done
+[33m34e07c6[m HEAD@{64}: commit: Resolved merge conflicts in LayerDataController.php
+[33m355997f[m HEAD@{65}: commit (merge): commit after pulling
+[33ma39a477[m HEAD@{66}: commit: commit before pulling master
+[33m88e1b6c[m HEAD@{67}: pull origin Frontend: Fast-forward
+[33m01ac4dd[m HEAD@{68}: pull origin Frontend: Fast-forward
+[33m4b4a0d1[m HEAD@{69}: commit: commit before push
+[33me45abb6[m HEAD@{70}: commit: changes with graph line
+[33m8e04e4d[m HEAD@{71}: commit: fixed ng counter bug
+[33ma38160c[m HEAD@{72}: commit: Serial Number increment done
+[33mb5a41f5[m HEAD@{73}: pull origin Frontend: Fast-forward
+[33m2c7932d[m HEAD@{74}: pull origin Frontend: Fast-forward
+[33maef0a0a[m HEAD@{75}: commit: add dynamic array for ng count
+[33m5cfc768[m HEAD@{76}: pull origin Frontend: Merge made by the 'ort' strategy.
+[33ma03bd59[m HEAD@{77}: pull origin backend: Fast-forward
+[33m5b02daf[m HEAD@{78}: checkout: moving from backend to Frontend
+[33m5c8b5a4[m HEAD@{79}: commit: commit before switch
+[33ma03bd59[m HEAD@{80}: commit: Added repord_data table schema
+[33mdcb4109[m HEAD@{81}: commit: Add reportdata model, controller and database schema
+[33m91eea73[m HEAD@{82}: merge master: Fast-forward
+[33m08fa82c[m HEAD@{83}: checkout: moving from master to backend
+[33m91eea73[m HEAD@{84}: merge Frontend: Merge made by the 'ort' strategy.
+[33m08fa82c[m HEAD@{85}: checkout: moving from Frontend to master
+[33m5b02daf[m HEAD@{86}: pull origin Frontend: Merge made by the 'ort' strategy.
+[33m74fcb24[m HEAD@{87}: checkout: moving from backend to Frontend
+[33m08fa82c[m HEAD@{88}: checkout: moving from master to backend
+[33m08fa82c[m HEAD@{89}: merge backend: Fast-forward
+[33m46f6399[m HEAD@{90}: checkout: moving from backend to master
+[33m08fa82c[m HEAD@{91}: commit: commit before push
+[33m46f6399[m HEAD@{92}: checkout: moving from master to backend
+[33m46f6399[m HEAD@{93}: merge backend: Fast-forward
+[33m9af19dd[m HEAD@{94}: checkout: moving from backend to master
+[33m46f6399[m HEAD@{95}: commit: add tmp aggregate functions database schema, model and controller
+[33m9af19dd[m HEAD@{96}: checkout: moving from master to backend
+[33m9af19dd[m HEAD@{97}: merge backend: Fast-forward
+[33m39ec49a[m HEAD@{98}: checkout: moving from backend to master
+[33m9af19dd[m HEAD@{99}: commit: add x and y input in store function
+[33m39ec49a[m HEAD@{100}: checkout: moving from master to backend
+[33m39ec49a[m HEAD@{101}: merge backend: Fast-forward
+[33m49d97aa[m HEAD@{102}: checkout: moving from backend to master
+[33m39ec49a[m HEAD@{103}: commit: Add try catch in delete function
+[33m49d97aa[m HEAD@{104}: checkout: moving from master to backend
+[33m49d97aa[m HEAD@{105}: checkout: moving from backend to master
+[33m49d97aa[m HEAD@{106}: checkout: moving from master to backend
+[33m49d97aa[m HEAD@{107}: merge backend: Fast-forward
+[33m97abf52[m HEAD@{108}: checkout: moving from backend to master
+[33m49d97aa[m HEAD@{109}: commit: Add api functionalities in tmpdata & add tmpremarks related to tmpdata
+[33m5d07223[m HEAD@{110}: checkout: moving from master to backend
+[33m97abf52[m HEAD@{111}: checkout: moving from Frontend to master
+[33m74fcb24[m HEAD@{112}: checkout: moving from backend to Frontend
+[33m5d07223[m HEAD@{113}: commit: Update TMP Data Controller. add API functionalities
+[33m72c9b66[m HEAD@{114}: checkout: moving from Frontend to backend
+[33m74fcb24[m HEAD@{115}: pull origin Frontend: Merge made by the 'ort' strategy.
+[33m97abf52[m HEAD@{116}: checkout: moving from master to Frontend
+[33m97abf52[m HEAD@{117}: checkout: moving from backend to master
+[33m72c9b66[m HEAD@{118}: commit: add tmp migration, model and controller
+[33m97abf52[m HEAD@{119}: merge master: Fast-forward
+[33m037c437[m HEAD@{120}: checkout: moving from master to backend
+[33m97abf52[m HEAD@{121}: merge frontend: Fast-forward
+[33m037c437[m HEAD@{122}: checkout: moving from Frontend to master
+[33m97abf52[m HEAD@{123}: checkout: moving from Frontend to Frontend
+[33m97abf52[m HEAD@{124}: pull origin master: Merge made by the 'ort' strategy.
+[33m9f1b808[m HEAD@{125}: checkout: moving from backend to Frontend
+[33m037c437[m HEAD@{126}: checkout: moving from Frontend to backend
+[33m9f1b808[m HEAD@{127}: checkout: moving from backend to Frontend
+[33m037c437[m HEAD@{128}: checkout: moving from backend to backend
+[33m037c437[m HEAD@{129}: checkout: moving from master to backend
+[33m037c437[m HEAD@{130}: merge backend: Fast-forward
+[33m1b36f93[m HEAD@{131}: checkout: moving from backend to master
+[33m037c437[m HEAD@{132}: checkout: moving from backend to backend
+[33m037c437[m HEAD@{133}: checkout: moving from master to backend
+[33m1b36f93[m HEAD@{134}: checkout: moving from backend to master
+[33m037c437[m HEAD@{135}: commit: Create store, update, destroy functions
+[33me9e0e86[m HEAD@{136}: commit: Add test API
+[33m872e234[m HEAD@{137}: checkout: moving from Frontend to backend
+[33m1b36f93[m HEAD@{138}: checkout: moving from backend to Frontend
+[33m872e234[m HEAD@{139}: checkout: moving from Frontend to backend
+[33m1b36f93[m HEAD@{140}: checkout: moving from backend to Frontend
+[33m872e234[m HEAD@{141}: commit: Install API using artisan|Remove job migration
+[33m70c7e1d[m HEAD@{142}: commit: Update package-lock.json
+[33m1b36f93[m HEAD@{143}: checkout: moving from master to backend
+[33m1b36f93[m HEAD@{144}: clone: from https://github.com/bellosillo137847/mpiproject.git
