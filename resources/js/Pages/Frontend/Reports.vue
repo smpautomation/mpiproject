@@ -2,39 +2,45 @@
     <Frontend>
       <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
 
-        <div v-show="showSelectionPanel">
-            <div> <!-- Selection Panel -->
+        <div v-if="serialList.length == 0"> <!-- default div -->
             <div class="flex flex-row items-center justify-center mt-10 align-baseline">
-                <p>Select Serial No: </p>
-                <select
-                v-model="currentSerialSelected"
-                class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
-                </select>
-            </div>
-            <div class="flex flex-row items-center justify-center m-10 space-x-8">
-            <!-- Button -->
-            <button
-                @click="generateReport"
-                class="px-6 py-3 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-                View Report
-            </button>
-
-            <!-- Checkbox + Label -->
-            <label class="flex items-center space-x-3 text-lg">
-                <input
-                v-model="isTTM_model"
-                type="checkbox"
-                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <span>(Tick this box if the TTM model applies.)</span>
-            </label>
-            </div>
-            <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 mx-auto my-10 text-white bg-yellow-500 shadow-lg rounded-2xl px-28">
-                <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                <p class="text-xl animate-pulse text-center"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
             </div>
         </div>
+
+        <div v-else v-show="showSelectionPanel">
+            <div> <!-- Selection Panel -->
+                <div class="flex flex-row items-center justify-center mt-10 align-baseline">
+                    <p>Select Serial No: </p>
+                    <select
+                    v-model="currentSerialSelected"
+                    class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
+                    </select>
+                </div>
+                <div class="flex flex-row items-center justify-center m-10 space-x-8">
+                    <!-- Button -->
+                    <button
+                        @click="generateReport"
+                        class="px-6 py-3 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                        View Report
+                    </button>
+
+                    <!-- Checkbox + Label -->
+                    <label class="flex items-center space-x-3 text-lg">
+                        <input
+                        v-model="isTTM_model"
+                        type="checkbox"
+                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <span>(Tick this box if the TTM model applies.)</span>
+                    </label>
+                </div>
+                <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl px-4">
+                    <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                </div>
+            </div>
         </div>
 
         <div v-show="showReportContent">
@@ -429,6 +435,7 @@
                     </button>
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
                     <button
+                        v-if="reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD'"
                         @click="applyData1x1x1"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-700 transition duration-300 ease-in-out transform border border-yellow-700 shadow-xl rounded-xl hover:text-white hover:bg-yellow-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
@@ -450,7 +457,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted, toRaw  } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
 //UI Control start
@@ -597,14 +604,13 @@ const showNotification2 = (message) => {
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         showNotif2.value = false;
-    }, 3000);  // 3000ms = 3 seconds
+    }, 5000);  // 5000ms = 5 seconds
 }
 
 const generateReport = async () => {
     showReportContent.value = true;
     showSelectionPanel.value = false;
     await fetchAllData();
-    await showReportData();
 }
 
 const fetchAllData = async () => {
@@ -612,27 +618,28 @@ const fetchAllData = async () => {
         const responseTpm = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value);
         //console.log("Show All tpm data API response: ", responseTpm.data);
 
-        // Filter the data to include only rows with serial_no like '0002'
-        tpmData.value = responseTpm.data[0] || [];
+        const tpmDataMAIN = responseTpm.data.data["tpmData"] || [];
+        console.log("Filtered tpm data list: ", tpmDataMAIN);
+        tpmData.value = responseTpm.data.data["aggregateFunctions"] || []; //Aggregate
         //console.log("Filtered tpm aggregate data list: ", tpmData.value);
-        getTpmModel.value = responseTpm.data.data || [];
+        getTpmModel.value = responseTpm.data.data["remarks"] || [];
         //console.log("GetModelValue: ", getTpmModel.value[0].code_no);
 
         //Remarks checking start
-        const getAllBrNG = getTpmModel.value.map(item => item.remark.Br_remarks || null);
-        const getAlliHcNG = getTpmModel.value.map(item => item.remark.iHc_remarks || null);
-        const getAlliHkNG = getTpmModel.value.map(item => item.remark.iHk_remarks || null);
-        const getAll4paildNG = getTpmModel.value.map(item => item.remark["4paild_remarks"] || null);
-        const getAll4pailsNG = getTpmModel.value.map(item => item.remark["4pails_remarks"] || null);
-        const getAll4pailaNG = getTpmModel.value.map(item => item.remark["4paila_remarks"] || null);
-        const getAllbHcNG = getTpmModel.value.map(item => item.remark.bHc_remarks || null);
-        const getAllBHMaxNG = getTpmModel.value.map(item => item.remark.BHMax_remarks || null);
-        const getAllSquarenessNG = getTpmModel.value.map(item => item.remark.Squareness_remarks || null);
-        const getAllDensityNG = getTpmModel.value.map(item => item.remark.Density_remarks || null);
-        const getAlliHkiHcNG = getTpmModel.value.map(item => item.remark.iHkiHc_remarks || null);
-        const getAllBr4paiNG = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
-        const getAlliHr95NG = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
-        const getAlliHr98NG = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
+        const getAllBrNG = getTpmModel.value.map(item => item.Br_remarks || null);
+        const getAlliHcNG = getTpmModel.value.map(item => item.iHc_remarks || null);
+        const getAlliHkNG = getTpmModel.value.map(item => item.iHk_remarks || null);
+        const getAll4paildNG = getTpmModel.value.map(item => item["4paild_remarks"] || null);
+        const getAll4pailsNG = getTpmModel.value.map(item => item["4pails_remarks"] || null);
+        const getAll4pailaNG = getTpmModel.value.map(item => item["4paila_remarks"] || null);
+        const getAllbHcNG = getTpmModel.value.map(item => item.bHc_remarks || null);
+        const getAllBHMaxNG = getTpmModel.value.map(item => item.BHMax_remarks || null);
+        const getAllSquarenessNG = getTpmModel.value.map(item => item.Squareness_remarks || null);
+        const getAllDensityNG = getTpmModel.value.map(item => item.Density_remarks || null);
+        const getAlliHkiHcNG = getTpmModel.value.map(item => item.iHkiHc_remarks || null);
+        const getAllBr4paiNG = getTpmModel.value.map(item => item.Br4pai_remarks || null);
+        const getAlliHr95NG = getTpmModel.value.map(item => item.iHr95_remarks || null);
+        const getAlliHr98NG = getTpmModel.value.map(item => item.iHr98_remarks || null);
         //console.log("check br remarks: ", getAllBrNG);
         // Check if "1" exists in getAllBrNG
         if (getAllBrNG.includes("1") || getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1") || getAllBHMaxNG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")) {
@@ -650,10 +657,10 @@ const fetchAllData = async () => {
         //Remarks checking end
 
 
-        const tpm_current_model = getTpmModel.value[0].code_no;
-        tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
-        const thisLayerId = getTpmModel.value[0].layer_no;
-        const thisfurnaceId = getTpmModel.value[0].furnace_id;
+        const tpm_current_model = tpmDataMAIN[0].code_no || '';
+        tpmData_tracerNo.value = tpmDataMAIN[0].Tracer || '';
+        const thisLayerId = tpmDataMAIN[0].layer_no || '';
+        const thisfurnaceId = tpmDataMAIN[0].furnace_id || '';
         console.log("Finding layer no: ", thisLayerId);
         console.log("Finding furnace id: ",thisfurnaceId);
 
@@ -663,16 +670,21 @@ const fetchAllData = async () => {
         //console.log("Furnaces arrays: ",furnaceNames);
         const filteredFurnaceName = furnaceNames.find(f => f.furnace_id === thisfurnaceId);
         //console.log("filtered furnace Names: ",filteredFurnaceName);
-        currentFurnaceName.value = filteredFurnaceName.furnace_name;
+        if (filteredFurnaceName) {
+            currentFurnaceName.value = filteredFurnaceName.furnace_name;
+        } else {
+            console.error("Furnace not found for ID:", thisfurnaceId);
+            currentFurnaceName.value = "Unknown Furnace"; // or whatever default value makes sense
+        }
 
         const responseLayerAPI = await axios.get(`/api/layerdata/`);
-        console.log("Show All layer id API response: ", responseLayerAPI.data);
+        //console.log("Show All layer id API response: ", responseLayerAPI.data);
         const layerNames = responseLayerAPI.data.data["Layer Data"];
-        console.log("Layer arrays: ",layerNames);
+        //console.log("Layer arrays: ",layerNames);
         const filteredLayerName = layerNames.find(f =>
             f.layer_no == thisLayerId && f.furnace_id == thisfurnaceId
         );
-        console.log("filtered Layer Names: ",filteredLayerName);
+        //console.log("filtered Layer Names: ",filteredLayerName);
         currentLayerName.value = filteredLayerName.layer_name;
 
         //console.log("currently selected serial: ",currentSerialSelected.value);
@@ -711,7 +723,7 @@ const fetchAllData = async () => {
         // Check if tpm_current_model exists in getAllInspModels
         if (getAllInspModels.includes(tpm_current_model)) {
             const filteredInspectionData = inspectionDataList.value.filter(item => item.model == tpm_current_model);
-            //console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
+            console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
             // Access the `br` value for each item in filteredInspectionData
             filteredInspectionData.forEach(item => {
                 inspectionBrStandard.value = item.br;
@@ -723,9 +735,8 @@ const fetchAllData = async () => {
                 inspectionMaterialGrade.value = item.material_grade;
                 inspectionMpiSampleQty.value = item.mpi_sample;
             });
-
         } else {
-            showNotification2("The model does not exist in the inspection data!")
+            showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
             showReportContent.value = false;
             showSelectionPanel.value = true;
             return;
@@ -759,9 +770,10 @@ const fetchAllData = async () => {
             "width": inspectionWidth.value
         }
 
-        //console.log("Rep Data: ",repData);
+        console.log("Rep Data: ",repData);
         createReport(repData, currentSerialSelected.value);
-
+        await nextTick();
+        await showReportData();
     } catch (error) {
         console.error("API get request showTpmData Error:", error);
     }
@@ -770,7 +782,7 @@ const fetchAllData = async () => {
 const createReport = async (reportData, serial) => {
     try {
         const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-        console.log("Patched report data: ", response.data);
+        console.log("Create report function Patched report data: ", response.data);
     } catch (error) {
         console.error("Patch report data Error:", error);
     }
@@ -779,9 +791,9 @@ const createReport = async (reportData, serial) => {
 const showReportData = async () => {
     try {
         const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data.data);
+        console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        //console.log("Filtered data: ", filterBySerial);
+        console.log("Filtered data: ", filterBySerial);
         reportModel.value = filterBySerial[0].model;
         reportPulseTracerMachineNo.value = filterBySerial[0].pulse_tracer_machine_number;
         reportMaterialCode.value = filterBySerial[0].material_code;
@@ -814,7 +826,7 @@ const showReportData = async () => {
         //console.log("Report Data Model", reportModel.value);
 
         const magneticProperty = JSON.parse(filterBySerial[0].magnetic_property_data);
-
+        console.log("Magnetic Property: ", magneticProperty);
          // Extracting BR, IHC, and IHK properties
 
         // BR values

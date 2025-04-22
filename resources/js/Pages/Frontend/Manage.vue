@@ -55,7 +55,7 @@
                     </div>
                     <p v-if="isLoadingForAddFurnaces" class="mt-10 text-xl text-center text-black animate-pulse">Creating... Please wait.</p>
                     <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-black animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
-                    <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-black animate-pulse">No furnace detected in the system. Create one by clicking Quick Add Furnace first.</p>
+                    <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-black animate-pulse">No furnace detected in the system. Create one by clicking <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">Quick Add Furnace</span> first.</p>
                 </div>
                 <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
@@ -784,9 +784,23 @@
         }
     }
 
-    const existingFurnaceBtn = () => {
-        showSelectFurnace.value = true;
-        showCreateExistingFurnaceBtn.value = false;
+    const existingFurnaceBtn = async () => {
+        try{
+            const response = await axios.get('/api/furnacedata');
+            const existingFurnaces = response.data.data["Furnace Data"] || [];
+            console.log("Existing furnaces: ", existingFurnaces.length);
+            if(existingFurnaces.length === 0){
+                showNoFurnaceDetectedNotif.value = true;
+                setTimeout(() => {
+                    showNoFurnaceDetectedNotif.value = false;
+                }, 5000);
+            }else{
+                showSelectFurnace.value = true;
+                showCreateExistingFurnaceBtn.value = false;
+            }
+        }catch(error){
+            console.error('Error fetching furnaces:', error);
+        }
     }
 
     const existingProceedBtn = () => {
@@ -905,7 +919,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
                 const firstSerialNumber = '000001';
                 serialNo.value = `${year}${month}${firstSerialNumber}`;
-                alert(`Generated First Serial Number: ${serialNo.value}`);
+                //alert(`Generated First Serial Number: ${serialNo.value}`);
             }
         } catch (error) {
             console.error('Error generating serial number:', error);

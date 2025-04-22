@@ -43,6 +43,7 @@ return new class extends Migration
             $table->datetime('checked_by_date')->nullable();
             $table->datetime('approved_by_date')->nullable();
             $table->boolean('checked')->default(false);
+            $table->boolean('applied_1x1x1')->default(false);
             $table->foreign('tpm_data_serial')
                 ->references('serial_no')
                 ->on('tpm_data')
