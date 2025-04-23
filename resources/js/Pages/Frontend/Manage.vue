@@ -1502,7 +1502,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         showProceed.value = false;
         try {
             showProceed.value = false;
-            const response = await axios.get("/api/tpmdata");
+            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
             console.log('API Response showallData:', response.data);
 
             console.log('Serial No value = ', serialNo.value);
@@ -1890,10 +1890,10 @@ const datasets = ref([]); // Array to hold multiple datasets
 
 const fetchDataCreateGraph = async () => {
     try {
-        const response = await axios.get("/api/tpmdata");
+        const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
 
         // Log the response structure to check
-        console.log("API Response:", response.data);
+        //console.log("API Response:", response.data);
 
         const tableRows = response.data.data["tpmData"]; // Assuming API returns an array of rows
 
