@@ -48,11 +48,13 @@ class TPMDataController extends Controller
         }else{
             try{
                 $tpmData = TPMData::where('serial_no',  $serial_no)
-                                    ->orderBy('zone', 'asc')
+                                    ->orderBy('id', 'asc')
                                     ->get();
 
                 if(!$tpmData->isEmpty()){
-                    $tpmDataRemarks = TPMDataRemark::where('tpm_data_serial', $serial_no)->get();
+                    $tpmDataRemarks = TPMDataRemark::where('tpm_data_serial', $serial_no)
+                                    ->orderBy('id', 'asc')
+                                    ->get();
                     $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
