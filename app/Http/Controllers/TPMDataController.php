@@ -47,23 +47,17 @@ class TPMDataController extends Controller
             }
         }else{
             try{
-                $tpmData = TPMData::where('serial_no',  $serial_no)
-                                    ->orderBy('id', 'asc')
+                $tpmData = TPMData::with($report ? ['remark', 'reportData'] : ['remark'])
+                                    ->where('serial_no',  $serial_no)
+                                    ->orderBy('zone', 'asc')
                                     ->get();
 
                 if(!$tpmData->isEmpty()){
-                    $tpmDataRemarks = TPMDataRemark::where('tpm_data_serial', $serial_no)
-                                    ->orderBy('id', 'asc')
-                                    ->get();
                     $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
                         'message' => 'TPM data found successfully',
-                        'data' => [
-                            'tpmData' => $tpmData,
-                            'remarks' => $tpmDataRemarks,
-                            'aggregateFunctions' =>  $tpmDataAggregateFunctions
-                        ]
+                        'data' => $tpmData, $tpmDataAggregateFunctions
                     ], 200);
                 }else{
                     return response()->json([
