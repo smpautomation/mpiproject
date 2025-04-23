@@ -161,7 +161,7 @@ class TPMDataController extends Controller
             ];
             $tpmData = TPMData::create($tpmDataInputs);
             $remarkData = [
-                'tpm_data_serial' => $tpmData->serial_no,
+                'tpm_data_id' => $tpmData->id,
                 'Br_remarks' => $request->input('Br_remarks', null),
                 '4paiId_remarks' => $request->input('4paiId_remarks', null),
                 'iHc_remarks' => $request->input('iHc_remarks', null),
