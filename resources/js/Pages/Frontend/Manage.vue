@@ -1502,7 +1502,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         showProceed.value = false;
         try {
             showProceed.value = false;
-            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
+            const response = await axios.get("/api/tpmdata");
             console.log('API Response showallData:', response.data);
 
             console.log('Serial No value = ', serialNo.value);
@@ -1515,16 +1515,32 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             getAggregateID.value = response.data.data["aggregateFunctions"][0].id || [];
             console.log("Aggregate ID: ", getAggregateID.value);
 
-            // Combine the arrays
-            //combinedData.value = tpmData.value;
-            //console.log('Combined Data: ', combinedData.value);
-            // Combine both arrays based on index
-            combinedData.value = tpmData.value.map((item, index) => {
+
+            // ✅ Build remark lookup map
+            const remarkMap = new Map(
+                tpmRemarks.value.map(remark => [String(remark.id), remark])
+            );
+
+            // ✅ Combine without sorting
+            combinedData.value = tpmData.value.map(item => {
+                const matchingRemark = remarkMap.get(String(item.id)) || {};
                 return {
                     ...item,
-                    remark: tpmRemarks.value[index] || {} // fallback to empty object if missing
+                    remark: matchingRemark
                 };
             });
+
+            // ✅ Debug output to verify order
+            console.log("🔍 TPM Data IDs:");
+            tpmData.value.forEach(item => console.log(item.id));
+
+            console.log("📝 Remarks IDs:");
+            tpmRemarks.value.forEach(remark => console.log(remark.id));
+
+            console.log("✅ Combined Data:");
+            combinedData.value.forEach(row =>
+                console.log(`${row.id} → ${row.remark?.id}`)
+            );
 
             // Extract individual values from tpmData for aggregate
             getAllIDValues.value = tpmData.value.map(item => item.id);
@@ -1874,7 +1890,7 @@ const datasets = ref([]); // Array to hold multiple datasets
 
 const fetchDataCreateGraph = async () => {
     try {
-        const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
+        const response = await axios.get("/api/tpmdata");
 
         // Log the response structure to check
         //console.log("API Response:", response.data);
