@@ -12,6 +12,7 @@ use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\StandardData;
+use App\Models\TPMDataCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
@@ -74,8 +75,6 @@ class TPMDataController extends Controller
             }
         }
     }
-    //nothing changed
-
     public function show($id){
         try{
             $tpmData = TPMData::with(['remark'])
@@ -104,7 +103,6 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
-
     public function store(Request $request){
         DB::beginTransaction();
 
@@ -199,6 +197,19 @@ class TPMDataController extends Controller
                 }
             }
 
+            $checkTpmDataCategory = TPMDataCategory::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkTpmDataCategory){
+                try{
+                    $tpmDataCategoryInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                    ];
+                    $tpmDataCategory = TPMDataCategory::create($tpmDataCategoryInputs);
+                }catch(\Exception $e){
+
+                }
+            }
+
+
             $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
             if(!$checkReportData){
                 try{
@@ -278,6 +289,7 @@ class TPMDataController extends Controller
                     $tpmData,
                     $remark,
                     $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
+                    $checkTpmDataCategory ?? $tpmDataCategory,
                     $checkReportData ?? $reportData,
                     $checkStandardData ?? $standardData,
                     $checkDataInstructions ?? $dataInstructions,
@@ -298,8 +310,6 @@ class TPMDataController extends Controller
         }
 
     }
-
-    // public function update(Request $request, $serial_no){
     //     DB::beginTransaction();
     //     try {
     //         $tpmData = TPMData::find($serial_no);
@@ -354,7 +364,6 @@ class TPMDataController extends Controller
 
     // }
 
-
     public function updateTpmData(Request $request, $id)
     {
         DB::beginTransaction();
@@ -381,8 +390,6 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
-
-    // Update Remarks
     public function updateRemarks(Request $request, $id)
     {
         DB::beginTransaction();
@@ -410,8 +417,6 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
-
-    // Update Aggregate Functions
     public function updateAggregateFunctions(Request $request, $id)
     {
         DB::beginTransaction();
@@ -438,7 +443,32 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
+    public function updateCategory(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $category = TPMDataCategory::where( 'tpm_data_serial',$id )
+                                ->first();
+            $categoryFields = $request->all();
+            $category->update($categoryFields);
 
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Category updated successfully',
+                'data' => $category
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Error updating Category',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function destroy($id){
         try{
             $tpmData = TPMData::findorfail($id);

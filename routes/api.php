@@ -24,6 +24,7 @@ Route::post('/tpmdata', [TPMDataController::class, 'store']);
 Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
 Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
 Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
+Route::patch('/updatecategory/{id}', [TPMDataController::class, 'updateCategory']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
 
 Route::get('/reportdata', [ReportDataController::class, 'index']);

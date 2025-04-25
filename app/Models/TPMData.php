@@ -23,6 +23,10 @@ class TPMData extends Model
     {
         return $this->hasOne(TPMDataAggregateFunctions::class, 'tpm_data_serial', 'serial_no');
     }
+    public function category()
+    {
+        return $this->hasOne(TPMDataCategory::class, 'tpm_data_serial', 'serial_no');
+    }
     public function reportData()
     {
         return $this->hasOne(ReportData::class, 'tpm_data_serial', 'serial_no');

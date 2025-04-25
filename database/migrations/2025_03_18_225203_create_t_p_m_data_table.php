@@ -57,7 +57,12 @@ return new class extends Migration
             $table->json('y')->nullable();
             $table->unsignedBigInteger('furnace_id');
             $table->unsignedBigInteger('layer_no');
-            $table->foreign('furnace_id')->references('furnace_id')->on('furnace_data')->onUpdate('cascade');
+            $table->foreign('furnace_id')
+                    ->references('furnace_id')
+                    ->on('furnace_data')
+                    ->onUpdate('cascade');
+            $table->float('temperature')->nullable();
+            $table->string('data_status')->nullable();
         });
 
         Schema::create('tpm_data_remarks', function (Blueprint $table) {
@@ -101,7 +106,27 @@ return new class extends Migration
             $table->json('maximum')->nullable();
             $table->json('minimum')->nullable();
             $table->json('ng_counter')->nullable();
-            $table->foreign('tpm_data_serial')->references('serial_no')->on('tpm_data')->onDelete('cascade');
+            $table->foreign('tpm_data_serial')
+                    ->references('serial_no')
+                    ->on('tpm_data')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+        });
+
+        Schema::create('tpm_data_category', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->unsignedBigInteger('tpm_data_serial')->index();
+            $table->foreign('tpm_data_serial')
+                    ->references('serial_no')
+                    ->on('tpm_data')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $table->string('massprod_name')->nullable();
+            $table->string('actual_model')->nullable();
+            $table->string('jhcurve_lotno')->nullable();
+            $table->string('mias_emp')->nullable();
+            $table->string('factor_emp')->nullable();
         });
     }
 
@@ -113,5 +138,6 @@ return new class extends Migration
         Schema::dropIfExists('tpm_data');
         Schema::dropIfExists('tpm_data_remarks');
         Schema::dropIfExists('tpm_data_aggregate_functions');
+        Schema::dropIfExists('tpm_data_category');
     }
 };

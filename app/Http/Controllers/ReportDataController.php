@@ -100,6 +100,16 @@ class ReportDataController extends Controller
                 "prepared_by_date"=> $request->input("prepared_by_date"),
                 "checked_by_date"=> $request->input("checked_by_date"),
                 "approved_by_date" => $request->input("approved_by_date"),
+                "oven_machine_no" => $request->input("oven_machine_no"),
+                "time_loading" => $request->input("time_loading"),
+                "temp_time_loading" => $request->input("temp_time_loading"),
+                "date_oven_info" => $request->input("date_oven_info"),
+                "time_unloading" => $request->input("time_unloading"),
+                "temp_time_unloading" => $request->input("temp_time_unloading"),
+                "shift_oven_info" => $request->input("shift_oven_info"),
+                "operator_oven_info" => $request->input("operator_oven_info"),
+                "withCarmark" => $request->input("withCarmark"),
+                "with_sec_additionals" => $request->input("with_sec_additionals")
             ];
             $reportData = ReportData::create($reportDataInputs);
             DB::commit();
