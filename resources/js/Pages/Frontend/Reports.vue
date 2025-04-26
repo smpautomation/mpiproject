@@ -24,17 +24,25 @@
                         @click="generateReport"
                         class="px-6 py-3 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
-                        View Report
+                        Generate Report
                     </button>
 
                     <!-- Checkbox + Label -->
                     <label class="flex items-center space-x-3 text-lg">
+                        <!--
                         <input
                         v-model="isTTM_model"
                         type="checkbox"
                         class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span>(Tick this box if the TTM model applies.)</span>
+                            <span>(Tick this box if the TTM model applies.)</span>
+                        -->
+                        <input
+                        v-model="isAutomotive"
+                        type="checkbox"
+                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                            <span>(Tick this box if the model is for Automotive.)</span>
                     </label>
                 </div>
                 <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl px-4">
@@ -43,10 +51,17 @@
             </div>
         </div>
 
+
         <div v-show="showReportContent">
-             <!-- Report Content -->
-             <div class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
-                <div class="w-full max-w-4xl px-4 mx-auto mb-10">
+            <div v-show="showReportProceedButtons">
+                <div v-if="isLoading">Generating Report...</div>
+                <div v-else>
+                    <button @click="showReportButton" class="bg-blue-500 px-3 py-2 rounded-xl shadow-xl text-white">Show Report</button>
+                </div>
+            </div>
+            <!-- Report Content -->
+            <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
+                <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
                     <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
 
                         <!-- Serial -->
@@ -66,7 +81,135 @@
                         <p class="text-sm font-bold text-blue-800">Layer</p>
                         <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
                         </div>
+                        <div>
+                        <span
+                            v-show="isAutomotive"
+                            class="flex items-center justify-center w-[150px] h-[82px] text-center  bg-center bg-no-repeat"
+                            :style="{
+                                backgroundImage: 'url(\'/photo/carmark_logo.png\')',
+                                backgroundSize: '100%'
+                            }">
+                        </span>
+                    </div>
+                    </div>
+                </div>
+                <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl mb-10">
+                    <!-- Oven Heating Information Section -->
+                    <div class="flex flex-col mb-4 space-y-4">
+                        <p class="text-xl font-extrabold mb-2">Oven Heating Information</p>
 
+                        <!-- Row 1 -->
+                        <div class="flex flex-row justify-evenly">
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Oven Machine No:</label>&nbsp;
+                                <input
+                                    v-model="reportOvenMachineNo"
+                                    type="text"
+                                    name="ovenMachineNo"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Time Loading:</label>&nbsp;
+                                <input
+                                    v-model="reportTimeLoading"
+                                    type="text"
+                                    name="timeLoading"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Temperature (Time Loading):</label>&nbsp;
+                                <input
+                                    v-model="reportTemperature_TimeLoading"
+                                    type="text"
+                                    name="temperature_timeLoading"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="flex flex-row justify-evenly">
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Date:</label>&nbsp;
+                                <input
+                                    v-model="reportDate_OvenInfo"
+                                    type="date"
+                                    name="ovenInfo_date"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Time Unloading:</label>&nbsp;
+                                <input
+                                    v-model="reportTimeUnloading"
+                                    type="text"
+                                    name="timeUnloading"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Temperature (Time Unloading):</label>&nbsp;
+                                <input
+                                    v-model="reportTemperature_TimeUnloading"
+                                    type="text"
+                                    name="temperature_TimeUnloading"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Row 3 -->
+                        <div class="flex flex-row justify-evenly">
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Shift:</label>&nbsp;
+                                <input
+                                    v-model="reportShift_OvenInfo"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <div class="flex flex-row items-baseline">
+                                <label class="text-lg font-extrabold">Operator:</label>&nbsp;
+                                <input
+                                    v-model="reportOperator_OvenInfo"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl">
@@ -144,23 +287,23 @@
                             <tbody>
                                 <tr>
                                     <td class="px-4 py-1 text-blue-600 border-4 border-white">LENGTH&nbsp;(mm)</td>
-                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportLength }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ inspectionLength }} mm</td>
                                 </tr>
                                 <tr>
                                     <td class="px-4 py-1 text-blue-600 border-4 border-white">WIDTH&nbsp;(mm)</td>
-                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportWidth }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ inspectionWidth }} mm</td>
                                 </tr>
                                 <tr>
                                     <td class="px-4 py-1 text-blue-600 border-4 border-white">THICKNESS&nbsp;(mm)</td>
-                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportThickness }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ inspectionThickness }} mm</td>
                                 </tr>
                                 <tr>
                                     <td class="px-4 py-1 text-blue-600 border-4 border-white">MATERIAL&nbsp;GRADE</td>
-                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportMaterialGrade }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ inspectionMaterialGrade }}</td>
                                 </tr>
                                 <tr>
                                     <td class="px-4 py-1 text-blue-600 border-4 border-white">MPI&nbsp;SAMPLE&nbsp;QTY.</td>
-                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ reportMPISampleQty }}</td>
+                                    <td class="px-4 py-1 text-blue-600 border-4 border-white">{{ inspectionMpiSampleQty }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -184,7 +327,7 @@
                             <tbody>
                                 <tr class="text-center">
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">Br (G)</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrStandard }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ inspectionBrStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrMinimum }}</td>
@@ -192,7 +335,7 @@
                                 </tr>
                                 <tr class="text-center">
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">iHc (Oe)</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcStandard }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ inspectioniHcStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMinimum }}</td>
@@ -200,7 +343,7 @@
                                 </tr>
                                 <tr class="text-center">
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">iHk (Oe)</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkStandard }}</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ inspectioniHkStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMinimum }}</td>
@@ -284,140 +427,152 @@
 
                 <div class="flex flex-row items-start justify-center p-10 mx-10 mt-10 mb-10 bg-blue-100 border-2 border-white rounded-lg shadow-xl gap-x-10">
 
-                <!-- SMP Judgement -->
-                <div class="flex flex-col mr-16">
-                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">
-                    SMP Judgement
-                </p>
-                <p class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
-                    <span
-                    class="inline-block w-40 h-40 bg-center bg-no-repeat"
-                    :style="{
-                        backgroundImage: reportRemarksDisplay === 'E'
-                        ? 'url(\'/photo/reject_stamp.png\')'
-                        : reportRemarksDisplay === 'HOLD'
-                        ? 'url(\'/photo/hold_stamp.png\')'
-                        : 'url(\'/photo/pass_stamp.png\')',
-                        backgroundSize: '101%'
-                    }">
-                    </span>
-                </p>
-                </div>
-
-                <!-- Prepared By -->
-                <div class="flex flex-col">
-                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Prepared By:</p>
-                <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
-                    <div v-show="showPreparedByDefault" class="px-2 py-[67px]">
-                    <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
-                        Waiting for stamp...
-                    </span>
-                    </div>
-                    <button
-                    @click="preparedByStamp"
-                    v-show="preparedByButton"
-                    class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
-                    >
-                    <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
-                        Click&nbsp;to&nbsp;Stamp
-                    </span>
-                    </button>
-
-                    <!-- Confirmation Buttons -->
-                    <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="preparedByStampConfirmation">
-                    <button
-                        @click="confirmPreparedByStamp"
-                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
-                    >
-                        Confirm Stamp
-                    </button>
-                    <button
-                        @click="cancelPreparedByStamp"
-                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-red-500/40 hover:bg-red-500/90 border-white/30 hover:border-white/60 hover:shadow-red-400 hover:shadow-lg backdrop-blur-md"
-                    >
-                        Cancel
-                    </button>
+                    <!-- SMP Judgement -->
+                    <div class="flex flex-col">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">
+                        SMP Judgement
+                    </p>
+                    <p class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <span
+                        class="inline-block w-40 h-40 bg-center bg-no-repeat"
+                        :style="{
+                            backgroundImage: reportRemarksDisplay === 'E'
+                            ? 'url(\'/photo/reject_stamp.png\')'
+                            : reportRemarksDisplay === 'HOLD'
+                            ? 'url(\'/photo/hold_stamp.png\')'
+                            : 'url(\'/photo/pass_stamp.png\')',
+                            backgroundSize: '101%'
+                        }">
+                        </span>
+                    </p>
                     </div>
 
-                    <span
-                    v-show="preparedByStampPhoto"
-                    class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
-                    :style="{
-                        backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
-                        backgroundSize: '101%'
-                    }">
-                    {{ reportPreparedByDate }}
-                    </span>
-                </div>
-                </div>
+                    <!-- Prepared By -->
+                    <div class="flex flex-col">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Prepared By:</p>
+                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showPreparedByDefault" class="px-2 py-[67px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                            Waiting for stamp...
+                        </span>
+                        </div>
+                        <button
+                        @click="preparedByStamp"
+                        v-show="preparedByButton"
+                        class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
+                        >
+                        <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
+                            Click&nbsp;to&nbsp;Stamp
+                        </span>
+                        </button>
 
-                <!-- Checked By -->
-                <div class="flex flex-col">
-                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Checked By:</p>
-                <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
-                    <div v-show="showCheckedByDefault" class="px-2 py-[67px]">
-                    <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
-                        Waiting for stamp...
-                    </span>
+                        <!-- Confirmation Buttons -->
+                        <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="preparedByStampConfirmation">
+                        <button
+                            @click="confirmPreparedByStamp"
+                            class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
+                        >
+                            Confirm Stamp
+                        </button>
+                        <button
+                            @click="cancelPreparedByStamp"
+                            class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-red-500/40 hover:bg-red-500/90 border-white/30 hover:border-white/60 hover:shadow-red-400 hover:shadow-lg backdrop-blur-md"
+                        >
+                            Cancel
+                        </button>
+                        </div>
+
+                        <span
+                        v-show="preparedByStampPhoto"
+                        class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
+                        :style="{
+                            backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
+                            backgroundSize: '101%'
+                        }">
+                        {{ reportPreparedByDate }}
+                        </span>
                     </div>
-                    <button
-                    @click="checkedByStamp"
-                    v-show="checkedByButton"
-                    class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
-                    >
-                    <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
-                        Click&nbsp;to&nbsp;Stamp
-                    </span>
-                    </button>
-
-                    <!-- Confirmation Buttons -->
-                    <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="checkedByStampConfirmation">
-                    <button
-                        @click="confirmCheckedByStamp"
-                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
-                    >
-                        Confirm Stamp
-                    </button>
-                    <button
-                        @click="cancelCheckedByStamp"
-                        class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-red-500/40 hover:bg-red-500/90 border-white/30 hover:border-white/60 hover:shadow-red-400 hover:shadow-lg backdrop-blur-md"
-                    >
-                        Cancel
-                    </button>
                     </div>
 
-                    <span
-                    v-show="checkedByStampPhoto"
-                    class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
-                    :style="{
-                        backgroundImage: 'url(\'/photo/Checked_by_stamp.png\')',
-                        backgroundSize: '101%'
-                    }">
-                    {{ reportCheckedByDate }}
-                    </span>
-                </div>
-                </div>
+                    <!-- Checked By -->
+                    <div class="flex flex-col">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Checked By:</p>
+                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showCheckedByDefault" class="px-2 py-[67px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                            Waiting for stamp...
+                        </span>
+                        </div>
+                        <button
+                        @click="checkedByStamp"
+                        v-show="checkedByButton"
+                        class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
+                        >
+                        <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
+                            Click&nbsp;to&nbsp;Stamp
+                        </span>
+                        </button>
 
-                <!-- Approved By -->
-                <div class="flex flex-col">
-                <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Approved By:</p>
-                <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
-                    <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
-                    <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
-                        Waiting for stamp...
-                    </span>
+                        <!-- Confirmation Buttons -->
+                        <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="checkedByStampConfirmation">
+                        <button
+                            @click="confirmCheckedByStamp"
+                            class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
+                        >
+                            Confirm Stamp
+                        </button>
+                        <button
+                            @click="cancelCheckedByStamp"
+                            class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-red-500/40 hover:bg-red-500/90 border-white/30 hover:border-white/60 hover:shadow-red-400 hover:shadow-lg backdrop-blur-md"
+                        >
+                            Cancel
+                        </button>
+                        </div>
+
+                        <span
+                        v-show="checkedByStampPhoto"
+                        class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
+                        :style="{
+                            backgroundImage: 'url(\'/photo/Checked_by_stamp.png\')',
+                            backgroundSize: '101%'
+                        }">
+                        {{ reportCheckedByDate }}
+                        </span>
                     </div>
-                    <span
-                    v-show="approvedByStampPhoto"
-                    class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
-                    :style="{
-                        backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
-                        backgroundSize: '101%'
-                    }">
-                    {{ reportApprovedByDate }}
-                    </span>
-                </div>
-                </div>
+                    </div>
+
+                    <!-- Approved By -->
+                    <div class="flex flex-col">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Approved By:</p>
+                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                            Waiting for stamp...
+                        </span>
+                        </div>
+                        <span
+                        v-show="approvedByStampPhoto"
+                        class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
+                        :style="{
+                            backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
+                            backgroundSize: '101%'
+                        }">
+                        {{ reportApprovedByDate }}
+                        </span>
+                    </div>
+                    </div>
+
+                    <!-- Note: -->
+                    <div class="flex flex-col">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Note: Reason of REJECT/HOLD</p>
+                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
+                            <span class="font-extrabold text-blue-700 opacity-100">
+
+                            </span>
+                        </div>
+                    </div>
+                    </div>
 
                 </div>
 
@@ -440,6 +595,9 @@
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-700 transition duration-300 ease-in-out transform border border-yellow-700 shadow-xl rounded-xl hover:text-white hover:bg-yellow-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
                         Apply Data 1x1x1
+                    </button>
+                    <button class="px-6 py-4 mt-4 ml-5 font-extrabold text-cyan-700 transition duration-300 ease-in-out transform border border-cyan-700 shadow-xl rounded-xl hover:text-white hover:bg-cyan-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-600 active:scale-95"> <!-- condition if approved only -->
+                        Send to SEC
                     </button>
                     <button v-show="showExitButton" @click="exitReport" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -472,6 +630,8 @@ const showNotif = ref(false);
 const showNotif2 = ref(false);
 const showNotif3 = ref(false);
 const showReportContent = ref(false);
+const showReportMain = ref(false);
+const showReportProceedButtons = ref(true);
 const showSelectionPanel = ref(true);
 const showReportSaveButton = ref(true);
 const showExitButton = ref(true);
@@ -493,17 +653,28 @@ const approvedByStampPhoto = ref(false);
 const exitReport = () => {
     showReportContent.value = false;
     showSelectionPanel.value = true;
+    showReportProceedButtons.value = true;
+    showReportMain.value = false;
     fetchSerial();
 }
 
+const showReportButton = async () => {
+    showReportMain.value = true;
+    showReportProceedButtons.value = false;
+    await showReportData();
+}
 
 const isTTM_model = ref(false);
-const show1x1x1Data = ref(true);
+const isAutomotive = ref(false);
+const show1x1x1Data = ref(false);
+
+const isLoading = ref(true);
 
 //UI Control end
 
 //general variables start
 
+const runShowAllData = ref(false);
 const currentFurnaceName = ref('');
 const currentLayerName = ref('');
 const tpmData = ref([]);
@@ -561,6 +732,16 @@ const reportExistingSMPJudgement = ref(null);
 const reportPreparedByDate = ref(null);
 const reportCheckedByDate = ref(null);
 const reportApprovedByDate = ref(null);
+const reportReasonsForReject = ref([]);
+
+const reportOvenMachineNo = ref('NA');
+const reportTimeLoading = ref('NA');
+const reportTemperature_TimeLoading = ref('NA');
+const reportDate_OvenInfo = ref('');
+const reportTimeUnloading = ref('NA');
+const reportTemperature_TimeUnloading = ref('NA');
+const reportShift_OvenInfo = ref('NA');
+const reportOperator_OvenInfo = ref('NA');
 
 /// to be put in the form end
 
@@ -573,6 +754,14 @@ const inspectionModel = ref('');
 const inspectionBrStandard = ref('');
 const inspectioniHcStandard = ref('');
 const inspectioniHkStandard = ref('');
+const inspectionOvenMachineNo = ref('');
+const inspectionTimeLoading = ref('');
+const inspectionTemperature_TimeLoading = ref('');
+const inspectionDate_OvenInfo = ref('');
+const inspectionTimeUnloading = ref('');
+const inspectionTemperature_TimeUnloading = ref('');
+const inspectionShift_OvenInfo = ref('');
+const inspectionOperator_OvenInfo = ref('');
 
 const tpmData_brAve = ref('');
 const tpmData_brMax = ref('');
@@ -618,28 +807,27 @@ const fetchAllData = async () => {
         const responseTpm = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value);
         //console.log("Show All tpm data API response: ", responseTpm.data);
 
-        const tpmDataMAIN = responseTpm.data.data["tpmData"] || [];
-        console.log("Filtered tpm data list: ", tpmDataMAIN);
-        tpmData.value = responseTpm.data.data["aggregateFunctions"] || []; //Aggregate
+        // Filter the data to include only rows with serial_no like '0002'
+        tpmData.value = responseTpm.data[0] || [];
         //console.log("Filtered tpm aggregate data list: ", tpmData.value);
-        getTpmModel.value = responseTpm.data.data["remarks"] || [];
+        getTpmModel.value = responseTpm.data.data || [];
         //console.log("GetModelValue: ", getTpmModel.value[0].code_no);
 
         //Remarks checking start
-        const getAllBrNG = getTpmModel.value.map(item => item.Br_remarks || null);
-        const getAlliHcNG = getTpmModel.value.map(item => item.iHc_remarks || null);
-        const getAlliHkNG = getTpmModel.value.map(item => item.iHk_remarks || null);
-        const getAll4paildNG = getTpmModel.value.map(item => item["4paild_remarks"] || null);
-        const getAll4pailsNG = getTpmModel.value.map(item => item["4pails_remarks"] || null);
-        const getAll4pailaNG = getTpmModel.value.map(item => item["4paila_remarks"] || null);
-        const getAllbHcNG = getTpmModel.value.map(item => item.bHc_remarks || null);
-        const getAllBHMaxNG = getTpmModel.value.map(item => item.BHMax_remarks || null);
-        const getAllSquarenessNG = getTpmModel.value.map(item => item.Squareness_remarks || null);
-        const getAllDensityNG = getTpmModel.value.map(item => item.Density_remarks || null);
-        const getAlliHkiHcNG = getTpmModel.value.map(item => item.iHkiHc_remarks || null);
-        const getAllBr4paiNG = getTpmModel.value.map(item => item.Br4pai_remarks || null);
-        const getAlliHr95NG = getTpmModel.value.map(item => item.iHr95_remarks || null);
-        const getAlliHr98NG = getTpmModel.value.map(item => item.iHr98_remarks || null);
+        const getAllBrNG = getTpmModel.value.map(item => item.remark.Br_remarks || null);
+        const getAlliHcNG = getTpmModel.value.map(item => item.remark.iHc_remarks || null);
+        const getAlliHkNG = getTpmModel.value.map(item => item.remark.iHk_remarks || null);
+        const getAll4paildNG = getTpmModel.value.map(item => item.remark["4paild_remarks"] || null);
+        const getAll4pailsNG = getTpmModel.value.map(item => item.remark["4pails_remarks"] || null);
+        const getAll4pailaNG = getTpmModel.value.map(item => item.remark["4paila_remarks"] || null);
+        const getAllbHcNG = getTpmModel.value.map(item => item.remark.bHc_remarks || null);
+        const getAllBHMaxNG = getTpmModel.value.map(item => item.remark.BHMax_remarks || null);
+        const getAllSquarenessNG = getTpmModel.value.map(item => item.remark.Squareness_remarks || null);
+        const getAllDensityNG = getTpmModel.value.map(item => item.remark.Density_remarks || null);
+        const getAlliHkiHcNG = getTpmModel.value.map(item => item.remark.iHkiHc_remarks || null);
+        const getAllBr4paiNG = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
+        const getAlliHr95NG = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
+        const getAlliHr98NG = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
         //console.log("check br remarks: ", getAllBrNG);
         // Check if "1" exists in getAllBrNG
         if (getAllBrNG.includes("1") || getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1") || getAllBHMaxNG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")) {
@@ -657,10 +845,10 @@ const fetchAllData = async () => {
         //Remarks checking end
 
 
-        const tpm_current_model = tpmDataMAIN[0].code_no || '';
-        tpmData_tracerNo.value = tpmDataMAIN[0].Tracer || '';
-        const thisLayerId = tpmDataMAIN[0].layer_no || '';
-        const thisfurnaceId = tpmDataMAIN[0].furnace_id || '';
+        const tpm_current_model = getTpmModel.value[0].code_no;
+        tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
+        const thisLayerId = getTpmModel.value[0].layer_no;
+        const thisfurnaceId = getTpmModel.value[0].furnace_id;
         console.log("Finding layer no: ", thisLayerId);
         console.log("Finding furnace id: ",thisfurnaceId);
 
@@ -734,6 +922,14 @@ const fetchAllData = async () => {
                 inspectionThickness.value = item.thickness;
                 inspectionMaterialGrade.value = item.material_grade;
                 inspectionMpiSampleQty.value = item.mpi_sample;
+                inspectionOvenMachineNo.value = item.oven_machine_no;
+                inspectionTimeLoading.value = item.time_loading;
+                inspectionTemperature_TimeLoading.value = item.temperature_1;
+                inspectionDate_OvenInfo.value = item.date;
+                inspectionTimeUnloading.value = item.time_unloading;
+                inspectionTemperature_TimeUnloading.value = item.temperature_2;
+                inspectionShift_OvenInfo.value = item.shift;
+                inspectionOperator_OvenInfo.value = item.operator;
             });
         } else {
             showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
@@ -773,9 +969,11 @@ const fetchAllData = async () => {
         console.log("Rep Data: ",repData);
         createReport(repData, currentSerialSelected.value);
         await nextTick();
-        await showReportData();
+        isLoading.value = false;
     } catch (error) {
         console.error("API get request showTpmData Error:", error);
+        showNotification2("Data is incomplete for this serial. Please Rerun the data.");
+        exitReport();
     }
 };
 
@@ -830,19 +1028,19 @@ const showReportData = async () => {
          // Extracting BR, IHC, and IHK properties
 
         // BR values
-        reportBrStandard.value = magneticProperty.brStandard;
+        reportBrStandard.value = inspectionBrStandard.value;
         reportBrAverage.value = magneticProperty.brAverage;
         reportBrMaximum.value = magneticProperty.brMaximum;
         reportBrMinimum.value = magneticProperty.brMinimum;
 
         // IHC values
-        reportihcStandard.value = magneticProperty.ihcStandard;
+        reportihcStandard.value = inspectioniHcStandard.value;
         reportihcAverage.value = magneticProperty.ihcAverage;
         reportihcMaximum.value = magneticProperty.ihcMaximum;
         reportihcMinimum.value = magneticProperty.ihcMinimum;
 
         // IHK values
-        reportihkStandard.value = magneticProperty.ihkStandard;
+        reportihkStandard.value = inspectioniHkStandard.value;
         reportihkAverage.value = magneticProperty.ihkAverage;
         reportihkMaximum.value = magneticProperty.ihkMaximum;
         reportihkMinimum.value = magneticProperty.ihkMinimum;
@@ -851,7 +1049,6 @@ const showReportData = async () => {
         reportBrVariance.value = parseFloat(reportBrMaximum.value) - parseFloat(reportBrMinimum.value);
         reportiHcVariance.value = parseFloat(reportihcMaximum.value) - parseFloat(reportihcMinimum.value);
         reportiHkVariance.value = parseFloat(reportihkMaximum.value) - parseFloat(reportihkMinimum.value);
-
         checkApprovalStates();
     } catch (error) {
         console.error("API get request showReportData Error:", error);
@@ -866,6 +1063,14 @@ const saveReport = async () => {
     reportOperator.value = (reportOperator.value || '').toUpperCase();
 
     const saveReportData = {
+        "oven_machine_no": reportOvenMachineNo.value,
+        "time_loading": reportTimeLoading.value,
+        "temperature_time_loading": reportTemperature_TimeLoading.value,
+        "date_oven_info": reportDate_OvenInfo.value,
+        "time_unloading": reportTimeUnloading.value,
+        "temperature_time_unloading": reportTemperature_TimeUnloading.value,
+        "shift_oven_info": reportShift_OvenInfo.value,
+        "operator_oven_info": reportOperator_OvenInfo.value,
         "material_code": reportMaterialCode.value,
         "date": reportDate.value,
         "partial_number": reportPartialNo.value,
@@ -878,7 +1083,7 @@ const saveReport = async () => {
 
     console.log("Save report data: ", saveReportData);
 
-    saveReportUpdate(saveReportData, currentSerialSelected.value);
+    //saveReportUpdate(saveReportData, currentSerialSelected.value);
 
         showReportContent.value = false;
         showSelectionPanel.value = true;
@@ -1078,6 +1283,7 @@ const checkApprovalStates = async () => {
 
     }
 }
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(() => {
