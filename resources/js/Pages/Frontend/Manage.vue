@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto  bg-gray-100">
+        <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showStartManageDiv">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
@@ -197,7 +197,7 @@
                 </div>
                 <div>
                     <div v-show="showProceed1" class="flex flex-col items-center justify-center">
-                        <p class="text-lg animate-pulse font-extrabold">TPM DATA UPLOADED SUCCESSFULLY!</p>
+                        <p class="text-lg font-extrabold animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
                         <p class="mt-5">Please Type the Model Name before proceeding: </p>
                         <input
                             type="text"
@@ -256,11 +256,11 @@
                 </div>
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
-                        <p class="text-lg animate-pulse font-extrabold">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
+                        <p class="text-lg font-extrabold animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
                         <p class="mt-5">Please fill in the details before proceeding</p>
                         <div class="flex flex-row">
                             <div class="flex flex-col items-start justify-start">
-                                <label class="text-sm text-gray-700 mb-1 mt-5 font-extrabold">Mass Production Name:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Mass Production Name:</label>
                                 <input
                                     type="text"
                                     v-model="jhCurveMassProdName"
@@ -268,7 +268,7 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="text-sm text-gray-700 mb-1 mt-5 font-extrabold">Mias. Employee:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Mias. Employee:</label>
                                 <input
                                     type="text"
                                     v-model="propData_factorEmp"
@@ -276,7 +276,7 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="text-sm text-gray-700 mb-1 mt-5 font-extrabold">Factor Employee:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Factor Employee:</label>
                                 <input
                                     type="text"
                                     v-model="propData_miasEmp"
@@ -284,7 +284,7 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="text-sm text-gray-700 mb-1 mt-5 font-extrabold">Lot No.:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Lot No.:</label>
                                 <input
                                     type="text"
                                     v-model="jhCurveLotNo"
@@ -302,7 +302,7 @@
                 </div>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
-                        <p class="text-lg animate-pulse font-extrabold">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
+                        <p class="text-lg font-extrabold animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
                             @click="showAllData"
@@ -353,7 +353,7 @@
                     </div>
                 </div>
 
-                <div class="p-6 rounded-lg shadow-lg mt-4 bg-gray-50 border-2 border-gray-500">
+                <div class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
                     <div class="mb-4">
                         <p class="text-center">PROPERTY DATA</p>
                     </div>
@@ -365,7 +365,7 @@
                         <div class="flex flex-row items-start justify-center w-full">
                             <div class="flex flex-row flex-[3] mb-10 shadow-2xl">
                                 <div class="min-w-[1000px]">
-                                    <table class="w-full border border-gray-300 rounded-xl table-auto">
+                                    <table class="w-full border border-gray-300 table-auto rounded-xl">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
@@ -587,8 +587,8 @@
     const jhCurveFurnaceName = ref("");
     const jhCurveLotNo = ref("");
 
-    const propData_miasEmp = ref("N/A");
-    const propData_factorEmp = ref("N/A");
+    const propData_miasEmp = ref("");
+    const propData_factorEmp = ref("");
 
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
@@ -689,7 +689,7 @@
         csv_selectedFile.value = event.target.files[0]
     }
 
-    const csv_submitFile = () => {
+    const csv_submitFile = async () => {
     if (!csv_selectedFile.value) {
         alert('Please select a CSV file first.')
         return
@@ -713,13 +713,12 @@
             console.log('CSV Parsed Data:', csv_parsedData.value);
             console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
-            //API update here
-
         },
         error: (err) => {
         console.error('Error parsing CSV:', err)
         }
-    })
+    });
+    mergeTempToTPM();
     }
 
     const csv_clearFile = () => {
@@ -732,6 +731,36 @@
             csv_fileInput.value = ''
         }
     }
+
+    const mergeTempToTPM = async () => {
+        try{ //tempDataClass contains the value to be updated
+            const responseTPM = await axios.get("/api/tpmdata?serial=" + serialNo.value); // This is used to find the proper id to update
+            console.log('API Response MergeTempToTPMDATA:', responseTPM.data);
+
+            const tpmData = responseTPM.data.data || [];
+            console.log('tpm data: ',tpmData);
+            const getAllID = tpmData.map(item => item.id);
+            console.log('getting all the ids:',getAllID);
+
+            for (let i = 0; i < getAllID.length; i++) {
+                try {
+                    const responseTempWithData = await axios.patch(`/api/tpmdataupdate/${getAllID[i]}`, {
+                        temperature: csv_tempWithDataStat.value[i]?.temp || null,
+                        data_status: csv_tempWithDataStat.value[i]?.status || null
+                    });
+
+                    console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
+                } catch (error) {
+                    console.error(`Error patching ID ${getAllID[i]}:`, error.response?.data || error.message);
+                }
+            }
+            // Uncomment this to see the response
+            console.log('API Response Patch merging Temp and Dataclass:', responseTempWithData.data);
+        }catch(error){
+
+        }
+    }
+
 
     const furnaceList = ref([]); // Stores all fetched furnaces
 
