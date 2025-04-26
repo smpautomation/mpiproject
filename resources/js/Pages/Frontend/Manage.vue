@@ -214,6 +214,11 @@
                     </div>
                 </div>
                 <div>
+                    <div v-show="showLoadingForProceed1" class="flex items-center justify-center mt-10 text-xl align-middle animate-pulse">
+                        Loading...
+                    </div>
+                </div>
+                <div>
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
                         <p class="mb-4 text-xl font-semibold text-gray-800">Upload file for Temperature and Data Status:</p>
@@ -325,12 +330,9 @@
 
             <div v-show="showGraphAndTables">
                 <div class="flex flex-row justify-center space-x-4">
-                    <!-- Chart Container -->
-                    <div class="w-[680px] h-[350px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
-                        <!-- Ensure canvas is rendered only when data is ready -->
-                        <canvas ref="myChartCanvas" width="650" height="350"></canvas>
-                    </div>
-
+                    <div class="w-[500px] h-[400px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
+    <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
+</div>
                     <!-- Side Content -->
                     <div class="w-[400px] h-[350px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
                         <div class="flex flex-col items-start space-y-2">
@@ -560,7 +562,8 @@
     const showFurnaceCreatedNotif = ref(false);
     const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
-    const showUploadData = ref(true);
+    const showUploadData = ref(true)
+    const showLoadingForProceed1 = ref(false);
     const showProceed1 = ref(false);
     const showProceed2 = ref(false);
     const showProceed3 = ref(false);
@@ -595,13 +598,17 @@
         generateSerialNumber();
     }
 
-    const proceedToCsvUpload = () => {
+    const proceedToCsvUpload = async () => {
         if(jhCurveActualModel.value == null || jhCurveActualModel.value == ''){
             alert('Please type the Model Name first.');
             return;
         }else{
-            showProceed1.value = false;
-            csvUpload.value = true;
+            showLoadingForProceed1.value = true;
+            setTimeout(() => {
+                csvUpload.value = true;
+                showProceed1.value = false;
+                showLoadingForProceed1.value = false;
+            }, 1000); // Delay just enough to let Vue catch up
         }
     }
 
@@ -2056,8 +2063,8 @@ const renderChart = () => {
 
         //console.log("2D Context obtained, proceeding to render the chart.");
 
-        const x_offset = 1000;
-        const y_offset = 2500;
+        const x_offset = 2000;
+        const y_offset = 4000;
 
         const chartDatasets = datasets.value.map((dataset, index) => {
             return {
@@ -2093,6 +2100,9 @@ const renderChart = () => {
                         easing: "easeOutQuart",
                     },
                     plugins: {
+                        legend: {
+                            display: false, // 👈 hides the legend completely
+                        },
                         tooltip: {
                             callbacks: {
                                 label: (context) => `Value: ${context.raw.y}`,
