@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tpm_data', function (Blueprint $table) {
+        Schema::create('normal_sec_additionals', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->date('date')->nullable();
@@ -65,10 +65,10 @@ return new class extends Migration
             $table->string('data_status')->nullable();
         });
 
-        Schema::create('tpm_data_remarks', function (Blueprint $table) {
+        Schema::create('nsa_remarks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_id')->index();
+            $table->unsignedBigInteger('nsa__id')->index();
             $table->string('Br_remarks')->nullable();
             $table->string('4paiId_remarks')->nullable();
             $table->string('iHc_remarks')->nullable();
@@ -98,28 +98,28 @@ return new class extends Migration
             $table->string('HRO_remarks')->nullable();
         });
 
-        Schema::create('tpm_data_aggregate_functions', function (Blueprint $table) {
+        Schema::create('nsa_aggregate_functions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_serial')->unique();
+            $table->unsignedBigInteger('nsa_serial')->unique();
+            $table->foreign('nsa_serial')
+                    ->references('serial_no')
+                    ->on('normal_sec_additionals')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
             $table->json('average')->nullable();
             $table->json('maximum')->nullable();
             $table->json('minimum')->nullable();
             $table->json('ng_counter')->nullable();
-            $table->foreign('tpm_data_serial')
-                    ->references('serial_no')
-                    ->on('tpm_data')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
         });
 
-        Schema::create('tpm_data_category', function (Blueprint $table) {
+        Schema::create('nsa_category', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_serial')->index();
-            $table->foreign('tpm_data_serial')
+            $table->unsignedBigInteger('nsa_serial')->index();
+            $table->foreign('nsa_serial')
                     ->references('serial_no')
-                    ->on('tpm_data')
+                    ->on('normal_sec_additionals')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             $table->string('massprod_name')->nullable();
@@ -135,9 +135,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tpm_data');
-        Schema::dropIfExists('tpm_data_remarks');
-        Schema::dropIfExists('tpm_data_aggregate_functions');
-        Schema::dropIfExists('tpm_data_category');
+        Schema::dropIfExists('normal_sec_additionals');
+        Schema::dropIfExists('nsa_remarks');
+        Schema::dropIfExists('nsa_aggregate_functions');
+        Schema::dropIfExists('nsa_category');
     }
 };

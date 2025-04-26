@@ -10,6 +10,7 @@ use App\Http\Controllers\ApproversController;
 use App\Http\Controllers\DataInstructionsController;
 use App\Http\Controllers\MieGxDataInstructionsController;
 use App\Http\Controllers\MieGxDataInstructionsAggregateController;
+use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ Route::post('/tpmdata', [TPMDataController::class, 'store']);
 Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
 Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
 Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
+Route::patch('/updatecategory/{id}', [TPMDataController::class, 'updateCategory']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
 
 Route::get('/reportdata', [ReportDataController::class, 'index']);
@@ -79,6 +81,15 @@ Route::get('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggrega
 Route::post('/miegxdatainstructionsaggregate', [MieGxDataInstructionsAggregateController::class, 'store']);
 Route::patch('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggregateController::class, 'update']);
 Route::delete('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggregateController::class, 'destroy']);
+
+Route::get('/nsadata', [NormalSecAdditionalsController::class, 'index']);
+Route::get('/nsadata/{id}', [NormalSecAdditionalsController::class, 'show']);
+Route::post('/nsadata', [NormalSecAdditionalsController::class, 'store']);
+Route::patch('/nsadataupdate/{id}', [NormalSecAdditionalsController::class, 'updateNSAData']);
+Route::patch('/nsaremarksupdate/{id}', [NormalSecAdditionalsController::class, 'updateRemarks']);
+Route::patch('/nsaaggregateupdate/{id}', [NormalSecAdditionalsController::class, 'updateAggregateFunctions']);
+Route::patch('/updatecategory/{id}', [NormalSecAdditionalsController::class, 'updateCategory']);
+Route::delete('/nsadata/{id}', [NormalSecAdditionalsController::class, 'destroy']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
