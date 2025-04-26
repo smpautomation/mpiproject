@@ -2,39 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DataInstructions;
-use App\Models\DataInstructionsAggregate;
-use App\Models\MieGxDataInstructions;
-use App\Models\MieGxDataInstructionsAggregate;
+use App\Models\NormalSecAdditionals;
+use App\Models\NSAAggregateFunctions;
+use App\Models\NSACategory;
+use App\Models\NSARemark;
 use Illuminate\Http\Request;
-use App\Models\TPMData;
-use App\Models\TPMDataRemark;
-use App\Models\TPMDataAggregateFunctions;
-use App\Models\ReportData;
-use App\Models\StandardData;
-use App\Models\TPMDataCategory;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Sleep;
-use Illuminate\Support\Facades\Validator;
 
-class TPMDataController extends Controller
+class NormalSecAdditionalsController extends Controller
 {
     public function index(Request $request){
         $serial_no = $request->query('serial');
         $report = $request->query('report');
         if (!$serial_no) {
             try{
-                $tpmData = TPMData::all();
-                $remarks = TPMDataRemark::all();
-                $aggregateFunctions = TPMDataAggregateFunctions::all();
-                if($report){
-                    $reportData = ReportData::all();
-                }
+                $nsaData = NormalSecAdditionals::all();
+                $remarks = NSARemark::all();
+                $aggregateFunctions = NSAAggregateFunctions::all();
+                // if($report){
+                //     $reportData = ReportData::all();
+                // }
                 return response()->json([
                     'status' => true,
-                    'message' => 'TPM Datas retrieved successfully',
+                    'message' => 'NSA Datas retrieved successfully',
                     'data' => [
-                        'tpmData' => $tpmData,
+                        'NSAData' => $nsaData,
                         'remarks' => $remarks,
                         'aggregateFunctions' =>  $aggregateFunctions
                     ]
@@ -42,34 +34,34 @@ class TPMDataController extends Controller
             }catch(\Exception $e){
                 return response()->json([
                     'status' => false,
-                    'message' => 'Error retrieving tmp Data',
+                    'message' => 'Error retrieving NSA Data',
                     'error' => $e->getMessage(),
                 ], 500);
             }
         }else{
             try{
-                $tpmData = TPMData::with($report ? ['remark', 'reportData'] : ['remark'])
+                $nsaData = NormalSecAdditionals::with($report ? ['remark', 'reportData'] : ['remark'])
                                     ->where('serial_no',  $serial_no)
                                     ->orderBy('zone', 'asc')
                                     ->get();
 
-                if(!$tpmData->isEmpty()){
-                    $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
+                if(!$nsaData->isEmpty()){
+                    $NSAAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
-                        'message' => 'TPM data found successfully',
-                        'data' => $tpmData, $tpmDataAggregateFunctions
+                        'message' => 'NSA data found successfully',
+                        'data' => $nsaData, $NSAAggregateFunctions
                     ], 200);
                 }else{
                     return response()->json([
                         'status' => false,
-                        'message' => 'TPM data not found for this serial number.'
+                        'message' => 'NSA data not found for this serial number.'
                     ], 404);
                 }
             }catch(\Exception $e){
                 return response()->json([
                     'status' => false,
-                    'message' => 'An error occurred while retrieving TPM data',
+                    'message' => 'An error occurred while retrieving NSA data',
                     'error' => $e->getMessage(),
                 ], 500);
             }
@@ -77,28 +69,28 @@ class TPMDataController extends Controller
     }
     public function show($id){
         try{
-            $tpmData = TPMData::with(['remark'])
+            $nsaData = NormalSecAdditionals::with(['remark'])
                                 ->find($id);
 
-            if(!empty($tpmData)){
-                $remark = $tpmData->remark ?? 'No remark available';
-                $tpmAggregateData = TPMDataAggregateFunctions::where('serial_no', $tpmData->serial_no)->get();
+            if(!empty($nsaData)){
+                $remark = $nsaData->remark ?? 'No remark available';
+                $NSAAggregateData = NSAAggregateFunctions::where('serial_no', $nsaData->serial_no)->get();
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'TPM data found successfully',
-                    'data' => $tpmData, $tpmAggregateData
+                    'message' => 'NSA data found successfully',
+                    'data' => $nsaData, $NSAAggregateData
                 ], 200);
             }else{
                 return response()->json([
                     'status' => false,
-                    'message' => 'TPM data not found for this serial number.'
+                    'message' => 'NSA data not found for this serial number.'
                 ], 404);
             }
         }catch(\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => 'An error occurred while retrieving TPM data',
+                'message' => 'An error occurred while retrieving NSA data',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -107,7 +99,7 @@ class TPMDataController extends Controller
         DB::beginTransaction();
 
         try{
-            $tpmDataInputs = [
+            $NSAInputs = [
                 'date' => $request->input('date', null),
                 'serial_no' => $request->input('serial_no', null),
                 'code_no' => $request->input('code_no', null),
@@ -154,9 +146,9 @@ class TPMDataController extends Controller
                 'temperature' => $request->input('temperature', null),
                 'data_status' => $request->input('data_status', null)
             ];
-            $tpmData = TPMData::create($tpmDataInputs);
+            $nsaData = NormalSecAdditionals::create($NSAInputs);
             $remarkData = [
-                'tpm_data_id' => $tpmData->id,
+                'nsa_id' => $nsaData->id,
                 'Br_remarks' => $request->input('Br_remarks', null),
                 '4paiId_remarks' => $request->input('4paiId_remarks', null),
                 'iHc_remarks' => $request->input('iHc_remarks', null),
@@ -185,119 +177,44 @@ class TPMDataController extends Controller
                 'HR_remarks' => $request->input('HR_remarks', null),
                 'HRO_remarks' => $request->input('HRO_remarks', null),
             ];
-            $remark = TPMDataRemark::create($remarkData);
+            $remark = NSARemark::create($remarkData);
 
-            $checkTpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkTpmDataAggregateFunctions){
+            $checkNSAAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $nsaData->serial_no)->exists();
+            if(!$checkNSAAggregateFunctions){
                 try{
-                    $tpmAggragateFunctionsInput = [
-                        'tpm_data_serial' => $tpmData->serial_no,
+                    $NSAAggragateFunctionsInput = [
+                        'nsa_serial' => $nsaData->serial_no,
                     ];
-                    $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
+                    $NSAAggragateFunctions = NSAAggregateFunctions::create($NSAAggragateFunctionsInput);
                 }catch(\Exception $e){
 
                 }
             }
 
-            $checkTpmDataCategory = TPMDataCategory::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkTpmDataCategory){
+            $checkNSACategory = NSACategory::where('nsa_serial', $nsaData->serial_no)->exists();
+            if(!$checkNSACategory){
                 try{
-                    $tpmDataCategoryInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
+                    $NSACategoryInputs = [
+                        'nsa_serial' => $nsaData->serial_no,
                     ];
-                    $tpmDataCategory = TPMDataCategory::create($tpmDataCategoryInputs);
+                    $NSACategory = NSACategory::create($NSACategoryInputs);
                 }catch(\Exception $e){
 
                 }
             }
 
 
-            $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkReportData){
-                try{
-                    $reportDataInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                    ];
-                    $reportData = ReportData::create($reportDataInputs);
-                }catch(\Exception $e){
-
-                }
-            }
-
-            $checkStandardData = StandardData::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkStandardData){
-                try{
-                    $standardDataInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                    ];
-                    $standardData = StandardData::create($standardDataInputs);
-                }catch(\Exception $e){
-
-                }
-            }
-
-            $checkDataInstructions = DataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkDataInstructions){
-                try{
-                    $dataInstructionsInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                    ];
-                    $dataInstructions = DataInstructions::create($dataInstructionsInputs);
-                }catch(\Exception $e){
-
-                }
-            }
-
-            $checkDataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkDataInstructionsAggregate){
-                try{
-                    $dataInstructionsAggregateInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                    ];
-                    $dataInstructionsAggregate = DataInstructionsAggregate::create($dataInstructionsAggregateInputs);
-                }catch(\Exception $e){
-
-                }
-            }
-
-            $checkMieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkMieGxDataInstructions){
-                try{
-                    $mieGxDataInstructionsInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                    ];
-                    $mieGxDataInstructions = MieGxDataInstructions::create($mieGxDataInstructionsInputs);
-                }catch(\Exception $e){
-
-                }
-            }
-            $checkMieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkMieGxDataInstructionsAggregate){
-                try{
-                    $mieGxDataInstructionsAggregateInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                    ];
-                    $mieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::create($mieGxDataInstructionsAggregateInputs);
-                }catch(\Exception $e){
-
-                }
-            }
+            
 
             DB::commit();
             return response()->json([
                 'status' => true,
-                'message' => 'tmp Data created successfully',
+                'message' => 'NSA Data created successfully',
                 'data' => [
-                    $tpmData,
+                    $nsaData,
                     $remark,
-                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
-                    $checkTpmDataCategory ?? $tpmDataCategory,
-                    $checkReportData ?? $reportData,
-                    $checkStandardData ?? $standardData,
-                    $checkDataInstructions ?? $dataInstructions,
-                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
-                    $checkMieGxDataInstructions ?? $mieGxDataInstructions,
-                    $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
+                    $checkNSAAggregateFunctions ?? $NSAAggragateFunctions,
+                    $checkNSACategory ?? $NSACategory
                     ]
             ], 201);
         }catch(\Exception $e){
@@ -306,88 +223,34 @@ class TPMDataController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Error creating TPM Data and remark',
+                'message' => 'Error creating NSA Data and remark',
                 'error' => $e->getMessage(),
             ], 500);
         }
 
     }
-    //     DB::beginTransaction();
-    //     try {
-    //         $tpmData = TPMData::find($serial_no);
-
-    //         $tpmDataInputs = [];
-    //         foreach ($request->all() as $key => $value) {
-    //             // Skip remarks and aggregate function fields (they will be handled separately)
-    //             if (strpos($key, 'remarks') === false && !in_array($key, ['average', 'maximum', 'minimum', 'ng_counter'])) {
-    //                 $tpmDataInputs[$key] = $value;
-    //             }
-    //         }
-    //         if (!empty($tpmDataInputs)) {
-    //             $tpmData->update($tpmDataInputs);
-    //         }
-
-    //         $remarks = $tpmData->remark;
-    //         $remarksFields = collect($request->all())
-    //             ->filter(function ($value, $key) {
-    //                 return strpos($key, '_remarks') !== false;  // Check if the field is a 'remarks' field
-    //             });
-    //         foreach ($remarksFields as $key => $value) {
-    //             $remarks->$key = $value;
-    //         }
-    //         if ($remarksFields->isNotEmpty()) {
-    //             $remarks->save();
-    //         }
-
-    //         $aggregateFields = ['average', 'maximum', 'minimum', 'ng_counter'];
-    //         $aggregateFunctions = $tpmData->aggregateFunctions;
-    //         foreach ($aggregateFields as $field) {
-    //             if ($request->has($field)) {
-    //                 $aggregateFunctions->$field = $request->input($field);
-    //             }
-    //         }
-    //         $aggregateFunctions->save();
-
-    //         DB::commit();
-
-    //         return response()->json([
-    //             'status' => true,
-    //             'message' => 'tmp Data updated successfully',
-    //             'data' => $tpmData
-    //         ], 200);
-    //     }catch(\Exception $e){
-    //         DB::rollBack();
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Error updating tmp Data and remark',
-    //             'error' => $e->getMessage(),
-    //         ], 500);
-    //     }
-
-    // }
-
-    public function updateTpmData(Request $request, $id)
+    public function updateNSAData(Request $request, $id)
     {
         DB::beginTransaction();
         try {
-            $tpmData = TPMData::findorfail( $id );
+            $nsaData = NormalSecAdditionals::findorfail( $id );
 
             $inputData = $request->all();
-            $tpmData->update($inputData);
+            $nsaData->update($inputData);
 
             DB::commit();
 
             return response()->json([
                 'status' => true,
-                'message' => 'TPM Data updated successfully',
-                'data' => $tpmData
+                'message' => 'NSA Data updated successfully',
+                'data' => $nsaData
             ], 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Error updating TPM Data',
+                'message' => 'Error updating NSA Data',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -396,9 +259,9 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $tpmData = TPMData::findorfail( $id );
+            $nsaData = NormalSecAdditionals::findorfail( $id );
 
-            $remarks = $tpmData->remark;
+            $remarks = $nsaData->remark;
             $remarksData = $request->all();
             $remarks->update($remarksData);
 
@@ -407,7 +270,7 @@ class TPMDataController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Remarks updated successfully',
-                'data' => $tpmData->remark
+                'data' => $nsaData->remark
             ], 200);
 
         } catch (\Exception $e) {
@@ -423,7 +286,7 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $aggregateFunctions = TPMDataAggregateFunctions::where( 'tpm_data_serial',$id )
+            $aggregateFunctions = NSAAggregateFunctions::where( 'nsa_serial',$id )
                                 ->first();
             $aggregateFields = $request->all();
             $aggregateFunctions->update($aggregateFields);
@@ -449,7 +312,7 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $category = TPMDataCategory::where( 'tpm_data_serial',$id )
+            $category = NSACategory::where( 'nsa_serial',$id )
                                 ->first();
             $categoryFields = $request->all();
             $category->update($categoryFields);
@@ -473,16 +336,16 @@ class TPMDataController extends Controller
     }
     public function destroy($id){
         try{
-            $tpmData = TPMData::findorfail($id);
-            $tpmData->delete();
+            $nsaData = NormalSecAdditionals::findorfail($id);
+            $nsaData->delete();
             return response()->json([
                 'status' => true,
-                'message' => 'tmp Data deleted successfully'
+                'message' => 'NSA Data deleted successfully'
             ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => 'Error deleting tmp Data',
+                'message' => 'Error deleting NSA Data',
                 'error' => $e->getMessage(),
             ], 500);
         }
