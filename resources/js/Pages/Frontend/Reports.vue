@@ -4,7 +4,7 @@
 
         <div v-if="serialList.length == 0"> <!-- default div -->
             <div class="flex flex-row items-center justify-center mt-10 align-baseline">
-                <p class="text-xl animate-pulse text-center"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
+                <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
             </div>
         </div>
 
@@ -45,7 +45,7 @@
                             <span>(Tick this box if the model is for Automotive.)</span>
                     </label>
                 </div>
-                <div v-show="showNotif2" class="flex flex-row items-center justify-center py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl px-4">
+                <div v-show="showNotif2" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
             </div>
@@ -56,7 +56,7 @@
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
-                    <button @click="showReportButton" class="bg-blue-500 px-3 py-2 rounded-xl shadow-xl text-white">Show Report</button>
+                    <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">Show Report</button>
                 </div>
             </div>
             <!-- Report Content -->
@@ -93,10 +93,10 @@
                     </div>
                     </div>
                 </div>
-                <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl mb-10">
+                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <!-- Oven Heating Information Section -->
                     <div class="flex flex-col mb-4 space-y-4">
-                        <p class="text-xl font-extrabold mb-2">Oven Heating Information</p>
+                        <p class="mb-2 text-xl font-extrabold">Oven Heating Information</p>
 
                         <!-- Row 1 -->
                         <div class="flex flex-row justify-evenly">
@@ -436,9 +436,9 @@
                         <span
                         class="inline-block w-40 h-40 bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: reportRemarksDisplay === 'E'
+                            backgroundImage: reportSMPJudgement === 'REJECT'
                             ? 'url(\'/photo/reject_stamp.png\')'
-                            : reportRemarksDisplay === 'HOLD'
+                            : reportSMPJudgement === 'HOLD'
                             ? 'url(\'/photo/hold_stamp.png\')'
                             : 'url(\'/photo/pass_stamp.png\')',
                             backgroundSize: '101%'
@@ -565,10 +565,40 @@
                     <!-- Note: -->
                     <div class="flex flex-col">
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Note: Reason of REJECT/HOLD</p>
-                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
-                            <span class="font-extrabold text-blue-700 opacity-100">
-
+                    <div class="p-2 border-4 border-white w-[320px] h-[190px] box-border">
+                        <div class="flex flex-col items-start w-full h-full overflow-auto bg-blue-100">
+                            <span v-if="reportBrMinimum < inspectionBrStandard_lower" class="font-extrabold text-red-700 opacity-100">
+                                - LOW BR
+                            </span>
+                            <span v-if="reportBrMaximum > inspectionBrStandard_higher" class="font-extrabold text-red-700 opacity-100">
+                                - HIGH BR
+                            </span>
+                            <span v-if="reportihcMinimum < inspectioniHcStandard" class="font-extrabold text-red-700 opacity-100">
+                                - N.G iHc
+                            </span>
+                            <span v-else-if="reportihcMinimum < inspectioniHcStandard + 500" class="font-extrabold text-blue-600 opacity-100">
+                                - iHc Below Target+500 Oe
+                            </span>
+                            <span v-if="reportihkMinimum < inspectioniHkStandard" class="font-extrabold text-red-700 opacity-100">
+                                - N.G iHk
+                            </span>
+                            <span v-if="reportihr95Minimum < inspectioniHcStandard - 750" class="font-extrabold text-red-700 opacity-100">
+                                - N.G Hr95
+                            </span>
+                            <span v-if="reportihr98Minimum < inspectioniHcStandard - 1250" class="font-extrabold text-red-700 opacity-100">
+                                - N.G Hr98
+                            </span>
+                            <span v-if="reportRemarksDisplayNG_ihcihk" class="font-extrabold text-red-700 opacity-100">
+                                - N.G iHc-iHk
+                            </span>
+                            <span v-if="reportRemarksDisplayNG_br4pia" class="font-extrabold text-red-700 opacity-100">
+                                - N.G Br-4PIa
+                            </span>
+                            <span v-if="reportRemarksDisplayNG_bhMax" class="font-extrabold text-red-700 opacity-100">
+                                - N.G BH(max)
+                            </span>
+                            <span v-if="reportRemarksDisplayNG_bhc" class="font-extrabold text-red-700 opacity-100">
+                                - N.G bHc
                             </span>
                         </div>
                     </div>
@@ -591,13 +621,10 @@
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
                     <button
                         v-if="reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD'"
-                        @click="applyData1x1x1"
+                        @click="sec_additional_redirect(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-700 transition duration-300 ease-in-out transform border border-yellow-700 shadow-xl rounded-xl hover:text-white hover:bg-yellow-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
-                        Apply Data 1x1x1
-                    </button>
-                    <button class="px-6 py-4 mt-4 ml-5 font-extrabold text-cyan-700 transition duration-300 ease-in-out transform border border-cyan-700 shadow-xl rounded-xl hover:text-white hover:bg-cyan-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-600 active:scale-95"> <!-- condition if approved only -->
-                        Send to SEC
+                        Apply SEC Additionals
                     </button>
                     <button v-show="showExitButton" @click="exitReport" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -656,6 +683,7 @@ const exitReport = () => {
     showReportProceedButtons.value = true;
     showReportMain.value = false;
     fetchSerial();
+    reportRemarksDisplayReset();
 }
 
 const showReportButton = async () => {
@@ -722,6 +750,8 @@ const reportihkStandard = ref('NA');
 const reportihkAverage = ref('NA');
 const reportihkMaximum = ref('NA');
 const reportihkMinimum = ref('NA');
+const reportihr95Minimum = ref('');
+const reportihr98Minimum = ref('');
 
 const reportBrVariance = ref('NA');
 const reportiHcVariance = ref('NA');
@@ -732,7 +762,10 @@ const reportExistingSMPJudgement = ref(null);
 const reportPreparedByDate = ref(null);
 const reportCheckedByDate = ref(null);
 const reportApprovedByDate = ref(null);
-const reportReasonsForReject = ref([]);
+const reportRemarksDisplayNG_ihcihk = ref(false);
+const reportRemarksDisplayNG_br4pia = ref(false);
+const reportRemarksDisplayNG_bhMax = ref(false);
+const reportRemarksDisplayNG_bhc = ref(false);
 
 const reportOvenMachineNo = ref('NA');
 const reportTimeLoading = ref('NA');
@@ -752,6 +785,8 @@ const inspectionMaterialGrade = ref('');
 const inspectionMpiSampleQty = ref('');
 const inspectionModel = ref('');
 const inspectionBrStandard = ref('');
+const inspectionBrStandard_higher = ref('');
+const inspectionBrStandard_lower = ref('');
 const inspectioniHcStandard = ref('');
 const inspectioniHkStandard = ref('');
 const inspectionOvenMachineNo = ref('');
@@ -772,7 +807,16 @@ const tpmData_ihcMin = ref('');
 const tpmData_ihkAve = ref('');
 const tpmData_ihkMax = ref('');
 const tpmData_ihkMin = ref('');
+const tpmData_ihr95Min = ref('');
+const tpmData_ihr98Min = ref('');
 const tpmData_tracerNo = ref('');
+
+const reportRemarksDisplayReset = () => {
+    reportRemarksDisplayNG_ihcihk.value = false;
+    reportRemarksDisplayNG_br4pia.value = false;
+    reportRemarksDisplayNG_bhMax.value = false;
+    reportRemarksDisplayNG_bhc.value = false;
+}
 
 const showNotification = (message) => {
     // Show notification and set the message
@@ -794,6 +838,10 @@ const showNotification2 = (message) => {
     setTimeout(() => {
         showNotif2.value = false;
     }, 5000);  // 5000ms = 5 seconds
+}
+
+const sec_additional_button = () => {
+    //redirect here
 }
 
 const generateReport = async () => {
@@ -830,19 +878,46 @@ const fetchAllData = async () => {
         const getAlliHr98NG = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
         //console.log("check br remarks: ", getAllBrNG);
         // Check if "1" exists in getAllBrNG
-        if (getAllBrNG.includes("1") || getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1") || getAllBHMaxNG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")) {
-            // Perform your action here (leave it blank for now)
+        //REJECT CONDITIONS
+        /*
+
+const reportRemarksDisplayNG_ihcihk = ref(false);
+const reportRemarksDisplayNG_br4pia = ref(false);
+const reportRemarksDisplayNG_bhMax = ref(false);
+const reportRemarksDisplayNG_bhc = ref(false);
+
+        */
+        if(getAlliHkiHcNG.includes("1")){
+            reportRemarksDisplayNG_ihcihk.value = true;
+        }
+        if(getAllBr4paiNG.includes("1")){
+            reportRemarksDisplayNG_br4pia.value = true;
+        }
+        if(getAllBHMaxNG.includes("1")){
+            reportRemarksDisplayNG_bhMax.value = true;
+        }
+        if(getAllbHcNG.includes("1")){
+            reportRemarksDisplayNG_bhc.value = true;
+        }
+
+
+        if (getAllBrNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1")) {
+
             reportRemarksDisplay.value = "E";
-            reportSMPJudgement.value = "REJECT";
-            if(getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1")){
-                reportRemarksDisplay.value = "HOLD";
-                reportSMPJudgement.value = reportRemarksDisplay.value;
+            reportSMPJudgement.value = "HOLD";
+
+            if(getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAllBHMaxNG.includes("1")){
+                // Perform your action here (leave it blank for now)
+                reportSMPJudgement.value = "REJECT";
             }
         }else{
             reportRemarksDisplay.value = "OK";
             reportSMPJudgement.value = "PASSED";
         }
         //Remarks checking end
+
+        console.log("SMP JUDGEMENT IS: ",reportSMPJudgement.value);
+        console.log("REPORT REMARKS IS: ",reportRemarksDisplay.value);
 
 
         const tpm_current_model = getTpmModel.value[0].code_no;
@@ -898,6 +973,8 @@ const fetchAllData = async () => {
         tpmData_ihkAve.value = averageData.iHk;
         tpmData_ihkMax.value = maximumData.iHk;
         tpmData_ihkMin.value = minimumData.iHk;
+        tpmData_ihr95Min.value = minimumData.Hr95;
+        tpmData_ihr98Min.value = minimumData.Hr98;
 
         const responseInsp = await axios.get("/api/inspectiondata");
         //console.log("Show All inspection data API response: ", responseInsp.data);
@@ -931,6 +1008,8 @@ const fetchAllData = async () => {
                 inspectionShift_OvenInfo.value = item.shift;
                 inspectionOperator_OvenInfo.value = item.operator;
             });
+
+
         } else {
             showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
             showReportContent.value = false;
@@ -940,6 +1019,16 @@ const fetchAllData = async () => {
 
         //console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
 
+        if (inspectionBrStandard.value.includes('~')) {
+            const [lower, higher] = inspectionBrStandard.value.split('~');
+            inspectionBrStandard_lower.value = lower;
+            inspectionBrStandard_higher.value = higher;
+        } else {
+            inspectionBrStandard_lower.value = '';
+            inspectionBrStandard_higher.value = '';
+        }
+        console.log("brStandard LOWER: ",inspectionBrStandard_lower.value);
+        console.log("brStandard HIGHER: ",inspectionBrStandard_higher.value);
 
         const repData = {
             "date": reportDate.value,
@@ -957,6 +1046,8 @@ const fetchAllData = async () => {
                 "ihkAverage": tpmData_ihkAve.value,
                 "ihkMaximum": tpmData_ihkMax.value,
                 "ihkMinimum": tpmData_ihkMin.value,
+                "ihr95Minimum": tpmData_ihr95Min.value,
+                "ihr98Minimum": tpmData_ihr98Min.value
             }),
             "material_grade": inspectionMaterialGrade.value,
             "model": tpm_current_model,
@@ -1045,6 +1136,10 @@ const showReportData = async () => {
         reportihkMaximum.value = magneticProperty.ihkMaximum;
         reportihkMinimum.value = magneticProperty.ihkMinimum;
 
+        //IHR95 and IHR98 value
+        reportihr95Minimum.value = magneticProperty.ihr95Minimum;
+        reportihr98Minimum.value = magneticProperty.ihr98Minimum;
+
         // Convert strings to numbers before performing subtraction
         reportBrVariance.value = parseFloat(reportBrMaximum.value) - parseFloat(reportBrMinimum.value);
         reportiHcVariance.value = parseFloat(reportihcMaximum.value) - parseFloat(reportihcMinimum.value);
@@ -1065,10 +1160,10 @@ const saveReport = async () => {
     const saveReportData = {
         "oven_machine_no": reportOvenMachineNo.value,
         "time_loading": reportTimeLoading.value,
-        "temperature_time_loading": reportTemperature_TimeLoading.value,
+        "temp_time_loading": reportTemperature_TimeLoading.value,
         "date_oven_info": reportDate_OvenInfo.value,
         "time_unloading": reportTimeUnloading.value,
-        "temperature_time_unloading": reportTemperature_TimeUnloading.value,
+        "temp_time_unloading": reportTemperature_TimeUnloading.value,
         "shift_oven_info": reportShift_OvenInfo.value,
         "operator_oven_info": reportOperator_OvenInfo.value,
         "material_code": reportMaterialCode.value,
@@ -1079,11 +1174,12 @@ const saveReport = async () => {
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
         "smp_judgement":reportSMPJudgement.value,
+
     }
 
     console.log("Save report data: ", saveReportData);
 
-    //saveReportUpdate(saveReportData, currentSerialSelected.value);
+    saveReportUpdate(saveReportData, currentSerialSelected.value);
 
         showReportContent.value = false;
         showSelectionPanel.value = true;
@@ -1284,6 +1380,28 @@ const checkApprovalStates = async () => {
     }
 }
 
+const sec_additional_redirect = (sec_serial) => {
+    try {
+        console.log('Navigating to report with serial:', sec_serial);
+        Inertia.visit('/sec_additional', {
+            method: 'get',
+            data: { sec_serialParam: sec_serial },
+            preserveState: true,
+            preserveScroll: true,
+            onError: (errors) => {
+                console.error('Navigation failed with error:', errors);
+                alert('Failed to load section additional. Please try again.');
+            },
+            onCancelToken: (cancelToken) => {
+                // Optional: Cancel a previous visit if needed
+                console.warn('Navigation was cancelled or interrupted.');
+            },
+        });
+    } catch (error) {
+        console.error('Unexpected error during Inertia navigation:', error);
+        alert('Something went wrong during navigation.');
+    }
+};
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(() => {

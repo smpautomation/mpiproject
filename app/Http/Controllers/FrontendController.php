@@ -69,4 +69,12 @@ class FrontendController extends Controller
     public function data_ins(){
         return Inertia::render('Frontend/Data_INS');
     }
+
+    public function sec_additional(Request $request) {
+        $serial = $request->input('sec_serialParam');
+
+        return Inertia::render('Frontend/SEC_Additional', [
+            'sec_serialParam' => $serial
+        ]);
+    }
 }

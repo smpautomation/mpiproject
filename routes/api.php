@@ -88,7 +88,7 @@ Route::post('/nsadata', [NormalSecAdditionalsController::class, 'store']);
 Route::patch('/nsadataupdate/{id}', [NormalSecAdditionalsController::class, 'updateNSAData']);
 Route::patch('/nsaremarksupdate/{id}', [NormalSecAdditionalsController::class, 'updateRemarks']);
 Route::patch('/nsaaggregateupdate/{id}', [NormalSecAdditionalsController::class, 'updateAggregateFunctions']);
-Route::patch('/updatecategory/{id}', [NormalSecAdditionalsController::class, 'updateCategory']);
+Route::patch('/nsaupdatecategory/{id}', [NormalSecAdditionalsController::class, 'updateCategory']);
 Route::delete('/nsadata/{id}', [NormalSecAdditionalsController::class, 'destroy']);
 
 Route::get('/users', [UserController::class, 'index']);

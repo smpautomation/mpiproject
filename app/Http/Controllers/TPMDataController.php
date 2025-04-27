@@ -48,7 +48,7 @@ class TPMDataController extends Controller
             }
         }else{
             try{
-                $tpmData = TPMData::with($report ? ['remark', 'reportData'] : ['remark'])
+                $tpmData = TPMData::with($report ? ['remark', 'reportData', 'category'] : ['remark', 'category'])
                                     ->where('serial_no',  $serial_no)
                                     ->orderBy('zone', 'asc')
                                     ->get();
@@ -449,7 +449,7 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $category = TPMDataCategory::where( 'tpm_data_serial',$id )
+            $category = TPMDataCategory::where('tpm_data_serial',$id)
                                 ->first();
             $categoryFields = $request->all();
             $category->update($categoryFields);

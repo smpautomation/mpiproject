@@ -330,11 +330,11 @@
 
             <div v-show="showGraphAndTables">
                 <div class="flex flex-row justify-center space-x-4">
-                    <div class="w-[500px] h-[400px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
-    <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
-</div>
+                    <div class="w-[500px] h-[420px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
+                        <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
+                    </div>
                     <!-- Side Content -->
-                    <div class="w-[400px] h-[350px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                    <div class="w-[300px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
                         <div class="flex flex-col items-start space-y-2">
                             <p>
                                 SMP Lot (
@@ -464,13 +464,13 @@
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white">
-                                        <tr v-for="(item, index) in csv_tempWithDataStat" :key="index">
-                                            <td class="px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">
-                                            {{ item.temp }}
-                                            </td>
-                                            <td class="px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">
-                                            {{ item.status }}
-                                            </td>
+                                        <tr
+                                            v-for="item in combinedData"
+                                            :key="item.id"
+                                            class="border-b hover:bg-gray-50"
+                                        >
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.temperature }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.data_status }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -555,6 +555,7 @@
     import { ref, computed, onMounted, nextTick } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     import Papa from 'papaparse';
+    import axios from 'axios';
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
 
@@ -584,9 +585,10 @@
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
 
+    //tpmdata category in database
     const jhCurveModel = ref("");
     const jhCurveMassProdName = ref("");
-    const jhCurveActualModel = ref(null);
+    const jhCurveActualModel = ref("");
     const jhCurveFurnaceName = ref("");
     const jhCurveLotNo = ref("");
 
@@ -622,7 +624,53 @@
         }else{
             showProceed3.value = true;
             showProceed2.value = false;
+            saveToTpmCategory();
         }
+    }
+
+    const saveToTpmCategory = async () => {
+        try{
+            const responsePatchCategory = await axios.patch(`/api/updatecategory/${serialNo.value}`,{
+                    actual_model: jhCurveActualModel.value,
+                    factor_emp: propData_factorEmp.value,
+                    jhcurve_lotno: jhCurveLotNo.value,
+                    mias_emp: propData_miasEmp.value,
+                    massprod_name: jhCurveMassProdName.value,
+                });
+                console.log("API PATCHED category: ",responsePatchCategory);
+        }catch(error){
+            console.error("Error fetching API Response SaveToTpmCategory:", error);
+        }
+                /*
+        try{
+            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
+            console.log('API Response showallData:', response.data);
+            const tpm_category_id = response.data.data.map(item => item.category?.id ?? null);
+            const category_id = tpm_category_id[0];
+            console.log('Show tpm category ID: ',category_id);
+            console.log('Actual model: ',jhCurveActualModel.value);
+            console.log('factor employee: ',propData_factorEmp.value);
+            console.log('mias employee: ',propData_miasEmp.value);
+            console.log('mass prod name: ',jhCurveMassProdName.value);
+            console.log('jh curve lot no: ',jhCurveLotNo.value);
+            try{
+                const responsePatchCategory = await axios.patch(`/api/updatecategory/${category_id}`,{
+                    actual_model: jhCurveActualModel.value,
+                    factor_emp: propData_factorEmp.value,
+                    jhcurve_lotno: jhCurveLotNo.value,
+                    mias_emp: propData_miasEmp.value,
+                    massprod_name: jhCurveMassProdName.value,
+                });
+                console.log("API PATCHED category: ",responsePatchCategory);
+            }catch(error){
+                console.error("Error patching API responsePatchCategory:", error);
+            }
+        }catch(error){
+            console.error("Error fetching API Response SaveToTpmCategory:", error);
+        }
+            */
+
+
     }
 
     const isLoadingForAddFurnaces = ref(false); // Initialize loading state
@@ -1639,6 +1687,17 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             tpmRemarks.value = response.data.remark || [];
             getAggregateID.value = response.data[0][0].id || [];
             console.log("Aggregate ID: ", getAggregateID.value);
+
+            const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
+            jhCurveActualModel.value = tpm_category_actualmodel[0];
+            const tpm_category_factorEmp = tpmData.value.map(item => item.category?.factor_emp ?? null);
+            propData_factorEmp.value = tpm_category_factorEmp[0];
+            const tpm_category_miasEmp = tpmData.value.map(item => item.category?.mias_emp ?? null);
+            propData_miasEmp.value = tpm_category_miasEmp[0];
+            const tpm_category_jhCurveLotno = tpmData.value.map(item => item.category?.jhcurve_lotno ?? null);
+            jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
+            const tpm_category_massProdName = tpmData.value.map(item => item.category?.massprod_name ?? null);
+            jhCurveMassProdName.value = tpm_category_massProdName[0];
 
             // Combine the arrays
             combinedData.value = tpmData.value;
