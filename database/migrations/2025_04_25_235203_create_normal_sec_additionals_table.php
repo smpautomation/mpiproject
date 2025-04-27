@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->date('date')->nullable();
             $table->unsignedBigInteger('serial_no')->index();
+
             $table->string('code_no')->nullable();
             $table->string('order_no')->nullable();
             $table->string('type')->nullable();
