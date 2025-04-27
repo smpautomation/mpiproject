@@ -131,7 +131,10 @@
                 </button>
             </div>
             <div v-if="toggleManageForm" class="flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 mt-20">
-                <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
+                <p v-if="!showGraphAndTables" class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
+                <div v-if="showGraphAndTables" class="mt-[100px]">
+
+                </div>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
                         <!-- Upload Section Title -->

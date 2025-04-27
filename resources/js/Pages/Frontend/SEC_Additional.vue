@@ -887,7 +887,9 @@ const saveBr4paiRemarks = ref('');
 const saveIHr95Remarks = ref('');
 const saveIHr98Remarks = ref('');
 
-const saveToDatabase = () => {
+const highest_setNo = ref(1);
+
+const saveToDatabase = async () => {
     if (fileData.value.length === 0) {
         console.error("No file selected! fileData is empty.");
         return; // Exit the function if fileData is empty
@@ -898,6 +900,22 @@ const saveToDatabase = () => {
     console.log('Sorted Files:', fileData.value);
 
     layerTableRowLoading.value = true;
+
+    const responseCheckNsa = await axios.get("/api/nsadata");
+    console.log('response check NSA: ',responseCheckNsa.data);
+    const nsaData = responseCheckNsa.data.data["NSAData"];
+    console.log('nsa Data array fectch: ',nsaData);
+
+    if (Object.keys(nsaData).length > 0) {
+        const nsaArray = Object.values(nsaData);
+        const maxSetNo = Math.max(...nsaArray.map(item => item.set_no));
+        highest_setNo.value = maxSetNo + 1;
+    }else{
+        console.log('NOT ARRAY!!');
+    }
+
+    console.log('Current set_no value: ',highest_setNo.value);
+
     fileData.value.forEach((file) => {
 
         const reader = new FileReader();
@@ -906,7 +924,7 @@ const saveToDatabase = () => {
             const content = reader.result; // Read file content
             const parsedData = parseFileContent(content); // Parse content
 
-            console.log('Parsed Data:', parsedData);
+            //console.log('Parsed Data:', parsedData);
 
 
             // Dynamically handle rows based on the length of the file content
@@ -989,6 +1007,7 @@ const saveToDatabase = () => {
             const layerData = {
                 "date": formattedDate,
                 "serial_no": currentSerialSelected.value,
+                "set_no": highest_setNo.value,
                 "code_no": rowCell.value[1],
                 "order_no": rowCell.value[2],
                 "type": rowCell.value[3],
@@ -1043,7 +1062,7 @@ const saveToDatabase = () => {
                 "iHr95_remarks": saveIHr95Remarks.value,
                 "iHr98_remarks": saveIHr98Remarks.value,
             };
-            console.log("Layer Data:", layerData);
+            //console.log("Layer Data:", layerData);
 
             sendLayerData(layerData); // Send the parsed data to the server
         };
@@ -1067,6 +1086,7 @@ const sendLayerData = async (layerData) => {
 
     } catch (error) {
         console.error('Error sending data to API:', error.response?.data || error.message);
+        return;
     } finally {
         showProceed1.value = true;
         showUploadData.value = false;
@@ -1094,6 +1114,7 @@ const parseFileContent = (content) => {
 
 const items = ref([]); // Holds the fetched data
 const tpmData = ref([]); // Holds the tpmData array
+const filteredNSAData = ref([]);
 const tpmRemarks = ref([]); // Holds the remarks array
 const tpmAggregateAve = ref([]); // Holds the aggregateFunctions array
 const tpmAggregateMax = ref([]); // Holds the aggregateFunctions array
@@ -1148,27 +1169,41 @@ const getAll4pailaRemarks = ref([]);
 
             // Extract arrays from the response
             tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
+            console.log('TPM DATA VALUE IN SHOW ALL DATA: ',tpmData.value);
+
+            const allData = tpmData.value;
+
+            if (Array.isArray(allData) && allData.length > 0) {
+                // Step 1: Find the highest set_no
+                const maxSetNo = Math.max(...allData.map(item => item.set_no));
+                // Step 2: Filter the data to only those with the highest set_no
+                filteredNSAData.value = allData.filter(item => item.set_no === maxSetNo);
+                console.log('Filtered data with highest set_no:', filteredNSAData.value);
+            } else {
+                console.log('No data found or data is not an array.');
+            }
+
             tpmRemarks.value = response.data.remark || [];
             getAggregateID.value = response.data[0][0].id || [];
             console.log("Aggregate ID: ", getAggregateID.value);
 
-            const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
+            const tpm_category_actualmodel = filteredNSAData.value.map(item => item.category?.actual_model ?? null);
             jhCurveActualModel.value = tpm_category_actualmodel[0];
-            const tpm_category_factorEmp = tpmData.value.map(item => item.category?.factor_emp ?? null);
+            const tpm_category_factorEmp = filteredNSAData.value.map(item => item.category?.factor_emp ?? null);
             propData_factorEmp.value = tpm_category_factorEmp[0];
-            const tpm_category_miasEmp = tpmData.value.map(item => item.category?.mias_emp ?? null);
+            const tpm_category_miasEmp = filteredNSAData.value.map(item => item.category?.mias_emp ?? null);
             propData_miasEmp.value = tpm_category_miasEmp[0];
-            const tpm_category_jhCurveLotno = tpmData.value.map(item => item.category?.jhcurve_lotno ?? null);
+            const tpm_category_jhCurveLotno = filteredNSAData.value.map(item => item.category?.jhcurve_lotno ?? null);
             jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
-            const tpm_category_massProdName = tpmData.value.map(item => item.category?.massprod_name ?? null);
+            const tpm_category_massProdName = filteredNSAData.value.map(item => item.category?.massprod_name ?? null);
             jhCurveMassProdName.value = tpm_category_massProdName[0];
 
             // Combine the arrays
-            combinedData.value = tpmData.value;
+            combinedData.value = filteredNSAData.value;
             console.log('Combined Data: ', combinedData.value);
 
-            jhCurveFurnaceName.value = tpmData.value[0].sintering_furnace_no || "No data found";
-            jhCurveModel.value = tpmData.value[0].code_no || "No data found";
+            jhCurveFurnaceName.value = filteredNSAData.value[0].sintering_furnace_no || "No data found";
+            jhCurveModel.value = filteredNSAData.value[0].code_no || "No data found";
 
             // Extract individual values from tpmData for aggregate
             getAllIDValues.value = combinedData.value.map(item => item.id);
@@ -1516,6 +1551,7 @@ const getAll4pailaRemarks = ref([]);
     // State for storing fetched data and error
 const error = ref(null);
 const datasets = ref([]); // Array to hold multiple datasets
+const filteredNSADataForGraph = ref([]);
 
 const fetchDataCreateGraph = async () => {
     try {
@@ -1526,13 +1562,25 @@ const fetchDataCreateGraph = async () => {
 
         const tableRows = response.data.data; // Assuming API returns an array of rows
 
+        const allData = tableRows;
+
+        if (Array.isArray(allData) && allData.length > 0) {
+            // Step 1: Find the highest set_no
+            const maxSetNo = Math.max(...allData.map(item => item.set_no));
+            // Step 2: Filter the data to only those with the highest set_no
+            filteredNSADataForGraph.value = allData.filter(item => item.set_no === maxSetNo);
+            console.log('Filtered data with highest set_no:', filteredNSAData.value);
+        } else {
+            console.log('No data found or data is not an array.');
+        }
+
         // Check if tableRows is not undefined or null before proceeding
-        if (!tableRows) {
+        if (!filteredNSADataForGraph.value) {
             throw new Error("No data found in tpmData");
         }
 
         // Parse each row and dynamically generate datasets
-        datasets.value = tableRows.map((row, index) => ({
+        datasets.value = filteredNSADataForGraph.value.map((row, index) => ({
             xAxis: JSON.parse(row.x || "[]"), // Parse x values
             yAxis: JSON.parse(row.y || "[]"), // Parse y values
             color: generateColor(index), // Assign a unique color
