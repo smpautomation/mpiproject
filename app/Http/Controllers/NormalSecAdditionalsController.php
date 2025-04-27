@@ -40,7 +40,7 @@ class NormalSecAdditionalsController extends Controller
             }
         }else{
             try{
-                $nsaData = NormalSecAdditionals::with($report ? ['remark', 'reportData'] : ['remark'])
+                $nsaData = NormalSecAdditionals::with($report ? ['remark', 'reportData', 'category'] : ['remark', 'category'])
                                     ->where('serial_no',  $serial_no)
                                     ->orderBy('zone', 'asc')
                                     ->get();
