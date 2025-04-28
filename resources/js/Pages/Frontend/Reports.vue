@@ -219,7 +219,7 @@
                             <span
                                 class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
                                 >
-                                {{ reportModel }}
+                                {{ jhCurveActualModel }}
                             </span>
                         </div>
                         <div class="flex flex-row items-baseline">
@@ -622,9 +622,15 @@
                     <button
                         v-if="reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD'"
                         @click="sec_additional_redirect(currentSerialSelected)"
-                        class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-700 transition duration-300 ease-in-out transform border border-yellow-700 shadow-xl rounded-xl hover:text-white hover:bg-yellow-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                        class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                         Apply SEC Additionals
+                    </button>
+                    <button
+                        @click="$inertia.visit('/create_pdf')"
+                        class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                    >
+                        Finalize Report
                     </button>
                     <button v-show="showExitButton" @click="exitReport" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -811,6 +817,8 @@ const tpmData_ihr95Min = ref('');
 const tpmData_ihr98Min = ref('');
 const tpmData_tracerNo = ref('');
 
+const jhCurveActualModel = ref('');
+
 const reportRemarksDisplayReset = () => {
     reportRemarksDisplayNG_ihcihk.value = false;
     reportRemarksDisplayNG_br4pia.value = false;
@@ -860,6 +868,9 @@ const fetchAllData = async () => {
         //console.log("Filtered tpm aggregate data list: ", tpmData.value);
         getTpmModel.value = responseTpm.data.data || [];
         //console.log("GetModelValue: ", getTpmModel.value[0].code_no);
+
+        const tpm_category_actualmodel = getTpmModel.value.map(item => item.category?.actual_model ?? null);
+        jhCurveActualModel.value = tpm_category_actualmodel[0];
 
         //Remarks checking start
         const getAllBrNG = getTpmModel.value.map(item => item.remark.Br_remarks || null);
@@ -920,7 +931,7 @@ const reportRemarksDisplayNG_bhc = ref(false);
         console.log("REPORT REMARKS IS: ",reportRemarksDisplay.value);
 
 
-        const tpm_current_model = getTpmModel.value[0].code_no;
+        const tpm_current_model = jhCurveActualModel.value;
         tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
         const thisLayerId = getTpmModel.value[0].layer_no;
         const thisfurnaceId = getTpmModel.value[0].furnace_id;

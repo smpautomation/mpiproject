@@ -77,4 +77,8 @@ class FrontendController extends Controller
             'sec_serialParam' => $serial
         ]);
     }
+
+    public function generatePdf(){
+        return Inertia::render('Frontend/PreviewPdf');
+    }
 }

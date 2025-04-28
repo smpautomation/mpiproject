@@ -80,7 +80,7 @@
                         </select>
                     </div>
                     <div class="flex flex-row items-center justify-center m-2 space-x-16">
-                        <button @click="existingBackBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                        <button @click="existingBackBtn" class="px-4 py-2 font-bold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
                             Back
                         </button>
                         <button @click="existingProceedBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
@@ -112,7 +112,7 @@
                         </select>
                     </div>
                     <div class="flex flex-row items-center justify-center m-2 space-x-16">
-                        <button @click="proceedLayerBackBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                        <button @click="proceedLayerBackBtn" class="px-4 py-2 font-bold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
                             Back
                         </button>
                         <button @click="proceedLayerBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
@@ -131,12 +131,12 @@
                 </button>
             </div>
             <div v-if="toggleManageForm" class="flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 mt-20">
-                <p v-if="!showGraphAndTables" class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
+                <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
                 <div v-if="showGraphAndTables" class="mt-[100px]">
 
                 </div>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
-                    <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
+                    <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
                         <!-- Upload Section Title -->
                         <p class="mb-4 text-xl font-semibold text-gray-800">Upload Raw Data:</p>
 
@@ -169,7 +169,7 @@
                                 type="submit"
                                 id="submitRawdata"
                                 class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                @click="saveToDatabase"
+                                @click="saveToDatabase_showConfirm"
                             />
                             <!-- Button to Redo Upload -->
 
@@ -180,7 +180,28 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
+                    <div
+                        v-show="showNoFileSelectedError"
+                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                        >
+                        <svg
+                            class="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                        <span>No file selected. Please upload a file.</span>
+                    </div>
+
+                    <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
                         <div v-if="fileLists.length > 0" class="w-[410px] h-[230px] overflow-auto">
                             <p><span class="text-lg font-extrabold">Files:</span> ( You have selected {{ fileLists.length }} files. ) </p>
                             <div
@@ -197,6 +218,30 @@
                             <span class="text-2xl animate-pulse">No files selected</span>
                         </div>
                     </div>
+
+                    <div
+                        v-show="showSaveToDatabase_confirmation"
+                        class="flex flex-col items-center justify-center bg-white p-8 rounded-xl shadow-xl border border-gray-200 max-w-md mx-auto mt-10"
+                        >
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold text-gray-800 text-center">Are you sure you want to upload all these files?</p>
+                        </div>
+                        <div class="flex space-x-6">
+                            <button
+                            @click="saveToDatabase"
+                            class="px-6 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-md"
+                            >
+                            YES
+                            </button>
+                            <button
+                            @click="saveToDatabase_cancel"
+                            class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200 shadow-md"
+                            >
+                            NO
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
                 <div>
                     <div v-show="showProceed1" class="flex flex-col items-center justify-center">
@@ -205,21 +250,62 @@
                         <input
                             type="text"
                             v-model="jhCurveActualModel"
-                            class="px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Model Name"
+                            @input="jhCurveActualModel = jhCurveActualModel.toUpperCase()"
+                            class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="E.G. TIC-0755G"
                         />
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="proceedToCsvUpload"
+                            @click="proceedToCsvUpload_showConfirm"
                             >
                                 Proceed to Upload CSV
                         </button>
                     </div>
+                    <div
+                        v-show="showNoModelError"
+                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                        >
+                        <svg
+                            class="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                        <span>Please type the model name first.</span>
+                    </div>
+                    <div
+                        v-show="showProceedToCsvUpload_confirmation"
+                        class="flex flex-col items-center justify-center bg-white p-8 rounded-xl shadow-xl border border-gray-200 max-w-md mx-auto mt-10"
+                        >
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold text-gray-800 text-center">Are you sure this model name is correct?</p>
+                        </div>
+                        <div class="flex space-x-6">
+                            <button
+                            @click="proceedToCsvUpload"
+                            class="px-6 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-md"
+                            >
+                            YES
+                            </button>
+                            <button
+                            @click="proceedToCsvUpload_cancel"
+                            class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200 shadow-md"
+                            >
+                            NO
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <div v-show="showLoadingForProceed1" class="flex items-center justify-center mt-10 text-xl align-middle animate-pulse">
-                        Loading...
-                    </div>
+                    <DotsLoader v-show="showLoadingForProceed1"/>
                 </div>
                 <div>
                     <div v-show="csvUpload">
@@ -252,13 +338,54 @@
                             <!-- Submit Button -->
                             <button
                             class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            @click="csv_submitFile"
+                            @click="csvUpload_showConfirm"
                             >
                             Submit
                             </button>
                         </div>
-
                         <p class="mt-2 text-sm text-gray-500">Only .csv files are allowed</p>
+                        </div>
+                    </div>
+                    <div
+                        v-show="showNoCsvFileSelectedError"
+                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                        >
+                        <svg
+                            class="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                        <span>No CSV file selected.</span>
+                    </div>
+                    <div
+                        v-show="showCsvUpload_confirmation"
+                        class="flex flex-col items-center justify-center bg-white p-8 rounded-xl shadow-xl border border-gray-200 max-w-md mx-auto mt-10"
+                        >
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold text-gray-800 text-center">Are you sure this CSV file is correct?</p>
+                        </div>
+                        <div class="flex space-x-6">
+                            <button
+                            @click="csv_submitFile"
+                            class="px-6 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-md"
+                            >
+                            YES
+                            </button>
+                            <button
+                            @click="csvUpload_cancel"
+                            class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200 shadow-md"
+                            >
+                            NO
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -272,7 +399,9 @@
                                 <input
                                     type="text"
                                     v-model="jhCurveMassProdName"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    @input="jhCurveMassProdName = jhCurveMassProdName.toUpperCase()"
+                                    placeholder="e.g. K40 541st"
+                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
@@ -280,7 +409,9 @@
                                 <input
                                     type="text"
                                     v-model="propData_factorEmp"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    @input="propData_factorEmp = propData_factorEmp.toUpperCase()"
+                                    placeholder="e.g. Ella"
+                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
@@ -288,7 +419,9 @@
                                 <input
                                     type="text"
                                     v-model="propData_miasEmp"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    @input="propData_miasEmp = propData_miasEmp.toUpperCase()"
+                                    placeholder="e.g. Kathryn"
+                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
@@ -296,7 +429,9 @@
                                 <input
                                     type="text"
                                     v-model="jhCurveLotNo"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    @input="jhCurveLotNo = jhCurveLotNo.toUpperCase()"
+                                    placeholder="e.g. 100/101-1"
+                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                         </div>
@@ -321,18 +456,10 @@
                 </div>
 
                <!-- Loading Indicator -->
-                <div
-                v-if="layerTableRowLoading"
-                class="flex items-center justify-center"
-                >
-                <div class="flex flex-col items-center">
-                    <div class="w-12 h-12 border-t-4 border-blue-500 rounded-full animate-spin"></div>
-                    <span class="mt-4 text-lg font-medium text-white">Loading...</span>
-                </div>
-                </div>
-
+                <DotsLoader v-if="layerTableRowLoading" />
+            </div>
             <div v-show="showGraphAndTables">
-                <div class="flex flex-row justify-center space-x-4">
+                <div class="flex flex-row justify-center space-x-4 mt-[200px]">
                     <div class="w-[500px] h-[420px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
                         <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
                     </div>
@@ -358,7 +485,7 @@
                     </div>
                 </div>
 
-                <div class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
+                <div class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50 mb-10">
                     <div class="mb-4">
                         <p class="text-center">PROPERTY DATA</p>
                     </div>
@@ -366,11 +493,11 @@
                         <p class="mr-10">Mias. Employee: <span>{{ propData_miasEmp }}</span> </p>
                         <p>Factor Employee: <span>{{ propData_factorEmp }}</span></p>
                     </div>
-                    <div class="flex flex-col items-center justify-center w-full ">
-                        <div class="flex flex-row items-start justify-center w-full">
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="flex flex-row items-start justify-center">
                             <div class="flex flex-row flex-[3] mb-10 shadow-2xl">
-                                <div class="min-w-[1000px]">
-                                    <table class="w-full border border-gray-300 table-auto rounded-xl">
+                                <div class="min-w-[700px]">
+                                    <table class="border border-gray-300 table-auto rounded-xl">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
@@ -480,7 +607,7 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-row">
+                        <div class="flex flex-row"> <!-- DIV 5 -->
                             <div class="mb-16">
                                 <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
                                     <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
@@ -516,36 +643,57 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="flex flex-col items-center justify-center p-2 mb-5 ml-10 bg-blue-200 shadow-lg rounded-xl">
-                                <div class="flex flex-row justify-center">
-                                    <p class="px-5 mb-2 text-sm font-extrabold text-white bg-blue-900 shadow-xl rounded-xl">Data Results:</p>
+                            <div class="flex flex-col items-center justify-center p-4 mb-4 ml-6 bg-blue-200 rounded-lg shadow-md text-sm space-y-3"> <!-- DIV 6 -->
+
+                                <!-- Header -->
+                                <div>
+                                    <p class="px-4 py-1 text-xs font-bold text-white bg-blue-900 rounded-md shadow">Data Results:</p>
                                 </div>
-                                <div class="flex flex-row items-center px-8 py-2 bg-white rounded-3xl">
-                                    <p class="mr-2 text-sm font-extrabold">
-                                        <span :class="adjustColor_rejectOKNG(rejectOKNGlist)" v-for="(rejectOKNGlist, index) in rejectOKNG" :key="index"> {{ rejectOKNGlist }} </span>
+
+                                <div class="w-[600px] h-[50px] px-4 py-2 bg-white rounded-2xl text-xs space-y-1">
+                                    <p class="font-bold flex gap-1 whitespace-nowrap">
+                                        <span
+                                        v-for="(rejectOKNGlist, index) in rejectOKNG"
+                                        :key="index"
+                                        :class="adjustColor_rejectOKNG(rejectOKNGlist)"
+                                        >
+                                        {{ rejectOKNGlist }}
+                                        </span>
                                     </p>
-                                    <p class="ml-2 text-sm">
-                                        <span :class="adjustColor_rejectInstructions"> {{ rejectInstruction }} </span>
+                                    <p class="whitespace-nowrap">
+                                        <span :class="adjustColor_rejectInstructions">
+                                        {{ rejectInstruction }}
+                                        </span>
                                     </p>
                                 </div>
-                                <div class="flex flex-row items-center mt-4 mb-0 align-baseline">
-                                    <div class="flex flex-col items-center px-4 py-2 mr-2 bg-white rounded-3xl">
-                                        <p class="text-sm font-semibold">
-                                            <span :class="adjustColor_rejectiHc"> {{ rejectiHcRemarks }} </span>
-                                        </p>
-                                        <p class="text-sm font-extrabold">
-                                            <span :class="adjustColor_iHcValue"> {{ getHighestSampleVariance }} </span>
-                                        </p>
+
+                                <!-- Additional Info Row -->
+                                <div class="flex justify-center items-stretch space-x-2 w-full">
+
+                                    <!-- iHc Remarks -->
+                                    <div class="flex flex-col items-center justify-center px-4 py-2 bg-white rounded-2xl w-1/2 text-center">
+                                    <p class="font-semibold text-xs">
+                                        <span :class="adjustColor_rejectiHc">{{ rejectiHcRemarks }}</span>
+                                    </p>
+                                    <p class="font-bold text-sm">
+                                        <span :class="adjustColor_iHcValue">{{ getHighestSampleVariance }}</span>
+                                    </p>
                                     </div>
-                                    <div class="flex px-4 py-2 ml-2 bg-white rounded-3xl">
-                                        <p class="text-sm font-extrabold">
-                                            <span :class="adjustColor_rejectLotRemarks(rejectLotRemarksList)" v-for="(rejectLotRemarksList, index) in rejectLotRemarks" :key="index"> {{ rejectLotRemarksList }} </span>
-                                        </p>
+
+                                    <!-- Lot Remarks -->
+                                    <div class="flex flex-wrap items-center justify-center px-4 py-2 bg-white rounded-2xl w-1/2 font-bold text-xs">
+                                    <span
+                                        v-for="(rejectLotRemarksList, index) in rejectLotRemarks"
+                                        :key="index"
+                                        :class="adjustColor_rejectLotRemarks(rejectLotRemarksList)"
+                                    >
+                                        {{ rejectLotRemarksList }}
+                                    </span>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -559,6 +707,7 @@
     import { Chart, registerables } from 'chart.js'; // Import all required components
     import Papa from 'papaparse';
     import axios from 'axios';
+    import DotsLoader from '@/Components/DotsLoader.vue';
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
 
@@ -567,6 +716,7 @@
     const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
     const showUploadData = ref(true)
+    const showUploadTPMFiles = ref(true);
     const showLoadingForProceed1 = ref(false);
     const showProceed1 = ref(false);
     const showProceed2 = ref(false);
@@ -584,6 +734,13 @@
     const currentLayerName = ref('');
     const currentLayerNo = ref(null);
     const showFurnaceName = ref('');
+    const showProceedToCsvUpload_confirmation = ref(false);
+    const showSaveToDatabase_confirmation = ref(false);
+    const showNoFileSelectedError = ref(false);
+    const showNoModelError = ref(false);
+    const showSerialNo = ref(true);
+    const showCsvUpload_confirmation = ref(false);
+    const showNoCsvFileSelectedError = ref(false);
 
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
@@ -603,18 +760,40 @@
         generateSerialNumber();
     }
 
-    const proceedToCsvUpload = async () => {
+    const proceedToCsvUpload_showConfirm = () => {
         if(jhCurveActualModel.value == null || jhCurveActualModel.value == ''){
-            alert('Please type the Model Name first.');
+            //alert('Please type the Model Name first.');
+            showNoModelError.value = true;
+            showSerialNo.value = false;
+            showProceed1.value = false;
+
+            setTimeout(() => {
+                showNoModelError.value = false;
+                showSerialNo.value = true;
+                showProceed1.value = true;
+            }, 2000);
             return;
         }else{
-            showLoadingForProceed1.value = true;
-            setTimeout(() => {
-                csvUpload.value = true;
-                showProceed1.value = false;
-                showLoadingForProceed1.value = false;
-            }, 1000); // Delay just enough to let Vue catch up
+            showProceedToCsvUpload_confirmation.value = true;
+            showSerialNo.value = false;
+            showProceed1.value = false;
         }
+    }
+
+    const proceedToCsvUpload_cancel = () => {
+        showProceedToCsvUpload_confirmation.value = false;
+        showProceed1.value = true;
+    }
+
+    const proceedToCsvUpload = async () => {
+        showProceedToCsvUpload_confirmation.value = false;
+        showLoadingForProceed1.value = true;
+        setTimeout(() => {
+            csvUpload.value = true;
+            showProceed1.value = false;
+            showLoadingForProceed1.value = false;
+        }, 500); // Delay just enough to let Vue catch up
+
     }
 
     const proceedToFinal = () => {
@@ -747,14 +926,35 @@
         csv_selectedFile.value = event.target.files[0]
     }
 
-    const csv_submitFile = async () => {
-    if (!csv_selectedFile.value) {
-        alert('Please select a CSV file first.')
-        return
-    }else{
-        csvUpload.value = false;
-        showProceed2.value = true;
+    const csvUpload_showConfirm = () => {
+        if (!csv_selectedFile.value) {
+            //alert('Please select a CSV file first.')
+            showSerialNo.value = false;
+            csvUpload.value = false;
+            showNoCsvFileSelectedError.value = true;
+            setTimeout(() => {
+                //showCsv.value = false;
+                showSerialNo.value = true;
+                csvUpload.value = true;
+                showNoCsvFileSelectedError.value = false;
+            }, 2000);
+            return;
+        }else{
+            showCsvUpload_confirmation.value = true;
+            showSerialNo.value = false;
+            csvUpload.value = false;
+        }
     }
+
+    const csvUpload_cancel = () => {
+        showCsvUpload_confirmation.value = false;
+        csvUpload.value = true;
+        csv_clearFile();
+    }
+
+    const csv_submitFile = async () => {
+    csvUpload.value = false;
+    showProceed2.value = true;
 
     Papa.parse(csv_selectedFile.value, {
         header: true,
@@ -1414,13 +1614,38 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         //console.log('Files stored:', fileData.value);
     };
 
-    const saveToDatabase = () => {
-        if (fileData.value.length === 0) {
-            console.error("No file selected! fileData is empty.");
-            return; // Exit the function if fileData is empty
-        }
+    const saveToDatabase_showConfirm = () => {
+        if (!fileData.value || fileData.value.length === 0) {
+            console.error("No file selected! fileData is empty or null.");
 
-         // Sort the files alphabetically by their name
+            showNoFileSelectedError.value = true;
+            showUploadTPMFiles.value = false;
+            showSerialNo.value = false;
+
+            setTimeout(() => {
+                showNoFileSelectedError.value = false;
+                showUploadTPMFiles.value = true;
+                showSerialNo.value = true;
+            }, 2000);
+
+            return; // Exit the function if fileData is null or empty
+        } else {
+            showSaveToDatabase_confirmation.value = true;
+            showUploadTPMFiles.value = false;
+            showSerialNo.value = false;
+        }
+    }
+
+    const saveToDatabase_cancel = () => {
+        showSaveToDatabase_confirmation.value = false;
+        showUploadTPMFiles.value = true;
+        showSerialNo.value = true;
+        clearFileUpload();
+    }
+
+    const saveToDatabase = () => {
+        showUploadData.value = false;
+        // Sort the files alphabetically by their name
         fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
         //console.log('Sorted Files:', fileData.value);
 
@@ -1468,7 +1693,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     ) {
                         const [x, y] = parsedData[key].split(',').map(Number);
 
-                         // Custom condition: x must be less than 100 and y must be greater than -1000
+                        // Custom condition: x must be less than 100 and y must be greater than -1000
                         if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
                             //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
                             continue; // Skip this iteration if condition is not met
@@ -1622,8 +1847,10 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             console.error('Error sending data to API:', error.response?.data || error.message);
         } finally {
             showProceed1.value = true;
+            showSerialNo.value = true;
             showUploadData.value = false;
             layerTableRowLoading.value = false;
+            showSaveToDatabase_confirmation.value = false;
         }
     };
 
@@ -1676,8 +1903,12 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const showAllData = async () => {
         layerTableRowLoading.value = true;
         showProceed3.value = false;
+        toggleManageForm.value = false;
+        showAddNewDataLayer.value = false;
         try {
             showProceed3.value = false;
+            toggleManageForm.value = false;
+            showAddNewDataLayer.value = false;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
             console.log('API Response showallData:', response.data);
 
@@ -2035,6 +2266,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } finally {
             showProceed3.value = false;
             showGraphAndTables.value = true;
+            toggleManageForm.value = false;
         }
         await fetchDataCreateGraph();
     };
