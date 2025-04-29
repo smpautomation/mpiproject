@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-      <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
+      <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
 
         <div v-if="serialList.length == 0"> <!-- default div -->
             <div class="flex flex-row items-center justify-center mt-10 align-baseline">
@@ -18,15 +18,7 @@
                     <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
                     </select>
                 </div>
-                <div class="flex flex-row items-center justify-center m-10 space-x-8">
-                    <!-- Button -->
-                    <button
-                        @click="generateReport"
-                        class="px-6 py-3 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    >
-                        Generate Report
-                    </button>
-
+                <div class="flex flex-col items-center justify-center space-x-8">
                     <!-- Checkbox + Label -->
                     <label class="flex items-center space-x-3 text-lg">
                         <!--
@@ -42,8 +34,15 @@
                         type="checkbox"
                         class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                            <span>(Tick this box if the model is for Automotive.)</span>
+                            <span>(Tick this box if the model is for Automotive)</span>
                     </label>
+                    <!-- Button -->
+                    <button
+                        @click="generateReport"
+                        class="px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                        Generate Report
+                    </button>
                 </div>
                 <div v-show="showNotif2" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
@@ -576,8 +575,11 @@
                             <span v-if="reportihcMinimum < inspectioniHcStandard" class="font-extrabold text-red-700 opacity-100">
                                 - N.G iHc
                             </span>
-                            <span v-else-if="reportihcMinimum < inspectioniHcStandard + 500" class="font-extrabold text-blue-600 opacity-100">
-                                - iHc Below Target+500 Oe
+                            <span
+                                v-else-if="reportihcMinimum < Number(inspectioniHcStandard) + 500"
+                                class="font-extrabold text-blue-600 opacity-100">
+                                    {{ console.log('reportihcMinimum:', reportihcMinimum, 'inspectioniHcStandard + 500:', Number(inspectioniHcStandard) + 1500) }}
+                                    - iHc Below Target+500 Oe
                             </span>
                             <span v-if="reportihkMinimum < inspectioniHkStandard" class="font-extrabold text-red-700 opacity-100">
                                 - N.G iHk

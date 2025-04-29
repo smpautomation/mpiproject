@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto bg-gray-100">
+        <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showStartManageDiv">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
@@ -458,13 +458,17 @@
                <!-- Loading Indicator -->
                 <DotsLoader v-if="layerTableRowLoading" />
             </div>
-            <div v-show="showGraphAndTables">
-                <div class="flex flex-row justify-center space-x-4 mt-[200px]">
+            <DotsLoader v-show="showLoadingForGraphAndTables"/>
+            <div v-show="showGraphAndTables" class="flex flex-col">
+                <div class="flex flex-col justify-center items-center">
+                    <p class="animate-pulse">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
+                </div>
+                <div class="flex flex-row justify-center space-x-4 mt-5">
                     <div class="w-[500px] h-[420px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
                         <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
                     </div>
                     <!-- Side Content -->
-                    <div class="w-[300px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                    <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
                         <div class="flex flex-col items-start space-y-2">
                             <p>
                                 SMP Lot (
@@ -715,6 +719,7 @@
     const showFurnaceCreatedNotif = ref(false);
     const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
+    const showLoadingForGraphAndTables = ref(false);
     const showUploadData = ref(true)
     const showUploadTPMFiles = ref(true);
     const showLoadingForProceed1 = ref(false);
@@ -955,6 +960,7 @@
     const csv_submitFile = async () => {
     csvUpload.value = false;
     showProceed2.value = true;
+    showCsvUpload_confirmation.value = false;
 
     Papa.parse(csv_selectedFile.value, {
         header: true,
@@ -1901,6 +1907,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     // Function to fetch data from the API
     const showAllData = async () => {
+        showLoadingForGraphAndTables.value = true;
         layerTableRowLoading.value = true;
         showProceed3.value = false;
         toggleManageForm.value = false;
@@ -2265,7 +2272,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             return;
         } finally {
             showProceed3.value = false;
-            showGraphAndTables.value = true;
             toggleManageForm.value = false;
         }
         await fetchDataCreateGraph();
@@ -2307,7 +2313,7 @@ const fetchDataCreateGraph = async () => {
             yAxis: JSON.parse(row.y || "[]"), // Parse y values
             color: generateColor(index), // Assign a unique color
         }));
-        showGraphAndTables.value = true;  // Set this to true after data is loaded
+        //showGraphAndTables.value = true;  // Set this to true after data is loaded
 
         // Set dataReady to true once the data is ready
         dataReady.value = true;
@@ -2325,6 +2331,9 @@ const fetchDataCreateGraph = async () => {
     } catch (err) {
         error.value = err;
         console.error("Error fetching data:", err);
+    } finally {
+        showGraphAndTables.value = true;
+        showLoadingForGraphAndTables.value = false;
     }
 };
 

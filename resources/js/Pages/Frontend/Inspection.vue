@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
+        <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showMainUI" class="flex flex-col items-center justify-center">
                 <div>
                     <button @click="insertBtn" class="relative flex px-6 py-3 m-10 overflow-hidden font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
