@@ -51,10 +51,10 @@ return new class extends Migration
                 ->onUpdate('cascade');
             $table->string('oven_machine_no')->nullable();
             $table->string('time_loading')->nullable();
-            $table->float('temp_time_loading')->nullable();
+            $table->string('temp_time_loading')->nullable();
             $table->string('date_oven_info')->nullable();
             $table->string('time_unloading')->nullable();
-            $table->float('temp_time_unloading')->nullable();
+            $table->string('temp_time_unloading')->nullable();
             $table->string('shift_oven_info')->nullable();
             $table->string('operator_oven_info')->nullable();
             $table->boolean('withCarmark')->nullable();
