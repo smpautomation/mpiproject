@@ -25,18 +25,14 @@ class TPMDataController extends Controller
         if (!$serial_no) {
             try{
                 $tpmData = TPMData::all();
-                $remarks = TPMDataRemark::all();
-                $aggregateFunctions = TPMDataAggregateFunctions::all();
-                if($report){
-                    $reportData = ReportData::all();
-                }
+                $category = TPMDataCategory::latest()->take(20)->get();
+                
                 return response()->json([
                     'status' => true,
                     'message' => 'TPM Datas retrieved successfully',
                     'data' => [
                         'tpmData' => $tpmData,
-                        'remarks' => $remarks,
-                        'aggregateFunctions' =>  $aggregateFunctions
+                        'category' => $category
                     ]
                 ], 200);
             }catch(\Exception $e){
