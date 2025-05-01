@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DataInstructions;
 use App\Models\DataInstructionsAggregate;
+use App\Models\FurnaceData;
+use App\Models\LayerData;
 use App\Models\MieGxDataInstructions;
 use App\Models\MieGxDataInstructionsAggregate;
 use Illuminate\Http\Request;
@@ -24,15 +26,46 @@ class TPMDataController extends Controller
         $report = $request->query('report');
         if (!$serial_no) {
             try{
-                $tpmData = TPMData::all();
-                $category = TPMDataCategory::latest()->take(20)->get();
+                $latestSerials = TPMData::select('serial_no')
+                            ->groupBy('serial_no')
+                            ->orderByRaw('MAX(created_at) DESC')
+                            ->limit(20)
+                            ->pluck('serial_no');
+                $tpmData = TPMData::whereIn('serial_no', $latestSerials)
+                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace_id', 'layer_no')
+                            ->orderByDesc('created_at')
+                            ->get()
+                            ->groupBy('serial_no');;
+                $category = TPMDataCategory::whereIn('tpm_data_serial', $latestSerials)
+                            ->orderByDesc('created_at')
+                            ->select('tpm_data_serial', 'actual_model', 'massprod_name', 'jhcurve_lotno')
+                            ->get()
+                            ->groupBy('tpm_data_serial');
+                $reportData = ReportData::whereIn('tpm_data_serial', $latestSerials)
+                            ->orderByDesc('created_at')
+                            ->select('tpm_data_serial', 'smp_judgement', 'prepared_by', 'checked_by', 'approved_by')
+                            ->get()
+                            ->groupBy('tpm_data_serial');
+                $grouped = [];
+                foreach ($latestSerials as $serial) {
+                    $grouped[$serial] = [
+                        'tpm' => $tpmData[$serial] ?? collect(),
+                        'category' => $category[$serial] ?? collect(),
+                        'report' => $reportData[$serial] ?? collect()
+                    ];
+                }
+
+                $furnace = FurnaceData::all();
+                $layer = LayerData::all();
+                
                 
                 return response()->json([
                     'status' => true,
                     'message' => 'TPM Datas retrieved successfully',
                     'data' => [
-                        'tpmData' => $tpmData,
-                        'category' => $category
+                        'tpmData' => $grouped,
+                        'furnace' => $furnace,
+                        'layer' => $layer,
                     ]
                 ], 200);
             }catch(\Exception $e){
