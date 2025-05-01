@@ -445,7 +445,7 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $category = TPMDataCategory::where( 'tpm_data_serial',$id )
+            $category = TPMDataCategory::where('tpm_data_serial',$id)
                                 ->first();
             $categoryFields = $request->all();
             $category->update($categoryFields);

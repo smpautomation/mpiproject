@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto overflow-y-auto bg-gray-100">
+        <div class="flex flex-col items-center justify-center h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showStartManageDiv">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
@@ -130,7 +130,7 @@
                     Begin Process
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4">
+            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 mt-20">
                 <p class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
@@ -196,8 +196,118 @@
                     </div>
                 </div>
                 <div>
-                    <div v-show="showProceed" class="flex flex-col items-center justify-center">
-                        <p>UPLOAD SUCCESSFULLY COMPLETED!</p>
+                    <div v-show="showProceed1" class="flex flex-col items-center justify-center">
+                        <p class="text-lg font-extrabold animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
+                        <p class="mt-5">Please Type the Model Name before proceeding: </p>
+                        <input
+                            type="text"
+                            v-model="jhCurveActualModel"
+                            class="px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Model Name"
+                        />
+                        <button
+                            class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                            @click="proceedToCsvUpload"
+                            >
+                                Proceed to Upload CSV
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div v-show="showLoadingForProceed1" class="flex items-center justify-center mt-10 text-xl align-middle animate-pulse">
+                        Loading...
+                    </div>
+                </div>
+                <div>
+                    <div v-show="csvUpload">
+                        <!-- Upload Section Title -->
+                        <p class="mb-4 text-xl font-semibold text-gray-800">Upload file for Temperature and Data Status:</p>
+
+                        <!-- File Input Section -->
+                        <div class="flex flex-col items-center w-full space-y-4">
+                        <!-- File Input Label -->
+                        <label for="csv-file-upload" class="text-lg font-medium text-gray-600">Select a file to upload:</label>
+
+                        <!-- File Upload Input -->
+                        <input
+                            id="csv-file-upload"
+                            type="file"
+                            accept=".csv"
+                            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            @change="csv_handleFileSelect"
+                        />
+
+                        <div>
+                            <!-- Clear Button -->
+                            <button
+                            class="px-4 py-2 mr-4 font-semibold text-white bg-red-700 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            @click="csv_clearFile"
+                            >
+                            Clear
+                            </button>
+
+                            <!-- Submit Button -->
+                            <button
+                            class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            @click="csv_submitFile"
+                            >
+                            Submit
+                            </button>
+                        </div>
+
+                        <p class="mt-2 text-sm text-gray-500">Only .csv files are allowed</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div v-show="showProceed2" class="flex flex-col items-center justify-center">
+                        <p class="text-lg font-extrabold animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
+                        <p class="mt-5">Please fill in the details before proceeding</p>
+                        <div class="flex flex-row">
+                            <div class="flex flex-col items-start justify-start">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Mass Production Name:</label>
+                                <input
+                                    type="text"
+                                    v-model="jhCurveMassProdName"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Mias. Employee:</label>
+                                <input
+                                    type="text"
+                                    v-model="propData_factorEmp"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Factor Employee:</label>
+                                <input
+                                    type="text"
+                                    v-model="propData_miasEmp"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Lot No.:</label>
+                                <input
+                                    type="text"
+                                    v-model="jhCurveLotNo"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                        <button
+                            class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                            @click="proceedToFinal"
+                            >
+                                Submit
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div v-show="showProceed3" class="flex flex-col items-center justify-center">
+                        <p class="text-lg font-extrabold animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
                             @click="showAllData"
@@ -219,327 +329,220 @@
                 </div>
 
             <div v-show="showGraphAndTables">
-                 <!-- Chart Container -->
-                 <div class="w-full max-w-[1500px] h-[850px] bg-blue-100 rounded-xl mx-auto">
-                    <!-- Ensure canvas is rendered only when data is ready -->
-                    <canvas v-if="dataReady" ref="myChartCanvas" width="1000" height="550"></canvas>
+                <div class="flex flex-row justify-center space-x-4">
+                    <div class="w-[500px] h-[420px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
+                        <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
+                    </div>
+                    <!-- Side Content -->
+                    <div class="w-[300px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                        <div class="flex flex-col items-start space-y-2">
+                            <p>
+                                SMP Lot (
+                                <span>{{ jhCurveMassProdName }}</span>
+                                Mass Production )
+                            </p>
+                            <p>
+                                Furnace Cycle No. : {{ jhCurveFurnaceName }}
+                            </p>
+                            <p>
+                                <span>{{ jhCurveActualModel }}</span>
+                                ( {{ jhCurveModel }} )
+                            </p>
+                            <p>
+                                Lot # {{ jhCurveLotNo }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-6 rounded-lg shadow-lg mt-14 bg-gray-50">
-                    <p class="flex p-4 mb-8 text-2xl font-semibold text-gray-800 rounded-md shadow-xl bg-gradient-to-r from-yellow-400 to-yellow-100">
-                        PROPERTY DATA
-                    </p>
 
-                        <div class="flex flex-col items-center justify-center w-full">
-                            <div class="flex flex-row items-center justify-center w-full">
-                                <div class="w-full mb-20 overflow-x-auto shadow-2xl"> <!-- Added overflow-x-auto for scrollable table -->
-                                    <!-- Table with Full Width -->
-                                    <table class="w-full overflow-hidden border border-gray-300 table-auto rounded-xl">
+                <div class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
+                    <div class="mb-4">
+                        <p class="text-center">PROPERTY DATA</p>
+                    </div>
+                    <div class="flex flex-row justify-center">
+                        <p class="mr-10">Mias. Employee: <span>{{ propData_miasEmp }}</span> </p>
+                        <p>Factor Employee: <span>{{ propData_factorEmp }}</span></p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center w-full ">
+                        <div class="flex flex-row items-start justify-center w-full">
+                            <div class="flex flex-row flex-[3] mb-10 shadow-2xl">
+                                <div class="min-w-[1000px]">
+                                    <table class="w-full border border-gray-300 table-auto rounded-xl">
                                         <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
                                             <tr>
                                                 <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
                                                     :key="tableLayerColumnHeader.name"
                                                     :colspan="tableLayerColumnHeader.colspan"
-                                                    class="px-2 py-2 text-sm font-medium text-center border border-white">
+                                                    class="px-[2px] py-[3px] text-[10px] font-medium text-center border border-white">
                                                     {{ tableLayerColumnHeader.name }}
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white">
-                                            <tr
-                                                v-for="item in combinedData"
-                                                :key="item.id"
-                                                class="border-b hover:bg-gray-50"
-                                            >
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.date }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.serial_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.code_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.order_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.type }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.sintering_furnace_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.furnace_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.zone }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.pass_no }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.Br }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.Br_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.iHc }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.iHc_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHc_remarks == '0' ? '' : item.remark.iHc_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.iHk }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.iHk_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHk_remarks == '0' ? '' : item.remark.iHk_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.BHMax }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.BHMax_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.BHMax_remarks == '0' ? '' : item.remark.BHMax_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.iHr95 }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.iHr95_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.iHr98 }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.iHr98_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHr98_remarks == '0' ? '' : item.remark.iHr98_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.iHkiHc }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.iHkiHc_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.iHkiHc_remarks == '0' ? '' : item.remark.iHkiHc_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.Br4pai }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.Br4pai_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.Br4pai_remarks == '0' ? '' : item.remark.Br4pai_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.bHc }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.bHc_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.bHc_remarks == '0' ? '' : item.remark.bHc_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.Squareness }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark.Squareness_remarks == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark.Squareness_remarks == '0' ? '' : item.remark.Squareness_remarks }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item['4paiId'] }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark['4paiId_remarks'] == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark['4paiId_remarks'] == '0' ? '' : item.remark['4paiId_remarks'] }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item['4paiIs'] }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark['4paiIs_remarks'] == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark['4paiIs_remarks'] == '0' ? '' : item.remark['4paiIs_remarks'] }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item['4paiIa'] }}
-                                                </td>
-                                                <td
-                                                    v-if="item.remark['4paiIa_remarks'] == '1'"
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 bg-red-500 text-white'">
-                                                    E
-                                                </td>
-                                                <td
-                                                    v-else
-                                                    :class="'px-3 py-2 text-sm text-center border border-blue-500 text-gray-700'">
-                                                    {{ item.remark['4paiIa_remarks'] == '0' ? '' : item.remark['4paiIa_remarks'] }}
-                                                </td>
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ item.Tracer }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div>
-                                    <table class="ml-5 overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
-                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
-                                            <tr>
-                                                <th class="px-3 py-6 text-xl font-extrabold text-center border border-white">Sample&nbsp;with&nbsp;Variance</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white">
-                                            <tr v-for="(variance, index) in sampleWithVariances" :key="index">
-                                                <td class="px-3 py-2 text-sm text-center text-gray-700 border border-blue-500">
-                                                    {{ variance }}
-                                                </td>
-                                            </tr>
+                                        <tr
+                                            v-for="item in combinedData"
+                                            :key="item.id"
+                                            class="border-b hover:bg-gray-50"
+                                        >
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.date }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.serial_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.code_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.order_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.type }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.sintering_furnace_no }}</td>
+                                            <td class="whitespace-nowrap px-[0px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.furnace_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.zone }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.pass_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br }}</td>
+                                            <td v-if="item.remark.Br_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHc }}</td>
+                                            <td v-if="item.remark.iHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHc_remarks == 0 ? '' : item.remark.iHc_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHk }}</td>
+                                            <td v-if="item.remark.iHk_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHk_remarks == 0 ? '' : item.remark.iHk_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.BHMax }}</td>
+                                            <td v-if="item.remark.BHMax_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.BHMax_remarks == 0 ? '' : item.remark.BHMax_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr95 }}</td>
+                                            <td v-if="item.remark.iHr95_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr98 }}</td>
+                                            <td v-if="item.remark.iHr98_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr98_remarks == 0 ? '' : item.remark.iHr98_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHkiHc }}</td>
+                                            <td v-if="item.remark.iHkiHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHkiHc_remarks == 0 ? '' : item.remark.iHkiHc_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br4pai }}</td>
+                                            <td v-if="item.remark.Br4pai_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br4pai_remarks == 0 ? '' : item.remark.Br4pai_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.bHc }}</td>
+                                            <td v-if="item.remark.bHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.bHc_remarks == 0 ? '' : item.remark.bHc_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Squareness }}</td>
+                                            <td v-if="item.remark.Squareness_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Squareness_remarks == 0 ? '' : item.remark.Squareness_remarks }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiId'] }}</td>
+                                            <td v-if="item.remark['4paiId_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiId_remarks'] == 0 ? '' : item.remark['4paiId_remarks'] }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIs'] }}</td>
+                                            <td v-if="item.remark['4paiIs_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIs_remarks'] == 0 ? '' : item.remark['4paiIs_remarks'] }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIa'] }}</td>
+                                            <td v-if="item.remark['4paiIa_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                            <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIa_remarks'] == 0 ? '' : item.remark['4paiIa_remarks'] }}</td>
+                                            <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Tracer }}</td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+                            <div class="flex flex-row flex-[1]"> <!-- DIV 2 -->
+                                <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <thead class="text-white bg-blue-400">
+                                        <tr>
+                                            <th class="px-[3px] py-[3px] text-[10px] font-extrabold text-center border border-white">Sample&nbsp;with&nbsp;Variance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr v-for="(variance, index) in sampleWithVariances" :key="index">
+                                            <td class="px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                {{ variance }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="flex flex-row flex-[1]"> <!-- DIV 2 -->
+                                <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <thead class="text-white bg-blue-400">
+                                        <tr>
+                                            <th class="px-[3px] py-[3px] text-[10px] font-extrabold text-center border border-white">Temp</th>
+                                            <th class="px-[3px] py-[3px] text-[10px] font-extrabold text-center border border-white">Data&nbsp;Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr
+                                            v-for="item in combinedData"
+                                            :key="item.id"
+                                            class="border-b hover:bg-gray-50"
+                                        >
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.temperature }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.data_status }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                            <div class="flex flex-row">
-                                <div class="mb-16">
-                                    <table class="overflow-hidden border border-gray-300 rounded-lg shadow-2xl table-auto">
-                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
-                                            <tr>
-                                                <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-3 py-2 text-2xl font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-blue-700">AVERAGE</td>
-                                                <td v-for="(aggAveValue, index) in aggAveValues" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
-                                                    {{ aggAveValue.value }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-blue-700">MAXIMUM</td>
-                                                <td v-for="(aggMaxValue, index) in aggMaxValues" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
-                                                    {{ aggMaxValue.value }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-blue-700">MINIMUM</td>
-                                                <td v-for="(aggMinValue, index) in aggMinValues" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
-                                                    {{ aggMinValue.value }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-3 py-2 text-2xl font-extrabold text-center text-white bg-red-800">NG COUNTER</td>
-                                                <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-3 py-2 text-xl text-center text-gray-700 border border-blue-500">
-                                                    {{ ngCount }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div class="flex flex-row">
+                            <div class="mb-16">
+                                <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                    <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                        <tr>
+                                            <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-[3px] py-[2px] text-[12px] font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-blue-700">AVERAGE</td>
+                                            <td v-for="(aggAveValue, index) in aggAveValues" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                {{ aggAveValue.value }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-blue-700">MAXIMUM</td>
+                                            <td v-for="(aggMaxValue, index) in aggMaxValues" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                {{ aggMaxValue.value }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-blue-700">MINIMUM</td>
+                                            <td v-for="(aggMinValue, index) in aggMinValues" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                {{ aggMinValue.value }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-red-800">NG&#160;COUNTER</td>
+                                            <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                {{ ngCount }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-2 mb-5 ml-10 bg-blue-200 shadow-lg rounded-xl">
+                                <div class="flex flex-row justify-center">
+                                    <p class="px-5 mb-2 text-sm font-extrabold text-white bg-blue-900 shadow-xl rounded-xl">Data Results:</p>
                                 </div>
-                                <div class="flex flex-col items-center justify-center p-5 mb-10 ml-40 bg-blue-200 shadow-lg rounded-xl">
-                                    <div class="flex flex-row justify-center">
-                                        <p class="px-12 mb-4 text-3xl font-extrabold text-white bg-blue-900 shadow-xl rounded-xl">Data Results:</p>
-                                    </div>
-                                    <div class="flex flex-row items-center px-16 py-6 bg-white rounded-3xl">
-                                        <p class="mr-2 text-4xl font-extrabold">
-                                            <span :class="adjustColor_rejectOKNG(rejectOKNGlist)" v-for="(rejectOKNGlist, index) in rejectOKNG" :key="index"> {{ rejectOKNGlist }} </span>
+                                <div class="flex flex-row items-center px-8 py-2 bg-white rounded-3xl">
+                                    <p class="mr-2 text-sm font-extrabold">
+                                        <span :class="adjustColor_rejectOKNG(rejectOKNGlist)" v-for="(rejectOKNGlist, index) in rejectOKNG" :key="index"> {{ rejectOKNGlist }} </span>
+                                    </p>
+                                    <p class="ml-2 text-sm">
+                                        <span :class="adjustColor_rejectInstructions"> {{ rejectInstruction }} </span>
+                                    </p>
+                                </div>
+                                <div class="flex flex-row items-center mt-4 mb-0 align-baseline">
+                                    <div class="flex flex-col items-center px-4 py-2 mr-2 bg-white rounded-3xl">
+                                        <p class="text-sm font-semibold">
+                                            <span :class="adjustColor_rejectiHc"> {{ rejectiHcRemarks }} </span>
                                         </p>
-                                        <p class="ml-2 text-2xl">
-                                            <span :class="adjustColor_rejectInstructions"> {{ rejectInstruction }} </span>
+                                        <p class="text-sm font-extrabold">
+                                            <span :class="adjustColor_iHcValue"> {{ getHighestSampleVariance }} </span>
                                         </p>
                                     </div>
-                                    <div class="flex flex-row items-center mt-4 mb-0 align-baseline">
-                                        <div class="flex flex-col items-center px-4 py-4 mr-2 bg-white rounded-3xl">
-                                            <p class="text-2xl font-semibold">
-                                                <span :class="adjustColor_rejectiHc"> {{ rejectiHcRemarks }} </span>
-                                            </p>
-                                            <p class="text-4xl font-extrabold">
-                                                <span :class="adjustColor_iHcValue"> {{ getHighestSampleVariance }} </span>
-                                            </p>
-                                        </div>
-                                        <div class="flex px-4 py-8 ml-2 bg-white rounded-3xl">
-                                            <p class="text-4xl font-extrabold">
-                                                <span :class="adjustColor_rejectLotRemarks(rejectLotRemarksList)" v-for="(rejectLotRemarksList, index) in rejectLotRemarks" :key="index"> {{ rejectLotRemarksList }} </span>
-                                            </p>
-                                        </div>
+                                    <div class="flex px-4 py-2 ml-2 bg-white rounded-3xl">
+                                        <p class="text-sm font-extrabold">
+                                            <span :class="adjustColor_rejectLotRemarks(rejectLotRemarksList)" v-for="(rejectLotRemarksList, index) in rejectLotRemarks" :key="index"> {{ rejectLotRemarksList }} </span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -551,6 +554,8 @@
     import Frontend from '@/Layouts/FrontendLayout.vue';
     import { ref, computed, onMounted, nextTick } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
+    import Papa from 'papaparse';
+    import axios from 'axios';
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
 
@@ -558,8 +563,12 @@
     const showFurnaceCreatedNotif = ref(false);
     const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
-    const showUploadData = ref(true);
-    const showProceed = ref(false);
+    const showUploadData = ref(true)
+    const showLoadingForProceed1 = ref(false);
+    const showProceed1 = ref(false);
+    const showProceed2 = ref(false);
+    const showProceed3 = ref(false);
+    const csvUpload = ref(false);
     const showAddNewDataLayer = ref(false);
     const showAddNewLayer = ref(false);
     const showStartManageDiv = ref(true);
@@ -576,9 +585,92 @@
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
 
+    //tpmdata category in database
+    const jhCurveModel = ref("");
+    const jhCurveMassProdName = ref("");
+    const jhCurveActualModel = ref("");
+    const jhCurveFurnaceName = ref("");
+    const jhCurveLotNo = ref("");
+
+    const propData_miasEmp = ref("");
+    const propData_factorEmp = ref("");
+
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
         generateSerialNumber();
+    }
+
+    const proceedToCsvUpload = async () => {
+        if(jhCurveActualModel.value == null || jhCurveActualModel.value == ''){
+            alert('Please type the Model Name first.');
+            return;
+        }else{
+            showLoadingForProceed1.value = true;
+            setTimeout(() => {
+                csvUpload.value = true;
+                showProceed1.value = false;
+                showLoadingForProceed1.value = false;
+            }, 1000); // Delay just enough to let Vue catch up
+        }
+    }
+
+    const proceedToFinal = () => {
+        if(jhCurveMassProdName.value == null || jhCurveMassProdName.value == "" ||
+            propData_factorEmp.value == null || propData_factorEmp.value == "" ||
+            propData_miasEmp.value == null || propData_miasEmp.value == "" ||
+            jhCurveLotNo.value == null || jhCurveLotNo.value == ""){
+                alert('Please fill in all the details first before proceeding');
+                return;
+        }else{
+            showProceed3.value = true;
+            showProceed2.value = false;
+            saveToTpmCategory();
+        }
+    }
+
+    const saveToTpmCategory = async () => {
+        try{
+            const responsePatchCategory = await axios.patch(`/api/updatecategory/${serialNo.value}`,{
+                    actual_model: jhCurveActualModel.value,
+                    factor_emp: propData_factorEmp.value,
+                    jhcurve_lotno: jhCurveLotNo.value,
+                    mias_emp: propData_miasEmp.value,
+                    massprod_name: jhCurveMassProdName.value,
+                });
+                console.log("API PATCHED category: ",responsePatchCategory);
+        }catch(error){
+            console.error("Error fetching API Response SaveToTpmCategory:", error);
+        }
+                /*
+        try{
+            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
+            console.log('API Response showallData:', response.data);
+            const tpm_category_id = response.data.data.map(item => item.category?.id ?? null);
+            const category_id = tpm_category_id[0];
+            console.log('Show tpm category ID: ',category_id);
+            console.log('Actual model: ',jhCurveActualModel.value);
+            console.log('factor employee: ',propData_factorEmp.value);
+            console.log('mias employee: ',propData_miasEmp.value);
+            console.log('mass prod name: ',jhCurveMassProdName.value);
+            console.log('jh curve lot no: ',jhCurveLotNo.value);
+            try{
+                const responsePatchCategory = await axios.patch(`/api/updatecategory/${category_id}`,{
+                    actual_model: jhCurveActualModel.value,
+                    factor_emp: propData_factorEmp.value,
+                    jhcurve_lotno: jhCurveLotNo.value,
+                    mias_emp: propData_miasEmp.value,
+                    massprod_name: jhCurveMassProdName.value,
+                });
+                console.log("API PATCHED category: ",responsePatchCategory);
+            }catch(error){
+                console.error("Error patching API responsePatchCategory:", error);
+            }
+        }catch(error){
+            console.error("Error fetching API Response SaveToTpmCategory:", error);
+        }
+            */
+
+
     }
 
     const isLoadingForAddFurnaces = ref(false); // Initialize loading state
@@ -643,6 +735,87 @@
             }, 5000); // 5000 milliseconds = 5 seconds
         }
     };
+
+    const csv_selectedFile = ref(null)
+    const csv_parsedData = ref([])
+    const csv_tempWithDataStat = ref([]);
+
+    const csv_handleFileSelect = (event) => {
+        csv_selectedFile.value = event.target.files[0]
+    }
+
+    const csv_submitFile = async () => {
+    if (!csv_selectedFile.value) {
+        alert('Please select a CSV file first.')
+        return
+    }else{
+        csvUpload.value = false;
+        showProceed2.value = true;
+    }
+
+    Papa.parse(csv_selectedFile.value, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+            csv_parsedData.value = results.data
+            const rows = results.data
+            // Combine them into one array for the table
+            csv_tempWithDataStat.value = rows.map(row => ({
+                temp: row["Temperature"],
+                status: row["Data class"]
+            }));
+
+            console.log('CSV Parsed Data:', csv_parsedData.value);
+            console.log('Temp with Data class:', csv_tempWithDataStat.value);
+
+        },
+        error: (err) => {
+        console.error('Error parsing CSV:', err)
+        }
+    });
+    mergeTempToTPM();
+    }
+
+    const csv_clearFile = () => {
+    csv_selectedFile.value = null
+    csv_parsedData.value = []
+
+    // Reset the file input manually
+    const csv_fileInput = document.getElementById('csv-file-upload')
+        if (csv_fileInput) {
+            csv_fileInput.value = ''
+        }
+    }
+
+    const mergeTempToTPM = async () => {
+        try{ //tempDataClass contains the value to be updated
+            const responseTPM = await axios.get("/api/tpmdata?serial=" + serialNo.value); // This is used to find the proper id to update
+            console.log('API Response MergeTempToTPMDATA:', responseTPM.data);
+
+            const tpmData = responseTPM.data.data || [];
+            console.log('tpm data: ',tpmData);
+            const getAllID = tpmData.map(item => item.id);
+            console.log('getting all the ids:',getAllID);
+
+            for (let i = 0; i < getAllID.length; i++) {
+                try {
+                    const responseTempWithData = await axios.patch(`/api/tpmdataupdate/${getAllID[i]}`, {
+                        temperature: csv_tempWithDataStat.value[i]?.temp || null,
+                        data_status: csv_tempWithDataStat.value[i]?.status || null
+                    });
+
+                    console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
+                } catch (error) {
+                    console.error(`Error patching ID ${getAllID[i]}:`, error.response?.data || error.message);
+                }
+            }
+            // Uncomment this to see the response
+            console.log('API Response Patch merging Temp and Dataclass:', responseTempWithData.data);
+        }catch(error){
+
+        }
+    }
+
 
     const furnaceList = ref([]); // Stores all fetched furnaces
 
@@ -1445,7 +1618,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         } finally {
-            showProceed.value = true;
+            showProceed1.value = true;
             showUploadData.value = false;
             layerTableRowLoading.value = false;
         }
@@ -1499,10 +1672,10 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     // Function to fetch data from the API
     const showAllData = async () => {
         layerTableRowLoading.value = true;
-        showProceed.value = false;
+        showProceed3.value = false;
         try {
-            showProceed.value = false;
-            const response = await axios.get("/api/tpmdata");
+            showProceed3.value = false;
+            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
             console.log('API Response showallData:', response.data);
 
             console.log('Serial No value = ', serialNo.value);
@@ -1510,66 +1683,57 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             items.value = response.data;
 
             // Extract arrays from the response
-            tpmData.value = response.data.data["tpmData"] || []; // Fallback to an empty array if undefined
-            tpmRemarks.value = response.data.data["remarks"] || [];
-            getAggregateID.value = response.data.data["aggregateFunctions"][0].id || [];
+            tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
+            tpmRemarks.value = response.data.remark || [];
+            getAggregateID.value = response.data[0][0].id || [];
             console.log("Aggregate ID: ", getAggregateID.value);
 
+            const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
+            jhCurveActualModel.value = tpm_category_actualmodel[0];
+            const tpm_category_factorEmp = tpmData.value.map(item => item.category?.factor_emp ?? null);
+            propData_factorEmp.value = tpm_category_factorEmp[0];
+            const tpm_category_miasEmp = tpmData.value.map(item => item.category?.mias_emp ?? null);
+            propData_miasEmp.value = tpm_category_miasEmp[0];
+            const tpm_category_jhCurveLotno = tpmData.value.map(item => item.category?.jhcurve_lotno ?? null);
+            jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
+            const tpm_category_massProdName = tpmData.value.map(item => item.category?.massprod_name ?? null);
+            jhCurveMassProdName.value = tpm_category_massProdName[0];
 
-            // ✅ Build remark lookup map
-            const remarkMap = new Map(
-                tpmRemarks.value.map(remark => [String(remark.id), remark])
-            );
+            // Combine the arrays
+            combinedData.value = tpmData.value;
+            console.log('Combined Data: ', combinedData.value);
 
-            // ✅ Combine without sorting
-            combinedData.value = tpmData.value.map(item => {
-                const matchingRemark = remarkMap.get(String(item.id)) || {};
-                return {
-                    ...item,
-                    remark: matchingRemark
-                };
-            });
-
-            // ✅ Debug output to verify order
-            console.log("🔍 TPM Data IDs:");
-            tpmData.value.forEach(item => console.log(item.id));
-
-            console.log("📝 Remarks IDs:");
-            tpmRemarks.value.forEach(remark => console.log(remark.id));
-
-            console.log("✅ Combined Data:");
-            combinedData.value.forEach(row =>
-                console.log(`${row.id} → ${row.remark?.id}`)
-            );
+            jhCurveFurnaceName.value = tpmData.value[0].sintering_furnace_no || "No data found";
+            jhCurveModel.value = tpmData.value[0].code_no || "No data found";
 
             // Extract individual values from tpmData for aggregate
-            getAllIDValues.value = tpmData.value.map(item => item.id);
-            getAllBrValues.value = tpmData.value.map(item => item.Br || null);
-            getAllBrRemarks.value = tpmRemarks.value.map(item => item.Br_remarks || null);
-            getAlliHcValues.value = tpmData.value.map(item => item.iHc || null);
-            getAlliHcRemarks.value = tpmRemarks.value.map(item => item.iHc_remarks || null);
-            getAlliHkValues.value = tpmData.value.map(item => item.iHk || null);
-            getAlliHkRemarks.value = tpmRemarks.value.map(item => item.iHk_remarks || null);
-            getAllBHMaxValues.value = tpmData.value.map(item => item.BHMax || null);
-            getAllBHMaxRemarks.value = tpmRemarks.value.map(item => item.BHMax_remarks || null);
-            getAlliHr95Values.value = tpmData.value.map(item => item.iHr95 || null);
-            getAlliHr95Remarks.value = tpmRemarks.value.map(item => item.iHr95_remarks || null);
-            getAlliHr98Values.value = tpmData.value.map(item => item.iHr98 || null);
-            getAlliHr98Remarks.value = tpmRemarks.value.map(item => item.iHr98_remarks || null);
-            getAlliHciHkValues.value = tpmData.value.map(item => item.iHkiHc || null);
-            getAlliHciHkRemarks.value = tpmRemarks.value.map(item => item.iHkiHc_remarks || null);
-            getAllBr4paiValues.value = tpmData.value.map(item => item.Br4pai || null);
-            getAllBr4paiRemarks.value = tpmRemarks.value.map(item => item.Br4pai_remarks || null);
-            getAllbHcValues.value = tpmData.value.map(item => item.bHc || null);
-            getAllbHcRemarks.value = tpmRemarks.value.map(item => item.bHc_remarks || null);
-            getAllSquarenessValues.value = tpmData.value.map(item => item.Squareness || null);
-            getAllSquarenessRemarks.value = tpmRemarks.value.map(item => item.Squareness_remarks || null);
-            getAll4paildValues.value = tpmData.value.map(item => item["4paiId"] || null);
-            getAll4paildRemarks.value = tpmRemarks.value.map(item => item["4paiId_remarks"] || null);
-            getAll4pailsValues.value = tpmData.value.map(item => item["4paiIs"] || null);
-            getAll4pailsRemarks.value = tpmRemarks.value.map(item => item["4paiIs_remarks"] || null);
-            getAll4pailaValues.value = tpmData.value.map(item => item["4paiIa"] || null);
-            getAll4pailaRemarks.value = tpmRemarks.value.map(item => item["4paiIa_remarks"] || null);
+            getAllIDValues.value = combinedData.value.map(item => item.id);
+            getAllBrValues.value = combinedData.value.map(item => item.Br || null);
+            getAllBrRemarks.value = combinedData.value.map(item => item.remark.Br_remarks || null);
+            getAlliHcValues.value = combinedData.value.map(item => item.iHc || null);
+            getAlliHcRemarks.value = combinedData.value.map(item => item.remark.iHc_remarks || null);
+            getAlliHkValues.value = combinedData.value.map(item => item.iHk || null);
+            getAlliHkRemarks.value = combinedData.value.map(item => item.remark.iHk_remarks || null);
+            getAllBHMaxValues.value = combinedData.value.map(item => item.BHMax || null);
+            getAllBHMaxRemarks.value = combinedData.value.map(item => item.remark.BHMax_remarks || null);
+            getAlliHr95Values.value = combinedData.value.map(item => item.iHr95 || null);
+            getAlliHr95Remarks.value = combinedData.value.map(item => item.remark.iHr95_remarks || null);
+            getAlliHr98Values.value = combinedData.value.map(item => item.iHr98 || null);
+            getAlliHr98Remarks.value = combinedData.value.map(item => item.remark.iHr98_remarks || null);
+            getAlliHciHkValues.value = combinedData.value.map(item => item.iHkiHc || null);
+            getAlliHciHkRemarks.value = combinedData.value.map(item => item.remark.iHkiHc_remarks || null);
+            getAllBr4paiValues.value = combinedData.value.map(item => item.Br4pai || null);
+            getAllBr4paiRemarks.value = combinedData.value.map(item => item.remark.Br4pai_remarks || null);
+            getAllbHcValues.value = combinedData.value.map(item => item.bHc || null);
+            getAllbHcRemarks.value = combinedData.value.map(item => item.remark.bHc_remarks || null);
+            getAllSquarenessValues.value = combinedData.value.map(item => item.Squareness || null);
+            getAllSquarenessRemarks.value = combinedData.value.map(item => item.remark.Squareness_remarks || null);
+            getAll4paildValues.value = combinedData.value.map(item => item["4paiId"] || null);
+            getAll4paildRemarks.value = combinedData.value.map(item => item.remark["4paiId_remarks"] || null);
+            getAll4pailsValues.value = combinedData.value.map(item => item["4paiIs"] || null);
+            getAll4pailsRemarks.value = combinedData.value.map(item => item.remark["4paiIs_remarks"] || null);
+            getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
+            getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
 
             //console.log('gettheIDs: ', getAllIDValues.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
@@ -1856,7 +2020,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }
             }
-            showProceed.value = false;
+            showProceed3.value = false;
             //ng conditions for NG remarks end...
 
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
@@ -1866,7 +2030,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             console.error('Error fetching data:', error);
             return;
         } finally {
-            showProceed.value = false;
+            showProceed3.value = false;
             showGraphAndTables.value = true;
         }
         await fetchDataCreateGraph();
@@ -1890,12 +2054,12 @@ const datasets = ref([]); // Array to hold multiple datasets
 
 const fetchDataCreateGraph = async () => {
     try {
-        const response = await axios.get("/api/tpmdata");
+        const response = await axios.get("/api/tpmdata?serial=" + serialNo.value);
 
         // Log the response structure to check
         //console.log("API Response:", response.data);
 
-        const tableRows = response.data.data["tpmData"]; // Assuming API returns an array of rows
+        const tableRows = response.data.data; // Assuming API returns an array of rows
 
         // Check if tableRows is not undefined or null before proceeding
         if (!tableRows) {
@@ -1958,8 +2122,8 @@ const renderChart = () => {
 
         //console.log("2D Context obtained, proceeding to render the chart.");
 
-        const x_offset = 1000;
-        const y_offset = 2500;
+        const x_offset = 2000;
+        const y_offset = 4000;
 
         const chartDatasets = datasets.value.map((dataset, index) => {
             return {
@@ -1995,6 +2159,9 @@ const renderChart = () => {
                         easing: "easeOutQuart",
                     },
                     plugins: {
+                        legend: {
+                            display: false, // 👈 hides the legend completely
+                        },
                         tooltip: {
                             callbacks: {
                                 label: (context) => `Value: ${context.raw.y}`,
@@ -2013,7 +2180,7 @@ const renderChart = () => {
                                 text: "←  kOe  →",
                                 color: "#333",
                                 font: {
-                                    size: 22,  // Increase font size
+                                    size: 14,  // Increase font size
                                     weight: "bold", // Make it bold
                                 },
                             },
@@ -2029,7 +2196,7 @@ const renderChart = () => {
                                 text: "←  kG  →",
                                 color: "#333",
                                 font: {
-                                    size: 22,  // Increase font size
+                                    size: 14,  // Increase font size
                                     weight: "bold", // Make it bold
                                 },
                             },

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->date('date')->nullable();
             $table->unsignedBigInteger('serial_no')->index();
+
             $table->string('code_no')->nullable();
             $table->string('order_no')->nullable();
             $table->string('type')->nullable();
@@ -55,8 +56,8 @@ return new class extends Migration
             $table->string('HRO')->nullable();
             $table->json('x')->nullable();
             $table->json('y')->nullable();
-            $table->unsignedBigInteger('furnace_id');
-            $table->unsignedBigInteger('layer_no');
+            $table->unsignedBigInteger('furnace_id')->nullable();
+            $table->unsignedBigInteger('layer_no')->nullable();
             $table->foreign('furnace_id')
                     ->references('furnace_id')
                     ->on('furnace_data')
@@ -68,7 +69,7 @@ return new class extends Migration
         Schema::create('nsa_remarks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('nsa__id')->index();
+            $table->unsignedBigInteger('nsa_id')->index();
             $table->string('Br_remarks')->nullable();
             $table->string('4paiId_remarks')->nullable();
             $table->string('iHc_remarks')->nullable();
