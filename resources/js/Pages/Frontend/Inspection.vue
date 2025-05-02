@@ -10,53 +10,53 @@
                 <div class="flex items-center justify-center mb-10 bg-gray-100">
                     <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
                         <thead class="text-white bg-gradient-to-l from-blue-600 to-green-600 ">
-                            <tr>
-                                <th class="px-4 py-2 text-center border">Model</th>
-                                <th class="px-4 py-2 text-center border">L</th>
-                                <th class="px-4 py-2 text-center border">W</th>
-                                <th class="px-4 py-2 text-center border">T</th>
-                                <th class="px-4 py-2 text-center border">Material&nbsp;Grade</th>
-                                <th class="px-4 py-2 text-center border">Br</th>
-                                <th class="px-4 py-2 text-center border">iHc</th>
-                                <th class="px-4 py-2 text-center border">iHk</th>
-                                <th class="px-4 py-2 text-center border">Oven&nbsp;Machine&nbsp;No</th>
-                                <th class="px-4 py-2 text-center border">Time&nbsp;Loading</th>
-                                <th class="px-4 py-2 text-center border">Temperature</th>
-                                <th class="px-4 py-2 text-center border">Date</th>
-                                <th class="px-4 py-2 text-center border">Time&nbsp;Unloading</th>
-                                <th class="px-4 py-2 text-center border">Temperature</th>
-                                <th class="px-4 py-2 text-center border">Shift</th>
-                                <th class="px-4 py-2 text-center border">Operator</th>
-                                <th class="px-4 py-2 text-center border">MPI&nbsp;Sample</th>
-                                <th class="px-4 py-2 text-center border">iHc&#8209;iHk</th>
-                                <th class="px-4 py-2 text-center border">Br&#8209;4πla</th>
+                            <tr class="text-sm">
+                                <th class="px-2 py-1 text-center border">Model</th>
+                                <th class="px-2 py-1 text-center border">L</th>
+                                <th class="px-2 py-1 text-center border">W</th>
+                                <th class="px-2 py-1 text-center border">T</th>
+                                <th class="px-2 py-1 text-center border">Material&nbsp;Grade</th>
+                                <th class="px-2 py-1 text-center border">Br</th>
+                                <th class="px-2 py-1 text-center border">iHc</th>
+                                <th class="px-2 py-1 text-center border">iHk</th>
+                                <th class="px-2 py-1 text-center border">Oven&nbsp;Machine&nbsp;No</th>
+                                <th class="px-2 py-1 text-center border">Time&nbsp;Loading</th>
+                                <th class="px-2 py-1 text-center border">Temperature</th>
+                                <th class="px-2 py-1 text-center border">Date</th>
+                                <th class="px-2 py-1 text-center border">Time&nbsp;Unloading</th>
+                                <th class="px-2 py-1 text-center border">Temperature</th>
+                                <th class="px-2 py-1 text-center border">Shift</th>
+                                <th class="px-2 py-1 text-center border">Operator</th>
+                                <th class="px-2 py-1 text-center border">MPI&nbsp;Sample</th>
+                                <th class="px-2 py-1 text-center border">iHc&#8209;iHk</th>
+                                <th class="px-2 py-1 text-center border">Br&#8209;4πla</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr
                                 v-for="item in inspectionDataList"
                                 :key="item.id"
-                                class="bg-gray-50"
+                                class="bg-gray-50 text-xs"
                             >
-                                <td class="px-4 py-2 text-center border">{{ item.model || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.length || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.width || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.thickness || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.material_grade || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.br || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.ihc || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.ihk || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.oven_machine_no || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.time_loading || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.temperature_1 || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.date || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.time_unloading || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.temperature_2 || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.shift || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.operator || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.mpi_sample || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item.ihc_ihk || 'null' }}</td>
-                                <td class="px-4 py-2 text-center border">{{ item["br_4-pie-la"] || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc_ihk || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item["br_4-pie-la"] || 'null' }}</td>
                             </tr>
                         </tbody>
                     </table>

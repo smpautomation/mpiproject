@@ -2,7 +2,7 @@
     <Frontend>
       <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
 
-        <div v-if="serialList.length == 0"> <!-- default div -->
+        <div v-if="serialList.length == 0 && currentUserName != 'ITADANI KAZUYA'"> <!-- default div -->
             <div class="flex flex-row items-center justify-center mt-10 align-baseline">
                 <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
             </div>
@@ -19,23 +19,6 @@
                     </select>
                 </div>
                 <div class="flex flex-col items-center justify-center space-x-8">
-                    <!-- Checkbox + Label -->
-                    <label class="flex items-center space-x-3 text-lg">
-                        <!--
-                        <input
-                        v-model="isTTM_model"
-                        type="checkbox"
-                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                            <span>(Tick this box if the TTM model applies.)</span>
-                        -->
-                        <input
-                        v-model="isAutomotive"
-                        type="checkbox"
-                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                            <span>(Tick this box if the model is for Automotive)</span>
-                    </label>
                     <!-- Button -->
                     <button
                         @click="generateReport"
@@ -55,12 +38,44 @@
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
-                    <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">Show Report</button>
+                    <!-- Checkbox + Label -->
+                    <label v-if="isAutomotiveInitiallyMarked == false" class="flex items-center space-x-3 text-lg mb-5">
+                        <!--
+                        <input
+                        v-model="isTTM_model"
+                        type="checkbox"
+                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                            <span>(Tick this box if the TTM model applies.)</span>
+                        -->
+                        <input
+                        v-model="isAutomotive"
+                        type="checkbox"
+                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                            <span>(Tick this box if the model is for Automotive)</span>
+                    </label>
+                    <div class="flex flex-row justify-center">
+                        <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">Show Report</button>
+                    </div>
+
                 </div>
             </div>
             <!-- Report Content -->
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
+                    <div v-if="currentUserName != 'ITADANI KAZUYA' && ipAddress == currentUserIP" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
+                        <p class="text-sm font-medium">Hello, Welcome!</p>
+                        <p class="text-xl font-bold uppercase">Ma'am {{ currentUserName.split(' ')[0] }}</p>
+                    </div>
+                    <div v-else-if="currentUserName == 'ITADANI KAZUYA'" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
+                        <p class="text-sm font-medium">Hello, Welcome!</p>
+                        <p class="text-xl font-bold uppercase">{{ currentUserName.split(' ')[0] }} SAN</p>
+                    </div>
+                    <div v-else class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
+                        <p class="text-sm font-medium">Hello, Welcome!</p>
+                        <p class="text-xl font-bold">You are not yet registered</p>
+                    </div>
                     <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
 
                         <!-- Serial -->
@@ -223,15 +238,11 @@
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Material Code:</label>&nbsp;
-                            <input
-                                v-model="reportMaterialCode"
-                                type="text"
-                                name="date"
-                                class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"
-                            />
+                            <span
+                                class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
+                                >
+                                {{ reportMaterialCode }}
+                            </span>
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Partial No.:</label>&nbsp;
@@ -451,18 +462,18 @@
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Prepared By:</p>
                     <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showPreparedByDefault" class="px-2 py-[67px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
-                            Waiting for stamp...
-                        </span>
+                            <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                                Waiting for stamp...
+                            </span>
                         </div>
                         <button
-                        @click="preparedByStamp"
-                        v-show="preparedByButton"
-                        class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
-                        >
-                        <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
-                            Click&nbsp;to&nbsp;Stamp
-                        </span>
+                            @click="preparedByStamp"
+                            v-show="preparedByButton"
+                            class="px-6 py-[70px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
+                            >
+                            <span class="inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
+                                Click&nbsp;to&nbsp;Stamp
+                            </span>
                         </button>
 
                         <!-- Confirmation Buttons -->
@@ -566,41 +577,12 @@
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Note: Reason of REJECT/HOLD</p>
                     <div class="p-2 border-4 border-white w-[320px] h-[190px] box-border">
                         <div class="flex flex-col items-start w-full h-full overflow-auto bg-blue-100">
-                            <span v-if="reportBrMinimum < inspectionBrStandard_lower" class="font-extrabold text-red-700 opacity-100">
-                                - LOW BR
-                            </span>
-                            <span v-if="reportBrMaximum > inspectionBrStandard_higher" class="font-extrabold text-red-700 opacity-100">
-                                - HIGH BR
-                            </span>
-                            <span v-if="reportihcMinimum < inspectioniHcStandard" class="font-extrabold text-red-700 opacity-100">
-                                - N.G iHc
-                            </span>
                             <span
-                                v-else-if="reportihcMinimum < Number(inspectioniHcStandard) + 500"
-                                class="font-extrabold text-blue-600 opacity-100">
-                                    {{ console.log('reportihcMinimum:', reportihcMinimum, 'inspectioniHcStandard + 500:', Number(inspectioniHcStandard) + 1500) }}
-                                    - iHc Below Target+500 Oe
-                            </span>
-                            <span v-if="reportihkMinimum < inspectioniHkStandard" class="font-extrabold text-red-700 opacity-100">
-                                - N.G iHk
-                            </span>
-                            <span v-if="reportihr95Minimum < inspectioniHcStandard - 750" class="font-extrabold text-red-700 opacity-100">
-                                - N.G Hr95
-                            </span>
-                            <span v-if="reportihr98Minimum < inspectioniHcStandard - 1250" class="font-extrabold text-red-700 opacity-100">
-                                - N.G Hr98
-                            </span>
-                            <span v-if="reportRemarksDisplayNG_ihcihk" class="font-extrabold text-red-700 opacity-100">
-                                - N.G iHc-iHk
-                            </span>
-                            <span v-if="reportRemarksDisplayNG_br4pia" class="font-extrabold text-red-700 opacity-100">
-                                - N.G Br-4PIa
-                            </span>
-                            <span v-if="reportRemarksDisplayNG_bhMax" class="font-extrabold text-red-700 opacity-100">
-                                - N.G BH(max)
-                            </span>
-                            <span v-if="reportRemarksDisplayNG_bhc" class="font-extrabold text-red-700 opacity-100">
-                                - N.G bHc
+                                v-for="(note, index) in noteReasonForReject"
+                                :key="index"
+                                class="font-extrabold text-red-700 opacity-100"
+                            >
+                                {{ note }}
                             </span>
                         </div>
                     </div>
@@ -614,7 +596,7 @@
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button v-show="showReportSaveButton" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-if="(currentUserIP == ipAddress) && (approvedByPerson == '' || approvedByPerson == null)" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
@@ -685,23 +667,29 @@ const preparedByStampPhoto = ref(false);
 const checkedByStampPhoto = ref(false);
 const approvedByStampPhoto = ref(false);
 
+const noteReasonForReject = ref([]);
+
 const exitReport = () => {
     showReportContent.value = false;
     showSelectionPanel.value = true;
     showReportProceedButtons.value = true;
     showReportMain.value = false;
     fetchSerial();
-    reportRemarksDisplayReset();
+    reportReset();
 }
 
 const showReportButton = async () => {
     showReportMain.value = true;
     showReportProceedButtons.value = false;
+    if(isAutomotiveInitiallyMarked.value == false){
+        checkCarmark();
+    }
     await showReportData();
 }
 
 const isTTM_model = ref(false);
 const isAutomotive = ref(false);
+const isAutomotiveInitiallyMarked = ref(false);
 const show1x1x1Data = ref(false);
 
 const isLoading = ref(true);
@@ -720,6 +708,10 @@ const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
+const currentUserData = ref([]);
+const currentUserName = ref('');
+const currentUserApproverStage = ref('');
+const currentUserIP = ref('');
 const preparedByPerson = ref('');
 const checkedByPerson = ref('');
 const approvedByPerson = ref('');
@@ -821,11 +813,15 @@ const tpmData_tracerNo = ref('');
 
 const jhCurveActualModel = ref('');
 
-const reportRemarksDisplayReset = () => {
+const reportReset = () => {
     reportRemarksDisplayNG_ihcihk.value = false;
     reportRemarksDisplayNG_br4pia.value = false;
     reportRemarksDisplayNG_bhMax.value = false;
     reportRemarksDisplayNG_bhc.value = false;
+    isTTM_model.value = false;
+    isAutomotive.value = false;
+    isAutomotiveInitiallyMarked.value = false;
+    show1x1x1Data.value = false;
 }
 
 const showNotification = (message) => {
@@ -857,8 +853,28 @@ const sec_additional_button = () => {
 const generateReport = async () => {
     showReportContent.value = true;
     showSelectionPanel.value = false;
+    initialCarmarkChecking();
     await fetchAllData();
 }
+
+const fetchMaterialCode = ref('');
+const fetchActualModel = ref('');
+//remarks checking
+const getAllBrNG = ref('');
+const getAlliHcNG = ref('');
+const getAlliHkNG = ref('');
+const getAll4paildNG = ref('');
+const getAll4pailsNG = ref('');
+const getAll4pailaNG = ref('');
+const getAllbHcNG = ref('');
+const getAllBHMaxNG = ref('');
+const getAllSquarenessNG = ref('');
+const getAllDensityNG = ref('');
+const getAlliHkiHcNG = ref('');
+const getAllBr4paiNG = ref('');
+const getAlliHr95NG = ref('');
+const getAlliHr98NG = ref('');
+
 
 const fetchAllData = async () => {
     try {
@@ -870,25 +886,25 @@ const fetchAllData = async () => {
         //console.log("Filtered tpm aggregate data list: ", tpmData.value);
         getTpmModel.value = responseTpm.data.data || [];
         //console.log("GetModelValue: ", getTpmModel.value[0].code_no);
-
+        fetchMaterialCode.value = getTpmModel.value[0].code_no;
         const tpm_category_actualmodel = getTpmModel.value.map(item => item.category?.actual_model ?? null);
         jhCurveActualModel.value = tpm_category_actualmodel[0];
 
         //Remarks checking start
-        const getAllBrNG = getTpmModel.value.map(item => item.remark.Br_remarks || null);
-        const getAlliHcNG = getTpmModel.value.map(item => item.remark.iHc_remarks || null);
-        const getAlliHkNG = getTpmModel.value.map(item => item.remark.iHk_remarks || null);
-        const getAll4paildNG = getTpmModel.value.map(item => item.remark["4paild_remarks"] || null);
-        const getAll4pailsNG = getTpmModel.value.map(item => item.remark["4pails_remarks"] || null);
-        const getAll4pailaNG = getTpmModel.value.map(item => item.remark["4paila_remarks"] || null);
-        const getAllbHcNG = getTpmModel.value.map(item => item.remark.bHc_remarks || null);
-        const getAllBHMaxNG = getTpmModel.value.map(item => item.remark.BHMax_remarks || null);
-        const getAllSquarenessNG = getTpmModel.value.map(item => item.remark.Squareness_remarks || null);
-        const getAllDensityNG = getTpmModel.value.map(item => item.remark.Density_remarks || null);
-        const getAlliHkiHcNG = getTpmModel.value.map(item => item.remark.iHkiHc_remarks || null);
-        const getAllBr4paiNG = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
-        const getAlliHr95NG = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
-        const getAlliHr98NG = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
+        getAllBrNG.value = getTpmModel.value.map(item => item.remark.Br_remarks || null);
+        getAlliHcNG.value = getTpmModel.value.map(item => item.remark.iHc_remarks || null);
+        getAlliHkNG.value = getTpmModel.value.map(item => item.remark.iHk_remarks || null);
+        getAll4paildNG.value = getTpmModel.value.map(item => item.remark["4paild_remarks"] || null);
+        getAll4pailsNG.value = getTpmModel.value.map(item => item.remark["4pails_remarks"] || null);
+        getAll4pailaNG.value = getTpmModel.value.map(item => item.remark["4paila_remarks"] || null);
+        getAllbHcNG.value = getTpmModel.value.map(item => item.remark.bHc_remarks || null);
+        getAllBHMaxNG.value = getTpmModel.value.map(item => item.remark.BHMax_remarks || null);
+        getAllSquarenessNG.value = getTpmModel.value.map(item => item.remark.Squareness_remarks || null);
+        getAllDensityNG.value = getTpmModel.value.map(item => item.remark.Density_remarks || null);
+        getAlliHkiHcNG.value = getTpmModel.value.map(item => item.remark.iHkiHc_remarks || null);
+        getAllBr4paiNG.value = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
+        getAlliHr95NG.value = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
+        getAlliHr98NG.value = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
         //console.log("check br remarks: ", getAllBrNG);
         // Check if "1" exists in getAllBrNG
         //REJECT CONDITIONS
@@ -900,26 +916,14 @@ const reportRemarksDisplayNG_bhMax = ref(false);
 const reportRemarksDisplayNG_bhc = ref(false);
 
         */
-        if(getAlliHkiHcNG.includes("1")){
-            reportRemarksDisplayNG_ihcihk.value = true;
-        }
-        if(getAllBr4paiNG.includes("1")){
-            reportRemarksDisplayNG_br4pia.value = true;
-        }
-        if(getAllBHMaxNG.includes("1")){
-            reportRemarksDisplayNG_bhMax.value = true;
-        }
-        if(getAllbHcNG.includes("1")){
-            reportRemarksDisplayNG_bhc.value = true;
-        }
 
 
-        if (getAllBrNG.includes("1") || getAlliHr95NG.includes("1") || getAlliHr98NG.includes("1") || getAllSquarenessNG.includes("1") || getAllDensityNG.includes("1") || getAlliHkiHcNG.includes("1") || getAllBr4paiNG.includes("1") || getAll4paildNG.includes("1") || getAll4pailsNG.includes("1") || getAll4pailaNG.includes("1") || getAllbHcNG.includes("1")) {
+        if (getAllBrNG.value.includes("1") || getAlliHr95NG.value.includes("1") || getAlliHr98NG.value.includes("1") || getAllSquarenessNG.value.includes("1") || getAllDensityNG.value.includes("1") || getAlliHkiHcNG.value.includes("1") || getAllBr4paiNG.value.includes("1") || getAll4paildNG.value.includes("1") || getAll4pailsNG.value.includes("1") || getAll4pailaNG.value.includes("1") || getAllbHcNG.value.includes("1")) {
 
             reportRemarksDisplay.value = "E";
             reportSMPJudgement.value = "HOLD";
 
-            if(getAlliHcNG.includes("1") || getAlliHkNG.includes("1") || getAllBHMaxNG.includes("1")){
+            if(getAlliHcNG.value.includes("1") || getAlliHkNG.value.includes("1") || getAllBHMaxNG.value.includes("1")){
                 // Perform your action here (leave it blank for now)
                 reportSMPJudgement.value = "REJECT";
             }
@@ -933,6 +937,7 @@ const reportRemarksDisplayNG_bhc = ref(false);
         console.log("REPORT REMARKS IS: ",reportRemarksDisplay.value);
 
 
+        fetchActualModel.value = jhCurveActualModel.value;
         const tpm_current_model = jhCurveActualModel.value;
         tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
         const thisLayerId = getTpmModel.value[0].layer_no;
@@ -999,9 +1004,10 @@ const reportRemarksDisplayNG_bhc = ref(false);
         console.log("Current model in tpm: ",tpm_current_model);
 
         // Check if tpm_current_model exists in getAllInspModels
-        if (getAllInspModels.includes(tpm_current_model)) {
-            const filteredInspectionData = inspectionDataList.value.filter(item => item.model == tpm_current_model);
+        if (getAllInspModels.includes(fetchActualModel.value)) {
+            const filteredInspectionData = inspectionDataList.value.filter(item => item.model == fetchActualModel.value);
             console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
+            console.log("Fetched model:", fetchActualModel.value);
             // Access the `br` value for each item in filteredInspectionData
             filteredInspectionData.forEach(item => {
                 inspectionBrStandard.value = item.br;
@@ -1032,7 +1038,7 @@ const reportRemarksDisplayNG_bhc = ref(false);
 
         //console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
 
-        if (inspectionBrStandard.value.includes('~')) {
+        if (inspectionBrStandard.value && inspectionBrStandard.value.includes('~')) {
             const [lower, higher] = inspectionBrStandard.value.split('~');
             inspectionBrStandard_lower.value = lower;
             inspectionBrStandard_higher.value = higher;
@@ -1063,14 +1069,15 @@ const reportRemarksDisplayNG_bhc = ref(false);
                 "ihr98Minimum": tpmData_ihr98Min.value
             }),
             "material_grade": inspectionMaterialGrade.value,
-            "model": tpm_current_model,
+            "material_code": fetchMaterialCode.value,
+            "model": fetchActualModel.value,
             "mpi_sample_quantity": inspectionMpiSampleQty.value,
             "pulse_tracer_machine_number": tpmData_tracerNo.value,
             "thickness": inspectionThickness.value,
             "width": inspectionWidth.value
         }
 
-        console.log("Rep Data: ",repData);
+        //console.log("Rep Data: ",repData);
         createReport(repData, currentSerialSelected.value);
         await nextTick();
         isLoading.value = false;
@@ -1083,6 +1090,7 @@ const reportRemarksDisplayNG_bhc = ref(false);
 
 const createReport = async (reportData, serial) => {
     try {
+        console.log("Rep Data: ",reportData);
         const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
         console.log("Create report function Patched report data: ", response.data);
     } catch (error) {
@@ -1111,6 +1119,9 @@ const showReportData = async () => {
         reportMPISampleQty.value = filterBySerial[0].mpi_sample_quantity;
         reportRemarks.value = filterBySerial[0].remarks;
         reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
+        preparedByPerson.value = filterBySerial[0].prepared_by;
+        checkedByPerson.value = filterBySerial[0].checked_by;
+        approvedByPerson.value = filterBySerial[0].approved_by;
         reportPreparedByDate.value = filterBySerial[0].prepared_by_date
         ? filterBySerial[0].prepared_by_date.split(' ')[0]
         : '';
@@ -1121,7 +1132,16 @@ const showReportData = async () => {
         ? filterBySerial[0].approved_by_date.split(' ')[0]
         : '';
 
+        isAutomotive.value = filterBySerial[0].withCarmark == 1;
+        console.log("With carmark value: ",isAutomotive.value);
 
+        const noteRejectReasons = JSON.parse(filterBySerial[0].note_reason_reject);
+        console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
+
+        noteReasonForReject.value = []; // Clear existing values
+        noteRejectReasons.forEach(reason => {
+            noteReasonForReject.value.push(reason);
+        });
 
         console.log("Model value: ",reportModel.value);
 
@@ -1157,6 +1177,8 @@ const showReportData = async () => {
         reportBrVariance.value = parseFloat(reportBrMaximum.value) - parseFloat(reportBrMinimum.value);
         reportiHcVariance.value = parseFloat(reportihcMaximum.value) - parseFloat(reportihcMinimum.value);
         reportiHkVariance.value = parseFloat(reportihkMaximum.value) - parseFloat(reportihkMinimum.value);
+
+        evaluateAllRejectReasons();
         checkApprovalStates();
     } catch (error) {
         console.error("API get request showReportData Error:", error);
@@ -1165,7 +1187,6 @@ const showReportData = async () => {
 
 const saveReport = async () => {
     // Use default values (empty string) or check for null/undefined before calling toUpperCase
-    reportMaterialCode.value = (reportMaterialCode.value || '').toUpperCase();
     reportPartialNo.value = (reportPartialNo.value || '').toUpperCase();
     reportShift.value = (reportShift.value || '').toUpperCase();
     reportOperator.value = (reportOperator.value || '').toUpperCase();
@@ -1179,7 +1200,6 @@ const saveReport = async () => {
         "temp_time_unloading": reportTemperature_TimeUnloading.value,
         "shift_oven_info": reportShift_OvenInfo.value,
         "operator_oven_info": reportOperator_OvenInfo.value,
-        "material_code": reportMaterialCode.value,
         "date": reportDate.value,
         "partial_number": reportPartialNo.value,
         "shift": reportShift.value,
@@ -1187,7 +1207,9 @@ const saveReport = async () => {
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
         "smp_judgement":reportSMPJudgement.value,
-
+        "withCarmark": isAutomotive.value,
+        "remarks_display": reportRemarksDisplay.value,
+        "note_reason_reject": noteReasonForReject.value,
     }
 
     console.log("Save report data: ", saveReportData);
@@ -1235,6 +1257,8 @@ const fetchSerial = async () => {
     if (serialList.value.length > 0) {
         currentSerialSelected.value = serialList.value[0];
     }
+
+
 
   } catch (error) {
     console.error("Error fetching serial data:", error);
@@ -1288,7 +1312,8 @@ const cancelPreparedByStamp = () => {
 }
 
 const confirmPreparedByStamp = async () => {
-    preparedByPerson.value = "IRISH MERCADO"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
+
+    preparedByPerson.value = currentUserName.value;
     preparedByStampPhoto.value = true;
     preparedByStampConfirmation.value = false;
     const dateNow = datenow();
@@ -1329,7 +1354,7 @@ const cancelCheckedByStamp = () => {
 }
 
 const confirmCheckedByStamp = async () => {
-    checkedByPerson.value = "CHECKED BY PERSON"; //Temporary Hardcode. Replace with Assigned IP address linked to a person
+    checkedByPerson.value = currentUserName.value;
     checkedByStampPhoto.value = true;
     checkedByStampConfirmation.value = false;
     const dateNow = datenow();
@@ -1360,24 +1385,34 @@ const checkApprovalStates = async () => {
         console.log("checked by: ",checked_by);
         console.log("approved by: ",approved_by);
 
-        if(prepared_by == "" || prepared_by == null){ //if not yet approved
-            //preparedByButton.value = true; //uncomment on designated ip address
-            showPreparedByDefault.value = true;
+        if(prepared_by != "" && prepared_by != null){ //Approver Conditions
+            showPreparedByDefault.value = false;
+            preparedByButton.value = false;  //Already approved condition
+            preparedByStampPhoto.value = true;
+        }else if(currentUserApproverStage.value == "PREPARED BY"){
+            showPreparedByDefault.value = false;
+            preparedByButton.value = true; //Not approved yet but ready for approval
             preparedByStampPhoto.value = false;
         }else{
             preparedByButton.value = false;
-            showPreparedByDefault.value = false;
-            preparedByStampPhoto.value = true;
+            showPreparedByDefault.value = true; //Not approver, not approved yet
+            preparedByStampPhoto.value = false;
         }
-        if(checked_by == "" || checked_by == null){
-            //checkedByButton.value = true; //uncomment on designated ip address
-            showCheckedByDefault.value = true;
+
+        if(checked_by != "" && checked_by != null){ //Approver Conditions
+            showCheckedByDefault.value = false;
+            checkedByButton.value = false;          //Already approved condition
+            checkedByStampPhoto.value = true;
+        }else if(currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)){
+            showCheckedByDefault.value = false;
+            checkedByButton.value = true;       //Not approved yet but ready for approval
             checkedByStampPhoto.value = false;
         }else{
             checkedByButton.value = false;
-            showCheckedByDefault.value = false;
-            checkedByStampPhoto.value = true;
+            showCheckedByDefault.value = true; //Not approver, not approved yet
+            checkedByStampPhoto.value = false;
         }
+
         if(approved_by == "" || approved_by == null){
             //approvedByButton.value = true; //uncomment on designated ip address
             showApprovedByDefault.value = true;
@@ -1387,9 +1422,131 @@ const checkApprovalStates = async () => {
             showApprovedByDefault.value = false;
             approvedByStampPhoto.value = true;
             showReportSaveButton.value = false;
+            //insert finalize button here the button for printing
         }
     }catch(error){
+        console.error("ERROR Getting report data API result: ", error);
+    }
+}
 
+const checkCurrentUser = async () => {
+    try {
+        const responseFindApprovers = await axios.get("/api/approver");
+        console.log('API GET requestFrom-responseFindPreparedBy: ', responseFindApprovers.data);
+
+        const approvers = responseFindApprovers.data.data?.Approvers || [];
+
+        currentUserData.value = approvers.filter(column => column.ip_address === ipAddress.value);
+        console.log('Current approver data array: ', currentUserData.value);
+
+        if (currentUserData.value.length > 0) {
+            const userData = currentUserData.value[0];
+            currentUserName.value = userData.approver_name;
+            currentUserApproverStage.value = userData.approval_stage;
+            currentUserIP.value = userData.ip_address;
+            console.log('current user name: ', currentUserName.value);
+            console.log('current approver stage: ', currentUserApproverStage.value);
+            console.log('current user IP: ',currentUserIP.value);
+        } else {
+            console.warn("No approver found for the current IP address.");
+            currentUserName.value = '';
+            currentUserApproverStage.value = '';
+        }
+
+    } catch (error) {
+        console.error("Error on checkCurrentUser API GET request", error);
+    }
+}
+
+const evaluateAllRejectReasons = () => {
+    if (!noteReasonForReject.value || noteReasonForReject.value.length === 0) {
+    noteReasonForReject.value = []; // Reset before evaluation
+
+    console.log('Evaluating rejection reasons part1...');
+
+    if (getAlliHkiHcNG.value.includes("1")) {
+      console.log('Condition met: getAlliHkiHcNG includes "1"');
+      noteReasonForReject.value.push('- N.G iHc-iHk');
+    }
+
+    if (getAllBr4paiNG.value.includes("1")) {
+      console.log('Condition met: getAllBr4paiNG includes "1"');
+      noteReasonForReject.value.push('- N.G Br-4PIa');
+    }
+
+    if (getAllBHMaxNG.value.includes("1")) {
+      console.log('Condition met: getAllBHMaxNG includes "1"');
+      noteReasonForReject.value.push('- N.G BH(max)');
+    }
+
+    if (getAllbHcNG.value.includes("1")) {
+      console.log('Condition met: getAllbHcNG includes "1"');
+      noteReasonForReject.value.push('- N.G bHc');
+    }
+
+    console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
+
+    console.log('Evaluating rejection reasons part2...');
+
+    if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
+      console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
+      noteReasonForReject.value.push('- LOW BR');
+    }
+
+    if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
+      console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
+      noteReasonForReject.value.push('- HIGH BR');
+    }
+
+    if (reportihcMinimum.value < inspectioniHcStandard.value) {
+      console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
+      noteReasonForReject.value.push('- N.G iHc');
+    } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
+      console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
+      noteReasonForReject.value.push('- iHc Below Target+500 Oe');
+    }
+
+    if (reportihkMinimum.value < inspectioniHkStandard.value) {
+      console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
+      noteReasonForReject.value.push('- N.G iHk');
+    }
+
+    if (reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) {
+      console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
+      noteReasonForReject.value.push('- N.G Hr95');
+    }
+
+    if (reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) {
+      console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
+      noteReasonForReject.value.push('- N.G Hr98');
+    }
+
+    console.log('Final Rejection Reasons part 2:', noteReasonForReject.value);
+  } else {
+    console.log('Skipping rejection evaluation: Reasons already exist.');
+  }
+}
+
+const checkCarmark = async () => {
+    try{
+        const responseCarMark = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, {
+            "withCarmark": isAutomotive.value,
+        });
+        console.log("Saved carmark data: ", responseCarMark.data);
+    }catch(error){
+        console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
+    }
+}
+
+const initialCarmarkChecking = async () => {
+    try{
+        const response = await axios.get(`/api/reportdata/`);
+        //console.log("Getting report data API result: ", response.data.data);
+        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
+        isAutomotiveInitiallyMarked.value = filterBySerial[0].withCarmark == 1;
+        console.warn("Is carmarked initially marked? = ",isAutomotiveInitiallyMarked.value);
+    }catch(error){
+        console.error("ERROR GET REQUEST FOR CARMARK: ", error);
     }
 }
 
@@ -1418,7 +1575,7 @@ const sec_additional_redirect = (sec_serial) => {
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(() => {
-
+    checkCurrentUser();
   if (props.serialParam) {
     // If serialParam has a value, do not fetch serial
     // Placeholder for additional actions when serialParam exists

@@ -22,15 +22,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item, index) in tpmData" :key="index">
-                            <td class="p-4 text-center text-md">{{ item.serial_no }}</td>
-                            <td class="p-4 text-center text-md">{{ item.furnace_id }}</td>
-                            <td class="p-4 text-center text-md">{{ item.layer_no }}</td>
-                            <td class="p-4 text-center text-md">{{ item.category.actual_model }}</td>
-                            <td class="p-4 text-center text-md">{{ item.press_1 + item.press_2 + item.machine_no }}</td>
-                            <td class="p-4 text-center text-md">{{ item.sintering_furnace_no }}</td>
-                            <td class="p-4 text-center text-md">{{ item.furnace_no }}</td>
-                            <td class="p-4 text-center text-md">{{ item.Tracer }}</td>
+                        <tr>
+                            <td class="p-4 text-center text-md"></td>
                         </tr>
                     </tbody>
                 </table>

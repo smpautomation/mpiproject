@@ -1,7 +1,12 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
-            <div v-show="showStartManageDiv">
+        <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-cover bg-center"
+        :style="{ backgroundImage: 'url(/photo/manage_background.jpg)',
+                backgroundPosition: 'center -120px'
+        }">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-30 z-0"></div>
+            <div v-show="showStartManageDiv" class="z-10">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
                         <span
@@ -57,7 +62,7 @@
                     <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-black animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
                     <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-black animate-pulse">No furnace detected in the system. Create one by clicking <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">Quick Add Furnace</span> first.</p>
                 </div>
-                <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl border-4">
+                <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
                         <span
                             class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
@@ -69,7 +74,7 @@
                         <p class="text-2xl font-bold text-blue-900">MANAGE</p>
                     </div>
                     <div class="flex flex-row items-center justify-center align-baseline">
-                        <p class="text-xl font-extrabold">Select a furnace:</p>
+                        <p class="text-xl font-extrabold text-white">Select a furnace:</p>
                         <select
                         v-model="currentFurnaceName"
                         class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -88,7 +93,7 @@
                         </button>
                     </div>
                 </div>
-                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl border-4">
+                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
                         <span
                             class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
@@ -99,8 +104,8 @@
                         ></span>
                         <p class="text-2xl font-bold text-blue-900">MANAGE</p>
                     </div>
-                    <p>{{ currentFurnaceName }}</p>
-                    <div class="flex flex-row items-center justify-center align-baseline">
+                    <p class=" text-white text-lg font-extrabold">You have selected <span class="animate-pulse text-xl">{{ currentFurnaceName }}</span></p>
+                    <div class="flex flex-row items-center justify-center align-baseline text-white">
                         <p>Select a layer:</p>
                         <select
                         v-model="currentLayerName"
@@ -121,8 +126,8 @@
                     </div>
                 </div>
             </div>
-            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl border-4">
-                <div class="flex flex-col items-center justify-center space-x-4 align-middle">
+            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="z-10 flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
+                <div class="flex flex-col items-center justify-center space-x-4 align-middle text-white text-lg font-extrabold">
                     <p>Currently selected: </p>
                     <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
                 </div>
@@ -130,8 +135,8 @@
                     Begin Process
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 mt-20">
-                <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold">Serial: {{ serialNo }}</p>
+            <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
+                <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold text-white">Serial: {{ serialNo }}</p>
                 <div v-if="showGraphAndTables" class="mt-[100px]">
 
                 </div>
@@ -458,8 +463,8 @@
                <!-- Loading Indicator -->
                 <DotsLoader v-if="layerTableRowLoading" />
             </div>
-            <DotsLoader v-show="showLoadingForGraphAndTables"/>
-            <div v-show="showGraphAndTables" class="flex flex-col">
+            <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
+            <div v-show="showGraphAndTables" class="flex flex-col z-10">
                 <div class="flex flex-col justify-center items-center">
                     <p class="animate-pulse">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
                 </div>
@@ -2339,8 +2344,29 @@ const fetchDataCreateGraph = async () => {
 
 // Generate a unique color for each dataset
 const generateColor = (index) => {
-    const colors = ["green", "blue", "red", "orange", "purple", "cyan", "magenta", "yellow", "teal", "pink", "lime"];
-    return colors[index % colors.length]; // Cycle through predefined colors
+    const colors = [
+        "#1F77B4", // deep blue
+        "#FF7F0E", // orange
+        "#2CA02C", // green
+        "#D62728", // red
+        "#9467BD", // purple
+        "#8C564B", // brown
+        "#E377C2", // pink
+        "#7F7F7F", // gray
+        "#BCBD22", // lime
+        "#17BECF", // cyan
+        "#393B79", // navy
+        "#637939", // olive
+        "#8C6D31", // ochre
+        "#843C39", // brick
+        "#7B4173", // plum
+        "#3182BD", // steel blue
+        "#E6550D", // burnt orange
+        "#31A354", // vivid green
+        "#756BB1", // violet
+        "#636363"  // dark gray
+    ];
+    return colors[index % colors.length];
 };
 
 const renderChart = () => {

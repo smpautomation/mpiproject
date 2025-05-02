@@ -179,7 +179,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr class="text-center">
                         <td class="border border-black px-2 py-[3.04px] text-xs">Br&nbsp;(G)</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrStandard }}</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrAverage }}</td>
@@ -187,7 +187,7 @@
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrMinimum }}</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrVariance }}</td>
                     </tr>
-                    <tr>
+                    <tr class="text-center">
                         <td class="border border-black px-2 py-[3.04px] text-xs">iHc&nbsp;(Oe)</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcStandard }}</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcAverage }}</td>
@@ -195,7 +195,7 @@
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcMinimum }}</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcVariance }}</td>
                     </tr>
-                    <tr>
+                    <tr class="text-center">
                         <td class="border border-black px-2 py-[3.04px] text-xs">iHk&nbsp;(Oe)</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkStandard }}</td>
                         <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkAverage }}</td>
@@ -450,22 +450,22 @@
                 </thead>
                 <tbody>
                     <tr class="text-center">
-                        <td class="border border-black px-1 py-1 text-[10px]">15AE</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">14157</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">22475</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">21107</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">48.68</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">21210</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">20858</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">1368</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">700</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">13688</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">0.972</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">13940</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">14566</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">13458</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">22.8</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">Normal</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printZone }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBr }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHc }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHk }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMax }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95 }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98 }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkiHc }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIa }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBhc }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printSquareness }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiId }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIs }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIa }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printTemperature }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printDataStatus }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -610,7 +610,7 @@
 import { ref, onMounted, nextTick, computed } from 'vue';
 
 // You could pass these via props or retrieve via an API
-const printSerialNo = ref('2504000001');
+const printSerialNo = ref('2505000001');
 const printSetNo = ref ('');
 const printOvenMachineNo_ovenInfo = ref('N/A');
 const printTimeLoading = ref('N/A');
@@ -657,8 +657,13 @@ const printRemarksResult = ref('N/A');
 
 const printSMPJudgement = ref('');
 const printPreparedBy = ref('');
+const printPreparedBy_date = ref('');
 const printCheckedBy = ref('');
+const printCheckedBy_date = ref('');
 const printApprovedBy = ref('');
+const printApprovedBy_date = ref('');
+
+const printTPMData = ref([]);
 
 
 const standardSampleDimention = computed(() => ({
@@ -691,10 +696,14 @@ const dataFrom_reportdata = async () => {
 
         //Under Magnetic Property Inspection
         printActualModel.value = rd.model;
+        printMaterialCode.value = rd.material_code;
+        printPartialNo.value = rd.partial_number;
         printPulseTracer.value = rd.pulse_tracer_machine_number;
         printDate.value = rd.date;
         printShift.value = rd.shift;
         printOperator.value = rd.operator;
+        printTotalQuantity.value = rd.total_quantity;
+        printRemarks.value = rd.remarks;
 
         //Under Standard Sample Dimention and Material Grade
         printLength.value = rd.length;
@@ -722,7 +731,18 @@ const dataFrom_reportdata = async () => {
         printiHkMaximum.value = mPD.ihkMaximum;
         printiHkMinimum.value = mPD.ihkMinimum;
 
+        printBrVariance.value = Number(printBrMaximum.value) - Number(printBrMinimum.value);
+        printiHcVariance.value = Number(printiHcMaximum.value) - Number(printiHcMinimum.value);
+        printiHkVariance.value = Number(printiHkMaximum.value) - Number(printiHkMinimum.value);
 
+        //Under SMP Judgement
+        printSMPJudgement.value = rd.smp_judgement;
+        printPreparedBy.value = rd.prepared_by;
+        printCheckedBy.value = rd.checked_by;
+        printApprovedBy.value = rd.approved_by;
+        printPreparedBy_date.value = rd.prepared_by_date;
+        printCheckedBy_date.value = rd.checked_by_date;
+        printApprovedBy_date.value = rd.approved_by_date;
 
 
     }catch(error){

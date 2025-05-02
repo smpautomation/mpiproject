@@ -42,7 +42,7 @@ class ApproversController extends Controller
                     'status' => true,
                     'message' => 'Approvers retrieved successfully',
                     'data' => [
-                        'Furnace Data' => $approverData
+                        'Approvers' => $approverData
                     ]
                 ], 200);
             }catch(\Exception $e){
