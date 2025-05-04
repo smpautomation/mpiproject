@@ -1138,10 +1138,14 @@ const showReportData = async () => {
         const noteRejectReasons = JSON.parse(filterBySerial[0].note_reason_reject);
         console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
 
-        noteReasonForReject.value = []; // Clear existing values
-        noteRejectReasons.forEach(reason => {
-            noteReasonForReject.value.push(reason);
-        });
+        if (noteRejectReasons && Array.isArray(noteRejectReasons)) {
+            noteReasonForReject.value = []; // Clear existing values
+            noteRejectReasons.forEach(reason => {
+                noteReasonForReject.value.push(reason);
+            });
+        } else {
+            console.warn("No valid noteRejectReasons found (null or not an array).");
+        }
 
         console.log("Model value: ",reportModel.value);
 

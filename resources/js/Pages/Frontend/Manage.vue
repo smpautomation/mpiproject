@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-cover bg-center"
+        <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-cover bg-center bg-no-repeat"
         :style="{ backgroundImage: 'url(/photo/manage_background.jpg)',
                 backgroundPosition: 'center -120px'
         }">
@@ -58,9 +58,9 @@
                             </p>
                         </div>
                     </div>
-                    <p v-if="isLoadingForAddFurnaces" class="mt-10 text-xl text-center text-black animate-pulse">Creating... Please wait.</p>
-                    <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-black animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
-                    <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-black animate-pulse">No furnace detected in the system. Create one by clicking <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">Quick Add Furnace</span> first.</p>
+                    <p v-if="isLoadingForAddFurnaces" class="mt-10 text-xl text-center text-white animate-pulse">Creating... Please wait.</p>
+                    <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-white animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
+                    <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-white animate-pulse">No furnace detected in the system. Create one by clicking <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">Quick Add Furnace</span> first.</p>
                 </div>
                 <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
@@ -315,19 +315,19 @@
                 <div>
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-gray-800">Upload file for Temperature and Data Status:</p>
+                        <p class="mb-4 text-xl font-semibold text-white">Upload file for Temperature and Data Status:</p>
 
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
                         <!-- File Input Label -->
-                        <label for="csv-file-upload" class="text-lg font-medium text-gray-600">Select a file to upload:</label>
+                        <label for="csv-file-upload" class="text-lg font-medium text-white">Select a file to upload:</label>
 
                         <!-- File Upload Input -->
                         <input
                             id="csv-file-upload"
                             type="file"
                             accept=".csv"
-                            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="block w-full px-4 py-3 border text-white border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             @change="csv_handleFileSelect"
                         />
 
@@ -396,11 +396,11 @@
                 </div>
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
-                        <p class="mt-5">Please fill in the details before proceeding</p>
+                        <p class="text-lg font-extrabold animate-pulse text-white">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
+                        <p class="mt-5 text-white">Please fill in the details before proceeding</p>
                         <div class="flex flex-row">
                             <div class="flex flex-col items-start justify-start">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Mass Production Name:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mass Production Name:</label>
                                 <input
                                     type="text"
                                     v-model="jhCurveMassProdName"
@@ -410,7 +410,7 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Mias. Employee:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mias. Employee:</label>
                                 <input
                                     type="text"
                                     v-model="propData_factorEmp"
@@ -420,7 +420,7 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Factor Employee:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Factor Employee:</label>
                                 <input
                                     type="text"
                                     v-model="propData_miasEmp"
@@ -430,7 +430,7 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-gray-700">Lot No.:</label>
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Lot No.:</label>
                                 <input
                                     type="text"
                                     v-model="jhCurveLotNo"
@@ -450,7 +450,7 @@
                 </div>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
+                        <p class="text-lg text-white font-extrabold animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
                             @click="showAllData"
@@ -466,7 +466,7 @@
             <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
             <div v-show="showGraphAndTables" class="flex flex-col z-10">
                 <div class="flex flex-col justify-center items-center">
-                    <p class="animate-pulse">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
+                    <p class="animate-pulse text-white text-xl px-4 py-2 rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-2">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
                 </div>
                 <div class="flex flex-row justify-center space-x-4 mt-5">
                     <div class="w-[500px] h-[420px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">

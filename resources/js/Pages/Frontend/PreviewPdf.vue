@@ -2,9 +2,18 @@
 <div class="print-container mx-auto">
   <!-- A4 Layout Box -->
   <div class="a4-page shadow-lg bg-white text-black border border-gray-300 max-w-5xl mx-auto px-7">
+    <div class="flex flex-row justify-between">
+        <button class="mt-2 bg-gray-600 text-white py-1 px-2 rounded-lg" @click="$inertia.visit('/reports')">back</button>
+        <button class="mt-2 bg-gray-300 text-black py-1 px-2 rounded-lg">Serial: </button>
+        <button
+        @click="window.print()"
+        class="py-1 px-2 mt-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
+        >
+        Print This Report
+    </button>
+    </div>
     <!-- Report Title -->
     <h1 class="text-2xl font-bold my-6 text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
-
     <!-- Oven Heating Information -->
     <p class="text-xl font-extrabold mb-4">Oven Heating Information</p>
 
@@ -259,11 +268,11 @@
                     <span
                         class="absolute w-[100px] h-[100px] bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: printPreparedBy === 'REJECT'
-                                ? 'url(\'/photo/reject_stamp.png\')'
+                            backgroundImage: printPreparedBy != '' && printPreparedBy != null
+                                ? 'url(\'/photo/Prepared_by_stamp.png\')'
                                 : printPreparedBy === 'HOLD'
-                                ? 'url(\'/photo/hold_stamp.png\')'
-                                : 'url(\'/photo/Prepared_by_stamp.png\')',
+                                ? 'url(\'/photo/cancel.png\')'
+                                : 'url(\'/photo/cancel.png\')',
                             backgroundSize: 'contain'
                         }">
                     </span>
@@ -281,11 +290,11 @@
                     <span
                         class="absolute w-[100px] h-[100px] bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: printCheckedBy === 'REJECT'
-                                ? 'url(\'/photo/reject_stamp.png\')'
+                            backgroundImage: printCheckedBy != '' && printCheckedBy != null
+                                ? 'url(\'/photo/Checked_by_stamp.png\')'
                                 : printCheckedBy === 'HOLD'
-                                ? 'url(\'/photo/hold_stamp.png\')'
-                                : 'url(\'/photo/Checked_by_stamp.png\')',
+                                ? 'url(\'/photo/cancel.png\')'
+                                : 'url(\'/photo/cancel.png\')',
                             backgroundSize: 'contain'
                         }">
                     </span>
@@ -303,22 +312,25 @@
                     <span
                         class="absolute w-[100px] h-[100px] bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: printApprovedBy === 'REJECT'
-                                ? 'url(\'/photo/reject_stamp.png\')'
+                            backgroundImage: printApprovedBy != '' && printApprovedBy != null
+                                ? 'url(\'/photo/Approved_by_stamp.png\')'
                                 : printApprovedBy === 'HOLD'
-                                ? 'url(\'/photo/hold_stamp.png\')'
-                                : 'url(\'/photo/Approved_by_stamp.png\')',
+                                ? 'url(\'/photo/cancel.png\')'
+                                : 'url(\'/photo/cancel.png\')',
                             backgroundSize: 'contain'
                         }">
                     </span>
                 </div>
             </div>
             <div class="ml-2">
-                <div class="flex flex-col">
-                    <p class="text-[10px]">Note: (REASON OF HOLD/REJECT)</p>
-                    <span class="text-sm">
-                        sample reject here
-                    </span>
+                <div class="flex flex-col border p-1 border-black">
+                    <p class="text-[10px] pb-1 font-extrabold">Note: (REASON OF HOLD/REJECT)</p>
+                    <div class="text-[10px] text-red-600 font-extrabold" v-if="noteReasonForReject.length">
+                        <span v-for="(reason, index) in noteReasonForReject" :key="index" class="block">
+                            {{ reason }}
+                        </span>
+                    </div>
+                    <span v-else class="text-sm text-gray-500">No rejection notes available.</span>
                 </div>
             </div>
         </div>
@@ -355,13 +367,13 @@
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Code&nbsp;No:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printOvenMachineNo_ovenInfo }}
+                        {{ printCodeNo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Sintering#:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printTimeLoading }}
+                        {{ printSinteringNo }}
                     </span>
                 </div>
             </div>
@@ -370,13 +382,13 @@
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Type&nbsp;Code:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printOvenMachineNo_ovenInfo }}
+                        {{ printTypeCode }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">coating:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printTimeLoading }}
+                        {{ printCoating }}
                     </span>
                 </div>
             </div>
@@ -385,13 +397,13 @@
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Judge&nbsp;Code:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printOvenMachineNo_ovenInfo }}
+                        {{ printJudgeCode }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Pass#:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printTimeLoading }}
+                        {{ printPassNo }}
                     </span>
                 </div>
             </div>
@@ -400,13 +412,13 @@
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Press#:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printOvenMachineNo_ovenInfo }}
+                        {{ printPressNo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Mias.&nbsp;Employee:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printTimeLoading }}
+                        {{ printMiasEmployee }}
                     </span>
                 </div>
             </div>
@@ -415,13 +427,13 @@
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Sintering&nbsp;Furnace#:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printOvenMachineNo_ovenInfo }}
+                        {{ printSinteringFurnaceNo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="font-semibold mr-2 text-xs">Factor&nbsp;Employee:</span>
                     <span class="inline-block border-b border-gray-500 flex-grow text-sm">
-                        {{ printTimeLoading }}
+                        {{ printFactoryEmployee }}
                     </span>
                 </div>
             </div>
@@ -475,7 +487,6 @@
                 <thead>
                     <tr class="bg-gray-200 text-center">
                         <th class="border border-black px-1 py-1 text-xs"></th>
-                        <th class="border border-black px-1 py-1 text-xs">Zone</th>
                         <th class="border border-black px-1 py-1 text-xs">Br</th>
                         <th class="border border-black px-1 py-1 text-xs">iHc</th>
                         <th class="border border-black px-1 py-1 text-xs">iHk</th>
@@ -492,56 +503,58 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- AVERAGE ROW -->
                     <tr class="text-center">
-                        <th class="border border-black px-1 py-1 text-xs bg-gray-200 text-center">Average</th>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
+                        <th class="border border-black px-1 py-1 text-xs bg-gray-200">Average</th>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Average }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Average }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsAverage }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaAverage }}</td>
                     </tr>
+
+                    <!-- MAXIMUM ROW -->
                     <tr class="text-center">
-                        <th class="border border-black px-1 py-1 text-xs bg-gray-200 text-center">Maximum</th>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
+                        <th class="border border-black px-1 py-1 text-xs bg-gray-200">Maximum</th>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Maximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Maximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcaxMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsMaximum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMaximum }}</td>
                     </tr>
+
+                    <!-- MINIMUM ROW -->
                     <tr class="text-center">
-                        <th class="border border-black px-1 py-1 text-xs bg-gray-200 text-center">Minimum</th>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">N/A</td>
+                        <th class="border border-black px-1 py-1 text-xs bg-gray-200">Minimum</th>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Minimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Minimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcaxMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsMinimum }}</td>
+                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -592,17 +605,6 @@
             </div>
         </div>
     </div>
-</div>
-
-
-<!-- Print Button Outside -->
-<div class="text-start ml-10">
-    <button
-        @click="window.print()"
-        class="px-6 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-        >
-        Print This Report
-    </button>
 </div>
 </template>
 
@@ -663,7 +665,68 @@ const printCheckedBy_date = ref('');
 const printApprovedBy = ref('');
 const printApprovedBy_date = ref('');
 
+const noteReasonForReject = ref([]);
+
 const printTPMData = ref([]);
+
+const printCodeNo = ref('');
+const printTypeCode = ref('');
+const printJudgeCode = ref('');
+const printPressNo = ref('');
+const printSinteringFurnaceNo = ref('');
+const printSinteringNo = ref('');
+const printCoating = ref('');
+const printPassNo = ref('');
+const printMiasEmployee = ref('');
+const printFactoryEmployee = ref('');
+
+const printZone = ref("");
+const printBr = ref("");
+const printiHc = ref("");
+const printiHk = ref("");
+const printBHMax = ref("");
+const printHr95 = ref("");
+const printHr98 = ref("");
+const printiHkiHc = ref("");
+const printBrpaiIa = ref("");
+const printBhc = ref("");
+const printSquareness = ref("");
+const print4paiId = ref("");
+const print4paiIs = ref("");
+const print4paiIa = ref("");
+const printTemperature = ref("");
+const printDataStatus = ref("");
+
+const printBHMaxAverage = ref('N/A');
+const printBHMaxMaximum = ref('N/A');
+const printBHMaxMinimum = ref('N/A');
+const printHr95Average = ref('N/A');
+const printHr95Maximum = ref('N/A');
+const printHr95Minimum = ref('N/A');
+const printHr98Average = ref('N/A');
+const printHr98Maximum = ref('N/A');
+const printHr98Minimum = ref('N/A');
+const printiHciHkAverage = ref('N/A');
+const printiHciHkMaximum = ref('N/A');
+const printiHciHkMinimum = ref('N/A');
+const printBrpaiIaAverage = ref('N/A');
+const printBrpaiIaMaximum = ref('N/A');
+const printBrpaiIaMinimum = ref('N/A');
+const printbHcAverage = ref('N/A');
+const printbHcaxMaximum = ref('N/A');
+const printbHcaxMinimum = ref('N/A');
+const printSquarenessAverage = ref('N/A');
+const printSquarenessaxMaximum = ref('N/A');
+const printSquarenessaxMinimum = ref('N/A');
+const print4paiIdAverage = ref('N/A');
+const print4paiIdMaximum = ref('N/A');
+const print4paiIdMinimum = ref('N/A');
+const print4paiIsAverage = ref('N/A');
+const print4paiIsMaximum = ref('N/A');
+const print4paiIsMinimum = ref('N/A');
+const print4paiIaAverage = ref('N/A');
+const print4paiIaMaximum = ref('N/A');
+const print4paiIaMinimum = ref('N/A');
 
 
 const standardSampleDimention = computed(() => ({
@@ -715,6 +778,7 @@ const dataFrom_reportdata = async () => {
 
         //Under Magnetic Property Data
         const mPD = JSON.parse(rd.magnetic_property_data);
+        const nRR = JSON.parse(rd.note_reason_reject);
 
         printBrStandard.value = mPD.brStandard;
         printBrAverage.value = mPD.brAverage;
@@ -731,6 +795,15 @@ const dataFrom_reportdata = async () => {
         printiHkMaximum.value = mPD.ihkMaximum;
         printiHkMinimum.value = mPD.ihkMinimum;
 
+        if (nRR && Array.isArray(nRR)) {
+            noteReasonForReject.value = []; // Clear existing values
+            nRR.forEach(reason => {
+                noteReasonForReject.value.push(reason);
+            });
+        } else {
+            console.warn("No valid noteRejectReasons found (null or not an array).");
+        }
+
         printBrVariance.value = Number(printBrMaximum.value) - Number(printBrMinimum.value);
         printiHcVariance.value = Number(printiHcMaximum.value) - Number(printiHcMinimum.value);
         printiHkVariance.value = Number(printiHkMaximum.value) - Number(printiHkMinimum.value);
@@ -743,7 +816,17 @@ const dataFrom_reportdata = async () => {
         printPreparedBy_date.value = rd.prepared_by_date;
         printCheckedBy_date.value = rd.checked_by_date;
         printApprovedBy_date.value = rd.approved_by_date;
-
+        
+        // Debug output
+        console.log("SMP Judgement Data:", {
+            smpJudgement: printSMPJudgement.value,
+            preparedBy: printPreparedBy.value,
+            checkedBy: printCheckedBy.value,
+            approvedBy: printApprovedBy.value,
+            preparedByDate: printPreparedBy_date.value,
+            checkedByDate: printCheckedBy_date.value,
+            approvedByDate: printApprovedBy_date.value
+        });
 
     }catch(error){
         console.error("Error on API GET REQUEST-dataFrom_reportdata function",error);
