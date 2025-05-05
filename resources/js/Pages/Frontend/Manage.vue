@@ -2344,16 +2344,16 @@ const fetchDataCreateGraph = async () => {
 // Generate a unique color for each dataset
 const generateColor = (index) => {
     const colors = [
-        "#1F77B4", // deep blue
-        "#FF7F0E", // orange
-        "#2CA02C", // green
-        "#D62728", // red
-        "#9467BD", // purple
-        "#8C564B", // brown
-        "#E377C2", // pink
-        "#7F7F7F", // gray
-        "#BCBD22", // lime
-        "#17BECF", // cyan
+        "#0d9ae0", // deep blue
+        "#a543de", // violet
+        "#82bd62", // green
+        "#564094", // purple
+        "#5cd1ac", // green
+        "#bf49d1", // brown
+        "#2da5eb", // blue
+        "#b469f5", // purple
+        "#5cd1ac", // green
+        "#946ff7", // purple
         "#393B79", // navy
         "#637939", // olive
         "#8C6D31", // ochre
