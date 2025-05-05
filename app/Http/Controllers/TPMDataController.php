@@ -47,6 +47,9 @@ class TPMDataController extends Controller
                             ->get()
                             ->groupBy('tpm_data_serial');
                 $grouped = [];
+                $tpmDataAll = TPMData::latest()->limit(20)->get();
+                $aggregateFunctions = TPMDataAggregateFunctions::latest()->limit(20)->get();
+                $remarks = TPMDataRemark::latest()->limit(20)->get();
                 foreach ($latestSerials as $serial) {
                     $grouped[$serial] = [
                         'tpm' => $tpmData[$serial] ?? collect(),
@@ -66,6 +69,9 @@ class TPMDataController extends Controller
                         'tpmData' => $grouped,
                         'furnace' => $furnace,
                         'layer' => $layer,
+                        'tpmDataAll' => $tpmDataAll,
+                        'remarks' => $remarks,
+                        'aggregateFunctions' => $aggregateFunctions
                     ]
                 ], 200);
             }catch(\Exception $e){
