@@ -4,6 +4,8 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Mail\TestMail;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 Route::get('/', [FrontendController::class,'index'])->name('homePage');
@@ -25,6 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/send-test-email/{emails}', function($emails){
+    $emailList = array_map('trim', explode(',', $emails)); 
+    Mail::to($emailList)->send(new TestMail('Test'));
+    return 'Test email sent!';
 });
 
 require __DIR__.'/auth.php';
