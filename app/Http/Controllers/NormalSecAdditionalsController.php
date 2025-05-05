@@ -102,6 +102,8 @@ class NormalSecAdditionalsController extends Controller
             $NSAInputs = [
                 'date' => $request->input('date', null),
                 'serial_no' => $request->input('serial_no', null),
+                'set_no' => $request->input('set_no', null),
+                'set_name' => $request->input('set_name', null),
                 'code_no' => $request->input('code_no', null),
                 'order_no' => $request->input('order_no', null),
                 'type' => $request->input('type', null),

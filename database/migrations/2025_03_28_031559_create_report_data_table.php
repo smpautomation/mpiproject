@@ -35,6 +35,7 @@ return new class extends Migration
             $table->float('cpk')->nullable();
             $table->string('br_cpk_remarks')->nullable();
             $table->string('remarks')->nullable();
+            $table->string('remarks_display')->nullable();
             $table->string('smp_judgement')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('checked_by')->nullable();
@@ -42,6 +43,7 @@ return new class extends Migration
             $table->datetime('prepared_by_date')->nullable();
             $table->datetime('checked_by_date')->nullable();
             $table->datetime('approved_by_date')->nullable();
+            $table->json('note_reason_reject')->nullable();
             $table->boolean('checked')->default(false);
             $table->boolean('applied_1x1x1')->default(false);
             $table->foreign('tpm_data_serial')
@@ -51,10 +53,10 @@ return new class extends Migration
                 ->onUpdate('cascade');
             $table->string('oven_machine_no')->nullable();
             $table->string('time_loading')->nullable();
-            $table->float('temp_time_loading')->nullable();
+            $table->string('temp_time_loading')->nullable();
             $table->string('date_oven_info')->nullable();
             $table->string('time_unloading')->nullable();
-            $table->float('temp_time_unloading')->nullable();
+            $table->string('temp_time_unloading')->nullable();
             $table->string('shift_oven_info')->nullable();
             $table->string('operator_oven_info')->nullable();
             $table->boolean('withCarmark')->nullable();

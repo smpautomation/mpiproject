@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center align-middle bg-gray-100 container-fluid">
+        <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
             <div class="flex flex-col items-center justify-center mt-12 font-bold">This is the Approval page</div>
             <div class="m-10">
                 <table class="w-full overflow-hidden border-collapse rounded-lg shadow-lg table-auto">
