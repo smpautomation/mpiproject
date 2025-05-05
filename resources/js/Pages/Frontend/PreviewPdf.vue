@@ -584,13 +584,14 @@
     <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page p-7">
         <div class="flex flex-col my-6">
             <div class="flex flex-row">
-                <div class="mb-10 border border-black w-[350px] h-[380px]">
-                    <canvas ref="myChartCanvas" width="500" height="520" style="transform: scale(1); transform-origin: top left;"></canvas>
+                <div class="mb-10 border border-black w-[480px] h-[360px]">
+                    <canvas ref="myChartCanvas" width="750" height="550" style="transform: scale(1); transform-origin: top left;"></canvas>
                 </div>
                 <div>
                     <!-- Side Content -->
-                    <div class="w-[330px] h-[380px] border border-black flex justify-center items-start ml-10 p-4">
+                    <div class="w-[250px] h-[360px] border border-black flex justify-center items-start ml-2 p-4">
                         <div class="flex flex-col items-start space-y-2">
+                            <p class="font-extrabold">Note:</p>
                             <p>
                                 SMP Lot (
                                 <span>{{ printMassProdName }}</span>
@@ -606,6 +607,13 @@
                             <p>
                                 Lot # {{ printJhCurveLotno }}
                             </p>
+                            <p class="text-sm" v-if="noteReasonForReject.length">       
+                                Remarks Encountered:   
+                                <div class="text-[10px] text-red-600 font-extrabold">
+                                    <span>{{ noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
+                                </div>
+                            </p>
+                            <span v-else class="text-sm text-gray-500"></span>
                         </div>
                     </div>
                 </div>
@@ -1022,16 +1030,16 @@ const fetchDataCreateGraph = async () => {
 // Generate a unique color for each dataset
 const generateColor = (index) => {
     const colors = [
-        "#1F77B4", // deep blue
-        "#FF7F0E", // orange
-        "#2CA02C", // green
-        "#D62728", // red
-        "#9467BD", // purple
-        "#8C564B", // brown
-        "#E377C2", // pink
-        "#7F7F7F", // gray
-        "#BCBD22", // lime
-        "#17BECF", // cyan
+        "#0d9ae0", // deep blue
+        "#a543de", // violet
+        "#82bd62", // green
+        "#564094", // purple
+        "#5cd1ac", // green
+        "#bf49d1", // brown
+        "#2da5eb", // blue
+        "#b469f5", // purple
+        "#5cd1ac", // green
+        "#946ff7", // purple
         "#393B79", // navy
         "#637939", // olive
         "#8C6D31", // ochre
@@ -1069,8 +1077,9 @@ const renderChart = () => {
 
         //console.log("2D Context obtained, proceeding to render the chart.");
 
+        //new updated offset 5/5/2025
         const x_offset = 2000;
-        const y_offset = 4000;
+        const y_offset = 1700;
 
         const chartDatasets = datasets.value.map((dataset, index) => {
             return {

@@ -348,7 +348,7 @@
                             Submit
                             </button>
                         </div>
-                        <p class="mt-2 text-sm text-gray-500">Only .csv files are allowed</p>
+                        <p class="mt-2 text-sm text-white">Only .csv files are allowed</p>
                         </div>
                     </div>
                     <div

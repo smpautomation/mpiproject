@@ -826,6 +826,7 @@ const reportReset = () => {
     isAutomotive.value = false;
     isAutomotiveInitiallyMarked.value = false;
     show1x1x1Data.value = false;
+    noteReasonForReject.value = [];
 }
 
 const showNotification = (message) => {
@@ -1550,6 +1551,7 @@ const checkCarmark = async () => {
             "withCarmark": isAutomotive.value,
         });
         console.log("Saved carmark data: ", responseCarMark.data);
+        isAutomotive.value = true;
     }catch(error){
         console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
     }
