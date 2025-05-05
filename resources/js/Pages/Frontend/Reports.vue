@@ -38,23 +38,25 @@
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
-                    <!-- Checkbox + Label -->
-                    <label v-if="isAutomotiveInitiallyMarked == false" class="flex items-center space-x-3 text-lg mb-5">
-                        <!--
-                        <input
-                        v-model="isTTM_model"
-                        type="checkbox"
-                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                            <span>(Tick this box if the TTM model applies.)</span>
-                        -->
-                        <input
-                        v-model="isAutomotive"
-                        type="checkbox"
-                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                            <span>(Tick this box if the model is for Automotive)</span>
-                    </label>
+                    <div v-if="!showTickThisBox">
+                        <!-- Checkbox + Label -->
+                        <label v-if="isAutomotiveInitiallyMarked == false" class="flex items-center mb-5 space-x-3 text-lg">
+                            <!--
+                            <input
+                            v-model="isTTM_model"
+                            type="checkbox"
+                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                                <span>(Tick this box if the TTM model applies.)</span>
+                            -->
+                            <input
+                            v-model="isAutomotive"
+                            type="checkbox"
+                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                                <span>(Tick this box if the model is for Automotive)</span>
+                        </label>
+                    </div>
                     <div class="flex flex-row justify-center">
                         <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">Show Report</button>
                     </div>
@@ -611,7 +613,7 @@
                         Apply SEC Additionals
                     </button>
                     <button
-                        @click="$inertia.visit('/create_pdf')"
+                        @click="finalizeReport(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
                         Finalize Report
@@ -642,6 +644,8 @@ const isOn = ref(false);
 function toggleSwitch() {
     isOn.value = !isOn.value;
 }
+
+const showTickThisBox = ref(false);
 
 const showNotif = ref(false);
 const showNotif2 = ref(false);
@@ -1050,7 +1054,6 @@ const reportRemarksDisplayNG_bhc = ref(false);
         console.log("brStandard HIGHER: ",inspectionBrStandard_higher.value);
 
         const repData = {
-            "date": reportDate.value,
             "length": inspectionLength.value,
             "magnetic_property_data": JSON.stringify({
                 "brStandard": inspectionBrStandard.value,
@@ -1131,6 +1134,15 @@ const showReportData = async () => {
         reportApprovedByDate.value = filterBySerial[0].approved_by_date
         ? filterBySerial[0].approved_by_date.split(' ')[0]
         : '';
+
+        reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
+        reportTimeLoading.value = filterBySerial[0].time_loading;
+        reportTimeUnloading.value = filterBySerial[0].time_unloading;
+        reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
+        reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
+        reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
+        reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
+        reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
 
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         console.log("With carmark value: ",isAutomotive.value);
@@ -1274,8 +1286,9 @@ const fetchSerial = async () => {
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
   ipAddress: String,
+  fromApproval: Boolean,
 });
-
+showTickThisBox.value = props.fromApproval;
 ipAddress.value = props.ipAddress;
 console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
@@ -1552,6 +1565,15 @@ const initialCarmarkChecking = async () => {
     }catch(error){
         console.error("ERROR GET REQUEST FOR CARMARK: ", error);
     }
+}
+
+const finalizeReport = (serial) => {
+    Inertia.visit('/create_pdf', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { serialParam: serial },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
 }
 
 const sec_additional_redirect = (sec_serial) => {

@@ -1,11 +1,11 @@
 <template>
     <Frontend>
-        <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-cover bg-center bg-no-repeat"
+        <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-no-repeat bg-cover"
         :style="{ backgroundImage: 'url(/photo/manage_background.jpg)',
                 backgroundPosition: 'center -120px'
         }">
         <!-- Overlay -->
-        <div class="absolute inset-0 bg-black bg-opacity-30 z-0"></div>
+        <div class="absolute inset-0 z-0 bg-black bg-opacity-30"></div>
             <div v-show="showStartManageDiv" class="z-10">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
@@ -104,16 +104,16 @@
                         ></span>
                         <p class="text-2xl font-bold text-blue-900">MANAGE</p>
                     </div>
-                    <p class=" text-white text-lg font-extrabold">You have selected <span class="animate-pulse text-xl">{{ currentFurnaceName }}</span></p>
-                    <div class="flex flex-row items-center justify-center align-baseline text-white">
+                    <p class="text-lg font-extrabold text-white ">You have selected <span class="text-xl animate-pulse">{{ currentFurnaceName }}</span></p>
+                    <div class="flex flex-row items-center justify-center text-white align-baseline">
                         <p>Select a layer:</p>
                         <select
                         v-model="currentLayerName"
                         class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                        <option v-for="layer in layerList" :key="layer.id" :value="layer.layer_name">
-                            {{ layer.layer_name }}
-                        </option>
+                            <option v-for="layer in layerList" :key="layer.id" :value="layer.layer_name">
+                                {{ layer.layer_name }}
+                            </option>
                         </select>
                     </div>
                     <div class="flex flex-row items-center justify-center m-2 space-x-16">
@@ -127,7 +127,7 @@
                 </div>
             </div>
             <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="z-10 flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
-                <div class="flex flex-col items-center justify-center space-x-4 align-middle text-white text-lg font-extrabold">
+                <div class="flex flex-col items-center justify-center space-x-4 text-lg font-extrabold text-white align-middle">
                     <p>Currently selected: </p>
                     <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
                 </div>
@@ -226,21 +226,21 @@
 
                     <div
                         v-show="showSaveToDatabase_confirmation"
-                        class="flex flex-col items-center justify-center bg-white p-8 rounded-xl shadow-xl border border-gray-200 max-w-md mx-auto mt-10"
+                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
                         >
                         <div class="mb-6">
-                            <p class="text-lg font-semibold text-gray-800 text-center">Are you sure you want to upload all these files?</p>
+                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure you want to upload all these files?</p>
                         </div>
                         <div class="flex space-x-6">
                             <button
                             @click="saveToDatabase"
-                            class="px-6 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-md"
+                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
                             >
                             YES
                             </button>
                             <button
                             @click="saveToDatabase_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200 shadow-md"
+                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
                             >
                             NO
                             </button>
@@ -250,13 +250,13 @@
                 </div>
                 <div>
                     <div v-show="showProceed1" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
-                        <p class="mt-5">Please Type the Model Name before proceeding: </p>
+                        <p class="text-lg font-extrabold text-white animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
+                        <p class="mt-5 text-white">Please Type the Model Name before proceeding: </p>
                         <input
                             type="text"
                             v-model="jhCurveActualModel"
                             @input="jhCurveActualModel = jhCurveActualModel.toUpperCase()"
-                            class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="E.G. TIC-0755G"
                         />
                         <button
@@ -288,21 +288,21 @@
                     </div>
                     <div
                         v-show="showProceedToCsvUpload_confirmation"
-                        class="flex flex-col items-center justify-center bg-white p-8 rounded-xl shadow-xl border border-gray-200 max-w-md mx-auto mt-10"
+                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
                         >
                         <div class="mb-6">
-                            <p class="text-lg font-semibold text-gray-800 text-center">Are you sure this model name is correct?</p>
+                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure this model name is correct?</p>
                         </div>
                         <div class="flex space-x-6">
                             <button
                             @click="proceedToCsvUpload"
-                            class="px-6 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-md"
+                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
                             >
                             YES
                             </button>
                             <button
                             @click="proceedToCsvUpload_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200 shadow-md"
+                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
                             >
                             NO
                             </button>
@@ -327,7 +327,7 @@
                             id="csv-file-upload"
                             type="file"
                             accept=".csv"
-                            class="block w-full px-4 py-3 border text-white border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="block w-full px-4 py-3 text-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             @change="csv_handleFileSelect"
                         />
 
@@ -373,21 +373,21 @@
                     </div>
                     <div
                         v-show="showCsvUpload_confirmation"
-                        class="flex flex-col items-center justify-center bg-white p-8 rounded-xl shadow-xl border border-gray-200 max-w-md mx-auto mt-10"
+                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
                         >
                         <div class="mb-6">
-                            <p class="text-lg font-semibold text-gray-800 text-center">Are you sure this CSV file is correct?</p>
+                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure this CSV file is correct?</p>
                         </div>
                         <div class="flex space-x-6">
                             <button
                             @click="csv_submitFile"
-                            class="px-6 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-md"
+                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
                             >
                             YES
                             </button>
                             <button
                             @click="csvUpload_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200 shadow-md"
+                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
                             >
                             NO
                             </button>
@@ -396,7 +396,7 @@
                 </div>
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold animate-pulse text-white">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
+                        <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
                         <p class="mt-5 text-white">Please fill in the details before proceeding</p>
                         <div class="flex flex-row">
                             <div class="flex flex-col items-start justify-start">
@@ -406,7 +406,7 @@
                                     v-model="jhCurveMassProdName"
                                     @input="jhCurveMassProdName = jhCurveMassProdName.toUpperCase()"
                                     placeholder="e.g. K40 541st"
-                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
@@ -416,7 +416,7 @@
                                     v-model="propData_factorEmp"
                                     @input="propData_factorEmp = propData_factorEmp.toUpperCase()"
                                     placeholder="e.g. Ella"
-                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
@@ -426,7 +426,7 @@
                                     v-model="propData_miasEmp"
                                     @input="propData_miasEmp = propData_miasEmp.toUpperCase()"
                                     placeholder="e.g. Kathryn"
-                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
@@ -436,7 +436,7 @@
                                     v-model="jhCurveLotNo"
                                     @input="jhCurveLotNo = jhCurveLotNo.toUpperCase()"
                                     placeholder="e.g. 100/101-1"
-                                    class="placeholder-opacity-40 placeholder-gray-400 uppercase px-4 py-2 mt-1 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
                         </div>
@@ -450,7 +450,7 @@
                 </div>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
-                        <p class="text-lg text-white font-extrabold animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
+                        <p class="text-lg font-extrabold text-white animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
                             @click="showAllData"
@@ -459,18 +459,17 @@
                         </button>
                     </div>
                 </div>
-
                <!-- Loading Indicator -->
                 <DotsLoader v-if="layerTableRowLoading" />
             </div>
             <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
-            <div v-show="showGraphAndTables" class="flex flex-col z-10">
-                <div class="flex flex-col justify-center items-center">
-                    <p class="animate-pulse text-white text-xl px-4 py-2 rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-2">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
+            <div v-show="showGraphAndTables" class="z-10 flex flex-col">
+                <div class="flex flex-col items-center justify-center">
+                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-yellow-100/80 to-yellow-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
                 </div>
-                <div class="flex flex-row justify-center space-x-4 mt-5">
-                    <div class="w-[500px] h-[420px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
-                        <canvas ref="myChartCanvas" width="650" height="680" style="transform: scale(1); transform-origin: top left;"></canvas>
+                <div class="flex flex-row justify-center mt-5 space-x-4">
+                    <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
+                        <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
                     </div>
                     <!-- Side Content -->
                     <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
@@ -494,7 +493,7 @@
                     </div>
                 </div>
 
-                <div class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50 mb-10">
+                <div class="p-6 mt-4 mb-10 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
                     <div class="mb-4">
                         <p class="text-center">PROPERTY DATA</p>
                     </div>
@@ -652,7 +651,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="flex flex-col items-center justify-center p-4 mb-4 ml-6 bg-blue-200 rounded-lg shadow-md text-sm space-y-3"> <!-- DIV 6 -->
+                            <div class="flex flex-col items-center justify-center p-4 mb-4 ml-6 space-y-3 text-sm bg-blue-200 rounded-lg shadow-md"> <!-- DIV 6 -->
 
                                 <!-- Header -->
                                 <div>
@@ -660,7 +659,7 @@
                                 </div>
 
                                 <div class="w-[600px] h-[50px] px-4 py-2 bg-white rounded-2xl text-xs space-y-1">
-                                    <p class="font-bold flex gap-1 whitespace-nowrap">
+                                    <p class="flex gap-1 font-bold whitespace-nowrap">
                                         <span
                                         v-for="(rejectOKNGlist, index) in rejectOKNG"
                                         :key="index"
@@ -677,20 +676,20 @@
                                 </div>
 
                                 <!-- Additional Info Row -->
-                                <div class="flex justify-center items-stretch space-x-2 w-full">
+                                <div class="flex items-stretch justify-center w-full space-x-2">
 
                                     <!-- iHc Remarks -->
-                                    <div class="flex flex-col items-center justify-center px-4 py-2 bg-white rounded-2xl w-1/2 text-center">
-                                    <p class="font-semibold text-xs">
+                                    <div class="flex flex-col items-center justify-center w-1/2 px-4 py-2 text-center bg-white rounded-2xl">
+                                    <p class="text-xs font-semibold">
                                         <span :class="adjustColor_rejectiHc">{{ rejectiHcRemarks }}</span>
                                     </p>
-                                    <p class="font-bold text-sm">
+                                    <p class="text-sm font-bold">
                                         <span :class="adjustColor_iHcValue">{{ getHighestSampleVariance }}</span>
                                     </p>
                                     </div>
 
                                     <!-- Lot Remarks -->
-                                    <div class="flex flex-wrap items-center justify-center px-4 py-2 bg-white rounded-2xl w-1/2 font-bold text-xs">
+                                    <div class="flex flex-wrap items-center justify-center w-1/2 px-4 py-2 text-xs font-bold bg-white rounded-2xl">
                                     <span
                                         v-for="(rejectLotRemarksList, index) in rejectLotRemarks"
                                         :key="index"
@@ -2392,8 +2391,12 @@ const renderChart = () => {
 
         //console.log("2D Context obtained, proceeding to render the chart.");
 
+        //new updated offset 5/5/2025
         const x_offset = 2000;
-        const y_offset = 4000;
+        const y_offset = 1700;
+
+        //const x_offset = 2000;
+        //const y_offset = 4000;
 
         const chartDatasets = datasets.value.map((dataset, index) => {
             return {

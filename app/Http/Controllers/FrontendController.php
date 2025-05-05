@@ -31,6 +31,7 @@ class FrontendController extends Controller
     {
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
+        $fromApproval = $request->get('fromApproval');
 
         // Debug: Log all the headers
         Log::debug($request->headers->all());  // <-- Now the Log class will work
@@ -50,7 +51,8 @@ class FrontendController extends Controller
         // Return the Inertia response and pass both serialParam and ipAddress to the Reports.vue component
         return Inertia::render('Frontend/Reports', [
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
-            'ipAddress' => $ipAddress  // Pass ipAddress as a prop to the Reports.vue component
+            'ipAddress' => $ipAddress,  // Pass ipAddress as a prop to the Reports.vue component
+            'fromApproval' => $fromApproval
         ]);
     }
 
@@ -78,7 +80,12 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function generatePdf(){
-        return Inertia::render('Frontend/PreviewPdf');
+    public function generatePdf(Request $request){
+        // Capture the serialParam from the GET request
+        $serial = $request->get('serialParam');
+        // Return the Inertia response and pass both serialParam and ipAddress to the Reports.vue component
+        return Inertia::render('Frontend/PreviewPdf', [
+            'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
+        ]);
     }
 }

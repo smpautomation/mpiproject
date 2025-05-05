@@ -7,12 +7,12 @@
                     <thead class="text-white bg-gray-800 ">
                         <tr>
                             <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Date</th>
-                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Serial No</th>
-                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Magnet Model</th>
-                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Material Code</th>
-                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Partial No</th>
-                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Total Quantity</th>
-                            <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300">SMP Judgement</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Partial No</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Total Quantity</th>
+                            <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300 whitespace-nowrap">SMP Judgement</th>
                             <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Prepared By</th>
                             <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Checked By</th>
                             <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300">Action</th>
@@ -22,7 +22,7 @@
                     </thead>
                     <tbody class="text-center bg-white">
                         <tr v-for="(report, index) in reportDataList" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
-                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.date }}</td>
+                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.date }}</td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
                             <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
@@ -31,11 +31,11 @@
                             <td class="px-6 py-3 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
                                 {{ report.smp_judgement }}
                             </td>
-                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.prepared_by }}</td>
-                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.checked_by }}</td>
+                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
+                            <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
                             <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
                                 <button @click="viewReport(report.tpm_data_serial)"
-                                        class="px-4 py-2 text-blue-500 border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+                                        class="px-4 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
                                     View Report
                                 </button>
                             </td>
@@ -122,7 +122,7 @@ const viewReport = (serial) => {
     console.log('Navigating to report with serial:', serial);
     Inertia.visit('/reports', {
         method: 'get',   // You can keep 'get' since we are not modifying any data
-        data: { serialParam: serial },   // Passing the serialParam here
+        data: { serialParam: serial, fromApproval: true },   // Passing the serialParam here
         preserveState: true,
         preserveScroll: true,
     });
