@@ -348,7 +348,7 @@
                             Submit
                             </button>
                         </div>
-                        <p class="mt-2 text-sm text-gray-500">Only .csv files are allowed</p>
+                        <p class="mt-2 text-sm text-white">Only .csv files are allowed</p>
                         </div>
                     </div>
                     <div
@@ -392,60 +392,6 @@
                             NO
                             </button>
                         </div>
-                    </div>
-                </div>
-                <div>
-                    <div v-show="showProceed2" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
-                        <p class="mt-5 text-white">Please fill in the details before proceeding</p>
-                        <div class="flex flex-row">
-                            <div class="flex flex-col items-start justify-start">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mass Production Name:</label>
-                                <input
-                                    type="text"
-                                    v-model="jhCurveMassProdName"
-                                    @input="jhCurveMassProdName = jhCurveMassProdName.toUpperCase()"
-                                    placeholder="e.g. K40 541st"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mias. Employee:</label>
-                                <input
-                                    type="text"
-                                    v-model="propData_factorEmp"
-                                    @input="propData_factorEmp = propData_factorEmp.toUpperCase()"
-                                    placeholder="e.g. Ella"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Factor Employee:</label>
-                                <input
-                                    type="text"
-                                    v-model="propData_miasEmp"
-                                    @input="propData_miasEmp = propData_miasEmp.toUpperCase()"
-                                    placeholder="e.g. Kathryn"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Lot No.:</label>
-                                <input
-                                    type="text"
-                                    v-model="jhCurveLotNo"
-                                    @input="jhCurveLotNo = jhCurveLotNo.toUpperCase()"
-                                    placeholder="e.g. 100/101-1"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                        <button
-                            class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="proceedToFinal"
-                            >
-                                Submit
-                        </button>
                     </div>
                 </div>
                 <div>
@@ -2496,7 +2442,7 @@ const renderChart = () => {
     onMounted(() => {
     // Log the value to check if it's being passed correctly
     console.log('Serial Param in Manage.vue:', props.manageSerialParam);
-
+    showLoadingForGraphAndTables
     if (props.manageSerialParam) {
         showStartManageDiv.value = false;
         // If serialParam has a value, do not fetch serial
