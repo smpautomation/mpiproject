@@ -13,6 +13,9 @@ use App\Http\Controllers\MieGxDataInstructionsAggregateController;
 use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
 use Illuminate\Support\Facades\Route;
+use App\Mail\TestMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -97,3 +100,26 @@ Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
+Route::post('/send-test-email', function(Request $request){
+
+    $validated = $request->validate([
+        'serial' => 'required|alpha_num',
+        'emails' => 'required|string',
+        'message' => 'nullable|string|max:5000',
+    ]);
+
+    $emailList = array_map('trim', explode(',', $validated['emails'])); 
+    $username = 'TestUser';
+
+    $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
+
+    Mail::to($emailList)->send(new TestMail($username, $validated['serial'], $customMessage));
+    return 'Test Email Sent';
+});
+
+Route::get('/test-email', function () {
+    return view('emails.test', [
+        'username' => 'PreviewUser',
+        'message' => 'customMessage'
+    ]);
+});
