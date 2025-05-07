@@ -316,12 +316,10 @@
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
                         <p class="mb-4 text-xl font-semibold text-white">Upload file for Temperature and Data Status:</p>
-
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
                         <!-- File Input Label -->
                         <label for="csv-file-upload" class="text-lg font-medium text-white">Select a file to upload:</label>
-
                         <!-- File Upload Input -->
                         <input
                             id="csv-file-upload"

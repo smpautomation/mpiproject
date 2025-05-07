@@ -607,8 +607,8 @@
                             <p>
                                 Lot # {{ printJhCurveLotno }}
                             </p>
-                            <p class="text-sm" v-if="noteReasonForReject.length">       
-                                Remarks Encountered:   
+                            <p class="text-sm" v-if="noteReasonForReject.length">
+                                Remarks Encountered:
                                 <div class="text-[10px] text-red-600 font-extrabold">
                                     <span>{{ noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
                                 </div>
@@ -690,7 +690,7 @@ import { Chart, registerables } from 'chart.js'; // Import all required componen
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
 
-// You could pass these via props or retrieve via an API
+const isAutomotive = ref(false);
 const printSerialNo = ref('');
 const printSetNo = ref ('');
 const printOvenMachineNo_ovenInfo = ref('N/A');
@@ -809,6 +809,8 @@ const dataFrom_reportdata = async () => {
         const reportData = responseReport.data.data.filter(column => column.tpm_data_serial == printSerialNo.value); // filter by serial
         console.log("reportData-data: ",reportData);
         const rd = reportData[0];
+
+        isAutomotive.value = rd.withCarmark == 1;
 
         //Under Oven Heating Information
         printOvenMachineNo_ovenInfo.value = rd.oven_machine_no;
