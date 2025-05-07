@@ -4,6 +4,9 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Mail\TestMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 Route::get('/', [FrontendController::class,'index'])->name('homePage');
@@ -26,5 +29,22 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route::post('/send-test-email', function(Request $request){
+
+//     $validated = $request->validate([
+//         'serial' => 'required|alpha_num',
+//         'emails' => 'required|string',
+//         'message' => 'nullable|string|max:5000',
+//     ]);
+
+//     $emailList = array_map('trim', explode(',', $validated['emails'])); 
+//     $username = 'TestUser';
+
+//     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
+
+//     Mail::to($emailList)->send(new TestMail($username, $validated['serial'], $customMessage));
+//     return 'Test Email Sent';
+// });
 
 require __DIR__.'/auth.php';

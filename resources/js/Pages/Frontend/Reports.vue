@@ -2,7 +2,7 @@
     <Frontend>
       <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
 
-        <div v-if="serialList.length == 0 && currentUserName != 'ITADANI KAZUYA'"> <!-- default div -->
+        <div v-if="serialList.length == 0 && isFromApproval == false"> <!-- default div -->
             <div class="flex flex-row items-center justify-center mt-10 align-baseline">
                 <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
             </div>
@@ -38,7 +38,7 @@
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
-                    <div v-if="!showTickThisBox">
+                    <div v-if="!isFromApproval">
                         <!-- Checkbox + Label -->
                         <label v-if="isAutomotiveInitiallyMarked == false" class="flex items-center mb-5 space-x-3 text-lg">
                             <!--
@@ -57,8 +57,11 @@
                                 <span>(Tick this box if the model is for Automotive)</span>
                         </label>
                     </div>
+                    <div v-if="isFromApproval">
+                        <p class="text-xl font-extrabold animate-pulse mb-10">Report Data is ready for viewing...</p>
+                    </div>
                     <div class="flex flex-row justify-center">
-                        <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">Show Report</button>
+                        <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">{{ isFromApproval ? 'Click to Show' : 'Show Report' }}</button>
                     </div>
 
                 </div>
@@ -645,7 +648,7 @@ function toggleSwitch() {
     isOn.value = !isOn.value;
 }
 
-const showTickThisBox = ref(false);
+const isFromApproval = ref(false);
 
 const showNotif = ref(false);
 const showNotif2 = ref(false);
@@ -1289,7 +1292,7 @@ const props = defineProps({
   ipAddress: String,
   fromApproval: Boolean,
 });
-showTickThisBox.value = props.fromApproval;
+isFromApproval.value = props.fromApproval;
 ipAddress.value = props.ipAddress;
 console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
