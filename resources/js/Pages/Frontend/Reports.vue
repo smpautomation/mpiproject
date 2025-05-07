@@ -58,7 +58,7 @@
                         </label>
                     </div>
                     <div v-if="isFromApproval">
-                        <p class="text-xl font-extrabold animate-pulse mb-10">Report Data is ready for viewing...</p>
+                        <p class="mb-10 text-xl font-extrabold animate-pulse">Report Data is ready for viewing...</p>
                     </div>
                     <div class="flex flex-row justify-center">
                         <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">{{ isFromApproval ? 'Click to Show' : 'Show Report' }}</button>
@@ -137,6 +137,7 @@
                                 <input
                                     v-model="reportTimeLoading"
                                     type="text"
+                                    @input="reportTimeLoading = reportTimeLoading.toUpperCase()"
                                     name="timeLoading"
                                     class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -150,6 +151,7 @@
                                 <input
                                     v-model="reportTemperature_TimeLoading"
                                     type="text"
+
                                     name="temperature_timeLoading"
                                     class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -208,6 +210,7 @@
                                 <input
                                     v-model="reportShift_OvenInfo"
                                     type="text"
+                                    @input="reportShift_OvenInfo = reportShift_OvenInfo.toUpperCase()"
                                     name="ovenInfo_shift"
                                     class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -221,6 +224,7 @@
                                 <input
                                     v-model="reportOperator_OvenInfo"
                                     type="text"
+                                    @input="reportOperator_OvenInfo = reportOperator_OvenInfo.toUpperCase()"
                                     name="ovenInfo_operator"
                                     class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -251,7 +255,7 @@
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Partial No.:</label>&nbsp;
-                            <input v-model="reportPartialNo" type="text" name="shift" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                            <input v-model="reportPartialNo" @input="reportPartialNo = reportPartialNo.toUpperCase()" type="text" name="shift" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out">
@@ -278,14 +282,14 @@
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Shift:</label>&nbsp;
-                            <input v-model="reportShift" type="text" name="shift" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                            <input v-model="reportShift" type="text" @input="reportShift = reportShift.toUpperCase()" name="shift" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out">
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Operator:</label>&nbsp;
-                            <input v-model="reportOperator" type="text" name="operator" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                            <input v-model="reportOperator" type="text" @input="reportOperator = reportOperator.toUpperCase()" name="operator" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out">
@@ -422,6 +426,7 @@
                         <input
                             v-model="reportRemarks"
                             type="text"
+                            @input="reportRemarks = reportRemarks.toUpperCase()"
                             class="w-full px-2 py-1 text-sm transition duration-200 ease-in-out bg-transparent bg-white border border-white rounded-md hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white"
                         />
                         <div class="px-0 py-5 mx-5 bg-blue-300 shadow-xl rounded-2xl">
@@ -1257,10 +1262,10 @@ const saveReportUpdate = async (saveData, serial) => {
 const fetchSerial = async () => {
   try {
     const response = await axios.get("/api/tpmdata");
-    //console.log("API Response:", response.data);
+    console.log("API Response fetchSerial-data:", response.data);
 
     // Extract furnace data dynamically
-    tpmData.value = response.data.data["tpmData"] || [];
+    tpmData.value = response.data.data["tpmDataAll"] || [];
     //console.log("TPM DATA response: ", tpmData.value);
 
     // Extract unique serial numbers by using a Set
