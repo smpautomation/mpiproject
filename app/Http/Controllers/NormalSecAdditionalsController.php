@@ -182,10 +182,12 @@ class NormalSecAdditionalsController extends Controller
             $remark = NSARemark::create($remarkData);
 
             $checkNSAAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $nsaData->serial_no)->exists();
-            if(!$checkNSAAggregateFunctions){
+            $checkNSAAggregateFunctionsSet = NSAAggregateFunctions::where('nsa_set', $nsaData->set_no)->exists();
+            if(!$checkNSAAggregateFunctions && !$checkNSAAggregateFunctionsSet){
                 try{
                     $NSAAggragateFunctionsInput = [
                         'nsa_serial' => $nsaData->serial_no,
+                        'nsa_set' => $nsaData->set_no,
                     ];
                     $NSAAggragateFunctions = NSAAggregateFunctions::create($NSAAggragateFunctionsInput);
                 }catch(\Exception $e){
