@@ -71,6 +71,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('nsa_id')->index();
+            $table->unsignedBigInteger('nsa_set')->index();
             $table->string('Br_remarks')->nullable();
             $table->string('4paiId_remarks')->nullable();
             $table->string('iHc_remarks')->nullable();
@@ -106,6 +107,12 @@ return new class extends Migration
             $table->unsignedBigInteger('nsa_serial')->unique();
             $table->foreign('nsa_serial')
                     ->references('serial_no')
+                    ->on('normal_sec_additionals')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $table->unsignedBigInteger('nsa_set');
+            $table->foreign('nsa_set')
+                    ->references('set_no')
                     ->on('normal_sec_additionals')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
