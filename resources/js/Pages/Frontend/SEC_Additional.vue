@@ -32,23 +32,20 @@
                             />
 
                             <div>
+                                <button
+                                    class="px-4 py-2 mr-24 font-semibold text-white bg-red-700 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    @click="clearFileUpload"
+                                >
+                                    Clear
+                                </button>
 
-                            <button
-                                class="px-4 py-2 mr-24 font-semibold text-white bg-red-700 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                @click="clearFileUpload"
-                            >
-                                Clear
-                            </button>
-
-                            <!-- Submit Button -->
-                            <input
-                                type="submit"
-                                id="submitRawdata"
-                                class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                @click="saveToDatabase_showConfirm"
-                            />
-                            <!-- Button to Redo Upload -->
-
+                                <!-- Submit Button -->
+                                <input
+                                    type="submit"
+                                    id="submitRawdata"
+                                    class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    @click="saveToDatabase_showConfirm"
+                                />
                             </div>
 
                             <!-- Optional Instruction Text -->
@@ -122,12 +119,62 @@
                 <div>
                     <div v-if="showProceed1" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
+                        <p class="mt-5 text-white">Please type the remarks description for this additional: </p>
+                        <input
+                            type="text"
+                            v-model="additional_remarks"
+                            @input="additional_remarks = additional_remarks.toUpperCase()"
+                            class="w-[700px] px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="E.G. 2ND LAYER AT OTHER CORNER OF N.G BOX"
+                        />
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
                             @click="proceedToCsvUpload_showConfirm"
                             >
                                 Proceed to Upload CSV
                         </button>
+                    </div>
+                    <div
+                        v-show="showNoRemarksError"
+                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                        >
+                        <svg
+                            class="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                        <span>This field is required</span>
+                    </div>
+                    <div
+                        v-show="showProceedToCsvUpload_confirmation"
+                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
+                        >
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure this description is correct?</p>
+                        </div>
+                        <div class="flex space-x-6">
+                            <button
+                            @click="proceedToCsvUpload"
+                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
+                            >
+                            YES
+                            </button>
+                            <button
+                            @click="proceedToCsvUpload_cancel"
+                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
+                            >
+                            NO
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -340,6 +387,27 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="flex items-center justify-center mt-10">
+                    <button @click="Inertia.reload()" class="flex items-center gap-2 px-4 py-2 font-semibold text-white transition duration-300 bg-blue-600 rounded shadow-md hover:bg-blue-700">
+                        <span>UPLOAD AGAIN</span>
+                        <span class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center"
+                            :style="{
+                                backgroundImage: 'url(\'/photo/repeat_upload.png\')',
+                                backgroundSize: 'contain'
+                            }"
+                        ></span>
+                    </button>
+                    <button @click="$inertia.visit('/reports')" class="flex items-center gap-2 px-4 py-2 ml-10 font-semibold text-white transition duration-300 rounded shadow-md bg-cyan-600 hover:bg-cyan-700">
+                        <span>GO TO REPORT</span>
+                        <span class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center"
+                            :style="{
+                                backgroundImage: 'url(\'/photo/gotoreport.png\')',
+                                backgroundSize: 'contain'
+                            }"
+                        ></span>
+                    </button>
+                </div>
             </div>
         </div>
     </Frontend>
@@ -349,6 +417,7 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js'; // Import all required components
+import { Inertia } from '@inertiajs/inertia';
 import Papa from 'papaparse';
 import axios from 'axios';
 import DotsLoader from '@/Components/DotsLoader.vue';
@@ -375,6 +444,7 @@ const showProceedToCsvUpload_confirmation = ref(false);
 const showNoCsvFileSelectedError = ref(false);
 const showCsvUpload_confirmation = ref(false);
 const showLoadingForGraphAndTables = ref(false);
+const showNoRemarksError = ref(false);
 
 
 
@@ -447,8 +517,29 @@ const storeFileList = (event) => {
     }
 
     const proceedToCsvUpload_showConfirm = () => {
+        if(additional_remarks.value == null || additional_remarks.value == ''){
+            showNoRemarksError.value = true;
+            showProceed1.value = false;
+            setTimeout(() => {
+                showNoRemarksError.value = false;
+                showProceed1.value = true;
+            }, 2000);
+            return;
+        }else{
+            showProceedToCsvUpload_confirmation.value = true;
+            showProceed1.value = false;
+        }
+    }
+
+    const proceedToCsvUpload = () => {
         csvUpload.value = true;
         showProceed1.value = false;
+        showProceedToCsvUpload_confirmation.value = false;
+    }
+
+    const proceedToCsvUpload_cancel = () => {
+        showProceedToCsvUpload_confirmation.value = false;
+        showProceed1.value = true;
     }
 
     const csvUpload_showConfirm = () => {
@@ -476,6 +567,8 @@ const storeFileList = (event) => {
         csvUpload.value = true;
         csv_clearFile();
     }
+
+    const additional_remarks = ref("");
 
  //tpmdata category in database
  const jhCurveModel = ref("");
@@ -549,7 +642,8 @@ const csv_selectedFile = ref(null)
                 try {
                     const responseTempWithData = await axios.patch(`/api/nsadataupdate/${getAllID[i]}`, {
                         temperature: csv_tempWithDataStat.value[i]?.temp || null,
-                        data_status: csv_tempWithDataStat.value[i]?.status || null
+                        data_status: csv_tempWithDataStat.value[i]?.status || null,
+                        set_name: additional_remarks.value || null
                     });
 
                     console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
@@ -949,6 +1043,7 @@ const saveToDatabase = async () => {
 
                 // Check if the date is in a valid format and reformat it to YYYY-MM-DD
                 const formattedDate = new Date(rawDate).toISOString().split('T')[0];  // Converts to 'YYYY-MM-DD' format
+                console.log("ADDITIONAL REMARKS: ",additional_remarks.value);
 
                 const layerData = {
                     "date": formattedDate,

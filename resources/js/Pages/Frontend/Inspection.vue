@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
+        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showMainUI" class="flex flex-col items-center justify-center">
                 <div>
                     <button @click="insertBtn" class="relative flex px-6 py-3 m-10 overflow-hidden font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
@@ -36,7 +36,7 @@
                             <tr
                                 v-for="item in inspectionDataList"
                                 :key="item.id"
-                                class="bg-gray-50 text-xs"
+                                class="text-xs bg-gray-50"
                             >
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'null' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'null' }}</td>

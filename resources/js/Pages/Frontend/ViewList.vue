@@ -1,29 +1,35 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100 space-y-4">
+        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-4 bg-gray-100">
             <!-- Loading indicator -->
             <div v-if="tpmData.length === 0" class="flex items-center justify-center min-h-screen">
-                <span class="text-lg font-semibold text-gray-500">Loading data...</span>
+                <span class="text-lg font-semibold text-gray-500">No data available. Please go to manage section first.</span>
             </div>
 
             <!-- DataTable -->
-            <div v-else class="overflow-x-auto w-full">
-                <table id="tpmDataTable" class="table-fixed border-collapse w-full rounded-lg shadow-lg">
+            <div v-else class="w-full overflow-x-auto">
+                <table id="tpmDataTable" class="w-full border-collapse rounded-lg shadow-lg table-fixed">
                     <thead>
                         <tr class="text-lg text-white bg-gradient-to-r from-green-400 via-black to-blue-400">
-                            <th class="w-1/12 px-4 py-4 border-b">Serial No</th>
-                            <th class="w-2/12 px-4 py-4 border-b">Furnace ID</th>
-                            <th class="w-1/12 px-4 py-4 border-b">Layer ID</th>
-                            <th class="w-2/12 px-4 py-4 border-b">Model Name</th>
-                            <th class="w-2/12 px-4 py-4 border-b">Lot No</th>
-                            <th class="w-1/12 px-4 py-4 border-b">Furnace No</th>
-                            <th class="w-1/12 px-4 py-4 border-b">Coating No</th>
-                            <th class="w-1/12 px-4 py-4 border-b">Tracer No</th>
+                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Serial No</th>
+                            <th class="w-2/12 px-1 py-2 border-b whitespace-nowrap">Model Name</th>
+                            <th class="w-2/12 px-1 py-2 border-b whitespace-nowrap">Lot No</th>
+                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Furnace No</th>
+                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Tracer No</th>
+                            <th class="w-2/12 px-1 py-2 border-b whitespace-nowrap">SMP Judgement</th>
+                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="p-4 text-center text-md"></td>
+                        <tr v-for="(item, index) in tpmData" :key="index">
+                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.category[0].tpm_data_serial }}</td>
+                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.category[0].actual_model }}</td>
+                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.category[0].jhcurve_lotno }}</td>
+                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.tpm[0].sintering_furnace_no }}</td>
+                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.tpm[0].Tracer }}</td>
+                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.report[0].smp_judgement || "NO DATA" }}</td>
+                            <td v-if="item.report[0].approved_by" class="p-2 text-center text-md">COMPLETED</td>
+                            <td v-else class="p-2 text-center text-md">PENDING</td>
                         </tr>
                     </tbody>
                 </table>
@@ -47,15 +53,10 @@ const viewAllSerialedLayers = async () => {
         const response = await axios.get("/api/tpmdata");
         console.log('API Response viewlist:', response.data);
 
-        // Access the tpmData from response (adjust based on your API structure)
-        const data = response.data.data?.tpmData || [];
+        const rawData = response.data.data?.tpmData || {};
+        tpmData.value = Object.values(rawData); // convert object to array
 
-        // Ensure unique serial numbers
-        const uniqueData = data.filter((value, index, self) => {
-            return index === self.findIndex((t) => t.serial_no === value.serial_no);
-        });
-
-        tpmData.value = uniqueData;
+        //tpmData.value = dataArray;
         console.log("Unique tpm data array: ", tpmData.value);
     } catch (error) {
         console.error("Error fetching data:", error);

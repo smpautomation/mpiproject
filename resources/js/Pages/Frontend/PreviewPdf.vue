@@ -682,12 +682,15 @@
     </div>
 
     <!-- A4 Layout Box -->
-    <p>pagesData length: {{ numberOfSet }}</p>
+    <button>pagesData length: {{ numberOfSet }}</button>
 
     <div v-for="index in numberOfSet" :key="index">
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
             <!-- Report Title -->
-            <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button>Set #:{{ index }}</button></h1>
+            <h1 class="mt-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button>Set #:{{ index }}</button></h1>
+            <div class="flex flex-row items-center justify-center mt-2 mb-5 text-blue-600">
+                <p class="text-sm">{{ additionalRemarks[index - 1] }}</p>
+            </div>
             <!-- Information Grid -->
             <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
                 <!-- First Column -->
@@ -934,6 +937,9 @@
                                     </p>
                                 </div>
                                 <span v-else class="text-sm text-gray-500"></span>
+                                <div>
+                                    <p class="mt-2 text-sm text-blue-600">{{ additionalRemarks[index - 1] }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1134,52 +1140,7 @@ const print4paiIaMinimum = ref('N/A');
 const printMassProdName = ref('N/A');
 const printJhCurveLotno = ref('N/A');
 
-const nsa_printTPMData = ref([]);
-
-const nsa_printCodeNo = ref('');
-const nsa_printTypeCode = ref('');
-const nsa_printJudgeCode = ref('');
-const nsa_printPressNo = ref('');
-const nsa_printSinteringFurnaceNo = ref('');
-const nsa_printSinteringNo = ref('');
-const nsa_printCoating = ref('');
-const nsa_printPassNo = ref('');
-const nsa_printMiasEmployee = ref('');
-const nsa_printFactoryEmployee = ref('');
-
-const nsa_printBHMaxAverage = ref('N/A');
-const nsa_printBHMaxMaximum = ref('N/A');
-const nsa_printBHMaxMinimum = ref('N/A');
-const nsa_printHr95Average = ref('N/A');
-const nsa_printHr95Maximum = ref('N/A');
-const nsa_printHr95Minimum = ref('N/A');
-const nsa_printHr98Average = ref('N/A');
-const nsa_printHr98Maximum = ref('N/A');
-const nsa_printHr98Minimum = ref('N/A');
-const nsa_printiHciHkAverage = ref('N/A');
-const nsa_printiHciHkMaximum = ref('N/A');
-const nsa_printiHciHkMinimum = ref('N/A');
-const nsa_printBrpaiIaAverage = ref('N/A');
-const nsa_printBrpaiIaMaximum = ref('N/A');
-const nsa_printBrpaiIaMinimum = ref('N/A');
-const nsa_printbHcAverage = ref('N/A');
-const nsa_printbHcaxMaximum = ref('N/A');
-const nsa_printbHcaxMinimum = ref('N/A');
-const nsa_printSquarenessAverage = ref('N/A');
-const nsa_printSquarenessaxMaximum = ref('N/A');
-const nsa_printSquarenessaxMinimum = ref('N/A');
-const nsa_print4paiIdAverage = ref('N/A');
-const nsa_print4paiIdMaximum = ref('N/A');
-const nsa_print4paiIdMinimum = ref('N/A');
-const nsa_print4paiIsAverage = ref('N/A');
-const nsa_print4paiIsMaximum = ref('N/A');
-const nsa_print4paiIsMinimum = ref('N/A');
-const nsa_print4paiIaAverage = ref('N/A');
-const nsa_print4paiIaMaximum = ref('N/A');
-const nsa_print4paiIaMinimum = ref('N/A');
-
-const nsa_printMassProdName = ref('N/A');
-const nsa_printJhCurveLotno = ref('N/A');
+const additionalRemarks = ref([]);
 
 const standardSampleDimention = computed(() => ({
   'LENGTH (mm)': printLength.value,
@@ -1570,6 +1531,10 @@ const checkingNSA = async () => {
             const nsaArray = Object.values(nsadata);
             const maxSetNo = Math.max(...nsaArray.map(item => item.set_no));
             numberOfSet.value = maxSetNo;
+
+            additionalRemarks.value = nsadata.map(item => item.set_name);
+            console.log('getting all the additional descriptions:',additionalRemarks.value);
+            //gggg
         }else{
             console.log('NOT ARRAY!!');
         }
