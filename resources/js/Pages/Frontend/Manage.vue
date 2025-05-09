@@ -1254,7 +1254,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         try {
             // Step 1: Fetch the data from the API
             const response = await axios.get("/api/tpmdata"); // Adjust this URL to your API endpoint
-            const tpmData = response.data.data.tpmData || [];  // Fallback to an empty array if undefined
+            const tpmData = response.data.data.tpmDataAll || [];  // Fallback to an empty array if undefined
+            console.log("tpmData-data result = ",tpmData);
 
             if (tpmData.length > 0) {
                 // Step 2: Loop through tpmData to find serial_no values and filter out invalid serial numbers

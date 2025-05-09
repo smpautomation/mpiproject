@@ -13,7 +13,7 @@
             </svg>
           </button>
           <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:text-white md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
              <li v-for="(item, index) in navItems" :key="index">
               <Link :href="route(item.route)" :class="{'text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500': route().current(item.route)}" aria-current="page">
                 {{ item.label }}

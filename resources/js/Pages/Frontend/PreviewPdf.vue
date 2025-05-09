@@ -1672,7 +1672,7 @@ const nsa_dataFrom_tpmData = async () => {
                 coating: firstTPM?.furnace_no ?? "",
                 judgeCode: firstTPM?.order_no ?? "",
                 passNo: firstTPM?.pass_no ?? "",
-                pressNo: firstTPM?.machine_no + " " + firstTPM?.press_1 + " " + firstTPM?.press_2,
+                pressNo: firstTPM?.press_1 + " " + firstTPM?.press_2 + " " + firstTPM?.machine_no,
                 tableTPM: tableTPMRows,
                 actualModel: firstTPM?.category.actual_model,
                 jhcurveLotNo: firstTPM?.category.jhcurve_lotno,

@@ -181,6 +181,7 @@
                                 <input
                                     v-model="reportTimeUnloading"
                                     type="text"
+                                    @input="reportTimeUnloading = reportTimeUnloading.toUpperCase()"
                                     name="timeUnloading"
                                     class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300

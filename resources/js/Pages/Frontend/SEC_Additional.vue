@@ -120,7 +120,7 @@
 
                 </div>
                 <div>
-                    <div v-show="showProceed1" class="flex flex-col items-center justify-center">
+                    <div v-if="showProceed1" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
@@ -233,7 +233,7 @@
             <div v-show="showGraphAndTables" class="z-10 flex flex-col">
                 <div class="flex flex-row items-center justify-center">
                     <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-blue-600/80 to-blue-600/40 backdrop-blur-lg">Serial: {{ currentSerialSelected }} </p>
-                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-blue-600/80 to-blue-600/40 backdrop-blur-lg ml-10">Set #: {{ highest_setNo }} </p>
+                    <p class="px-4 py-2 ml-10 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-blue-600/80 to-blue-600/40 backdrop-blur-lg">Set #: {{ highest_setNo }} </p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
                     <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
@@ -524,11 +524,11 @@ const csv_selectedFile = ref(null)
     }
 
     const csv_clearFile = () => {
-    csv_selectedFile.value = null
-    csv_parsedData.value = []
+        csv_selectedFile.value = null
+        csv_parsedData.value = []
 
-    // Reset the file input manually
-    const csv_fileInput = document.getElementById('csv-file-upload')
+        // Reset the file input manually
+        const csv_fileInput = document.getElementById('csv-file-upload')
         if (csv_fileInput) {
             csv_fileInput.value = ''
         }
@@ -538,10 +538,11 @@ const csv_selectedFile = ref(null)
         try{ //tempDataClass contains the value to be updated
             const responseTPM = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value); // This is used to find the proper id to update
             console.log('API Response MergeTempToTPMDATA:', responseTPM.data);
-
+//ggggg
             const tpmData = responseTPM.data.data || [];
             console.log('tpm data: ',tpmData);
-            const getAllID = tpmData.map(item => item.id);
+            const nsafilteredData = tpmData.filter(item => item.set_no == highest_setNo.value);
+            const getAllID = nsafilteredData.map(item => item.id);
             console.log('getting all the ids:',getAllID);
 
             for (let i = 0; i < getAllID.length; i++) {
@@ -861,166 +862,178 @@ const saveToDatabase = async () => {
 
     console.log('Current set_no value: ',highest_setNo.value);
 
-    fileData.value.forEach((file) => {
+        const filePromises = fileData.value.map((file) => {
+            return new Promise((resolve, reject) => {
+            const reader = new FileReader();
 
-        const reader = new FileReader();
+            reader.onload = async () => {
+                const content = reader.result; // Read file content
+                const parsedData = parseFileContent(content); // Parse content
 
-        reader.onload = () => {
-            const content = reader.result; // Read file content
-            const parsedData = parseFileContent(content); // Parse content
-
-            //console.log('Parsed Data:', parsedData);
+                //console.log('Parsed Data:', parsedData);
 
 
-            // Dynamically handle rows based on the length of the file content
-            const lines = content.split("\n"); // Split content into lines (assuming newline delimiter)
-            const rows = lines.map(line => line.split("\t")); // Split each line by tabs (if TSV)
+                // Dynamically handle rows based on the length of the file content
+                const lines = content.split("\n"); // Split content into lines (assuming newline delimiter)
+                const rows = lines.map(line => line.split("\t")); // Split each line by tabs (if TSV)
 
-            const numberOfRows = rows.length; // This gives the total number of rows in the file
-            //console.log(`The file contains ${numberOfRows} rows.`);
+                const numberOfRows = rows.length; // This gives the total number of rows in the file
+                //console.log(`The file contains ${numberOfRows} rows.`);
 
-            // Map specific keys to extract relevant values
-            const dataKeysValue = [
-                2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
-                22, 24, 27, 30, 33, 36, 39, 42, 45,
-                48, 51, 54, 57, 60, 63, 66, 68, 71,
-                74, 76, 78, 81, 83, 86, 88, 91, 93,
-                96
-            ];
+                // Map specific keys to extract relevant values
+                const dataKeysValue = [
+                    2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
+                    22, 24, 27, 30, 33, 36, 39, 42, 45,
+                    48, 51, 54, 57, 60, 63, 66, 68, 71,
+                    74, 76, 78, 81, 83, 86, 88, 91, 93,
+                    96
+                ];
 
-            const newRowValues = dataKeysValue
-                .map((i) => parsedData[`data${i}`])
-                .filter(Boolean);
+                const newRowValues = dataKeysValue
+                    .map((i) => parsedData[`data${i}`])
+                    .filter(Boolean);
 
-        //-------------------------------------GRAPH
-            const xValues = [];
-            const yValues = [];
-            for (const key in parsedData) {
-                if (
-                    parsedData.hasOwnProperty(key) &&
-                    key.startsWith('data') &&
-                    parseInt(key.replace('data', ''), 10) >= 150 && //Adjust
-                    parseInt(key.replace('data', ''), 10) <= numberOfRows
-                ) {
-                    const [x, y] = parsedData[key].split(',').map(Number);
+            //-------------------------------------GRAPH
+                const xValues = [];
+                const yValues = [];
+                for (const key in parsedData) {
+                    if (
+                        parsedData.hasOwnProperty(key) &&
+                        key.startsWith('data') &&
+                        parseInt(key.replace('data', ''), 10) >= 150 && //Adjust
+                        parseInt(key.replace('data', ''), 10) <= numberOfRows
+                    ) {
+                        const [x, y] = parsedData[key].split(',').map(Number);
 
-                        // Custom condition: x must be less than 100 and y must be greater than -1000
-                    if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
-                        //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
-                        continue; // Skip this iteration if condition is not met
+                            // Custom condition: x must be less than 100 and y must be greater than -1000
+                        if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
+                            //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
+                            continue; // Skip this iteration if condition is not met
+                        }
+
+                        xValues.push(x);
+                        yValues.push(y);
                     }
-
-                    xValues.push(x);
-                    yValues.push(y);
                 }
-            }
 
 
-            xAxis.value = xValues;
-            yAxis.value = yValues;
+                xAxis.value = xValues;
+                yAxis.value = yValues;
 
-            xJsonOutput.value = JSON.stringify(xValues, null, 2);
-            yJsonOutput.value = JSON.stringify(yValues, null, 2);
+                xJsonOutput.value = JSON.stringify(xValues, null, 2);
+                yJsonOutput.value = JSON.stringify(yValues, null, 2);
 
-            //console.log('X Axis JSON:', xJsonOutput.value);
-            //console.log('Y Axis JSON:', yJsonOutput.value);
+                //console.log('X Axis JSON:', xJsonOutput.value);
+                //console.log('Y Axis JSON:', yJsonOutput.value);
 
-            //-------------------------------------GRAPH END
+                //-------------------------------------GRAPH END
 
-            rowCell.value = newRowValues;
+                rowCell.value = newRowValues;
 
-            saveBrRemarks.value = parsedData.data25;
-            save4paiIdRemarks.value = parsedData.data28;
-            saveIHcRemarks.value = parsedData.data31;
-            saveBHcRemarks.value = parsedData.data34;
-            saveBHMaxRemarks.value = parsedData.data37;
-            saveSquarenessRemarks.value = parsedData.data40;
-            save4paiIsRemarks.value = parsedData.data43;
-            saveIHkRemarks.value = parsedData.data46;
-            save4paiIaRemarks.value = parsedData.data49;
-            saveDensityRemarks.value = parsedData.data52;
-            saveIHkiHcRemarks.value = parsedData.data55;
-            saveBr4paiRemarks.value = parsedData.data58;
-            saveIHr95Remarks.value = parsedData.data61;
-            saveIHr98Remarks.value = parsedData.data64;
+                saveBrRemarks.value = parsedData.data25;
+                save4paiIdRemarks.value = parsedData.data28;
+                saveIHcRemarks.value = parsedData.data31;
+                saveBHcRemarks.value = parsedData.data34;
+                saveBHMaxRemarks.value = parsedData.data37;
+                saveSquarenessRemarks.value = parsedData.data40;
+                save4paiIsRemarks.value = parsedData.data43;
+                saveIHkRemarks.value = parsedData.data46;
+                save4paiIaRemarks.value = parsedData.data49;
+                saveDensityRemarks.value = parsedData.data52;
+                saveIHkiHcRemarks.value = parsedData.data55;
+                saveBr4paiRemarks.value = parsedData.data58;
+                saveIHr95Remarks.value = parsedData.data61;
+                saveIHr98Remarks.value = parsedData.data64;
 
-            const rawDate = rowCell.value[0]; // The raw date from rowCell.value[0]
+                const rawDate = rowCell.value[0]; // The raw date from rowCell.value[0]
 
-            // Check if the date is in a valid format and reformat it to YYYY-MM-DD
-            const formattedDate = new Date(rawDate).toISOString().split('T')[0];  // Converts to 'YYYY-MM-DD' format
+                // Check if the date is in a valid format and reformat it to YYYY-MM-DD
+                const formattedDate = new Date(rawDate).toISOString().split('T')[0];  // Converts to 'YYYY-MM-DD' format
 
-            const layerData = {
-                "date": formattedDate,
-                "serial_no": currentSerialSelected.value,
-                "set_no": highest_setNo.value,
-                "code_no": rowCell.value[1],
-                "order_no": rowCell.value[2],
-                "type": rowCell.value[3],
-                "press_1": rowCell.value[4],
-                "press_2": rowCell.value[5],
-                "machine_no": rowCell.value[6],
-                "sintering_furnace_no": rowCell.value[7],
-                "furnace_no": rowCell.value[8],
-                "zone": rowCell.value[9],
-                "pass_no": rowCell.value[10],
-                "Br": Math.round(rowCell.value[11]),
-                "4paiId": Math.round(rowCell.value[12]),
-                "iHc": Math.round(rowCell.value[13]),
-                "bHc": Math.round(rowCell.value[14]),
-                "BHMax": parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
-                "Squareness": parseFloat(parseFloat(rowCell.value[16]).toFixed(3)) || 0,
-                "4paiIs": Math.round(rowCell.value[17]),
-                "iHk": Math.round(rowCell.value[18]),
-                "4paiIa": Math.round(rowCell.value[19]),
-                "Density": rowCell.value[20],
-                "iHkiHc": Math.round(rowCell.value[21]),
-                "Br4pai": Math.round(rowCell.value[22]),
-                "iHr95": Math.round(rowCell.value[23]),
-                "iHr98": Math.round(rowCell.value[24]),
-                "Tracer": rowCell.value[25],
-                "HRX": rowCell.value[26],
-                "MRX": rowCell.value[27],
-                "HRY": rowCell.value[28],
-                "MRY": rowCell.value[29],
-                "IHKA": rowCell.value[30],
-                "MRA": rowCell.value[31],
-                "IHKB": rowCell.value[32],
-                "MRB": rowCell.value[33],
-                "IHKC": rowCell.value[34],
-                "MRC": rowCell.value[35],
-                "HR": rowCell.value[36],
-                "HRO": rowCell.value[37],
-                "x": xJsonOutput.value,
-                "y": yJsonOutput.value,
-                "Br_remarks": saveBrRemarks.value,
-                "4paiId_remarks": save4paiIdRemarks.value,
-                "iHc_remarks": saveIHcRemarks.value,
-                "bHc_remarks": saveBHcRemarks.value,
-                "BHMax_remarks": saveBHMaxRemarks.value,
-                "Squareness_remarks": saveSquarenessRemarks.value,
-                "4paiIs_remarks": save4paiIsRemarks.value,
-                "iHk_remarks": saveIHkRemarks.value,
-                "4paiIa_remarks": save4paiIaRemarks.value,
-                "Density_remarks": saveDensityRemarks.value,
-                "iHkiHc_remarks": saveIHkiHcRemarks.value,
-                "Br4pai_remarks": saveBr4paiRemarks.value,
-                "iHr95_remarks": saveIHr95Remarks.value,
-                "iHr98_remarks": saveIHr98Remarks.value,
+                const layerData = {
+                    "date": formattedDate,
+                    "serial_no": currentSerialSelected.value,
+                    "set_no": highest_setNo.value,
+                    "code_no": rowCell.value[1],
+                    "order_no": rowCell.value[2],
+                    "type": rowCell.value[3],
+                    "press_1": rowCell.value[4],
+                    "press_2": rowCell.value[5],
+                    "machine_no": rowCell.value[6],
+                    "sintering_furnace_no": rowCell.value[7],
+                    "furnace_no": rowCell.value[8],
+                    "zone": rowCell.value[9],
+                    "pass_no": rowCell.value[10],
+                    "Br": Math.round(rowCell.value[11]),
+                    "4paiId": Math.round(rowCell.value[12]),
+                    "iHc": Math.round(rowCell.value[13]),
+                    "bHc": Math.round(rowCell.value[14]),
+                    "BHMax": parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
+                    "Squareness": parseFloat(parseFloat(rowCell.value[16]).toFixed(3)) || 0,
+                    "4paiIs": Math.round(rowCell.value[17]),
+                    "iHk": Math.round(rowCell.value[18]),
+                    "4paiIa": Math.round(rowCell.value[19]),
+                    "Density": rowCell.value[20],
+                    "iHkiHc": Math.round(rowCell.value[21]),
+                    "Br4pai": Math.round(rowCell.value[22]),
+                    "iHr95": Math.round(rowCell.value[23]),
+                    "iHr98": Math.round(rowCell.value[24]),
+                    "Tracer": rowCell.value[25],
+                    "HRX": rowCell.value[26],
+                    "MRX": rowCell.value[27],
+                    "HRY": rowCell.value[28],
+                    "MRY": rowCell.value[29],
+                    "IHKA": rowCell.value[30],
+                    "MRA": rowCell.value[31],
+                    "IHKB": rowCell.value[32],
+                    "MRB": rowCell.value[33],
+                    "IHKC": rowCell.value[34],
+                    "MRC": rowCell.value[35],
+                    "HR": rowCell.value[36],
+                    "HRO": rowCell.value[37],
+                    "x": xJsonOutput.value,
+                    "y": yJsonOutput.value,
+                    "Br_remarks": saveBrRemarks.value,
+                    "4paiId_remarks": save4paiIdRemarks.value,
+                    "iHc_remarks": saveIHcRemarks.value,
+                    "bHc_remarks": saveBHcRemarks.value,
+                    "BHMax_remarks": saveBHMaxRemarks.value,
+                    "Squareness_remarks": saveSquarenessRemarks.value,
+                    "4paiIs_remarks": save4paiIsRemarks.value,
+                    "iHk_remarks": saveIHkRemarks.value,
+                    "4paiIa_remarks": save4paiIaRemarks.value,
+                    "Density_remarks": saveDensityRemarks.value,
+                    "iHkiHc_remarks": saveIHkiHcRemarks.value,
+                    "Br4pai_remarks": saveBr4paiRemarks.value,
+                    "iHr95_remarks": saveIHr95Remarks.value,
+                    "iHr98_remarks": saveIHr98Remarks.value,
+                };
+                //console.log("Layer Data:", layerData);
+
+                await sendLayerData(layerData);
+                resolve(); // Finish promise
             };
-            //console.log("Layer Data:", layerData);
 
-            sendLayerData(layerData); // Send the parsed data to the server
-        };
+            reader.onerror = () => {
+                console.error('Error reading file:', file.name);
+                reject(reader.error);
+            };
 
-        reader.onerror = () => {
-            console.error('Error reading file:', file.name);
-        };
-
-        reader.readAsText(file); // Read the file as text
+            reader.readAsText(file); // Read the file as text
+        });
     });
 
-
+    try {
+        await Promise.all(filePromises);
+        showProceed1.value = true;
+    } catch (e) {
+        console.error("One or more files failed to upload." , e);
+    } finally {
+        showUploadData.value = false;
+        layerTableRowLoading.value = false;
+    }
 };
+
 
 // Function to send raw data via API
 const sendLayerData = async (layerData) => {
@@ -1033,9 +1046,7 @@ const sendLayerData = async (layerData) => {
         console.error('Error sending data to API:', error.response?.data || error.message);
         return;
     } finally {
-        showProceed1.value = true;
         showUploadData.value = false;
-        layerTableRowLoading.value = false;
         showSaveToDatabase_confirmation.value = false;
     }
 };
