@@ -1617,11 +1617,9 @@ const showAllData = async () => {
     };
 
     // Function to send raw data via API
-    const sendAggData = async (aggData, id) => {  // Make sure to pass 'id' as a parameter
+    const sendAggData = async (aggData, id) => {
         try {
-            // Correct string interpolation for the URL
             const response = await axios.patch(`/api/nsaaggregateupdate/${id}`, aggData); // Proper string interpolation for URL
-            // Uncomment this to see the response
             console.log('API Response sendAggData:', response.data);
         } catch (error) {
             console.error('Error sending aggregate data to API:', error.response?.data || error.message);

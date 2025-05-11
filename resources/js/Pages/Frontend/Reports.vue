@@ -377,54 +377,118 @@
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHkVariance }}</td>
                                 </tr>
                                 <tr v-show="isTTM_model" class="bg-blue-300">
-                                    <th rowspan="2" class="px-4 py-2 text-xl text-white border-4 border-white">Br Cpk</th>
+                                    <th rowspan="2" colspan="2" class="px-4 py-2 text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
                                     <th class="px-4 py-2 text-white border-4 border-white">STD DEV</th>
-                                    <th class="px-4 py-2 text-white border-4 border-white">Cpu</th>
-                                    <th class="px-4 py-2 text-white border-4 border-white">Cpl</th>
-                                    <th class="px-4 py-2 text-white border-4 border-white">Cpk</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white">Cp</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
                                     <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
                                 </tr>
                                 <tr v-show="isTTM_model" class="text-center">
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"><input type="number" v-model="reportStdDev" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCpk" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportCpkRemarks" name="stdDev" class="w-[8.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
                                 </tr>
-                                <tr v-show="show1x1x1Data" class="text-center bg-blue-300">
+                                <tr v-show="show1x1x1Data_withoutCorner" class="text-center bg-blue-300">
                                     <td colspan="2" class="px-4 py-2 font-extrabold text-white border-4 border-white">Data of 1x1x1 mm samples</td>
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">AVERAGE</td>
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">MAXIMUM</td>
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">MINIMUM</td>
-                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white">Cpk</td>
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.33</td> <!-- &#8805; is greater than equal to symbol -->
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">Remarks</td>
                                 </tr>
-                                <tr v-show="show1x1x1Data" class="text-center">
-                                    <th class="px-4 py-2 font-extrabold text-white bg-blue-300 border-4 border-white">Corner</th>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                <tr v-show="show1x1x1Data_Corner" class="text-center">
+                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Corner</th>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCorner" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCorner_average" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCorner_maximum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCorner_minimum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCorner_cpk" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportCorner_remarks" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
                                 </tr>
-                                <tr v-show="show1x1x1Data" class="text-center">
-                                    <th class="px-4 py-2 font-extrabold text-white bg-blue-300 border-4 border-white">Surface</th>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
+                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Surface</th>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportSurface" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportSurface_average" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportSurface_maximum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportSurface_minimum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportSurface_cpk" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportSurface_remarks" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
                                 </tr>
-                                <tr v-show="show1x1x1Data" class="text-center">
-                                    <th class="px-4 py-2 font-extrabold text-white bg-blue-300 border-4 border-white">Core</th>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">NA</td>
+                                <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
+                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Core</th>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCore" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCore_average" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCore_maximum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCore_minimum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCore_cpk" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportCore_remarks" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -707,14 +771,45 @@ const showReportButton = async () => {
     await showReportData();
 }
 
-const isTTM_model = ref(false);
+// models with special instructions
+
+const isTTM_model = ref(true);
 const isAutomotive = ref(false);
 const isAutomotiveInitiallyMarked = ref(false);
-const show1x1x1Data = ref(false);
+const show1x1x1Data_withoutCorner = ref(true);
+const show1x1x1Data_Corner = ref(true);
 
 const isLoading = ref(true);
 
 //UI Control end
+
+// variables for models with special instructions
+
+const reportStdDev = ref(0);
+const reportCp = ref(0);
+const reportCpk = ref(0);
+const reportCpkRemarks = ref('NA');
+const reportCorner = ref(0);
+const reportCorner_average = ref(0);
+const reportCorner_maximum = ref(0);
+const reportCorner_minimum = ref(0);
+const reportCorner_cpk = ref(0);
+const reportCorner_remarks = ref('NA');
+const reportSurface = ref(0);
+const reportSurface_average = ref(0);
+const reportSurface_maximum = ref(0);
+const reportSurface_minimum = ref(0);
+const reportSurface_cpk = ref(0);
+const reportSurface_remarks = ref('NA');
+const reportCore = ref(0);
+const reportCore_average = ref(0);
+const reportCore_maximum = ref(0);
+const reportCore_minimum = ref(0);
+const reportCore_cpk = ref(0);
+const reportCore_remarks = ref('NA');
+
+
+// variables for models with special instructions end
 
 //general variables start
 
