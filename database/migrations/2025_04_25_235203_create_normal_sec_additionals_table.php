@@ -71,7 +71,6 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('nsa_id')->index();
-            $table->unsignedBigInteger('nsa_set')->index();
             $table->string('Br_remarks')->nullable();
             $table->string('4paiId_remarks')->nullable();
             $table->string('iHc_remarks')->nullable();

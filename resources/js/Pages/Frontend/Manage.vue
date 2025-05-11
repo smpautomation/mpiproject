@@ -1,8 +1,11 @@
 <template>
     <Frontend>
-        <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-no-repeat bg-cover"
-        :style="{ backgroundImage: 'url(/photo/manage_background.jpg)',
-                backgroundPosition: 'center -120px'
+    <div class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-no-repeat bg-cover"
+        :style="{
+            backgroundImage: 'url(/photo/manage_background.jpg)',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover'
         }">
         <!-- Overlay -->
         <div class="absolute inset-0 z-0 bg-black bg-opacity-30"></div>
@@ -88,14 +91,17 @@
                         <button @click="existingBackBtn" class="px-4 py-2 font-bold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
                             Back
                         </button>
-                        <button @click="existingProceedBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                            Proceed
-                            <span class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center"
-                            :style="{
-                                backgroundImage: 'url(\'/photo/gotoreport.png\')',
-                                backgroundSize: 'contain'
-                            }"
-                        ></span>
+                        <button
+                        @click="existingProceedBtn"
+                        class="flex items-baseline gap-2 px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                        >
+                        Proceed
+                            <span
+                                class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center bg-contain relative top-[2px]"
+                                :style="{
+                                backgroundImage: 'url(/photo/gotoreport.png)'
+                                }"
+                            ></span>
                         </button>
                     </div>
                 </div>
@@ -128,6 +134,12 @@
                         </button>
                         <button @click="proceedLayerBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
                             Proceed
+                            <span
+                                class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center bg-contain relative top-[2px]"
+                                :style="{
+                                backgroundImage: 'url(/photo/gotoreport.png)'
+                                }"
+                            ></span>
                         </button>
                     </div>
                 </div>
@@ -139,6 +151,9 @@
                 </div>
                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
                     Begin Process
+                </button>
+                <button class="px-4 py-2 font-bold text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showAddNewDataLayer_cancel">
+                    Cancel
                 </button>
             </div>
             <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
@@ -446,11 +461,58 @@
                         </div>
                         <button
                             class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="proceedToFinal"
+                            @click="proceedToFinal_showConfirm"
                             >
                                 Submit
                         </button>
                     </div>
+
+                    <div
+                    v-show="showProceed2_confirmation"
+                    class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
+                    >
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure all information is correct?</p>
+                        </div>
+                        <div class="flex space-x-6">
+                            <button
+                            @click="proceedToFinal"
+                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
+                            >
+                            YES
+                            </button>
+                            <button
+                            @click="proceedToFinal_cancel"
+                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
+                            >
+                            NO
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        v-show="showIncompleteInformationError"
+                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                        >
+                        <svg
+                            class="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                        <span>All fields are required.</span>
+                    </div>
+
+                    <DotsLoader v-show="showCsvLoading" />
+
                 </div>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
@@ -469,7 +531,7 @@
             <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
             <div v-show="showGraphAndTables" class="z-10 flex flex-col">
                 <div class="flex flex-col items-center justify-center">
-                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-yellow-100/80 to-yellow-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="font-extrabold">report</span> section and select {{ serialNo }} </p>
+                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-cyan-900/80 to-green-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="text-2xl font-extrabold text-blue-400">Report</span> section and select {{ serialNo }} </p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
                     <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
@@ -754,6 +816,9 @@
     const showSerialNo = ref(true);
     const showCsvUpload_confirmation = ref(false);
     const showNoCsvFileSelectedError = ref(false);
+    const showProceed2_confirmation = ref(false);
+    const showIncompleteInformationError = ref(false);
+    const showCsvLoading = ref(false);
 
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
@@ -771,6 +836,11 @@
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
         generateSerialNumber();
+    }
+
+    const showAddNewDataLayer_cancel = () => {
+        showStartManageDiv.value = true;
+        showAddNewDataLayer.value = false;
     }
 
     const proceedToCsvUpload_showConfirm = () => {
@@ -809,18 +879,36 @@
 
     }
 
-    const proceedToFinal = () => {
+    const proceedToFinal_showConfirm = () => {
         if(jhCurveMassProdName.value == null || jhCurveMassProdName.value == "" ||
             propData_factorEmp.value == null || propData_factorEmp.value == "" ||
             propData_miasEmp.value == null || propData_miasEmp.value == "" ||
             jhCurveLotNo.value == null || jhCurveLotNo.value == ""){
-                alert('Please fill in all the details first before proceeding');
-                return;
-        }else{
-            showProceed3.value = true;
+
+            showIncompleteInformationError.value = true;
             showProceed2.value = false;
-            saveToTpmCategory();
+
+            setTimeout(() => {
+                showIncompleteInformationError.value = false;
+                showProceed2.value = true;
+            }, 2000);
+            return;
+        }else{
+            showProceed2_confirmation.value = true;
+            showProceed2.value = false;
         }
+    }
+
+    const proceedToFinal = () => {
+        showProceed3.value = true;
+        showProceed2.value = false;
+        showProceed2_confirmation.value = false;
+        saveToTpmCategory();
+    }
+
+    const proceedToFinal_cancel = () => {
+        showProceed2_confirmation.value = false;
+        showProceed2.value = true;
     }
 
     const saveToTpmCategory = async () => {
@@ -966,31 +1054,31 @@
     }
 
     const csv_submitFile = async () => {
-    csvUpload.value = false;
-    showProceed2.value = true;
-    showCsvUpload_confirmation.value = false;
+        csvUpload.value = false;
+        showCsvUpload_confirmation.value = false;
+        showCsvLoading.value = true;
 
-    Papa.parse(csv_selectedFile.value, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-            csv_parsedData.value = results.data
-            const rows = results.data
-            // Combine them into one array for the table
-            csv_tempWithDataStat.value = rows.map(row => ({
-                temp: row["Temperature"],
-                status: row["Data class"]
-            }));
+        Papa.parse(csv_selectedFile.value, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+                csv_parsedData.value = results.data
+                const rows = results.data
+                // Combine them into one array for the table
+                csv_tempWithDataStat.value = rows.map(row => ({
+                    temp: row["Temperature"],
+                    status: row["Data class"]
+                }));
 
-            console.log('CSV Parsed Data:', csv_parsedData.value);
-            console.log('Temp with Data class:', csv_tempWithDataStat.value);
+                console.log('CSV Parsed Data:', csv_parsedData.value);
+                console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
-        },
-        error: (err) => {
-        console.error('Error parsing CSV:', err)
-        }
+            },
+                error: (err) => {
+                console.error('Error parsing CSV:', err);
+            }
     });
-    mergeTempToTPM();
+        mergeTempToTPM();
     }
 
     const csv_clearFile = () => {
@@ -1005,33 +1093,37 @@
     }
 
     const mergeTempToTPM = async () => {
-        try{ //tempDataClass contains the value to be updated
-            const responseTPM = await axios.get("/api/tpmdata?serial=" + serialNo.value); // This is used to find the proper id to update
-            console.log('API Response MergeTempToTPMDATA:', responseTPM.data);
-
+        try {
+            const responseTPM = await axios.get("/api/tpmdata?serial=" + serialNo.value);
             const tpmData = responseTPM.data.data || [];
-            console.log('tpm data: ',tpmData);
+
             const getAllID = tpmData.map(item => item.id);
-            console.log('getting all the ids:',getAllID);
 
-            for (let i = 0; i < getAllID.length; i++) {
-                try {
-                    const responseTempWithData = await axios.patch(`/api/tpmdataupdate/${getAllID[i]}`, {
-                        temperature: csv_tempWithDataStat.value[i]?.temp || null,
-                        data_status: csv_tempWithDataStat.value[i]?.status || null
-                    });
+            // 👇 Create an array of promises
+            const patchPromises = getAllID.map((id, i) => {
+            return axios.patch(`/api/tpmdataupdate/${id}`, {
+                temperature: csv_tempWithDataStat.value[i]?.temp || null,
+                data_status: csv_tempWithDataStat.value[i]?.status || null
+            }).then(response => {
+                console.log(`Patched ID ${id} with row ${i}:`, response.data);
+                return response.data; // optionally return result
+            }).catch(error => {
+                console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
+                return null; // or rethrow if you want to break the flow
+            });
+            });
 
-                    console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
-                } catch (error) {
-                    console.error(`Error patching ID ${getAllID[i]}:`, error.response?.data || error.message);
-                }
-            }
-            // Uncomment this to see the response
-            console.log('API Response Patch merging Temp and Dataclass:', responseTempWithData.data);
-        }catch(error){
+            // 👇 Run them all at once
+            const patchResults = await Promise.all(patchPromises);
+            console.log('All patch results:', patchResults);
 
+        } catch (error) {
+            console.error("Something went wrong in mergeTempToTPM:", error);
+        } finally{
+            showCsvLoading.value = false;
+            showProceed2.value = true;
         }
-    }
+    };
 
 
     const furnaceList = ref([]); // Stores all fetched furnaces
@@ -1658,18 +1750,19 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         clearFileUpload();
     }
 
-    const saveToDatabase = () => {
+    const saveToDatabase = async () => {
         showUploadData.value = false;
         // Sort the files alphabetically by their name
         fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
         //console.log('Sorted Files:', fileData.value);
 
         layerTableRowLoading.value = true;
-        fileData.value.forEach((file) => {
+        const filePromises = fileData.value.map((file) => {
+            return new Promise((resolve, reject) => {
 
             const reader = new FileReader();
 
-            reader.onload = () => {
+            reader.onload = async () => {
                 const content = reader.result; // Read file content
                 const parsedData = parseFileContent(content); // Parse content
 
@@ -1814,15 +1907,31 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 };
                 //console.log("Layer Data:", layerData);
 
-                sendLayerData(layerData); // Send the parsed data to the server
+                await sendLayerData(layerData); // Send the parsed data to the server
+                resolve();
             };
 
             reader.onerror = () => {
                 console.error('Error reading file:', file.name);
+                reject(reader.error);
             };
 
             reader.readAsText(file); // Read the file as text
+
+            });
         });
+
+        try{
+            await Promise.all(filePromises);
+            showProceed1.value = true;
+            showSerialNo.value = true;
+        }catch(e){
+            console.error("One or more files failed to upload." , e);
+        }finally{
+            showUploadData.value = false;
+            layerTableRowLoading.value = false;
+            showSaveToDatabase_confirmation.value = false;
+        }
     };
 
     // Function to parse the file content
@@ -1860,12 +1969,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             //console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
-        } finally {
-            showProceed1.value = true;
-            showSerialNo.value = true;
-            showUploadData.value = false;
-            layerTableRowLoading.value = false;
-            showSaveToDatabase_confirmation.value = false;
         }
     };
 

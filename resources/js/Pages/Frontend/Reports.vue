@@ -1,9 +1,16 @@
 <template>
     <Frontend>
-      <div class="flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-gray-100">
+      <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
 
-        <div v-if="serialList.length == 0 && isFromApproval == false"> <!-- default div -->
-            <div class="flex flex-row items-center justify-center mt-10 align-baseline">
+        <div v-if="serialList.length == 0 || isFromApproval == false"> <!-- default div -->
+            <div class="flex flex-col items-center justify-center mt-10 align-baseline">
+                <div
+                    class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
+                    :style="{
+                        backgroundImage: 'url(\'/photo/no_data.png\')',
+                        backgroundSize: '80%'
+                    }"
+                ></div>
                 <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
             </div>
         </div>

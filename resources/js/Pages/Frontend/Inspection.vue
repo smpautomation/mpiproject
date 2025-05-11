@@ -7,7 +7,7 @@
                         Insert New Record
                     </button>
                 </div>
-                <div class="flex items-center justify-center mb-10 bg-gray-100">
+                <div v-if="inspectionDataList.length > 0" class="flex items-center justify-center mb-10 bg-gray-100">
                     <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
                         <thead class="text-white bg-gradient-to-l from-blue-600 to-green-600 ">
                             <tr class="text-sm">

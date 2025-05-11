@@ -1,92 +1,174 @@
 <template>
-    <Frontend>
-        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-4 bg-gray-100">
-            <!-- Loading indicator -->
-            <div v-if="tpmData.length === 0" class="flex items-center justify-center min-h-screen">
-                <span class="text-lg font-semibold text-gray-500">No data available. Please go to manage section first.</span>
-            </div>
+  <Frontend>
+    <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
+      <!-- Search Box -->
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search model name or lot no..."
+        class="w-full max-w-md p-2 border rounded shadow-sm"
+      />
 
-            <!-- DataTable -->
-            <div v-else class="w-full overflow-x-auto">
-                <table id="tpmDataTable" class="w-full border-collapse rounded-lg shadow-lg table-fixed">
-                    <thead>
-                        <tr class="text-lg text-white bg-gradient-to-r from-green-400 via-black to-blue-400">
-                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Serial No</th>
-                            <th class="w-2/12 px-1 py-2 border-b whitespace-nowrap">Model Name</th>
-                            <th class="w-2/12 px-1 py-2 border-b whitespace-nowrap">Lot No</th>
-                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Furnace No</th>
-                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Tracer No</th>
-                            <th class="w-2/12 px-1 py-2 border-b whitespace-nowrap">SMP Judgement</th>
-                            <th class="w-1/12 px-1 py-2 border-b whitespace-nowrap">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in tpmData" :key="index">
-                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.category[0].tpm_data_serial }}</td>
-                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.category[0].actual_model }}</td>
-                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.category[0].jhcurve_lotno }}</td>
-                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.tpm[0].sintering_furnace_no }}</td>
-                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.tpm[0].Tracer }}</td>
-                            <td class="p-2 text-center text-md whitespace-nowrap">{{ item.report[0].smp_judgement || "NO DATA" }}</td>
-                            <td v-if="item.report[0].approved_by" class="p-2 text-center text-md">COMPLETED</td>
-                            <td v-else class="p-2 text-center text-md">PENDING</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </Frontend>
+      <!-- No Data -->
+      <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
+            No matching data found.
+      </div>
+
+      <!-- Table -->
+      <div v-else class="w-full overflow-x-auto">
+        <table class="w-full border-collapse rounded-lg shadow-lg">
+            <thead>
+                <tr class="text-white bg-gradient-to-r from-green-400 via-black to-blue-400">
+                <th class="px-2 py-2 whitespace-nowrap">Serial No</th>
+                <th class="px-2 py-2 whitespace-nowrap">Model Name</th>
+                <th class="px-2 py-2 whitespace-nowrap">Lot No</th>
+                <th class="px-2 py-2 whitespace-nowrap">Furnace No</th>
+                <th class="px-2 py-2 whitespace-nowrap">Tracer No</th>
+                <th class="px-2 py-2 whitespace-nowrap">SMP Judgement</th>
+                <th class="px-2 py-2 whitespace-nowrap">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                v-for="(item, index) in paginatedData"
+                :key="index"
+                class="bg-gradient-to-r from-green-400 via-black to-blue-400"
+                >
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.category[0].tpm_data_serial || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.category[0].actual_model || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.category[0].jhcurve_lotno || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.tpm[0].sintering_furnace_no || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.tpm[0].Tracer || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.report[0]?.smp_judgement || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.report[0]?.approved_by ? 'COMPLETED' : 'PENDING' }}
+                    </div>
+                </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center mt-4 space-x-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="px-3 py-1 text-white bg-green-300 rounded hover:bg-green-600 disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span class="text-gray-400">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="px-3 py-1 text-white bg-blue-300 rounded hover:bg-blue-600 disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </Frontend>
 </template>
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
-import $ from 'jquery'; // jQuery is a dependency of DataTables
-import 'datatables.net'; // DataTables script
 
 const tpmData = ref([]);
+const searchQuery = ref('');
+const currentPage = ref(1);
+const itemsPerPage = 20;
 
-// Fetch the TPM data
+// Fetch data
 const viewAllSerialedLayers = async () => {
-    try {
-        const response = await axios.get("/api/tpmdata");
-        console.log('API Response viewlist:', response.data);
-
-        const rawData = response.data.data?.tpmData || {};
-        tpmData.value = Object.values(rawData); // convert object to array
-
-        //tpmData.value = dataArray;
-        console.log("Unique tpm data array: ", tpmData.value);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
+  try {
+    const response = await axios.get('/api/tpmdata');
+    const rawData = response.data.data?.tpmData || {};
+    tpmData.value = Object.values(rawData);
+    console.log('[Fetched Data]:', tpmData.value);
+  } catch (error) {
+    console.error('[Error Fetching Data]:', error);
+  }
 };
 
-// Initialize DataTable
-onMounted(() => {
-    viewAllSerialedLayers().then(() => {
-        $('#tpmDataTable').DataTable({
-            pageLength: 10, // Default entries per page
-            searching: true, // Enable search
-            paging: true, // Enable pagination
-            ordering: true, // Enable sorting
-            language: {
-                search: "Search:",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                infoEmpty: "No records available",
-                infoFiltered: "(filtered from _MAX_ total entries)",
-            },
-            dom: "<'flex justify-between items-center m-4'f>" +
-                "<'overflow-x-auto'tr>" +
-                "<'flex justify-between items-center m-4'i<'pagination p-2'>>",
-            initComplete: function() {
-                $('.dataTables_filter input').addClass('input input-bordered'); // Tailwind-friendly search box
-                $('.dataTables_paginate').addClass('flex items-center'); // Tailwind pagination
-            }
-        });
-    }).catch((error) => {
-        console.error('Error loading data:', error);
-    });
+onMounted(viewAllSerialedLayers);
+
+// Search + filter
+const filteredData = computed(() => {
+  if (!searchQuery.value) {
+    console.log('[Filtered Data]: No search query. Returning full data.');
+    return tpmData.value;
+  }
+
+  const query = searchQuery.value.toLowerCase();
+  const filtered = tpmData.value.filter(item => {
+    const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
+    const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
+    return model.includes(query) || lot.includes(query);
+  });
+
+  console.log('[Filtered Data]: Query =', searchQuery.value, '| Results =', filtered.length);
+  return filtered;
+});
+
+// Pagination
+const totalPages = computed(() => {
+  const pages = Math.ceil(filteredData.value.length / itemsPerPage);
+  console.log('[Pagination]: Total Pages =', pages);
+  return pages;
+});
+
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const paginated = filteredData.value.slice(start, start + itemsPerPage);
+  console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
+  return paginated;
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+    console.log('[Pagination]: Next Page →', currentPage.value);
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    console.log('[Pagination]: Previous Page ←', currentPage.value);
+  }
+};
+
+// Watchers for debugging
+watch(searchQuery, (newVal) => {
+  console.log('[Search Query Changed]:', newVal);
+  currentPage.value = 1; // Reset to page 1 on new search
 });
 </script>
