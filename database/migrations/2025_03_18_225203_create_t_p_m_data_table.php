@@ -116,7 +116,7 @@ return new class extends Migration
         Schema::create('tpm_data_category', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('tpm_data_serial')->index();
+            $table->unsignedBigInteger('tpm_data_serial')->unique();
             $table->foreign('tpm_data_serial')
                     ->references('serial_no')
                     ->on('tpm_data')
