@@ -9,9 +9,13 @@ class TxtExportService
 {
     public function exportData3(string $furnace_no)
     {
-        
+        $dateToGet = TpmData::where('furnace_no', $furnace_no)
+            ->orderBy('date', 'desc')
+            ->value('date');
+
         $tpmData = TpmData::with('remark', 'category')
         ->where('furnace_no', $furnace_no)
+        ->where('date', $dateToGet)
         ->get();
 
         if ($tpmData->isEmpty()) {
