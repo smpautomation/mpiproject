@@ -119,6 +119,7 @@
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
+            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33') }}
         </div>
         
     </div>

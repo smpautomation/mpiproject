@@ -103,13 +103,13 @@ return new class extends Migration
         Schema::create('nsa_aggregate_functions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('nsa_serial')->unique();
+            $table->unsignedBigInteger('nsa_serial')->index();
             $table->foreign('nsa_serial')
                     ->references('serial_no')
                     ->on('normal_sec_additionals')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
-            $table->unsignedBigInteger('nsa_set');
+            $table->unsignedBigInteger('nsa_set')->index();
             $table->foreign('nsa_set')
                     ->references('set_no')
                     ->on('normal_sec_additionals')
