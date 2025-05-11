@@ -490,6 +490,87 @@
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
                                 </tr>
+                                <tr v-show="showVTData" class="text-center">
+                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
+                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportVT_sample" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> (N.G iHc)</td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                </tr>
+                                <tr v-show="showVTData" class="text-center">
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                        <div class="flex items-center">
+                                            <input type="number" v-model="reportVT_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            <span class="ml-1 align-baseline">°C</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">iHc (kOe) &#8805; <input type="number" v-model="reportVT_iHc" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> (kOe)</td>
+                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT_iHcResult" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> kOe</td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
+                                </tr>
+                                <tr v-show="showCpkFrom_iHc" class="bg-blue-300">
+                                    <th rowspan="2" colspan="2" class="px-4 py-2 text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from iHc</th>
+                                    <th class="px-4 py-2 text-white border-4 border-white">STD DEV</th>
+                                    <th colspan="2" class="px-4 py-2 text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.33</th> <!-- &#8805; is greater than equal to symbol -->
+                                    <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
+                                </tr>
+                                <tr v-show="showCpkFrom_iHc" class="text-center">
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"><input type="number" v-model="reportCpkFrom_iHc_StdDev" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCpkFrom_iHc_Cpk" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkFrom_iHc_remarks }}</td>
+                                </tr>
+                                <tr v-show="showVTData2" class="text-center">
+                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
+                                    <td colspan="2" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportVT2_minSample" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> (min iHc)</td>
+                                    <td class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300 whitespace-nowrap"><input type="text" v-model="reportVT2_maxSample" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> (max iHc)</td>
+                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                </tr>
+                                <tr v-show="showVTData2" class="text-center">
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                        <div class="flex items-center">
+                                            <input type="number" v-model="reportVT2_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            <span class="ml-1 align-baseline">°C</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">iHc (kOe) &#8805; <input type="number" v-model="reportVT2_iHc" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> (kOe)</td>
+                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT_iHcResult" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> kOe</td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT_iHcResult" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> kOe</td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -773,11 +854,15 @@ const showReportButton = async () => {
 
 // models with special instructions
 
-const isTTM_model = ref(true);
+const isTTM_model = ref(false);
 const isAutomotive = ref(false);
 const isAutomotiveInitiallyMarked = ref(false);
-const show1x1x1Data_withoutCorner = ref(true);
-const show1x1x1Data_Corner = ref(true);
+const show1x1x1Data_withoutCorner = ref(false);
+const show1x1x1Data_Corner = ref(false);
+const showVTData = ref(false);
+const showVTData2 = ref(false);
+const showCpkFrom_iHc = ref(false);
+
 
 const isLoading = ref(true);
 
@@ -807,7 +892,14 @@ const reportCore_maximum = ref(0);
 const reportCore_minimum = ref(0);
 const reportCore_cpk = ref(0);
 const reportCore_remarks = ref('NA');
-
+const reportVT_sample = ref(0);
+const reportVT_temp = ref(0);
+const reportVT_iHc = ref(0);
+const reportVT_iHcResult = ref(0);
+const reportVT_remarks = ref('NA');
+const reportCpkFrom_iHc_StdDev = ref(0);
+const reportCpkFrom_iHc_Cpk = ref(0);
+const reportCpkFrom_iHc_remarks = ref('NA');
 
 // variables for models with special instructions end
 
