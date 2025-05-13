@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\File;
 
 class TxtExportService
 {
+    public function exportData1(string $data)
+    {
+
+    }
+
+    public function exportData2(string $furnace_no)
+    {
+
+    }
+    
     public function exportData3(string $furnace_no)
     {
         $dateToGet = TpmData::where('furnace_no', $furnace_no)

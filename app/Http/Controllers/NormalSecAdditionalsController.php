@@ -13,6 +13,7 @@ class NormalSecAdditionalsController extends Controller
 {
     public function index(Request $request){
         $serial_no = $request->query('serial');
+        $set_no = $request->query('set');
         $report = $request->query('report');
         if (!$serial_no) {
             try{
@@ -42,6 +43,7 @@ class NormalSecAdditionalsController extends Controller
             try{
                 $nsaData = NormalSecAdditionals::with($report ? ['remark', 'reportData', 'category'] : ['remark', 'category'])
                                     ->where('serial_no',  $serial_no)
+                                    ->where('set_no', $set_no)
                                     ->orderBy('zone', 'asc')
                                     ->get();
 
