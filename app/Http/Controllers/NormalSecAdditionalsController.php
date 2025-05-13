@@ -294,8 +294,7 @@ class NormalSecAdditionalsController extends Controller
     {
         DB::beginTransaction();
         try {
-            $aggregateFunctions = NSAAggregateFunctions::where( 'nsa_serial',$id )
-                                ->first();
+            $aggregateFunctions = NSAAggregateFunctions::find($id);
             $aggregateFields = $request->all();
             $aggregateFunctions->update($aggregateFields);
 
