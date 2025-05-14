@@ -204,6 +204,31 @@ const insertBtn = () => {
 const registerBackBtn = () => {
     showMainUI.value = true;
     showInputData.value = false;
+    resetAllField();
+}
+
+const resetAllField = () => {
+    formData.value = {
+        model: null,
+        length: null,
+        width: null,
+        thickness: null,
+        material_grade: null,
+        br: null,
+        ihc: null,
+        ihk: null,
+        oven_machine_no: null,
+        time_loading: null,
+        temperature_1: null,
+        date: null,
+        time_unloading: null,
+        temperature_2: null,
+        shift: null,
+        operator: null,
+        mpi_sample: null,
+        ihc_ihk: null,
+        "br_4-pie-la": null
+    };
 }
 
 // UI visibility functions end
@@ -264,6 +289,7 @@ const submitData = async () => {
         showMainUI.value = true;
         showInputData.value = false;
         showInspectionData();
+        resetAllField();
     } catch (error) {
         console.log("Error submitting data!");
         console.error("API Error:", error);

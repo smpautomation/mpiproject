@@ -29,7 +29,8 @@
                     <!-- Button -->
                     <button
                         @click="generateReport"
-                        class="px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        :disabled="showNotif2"
+                        class="disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
                         Generate Report
                     </button>
@@ -70,10 +71,10 @@
                     <div class="flex flex-row justify-center">
                         <button @click="showReportButton" class="px-3 py-2 text-white bg-blue-500 shadow-xl rounded-xl">{{ isFromApproval ? 'Click to Show' : 'Show Report' }}</button>
                     </div>
-
                 </div>
             </div>
             <!-- Report Content -->
+            <DotsLoader v-show="showReportLoading" class="mt-8 z-10"/>
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
                     <div v-if="currentUserName != 'ITADANI KAZUYA' && ipAddress == currentUserIP" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
@@ -353,7 +354,7 @@
                             </thead>
                             <tbody>
                                 <tr class="text-center">
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">Br (G)</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">Br (G)</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ inspectionBrStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrMaximum }}</td>
@@ -361,14 +362,14 @@
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td :rowspan="(noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white">iHc (Oe)</td>
+                                    <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">iHc (Oe)</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GM </span>{{ inspectioniHcStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMinimum }}</td>
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHcVariance }}</td>
                                 </tr>
-                                <tr v-if="showGX && (noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                                <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
                                     <td class="text-blue-600 border-4 border-white "><span v-if="showGX">GX </span>
                                         <input type="number" v-model="reportGX_iHcStandard" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -386,20 +387,17 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
-                                    <td class="text-blue-600 border-4 border-white "><input type="number" v-model="reportGX_iHcVariance" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                    <td class="text-blue-600 border-4 border-white ">{{ reportGX_iHcVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td :rowspan="(noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white">iHk (Oe)</td>
+                                    <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">iHk (Oe)</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GM </span>{{ inspectioniHkStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMinimum }}</td>
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHkVariance }}</td>
                                 </tr>
-                                <tr v-if="showGX && (noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                                <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GX </span> - - - - - </td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkAverage" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -413,10 +411,7 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkVariance" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
                                 <tr v-show="isTTM_model" class="bg-blue-300">
                                     <th rowspan="2" colspan="2" class="text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
@@ -445,12 +440,12 @@
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">AVERAGE</td>
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">MAXIMUM</td>
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">MINIMUM</td>
-                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.33</td> <!-- &#8805; is greater than equal to symbol -->
+                                    <td class="px-4 py-2 font-extrabold text-white border-4 border-white whitespace-nowrap">Cpk &#8805; {{ cpkStandardValue }}</td> <!-- &#8805; is greater than equal to symbol -->
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">Remarks</td>
                                 </tr>
                                 <tr v-show="show1x1x1Data_Corner" class="text-center">
                                     <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Corner</th>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCorner" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">&#8805; <input type="number" v-model="reportCorner" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
@@ -474,7 +469,7 @@
                                 </tr>
                                 <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
                                     <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Surface</th>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportSurface" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">&#8805; <input type="number" v-model="reportSurface" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
@@ -498,7 +493,7 @@
                                 </tr>
                                 <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
                                     <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Core</th>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCore" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">&#8805; <input type="number" v-model="reportCore" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
@@ -520,122 +515,126 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCore_remarks }}</td>
                                 </tr>
-                                <!-- VT Row 1: Sample + Remarks (Vertical Repeating Inputs) -->
-                                <tr v-if="showVTData && reportVT_samplesQty > 0" class="text-center">
-                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
-                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
+                                <template v-if="showVTData && (noteReasonForReject.includes('- N.G iHc'))">
+                                    <!-- VT Row 1: Sample + Remarks (Vertical Repeating Inputs) -->
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                            <div
+                                                v-for="i in reportVT_samplesQty"
+                                                :key="'sample-remarks-' + i"
+                                                class="flex items-center gap-1"
+                                            >{{ i + ")" }}
+                                                <input
+                                                type="text"
+                                                v-model="reportVT_samples[i - 1]"
+                                                @input="reportVT_samples[i - 1] = reportVT_samples[i - 1]?.toUpperCase()"
+                                                class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                        transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                placeholder="12AB"
+                                                />
+                                                (
+                                                <input
+                                                type="text"
+                                                v-model="reportVT_sampleRemarks[i - 1]"
+                                                @input="reportVT_sampleRemarks[i - 1] = reportVT_sampleRemarks[i - 1]?.toUpperCase()"
+                                                class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                        transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                placeholder="N.G iHc"
+                                                />
+                                                )
+                                            </div>
+                                            </div>
+                                        </td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                    </tr>
+
+                                    <!-- VT Row 2: Temperature, iHc, Result, Remarks -->
+                                    <tr class="text-center">
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                        <div class="flex items-center">
+                                        <input
+                                            type="number"
+                                            v-model="reportVT_temp"
+                                            class="w-[4.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out"
+                                        />
+                                        <span class="ml-1 align-baseline">°C</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                        iHc (kOe) &#8805;
+                                        <input
+                                        type="number"
+                                        v-model="reportVT_iHc"
+                                        class="w-[5.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out"
+                                        />
+                                        (kOe)
+                                    </td>
+                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
                                         <div class="flex flex-col gap-[6px] items-center">
                                         <div
                                             v-for="i in reportVT_samplesQty"
-                                            :key="'sample-remarks-' + i"
+                                            :key="'result-' + i"
                                             class="flex items-center gap-1"
                                         >{{ i + ")" }}
                                             <input
-                                            type="text"
-                                            v-model="reportVT_samples[i - 1]"
-                                            @input="reportVT_samples[i - 1] = reportVT_samples[i - 1]?.toUpperCase()"
+                                            type="number"
+                                            v-model="reportVT_iHcResults[i - 1]"
                                             class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                                     hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                                     focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                                     transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
-                                            placeholder="12AB"
+                                            placeholder="0"
                                             />
-                                            (
-                                            <input
-                                            type="text"
-                                            v-model="reportVT_sampleRemarks[i - 1]"
-                                            @input="reportVT_sampleRemarks[i - 1] = reportVT_sampleRemarks[i - 1]?.toUpperCase()"
-                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                                    transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
-                                            placeholder="N.G iHc"
-                                            />
-                                            )
+                                            <span class="text-gray-600">kOe</span>
                                         </div>
                                         </div>
                                     </td>
-                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
-                                </tr>
-
-                                <!-- VT Row 2: Temperature, iHc, Result, Remarks -->
-                                <tr v-if="showVTData && reportVT_samplesQty > 0" class="text-center">
-                                <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
-                                    <div class="flex items-center">
-                                    <input
-                                        type="number"
-                                        v-model="reportVT_temp"
-                                        class="w-[4.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                            transition duration-200 ease-in-out"
-                                    />
-                                    <span class="ml-1 align-baseline">°C</span>
-                                    </div>
-                                </td>
-                                <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
-                                    iHc (kOe) &#8805;
-                                    <input
-                                    type="number"
-                                    v-model="reportVT_iHc"
-                                    class="w-[5.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                            transition duration-200 ease-in-out"
-                                    />
-                                    (kOe)
-                                </td>
-                                <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
-                                    <div class="flex flex-col gap-[6px] items-center">
-                                    <div
-                                        v-for="i in reportVT_samplesQty"
-                                        :key="'result-' + i"
-                                        class="flex items-center gap-1"
-                                    >{{ i + ")" }}
-                                        <input
-                                        type="number"
-                                        v-model="reportVT_iHcResults[i - 1]"
-                                        class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                                transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
-                                        placeholder="0"
-                                        />
-                                        <span class="text-gray-600">kOe</span>
-                                    </div>
-                                    </div>
-                                </td>
-                                <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
-                                </tr>
-                                <tr v-if="showVTData_default && reportVT_samplesQty <= 0" class="text-center">
-                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
-                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">Enter the number of samples first and then save</td>
-                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
-                                </tr>
-                                <tr v-if="showVTData_default && reportVT_samplesQty <= 0" class="text-center">
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
-                                        <div class="flex items-center">
-                                            <input type="number" v-model="reportVT_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                                transition duration-200 ease-in-out">
-                                            <span class="ml-1 align-baseline">°C</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">iHc (kOe) &#8805; <input type="number" v-model="reportVT_iHc" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> (kOe)</td>
-                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"> Quantity of Samples:<input type="number" v-model="reportVT_samplesQty" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
-                                </tr>
+                                    </tr>
+                                </template>
+                                <template v-if="showVTData_default && (noteReasonForReject.includes('- N.G iHc'))">
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">Enter the number of samples first and then save</td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                                <input type="number" v-model="reportVT_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                    transition duration-200 ease-in-out">
+                                                <span class="ml-1 align-baseline">°C</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">iHc (kOe) &#8805; <input type="number" v-model="reportVT_iHc" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (kOe)</td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"> Quantity of Samples:<input type="number" v-model="reportVT_samplesQty" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
+                                    </tr>
+                                </template>
                                 <tr v-show="showCpkFrom_iHc" class="bg-blue-300">
                                     <th rowspan="2" colspan="2" class="px-4 py-2 text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from iHc</th>
                                     <th class="px-4 py-2 text-white border-4 border-white">STD DEV</th>
-                                    <th colspan="2" class="px-4 py-2 text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.33</th> <!-- &#8805; is greater than equal to symbol -->
+                                    <th colspan="2" class="px-4 py-2 text-white border-4 border-white whitespace-nowrap">Cpk &#8805; {{ cpkStandardValue }}</th> <!-- &#8805; is greater than equal to symbol -->
                                     <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
                                 </tr>
                                 <tr v-show="showCpkFrom_iHc" class="text-center">
@@ -649,42 +648,6 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkFrom_iHc_remarks }}</td>
                                 </tr>
-                                <tr v-if="showVTData2 && (noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc'))" class="text-center">
-                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
-                                    <td colspan="2" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportVT2_minSample" @input="reportVT2_minSample = reportVT2_minSample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> (min iHc)</td>
-                                    <td class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300 whitespace-nowrap"><input type="text" v-model="reportVT2_maxSample" @input="reportVT2_maxSample = reportVT2_maxSample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> (max iHc)</td>
-                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
-                                </tr>
-                                <tr v-if="showVTData2" class="text-center">
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
-                                        <div class="flex items-center">
-                                            <input type="number" v-model="reportVT2_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                                transition duration-200 ease-in-out">
-                                            <span class="ml-1 align-baseline">°C</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">iHc (kOe) &#8805; <input type="number" v-model="reportVT2_iHc" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> (kOe)</td>
-                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT2_iHcResult_min" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> kOe</td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT2_iHcResult_max" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> kOe</td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT2_remarks }}</td>
-                                </tr>
                                 <tr v-show="showBHData" class="text-center">
                                     <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBH_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -693,7 +656,7 @@
                                     <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportBH_sample" @input="reportBH_sample = reportBH_sample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> AF</td>
+                                        transition duration-200 ease-in-out"></td>
                                         <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
                                 </tr>
                                 <tr v-show="showBHData" class="text-center">
@@ -924,7 +887,7 @@
                     >
                         Finalize Report
                     </button>
-                    <button v-show="showExitButton" @click="exitReport" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
                 </div>
@@ -942,14 +905,16 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, onMounted, nextTick, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
+import DotsLoader from '@/Components/DotsLoader.vue';
 
 //UI Control start
 
 const isOn = ref(false);
-
+const cpkStandardValue = ref(1.33);
 function toggleSwitch() {
     isOn.value = !isOn.value;
 }
+const showReportLoading = ref(false);
 
 const isFromApproval = ref(false);
 
@@ -981,35 +946,6 @@ const noteReasonForReject = ref([]);
 
 const isReportDataReady = ref(false);
 
-const exitReport = () => {
-    showReportContent.value = false;
-    showSelectionPanel.value = true;
-    showReportProceedButtons.value = true;
-    showReportMain.value = false;
-    fetchSerial();
-    reportReset();
-}
-
-const showReportButton = async () => {
-    showReportProceedButtons.value = false;
-    if(isAutomotiveInitiallyMarked.value == false){
-        checkCarmark();
-    }
-    await showReportData();
-    // Poll until isReportDataReady is true
-    const waitForFlag = () =>
-        new Promise(resolve => {
-        const check = () => {
-            if (isReportDataReady.value) resolve();
-            else setTimeout(check, 50); // check every 50ms
-        };
-        check();
-        });
-
-    await waitForFlag();
-    showReportMain.value = true;
-}
-
 // models with special instructions
 
 const isTTM_model = ref(false);
@@ -1019,7 +955,6 @@ const show1x1x1Data_withoutCorner = ref(false);
 const show1x1x1Data_Corner = ref(false);
 const showVTData = ref(false);
 const showVTData_default = ref(false);
-const showVTData2 = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showGX = ref(false);
 const showBHData = ref(false);
@@ -1057,10 +992,11 @@ const reportCore_remarks = ref('NA');
 const reportVT_temp = ref(0);
 const reportVT_iHc = ref(0);
 const reportVT_remarks = ref('NA');
-const reportVT_samplesQty = ref(3);
+const reportVT_samplesQty = ref();
 const reportVT_samples = ref([]);
 const reportVT_sampleRemarks = ref([]);
 const reportVT_iHcResults = ref([]);
+const reportVT_sampleQtyConfirmation = ref(false);
 
 const reportCpkFrom_iHc_StdDev = ref(0);
 const reportCpkFrom_iHc_Cpk = ref(0);
@@ -1080,16 +1016,6 @@ const reportBH_remarks = ref('NA');
 const reportBH_sample = ref(0);
 const reportBH_temp = ref(0);
 const reportBH_result = ref(0);
-
-const reportVT2_iHc = ref(0);
-const reportVT2_minSample = ref("NA");
-const reportVT2_maxSample = ref("NA");
-const reportVT2_temp = ref(0);
-const reportVT2_iHcResult_min = ref(0);
-const reportVT2_iHcResult_max = ref(0);
-const reportVT2_remarks = ref("NA");
-
-// variables for models with special instructions end
 
 //general variables start
 
@@ -1208,57 +1134,6 @@ const tpmData_tracerNo = ref('');
 
 const jhCurveActualModel = ref('');
 
-const reportReset = () => {
-    reportRemarksDisplayNG_ihcihk.value = false;
-    reportRemarksDisplayNG_br4pia.value = false;
-    reportRemarksDisplayNG_bhMax.value = false;
-    reportRemarksDisplayNG_bhc.value = false;
-    isTTM_model.value = false;
-    isAutomotive.value = false;
-    isAutomotiveInitiallyMarked.value = false;
-    noteReasonForReject.value = [];
-    show1x1x1Data_Corner.value = false;
-    show1x1x1Data_withoutCorner.value = false;
-    showBHData.value = false;
-    showGX.value = false;
-    showVTData.value = false;
-    showVTData2.value = false;
-    showCpkFrom_iHc.value = false;
-}
-
-const showNotification = (message) => {
-    // Show notification and set the message
-    showNotif.value = true;
-    reportNotificationMessage.value = message;
-
-    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
-    setTimeout(() => {
-        showNotif.value = false;
-    }, 3000);  // 3000ms = 3 seconds
-}
-
-const showNotification2 = (message) => {
-    // Show notification and set the message
-    showNotif2.value = true;
-    reportNotificationMessage.value = message;
-
-    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
-    setTimeout(() => {
-        showNotif2.value = false;
-    }, 5000);  // 5000ms = 5 seconds
-}
-
-const sec_additional_button = () => {
-    //redirect here
-}
-
-const generateReport = async () => {
-    showReportContent.value = true;
-    showSelectionPanel.value = false;
-    initialCarmarkChecking();
-    await fetchAllData();
-}
-
 const fetchMaterialCode = ref('');
 const fetchActualModel = ref('');
 //remarks checking
@@ -1277,6 +1152,330 @@ const getAllBr4paiNG = ref('');
 const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
 
+const exitReport = () => {
+    //fetchAllData();
+    //showReportData();
+    showReportContent.value = false;
+    showSelectionPanel.value = true;
+    showReportProceedButtons.value = true;
+    showReportMain.value = false;
+    fetchSerial();
+    reportReset();
+}
+
+const showReportButton = async () => {
+    showReportProceedButtons.value = false;
+    if(isAutomotiveInitiallyMarked.value == false){
+        checkCarmark();
+    }
+    showReportLoading.value = true;
+    await showReportData();
+    // Poll until isReportDataReady is true
+    const waitForFlag = () =>
+        new Promise(resolve => {
+        const check = () => {
+            if (isReportDataReady.value) resolve();
+            else setTimeout(check, 50); // check every 50ms
+        };
+        check();
+        });
+
+    await waitForFlag();
+    showReportMain.value = true;
+}
+
+
+// special judgement conditions logic
+//FOR VT - models DNS-0A54G, MIE-0751G, MIS-0766G
+watch(
+  [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement],
+  () => {
+    if (
+      noteReasonForReject.value.includes('- N.G iHc') &&
+      showVTData.value === true
+    ) {
+      if (reportVT_iHcResults.value.length == 0 || reportVT_iHcResults.value.some(sample => sample < reportVT_iHc.value)) {
+        console.log('One or more samples below threshold — NG');
+        reportVT_remarks.value = 'NG';
+        reportSMPJudgement.value = 'REJECT';
+      } else {
+        console.log('All samples OK');
+        reportVT_remarks.value = 'OK';
+        reportSMPJudgement.value = 'HOLD';
+      }
+    } else {
+      console.warn('Conditions not met: skipping check');
+    }
+  },
+  { immediate: true }
+);
+
+//For Data 1x1x1 without corner - models AAW-0935G, AAW-0934G
+watch(
+  [reportSurface_cpk, reportCore_cpk, reportSurface_remarks, reportCore_remarks, reportSMPJudgement],
+  () => {
+    console.log('Watch triggered for 1x1x1 without corner evaluation');
+    console.log('noteReasonForReject:', noteReasonForReject.value);
+    console.log('show1x1x1Data_withoutCorner:', show1x1x1Data_withoutCorner.value);
+    console.log('reportSurface_cpk:', reportSurface_cpk.value);
+    console.log('reportCore_cpk:', reportCore_cpk.value);
+
+    if (
+      noteReasonForReject.value.includes('- N.G iHc') &&
+      show1x1x1Data_withoutCorner.value === true && reportSurface_cpk.value !== null && reportCore_cpk.value !== null
+    ) {
+      if (reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value) {
+        console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
+        reportSurface_remarks.value = 'NG';
+        reportCore_remarks.value = 'NG';
+        reportSMPJudgement.value = 'REJECT';
+      } else {
+        console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
+        reportCore_remarks.value = 'OK';
+        reportSurface_remarks.value = 'OK';
+        reportSMPJudgement.value = 'HOLD';
+      }
+    } else {
+      console.log('Conditions not met for 1x1x1 CPK check — skipping');
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  [reportCpkFrom_iHc_Cpk, reportCpkFrom_iHc_remarks, reportSMPJudgement],
+  () => {
+    console.log('Watch triggered for CPK from iHc evaluation');
+    console.log('noteReasonForReject:', noteReasonForReject.value);
+    console.log('showCpkFrom_iHc:', showCpkFrom_iHc.value);
+    console.log('reportCpkFrom_iHc_Cpk:', reportCpkFrom_iHc_Cpk.value);
+    console.log('cpkStandardValue:', cpkStandardValue.value);
+
+    if (
+      noteReasonForReject.value.includes('- N.G iHc') &&
+      showCpkFrom_iHc.value === true && reportCpkFrom_iHc_Cpk.value !== null
+    ) {
+      if (reportCpkFrom_iHc_Cpk.value < cpkStandardValue.value) {
+        console.log('reportCpkFrom_iHc_Cpk is below standard — setting NG/REJECT');
+        reportCpkFrom_iHc_remarks.value = 'NG';
+        reportSMPJudgement.value = 'REJECT';
+      } else {
+        console.log('reportCpkFrom_iHc_Cpk meets or exceeds standard — setting OK/HOLD');
+        reportCpkFrom_iHc_remarks.value = 'OK';
+        reportSMPJudgement.value = 'HOLD';
+      }
+    } else {
+      console.log('Conditions not met for CPK from iHc check — skipping');
+    }
+  },
+  { immediate: true }
+);
+
+//FOR GX - models
+watch(
+  [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement],
+  () => {
+    console.log('Watch triggered for GX iHc evaluation');
+    console.log('showGX:', showGX.value);
+    console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
+    console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
+
+    if (noteReasonForReject.value.includes('- N.G iHc') && showGX.value === true &&
+    reportGX_iHcMinimum.value !== null && reportGX_iHcStandard.value !== null) {
+      if (reportGX_iHcMinimum.value < reportGX_iHcStandard.value) {
+        console.log('GX iHc minimum is below standard — setting NG/REJECT');
+        reportSMPJudgement.value = 'REJECT';
+      } else {
+        console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+        reportSMPJudgement.value = 'HOLD';
+      }
+    } else {
+      console.log('GX display not active — skipping GX iHc check');
+    }
+  },
+  { immediate: true }
+);
+
+//FOR BH - models
+watch(
+  [reportBH_result, reportBH_dataStandard, reportSMPJudgement, reportBH_remarks],
+  () => {
+    if (
+      noteReasonForReject.value.includes('- N.G iHc') &&
+      showBHData.value === true &&
+      reportBH_result.value !== null &&
+      reportBH_dataStandard.value !== null
+    ) {
+      if (reportBH_result.value < reportBH_dataStandard.value) {
+        reportBH_remarks.value = 'NG';
+        reportSMPJudgement.value = 'REJECT';
+      } else {
+        reportBH_remarks.value = 'OK';
+        reportSMPJudgement.value = 'HOLD';
+      }
+    } else {
+      console.log('BH display not active — skipping BH check');
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks],
+  () => {
+    console.log('Watch triggered for isTTM_model or reportCpk');
+    console.log('isTTM_model:', isTTM_model.value);
+    console.log('reportCpk:', reportCpk.value);
+
+
+    if (isTTM_model.value === true && reportCpk.value !== null) {
+        if (reportCpk.value < 1.00) {
+            console.log('reportCpk is below 1.00 — setting NG/REJECT');
+            reportCpkRemarks.value = 'NG';
+        } else {
+            console.log('reportCpk is 1.00 or higher — setting OK/HOLD');
+            reportCpkRemarks.value = 'OK';
+        }
+
+        if(noteReasonForReject.value.includes('- N.G iHc') && show1x1x1Data_withoutCorner.value === true && show1x1x1Data_Corner.value === false){
+            if(reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value){
+            console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
+            reportSurface_remarks.value = 'NG';
+            reportCore_remarks.value = 'NG';
+            reportSMPJudgement.value = 'REJECT';
+            }else{
+                console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
+                reportCore_remarks.value = 'OK';
+                reportSurface_remarks.value = 'OK';
+                reportSMPJudgement.value = 'HOLD';
+            }
+        }else if(noteReasonForReject.value.includes('- N.G iHc') && show1x1x1Data_withoutCorner.value === true && show1x1x1Data_Corner.value === true){
+            if(reportCorner_cpk.value < cpkStandardValue.value || reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value){
+                console.log('Surface, Core and Corner CPK below 1.33 — setting NG/REJECT');
+                reportSurface_remarks.value = 'NG';
+                reportCore_remarks.value = 'NG';
+                reportCorner_remarks.value = 'NG';
+                reportSMPJudgement.value = 'REJECT';
+            }else{
+                console.log('Surface, Core and Corner CPK 1.33 or higher — setting OK/HOLD');
+                reportCore_remarks.value = 'OK';
+                reportSurface_remarks.value = 'OK';
+                reportCorner_remarks.value = 'OK';
+                reportSMPJudgement.value = 'HOLD';
+            }
+        }
+    } else {
+      console.log('isTTM_model is false — skipping TTM CPK check');
+    }
+  },
+  { immediate: true }
+);
+
+
+// special judgement conditions logic end
+
+const reportReset = () => {
+    reportRemarksDisplayNG_ihcihk.value = false;
+    reportRemarksDisplayNG_br4pia.value = false;
+    reportRemarksDisplayNG_bhMax.value = false;
+    reportRemarksDisplayNG_bhc.value = false;
+    isTTM_model.value = false;
+    isAutomotive.value = false;
+    isAutomotiveInitiallyMarked.value = false;
+    noteReasonForReject.value = [];
+    show1x1x1Data_Corner.value = false;
+    show1x1x1Data_withoutCorner.value = false;
+    showBHData.value = false;
+    showGX.value = false;
+    showVTData.value = false;
+    showCpkFrom_iHc.value = false;
+}
+
+const showNotification = (message) => {
+    // Show notification and set the message
+    showNotif.value = true;
+    reportNotificationMessage.value = message;
+
+    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
+    setTimeout(() => {
+        showNotif.value = false;
+    }, 2000);  // 2000ms = 3 seconds
+}
+
+const showNotification2 = (message) => {
+    // Show notification and set the message
+    showNotif2.value = true;
+    reportNotificationMessage.value = message;
+
+    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
+    setTimeout(() => {
+        showNotif2.value = false;
+    }, 2000);  // 2000ms = 2 seconds
+}
+
+const sec_additional_button = () => {
+    //redirect here
+}
+
+const generateReport = async () => {
+    showReportContent.value = true;
+    showSelectionPanel.value = false;
+    initialCarmarkChecking();
+    await fetchAllData();
+
+}
+
+const checkSpecialJudgement = async () => {
+    //special judgement conditions
+
+    if (jhCurveActualModel.value === "DNS-0A54G" || jhCurveActualModel.value === "MIS-0766G") { //VT data
+
+        const hasSamples = reportVT_samplesQty.value > 0;
+        const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+        const shouldShowFullVT = hasSamples && hasNGihc;
+
+        console.log("reportVT_samplesQty:", reportVT_samplesQty.value);
+        console.log("noteReasonForReject:", noteReasonForReject.value);
+        console.log("hasSamples:", hasSamples);
+        console.log("hasNGihc:", hasNGihc);
+        console.log("shouldShowFullVT:", shouldShowFullVT);
+
+        showVTData_default.value = !shouldShowFullVT;
+        showVTData.value = shouldShowFullVT;
+
+        console.log("showVTData_default set to:", showVTData_default.value);
+        console.log("showVTData set to:", showVTData.value);
+    }
+
+    //TTM Models conditions
+    if(jhCurveActualModel.value.includes("TIC-0755G")) { //ALL TTM models use .includes("TTM-")
+        isTTM_model.value = true;
+        if(noteReasonForReject.value.includes('- N.G iHc')){
+            if(jhCurveActualModel.value === "TTM-0A58D" || jhCurveActualModel.value === "TTM-0C16D") { //TTM models without corners , TTM-0A58D, TTM-0C16D
+                show1x1x1Data_withoutCorner.value = true;
+            }else{ // with corners
+                show1x1x1Data_withoutCorner.value = true;
+                show1x1x1Data_Corner.value = true;
+            }
+        }
+    }
+
+    if(jhCurveActualModel.value === "AAW-0935G" && noteReasonForReject.value.includes('- N.G iHc')){ // AAW-0935G
+        show1x1x1Data_withoutCorner.value = true;
+    }
+
+    if(jhCurveActualModel.value === "DNS-0917G" && noteReasonForReject.value.includes('- N.G iHc')){ // DNS-0917G
+        showCpkFrom_iHc.value = true;
+    }
+
+    if(jhCurveActualModel.value === "MIE-0983G" && noteReasonForReject.value.includes('- N.G iHc')){ // MIE-0983G
+        showGX.value = true;
+    }
+
+    if(jhCurveActualModel.value === "ZFS-0982G" && noteReasonForReject.value.includes('- N.G iHc')){ // ZFS-0982G
+        showBHData.value = true;
+    }
+}
 
 const fetchAllData = async () => {
     try {
@@ -1308,16 +1507,6 @@ const fetchAllData = async () => {
         getAlliHr95NG.value = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
         getAlliHr98NG.value = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
         //console.log("check br remarks: ", getAllBrNG);
-        // Check if "1" exists in getAllBrNG
-        //REJECT CONDITIONS
-        /*
-
-const reportRemarksDisplayNG_ihcihk = ref(false);
-const reportRemarksDisplayNG_br4pia = ref(false);
-const reportRemarksDisplayNG_bhMax = ref(false);
-const reportRemarksDisplayNG_bhc = ref(false);
-
-        */
 
 
         if (getAllBrNG.value.includes("1") || getAlliHr95NG.value.includes("1") || getAlliHr98NG.value.includes("1") || getAllSquarenessNG.value.includes("1") || getAllDensityNG.value.includes("1") || getAlliHkiHcNG.value.includes("1") || getAllBr4paiNG.value.includes("1") || getAll4paildNG.value.includes("1") || getAll4pailsNG.value.includes("1") || getAll4pailaNG.value.includes("1") || getAllbHcNG.value.includes("1")) {
@@ -1335,8 +1524,8 @@ const reportRemarksDisplayNG_bhc = ref(false);
         }
         //Remarks checking end
 
-        console.log("SMP JUDGEMENT IS: ",reportSMPJudgement.value);
-        console.log("REPORT REMARKS IS: ",reportRemarksDisplay.value);
+        //console.log("SMP JUDGEMENT IS: ",reportSMPJudgement.value);
+        //console.log("REPORT REMARKS IS: ",reportRemarksDisplay.value);
 
 
         fetchActualModel.value = jhCurveActualModel.value;
@@ -1344,8 +1533,8 @@ const reportRemarksDisplayNG_bhc = ref(false);
         tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
         const thisLayerId = getTpmModel.value[0].layer_no;
         const thisfurnaceId = getTpmModel.value[0].furnace_id;
-        console.log("Finding layer no: ", thisLayerId);
-        console.log("Finding furnace id: ",thisfurnaceId);
+        //console.log("Finding layer no: ", thisLayerId);
+        //console.log("Finding furnace id: ",thisfurnaceId);
 
         const responseFurnaceAPI = await axios.get(`/api/furnacedata/`); //getting furnace Name
         //console.log("Show All furnace id API response: ", responseFurnaceAPI.data);
@@ -1402,14 +1591,14 @@ const reportRemarksDisplayNG_bhc = ref(false);
         //console.log("Show All inspection data list : ", inspectionDataList.value);
 
         const getAllInspModels = inspectionDataList.value.map(item => item.model);
-        console.log("List of models in inspection: ", getAllInspModels);
-        console.log("Current model in tpm: ",tpm_current_model);
+        //console.log("List of models in inspection: ", getAllInspModels);
+        //console.log("Current model in tpm: ",tpm_current_model);
 
         // Check if tpm_current_model exists in getAllInspModels
         if (getAllInspModels.includes(fetchActualModel.value)) {
             const filteredInspectionData = inspectionDataList.value.filter(item => item.model == fetchActualModel.value);
-            console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
-            console.log("Fetched model:", fetchActualModel.value);
+            //console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
+            //console.log("Fetched model:", fetchActualModel.value);
             // Access the `br` value for each item in filteredInspectionData
             filteredInspectionData.forEach(item => {
                 inspectionBrStandard.value = item.br;
@@ -1448,32 +1637,8 @@ const reportRemarksDisplayNG_bhc = ref(false);
             inspectionBrStandard_lower.value = '';
             inspectionBrStandard_higher.value = '';
         }
-        console.log("brStandard LOWER: ",inspectionBrStandard_lower.value);
-        console.log("brStandard HIGHER: ",inspectionBrStandard_higher.value);
-
-        //special judgement conditions
-
-        if(jhCurveActualModel.value == "MIE-0751G"){
-            showVTData2.value = true;
-        }
-        if(jhCurveActualModel.value == "AAW-0934G" || jhCurveActualModel.value == "AAW-0935G" || jhCurveActualModel.value == "TTM-0A58D" || jhCurveActualModel.value == "TTM-0C16D"){
-            show1x1x1Data_withoutCorner.value = true;
-        }
-        if(jhCurveActualModel.value == "DNS-0A54G"){
-            showVTData.value = true;
-        }
-        if(jhCurveActualModel.value == "DNS-0917G"){
-            showCpkFrom_iHc.value = true;
-        }
-        if(jhCurveActualModel.value == "OKMODEL"){
-            showGX.value = true;
-        }
-        if(jhCurveActualModel.value == "TIC-0755G"){
-            showVTData_default.value = true;
-        }
-
-
-        //special judgement conditions end
+        //console.log("brStandard LOWER: ",inspectionBrStandard_lower.value);
+        //console.log("brStandard HIGHER: ",inspectionBrStandard_higher.value);
 
         const repData = {
             "length": inspectionLength.value,
@@ -1504,6 +1669,7 @@ const reportRemarksDisplayNG_bhc = ref(false);
 
         //console.log("Rep Data: ",repData);
         createReport(repData, currentSerialSelected.value);
+
         await nextTick();
         isLoading.value = false;
     } catch (error) {
@@ -1515,9 +1681,9 @@ const reportRemarksDisplayNG_bhc = ref(false);
 
 const createReport = async (reportData, serial) => {
     try {
-        console.log("Rep Data: ",reportData);
+        //console.log("Rep Data: ",reportData);
         const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-        console.log("Create report function Patched report data: ", response.data);
+        //console.log("Create report function Patched report data: ", response.data);
     } catch (error) {
         console.error("Patch report data Error:", error);
     }
@@ -1527,9 +1693,9 @@ const showReportData = async () => {
     try {
         isReportDataReady.value = false;
         const response = await axios.get(`/api/reportdata/`);
-        console.log("Getting report data API result: ", response.data.data);
+        //console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        console.log("Filtered data: ", filterBySerial);
+        //console.log("Filtered data: ", filterBySerial);
         reportModel.value = filterBySerial[0].model;
         reportPulseTracerMachineNo.value = filterBySerial[0].pulse_tracer_machine_number;
         reportMaterialCode.value = filterBySerial[0].material_code;
@@ -1568,7 +1734,15 @@ const showReportData = async () => {
         reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
 
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
-        console.log("With carmark value: ",isAutomotive.value);
+        //console.log("With carmark value: ",isAutomotive.value);
+        reportStdDev.value = filterBySerial[0].std_dev;
+        console.log('reportStdDev:', reportStdDev.value);
+        reportCp.value = filterBySerial[0].cp;
+        console.log('reportCp:', reportCp.value);
+        reportCpk.value = filterBySerial[0].cpk;
+        console.log('reportCpk:', reportCpk.value);
+        reportCpkRemarks.value = filterBySerial[0].br_cpk_remarks;
+        console.log('reportCpkRemarks:', reportCpkRemarks.value);
 
         const noteRejectReasons = JSON.parse(filterBySerial[0].note_reason_reject);
         console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
@@ -1587,7 +1761,7 @@ const showReportData = async () => {
         //console.log("Report Data Model", reportModel.value);
 
         const magneticProperty = JSON.parse(filterBySerial[0].magnetic_property_data);
-        console.log("Magnetic Property: ", magneticProperty);
+        //console.log("Magnetic Property: ", magneticProperty);
          // Extracting BR, IHC, and IHK properties
 
         // BR values
@@ -1645,25 +1819,19 @@ const showReportData = async () => {
         reportCore_remarks.value = oneby.core_remarks || '';
 
         reportVT_samples.value = Array.isArray(VT.sample) ? VT.sample : [];
-        console.log("reportVT_samples:", reportVT_samples.value);
-
+        //console.log("reportVT_samples:", reportVT_samples.value);
         reportVT_sampleRemarks.value = Array.isArray(VT.sample_remarks) ? VT.sample_remarks : [];
-        console.log("reportVT_sampleRemarks:", reportVT_sampleRemarks.value);
-
+        //console.log("reportVT_sampleRemarks:", reportVT_sampleRemarks.value);
         reportVT_iHcResults.value = Array.isArray(VT.iHcResult) ? VT.iHcResult : [];
-        console.log("reportVT_iHcResults:", reportVT_iHcResults.value);
-
+        //console.log("reportVT_iHcResults:", reportVT_iHcResults.value);
         reportVT_samplesQty.value = VT.sample_qty ?? 0;
-        console.log("reportVT_samplesQty:", reportVT_samplesQty.value);
-
+        //console.log("reportVT_samplesQty:", reportVT_samplesQty.value);
         reportVT_temp.value = VT.temp ?? '';
-        console.log("reportVT_temp:", reportVT_temp.value);
-
+        //console.log("reportVT_temp:", reportVT_temp.value);
         reportVT_iHc.value = VT.iHc ?? '';
-        console.log("reportVT_iHc:", reportVT_iHc.value);
-
+        //console.log("reportVT_iHc:", reportVT_iHc.value);
         reportVT_remarks.value = VT.remarks ?? '';
-        console.log("reportVT_remarks:", reportVT_remarks.value);
+        //console.log("reportVT_remarks:", reportVT_remarks.value);
 
         reportCpkFrom_iHc_StdDev.value = iHc_cpk.std_dev || '';
         reportCpkFrom_iHc_Cpk.value = iHc_cpk.cpk || '';
@@ -1673,11 +1841,11 @@ const showReportData = async () => {
         reportGX_iHcAverage.value = GX.iHcAverage || '';
         reportGX_iHcMaximum.value = GX.iHcMaximum || '';
         reportGX_iHcMinimum.value = GX.iHcMinimum || '';
-        reportGX_iHcVariance.value = GX.iHcVariance || '';
+        reportGX_iHcVariance.value = (GX.iHcMaximum - GX.iHcMinimum) || '';
         reportGX_iHkAverage.value = GX.iHkAverage || '';
         reportGX_iHkMaximum.value = GX.iHkMaximum || '';
         reportGX_iHkMinimum.value = GX.iHkMinimum || '';
-        reportGX_iHkVariance.value = GX.iHkVariance || '';
+        reportGX_iHkVariance.value = (GX.iHkMaximum - GX.iHkMinimum) || '';
 
         reportBH_data.value = bh.data || '';
         reportBH_dataStandard.value = bh.dataStandard || '';
@@ -1686,26 +1854,16 @@ const showReportData = async () => {
         reportBH_temp.value = bh.temp || '';
         reportBH_result.value = bh.result || '';
 
-        reportVT2_iHc.value = VT2.iHc || '';
-        reportVT2_minSample.value = VT2.minSample || '';
-        reportVT2_maxSample.value = VT2.maxSample || '';
-        reportVT2_temp.value = VT2.temp || '';
-        reportVT2_iHcResult_min.value = VT2.iHcResult_min || '';
-        reportVT2_iHcResult_max.value = VT2.iHcResult_max || '';
-        reportVT2_remarks.value = VT2.remarks || '';
-
-        //special judgement conditions
-
-        if(showVTData_default.value && reportVT_samplesQty.value > 0){
-            showVTData_default.value = false;
-            showVTData.value = true;
-        }
-
-        //special judgement conditions end
-
         evaluateAllRejectReasons();
         checkApprovalStates();
-        isReportDataReady.value = true;
+        checkSpecialJudgement();
+
+        // Final result conditions
+
+        setTimeout(() => {
+            isReportDataReady.value = true;
+            showReportLoading.value = false;
+        }, 1000); // 1 second delay
     } catch (error) {
         console.error("API get request showReportData Error:", error);
     }
@@ -1736,6 +1894,10 @@ const saveReport = async () => {
         "withCarmark": isAutomotive.value,
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
+        "std_dev": reportStdDev.value,
+        "cp": reportCpk.value,
+        "cpk": reportCpk.value,
+        "br_cpk_remarks": reportCpkRemarks.value,
         "data_1x1x1_info": JSON.stringify({
             "corner": reportCorner.value,
             "corner_average": reportCorner_average.value,
@@ -1789,20 +1951,9 @@ const saveReport = async () => {
             "temp": reportBH_temp.value,
             "result": reportBH_result.value,
         }),
-        "data_VT2_info": JSON.stringify({
-            "iHc": reportVT2_iHc.value,
-            "minSample": reportVT2_minSample.value,
-            "maxSample": reportVT2_maxSample.value,
-            "temp": reportVT2_temp.value,
-            "iHcResult_min": reportVT2_iHcResult_min.value,
-            "iHcResult_max": reportVT2_iHcResult_max.value,
-            "remarks": reportVT2_remarks.value,
-        }),
     }
     console.log("Save report data: ", saveReportData);
     saveReportUpdate(saveReportData, currentSerialSelected.value);
-    showReportContent.value = false;
-    showSelectionPanel.value = true;
 }
 
 const saveReportUpdate = async (saveData, serial) => {
@@ -1813,6 +1964,11 @@ const saveReportUpdate = async (saveData, serial) => {
         showNotification2("Saved Successfully");
     }catch (error){
         console.error("Patch report data Error:", error);
+    }finally{
+        fetchAllData();
+        showReportData();
+        showReportContent.value = false;
+        showSelectionPanel.value = true;
     }
 }
 
@@ -1822,11 +1978,11 @@ const saveReportUpdate = async (saveData, serial) => {
 const fetchSerial = async () => {
   try {
     const response = await axios.get("/api/tpmdata");
-    console.log("API Response fetchSerial-data:", response.data);
+    //console.log("API Response fetchSerial-data:", response.data);
 
     // Extract furnace data dynamically
     tpmData.value = response.data.data["tpmDataAll"] || [];
-    console.log("TPM DATA response: ", tpmData.value);
+    //console.log("TPM DATA response: ", tpmData.value);
 
     // Extract unique serial numbers by using a Set
     serialList.value = [...new Set(tpmData.value.map(item => item.serial_no))];
@@ -1836,7 +1992,7 @@ const fetchSerial = async () => {
       return Number(b) - Number(a); // Convert to number for proper sorting
     });
 
-    console.log("Unique Serial lists (Descending):", serialList.value);
+    //console.log("Unique Serial lists (Descending):", serialList.value);
 
     // Set default selection to first serial, if available
     if (serialList.value.length > 0) {
@@ -1845,7 +2001,7 @@ const fetchSerial = async () => {
 
 
   } catch (error) {
-    console.error("Error fetching serial data:", error);
+    //console.error("Error fetching serial data:", error);
   }
 };
 // Fetching the serial start end
@@ -1858,11 +2014,11 @@ const props = defineProps({
 });
 isFromApproval.value = props.fromApproval;
 ipAddress.value = props.ipAddress;
-console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
-console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
+//console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
+//console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
 
 const viewPropertyData = (serial) => {
-  console.log('Navigating to manage with serial:', serial);
+  //console.log('Navigating to manage with serial:', serial);
   Inertia.visit('/manage', {
     method: 'get',   // You can keep 'get' since we are not modifying any data
     data: { manageSerialParam: serial },   // Passing the serialParam here
@@ -1902,14 +2058,14 @@ const confirmPreparedByStamp = async () => {
     preparedByStampPhoto.value = true;
     preparedByStampConfirmation.value = false;
     const dateNow = datenow();
-    console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
+    //console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
     const preparedByData = {
         prepared_by: preparedByPerson.value, // Set the approved_by field to "ITADANI KAZUYA"
         prepared_by_date: dateNow
     };
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
-    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
     showReportData();
 }
 
@@ -1943,20 +2099,20 @@ const confirmCheckedByStamp = async () => {
     checkedByStampPhoto.value = true;
     checkedByStampConfirmation.value = false;
     const dateNow = datenow();
-    console.log("Checked By Has been stamped by -> ", checkedByPerson.value);
+    //console.log("Checked By Has been stamped by -> ", checkedByPerson.value);
     const checkedByData = {
         checked_by: checkedByPerson.value,
         checked_by_date: dateNow
     };
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, checkedByData);
-    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
     showReportData();
 }
 
 const checkApprovalStates = async () => {
     try{
-        console.log("Checking approval states...");
+        //console.log("Checking approval states...");
         const response = await axios.get(`/api/reportdata/`);
         //console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
@@ -1966,9 +2122,9 @@ const checkApprovalStates = async () => {
         const checked_by = filterBySerial[0].checked_by;
         const approved_by = filterBySerial[0].approved_by;
 
-        console.log("prepared by: ",prepared_by);
-        console.log("checked by: ",checked_by);
-        console.log("approved by: ",approved_by);
+        //console.log("prepared by: ",prepared_by);
+        //console.log("checked by: ",checked_by);
+        //console.log("approved by: ",approved_by);
 
         if(prepared_by != "" && prepared_by != null){ //Approver Conditions
             showPreparedByDefault.value = false;
@@ -2017,21 +2173,21 @@ const checkApprovalStates = async () => {
 const checkCurrentUser = async () => {
     try {
         const responseFindApprovers = await axios.get("/api/approver");
-        console.log('API GET requestFrom-responseFindPreparedBy: ', responseFindApprovers.data);
+        //console.log('API GET requestFrom-responseFindPreparedBy: ', responseFindApprovers.data);
 
         const approvers = responseFindApprovers.data.data?.Approvers || [];
 
         currentUserData.value = approvers.filter(column => column.ip_address === ipAddress.value);
-        console.log('Current approver data array: ', currentUserData.value);
+        //console.log('Current approver data array: ', currentUserData.value);
 
         if (currentUserData.value.length > 0) {
             const userData = currentUserData.value[0];
             currentUserName.value = userData.approver_name;
             currentUserApproverStage.value = userData.approval_stage;
             currentUserIP.value = userData.ip_address;
-            console.log('current user name: ', currentUserName.value);
-            console.log('current approver stage: ', currentUserApproverStage.value);
-            console.log('current user IP: ',currentUserIP.value);
+            //console.log('current user name: ', currentUserName.value);
+            //console.log('current approver stage: ', currentUserApproverStage.value);
+            //console.log('current user IP: ',currentUserIP.value);
         } else {
             console.warn("No approver found for the current IP address.");
             currentUserName.value = '';
@@ -2047,68 +2203,68 @@ const evaluateAllRejectReasons = () => {
     if (!noteReasonForReject.value || noteReasonForReject.value.length === 0) {
     noteReasonForReject.value = []; // Reset before evaluation
 
-    console.log('Evaluating rejection reasons part1...');
+    //console.log('Evaluating rejection reasons part1...');
 
     if (getAlliHkiHcNG.value.includes("1")) {
-      console.log('Condition met: getAlliHkiHcNG includes "1"');
+      //console.log('Condition met: getAlliHkiHcNG includes "1"');
       noteReasonForReject.value.push('- N.G iHc-iHk');
     }
 
     if (getAllBr4paiNG.value.includes("1")) {
-      console.log('Condition met: getAllBr4paiNG includes "1"');
+      //console.log('Condition met: getAllBr4paiNG includes "1"');
       noteReasonForReject.value.push('- N.G Br-4PIa');
     }
 
     if (getAllBHMaxNG.value.includes("1")) {
-      console.log('Condition met: getAllBHMaxNG includes "1"');
+      //console.log('Condition met: getAllBHMaxNG includes "1"');
       noteReasonForReject.value.push('- N.G BH(max)');
     }
 
     if (getAllbHcNG.value.includes("1")) {
-      console.log('Condition met: getAllbHcNG includes "1"');
+      //console.log('Condition met: getAllbHcNG includes "1"');
       noteReasonForReject.value.push('- N.G bHc');
     }
 
-    console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
+    //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
 
-    console.log('Evaluating rejection reasons part2...');
+    //console.log('Evaluating rejection reasons part2...');
 
     if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
-      console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
+      //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
       noteReasonForReject.value.push('- LOW BR');
     }
 
     if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-      console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
+      //console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
       noteReasonForReject.value.push('- HIGH BR');
     }
 
     if (reportihcMinimum.value < inspectioniHcStandard.value) {
-      console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
+      //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
       noteReasonForReject.value.push('- N.G iHc');
     } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
-      console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
+      //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
       noteReasonForReject.value.push('- iHc Below Target+500 Oe');
     }
 
     if (reportihkMinimum.value < inspectioniHkStandard.value) {
-      console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
+      //console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
       noteReasonForReject.value.push('- N.G iHk');
     }
 
     if (reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) {
-      console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
+      //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
       noteReasonForReject.value.push('- N.G Hr95');
     }
 
     if (reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) {
-      console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
+      //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
       noteReasonForReject.value.push('- N.G Hr98');
     }
 
-    console.log('Final Rejection Reasons part 2:', noteReasonForReject.value);
+    //console.log('Final Rejection Reasons part 2:', noteReasonForReject.value);
   } else {
-    console.log('Skipping rejection evaluation: Reasons already exist.');
+    //console.log('Skipping rejection evaluation: Reasons already exist.');
   }
 }
 
@@ -2117,7 +2273,7 @@ const checkCarmark = async () => {
         const responseCarMark = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, {
             "withCarmark": isAutomotive.value,
         });
-        console.log("Saved carmark data: ", responseCarMark.data);
+        //console.log("Saved carmark data: ", responseCarMark.data);
         isAutomotive.value = true;
     }catch(error){
         console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
@@ -2147,7 +2303,7 @@ const finalizeReport = (serial) => {
 
 const sec_additional_redirect = (sec_serial) => {
     try {
-        console.log('Navigating to report with serial:', sec_serial);
+        //console.log('Navigating to report with serial:', sec_serial);
         Inertia.visit('/sec_additional', {
             method: 'get',
             data: { sec_serialParam: sec_serial },
@@ -2181,7 +2337,7 @@ onMounted(() => {
     showExitButton.value = false;
     fetchAllData();
     showReportData();
-    console.log('serialParam is provided, skipping fetchSerial.');
+    //console.log('serialParam is provided, skipping fetchSerial.');
   } else {
     // If serialParam does not have a value, proceed with fetchSerial
     fetchSerial();
