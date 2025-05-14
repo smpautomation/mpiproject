@@ -861,8 +861,7 @@ const show1x1x1Data_withoutCorner = ref(false);
 const show1x1x1Data_Corner = ref(false);
 const showVTData = ref(false);
 const showVTData2 = ref(false);
-const showCpkFrom_iHc = ref(false);
-
+const showCpkFrom_iHc = ref(true);
 
 
 const isLoading = ref(true);
