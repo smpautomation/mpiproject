@@ -9,6 +9,7 @@
         <!-- Content -->
         <div class="relative z-10 flex flex-col items-center justify-center mt-12 font-bold text-white text-2xl drop-shadow">
             Welcome! This is the MPI AUTOMATION project home page.
+            <div class="stamp-text">Welcome</div>
         </div>
     </div>
     </Frontend>
@@ -17,3 +18,9 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 </script>
+
+<style scoped>
+.stamp-text {
+  font-family: 'MyFont', sans-serif;
+}
+</style>

@@ -1194,6 +1194,61 @@ const printJhCurveLotno = ref('N/A');
 
 const additionalRemarks = ref([]);
 
+//variables from models with special judgement
+//from data 1x1x1
+const printCore = ref(0);
+const printCorner = ref(0);
+const printSurface = ref(0);
+const printCoreCpk = ref(0);
+const printCornerCpk = ref(0);
+const printSurfaceCpk = ref(0);
+const printCoreAverage = ref(0);
+const printCornerAverage = ref(0);
+const printSurfaceAverage = ref(0);
+const printCoreMaximum = ref(0);
+const printCornerMaximum = ref(0);
+const printSurfaceMaximum = ref(0);
+const printCoreMinimum = ref(0);
+const printCornerMinimum = ref(0);
+const printSurfaceMinimum = ref(0);
+const printCoreRemarks = ref('N/A');
+const printCornerRemarks = ref('N/A');
+const printSurfaceRemarks = ref('N/A');
+
+//from data VT
+const printVT_iHc = ref(0);
+const printVT_Temp = ref(0);
+const printVT_samples = ref([]);
+const printVT_sampleRemarks = ref([]);
+const printVT_iHcResults = ref([]);
+const printVT_remarks = ref('N/A');
+const printVT_sampleQty = ref(0);
+
+//from data iHc_cpk
+const printiHc_cpk_info_cpk = ref(0);
+const printiHc_cpk_info_remarks = ref('N/A');
+const printiHc_cpk_info_stdDev = ref(0);
+
+//from data GX
+const printGX_iHcAverage = ref(0);
+const printGX_iHcMaximum = ref(0);
+const printGX_iHcMinimum = ref(0);
+const printGX_iHcStandard = ref(0);
+const printGX_iHcVariance = ref(0);
+const printGX_iHkAverage = ref(0);
+const printGX_iHkMaximum = ref(0);
+const printGX_iHkMinimum = ref(0);
+const printGX_iHkVariance = ref(0);
+
+//from data BH
+const printBH_data = ref("N/A");
+const printBH_dataStandard = ref(0);
+const printBH_temp = ref(0);
+const printBH_result = ref(0);
+const printBH_sample = ref("N/A");
+const printBH_remarks = ref("N/A");
+
+
 const standardSampleDimention = computed(() => ({
   'LENGTH (mm)': printLength.value,
   'WIDTH (mm)': printWidth.value,
@@ -1263,6 +1318,62 @@ const dataFrom_reportdata = async () => {
         printiHkAverage.value = mPD.ihkAverage;
         printiHkMaximum.value = mPD.ihkMaximum;
         printiHkMinimum.value = mPD.ihkMinimum;
+
+        //Under special judgements
+        const d1x1x1 = JSON.parse(rd.data_1x1x1_info);
+        const dVT = JSON.parse(rd.data_VT_info);
+        const diHc_cpk = JSON.parse(rd.data_iHc_cpk_info);
+        const dGX = JSON.parse(rd.data_GX_info);
+        const dBH = JSON.parse(rd.data_bh_info);
+
+        printCore.value = d1x1x1.core;
+        printCorner.value = d1x1x1.corner;
+        printSurface.value = d1x1x1.surface;
+        printCoreCpk.value = d1x1x1.core_cpk;
+        printCornerCpk.value = d1x1x1.corner_cpk;
+        printSurfaceCpk.value = d1x1x1.surface_cpk;
+        printCoreAverage.value = d1x1x1.core_average;
+        printCornerAverage.value = d1x1x1.corner_average;
+        printSurfaceAverage.value = d1x1x1.surface_average;
+        printCoreMaximum.value = d1x1x1.core_maximum;
+        printCornerMaximum.value = d1x1x1.corner_maximum;
+        printSurfaceMaximum.value = d1x1x1.surface_maximum;
+        printCoreMinimum.value = d1x1x1.core_minimum;
+        printCornerMinimum.value = d1x1x1.corner_minimum;
+        printSurfaceMinimum.value = d1x1x1.surface_minimum;
+        printCoreRemarks.value = d1x1x1.core_remarks;
+        printCornerRemarks.value = d1x1x1.corner_remarks;
+        printSurfaceRemarks.value = d1x1x1.surface_remarks;
+
+        printVT_iHc.value = dVT.iHc;
+        printVT_Temp.value = dVT.temp;
+        printVT_samples.value = dVT.sample;
+        printVT_sampleRemarks.value = dVT.sample_remarks;
+        printVT_iHcResults.value = dVT.iHc_result;
+        printVT_remarks.value = dVT.remarks;
+        printVT_sampleQty.value = dVT.sample_qty;
+
+        printiHc_cpk_info_cpk.value = diHc_cpk.cpk;
+        printiHc_cpk_info_remarks.value = diHc_cpk.remarks;
+        printiHc_cpk_info_stdDev.value = diHc_cpk.std_dev;
+
+        printGX_iHcAverage.value = dGX.iHcAverage;
+        printGX_iHcMaximum.value = dGX.iHcMaximum;
+        printGX_iHcMinimum.value = dGX.iHcMinimum;
+        printGX_iHcStandard.value = dGX.iHcStandard;
+        printGX_iHcVariance.value = dGX.iHcVariance;
+        printGX_iHkAverage.value = dGX.iHkAverage;
+        printGX_iHkMaximum.value = dGX.iHkMaximum;
+        printGX_iHkMinimum.value = dGX.iHkMinimum;
+        printGX_iHkVariance.value = dGX.iHkVariance;
+
+        printBH_data.value = dBH.data;
+        printBH_dataStandard.value = dBH.dataStandard;
+        printBH_temp.value = dBH.temp;
+        printBH_result.value = dBH.result;
+        printBH_sample.value = dBH.sample;
+        printBH_remarks.value = dBH.remarks;
+
 
         if (nRR && Array.isArray(nRR)) {
             noteReasonForReject.value = []; // Clear existing values

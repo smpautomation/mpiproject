@@ -413,28 +413,31 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
-                                <tr v-show="isTTM_model" class="bg-blue-300">
-                                    <th rowspan="2" colspan="2" class="text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
-                                    <th class="text-white border-4 border-white ">STD DEV</th>
-                                    <th class="text-white border-4 border-white ">Cp</th>
-                                    <th class="text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
-                                    <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
-                                </tr>
-                                <tr v-show="isTTM_model" class="text-center">
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"><input type="number" v-model="reportStdDev" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCpk" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkRemarks }}</td>
-                                </tr>
+                                <template v-if="isTTM_model">
+                                    <tr class="bg-blue-300">
+                                        <th rowspan="2" colspan="2" class="text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
+                                        <th class="text-white border-4 border-white ">STD DEV</th>
+                                        <th class="text-white border-4 border-white ">Cp</th>
+                                        <th class="text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
+                                        <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"><input type="number" v-model="reportStdDev" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportCpk" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                        <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkRemarks }}</td>
+                                    </tr>
+                                </template>
+
                                 <tr v-show="show1x1x1Data_withoutCorner" class="text-center bg-blue-300">
                                     <td colspan="2" class="px-4 py-2 font-extrabold text-white border-4 border-white">Data of 1x1x1 mm samples</td>
                                     <td class="px-4 py-2 font-extrabold text-white border-4 border-white">AVERAGE</td>
@@ -765,12 +768,14 @@
 
                         <span
                         v-show="preparedByStampPhoto"
-                        class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
+                        class="flex flex-col items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: 'url(\'/photo/Prepared_by_stamp.png\')',
+                            backgroundImage: 'url(\'/photo/template.png\')',
                             backgroundSize: '101%'
                         }">
-                        {{ reportPreparedByDate }}
+                        <span>{{ preparedByPerson_firstName }}</span>
+                        <span class="my-[6.5px]">{{ reportPreparedByDate }}</span>
+                        <span>{{ preparedByPerson_lastName }}</span>
                         </span>
                     </div>
                     </div>
@@ -1034,6 +1039,8 @@ const currentUserName = ref('');
 const currentUserApproverStage = ref('');
 const currentUserIP = ref('');
 const preparedByPerson = ref('');
+const preparedByPerson_firstName = ref('');
+const preparedByPerson_lastName = ref('');
 const checkedByPerson = ref('');
 const approvedByPerson = ref('');
 
@@ -1320,6 +1327,7 @@ watch(
   { immediate: true }
 );
 
+//For TTM Models
 watch(
   [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks],
   () => {
@@ -1448,7 +1456,7 @@ const checkSpecialJudgement = async () => {
     }
 
     //TTM Models conditions
-    if(jhCurveActualModel.value.includes("TIC-0755G")) { //ALL TTM models use .includes("TTM-")
+    if(jhCurveActualModel.value.includes("TTM-")) { //ALL TTM models use .includes("TTM-")
         isTTM_model.value = true;
         if(noteReasonForReject.value.includes('- N.G iHc')){
             if(jhCurveActualModel.value === "TTM-0A58D" || jhCurveActualModel.value === "TTM-0C16D") { //TTM models without corners , TTM-0A58D, TTM-0C16D
@@ -2055,6 +2063,7 @@ const cancelPreparedByStamp = () => {
 const confirmPreparedByStamp = async () => {
 
     preparedByPerson.value = currentUserName.value;
+    // Split the full name into first and last name
     preparedByStampPhoto.value = true;
     preparedByStampConfirmation.value = false;
     const dateNow = datenow();
@@ -2130,6 +2139,12 @@ const checkApprovalStates = async () => {
             showPreparedByDefault.value = false;
             preparedByButton.value = false;  //Already approved condition
             preparedByStampPhoto.value = true;
+
+            const nameParts = prepared_by.split(' ');
+            preparedByPerson_firstName.value = nameParts[0];
+            preparedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+            console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
+            console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
         }else if(currentUserApproverStage.value == "PREPARED BY"){
             showPreparedByDefault.value = false;
             preparedByButton.value = true; //Not approved yet but ready for approval
@@ -2165,6 +2180,7 @@ const checkApprovalStates = async () => {
             showReportSaveButton.value = false;
             //insert finalize button here the button for printing
         }
+
     }catch(error){
         console.error("ERROR Getting report data API result: ", error);
     }
