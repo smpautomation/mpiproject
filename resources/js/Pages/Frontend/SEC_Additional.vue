@@ -605,8 +605,8 @@ const csv_selectedFile = ref(null)
                 status: row["Data class"]
             }));
 
-            console.log('CSV Parsed Data:', csv_parsedData.value);
-            console.log('Temp with Data class:', csv_tempWithDataStat.value);
+            //console.log('CSV Parsed Data:', csv_parsedData.value);
+            //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
         },
         error: (err) => {
@@ -629,14 +629,17 @@ const csv_selectedFile = ref(null)
 
     const mergeTempToTPM = async () => {
         try{ //tempDataClass contains the value to be updated
-            const responseTPM = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value); // This is used to find the proper id to update
-            console.log('API Response MergeTempToTPMDATA:', responseTPM.data);
-//ggggg
-            const tpmData = responseTPM.data.data || [];
-            console.log('tpm data: ',tpmData);
-            const nsafilteredData = tpmData.filter(item => item.set_no == highest_setNo.value);
-            const getAllID = nsafilteredData.map(item => item.id);
-            console.log('getting all the ids:',getAllID);
+            const responseTPM = await axios.get("/api/nsadata"); // This is used to find the proper id to update
+            //console.log('API Response MergeTempToTPMDATA:', responseTPM.data.data["NSAData"]);
+//ggggg /*
+            const nsaData = responseTPM.data.data["NSAData"] || [];
+            //console.log('tpm data: ',nsaData);
+            const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
+            //console.log('tpm data filtered by serial: ',nsafilteredData);
+            const nsafilteredData2 = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
+            //console.log('tpm data filtered by set_no and serial: ',nsafilteredData2);
+            const getAllID = nsafilteredData2.map(item => item.id);
+            //console.log('getting all the ids:',getAllID);
 
             for (let i = 0; i < getAllID.length; i++) {
                 try {
@@ -645,56 +648,15 @@ const csv_selectedFile = ref(null)
                         data_status: csv_tempWithDataStat.value[i]?.status || null,
                         set_name: additional_remarks.value || null
                     });
-
-                    console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
+                    //console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
                 } catch (error) {
                     console.error(`Error patching ID ${getAllID[i]}:`, error.response?.data || error.message);
                 }
             }
-            // Uncomment this to see the response
-            console.log('API Response Patch merging Temp and Dataclass:', responseTempWithData.data);
         }catch(error){
-
+            console.log("Merge failed: ",error);
         }
     }
-
-  //UI Dynamic Color adjustments
-
-  const adjustColor_rejectOKNG = (arrayString_OKNG) => {
-        //console.log(arrayString_OKNG); // Log the value to see what it is
-        if (arrayString_OKNG && arrayString_OKNG.includes) {
-            return arrayString_OKNG.includes("Status OK") ? "text-green-500" : "text-red-500";
-        }
-        return "text-yellow-500"; // or any fallback class
-    }
-
-    const adjustColor_rejectLotRemarks = (arrayString_lotRem) => {
-        return arrayString_lotRem.includes("THIS LOT IS PASS") ? "text-green-600" : "text-red-500";
-    }
-
-    const adjustColor_rejectInstructions = computed(() => {
-        // Check if rejectInstruction is not null and is a string before calling includes
-        return rejectInstruction.value && rejectInstruction.value.includes("No reject instructions")
-            ? "text-blue-600"
-            : "text-green-500";
-    });
-
-    const adjustColor_rejectiHc = computed(() => {
-        // Check if rejectiHcRemarks is not null and is a string before calling includes
-        return rejectiHcRemarks.value && rejectiHcRemarks.value.includes("iHc variance OK")
-            ? "text-blue-600"
-            : "text-red-500";
-    });
-
-    const adjustColor_iHcValue = computed(() => {
-        if(getHighestSampleVariance.value <= 1500){
-            return "text-blue-500";
-        }else{
-            return "text-red-500";
-        }
-    });
-
-    //UI Dynamic Color adjustments end
 
     //New Furnace , New Layers end
 
@@ -725,25 +687,6 @@ const csv_selectedFile = ref(null)
         {name: 'Tracer', colspan: 1},
     ]);
         //table main layer header dynamic end
-
-    //2nd table cell data dynamic
-    const secondTableLayerColumnHeaders = ref([
-        {name: '', colspan: 1},
-        {name: 'Br', colspan: 1},
-        {name: 'iHc', colspan: 1},
-        {name: 'iHk', colspan: 1},
-        {name: 'BHMax', colspan: 1},
-        {name: 'iHr95', colspan: 1},
-        {name: 'iHr98', colspan: 1},
-        {name: 'iHciHk', colspan: 1},
-        {name: 'Br4pai', colspan: 1},
-        {name: 'bHc', colspan: 1},
-        {name: 'Squareness', colspan: 1},
-        {name: '4paild', colspan: 1},
-        {name: '4pails', colspan: 1},
-        {name: '4paila', colspan: 1},
-    ]);
-    //2nd table cell data dynamic end
 
     //Variables for ave max min ng counter
 
@@ -799,71 +742,6 @@ const csv_selectedFile = ref(null)
     const ng4paild = ref(null);
     const ng4pails = ref(null);
     const ng4paila = ref(null);
-
-    // Grouping variables into arrays
-    const aggAveValues = ref([
-        aveBr,
-        aveiHc,
-        aveiHk,
-        aveBHMax,
-        aveiHr95,
-        aveiHr98,
-        aveiHciHk,
-        aveBr4pai,
-        avebHc,
-        aveSquareness,
-        ave4paild,
-        ave4pails,
-        ave4paila,
-    ]);
-
-    const aggMaxValues = ref([
-        maxBr,
-        maxiHc,
-        maxiHk,
-        maxBHMax,
-        maxiHr95,
-        maxiHr98,
-        maxiHciHk,
-        maxBr4pai,
-        maxbHc,
-        maxSquareness,
-        max4paild,
-        max4pails,
-        max4paila,
-    ]);
-
-    const aggMinValues = ref([
-        minBr,
-        miniHc,
-        miniHk,
-        minBHMax,
-        miniHr95,
-        miniHr98,
-        miniHciHk,
-        minBr4pai,
-        minbHc,
-        minSquareness,
-        min4paild,
-        min4pails,
-        min4paila,
-    ]);
-
-    const aggNGCounts = ref([
-        ngBr,
-        ngiHc,
-        ngiHk,
-        ngBHMax,
-        ngiHr95,
-        ngiHr98,
-        ngiHciHk,
-        ngBr4pai,
-        ngbHc,
-        ngSquareness,
-        ng4paild,
-        ng4pails,
-        ng4paila,
-    ]);
 
     //Variables for ave max min ng counter end
 
@@ -922,7 +800,6 @@ const saveIHr95Remarks = ref('');
 const saveIHr98Remarks = ref('');
 
 const highest_setNo = ref(1);
-const currentSetNo = ref();
 
 const saveToDatabase = async () => {
     if (fileData.value.length === 0) {
@@ -932,22 +809,23 @@ const saveToDatabase = async () => {
 
     // Sort the files alphabetically by their name
     fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
-    console.log('Sorted Files:', fileData.value);
+   // console.log('Sorted Files:', fileData.value);
 
     layerTableRowLoading.value = true;
     showSaveToDatabase_confirmation.value = false;
     try{
-        const responseCheckNsa = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value);
-        console.log('response check NSA: ',responseCheckNsa.data);
-        const nsaData = responseCheckNsa.data.data;
-        console.log('nsa Data array fectch: ',nsaData);
+        const responseCheckNsa = await axios.get("/api/nsadata");
+        //console.log('response check NSA: ',responseCheckNsa.data.data);
+        const nsaData = responseCheckNsa.data.data["NSAData"] || [];
+        //console.log('tpm data: ',nsaData);
+        const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
+       // console.log('tpm data filtered by serial: ',nsafilteredData);
 
-        if (Object.keys(nsaData).length > 0) {
-            const nsaArray = Object.values(nsaData);
-            const maxSetNo = Math.max(...nsaArray.map(item => item.set_no));
+        if(nsafilteredData.length > 0) {
+            const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
             highest_setNo.value = maxSetNo + 1;
-        }else{
-            console.log('NOT ARRAY!!');
+        } else {
+            console.log('No matching NSA data for this serial number.');
         }
     }catch(error){
         console.warn("404 No data detected or another error check here -> ",error)
@@ -1043,7 +921,7 @@ const saveToDatabase = async () => {
 
                 // Check if the date is in a valid format and reformat it to YYYY-MM-DD
                 const formattedDate = new Date(rawDate).toISOString().split('T')[0];  // Converts to 'YYYY-MM-DD' format
-                console.log("ADDITIONAL REMARKS: ",additional_remarks.value);
+                //console.log("ADDITIONAL REMARKS: ",additional_remarks.value);
 
                 const layerData = {
                     "date": formattedDate,
@@ -1133,9 +1011,9 @@ const saveToDatabase = async () => {
 // Function to send raw data via API
 const sendLayerData = async (layerData) => {
     try {
-        console.log("Sending layer TO API: ",layerData);
+        //console.log("Sending layer TO API: ",layerData);
         const response = await axios.post('/api/nsadata', layerData); // Replace '/api/endpoint' with your API endpoint
-        console.log('API Response sendlayerdata:', response.data);
+        //console.log('API Response sendlayerdata:', response.data);
 
     } catch (error) {
         console.error('Error sending data to API:', error.response?.data || error.message);
@@ -1165,7 +1043,9 @@ const parseFileContent = (content) => {
 };
 
 const items = ref([]); // Holds the fetched data
-const tpmData = ref([]); // Holds the tpmData array
+const nsaData = ref([]); // Holds the nsaData array
+const nsaData_aggID = ref(null);
+const filteredAggregateID = ref([]);
 const filteredNSAData = ref([]);
 const tpmRemarks = ref([]); // Holds the remarks array
 const tpmAggregateAve = ref([]); // Holds the aggregateFunctions array
@@ -1175,7 +1055,6 @@ const combinedData = ref([]); // Holds the combined array
 const getAllIDValues = ref([]);
 
 // Variables for aggregate
-const getAggregateID = ref([]);
 
 const getAllBrValues = ref([]);
 const getAllBrRemarks = ref([]);
@@ -1209,33 +1088,33 @@ const tpmCatData = ref([]);
 const checkTPMCategory = async () => {
     try{
         const responseTPMCAT = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value); // Adjust this URL to your API endpoint
-        console.log('API Response showallData:', responseTPMCAT.data);
+        //console.log('checkTPMCategory - API Response showallData:', responseTPMCAT.data);
         tpmCatData.value = responseTPMCAT.data.data;
 
         const tpm_category_actualmodel = tpmCatData.value.map(item => item.category?.actual_model ?? null);
-        console.log('tpm_category_actualmodel:', tpm_category_actualmodel);
+        //console.log('tpm_category_actualmodel:', tpm_category_actualmodel);
         jhCurveActualModel.value = tpm_category_actualmodel[0];
-        console.log('jhCurveActualModel:', jhCurveActualModel.value);
+        //console.log('jhCurveActualModel:', jhCurveActualModel.value);
 
         const tpm_category_factorEmp = tpmCatData.value.map(item => item.category?.factor_emp ?? null);
-        console.log('tpm_category_factorEmp:', tpm_category_factorEmp);
+        //console.log('tpm_category_factorEmp:', tpm_category_factorEmp);
         propData_factorEmp.value = tpm_category_factorEmp[0];
-        console.log('propData_factorEmp:', propData_factorEmp.value);
+        //console.log('propData_factorEmp:', propData_factorEmp.value);
 
         const tpm_category_miasEmp = tpmCatData.value.map(item => item.category?.mias_emp ?? null);
-        console.log('tpm_category_miasEmp:', tpm_category_miasEmp);
+        //console.log('tpm_category_miasEmp:', tpm_category_miasEmp);
         propData_miasEmp.value = tpm_category_miasEmp[0];
-        console.log('propData_miasEmp:', propData_miasEmp.value);
+        //console.log('propData_miasEmp:', propData_miasEmp.value);
 
         const tpm_category_jhCurveLotno = tpmCatData.value.map(item => item.category?.jhcurve_lotno ?? null);
-        console.log('tpm_category_jhCurveLotno:', tpm_category_jhCurveLotno);
+        //console.log('tpm_category_jhCurveLotno:', tpm_category_jhCurveLotno);
         jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
-        console.log('jhCurveLotNo:', jhCurveLotNo.value);
+        //console.log('jhCurveLotNo:', jhCurveLotNo.value);
 
         const tpm_category_massProdName = tpmCatData.value.map(item => item.category?.massprod_name ?? null);
-        console.log('tpm_category_massProdName:', tpm_category_massProdName);
+        //console.log('tpm_category_massProdName:', tpm_category_massProdName);
         jhCurveMassProdName.value = tpm_category_massProdName[0];
-        console.log('jhCurveMassProdName:', jhCurveMassProdName.value);
+        //console.log('jhCurveMassProdName:', jhCurveMassProdName.value);
 
         const responsePatchCategory = await axios.patch(`/api/nsaupdatecategory/${currentSerialSelected.value}`,{
             actual_model: jhCurveActualModel.value,
@@ -1244,7 +1123,7 @@ const checkTPMCategory = async () => {
             mias_emp: propData_miasEmp.value,
             massprod_name: jhCurveMassProdName.value,
         });
-        console.log("API PATCHED category: ",responsePatchCategory);
+        //console.log("API PATCHED category: ",responsePatchCategory);
     }catch(error){
         console.error("Error fetching for checkTPMCategory-data: ",error);
     }
@@ -1259,34 +1138,35 @@ const showAllData = async () => {
         try {
             showProceed3.value = false;
             toggleManageForm.value = false;
-            const response = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value); // Adjust this URL to your API endpoint
-            console.log('API Response showallData:', response.data);
+            const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + highest_setNo.value); // Adjust this URL to your API endpoint
+            console.log('responseNSARemarks - API Response showallData:', responseNSARemarks.data);
             //gg
             console.log('Serial No value = ', currentSerialSelected.value);
 
-            items.value = response.data;
-
             // Extract arrays from the response
-            const getTpmData = response.data.data || []; // Fallback to an empty array if undefined
-
-            tpmData.value = getTpmData.filter(item => item.set_no == highest_setNo.value);
-            console.log("Highest set no: ",highest_setNo.value);
-            console.log('Filtered data with highest set_no on SHOWALLDATA:', tpmData.value);
-
-            tpmRemarks.value = response.data.remark || [];
-            getAggregateID.value = response.data[0][0].id || [];
-            console.log("Aggregate ID: ", getAggregateID.value);
+            nsaData.value = responseNSARemarks.data.data || [];
+            console.log('showAllData nsa data: ',nsaData);
+            const getAggregateID = responseNSARemarks.data[0];
+            console.log("Data for getting aggregate ID: ",getAggregateID);
+            const filteredAggregateID_first = getAggregateID.filter(item => item.nsa_serial == currentSerialSelected.value);
+            console.log("Filtered aggregate with serial_no:", filteredAggregateID.value);
+            filteredAggregateID.value = filteredAggregateID_first.filter(item => item.nsa_set == highest_setNo.value);
+            console.log("Filtered aggregate with set_no:", filteredAggregateID.value);
+            nsaData_aggID.value = filteredAggregateID.value[0].id;
+            console.log("aggregate ID to be patched: ",nsaData_aggID.value);
+            //const nsaRemarks = response.data.data["remarks"] || [];
+            //console.log('showAllData nsa remarks: ',nsaRemarks);
 
             checkTPMCategory();
 
             // Combine the arrays
-            combinedData.value = tpmData.value;
+            combinedData.value = nsaData.value;
             console.log('Combined Data: ', combinedData.value);
 
-            jhCurveFurnaceName.value = tpmData.value[0].sintering_furnace_no || "No data found";
-            jhCurveModel.value = tpmData.value[0].code_no || "No data found";
+            jhCurveFurnaceName.value = nsaData.value[0].sintering_furnace_no || "No data found";
+            jhCurveModel.value = nsaData.value[0].code_no || "No data found";
 
-            // Extract individual values from tpmData for aggregate
+            // Extract individual values from nsaData for aggregate
             getAllIDValues.value = combinedData.value.map(item => item.id);
             getAllBrValues.value = combinedData.value.map(item => item.Br || null);
             getAllBrRemarks.value = combinedData.value.map(item => item.remark.Br_remarks || null);
@@ -1315,7 +1195,7 @@ const showAllData = async () => {
             getAll4pailaValues.value = combinedData.value.map(item => item["4paiIa"] || null);
             getAll4pailaRemarks.value = combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
 
-            //console.log('gettheIDs: ', getAllIDValues.value);
+            console.log('gettheIDs: ', getAllIDValues.value);
             //console.log('tpmRemarks: ', tpmRemarks.value);
 
             //get average function
@@ -1519,7 +1399,8 @@ const showAllData = async () => {
             };
 
             console.log('Aggregate Data:', aggregateData);
-            sendAggData(aggregateData, currentSerialSelected.value);
+            console.log('Aggregate ID for patch:', nsaData_aggID.value)
+            sendAggData(aggregateData, nsaData_aggID.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
@@ -1633,12 +1514,16 @@ const filteredNSADataForGraph = ref([]);
 
 const fetchDataCreateGraph = async () => {
     try {
-        const response = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value);
+        const response = await axios.get("/api/nsadata");
 
         // Log the response structure to check
         //console.log("API Response:", response.data);
-
-        const tableRows = response.data.data; // Assuming API returns an array of rows
+        const nsaData = response.data.data["NSAData"] || [];
+        console.log('tpm data: ',nsaData);
+        const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
+        console.log('tpm data filtered by serial: ',nsafilteredData);
+        const tableRows = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
+        console.log('tpm data filtered by set_no and serial: ',tableRows);
 
         const allData = tableRows;
 
@@ -1647,14 +1532,14 @@ const fetchDataCreateGraph = async () => {
             const maxSetNo = Math.max(...allData.map(item => item.set_no));
             // Step 2: Filter the data to only those with the highest set_no
             filteredNSADataForGraph.value = allData.filter(item => item.set_no === maxSetNo);
-            console.log('Filtered data with highest set_no:', filteredNSAData.value);
+            console.log('Filtered data with highest set_no:', filteredNSADataForGraph.value);
         } else {
             console.log('No data found or data is not an array.');
         }
 
         // Check if tableRows is not undefined or null before proceeding
         if (!filteredNSADataForGraph.value) {
-            throw new Error("No data found in tpmData");
+            throw new Error("No data found in nsaData");
         }
 
         // Parse each row and dynamically generate datasets

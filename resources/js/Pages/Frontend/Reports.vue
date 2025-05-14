@@ -361,26 +361,68 @@
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">iHc (Oe)</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ inspectioniHcStandard }}</td>
+                                    <td :rowspan="(noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white">iHc (Oe)</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GM </span>{{ inspectioniHcStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMinimum }}</td>
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHcVariance }}</td>
                                 </tr>
+                                <tr v-if="showGX && (noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                                    <td class="text-blue-600 border-4 border-white "><span v-if="showGX">GX </span>
+                                        <input type="number" v-model="reportGX_iHcStandard" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="text-blue-600 border-4 border-white "><input type="number" v-model="reportGX_iHcAverage" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="text-blue-600 border-4 border-white "><input type="number" v-model="reportGX_iHcMaximum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="text-blue-600 border-4 border-white "><input type="number" v-model="reportGX_iHcMinimum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="text-blue-600 border-4 border-white "><input type="number" v-model="reportGX_iHcVariance" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                </tr>
                                 <tr class="text-center">
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">iHk (Oe)</td>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ inspectioniHkStandard }}</td>
+                                    <td :rowspan="(noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white">iHk (Oe)</td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GM </span>{{ inspectioniHkStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMinimum }}</td>
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHkVariance }}</td>
                                 </tr>
+                                <tr v-if="showGX && (noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GX </span> - - - - - </td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkAverage" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkMaximum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkMinimum" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkVariance" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                </tr>
                                 <tr v-show="isTTM_model" class="bg-blue-300">
-                                    <th rowspan="2" colspan="2" class="px-4 py-2 text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
-                                    <th class="px-4 py-2 text-white border-4 border-white">STD DEV</th>
-                                    <th class="px-4 py-2 text-white border-4 border-white">Cp</th>
-                                    <th class="px-4 py-2 text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
+                                    <th rowspan="2" colspan="2" class="text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
+                                    <th class="text-white border-4 border-white ">STD DEV</th>
+                                    <th class="text-white border-4 border-white ">Cp</th>
+                                    <th class="text-white border-4 border-white whitespace-nowrap">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
                                     <th colspan="2" class="px-4 py-2 text-white border-4 border-white">Remarks</th>
                                 </tr>
                                 <tr v-show="isTTM_model" class="text-center">
@@ -396,10 +438,7 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
-                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportCpkRemarks" name="stdDev" class="w-[8.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkRemarks }}</td>
                                 </tr>
                                 <tr v-show="show1x1x1Data_withoutCorner" class="text-center bg-blue-300">
                                     <td colspan="2" class="px-4 py-2 font-extrabold text-white border-4 border-white">Data of 1x1x1 mm samples</td>
@@ -431,10 +470,7 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportCorner_remarks" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCorner_remarks }}</td>
                                 </tr>
                                 <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
                                     <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Surface</th>
@@ -458,10 +494,7 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportSurface_remarks" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportSurface_remarks }}</td>
                                 </tr>
                                 <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
                                     <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Core</th>
@@ -485,20 +518,101 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"></td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="text" v-model="reportCore_remarks" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCore_remarks }}</td>
                                 </tr>
-                                <tr v-show="showVTData" class="text-center">
+                                <!-- VT Row 1: Sample + Remarks (Vertical Repeating Inputs) -->
+                                <tr v-if="showVTData && reportVT_samplesQty > 0" class="text-center">
                                     <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
-                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportVT_sample" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> (N.G iHc)</td>
+                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
+                                        <div class="flex flex-col gap-[6px] items-center">
+                                        <div
+                                            v-for="i in reportVT_samplesQty"
+                                            :key="'sample-remarks-' + i"
+                                            class="flex items-center gap-1"
+                                        >{{ i + ")" }}
+                                            <input
+                                            type="text"
+                                            v-model="reportVT_samples[i - 1]"
+                                            @input="reportVT_samples[i - 1] = reportVT_samples[i - 1]?.toUpperCase()"
+                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                    transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                            placeholder="12AB"
+                                            />
+                                            (
+                                            <input
+                                            type="text"
+                                            v-model="reportVT_sampleRemarks[i - 1]"
+                                            @input="reportVT_sampleRemarks[i - 1] = reportVT_sampleRemarks[i - 1]?.toUpperCase()"
+                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                    transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                            placeholder="N.G iHc"
+                                            />
+                                            )
+                                        </div>
+                                        </div>
+                                    </td>
+                                    <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                </tr>
+
+                                <!-- VT Row 2: Temperature, iHc, Result, Remarks -->
+                                <tr v-if="showVTData && reportVT_samplesQty > 0" class="text-center">
+                                <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                    <div class="flex items-center">
+                                    <input
+                                        type="number"
+                                        v-model="reportVT_temp"
+                                        class="w-[4.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"
+                                    />
+                                    <span class="ml-1 align-baseline">°C</span>
+                                    </div>
+                                </td>
+                                <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                    iHc (kOe) &#8805;
+                                    <input
+                                    type="number"
+                                    v-model="reportVT_iHc"
+                                    class="w-[5.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"
+                                    />
+                                    (kOe)
+                                </td>
+                                <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                    <div class="flex flex-col gap-[6px] items-center">
+                                    <div
+                                        v-for="i in reportVT_samplesQty"
+                                        :key="'result-' + i"
+                                        class="flex items-center gap-1"
+                                    >{{ i + ")" }}
+                                        <input
+                                        type="number"
+                                        v-model="reportVT_iHcResults[i - 1]"
+                                        class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                        placeholder="0"
+                                        />
+                                        <span class="text-gray-600">kOe</span>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
+                                </tr>
+                                <tr v-if="showVTData_default && reportVT_samplesQty <= 0" class="text-center">
+                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
+                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">Enter the number of samples first and then save</td>
                                         <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
                                 </tr>
-                                <tr v-show="showVTData" class="text-center">
+                                <tr v-if="showVTData_default && reportVT_samplesQty <= 0" class="text-center">
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
                                         <div class="flex items-center">
                                             <input type="number" v-model="reportVT_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
@@ -512,10 +626,10 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> (kOe)</td>
-                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT_iHcResult" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"> Quantity of Samples:<input type="number" v-model="reportVT_samplesQty" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> kOe</td>
+                                        transition duration-200 ease-in-out"></td>
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
                                 </tr>
                                 <tr v-show="showCpkFrom_iHc" class="bg-blue-300">
@@ -535,19 +649,19 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkFrom_iHc_remarks }}</td>
                                 </tr>
-                                <tr v-show="showVTData2" class="text-center">
+                                <tr v-if="showVTData2 && (noteReasonForReject?.includes && noteReasonForReject.includes('- N.G iHc'))" class="text-center">
                                     <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
-                                    <td colspan="2" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportVT2_minSample" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td colspan="2" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportVT2_minSample" @input="reportVT2_minSample = reportVT2_minSample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> (min iHc)</td>
-                                    <td class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300 whitespace-nowrap"><input type="text" v-model="reportVT2_maxSample" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300 whitespace-nowrap"><input type="text" v-model="reportVT2_maxSample" @input="reportVT2_maxSample = reportVT2_maxSample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> (max iHc)</td>
                                     <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
                                 </tr>
-                                <tr v-show="showVTData2" class="text-center">
+                                <tr v-if="showVTData2" class="text-center">
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
                                         <div class="flex items-center">
                                             <input type="number" v-model="reportVT2_temp" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
@@ -561,15 +675,46 @@
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> (kOe)</td>
-                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT_iHcResult" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td colspan="2" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT2_iHcResult_min" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> kOe</td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT_iHcResult" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportVT2_iHcResult_max" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> kOe</td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT_remarks }}</td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportVT2_remarks }}</td>
+                                </tr>
+                                <tr v-show="showBHData" class="text-center">
+                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBH_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> °C</th>
+                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportBH_sample" @input="reportBH_sample = reportBH_sample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> AF</td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                </tr>
+                                <tr v-show="showBHData" class="text-center">
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                        <div class="flex items-center">
+                                            <input type="text" v-model="reportBH_data" @input="reportBH_data = reportBH_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            <span class="ml-1 align-baseline"> kOe</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"> &#8805; <input type="number" v-model="reportBH_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> (kOe)</td>
+                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportBH_result" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> kOe</td>
+                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBH_remarks }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -795,7 +940,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
 //UI Control start
@@ -834,6 +979,8 @@ const approvedByStampPhoto = ref(false);
 
 const noteReasonForReject = ref([]);
 
+const isReportDataReady = ref(false);
+
 const exitReport = () => {
     showReportContent.value = false;
     showSelectionPanel.value = true;
@@ -844,12 +991,23 @@ const exitReport = () => {
 }
 
 const showReportButton = async () => {
-    showReportMain.value = true;
     showReportProceedButtons.value = false;
     if(isAutomotiveInitiallyMarked.value == false){
         checkCarmark();
     }
     await showReportData();
+    // Poll until isReportDataReady is true
+    const waitForFlag = () =>
+        new Promise(resolve => {
+        const check = () => {
+            if (isReportDataReady.value) resolve();
+            else setTimeout(check, 50); // check every 50ms
+        };
+        check();
+        });
+
+    await waitForFlag();
+    showReportMain.value = true;
 }
 
 // models with special instructions
@@ -860,8 +1018,11 @@ const isAutomotiveInitiallyMarked = ref(false);
 const show1x1x1Data_withoutCorner = ref(false);
 const show1x1x1Data_Corner = ref(false);
 const showVTData = ref(false);
+const showVTData_default = ref(false);
 const showVTData2 = ref(false);
-const showCpkFrom_iHc = ref(true);
+const showCpkFrom_iHc = ref(false);
+const showGX = ref(false);
+const showBHData = ref(false);
 
 
 const isLoading = ref(true);
@@ -892,14 +1053,41 @@ const reportCore_maximum = ref(0);
 const reportCore_minimum = ref(0);
 const reportCore_cpk = ref(0);
 const reportCore_remarks = ref('NA');
-const reportVT_sample = ref(0);
+
 const reportVT_temp = ref(0);
 const reportVT_iHc = ref(0);
-const reportVT_iHcResult = ref(0);
 const reportVT_remarks = ref('NA');
+const reportVT_samplesQty = ref(3);
+const reportVT_samples = ref([]);
+const reportVT_sampleRemarks = ref([]);
+const reportVT_iHcResults = ref([]);
+
 const reportCpkFrom_iHc_StdDev = ref(0);
 const reportCpkFrom_iHc_Cpk = ref(0);
 const reportCpkFrom_iHc_remarks = ref('NA');
+const reportGX_iHcStandard = ref(0);
+const reportGX_iHcAverage = ref(0);
+const reportGX_iHcMaximum = ref(0);
+const reportGX_iHcMinimum = ref(0);
+const reportGX_iHcVariance =  ref(0);
+const reportGX_iHkAverage = ref(0);
+const reportGX_iHkMaximum = ref(0);
+const reportGX_iHkMinimum = ref(0);
+const reportGX_iHkVariance =  ref(0);
+const reportBH_data = ref('NA');
+const reportBH_dataStandard = ref(0);
+const reportBH_remarks = ref('NA');
+const reportBH_sample = ref(0);
+const reportBH_temp = ref(0);
+const reportBH_result = ref(0);
+
+const reportVT2_iHc = ref(0);
+const reportVT2_minSample = ref("NA");
+const reportVT2_maxSample = ref("NA");
+const reportVT2_temp = ref(0);
+const reportVT2_iHcResult_min = ref(0);
+const reportVT2_iHcResult_max = ref(0);
+const reportVT2_remarks = ref("NA");
 
 // variables for models with special instructions end
 
@@ -1028,8 +1216,14 @@ const reportReset = () => {
     isTTM_model.value = false;
     isAutomotive.value = false;
     isAutomotiveInitiallyMarked.value = false;
-    show1x1x1Data.value = false;
     noteReasonForReject.value = [];
+    show1x1x1Data_Corner.value = false;
+    show1x1x1Data_withoutCorner.value = false;
+    showBHData.value = false;
+    showGX.value = false;
+    showVTData.value = false;
+    showVTData2.value = false;
+    showCpkFrom_iHc.value = false;
 }
 
 const showNotification = (message) => {
@@ -1257,6 +1451,30 @@ const reportRemarksDisplayNG_bhc = ref(false);
         console.log("brStandard LOWER: ",inspectionBrStandard_lower.value);
         console.log("brStandard HIGHER: ",inspectionBrStandard_higher.value);
 
+        //special judgement conditions
+
+        if(jhCurveActualModel.value == "MIE-0751G"){
+            showVTData2.value = true;
+        }
+        if(jhCurveActualModel.value == "AAW-0934G" || jhCurveActualModel.value == "AAW-0935G" || jhCurveActualModel.value == "TTM-0A58D" || jhCurveActualModel.value == "TTM-0C16D"){
+            show1x1x1Data_withoutCorner.value = true;
+        }
+        if(jhCurveActualModel.value == "DNS-0A54G"){
+            showVTData.value = true;
+        }
+        if(jhCurveActualModel.value == "DNS-0917G"){
+            showCpkFrom_iHc.value = true;
+        }
+        if(jhCurveActualModel.value == "OKMODEL"){
+            showGX.value = true;
+        }
+        if(jhCurveActualModel.value == "TIC-0755G"){
+            showVTData_default.value = true;
+        }
+
+
+        //special judgement conditions end
+
         const repData = {
             "length": inspectionLength.value,
             "magnetic_property_data": JSON.stringify({
@@ -1307,6 +1525,7 @@ const createReport = async (reportData, serial) => {
 
 const showReportData = async () => {
     try {
+        isReportDataReady.value = false;
         const response = await axios.get(`/api/reportdata/`);
         console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
@@ -1398,8 +1617,95 @@ const showReportData = async () => {
         reportiHcVariance.value = parseFloat(reportihcMaximum.value) - parseFloat(reportihcMinimum.value);
         reportiHkVariance.value = parseFloat(reportihkMaximum.value) - parseFloat(reportihkMinimum.value);
 
+        const oneby = JSON.parse(filterBySerial[0].data_1x1x1_info || '{}');
+        const VT = JSON.parse(filterBySerial[0].data_VT_info || '{}');
+        console.log("VT Data: ",VT);
+        const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || '{}');
+        const GX = JSON.parse(filterBySerial[0].data_GX_info || '{}');
+        const bh = JSON.parse(filterBySerial[0].data_bh_info || '{}');
+        const VT2 = JSON.parse(filterBySerial[0].data_VT2_info || '{}');
+
+        reportCorner.value = oneby.corner || '';
+        reportCorner_average.value = oneby.corner_average || '';
+        reportCorner_maximum.value = oneby.corner_maximum || '';
+        reportCorner_minimum.value = oneby.corner_minimum || '';
+        reportCorner_cpk.value = oneby.corner_cpk || '';
+        reportCorner_remarks.value = oneby.corner_remarks || '';
+        reportSurface.value = oneby.surface || '';
+        reportSurface_average.value = oneby.surface_average || '';
+        reportSurface_maximum.value = oneby.surface_maximum || '';
+        reportSurface_minimum.value = oneby.surface_minimum || '';
+        reportSurface_cpk.value = oneby.surface_cpk || '';
+        reportSurface_remarks.value = oneby.surface_remarks || '';
+        reportCore.value = oneby.core || '';
+        reportCore_average.value = oneby.core_average || '';
+        reportCore_maximum.value = oneby.core_maximum || '';
+        reportCore_minimum.value = oneby.core_minimum || '';
+        reportCore_cpk.value = oneby.core_cpk || '';
+        reportCore_remarks.value = oneby.core_remarks || '';
+
+        reportVT_samples.value = Array.isArray(VT.sample) ? VT.sample : [];
+        console.log("reportVT_samples:", reportVT_samples.value);
+
+        reportVT_sampleRemarks.value = Array.isArray(VT.sample_remarks) ? VT.sample_remarks : [];
+        console.log("reportVT_sampleRemarks:", reportVT_sampleRemarks.value);
+
+        reportVT_iHcResults.value = Array.isArray(VT.iHcResult) ? VT.iHcResult : [];
+        console.log("reportVT_iHcResults:", reportVT_iHcResults.value);
+
+        reportVT_samplesQty.value = VT.sample_qty ?? 0;
+        console.log("reportVT_samplesQty:", reportVT_samplesQty.value);
+
+        reportVT_temp.value = VT.temp ?? '';
+        console.log("reportVT_temp:", reportVT_temp.value);
+
+        reportVT_iHc.value = VT.iHc ?? '';
+        console.log("reportVT_iHc:", reportVT_iHc.value);
+
+        reportVT_remarks.value = VT.remarks ?? '';
+        console.log("reportVT_remarks:", reportVT_remarks.value);
+
+        reportCpkFrom_iHc_StdDev.value = iHc_cpk.std_dev || '';
+        reportCpkFrom_iHc_Cpk.value = iHc_cpk.cpk || '';
+        reportCpkFrom_iHc_remarks.value = iHc_cpk.remarks || '';
+
+        reportGX_iHcStandard.value = GX.iHcStandard || '';
+        reportGX_iHcAverage.value = GX.iHcAverage || '';
+        reportGX_iHcMaximum.value = GX.iHcMaximum || '';
+        reportGX_iHcMinimum.value = GX.iHcMinimum || '';
+        reportGX_iHcVariance.value = GX.iHcVariance || '';
+        reportGX_iHkAverage.value = GX.iHkAverage || '';
+        reportGX_iHkMaximum.value = GX.iHkMaximum || '';
+        reportGX_iHkMinimum.value = GX.iHkMinimum || '';
+        reportGX_iHkVariance.value = GX.iHkVariance || '';
+
+        reportBH_data.value = bh.data || '';
+        reportBH_dataStandard.value = bh.dataStandard || '';
+        reportBH_remarks.value = bh.remarks || '';
+        reportBH_sample.value = bh.sample || '';
+        reportBH_temp.value = bh.temp || '';
+        reportBH_result.value = bh.result || '';
+
+        reportVT2_iHc.value = VT2.iHc || '';
+        reportVT2_minSample.value = VT2.minSample || '';
+        reportVT2_maxSample.value = VT2.maxSample || '';
+        reportVT2_temp.value = VT2.temp || '';
+        reportVT2_iHcResult_min.value = VT2.iHcResult_min || '';
+        reportVT2_iHcResult_max.value = VT2.iHcResult_max || '';
+        reportVT2_remarks.value = VT2.remarks || '';
+
+        //special judgement conditions
+
+        if(showVTData_default.value && reportVT_samplesQty.value > 0){
+            showVTData_default.value = false;
+            showVTData.value = true;
+        }
+
+        //special judgement conditions end
+
         evaluateAllRejectReasons();
         checkApprovalStates();
+        isReportDataReady.value = true;
     } catch (error) {
         console.error("API get request showReportData Error:", error);
     }
@@ -1430,14 +1736,73 @@ const saveReport = async () => {
         "withCarmark": isAutomotive.value,
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
+        "data_1x1x1_info": JSON.stringify({
+            "corner": reportCorner.value,
+            "corner_average": reportCorner_average.value,
+            "corner_maximum": reportCorner_maximum.value,
+            "corner_minimum": reportCorner_minimum.value,
+            "corner_cpk": reportCorner_cpk.value,
+            "corner_remarks": reportCorner_remarks.value,
+            "surface": reportSurface.value,
+            "surface_average": reportSurface_average.value,
+            "surface_maximum": reportSurface_maximum.value,
+            "surface_minimum": reportSurface_minimum.value,
+            "surface_cpk": reportSurface_cpk.value,
+            "surface_remarks": reportSurface_remarks.value,
+            "core": reportCore.value,
+            "core_average": reportCore_average.value,
+            "core_maximum": reportCore_maximum.value,
+            "core_minimum": reportCore_minimum.value,
+            "core_cpk": reportCore_cpk.value,
+            "core_remarks": reportCore_remarks.value,
+        }),
+        "data_VT_info": JSON.stringify({
+            "sample": reportVT_samples.value, // Dynamic sample array
+            "sample_qty": reportVT_samplesQty.value, // Dynamic sample qty
+            "sample_remarks": reportVT_sampleRemarks.value, // Dynamic remarks array
+            "temp": reportVT_temp.value, // Single temperature value
+            "iHc": reportVT_iHc.value, // Single iHc value
+            "iHcResult": reportVT_iHcResults.value, // Dynamic iHc results array
+            "remarks": reportVT_remarks.value, // Single remarks value
+        }),
+        "data_iHc_cpk_info": JSON.stringify({
+            "std_dev": reportCpkFrom_iHc_StdDev.value,
+            "cpk": reportCpkFrom_iHc_Cpk.value,
+            "remarks": reportCpkFrom_iHc_remarks.value,
+        }),
+        "data_GX_info": JSON.stringify({
+            "iHcStandard": reportGX_iHcStandard.value,
+            "iHcAverage": reportGX_iHcAverage.value,
+            "iHcMaximum": reportGX_iHcMaximum.value,
+            "iHcMinimum": reportGX_iHcMinimum.value,
+            "iHcVariance": reportGX_iHcVariance.value,
+            "iHkAverage": reportGX_iHkAverage.value,
+            "iHkMaximum": reportGX_iHkMaximum.value,
+            "iHkMinimum": reportGX_iHkMinimum.value,
+            "iHkVariance": reportGX_iHkVariance.value,
+        }),
+        "data_bh_info": JSON.stringify({
+            "data": reportBH_data.value,
+            "dataStandard": reportBH_dataStandard.value,
+            "remarks": reportBH_remarks.value,
+            "sample": reportBH_sample.value,
+            "temp": reportBH_temp.value,
+            "result": reportBH_result.value,
+        }),
+        "data_VT2_info": JSON.stringify({
+            "iHc": reportVT2_iHc.value,
+            "minSample": reportVT2_minSample.value,
+            "maxSample": reportVT2_maxSample.value,
+            "temp": reportVT2_temp.value,
+            "iHcResult_min": reportVT2_iHcResult_min.value,
+            "iHcResult_max": reportVT2_iHcResult_max.value,
+            "remarks": reportVT2_remarks.value,
+        }),
     }
-
     console.log("Save report data: ", saveReportData);
-
     saveReportUpdate(saveReportData, currentSerialSelected.value);
-
-        showReportContent.value = false;
-        showSelectionPanel.value = true;
+    showReportContent.value = false;
+    showSelectionPanel.value = true;
 }
 
 const saveReportUpdate = async (saveData, serial) => {
@@ -1461,7 +1826,7 @@ const fetchSerial = async () => {
 
     // Extract furnace data dynamically
     tpmData.value = response.data.data["tpmDataAll"] || [];
-    //console.log("TPM DATA response: ", tpmData.value);
+    console.log("TPM DATA response: ", tpmData.value);
 
     // Extract unique serial numbers by using a Set
     serialList.value = [...new Set(tpmData.value.map(item => item.serial_no))];
@@ -1471,13 +1836,12 @@ const fetchSerial = async () => {
       return Number(b) - Number(a); // Convert to number for proper sorting
     });
 
-    //console.log("Unique Serial lists (Descending):", serialList.value);
+    console.log("Unique Serial lists (Descending):", serialList.value);
 
     // Set default selection to first serial, if available
     if (serialList.value.length > 0) {
         currentSerialSelected.value = serialList.value[0];
     }
-
 
 
   } catch (error) {

@@ -30,8 +30,7 @@ return new class extends Migration
             $table->string('material_grade')->nullable();
             $table->string('mpi_sample_quantity')->nullable();
             $table->float('std_dev')->nullable();
-            $table->float('cpu')->nullable();
-            $table->float('cpl')->nullable();
+            $table->float('cp')->nullable();
             $table->float('cpk')->nullable();
             $table->string('br_cpk_remarks')->nullable();
             $table->string('remarks')->nullable();
@@ -45,7 +44,6 @@ return new class extends Migration
             $table->datetime('approved_by_date')->nullable();
             $table->json('note_reason_reject')->nullable();
             $table->boolean('checked')->default(false);
-            $table->boolean('applied_1x1x1')->default(false);
             $table->foreign('tpm_data_serial')
                 ->references('serial_no')
                 ->on('tpm_data')
@@ -60,7 +58,12 @@ return new class extends Migration
             $table->string('shift_oven_info')->nullable();
             $table->string('operator_oven_info')->nullable();
             $table->boolean('withCarmark')->nullable();
-            $table->boolean('with_sec_additionals')->nullable();
+            $table->json('data_1x1x1_info')->nullable();
+            $table->json('data_VT_info')->nullable();
+            $table->json('data_iHc_cpk_info')->nullable();
+            $table->json('data_GX_info')->nullable();
+            $table->json('data_bh_info')->nullable();
+            $table->json('data_VT2_info')->nullable();
         });
 
     }

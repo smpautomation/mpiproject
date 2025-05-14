@@ -969,18 +969,18 @@
                                 <p class="font-extrabold">Note:</p>
                                 <p>
                                     SMP Lot (
-                                    <span>{{ pagesData[index - 1].massProd }}</span>
+                                     <span>{{ pagesData[index - 1]?.massProd ?? 'N/A' }}</span>
                                     Mass Production )
                                 </p>
                                 <p>
-                                    Furnace Cycle No. : {{ pagesData[index - 1].sinteringFurnaceNo + "-" + pagesData[index - 1].sinteringNo }}
+                                    Furnace Cycle No. : {{ pagesData[index - 1]?.sinteringFurnaceNo  ?? 'N/A' + "-" + pagesData[index - 1]?.sinteringNo ?? 'N/A' }}
                                 </p>
                                 <p>
-                                    <span>{{ pagesData[index - 1].actualModel }}</span>
-                                    ( {{ pagesData[index - 1].codeNo }} )
+                                    <span>{{ pagesData[index - 1]?.actualModel ?? 'N/A' }}</span>
+                                    ( {{ pagesData[index - 1]?.codeNo ?? 'N/A' }} )
                                 </p>
                                 <p>
-                                    Lot # {{ pagesData[index - 1].jhcurveLotNo }}
+                                    Lot # {{ pagesData[index - 1]?.jhcurveLotNo ?? 'N/A' }}
                                 </p>
                                 <div class="text-sm" v-if="nsa_noteReasonForReject.length">
                                     Remarks Encountered:
@@ -1575,21 +1575,21 @@ const renderChart = () => {
 
 const checkingNSA = async () => {
     try {
-        const responseCheckNSA = await axios.get("api/nsadata?serial=" + printSerialNo.value);
+        const responseCheckNSA = await axios.get("api/nsadata/");
         console.log("API GET REQUEST responseCheckNSA-data:", responseCheckNSA.data);
-        const nsadata = responseCheckNSA.data.data;
-        if (Object.keys(nsadata).length > 0) {
-
-            const nsaArray = Object.values(nsadata);
-            const maxSetNo = Math.max(...nsaArray.map(item => item.set_no));
+        const nsadata = responseCheckNSA.data.data["NSAData"] || [];
+        const nsafilteredData = nsadata.filter(item => item.serial_no == printSerialNo.value);
+        if (nsafilteredData.length > 0) {
+            const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
             numberOfSet.value = maxSetNo;
-
-            additionalRemarks.value = nsadata.map(item => item.set_name);
+            additionalRemarks.value = [...new Set(nsadata.map(item => item.set_name))];
             console.log('getting all the additional descriptions:',additionalRemarks.value);
-            //gggg
         }else{
             console.log('NOT ARRAY!!');
         }
+
+       // console.log('tpm data filtered by serial: ',nsafilteredData);
+
         console.log("NUMBER OF SETS: ",numberOfSet.value);
     } catch (error) {
         console.error("ERROR GET REQUEST responseCheckNSA-data:", error);
@@ -1612,31 +1612,30 @@ const nsa_dataFrom_tpmData = async () => {
             console.log(`Fetching data for set #${x}...`);
 
             // Fetch data from API
-            const responseNsaData = await axios.get("api/nsadata?serial=" + printSerialNo.value);
+            const responseNsaData = await axios.get("api/nsadata?serial=" + printSerialNo.value + "&set=" + x);
             console.log(`API response for set #${x}:`, responseNsaData.data);
 
             const nsadata = responseNsaData.data.data;
             const nsaGeneral = responseNsaData.data;
+            console.log("NSA GENERAL DATA: ",nsaGeneral);
 
             if (!nsadata || nsadata.length === 0) {
                 console.warn(`No data found for set #${x}`);
                 continue; // Skip this iteration if no data is available
             }
 
-            // Filter the data for the current set
-            const nsa_filteredData = nsadata.filter(item => item.set_no == x);
-            console.log(`Filtered data for set #${x}:`, nsa_filteredData);
+            console.log(`NSA data for set #${x}:`, nsadata);
 
-            if (nsa_filteredData.length === 0) {
-                console.warn(`No filtered data for set #${x}`);
-                continue; // Skip this iteration if no filtered data
+            if (nsadata.length === 0) {
+                console.warn(`No data found for set #${x}`);
+                continue;
             }
 
             const tableTPMRows = [];
 
             // Loop through the filtered data and populate the table
-            for (let i = 0; i < nsa_filteredData.length; i++) {
-                const TPM = nsa_filteredData[i];
+            for (let i = 0; i < nsadata.length; i++) {
+                const TPM = nsadata[i];
                 const tpmCat = TPM?.category;
 
                 // Skip the iteration if required properties are missing
@@ -1677,7 +1676,7 @@ const nsa_dataFrom_tpmData = async () => {
             }
 
             // General page-level info
-            const firstTPM = nsa_filteredData[0];
+            const firstTPM = nsadata[0];
             const [furnaceNo, sinteringNo] = firstTPM?.sintering_furnace_no?.split('-') ?? ["", ""];
             console.log(`furnace and sintering no for page:`, { furnaceNo, sinteringNo });
 
@@ -1697,12 +1696,12 @@ const nsa_dataFrom_tpmData = async () => {
             };
 
             // Check if nsaGeneral exists and parse additional data
-            if (nsaGeneral[x-1] && nsaGeneral[x-1][0]) {
-                console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral[x-1][0]);
+            if (nsaGeneral[0] && nsaGeneral[0][x-1]) {
+                console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral[0][x-1]);
 
-                const average = JSON.parse(nsaGeneral[x-1][0].average);
-                const maximum = JSON.parse(nsaGeneral[x-1][0].maximum);
-                const minimum = JSON.parse(nsaGeneral[x-1][0].minimum);
+                const average = JSON.parse(nsaGeneral[0][x-1].average);
+                const maximum = JSON.parse(nsaGeneral[0][x-1].maximum);
+                const minimum = JSON.parse(nsaGeneral[0][x-1].minimum);
 
                 // Populate page with the parsed averages, max, min
                 page.brAverage = average.Br ?? "";
@@ -1757,7 +1756,7 @@ const nsa_dataFrom_tpmData = async () => {
                 page.fourpaiIaMaximum = maximum["4paila"] ?? "";
                 page.fourpaiIaMinimum = minimum["4paila"] ?? "";
             } else {
-                console.warn(`nsaGeneral[${x}] or nsaGeneral[${x}][0] is undefined!`);
+                console.warn(`nsaGeneral[${0}] or nsaGeneral[0][${x-1}] is undefined!`);
             }
 
             console.log(`Page contents for set #${x}:`, page);
@@ -1786,12 +1785,10 @@ const nsa_graph = async () => {
 
     for (let x = 1; x <= numberOfSet.value; x++) {
         try {
-            const response = await axios.get("api/nsadata?serial=" + printSerialNo.value);
+            const response = await axios.get("api/nsadata?serial=" + printSerialNo.value + "&set=" + x);
             const nsadata = response.data.data;
 
-            const filtered = nsadata.filter(item => item.set_no == x);
-
-            const datasetsForSet = filtered.map((row, index) => ({
+            const datasetsForSet = nsadata.map((row, index) => ({
                 xAxis: JSON.parse(row.x || "[]"),
                 yAxis: JSON.parse(row.y || "[]"),
                 color: generateColor(index),
