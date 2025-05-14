@@ -14,6 +14,7 @@ use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TestMail;
+use App\Mail\RouteMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
@@ -118,4 +119,26 @@ Route::get('/test-email', function () {
         'username' => 'PreviewUser',
         'message' => 'customMessage'
     ]);
+});
+
+Route::post('/route-email', function (Request $request) {
+    // return view('emails.route-email', [
+    //     'username' => 'User',
+    //     'serial' => [
+    //         'serial1',
+    //         'serial2',
+    //         'serial3'
+    //     ],
+    //     'message' => 'customMessage'
+    // ]);
+    $validated = $request->validate([
+        'username' => 'required|string|max:255',
+        'serial' => 'required|array',
+        'emails' => 'required|string'
+    ]);
+    
+
+    $emailList = array_map('trim', explode(',', $validated['emails'])); 
+    Mail::to($emailList)->send(new RouteMail($validated['username'], $validated['serial']));
+    return 'Test Email Sent';
 });
