@@ -120,6 +120,7 @@ const showApprovedNotification = (message) => {
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         approveNotif.value = false;
+        showApproveButton.value = false;
     }, 3000);  // 3000ms = 3 seconds
 }
 

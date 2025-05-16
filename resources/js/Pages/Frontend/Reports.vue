@@ -1,42 +1,44 @@
 <template>
     <Frontend>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-
-        <div v-if="serialList.length == 0 || isFromApproval == false"> <!-- default div -->
-            <div class="flex flex-col items-center justify-center mt-10 align-baseline">
-                <div
-                    class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
-                    :style="{
-                        backgroundImage: 'url(\'/photo/no_data.png\')',
-                        backgroundSize: '80%'
-                    }"
-                ></div>
-                <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
+        <div v-if="!isFromApproval">
+            <div v-if="serialList.length == 0"> <!-- default div -->
+                <div class="flex flex-col items-center justify-center mt-10 align-baseline">
+                    <div
+                        class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
+                        :style="{
+                            backgroundImage: 'url(\'/photo/no_data.png\')',
+                            backgroundSize: '80%'
+                        }"
+                    ></div>
+                    <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
+                </div>
             </div>
         </div>
-
-        <div v-else v-show="showSelectionPanel">
-            <div> <!-- Selection Panel -->
-                <div class="flex flex-row items-center justify-center mt-10 align-baseline">
-                    <p>Select Serial No: </p>
-                    <select
-                    v-model="currentSerialSelected"
-                    class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
-                    </select>
-                </div>
-                <div class="flex flex-col items-center justify-center space-x-8">
-                    <!-- Button -->
-                    <button
-                        @click="generateReport"
-                        :disabled="showNotif2"
-                        class="disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    >
-                        Generate Report
-                    </button>
-                </div>
-                <div v-show="showNotif2" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
-                    <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+        <div v-show="showSelectionPanel">
+            <div v-if="serialList.length > 0">
+                <div> <!-- Selection Panel -->
+                    <div class="flex flex-row items-center justify-center mt-10 align-baseline">
+                        <p>Select Serial No: </p>
+                        <select
+                        v-model="currentSerialSelected"
+                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col items-center justify-center space-x-8">
+                        <!-- Button -->
+                        <button
+                            @click="generateReport"
+                            :disabled="showNotif2"
+                            class="disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            Generate Report
+                        </button>
+                    </div>
+                    <div v-show="showNotif2" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
+                        <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -524,34 +526,34 @@
                                         <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">VT Data</th>
                                         <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
                                             <div class="flex flex-col gap-[6px] items-center">
-                                            <div
-                                                v-for="i in reportVT_samplesQty"
-                                                :key="'sample-remarks-' + i"
-                                                class="flex items-center gap-1"
-                                            >{{ i + ")" }}
-                                                <input
-                                                type="text"
-                                                v-model="reportVT_samples[i - 1]"
-                                                @input="reportVT_samples[i - 1] = reportVT_samples[i - 1]?.toUpperCase()"
-                                                class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                                        transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
-                                                placeholder="12AB"
-                                                />
-                                                (
-                                                <input
-                                                type="text"
-                                                v-model="reportVT_sampleRemarks[i - 1]"
-                                                @input="reportVT_sampleRemarks[i - 1] = reportVT_sampleRemarks[i - 1]?.toUpperCase()"
-                                                class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                                        transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
-                                                placeholder="N.G iHc"
-                                                />
-                                                )
-                                            </div>
+                                                <div
+                                                    v-for="i in reportVT_samplesQty"
+                                                    :key="'sample-remarks-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="text"
+                                                    v-model="reportVT_samples[i - 1]"
+                                                    @input="reportVT_samples[i - 1] = reportVT_samples[i - 1]?.toUpperCase()"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="12AB"
+                                                    />
+                                                    (
+                                                    <input
+                                                    type="text"
+                                                    v-model="reportVT_sampleRemarks[i - 1]"
+                                                    @input="reportVT_sampleRemarks[i - 1] = reportVT_sampleRemarks[i - 1]?.toUpperCase()"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="N.G iHc"
+                                                    />
+                                                    )
+                                                </div>
                                             </div>
                                         </td>
                                         <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
@@ -773,9 +775,9 @@
                             backgroundImage: 'url(\'/photo/template.png\')',
                             backgroundSize: '101%'
                         }">
-                        <span>{{ preparedByPerson_firstName }}</span>
+                        <span :class="getFontSize(preparedByPerson_firstName)">{{ preparedByPerson_firstName }}</span>
                         <span class="my-[6.5px]">{{ reportPreparedByDate }}</span>
-                        <span>{{ preparedByPerson_lastName }}</span>
+                        <span :class="getFontSize(preparedByPerson_lastName)">{{ preparedByPerson_lastName }}</span>
                         </span>
                     </div>
                     </div>
@@ -817,12 +819,14 @@
 
                         <span
                         v-show="checkedByStampPhoto"
-                        class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
+                        class="flex flex-col items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: 'url(\'/photo/Checked_by_stamp.png\')',
+                            backgroundImage: 'url(\'/photo/template.png\')',
                             backgroundSize: '101%'
                         }">
-                        {{ reportCheckedByDate }}
+                        <span :class="getFontSize(checkedByPerson_firstName)">{{ checkedByPerson_firstName }}</span>
+                        <span class="my-[9px]">{{ reportCheckedByDate }}</span>
+                        <span :class="getFontSize(checkedByPerson_lastName)">{{ checkedByPerson_lastName }}</span>
                         </span>
                     </div>
                     </div>
@@ -1042,7 +1046,11 @@ const preparedByPerson = ref('');
 const preparedByPerson_firstName = ref('');
 const preparedByPerson_lastName = ref('');
 const checkedByPerson = ref('');
+const checkedByPerson_firstName = ref('');
+const checkedByPerson_lastName = ref('');
 const approvedByPerson = ref('');
+const approvedByPerson_firstName = ref('');
+const approvedByPerson_lastName = ref('');
 
 const reportNotificationMessage = ref('');
 
@@ -1158,6 +1166,21 @@ const getAlliHkiHcNG = ref('');
 const getAllBr4paiNG = ref('');
 const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
+
+// Method to dynamically adjust font size based on string length
+const getFontSize = (name) => {
+  const length = name.length;
+
+  if (length <= 4) return 'text-[32px]';         // Very short names
+  if (length === 5) return 'text-[30px]';
+  if (length === 6) return 'text-[26px]';
+  if (length === 7) return 'text-[24px]';
+  if (length === 8) return 'text-[22px]';         // Mid point
+  if (length === 9) return 'text-[20px]';
+  if (length === 10) return 'text-[18px]';
+  if (length === 11) return 'text-[16px]';
+  return 'text-[14px]';                          // 12 or more characters
+};
 
 const exitReport = () => {
     //fetchAllData();
@@ -1434,9 +1457,9 @@ const generateReport = async () => {
 }
 
 const checkSpecialJudgement = async () => {
-    //special judgement conditions
+    //special judgement conditions //used sample model TIC-0755G
 
-    if (jhCurveActualModel.value === "DNS-0A54G" || jhCurveActualModel.value === "MIS-0766G") { //VT data
+    if (jhCurveActualModel.value === "DNS-0A54G" || jhCurveActualModel.value === "MIS-0766G" || jhCurveActualModel.value === "MIE-0751G") {  //VT data MIS-0766G, DNS-0A54G, MIE-0751G
 
         const hasSamples = reportVT_samplesQty.value > 0;
         const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
@@ -2020,7 +2043,9 @@ const props = defineProps({
   ipAddress: String,
   fromApproval: Boolean,
 });
-isFromApproval.value = props.fromApproval;
+// Update value after props are available
+isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
+console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
 //console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
@@ -2159,6 +2184,12 @@ const checkApprovalStates = async () => {
             showCheckedByDefault.value = false;
             checkedByButton.value = false;          //Already approved condition
             checkedByStampPhoto.value = true;
+
+            const nameParts = checked_by.split(' ');
+            checkedByPerson_firstName.value = nameParts[0];
+            checkedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+            console.error("Prepared By First Name: ", checkedByPerson_firstName.value);
+            console.error("Prepared By Last Name: ", checkedByPerson_lastName.value);
         }else if(currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)){
             showCheckedByDefault.value = false;
             checkedByButton.value = true;       //Not approved yet but ready for approval
@@ -2173,6 +2204,11 @@ const checkApprovalStates = async () => {
             //approvedByButton.value = true; //uncomment on designated ip address
             showApprovedByDefault.value = true;
             approvedByStampPhoto.value = false;
+            const nameParts = checked_by.split(' ');
+            approvedByPerson_firstName.value = nameParts[0];
+            approvedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+            console.error("Checked By First Name: ", approvedByPerson_firstName.value);
+            console.error("Checked By Last Name: ", approvedByPerson_lastName.value);
         }else{
             approvedByButton.value = false;
             showApprovedByDefault.value = false;

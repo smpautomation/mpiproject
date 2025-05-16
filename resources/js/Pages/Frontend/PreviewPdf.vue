@@ -1,748 +1,513 @@
 <template>
-<div class="mx-auto print-container">
-  <!-- A4 Layout Box -->
-  <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
-    <div class="flex flex-row justify-between">
-        <button class="px-2 py-1 mt-2 text-white bg-gray-600 rounded-lg" @click="$inertia.visit('/reports')">back</button>
-        <button class="px-2 py-1 mt-2 text-black bg-gray-300 rounded-lg">Serial#: {{ printSerialNo }}</button>
-        <button
-        @click="window.print()"
-        class="px-2 py-1 mt-2 text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600"
-        >
-        Print This Report
-    </button>
-    </div>
-    <!-- Report Title -->
-    <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
-    <!-- Oven Heating Information -->
-    <div class="flex flex-row justify-between">
-        <p class="mb-4 text-xl font-extrabold">Oven Heating Information</p>
-        <span
-            v-show="isAutomotive"
-            class="flex items-center justify-center w-[70px] h-[40px] text-center bg-center bg-no-repeat"
-            :style="{
-                backgroundImage: 'url(\'/photo/carmark_logo.png\')',
-                backgroundSize: '100%'
-            }">
-        </span>
-    </div>
-
-    <!-- Information Grid -->
-    <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-3">
-        <!-- First Column -->
-        <div class="space-y-1">
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Oven Machine No:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printOvenMachineNo_ovenInfo }}
-                </span>
-            </div>
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Time Loading:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printTimeLoading }}
-                </span>
-            </div>
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Temperature:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printTimeLoading_temp }}
-                </span>
-            </div>
+    <div class="mx-auto print-container">
+      <!-- A4 Layout Box -->
+      <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
+        <div class="flex flex-row justify-between">
+            <button class="px-2 py-1 mt-2 text-white bg-gray-600 rounded-lg" @click="$inertia.visit('/reports')">back</button>
+            <button class="px-2 py-1 mt-2 text-black bg-gray-300 rounded-lg">Serial#: {{ printSerialNo }}</button>
+            <button
+            @click="window.print()"
+            class="px-2 py-1 mt-2 text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600"
+            >
+            Print This Report
+        </button>
         </div>
-
-        <!-- Second Column -->
-        <div class="space-y-1">
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Date:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printDate_ovenInfo }}
-                </span>
-            </div>
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Time Unloading:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printTimeUnloading }}
-                </span>
-            </div>
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Temperature:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printTimeUnloading_temp }}
-                </span>
-            </div>
-        </div>
-
-        <!-- Third Column -->
-        <div class="space-y-1">
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Shift:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printShift_ovenInfo }}
-                </span>
-            </div>
-            <div class="flex items-center">
-                <span class="mr-2 text-sm font-semibold">Operator:</span>
-                <span class="flex-grow inline-block text-sm border-b border-gray-500">
-                    {{ printOperator_ovenInfo }}
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Divider -->
-    <hr class="my-4" />
-
-    <p class="mb-4 text-xl font-extrabold">Magnetic Property Inspection Information</p>
-
-    <!-- Single Row Information -->
-    <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-4">
-        <!-- First Column -->
-        <div class="flex items-center">
-            <span class="mr-2 text-sm font-semibold">Model:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printActualModel }}
-            </span>
-        </div>
-
-        <!-- Second Column -->
-        <div class="flex items-center">
-            <span class="font-semibold mr-2 text-[10px]">MATERIAL&nbsp;CODE:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printMaterialCode }}
-            </span>
-        </div>
-
-        <!-- Third Column -->
-        <div class="flex items-center">
-            <span class="mr-2 text-sm font-semibold">Partial&nbsp;No.:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printPartialNo }}
-            </span>
-        </div>
-
-        <!-- Fourth Column -->
-        <div class="flex items-center">
-            <span class="font-semibold mr-2 text-[10px]">TOTAL&nbsp;QUANTITY:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printTotalQuantity }}
-            </span>
-        </div>
-        <!-- Fifth Column -->
-        <div class="flex items-center">
-            <span class="mr-2 text-sm font-semibold">Pulse&nbsp;Tracer&nbsp;No:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printPulseTracer }}
-            </span>
-        </div>
-
-        <!-- Sixth Column -->
-        <div class="flex items-center">
-            <span class="mr-2 text-sm font-semibold">Date:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printDate }}
-            </span>
-        </div>
-
-        <!-- Seventh Column -->
-        <div class="flex items-center">
-            <span class="mr-2 text-sm font-semibold">Shift:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printShift }}
-            </span>
-        </div>
-
-        <!-- Eighth Column -->
-        <div class="flex items-center">
-            <span class="mr-2 text-sm font-semibold">Operator:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printOperator }}
-            </span>
-        </div>
-    </div>
-
-    <div class="flex flex-row gap-2">
-        <div>
-            <!-- Data Table -->
-            <table class="w-full mb-6 text-sm border border-collapse border-gray-400">
-            <thead>
-                <tr class="text-center bg-gray-200">
-                    <th colspan="2" class="border border-black px-2 py-[3.04px]">Standard&nbsp;Sample&nbsp;Dimention and&nbsp;Material&nbsp;Grade</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(value, key) in standardSampleDimention" :key="key">
-                    <td class="border border-black px-4 py-[3.04px] text-xs">{{ key }}</td>
-                    <td class="border border-black px-4 py-[3.04px] text-xs">{{ value }}</td>
-                </tr>
-            </tbody>
-            </table>
-        </div>
-        <div>
-            <!-- Data Table -->
-            <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
-                <thead>
-                    <tr class="text-center bg-gray-200">
-                        <th colspan="7" class="border border-black px-2 py-[9.5px] text-sm">Magnetic Property Data</th>
-                    </tr>
-                    <tr class="text-center bg-gray-200">
-                        <th rowspan="2" class="border border-black px-2 py-[3.04px]">Items</th>
-                        <th rowspan="2" class="border border-black px-2 py-[3.04px]">Standard</th>
-                        <th colspan="4" class="border border-black px-2 py-[3.04px]">Actual Data</th>
-                    </tr>
-                    <tr class="text-center bg-gray-200">
-                        <th class="border border-black px-2 py-[3.04px]">Average</th>
-                        <th class="border border-black px-2 py-[3.04px]">Maximum</th>
-                        <th class="border border-black px-2 py-[3.04px]">Minimum</th>
-                        <th class="border border-black px-2 py-[3.04px]">Variance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="text-center">
-                        <td class="border border-black px-2 py-[3.04px] text-xs">Br&nbsp;(G)</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrStandard }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrAverage }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrMaximum }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrMinimum }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printBrVariance }}</td>
-                    </tr>
-                    <tr class="text-center">
-                        <td class="border border-black px-2 py-[3.04px] text-xs">iHc&nbsp;(Oe)</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcStandard }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcAverage }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcMaximum }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcMinimum }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHcVariance }}</td>
-                    </tr>
-                    <tr class="text-center">
-                        <td class="border border-black px-2 py-[3.04px] text-xs">iHk&nbsp;(Oe)</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkStandard }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkAverage }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkMaximum }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkMinimum }}</td>
-                        <td class="border border-black px-2 py-[3.04px] text-xs">{{ printiHkVariance }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="mb-5">
-        <div class="flex flex-row">
-            <span class="mr-2 text-sm font-semibold">Remarks:</span>
-            <span class="inline-block w-full text-sm border-b border-gray-500">
-                {{ printRemarks }}
-            </span>
-            <div class="mx-10">
-                <span class="font-extrabold text-center"
-                :class="{
-                    'text-red-500': printRemarksResult === 'E' || printRemarksResult === 'HOLD',
-                    'text-blue-500': printRemarksResult !== 'E' && printRemarksResult !== 'HOLD'
-                }">{{ printRemarksResult }}</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Divider -->
-    <hr class="my-4" />
-
-    <div class="mb-5">
-        <p class="mb-4 text-xl font-extrabold">SMP Judgement:</p>
-        <div class="flex flex-row">
-            <!-- SMP Judgement -->
-            <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
-                <!-- Header acting as the title -->
-                <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
-                    SMP Judgement
-                </p>
-                <!-- Container for the stamp -->
-                <div class="relative flex items-center justify-center flex-grow w-full bg-white">
-                    <!-- The stamp -->
-                    <span
-                        class="absolute w-[100px] h-[100px] bg-center bg-no-repeat"
-                        :style="{
-                            backgroundImage: printSMPJudgement === 'REJECT'
-                                ? 'url(\'/photo/reject_stamp.png\')'
-                                : printSMPJudgement === 'HOLD'
-                                ? 'url(\'/photo/hold_stamp.png\')'
-                                : 'url(\'/photo/pass_stamp.png\')',
-                            backgroundSize: 'contain'
-                        }">
-                    </span>
-                </div>
-            </div>
-            <!-- Prepared By -->
-            <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200 ml-3">
-                <!-- Header acting as the title -->
-                <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
-                    Prepared By
-                </p>
-                <!-- Container for the stamp -->
-                <div class="relative flex items-center justify-center flex-grow w-full bg-white">
-                    <!-- The stamp -->
-                    <span
-                        class="absolute w-[100px] h-[100px] items-center flex text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
-                        :style="{
-                            backgroundImage: printPreparedBy != '' && printPreparedBy != null
-                                ? 'url(\'/photo/Prepared_by_stamp.png\')'
-                                : printPreparedBy === 'HOLD'
-                                ? 'url(\'/photo/cancel.png\')'
-                                : 'url(\'/photo/cancel.png\')',
-                            backgroundSize: 'contain'
-                        }">
-                        {{ printPreparedBy_date }}
-                    </span>
-                </div>
-            </div>
-            <!-- Checked By -->
-            <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
-                <!-- Header acting as the title -->
-                <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
-                    Checked By
-                </p>
-                <!-- Container for the stamp -->
-                <div class="relative flex items-center justify-center flex-grow w-full bg-white">
-                    <!-- The stamp -->
-                    <span
-                        class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
-                        :style="{
-                            backgroundImage: printCheckedBy != '' && printCheckedBy != null
-                                ? 'url(\'/photo/Checked_by_stamp.png\')'
-                                : printCheckedBy === 'HOLD'
-                                ? 'url(\'/photo/cancel.png\')'
-                                : 'url(\'/photo/cancel.png\')',
-                            backgroundSize: 'contain'
-                        }">
-                        {{ printCheckedBy_date }}
-                    </span>
-                </div>
-            </div>
-            <!-- Approved By -->
-            <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
-                <!-- Header acting as the title -->
-                <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
-                    Approved By
-                </p>
-                <!-- Container for the stamp -->
-                <div class="relative flex items-center justify-center flex-grow w-full bg-white">
-                    <!-- The stamp -->
-                    <span
-                        class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
-                        :style="{
-                            backgroundImage: printApprovedBy != '' && printApprovedBy != null
-                                ? 'url(\'/photo/Approved_by_stamp.png\')'
-                                : printApprovedBy === 'HOLD'
-                                ? 'url(\'/photo/cancel.png\')'
-                                : 'url(\'/photo/cancel.png\')',
-                            backgroundSize: 'contain'
-                        }">
-                        {{ printApprovedBy_date }}
-                    </span>
-                </div>
-            </div>
-            <div class="ml-2">
-                <div class="flex flex-col p-1 border border-black">
-                    <div class="text-[10px] pb-1 font-extrabold">Note: (REASON OF HOLD/REJECT)</div>
-                    <p class="text-[10px] text-red-600 font-extrabold" v-if="noteReasonForReject.length">
-                        <span v-for="(reason, index) in noteReasonForReject" :key="index" class="block">
-                            {{ reason }}
-                        </span>
-                    </p>
-                    <span v-else class="text-sm text-gray-500">No rejection notes available.</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Divider -->
-    <hr class="my-4" />
-
-
-    <div>
-        <p class="mb-4 text-xl font-extrabold">SEC / C-Mark Judgement:</p>
-        <div class="flex flex-row">
-            <div class="min-w-[300px] min-h-[150px] border border-black">
-                <!-- empty -->
-            </div>
-            <div class="min-w-[400px] min-h-[150px] border border-black ml-3">
-                <p class="text-[10px] ml-1">
-                    Note: (Reason of REJECTED/Content of Condition Approved)
-                </p>
-            </div>
-        </div>
-    </div>
-
-  </div>
-
-    <!-- A4 Layout Box -->
-    <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
         <!-- Report Title -->
-        <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA</h1>
+        <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
+        <!-- Oven Heating Information -->
+        <div class="flex flex-row justify-between">
+            <p class="mb-4 text-xl font-extrabold">Oven Heating Information</p>
+            <span
+                v-show="isAutomotive"
+                class="flex items-center justify-center w-[70px] h-[40px] text-center bg-center bg-no-repeat"
+                :style="{
+                    backgroundImage: 'url(\'/photo/carmark_logo.png\')',
+                    backgroundSize: '100%'
+                }">
+            </span>
+        </div>
+
         <!-- Information Grid -->
-        <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
+        <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-3">
             <!-- First Column -->
             <div class="space-y-1">
                 <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Code&nbsp;No:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printCodeNo }}
+                    <span class="mr-2 text-sm font-semibold">Oven Machine No:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printOvenMachineNo_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Sintering#:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printSinteringNo }}
+                    <span class="mr-2 text-sm font-semibold">Time Loading:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printTimeLoading }}
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <span class="mr-2 text-sm font-semibold">Temperature:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printTimeLoading_temp }}
                     </span>
                 </div>
             </div>
+
             <!-- Second Column -->
             <div class="space-y-1">
                 <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Type&nbsp;Code:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printTypeCode }}
+                    <span class="mr-2 text-sm font-semibold">Date:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printDate_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">coating:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printCoating }}
+                    <span class="mr-2 text-sm font-semibold">Time Unloading:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printTimeUnloading }}
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <span class="mr-2 text-sm font-semibold">Temperature:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printTimeUnloading_temp }}
                     </span>
                 </div>
             </div>
+
             <!-- Third Column -->
             <div class="space-y-1">
                 <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Judge&nbsp;Code:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printJudgeCode }}
+                    <span class="mr-2 text-sm font-semibold">Shift:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printShift_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Pass#:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printPassNo }}
+                    <span class="mr-2 text-sm font-semibold">Operator:</span>
+                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                        {{ printOperator_ovenInfo }}
                     </span>
                 </div>
             </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="my-2" />
+
+        <p class="mb-4 text-xl font-extrabold">Magnetic Property Inspection Information</p>
+
+        <!-- Single Row Information -->
+        <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-4">
+            <!-- First Column -->
+            <div class="flex items-center">
+                <span class="mr-2 text-sm font-semibold">Model:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printActualModel }}
+                </span>
+            </div>
+
+            <!-- Second Column -->
+            <div class="flex items-center">
+                <span class="font-semibold mr-2 text-[10px]">MATERIAL&nbsp;CODE:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printMaterialCode }}
+                </span>
+            </div>
+
+            <!-- Third Column -->
+            <div class="flex items-center">
+                <span class="mr-2 text-sm font-semibold">Partial&nbsp;No.:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printPartialNo }}
+                </span>
+            </div>
+
             <!-- Fourth Column -->
-            <div class="space-y-1">
-                <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Press#:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printPressNo }}
-                    </span>
-                </div>
-                <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Mias.&nbsp;Employee:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printMiasEmployee }}
-                    </span>
-                </div>
+            <div class="flex items-center">
+                <span class="font-semibold mr-2 text-[10px]">TOTAL&nbsp;QUANTITY:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printTotalQuantity }}
+                </span>
             </div>
             <!-- Fifth Column -->
-            <div class="space-y-1">
-                <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Sintering&nbsp;Furnace#:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printSinteringFurnaceNo }}
-                    </span>
-                </div>
-                <div class="flex items-center">
-                    <span class="mr-2 text-xs font-semibold">Factor&nbsp;Employee:</span>
-                    <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                        {{ printFactoryEmployee }}
-                    </span>
-                </div>
+            <div class="flex items-center">
+                <span class="mr-2 text-sm font-semibold">Pulse&nbsp;Tracer&nbsp;No:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printPulseTracer }}
+                </span>
+            </div>
+
+            <!-- Sixth Column -->
+            <div class="flex items-center">
+                <span class="mr-2 text-sm font-semibold">Date:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printDate }}
+                </span>
+            </div>
+
+            <!-- Seventh Column -->
+            <div class="flex items-center">
+                <span class="mr-2 text-sm font-semibold">Shift:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printShift }}
+                </span>
+            </div>
+
+            <!-- Eighth Column -->
+            <div class="flex items-center">
+                <span class="mr-2 text-sm font-semibold">Operator:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printOperator }}
+                </span>
             </div>
         </div>
-        <div>
-            <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
+
+        <div class="flex flex-row gap-2">
+            <div>
+                <!-- Data Table -->
+                <table class="w-full mb-6 text-sm border border-collapse border-gray-400">
                 <thead>
                     <tr class="text-center bg-gray-200">
-                        <th class="px-1 py-1 text-[10px] border border-black">Zone</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Br</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">iHc</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">iHk</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">[BH]m</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Hr95</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Hr98</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">iHc&#8209;iHk</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Br&#960;Ia</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">bHc</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Squareness</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">4&#960;Id</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">4&#960;Is</th>
-                        <th colspan="2" class="px-1 py-1 text-[10px] border border-black">4&#960;Ia</th>
-                        <th class="px-1 py-1 text-[8px] border border-black">Temperature</th>
-                        <th class="px-1 py-1 text-[8px] border border-black">Data&nbsp;Status</th>
+                        <th colspan="2" class="border border-black px-2 py-[3.04px]">Standard&nbsp;Sample&nbsp;Dimention and&nbsp;Material&nbsp;Grade</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in printTPMData"
-                                            :key="item.id"
-                                            class="text-center whitespace-nowrap text-[10px]">
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.zone }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.Br }}</td>
-                        <td v-if="item.remark.Br_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHc }}</td>
-                        <td v-if="item.remark.iHc_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHc_remarks == '0' ? '' : item.remark.iHc_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHk }}</td>
-                        <td v-if="item.remark.iHk_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHk_remarks == '0' ? '' : item.remark.iHk_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.BHMax }}</td>
-                        <td v-if="item.remark.BHMax_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.BHMax_remarks == '0' ? '' : item.remark.BHMax_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHr95 }}</td>
-                        <td v-if="item.remark.iHr95_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHr98 }}</td>
-                        <td v-if="item.remark.iHr98_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHr98_remarks == '0' ? '' : item.remark.iHr98_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHkiHc }}</td>
-                        <td v-if="item.remark.iHkiHc_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHkiHc_remarks == '0' ? '' : item.remark.iHkiHc_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.Br4pai }}</td>
-                        <td v-if="item.remark.Br4pai_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.Br4pai_remarks == '0' ? '' : item.remark.Br4pai_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.bHc }}</td>
-                        <td v-if="item.remark.bHc_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.bHc_remarks == '0' ? '' : item.remark.bHc_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.Squareness }}</td>
-                        <td v-if="item.remark.Squareness_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.Squareness_remarks == '0' ? '' : item.remark.Squareness_remarks }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item["4paiIa"] }}</td>
-                        <td v-if="item.remark['4paiIa_remarks'] == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark['4paiIa_remarks'] == '0' ? '' : item.remark['4paiIa_remarks'] }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item["4paiId"] }}</td>
-                        <td v-if="item.remark['4paiId_remarks'] == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark['4paiId_remarks'] == '0' ? '' : item.remark['4paiId_remarks'] }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item["4paiIs"] }}</td>
-                        <td v-if="item.remark['4paiIs_remarks'] == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
-                        <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark['4paiIs_remarks'] == '0' ? '' : item.remark['4paiIs_remarks'] }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.temperature }}</td>
-                        <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.data_status }}</td>
+                    <tr v-for="(value, key) in standardSampleDimention" :key="key">
+                        <td class="border border-black px-4 py-[3.04px] text-xs whitespace-nowrap">{{ key }}</td>
+                        <td class="border border-black px-4 py-[3.04px] text-xs whitespace-nowrap">{{ value }}</td>
                     </tr>
                 </tbody>
-            </table>
-        </div>
-        <div>
-            <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
-                <thead>
-                    <tr class="text-center bg-gray-200">
-                        <th class="px-1 py-1 text-xs border border-black"></th>
-                        <th class="px-1 py-1 text-xs border border-black">Br</th>
-                        <th class="px-1 py-1 text-xs border border-black">iHc</th>
-                        <th class="px-1 py-1 text-xs border border-black">iHk</th>
-                        <th class="px-1 py-1 text-xs border border-black">[BH]m</th>
-                        <th class="px-1 py-1 text-xs border border-black">Hr95</th>
-                        <th class="px-1 py-1 text-xs border border-black">Hr98</th>
-                        <th class="px-1 py-1 text-xs border border-black">iHc&#8209;iHk</th>
-                        <th class="px-1 py-1 text-xs border border-black">Br&#960;Ia</th>
-                        <th class="px-1 py-1 text-xs border border-black">bHc</th>
-                        <th class="px-1 py-1 text-xs border border-black">Squareness</th>
-                        <th class="px-1 py-1 text-xs border border-black">4&#960;Id</th>
-                        <th class="px-1 py-1 text-xs border border-black">4&#960;Is</th>
-                        <th class="px-1 py-1 text-xs border border-black">4&#960;Ia</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- AVERAGE ROW -->
-                    <tr class="text-center">
-                        <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Average</th>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printBrAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printiHcAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printiHkAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printBHMaxAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printHr95Average }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printHr98Average }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printiHciHkAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printBrpaiIaAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printbHcAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ printSquarenessAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIdAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIsAverage }}</td>
-                        <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIaAverage }}</td>
-                    </tr>
-
-                    <!-- MAXIMUM ROW -->
-                    <tr class="text-center">
-                        <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Maximum</th>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Maximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Maximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcaxMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsMaximum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMaximum }}</td>
-                    </tr>
-
-                    <!-- MINIMUM ROW -->
-                    <tr class="text-center">
-                        <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Minimum</th>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Minimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Minimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcaxMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsMinimum }}</td>
-                        <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- A4 Layout Box -->
-    <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page p-7">
-        <div class="flex flex-col my-6">
-            <div class="flex flex-row">
-                <div class="mb-10 border border-black w-[480px] h-[360px]">
-                    <canvas ref="myChartCanvas" width="750" height="550" style="transform: scale(1); transform-origin: top left;"></canvas>
-                </div>
-                <div>
-                    <!-- Side Content -->
-                    <div class="w-[250px] h-[360px] border border-black flex justify-center items-start ml-2 p-4">
-                        <div class="flex flex-col items-start space-y-2">
-                            <p class="font-extrabold">Note:</p>
-                            <p>
-                                SMP Lot (
-                                <span>{{ printMassProdName }}</span>
-                                Mass Production )
-                            </p>
-                            <p>
-                                Furnace Cycle No. : {{ printSinteringFurnaceNo + "-" + printSinteringNo }}
-                            </p>
-                            <p>
-                                <span>{{ printActualModel }}</span>
-                                ( {{ printCodeNo }} )
-                            </p>
-                            <p>
-                                Lot # {{ printJhCurveLotno }}
-                            </p>
-                            <div class="text-sm" v-if="noteReasonForReject.length">
-                                Remarks Encountered:
-                                <p class="text-[10px] text-red-600 font-extrabold">
-                                    <span>{{ noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
-                                </p>
-                            </div>
-                            <span v-else class="text-sm text-gray-500"></span>
-                        </div>
-                    </div>
-                </div>
+                </table>
             </div>
             <div>
-                <table>
+                <!-- Data Table gggg-->
+                <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
                     <thead>
                         <tr class="text-center bg-gray-200">
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Date</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Code&nbsp;No</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Order&nbsp;No</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Type</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">LOT#</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Furnace#</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Coating#</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Zone</th>
-                            <th class="border border-black px-[2px] py-1 text-[7px]">Pass#</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Br</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">iHc</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">iHk</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">BHMax</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Hr95</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Hr98</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">iHkiHc</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Br4pai</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">bHc</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Squareness</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">4paiId</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">4paiIs</th>
-                            <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">4paiIa</th>
-                            <th class="border border-black px-[2px] py-1 text-[7.5px]">Tracer</th>
+                            <th colspan="7" class="border border-black px-[3.04px] py-[4.5px] text-sm">Magnetic Property Data</th>
+                        </tr>
+                        <tr class="text-center bg-gray-200">
+                            <th rowspan="2" class="border border-black px-[3.04px] py-[3.04px]">Items</th>
+                            <th rowspan="2" class="border border-black px-[3.04px] py-[3.04px]">Standard</th>
+                            <th colspan="5" class="border border-black px-[3.04px] py-[2.04px]">Actual Data</th>
+                        </tr>
+                        <tr class="text-center bg-gray-200">
+                            <th class="border border-black px-[3.04px] py-[3.04px]">Average</th>
+                            <th class="border border-black px-[3.04px] py-[3.04px]">Maximum</th>
+                            <th class="border border-black px-[3.04px] py-[3.04px]">Minimum</th>
+                            <th colspan="2" class="border border-black px-[3.04px] py-[3.04px]">Variance</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in printTPMData"
-                                            :key="item.id"
-                                            class="text-center whitespace-nowrap text-[10px]">
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.date }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.code_no }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.order_no }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.type }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.press_1 + " " + item.press_2 + " " + item.machine_no }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.sintering_furnace_no }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.furnace_no }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.zone }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.pass_no }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Br }}</td>
-                            <td v-if="item.remark.Br_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHc }}</td>
-                            <td v-if="item.remark.iHc_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHc_remarks == '0' ? '' : item.remark.iHc_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHk }}</td>
-                            <td v-if="item.remark.iHk_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHk_remarks == '0' ? '' : item.remark.iHk_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.BHMax }}</td>
-                            <td v-if="item.remark.BHMax_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.BHMax_remarks == '0' ? '' : item.remark.BHMax_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHr95 }}</td>
-                            <td v-if="item.remark.iHr95_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHr98 }}</td>
-                            <td v-if="item.remark.iHr98_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHr98_remarks == '0' ? '' : item.remark.iHr98_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHkiHc }}</td>
-                            <td v-if="item.remark.iHkiHc_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHkiHc_remarks == '0' ? '' : item.remark.iHkiHc_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Br4pai }}</td>
-                            <td v-if="item.remark.Br4pai_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.Br4pai_remarks == '0' ? '' : item.remark.Br4pai_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.bHc }}</td>
-                            <td v-if="item.remark.bHc_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.bHc_remarks == '0' ? '' : item.remark.bHc_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Squareness }}</td>
-                            <td v-if="item.remark.Squareness_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.Squareness_remarks == '0' ? '' : item.remark.Squareness_remarks }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item["4paiId"] }}</td>
-                            <td v-if="item.remark['4paiId_remarks'] == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark['4paiId_remarks'] == '0' ? '' : item.remark['4paiId_remarks'] }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item["4paiIs"] }}</td>
-                            <td v-if="item.remark['4paiIs_remarks'] == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark['4paiIs_remarks'] == '0' ? '' : item.remark['4paiIs_remarks'] }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item["4paiIa"] }}</td>
-                            <td v-if="item.remark['4paiIa_remarks'] == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
-                            <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark['4paiIa_remarks'] == '0' ? '' : item.remark['4paiIa_remarks'] }}</td>
-                            <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Tracer }}</td>
+                        <tr class="text-center">
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">Br&nbsp;(G)</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrStandard }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrMinimum }}</td>
+                            <td colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrVariance }}</td>
+                        </tr>
+                        <tr class="text-center">
+                            <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="border border-black px-[3.04px] py-[3.04px] text-xs">iHc (Oe)</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs"><span v-if="showGX">GM </span>{{ printiHcStandard }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcMinimum }}</td>
+                            <td colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcVariance }}</td>
+                        </tr>
+                        <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs"><span v-if="showGX">GX </span>
+                                {{ printGX_iHcStandard }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printGX_iHcAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printGX_iHcMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printGX_iHcMinimum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printGX_iHcVariance }}</td>
+                        </tr>
+                        <tr class="text-center">
+                            <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" class="border border-black px-2 py-[3.04px] text-xs whitespace-nowrap">iHk (Oe)</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"><span v-if="showGX">GM </span>{{ printiHkStandard }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHkAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHkMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHkMinimum }}</td>
+                            <td colspan="2" class="border border-black px-2 py-[3.04px] text-xs whitespace-nowrap">{{ printiHkVariance }}</td>
+                        </tr>
+                        <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"><span v-if="showGX">GX </span> - - - - - </td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkMinimum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkVariance }}</td>
+                        </tr>
+                        <tr v-if="isTTM_model" class="text-center bg-gray-200">
+                            <th rowspan="2" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Computation of Cpk from Br</th>
+                            <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">STD DEV</th>
+                            <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Cp</th>
+                            <th class="v">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
+                            <th colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Remarks</th>
+                        </tr>
+                        <tr v-if="isTTM_model" class="text-center">
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printStdDev }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printCpk }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printCp }}</td>
+                            <td colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printCpkRemarks }}</td>
+                        </tr>
+                        <tr v-show="show1x1x1Data_withoutCorner" class="text-center bg-gray-200">
+                            <td colspan="2" class="border border-black px-2 py-[3.04px] text-xs whitespace-nowrap">Data of 1x1x1 mm samples</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">AVERAGE</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">MAXIMUM</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">MINIMUM</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Cpk &#8805; {{ cpkStandardValue }}</td> <!-- &#8805; is a greater than equal to symbol -->
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs">Remarks</td>
+                        </tr>
+                        <tr v-show="show1x1x1Data_Corner" class="text-center">
+                            <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">Corner</th>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">&#8805; {{ printCorner }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCornerAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCornerMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCornerMinimum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCornerCpk }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCornerRemarks }}</td>
+                        </tr>
+                        <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
+                            <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">Surface</th>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">&#8805; {{ printSurface }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printSurfaceAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printSurfaceMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printSurfaceMinimum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printSurfaceCpk }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printSurfaceRemarks }}</td>
+                        </tr>
+                        <tr v-show="show1x1x1Data_withoutCorner" class="text-center">
+                            <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">Core</th>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">&#8805; {{ printCore }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCoreAverage }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCoreMaximum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCoreMinimum }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCoreCpk }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printCoreRemarks }}</td>
+                        </tr>
+                        <!-- VT Row 1: Sample + Remarks (Grid layout with 3 columns) -->
+                        <tr v-if="showVTData && noteReasonForReject.includes('- N.G iHc')" class="text-center bg-gray-200">
+                        <th colspan="2" class="border border-black px-2 py-1 text-xs whitespace-nowrap bg-gray-200">VT Data</th>
+
+                        <th colspan="3" class="border border-black px-2 py-1 whitespace-nowrap bg-gray-200 text-xs">
+                            Samples
+                        </th>
+
+                        <th class="border border-black px-2 py-1 text-xs whitespace-nowrap bg-gray-200">Remarks</th>
+                        </tr>
+
+                        <tr v-if="showVTData && noteReasonForReject.includes('- N.G iHc')" class="text-center">
+                        <td class="border border-black px-2 py-1 text-xs whitespace-nowrap">
+                            {{ printVT_Temp }} <span class="align-baseline">°C</span>
+                        </td>
+                        <td class="border border-black px-2 py-1 text-xs whitespace-nowrap">
+                            iHc (kOe) &#8805; {{ printVT_iHc }} (kOe)
+                        </td>
+                        <td colspan="3" class="border border-black px-0 py-0 text-xs whitespace-nowrap">
+                            <table class="table-fixed w-full border-collapse">
+                                <tr v-for="rowIndex in Math.ceil(printVT_samples.length / 3)" :key="'row-' + rowIndex">
+                                <td
+                                    v-for="colIndex in 3"
+                                    :key="'col-' + colIndex"
+                                    class="border border-gray-400 align-top px-[2.5px] py-[2.5px] text-left text-[9px] w-1/3"
+                                >
+                                    <template v-if="printVT_samples[(rowIndex - 1) * 3 + (colIndex - 1)]">
+                                    <div class="font-semibold bg-gray-100">
+                                        {{ printVT_samples[(rowIndex - 1) * 3 + (colIndex - 1)] }}
+                                        ({{ printVT_sampleRemarks[(rowIndex - 1) * 3 + (colIndex - 1)] }})
+                                    </div>
+                                    <div class="text-gray-700 border-t border-gray-300">
+                                        {{ printVT_iHcResults[(rowIndex - 1) * 3 + (colIndex - 1)] }} kOe
+                                    </div>
+                                    </template>
+                                </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td class="border border-black px-2 py-1 text-xs whitespace-nowrap">{{ printVT_remarks }}</td>
+                        </tr>
+                        <tr v-show="showCpkFrom_iHc" class="bg-gray-200">
+                            <th rowspan="2" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Computation of Cpk from iHc</th>
+                            <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">STD DEV</th>
+                            <th colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Cpk &#8805; {{ cpkStandardValue }}</th> <!-- &#8805; is greater than equal to symbol -->
+                            <th colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Remarks</th>
+                        </tr>
+                        <tr v-show="showCpkFrom_iHc" class="text-center">
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_stdDev }}</td>
+                            <td colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_cpk }}</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_remarks }}</td>
+                        </tr>
+                        <tr v-show="showBHData" class="text-center">
+                            <th colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">BH Data @ {{ printBH_temp }} °C</th>
+                            <td colspan="3" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">{{ printBH_sample }}</td>
+                                <th class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">Result</th>
+                        </tr>
+                        <tr v-show="showBHData" class="text-center">
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">
+                                <div class="flex items-center">
+                                    {{ printBH_data }}
+                                    <span class="ml-1 align-baseline"> kOe</span>
+                                </div>
+                            </td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"> &#8805; {{ printBH_dataStandard }} (kOe)</td>
+                            <td colspan="3" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBH_result }} kOe</td>
+                            <td class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBH_remarks }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+        <div class="mb-5">
+            <div class="flex flex-row">
+                <span class="mr-2 text-sm font-semibold">Remarks:</span>
+                <span class="inline-block w-full text-sm border-b border-gray-500">
+                    {{ printRemarks }}
+                </span>
+                <div class="mx-10">
+                    <span class="font-extrabold text-center"
+                    :class="{
+                        'text-red-500': printRemarksResult === 'E' || printRemarksResult === 'HOLD',
+                        'text-blue-500': printRemarksResult !== 'E' && printRemarksResult !== 'HOLD'
+                    }">{{ printRemarksResult }}</span>
+                </div>
+            </div>
+        </div>
 
-    <!-- A4 Layout Box -->
-    <button>pagesData length: {{ numberOfSet }}</button>
+        <!-- Divider -->
+        <hr class="my-2" />
 
-    <div v-for="index in numberOfSet" :key="index">
+        <div class="mb-5">
+            <p class="mb-4 text-xl font-extrabold">SMP Judgement:</p>
+            <div class="flex flex-row">
+                <!-- SMP Judgement -->
+                <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
+                    <!-- Header acting as the title -->
+                    <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
+                        SMP Judgement
+                    </p>
+                    <!-- Container for the stamp -->
+                    <div class="relative flex items-center justify-center flex-grow w-full bg-white">
+                        <!-- The stamp -->
+                        <span
+                            class="absolute w-[100px] h-[100px] bg-center bg-no-repeat"
+                            :style="{
+                                backgroundImage: printSMPJudgement === 'REJECT'
+                                    ? 'url(\'/photo/reject_stamp.png\')'
+                                    : printSMPJudgement === 'HOLD'
+                                    ? 'url(\'/photo/hold_stamp.png\')'
+                                    : 'url(\'/photo/pass_stamp.png\')',
+                                backgroundSize: 'contain'
+                            }">
+                        </span>
+                    </div>
+                </div>
+                <!-- Prepared By -->
+                <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200 ml-3">
+                    <!-- Header acting as the title -->
+                    <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
+                        Prepared By
+                    </p>
+                    <!-- Container for the stamp -->
+                    <div class="relative flex items-center justify-center flex-grow w-full bg-white">
+                        <!-- The stamp -->
+                        <span
+                            class="absolute w-[100px] h-[100px] items-center flex text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
+                            :style="{
+                                backgroundImage: printPreparedBy != '' && printPreparedBy != null
+                                    ? 'url(\'/photo/Prepared_by_stamp.png\')'
+                                    : printPreparedBy === 'HOLD'
+                                    ? 'url(\'/photo/cancel.png\')'
+                                    : 'url(\'/photo/cancel.png\')',
+                                backgroundSize: 'contain'
+                            }">
+                            {{ printPreparedBy_date }}
+                        </span>
+                    </div>
+                </div>
+                <!-- Checked By -->
+                <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
+                    <!-- Header acting as the title -->
+                    <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
+                        Checked By
+                    </p>
+                    <!-- Container for the stamp -->
+                    <div class="relative flex items-center justify-center flex-grow w-full bg-white">
+                        <!-- The stamp -->
+                        <span
+                            class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
+                            :style="{
+                                backgroundImage: printCheckedBy != '' && printCheckedBy != null
+                                    ? 'url(\'/photo/Checked_by_stamp.png\')'
+                                    : printCheckedBy === 'HOLD'
+                                    ? 'url(\'/photo/cancel.png\')'
+                                    : 'url(\'/photo/cancel.png\')',
+                                backgroundSize: 'contain'
+                            }">
+                            {{ printCheckedBy_date }}
+                        </span>
+                    </div>
+                </div>
+                <!-- Approved By -->
+                <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
+                    <!-- Header acting as the title -->
+                    <p class="w-full p-1 text-sm font-extrabold text-center text-black bg-gray-300 border-b border-black">
+                        Approved By
+                    </p>
+                    <!-- Container for the stamp -->
+                    <div class="relative flex items-center justify-center flex-grow w-full bg-white">
+                        <!-- The stamp -->
+                        <span
+                            class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
+                            :style="{
+                                backgroundImage: printApprovedBy != '' && printApprovedBy != null
+                                    ? 'url(\'/photo/Approved_by_stamp.png\')'
+                                    : printApprovedBy === 'HOLD'
+                                    ? 'url(\'/photo/cancel.png\')'
+                                    : 'url(\'/photo/cancel.png\')',
+                                backgroundSize: 'contain'
+                            }">
+                            {{ printApprovedBy_date }}
+                        </span>
+                    </div>
+                </div>
+                <div class="ml-2">
+                    <div class="flex flex-col p-1 border border-black">
+                        <div class="text-[10px] pb-1 font-extrabold">Note: (REASON OF HOLD/REJECT)</div>
+                        <p class="text-[10px] text-red-600 font-extrabold" v-if="noteReasonForReject.length">
+                            <span v-for="(reason, index) in noteReasonForReject" :key="index" class="block">
+                                {{ reason }}
+                            </span>
+                        </p>
+                        <span v-else class="text-sm text-gray-500">No rejection notes available.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="my-4" />
+
+
+        <div>
+            <p class="mb-4 text-xl font-extrabold">SEC / C-Mark Judgement:</p>
+            <div class="flex flex-row">
+                <div class="min-w-[300px] min-h-[80px] border border-black">
+                    <!-- empty -->
+                </div>
+                <div class="min-w-[400px] min-h-[80px] border border-black ml-3">
+                    <p class="text-[10px] ml-1">
+                        Note: (Reason of REJECTED/Content of Condition Approved)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+        <!-- A4 Layout Box -->
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
             <!-- Report Title -->
-            <h1 class="mt-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button>Set #:{{ index }}</button></h1>
-            <div class="flex flex-row items-center justify-center mt-2 mb-5 text-blue-600">
-                <p class="text-sm">{{ additionalRemarks[index - 1] }}</p>
-            </div>
+            <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA</h1>
             <!-- Information Grid -->
             <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
                 <!-- First Column -->
@@ -750,13 +515,13 @@
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Code&nbsp;No:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.codeNo }}
+                            {{ printCodeNo }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Sintering#:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.sinteringNo }}
+                            {{ printSinteringNo }}
                         </span>
                     </div>
                 </div>
@@ -765,13 +530,13 @@
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Type&nbsp;Code:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.typeCode }}
+                            {{ printTypeCode }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">coating:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.coating }}
+                            {{ printCoating }}
                         </span>
                     </div>
                 </div>
@@ -780,13 +545,13 @@
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Judge&nbsp;Code:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.judgeCode }}
+                            {{ printJudgeCode }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Pass#:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.passNo }}
+                            {{ printPassNo }}
                         </span>
                     </div>
                 </div>
@@ -795,13 +560,13 @@
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Press#:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.pressNo }}
+                            {{ printPressNo }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Mias.&nbsp;Employee:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.miasEmployee }}
+                            {{ printMiasEmployee }}
                         </span>
                     </div>
                 </div>
@@ -810,13 +575,13 @@
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Sintering&nbsp;Furnace#:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.sinteringFurnaceNo }}
+                            {{ printSinteringFurnaceNo }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Factor&nbsp;Employee:</span>
                         <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                            {{ pagesData[index-1]?.factoryEmployee }}
+                            {{ printFactoryEmployee }}
                         </span>
                     </div>
                 </div>
@@ -825,46 +590,70 @@
                 <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
                     <thead>
                         <tr class="text-center bg-gray-200">
-                            <th class="px-1 py-1 text-xs border border-black">Zone</th>
-                            <th class="px-1 py-1 text-xs border border-black">Br</th>
-                            <th class="px-1 py-1 text-xs border border-black">iHc</th>
-                            <th class="px-1 py-1 text-xs border border-black">iHk</th>
-                            <th class="px-1 py-1 text-xs border border-black">[BH]m</th>
-                            <th class="px-1 py-1 text-xs border border-black">Hr95</th>
-                            <th class="px-1 py-1 text-xs border border-black">Hr98</th>
-                            <th class="px-1 py-1 text-xs border border-black">iHc&#8209;iHk</th>
-                            <th class="px-1 py-1 text-xs border border-black">Br&#960;Ia</th>
-                            <th class="px-1 py-1 text-xs border border-black">bHc</th>
-                            <th class="px-1 py-1 text-xs border border-black">Squareness</th>
-                            <th class="px-1 py-1 text-xs border border-black">4&#960;Id</th>
-                            <th class="px-1 py-1 text-xs border border-black">4&#960;Is</th>
-                            <th class="px-1 py-1 text-xs border border-black">4&#960;Ia</th>
-                            <th class="px-1 py-1 text-xs border border-black">Temperature</th>
-                            <th class="px-1 py-1 text-xs border border-black">Data&nbsp;Status</th>
+                            <th class="px-1 py-1 text-[10px] border border-black">Zone</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Br</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">iHc</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">iHk</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">[BH]m</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Hr95</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Hr98</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">iHc&#8209;iHk</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Br&#960;Ia</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">bHc</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">Squareness</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">4&#960;Id</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">4&#960;Is</th>
+                            <th colspan="2" class="px-1 py-1 text-[10px] border border-black">4&#960;Ia</th>
+                            <th class="px-1 py-1 text-[8px] border border-black">Temperature</th>
+                            <th class="px-1 py-1 text-[8px] border border-black">Data&nbsp;Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Assume this loop is inside your templating engine's structure, e.g., Vue `v-for` or similar -->
-                        <tr  v-for="(TPM, tpmIndex) in pagesData[index - 1]?.tableTPM"
-                            :key="tpmIndex"
-                            class="text-center whitespace-nowrap text-[10px]"
-                            >
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.zone }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.Br }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHc }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHk }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.BHMax }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHr95 }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHr98 }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHkiHc }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.Br4pai }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.bHc }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.Squareness }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM["4paiIa"] }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM["4paiId"] }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM["4paiIs"] }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.temperature }}</td>
-                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.data_status }}</td>
+                        <tr v-for="item in printTPMData"
+                                                :key="item.id"
+                                                class="text-center whitespace-nowrap text-[10px]">
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.zone }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.Br }}</td>
+                            <td v-if="item.remark.Br_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHc }}</td>
+                            <td v-if="item.remark.iHc_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHc_remarks == '0' ? '' : item.remark.iHc_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHk }}</td>
+                            <td v-if="item.remark.iHk_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHk_remarks == '0' ? '' : item.remark.iHk_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.BHMax }}</td>
+                            <td v-if="item.remark.BHMax_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.BHMax_remarks == '0' ? '' : item.remark.BHMax_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHr95 }}</td>
+                            <td v-if="item.remark.iHr95_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHr98 }}</td>
+                            <td v-if="item.remark.iHr98_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHr98_remarks == '0' ? '' : item.remark.iHr98_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.iHkiHc }}</td>
+                            <td v-if="item.remark.iHkiHc_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.iHkiHc_remarks == '0' ? '' : item.remark.iHkiHc_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.Br4pai }}</td>
+                            <td v-if="item.remark.Br4pai_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.Br4pai_remarks == '0' ? '' : item.remark.Br4pai_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.bHc }}</td>
+                            <td v-if="item.remark.bHc_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.bHc_remarks == '0' ? '' : item.remark.bHc_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.Squareness }}</td>
+                            <td v-if="item.remark.Squareness_remarks == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark.Squareness_remarks == '0' ? '' : item.remark.Squareness_remarks }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item["4paiIa"] }}</td>
+                            <td v-if="item.remark['4paiIa_remarks'] == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark['4paiIa_remarks'] == '0' ? '' : item.remark['4paiIa_remarks'] }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item["4paiId"] }}</td>
+                            <td v-if="item.remark['4paiId_remarks'] == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark['4paiId_remarks'] == '0' ? '' : item.remark['4paiId_remarks'] }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item["4paiIs"] }}</td>
+                            <td v-if="item.remark['4paiIs_remarks'] == '1'" class="border border-black px-[2px] py-[2px] text-[10px] text-red-500">E</td>
+                            <td v-else class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.remark['4paiIs_remarks'] == '0' ? '' : item.remark['4paiIs_remarks'] }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.temperature }}</td>
+                            <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.data_status }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -893,74 +682,67 @@
                         <!-- AVERAGE ROW -->
                         <tr class="text-center">
                             <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Average</th>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.brAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHcAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHkAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.bHMaxAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.hr95Average }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.hr98Average }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHciHkAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.brpaiIaAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.bHcAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.squarenessAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.fourpaiIdAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.fourpaiIsAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.fourpaiIaAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printBrAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printiHcAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printiHkAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printBHMaxAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printHr95Average }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printHr98Average }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printiHciHkAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printBrpaiIaAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printbHcAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ printSquarenessAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIdAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIsAverage }}</td>
+                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIaAverage }}</td>
                         </tr>
 
                         <!-- MAXIMUM ROW -->
                         <tr class="text-center">
                             <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Maximum</th>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHcMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHkMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHMaxMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr95Maximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr98Maximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHciHkMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brpaiIaMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHcMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.squarenessMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIdMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIsMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIaMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printBrMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Maximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Maximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcaxMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsMaximum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMaximum }}</td>
                         </tr>
 
                         <!-- MINIMUM ROW -->
                         <tr class="text-center">
                             <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Minimum</th>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHcMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHkMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHMaxMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr95Minimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr98Minimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHciHkMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brpaiIaMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHcMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.squarenessMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIdMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIsMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIaMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printBrMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printiHcMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printiHkMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printBHMaxMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printHr95Minimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printHr98Minimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printiHciHkMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printbHcaxMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIdMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIsMinimum }}</td>
+                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
-    <div v-for="index in numberOfSet" :key="index">
+        <!-- A4 Layout Box -->
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page p-7">
             <div class="flex flex-col my-6">
-                <button>Set #{{ index }}</button>
                 <div class="flex flex-row">
                     <div class="mb-10 border border-black w-[480px] h-[360px]">
-                        <canvas
-                            :ref="el => nsa_myChartCanvasRefs[index - 1] = el"
-                            width="750"
-                            height="550"
-                            style="transform: scale(1); transform-origin: top left;"
-                        ></canvas>
+                        <canvas ref="myChartCanvas" width="750" height="550" style="transform: scale(1); transform-origin: top left;"></canvas>
                     </div>
                     <div>
                         <!-- Side Content -->
@@ -969,29 +751,26 @@
                                 <p class="font-extrabold">Note:</p>
                                 <p>
                                     SMP Lot (
-                                     <span>{{ pagesData[index - 1]?.massProd ?? 'N/A' }}</span>
+                                    <span>{{ printMassProdName }}</span>
                                     Mass Production )
                                 </p>
                                 <p>
-                                    Furnace Cycle No. : {{ pagesData[index - 1]?.sinteringFurnaceNo  ?? 'N/A' + "-" + pagesData[index - 1]?.sinteringNo ?? 'N/A' }}
+                                    Furnace Cycle No. : {{ printSinteringFurnaceNo + "-" + printSinteringNo }}
                                 </p>
                                 <p>
-                                    <span>{{ pagesData[index - 1]?.actualModel ?? 'N/A' }}</span>
-                                    ( {{ pagesData[index - 1]?.codeNo ?? 'N/A' }} )
+                                    <span>{{ printActualModel }}</span>
+                                    ( {{ printCodeNo }} )
                                 </p>
                                 <p>
-                                    Lot # {{ pagesData[index - 1]?.jhcurveLotNo ?? 'N/A' }}
+                                    Lot # {{ printJhCurveLotno }}
                                 </p>
-                                <div class="text-sm" v-if="nsa_noteReasonForReject.length">
+                                <div class="text-sm" v-if="noteReasonForReject.length">
                                     Remarks Encountered:
                                     <p class="text-[10px] text-red-600 font-extrabold">
-                                        <span>{{ nsa_noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
+                                        <span>{{ noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
                                     </p>
                                 </div>
                                 <span v-else class="text-sm text-gray-500"></span>
-                                <div>
-                                    <p class="mt-2 text-sm text-blue-600">{{ additionalRemarks[index - 1] }}</p>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1000,67 +779,417 @@
                     <table>
                         <thead>
                             <tr class="text-center bg-gray-200">
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Date</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Code&nbsp;No</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Order&nbsp;No</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Type</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">LOT#</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Furnace#</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Coating#</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Zone</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Pass#</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Br</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">iHc</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">iHk</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">BHMax</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Hr95</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Hr98</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">iHkiHc</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Br4pai</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">bHc</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">Squareness</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">4paiId</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">4paiIs</th>
-                                <th class="border border-black px-[2px] py-1 text-[7.5px]">4paiIa</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Date</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Code&nbsp;No</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Order&nbsp;No</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Type</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">LOT#</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Furnace#</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Coating#</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Zone</th>
+                                <th class="border border-black px-[2px] py-1 text-[7px]">Pass#</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Br</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">iHc</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">iHk</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">BHMax</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Hr95</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Hr98</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">iHkiHc</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Br4pai</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">bHc</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">Squareness</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">4paiId</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">4paiIs</th>
+                                <th colspan="2" class="border border-black px-[2px] py-1 text-[7px]">4paiIa</th>
                                 <th class="border border-black px-[2px] py-1 text-[7.5px]">Tracer</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(TPM, tpmIndex) in pagesData[index - 1]?.tableTPM"
-                                :key="tpmIndex" class="text-center whitespace-nowrap text-[10px]"
-                            >
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.date }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.codeNo }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.orderNo }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.type }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.lotNo }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.furnaceNo }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.coatingNo }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.zone }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.passNo }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.Br }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHc }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHk }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.BHMax }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHr95 }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHr98 }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHkiHc }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.Br4pai }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.bHc }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.Squareness }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM["4paiId"] }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM["4paiIs"] }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM["4paiIa"] }}</td>
-                                <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.tracer }}</td>
+                            <tr v-for="item in printTPMData"
+                                                :key="item.id"
+                                                class="text-center whitespace-nowrap text-[10px]">
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.date }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.code_no }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.order_no }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.type }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.press_1 + " " + item.press_2 + " " + item.machine_no }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.sintering_furnace_no }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.furnace_no }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.zone }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.pass_no }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Br }}</td>
+                                <td v-if="item.remark.Br_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHc }}</td>
+                                <td v-if="item.remark.iHc_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHc_remarks == '0' ? '' : item.remark.iHc_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHk }}</td>
+                                <td v-if="item.remark.iHk_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHk_remarks == '0' ? '' : item.remark.iHk_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.BHMax }}</td>
+                                <td v-if="item.remark.BHMax_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.BHMax_remarks == '0' ? '' : item.remark.BHMax_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHr95 }}</td>
+                                <td v-if="item.remark.iHr95_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHr98 }}</td>
+                                <td v-if="item.remark.iHr98_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHr98_remarks == '0' ? '' : item.remark.iHr98_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.iHkiHc }}</td>
+                                <td v-if="item.remark.iHkiHc_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.iHkiHc_remarks == '0' ? '' : item.remark.iHkiHc_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Br4pai }}</td>
+                                <td v-if="item.remark.Br4pai_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.Br4pai_remarks == '0' ? '' : item.remark.Br4pai_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.bHc }}</td>
+                                <td v-if="item.remark.bHc_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.bHc_remarks == '0' ? '' : item.remark.bHc_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Squareness }}</td>
+                                <td v-if="item.remark.Squareness_remarks == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark.Squareness_remarks == '0' ? '' : item.remark.Squareness_remarks }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item["4paiId"] }}</td>
+                                <td v-if="item.remark['4paiId_remarks'] == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark['4paiId_remarks'] == '0' ? '' : item.remark['4paiId_remarks'] }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item["4paiIs"] }}</td>
+                                <td v-if="item.remark['4paiIs_remarks'] == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark['4paiIs_remarks'] == '0' ? '' : item.remark['4paiIs_remarks'] }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item["4paiIa"] }}</td>
+                                <td v-if="item.remark['4paiIa_remarks'] == '1'" class="border border-black px-[2px] py-1 text-[6.5px] text-red-500">E</td>
+                                <td v-else class="border border-black px-[2px] py-py-1 text-[6.5px]">{{ item.remark['4paiIa_remarks'] == '0' ? '' : item.remark['4paiIa_remarks'] }}</td>
+                                <td class="border border-black px-[2px] py-1 text-[6.5px]">{{ item.Tracer }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+        <!-- A4 Layout Box -->
+
+        <div v-for="index in numberOfSet" :key="index">
+            <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
+                <!-- Report Title -->
+                <h1 class="mt-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button>Set #:{{ index }}</button></h1>
+                <div class="flex flex-row items-center justify-center mt-2 mb-5 text-blue-600">
+                    <p class="text-sm">{{ additionalRemarks[index - 1] }}</p>
+                </div>
+                <!-- Information Grid -->
+                <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
+                    <!-- First Column -->
+                    <div class="space-y-1">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Code&nbsp;No:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.codeNo }}
+                            </span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Sintering#:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.sinteringNo }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Second Column -->
+                    <div class="space-y-1">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Type&nbsp;Code:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.typeCode }}
+                            </span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">coating:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.coating }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Third Column -->
+                    <div class="space-y-1">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Judge&nbsp;Code:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.judgeCode }}
+                            </span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Pass#:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.passNo }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Fourth Column -->
+                    <div class="space-y-1">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Press#:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.pressNo }}
+                            </span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Mias.&nbsp;Employee:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.miasEmployee }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Fifth Column -->
+                    <div class="space-y-1">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Sintering&nbsp;Furnace#:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.sinteringFurnaceNo }}
+                            </span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 text-xs font-semibold">Factor&nbsp;Employee:</span>
+                            <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                                {{ pagesData[index-1]?.factoryEmployee }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
+                        <thead>
+                            <tr class="text-center bg-gray-200">
+                                <th class="px-1 py-1 text-xs border border-black">Zone</th>
+                                <th class="px-1 py-1 text-xs border border-black">Br</th>
+                                <th class="px-1 py-1 text-xs border border-black">iHc</th>
+                                <th class="px-1 py-1 text-xs border border-black">iHk</th>
+                                <th class="px-1 py-1 text-xs border border-black">[BH]m</th>
+                                <th class="px-1 py-1 text-xs border border-black">Hr95</th>
+                                <th class="px-1 py-1 text-xs border border-black">Hr98</th>
+                                <th class="px-1 py-1 text-xs border border-black">iHc&#8209;iHk</th>
+                                <th class="px-1 py-1 text-xs border border-black">Br&#960;Ia</th>
+                                <th class="px-1 py-1 text-xs border border-black">bHc</th>
+                                <th class="px-1 py-1 text-xs border border-black">Squareness</th>
+                                <th class="px-1 py-1 text-xs border border-black">4&#960;Id</th>
+                                <th class="px-1 py-1 text-xs border border-black">4&#960;Is</th>
+                                <th class="px-1 py-1 text-xs border border-black">4&#960;Ia</th>
+                                <th class="px-1 py-1 text-xs border border-black">Temperature</th>
+                                <th class="px-1 py-1 text-xs border border-black">Data&nbsp;Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Assume this loop is inside your templating engine's structure, e.g., Vue `v-for` or similar -->
+                            <tr  v-for="(TPM, tpmIndex) in pagesData[index - 1]?.tableTPM"
+                                :key="tpmIndex"
+                                class="text-center whitespace-nowrap text-[10px]"
+                                >
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.zone }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.Br }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHc }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHk }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.BHMax }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHr95 }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHr98 }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.iHkiHc }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.Br4pai }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.bHc }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.Squareness }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM["4paiIa"] }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM["4paiId"] }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM["4paiIs"] }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.temperature }}</td>
+                                <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ TPM.data_status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
+                        <thead>
+                            <tr class="text-center bg-gray-200">
+                                <th class="px-1 py-1 text-xs border border-black"></th>
+                                <th class="px-1 py-1 text-xs border border-black">Br</th>
+                                <th class="px-1 py-1 text-xs border border-black">iHc</th>
+                                <th class="px-1 py-1 text-xs border border-black">iHk</th>
+                                <th class="px-1 py-1 text-xs border border-black">[BH]m</th>
+                                <th class="px-1 py-1 text-xs border border-black">Hr95</th>
+                                <th class="px-1 py-1 text-xs border border-black">Hr98</th>
+                                <th class="px-1 py-1 text-xs border border-black">iHc&#8209;iHk</th>
+                                <th class="px-1 py-1 text-xs border border-black">Br&#960;Ia</th>
+                                <th class="px-1 py-1 text-xs border border-black">bHc</th>
+                                <th class="px-1 py-1 text-xs border border-black">Squareness</th>
+                                <th class="px-1 py-1 text-xs border border-black">4&#960;Id</th>
+                                <th class="px-1 py-1 text-xs border border-black">4&#960;Is</th>
+                                <th class="px-1 py-1 text-xs border border-black">4&#960;Ia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- AVERAGE ROW -->
+                            <tr class="text-center">
+                                <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Average</th>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.brAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHcAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHkAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.bHMaxAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.hr95Average }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.hr98Average }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHciHkAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.brpaiIaAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.bHcAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.squarenessAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.fourpaiIdAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.fourpaiIsAverage }}</td>
+                                <td class="border border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.fourpaiIaAverage }}</td>
+                            </tr>
+
+                            <!-- MAXIMUM ROW -->
+                            <tr class="text-center">
+                                <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Maximum</th>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHcMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHkMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHMaxMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr95Maximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr98Maximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHciHkMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brpaiIaMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHcMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.squarenessMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIdMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIsMaximum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIaMaximum }}</td>
+                            </tr>
+
+                            <!-- MINIMUM ROW -->
+                            <tr class="text-center">
+                                <th class="px-1 py-1 text-xs bg-gray-200 border border-black">Minimum</th>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHcMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHkMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHMaxMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr95Minimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.hr98Minimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHciHkMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brpaiIaMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.bHcMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.squarenessMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIdMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIsMinimum }}</td>
+                                <td class="border border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.fourpaiIaMinimum }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div v-for="index in numberOfSet" :key="index">
+            <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page p-7">
+                <div class="flex flex-col my-6">
+                    <button>Set #{{ index }}</button>
+                    <div class="flex flex-row">
+                        <div class="mb-10 border border-black w-[480px] h-[360px]">
+                            <canvas
+                                :ref="el => nsa_myChartCanvasRefs[index - 1] = el"
+                                width="750"
+                                height="550"
+                                style="transform: scale(1); transform-origin: top left;"
+                            ></canvas>
+                        </div>
+                        <div>
+                            <!-- Side Content -->
+                            <div class="w-[250px] h-[360px] border border-black flex justify-center items-start ml-2 p-4">
+                                <div class="flex flex-col items-start space-y-2">
+                                    <p class="font-extrabold">Note:</p>
+                                    <p>
+                                        SMP Lot (
+                                         <span>{{ pagesData[index - 1]?.massProd ?? 'N/A' }}</span>
+                                        Mass Production )
+                                    </p>
+                                    <p>
+                                        Furnace Cycle No. : {{ pagesData[index - 1]?.sinteringFurnaceNo  ?? 'N/A' + "-" + pagesData[index - 1]?.sinteringNo ?? 'N/A' }}
+                                    </p>
+                                    <p>
+                                        <span>{{ pagesData[index - 1]?.actualModel ?? 'N/A' }}</span>
+                                        ( {{ pagesData[index - 1]?.codeNo ?? 'N/A' }} )
+                                    </p>
+                                    <p>
+                                        Lot # {{ pagesData[index - 1]?.jhcurveLotNo ?? 'N/A' }}
+                                    </p>
+                                    <div class="text-sm" v-if="nsa_noteReasonForReject.length">
+                                        Remarks Encountered:
+                                        <p class="text-[10px] text-red-600 font-extrabold">
+                                            <span>{{ nsa_noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
+                                        </p>
+                                    </div>
+                                    <span v-else class="text-sm text-gray-500"></span>
+                                    <div>
+                                        <p class="mt-2 text-sm text-blue-600">{{ additionalRemarks[index - 1] }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr class="text-center bg-gray-200">
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Date</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Code&nbsp;No</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Order&nbsp;No</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Type</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">LOT#</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Furnace#</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Coating#</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Zone</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Pass#</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Br</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">iHc</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">iHk</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">BHMax</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Hr95</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Hr98</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">iHkiHc</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Br4pai</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">bHc</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Squareness</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">4paiId</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">4paiIs</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">4paiIa</th>
+                                    <th class="border border-black px-[2px] py-1 text-[7.5px]">Tracer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(TPM, tpmIndex) in pagesData[index - 1]?.tableTPM"
+                                    :key="tpmIndex" class="text-center whitespace-nowrap text-[10px]"
+                                >
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.date }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.codeNo }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.orderNo }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.type }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.lotNo }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.furnaceNo }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.coatingNo }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.zone }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.passNo }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.Br }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHc }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHk }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.BHMax }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHr95 }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHr98 }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.iHkiHc }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.Br4pai }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.bHc }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.Squareness }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM["4paiId"] }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM["4paiIs"] }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM["4paiIa"] }}</td>
+                                    <td class="border border-black px-[2px] py-1 text-[7.5px]">{{ TPM.tracer }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -1194,6 +1323,12 @@ const printJhCurveLotno = ref('N/A');
 
 const additionalRemarks = ref([]);
 
+const cpkStandardValue = ref(1.33);
+const printStdDev = ref(0);
+const printCp = ref(0);
+const printCpk = ref(0);
+const printCpkRemarks = ref('N/A');
+
 //variables from models with special judgement
 //from data 1x1x1
 const printCore = ref(0);
@@ -1248,6 +1383,19 @@ const printBH_result = ref(0);
 const printBH_sample = ref("N/A");
 const printBH_remarks = ref("N/A");
 
+//special judgement UI variables
+
+const isTTM_model = ref(false);
+const show1x1x1Data_withoutCorner = ref(false);
+const show1x1x1Data_Corner = ref(false);
+const showVTData = ref(false);
+const showVTData_default = ref(false);
+const showCpkFrom_iHc = ref(false);
+const showGX = ref(false);
+const showBHData = ref(false);
+
+//special judgement UI variables end
+
 
 const standardSampleDimention = computed(() => ({
   'LENGTH (mm)': printLength.value,
@@ -1257,6 +1405,44 @@ const standardSampleDimention = computed(() => ({
   'MPI SAMPLE QTY.': printMPISampleQty.value,
 }));
 
+const checkSpecialJudgement = async () => {
+    //special judgement conditions //used sample model TIC-0755G
+
+    if ((printActualModel.value === "DNS-0A54G" || printActualModel.value === "MIS-0766G" || printActualModel.value === "MIE-0751G") && noteReasonForReject.value.includes('- N.G iHc')) { //VT data MIS-0766G, DNS-0A54G, MIE-0751G
+
+        showVTData.value = true;
+        console.log("showVTData set to:", showVTData.value);
+    }
+
+    //TTM Models conditions
+    if(printActualModel.value.includes("TTM-")) { //ALL TTM models use .includes("TTM-")
+        isTTM_model.value = true;
+        if(noteReasonForReject.value.includes('- N.G iHc')){
+            if(printActualModel.value === "TTM-0A58D" || printActualModel.value === "TTM-0C16D") { //TTM models without corners , TTM-0A58D, TTM-0C16D
+                show1x1x1Data_withoutCorner.value = true;
+            }else{ // with corners
+                show1x1x1Data_withoutCorner.value = true;
+                show1x1x1Data_Corner.value = true;
+            }
+        }
+    }
+
+    if(printActualModel.value === "AAW-0935G" && noteReasonForReject.value.includes('- N.G iHc')){ // AAW-0935G
+        show1x1x1Data_withoutCorner.value = true;
+    }
+
+    if(printActualModel.value === "DNS-0917G" && noteReasonForReject.value.includes('- N.G iHc')){ // DNS-0917G
+        showCpkFrom_iHc.value = true;
+    }
+
+    if(printActualModel.value === "MIE-0983G" && noteReasonForReject.value.includes('- N.G iHc')){ // MIE-0983G
+        showGX.value = true;
+    }
+
+    if(printActualModel.value === "ZFS-0982G" && noteReasonForReject.value.includes('- N.G iHc')){ // ZFS-0982G
+        showBHData.value = true;
+    }
+}
 
 const dataFrom_reportdata = async () => {
     try{
@@ -1299,6 +1485,11 @@ const dataFrom_reportdata = async () => {
         printMaterialGrade.value = rd.material_grade;
         printMPISampleQty.value = rd.mpi_sample_quantity;
         //console.log("StandardSampleDimention array: ",standardSampleDimention.value);
+
+        printStdDev.value = rd.std_dev;
+        printCp.value = rd.cp;
+        printCpk.value = rd.cpk;
+        printCpkRemarks.value = rd.br_cpk_remarks;
 
         //Under Magnetic Property Data
         const mPD = JSON.parse(rd.magnetic_property_data);
@@ -1347,9 +1538,9 @@ const dataFrom_reportdata = async () => {
 
         printVT_iHc.value = dVT.iHc;
         printVT_Temp.value = dVT.temp;
-        printVT_samples.value = dVT.sample;
-        printVT_sampleRemarks.value = dVT.sample_remarks;
-        printVT_iHcResults.value = dVT.iHc_result;
+        printVT_samples.value = Array.isArray(dVT.sample) ? dVT.sample : [];
+        printVT_sampleRemarks.value = Array.isArray(dVT.sample_remarks) ? dVT.sample_remarks : [];
+        printVT_iHcResults.value = Array.isArray(dVT.iHcResult) ? dVT.iHcResult : [];
         printVT_remarks.value = dVT.remarks;
         printVT_sampleQty.value = dVT.sample_qty;
 
@@ -1407,6 +1598,8 @@ const dataFrom_reportdata = async () => {
             checkedByDate: printCheckedBy_date.value,
             approvedByDate: printApprovedBy_date.value
         });*/
+
+        checkSpecialJudgement();
 
     }catch(error){
         console.error("Error on API GET REQUEST-dataFrom_reportdata function",error);
@@ -1807,8 +2000,8 @@ const nsa_dataFrom_tpmData = async () => {
             };
 
             // Check if nsaGeneral exists and parse additional data
-            if (nsaGeneral[0] && nsaGeneral[0][x-1]) {
-                console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral[0][x-1]);
+            if (nsaGeneral[0][x-1].average && nsaGeneral[0][x-1].maximum && nsaGeneral[0][x-1].minimum) {
+                console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral);
 
                 const average = JSON.parse(nsaGeneral[0][x-1].average);
                 const maximum = JSON.parse(nsaGeneral[0][x-1].maximum);
