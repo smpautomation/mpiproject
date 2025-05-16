@@ -265,6 +265,83 @@
                 <!-- Loading Indicator -->
                 <DotsLoader v-if="showCsvLoading" />
                 <div>
+                    <div v-show="showMiasFactorEmp" class="flex flex-col items-center justify-center">
+                        <p class="text-lg font-extrabold text-white animate-pulse">CSV DATA UPLOADED SUCCESSFULLY!</p>
+                        <p class="mt-5 text-white">Please fill in the details before proceeding</p>
+                        <div class="flex flex-row mt-10">
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mias. Employee:</label>
+                                <input
+                                    type="text"
+                                    v-model="nsa_FactorEmp"
+                                    @input="nsa_FactorEmp = nsa_FactorEmp.toUpperCase()"
+                                    placeholder="e.g. Ella"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Factor Employee:</label>
+                                <input
+                                    type="text"
+                                    v-model="nsa_MiasEmp"
+                                    @input="nsa_MiasEmp = nsa_MiasEmp.toUpperCase()"
+                                    placeholder="e.g. Kathryn"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            class="px-4 py-2 mt-12 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                            @click="finishProceed_showConfirmationButton"
+                            >
+                                FINISH
+                        </button>
+                    </div>
+                </div>
+                <div
+                    v-show="finishProceed_showConfirm"
+                    class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
+                    >
+                    <div class="mb-6">
+                        <p class="text-lg font-semibold text-center text-gray-800">Are you sure all information is correct?</p>
+                    </div>
+                    <div class="flex space-x-6">
+                        <button
+                        @click="finishProceed"
+                        class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
+                        >
+                        YES
+                        </button>
+                        <button
+                        @click="finishProceed_cancel"
+                        class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
+                        >
+                        NO
+                        </button>
+                    </div>
+                </div>
+                <div
+                    v-show="showIncompleteInformationError"
+                    class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                    >
+                    <svg
+                        class="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                    <span>All fields are required.</span>
+                </div>
+                <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
                         <button
@@ -428,7 +505,7 @@ Chart.register(...registerables);
 
 // UI Control Variables
 const showSerialNo = ref(true);
-const showUploadSection = ref(true);
+const showMiasFactorEmp = ref(false);
 const showUploadTPMFiles = ref(true);
 const toggleManageForm = ref(true);
 const showUploadData = ref(true);
@@ -448,9 +525,13 @@ const showCsvUpload_confirmation = ref(false);
 const showLoadingForGraphAndTables = ref(false);
 const showNoRemarksError = ref(false);
 const showCsvLoading = ref(false);
-
+const showIncompleteInformationError = ref(false);
+const finishProceed_showConfirm = ref(false);
 
 // UI Control Variables end
+
+const nsa_FactorEmp = ref("");
+const nsa_MiasEmp = ref("");
 
 const saveToDatabase_showConfirm = () => {
         if (!fileData.value || fileData.value.length === 0) {
@@ -570,6 +651,8 @@ const storeFileList = (event) => {
         csv_clearFile();
     }
 
+
+
     const additional_remarks = ref("");
 
  //tpmdata category in database
@@ -659,8 +742,37 @@ const csv_selectedFile = ref(null)
             console.log("Merge failed: ", error);
         } finally {
             showCsvLoading.value = false;
-            showProceed3.value = true;
+            //showProceed3.value = true;
+            showMiasFactorEmp.value = true;
         }
+    }
+
+    const finishProceed = () => {
+        finishProceed_showConfirm.value = false;
+        showProceed3.value = true;
+    }
+
+    const finishProceed_showConfirmationButton = () => {
+        if(nsa_FactorEmp.value == null || nsa_FactorEmp.value == "" ||
+            nsa_MiasEmp.value == null || nsa_MiasEmp.value == ""){
+
+            showIncompleteInformationError.value = true;
+            showMiasFactorEmp.value = false;
+
+            setTimeout(() => {
+                showIncompleteInformationError.value = false;
+                showMiasFactorEmp.value = true;
+            }, 2000);
+            return;
+        }else{
+            showMiasFactorEmp.value = false;
+            finishProceed_showConfirm.value = true;
+        }
+    }
+
+    const finishProceed_cancel = () => {
+        showMiasFactorEmp.value = true;
+        finishProceed_showConfirm.value = false;
     }
 
     //New Furnace , New Layers end
