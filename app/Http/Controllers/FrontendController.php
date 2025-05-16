@@ -60,8 +60,23 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Inspection');
     }
 
-    public function approval(){
-        return Inertia::render('Frontend/Approval');
+    public function approval(Request $request){
+        // Get the real client IP address
+        $xForwardedFor = $request->header('X-Forwarded-For');
+        if ($xForwardedFor) {
+            // The first IP address in the X-Forwarded-For list is the real client IP
+            $ipAddress = explode(',', $xForwardedFor)[0];
+        } else {
+            // Fallback to REMOTE_ADDR if X-Forwarded-For is not present
+            $ipAddress = $request->server('REMOTE_ADDR');
+        }
+
+        // Optionally log it
+        Log::debug('Client IP Address (Approval): ' . $ipAddress);
+
+        return Inertia::render('Frontend/Approval', [
+            'ipAddress' => $ipAddress  // Now passed to Approval.vue
+        ]);
     }
 
     public function settings(){

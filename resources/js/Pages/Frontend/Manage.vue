@@ -8,7 +8,7 @@
             backgroundSize: 'cover'
         }">
         <!-- Overlay -->
-        <div class="absolute inset-0 z-0 bg-black bg-opacity-30"></div>
+        <div class="absolute inset-0 z-0 bg-black bg-opacity-50"></div>
             <div v-show="showStartManageDiv" class="z-10">
                 <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">

@@ -16,7 +16,7 @@ class TxtExportService
     {
 
     }
-    
+
     public function exportData3(string $furnace_no)
     {
         $dateToGet = TpmData::where('furnace_no', $furnace_no)
@@ -34,41 +34,41 @@ class TxtExportService
 
         $firstItem = $tpmData->first();
         $excludeFields = [
-            'id', 
-            'created_at', 
-            'updated_at', 
-            'serial_no', 
-            'x', 
+            'id',
+            'created_at',
+            'updated_at',
+            'serial_no',
+            'x',
             'y',
             'furnace_id',
             'temperature',
             'data_status',
             'order_no',
             'Density',
-            'HRX', 
-            'MRX', 
-            'HRY', 
-            'MRY', 
-            'IHKA', 
-            'MRA', 
-            'IHKB', 
-            'MRB', 
-            'IHKC', 
+            'HRX',
+            'MRX',
+            'HRY',
+            'MRY',
+            'IHKA',
+            'MRA',
+            'IHKB',
+            'MRB',
+            'IHKC',
             'MRC',
             'HR',
             'HRO'
         ];
-        
+
         $baseAttributes = collect($firstItem->getAttributes())
                     ->except($excludeFields)
                     ->keys();
-        $remarkAttributes = $firstItem->remark 
+        $remarkAttributes = $firstItem->remark
             ? collect($firstItem->remark->getAttributes())
-                ->except(['id', 
-                                'created_at', 
-                                'updated_at', 
+                ->except(['id',
+                                'created_at',
+                                'updated_at',
                                 ])
-                ->keys() 
+                ->keys()
             : collect();
 
         $fixedFront = [
@@ -113,7 +113,7 @@ class TxtExportService
             );
             $row[] = $lot_no;
 
-            
+
             foreach ($headers as $column) {
                 if (in_array($column, ['layer_no', 'lot_no'])) {
                     continue; // already added
@@ -131,7 +131,7 @@ class TxtExportService
             // Escape values (commas, newlines)
             $escapedRow = array_map(function ($value) {
                 $value = $this->convertToString($value);
-                $value = str_replace(["\r", "\n"], [' ', ' '], $value); 
+                $value = str_replace(["\r", "\n"], [' ', ' '], $value);
                 return str_contains($value, ',') ? "\"$value\"" : $value;
             }, $row);
 
@@ -147,9 +147,9 @@ class TxtExportService
         File::put($filePath, implode("\n", $lines));
 
         return "Exported successfully to: {$filePath}";
-    
- 
- 
+
+
+
     }
 
     private function convertToString($value)
@@ -164,5 +164,5 @@ class TxtExportService
 
         return (string)$value; // Fallback for strings, numbers, and null
     }
-    
-} 
+
+}

@@ -262,6 +262,8 @@
                         </div>
                     </div>
                 </div>
+                <!-- Loading Indicator -->
+                <DotsLoader v-if="showCsvLoading" />
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
@@ -445,7 +447,7 @@ const showNoCsvFileSelectedError = ref(false);
 const showCsvUpload_confirmation = ref(false);
 const showLoadingForGraphAndTables = ref(false);
 const showNoRemarksError = ref(false);
-
+const showCsvLoading = ref(false);
 
 
 // UI Control Variables end
@@ -590,7 +592,7 @@ const csv_selectedFile = ref(null)
 
     const csv_submitFile = async () => {
     csvUpload.value = false;
-    showProceed3.value = true;
+    showCsvLoading.value = true;
     showCsvUpload_confirmation.value = false;
 
     Papa.parse(csv_selectedFile.value, {
@@ -628,33 +630,36 @@ const csv_selectedFile = ref(null)
     }
 
     const mergeTempToTPM = async () => {
-        try{ //tempDataClass contains the value to be updated
-            const responseTPM = await axios.get("/api/nsadata"); // This is used to find the proper id to update
-            //console.log('API Response MergeTempToTPMDATA:', responseTPM.data.data["NSAData"]);
-//ggggg /*
+        try { // tempDataClass contains the value to be updated
+            const responseTPM = await axios.get("/api/nsadata");
             const nsaData = responseTPM.data.data["NSAData"] || [];
-            //console.log('tpm data: ',nsaData);
-            const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-            //console.log('tpm data filtered by serial: ',nsafilteredData);
-            const nsafilteredData2 = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
-            //console.log('tpm data filtered by set_no and serial: ',nsafilteredData2);
-            const getAllID = nsafilteredData2.map(item => item.id);
-            //console.log('getting all the ids:',getAllID);
 
-            for (let i = 0; i < getAllID.length; i++) {
-                try {
-                    const responseTempWithData = await axios.patch(`/api/nsadataupdate/${getAllID[i]}`, {
-                        temperature: csv_tempWithDataStat.value[i]?.temp || null,
-                        data_status: csv_tempWithDataStat.value[i]?.status || null,
-                        set_name: additional_remarks.value || null
-                    });
-                    //console.log(`Patched ID ${getAllID[i]} with row ${i}:`, responseTempWithData.data);
-                } catch (error) {
-                    console.error(`Error patching ID ${getAllID[i]}:`, error.response?.data || error.message);
-                }
-            }
-        }catch(error){
-            console.log("Merge failed: ",error);
+            const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
+            const nsafilteredData2 = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
+            const getAllID = nsafilteredData2.map(item => item.id);
+
+            // Create array of PATCH promises
+            const patchPromises = getAllID.map((id, i) => {
+            return axios.patch(`/api/nsadataupdate/${id}`, {
+                temperature: csv_tempWithDataStat.value[i]?.temp || null,
+                data_status: csv_tempWithDataStat.value[i]?.status || null,
+                set_name: additional_remarks.value || null
+            }).catch(error => {
+                console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
+                return null; // Continue with others even if one fails
+            });
+            });
+
+            // Wait for all PATCH requests to finish
+            const patchResults = await Promise.all(patchPromises);
+            // Optionally log patchResults or process them if needed
+            console.log('All patch results:', patchResults);
+
+        } catch (error) {
+            console.log("Merge failed: ", error);
+        } finally {
+            showCsvLoading.value = false;
+            showProceed3.value = true;
         }
     }
 
