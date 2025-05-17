@@ -93,11 +93,6 @@
                     {!! $customMessage !!}
                 </div>
             @endif
-            <!-- do be deleted after testing -->
-            <div class="custom-message" style="margin-top: 20px;">
-                <p>test custom message</p>
-            </div>
-            <!-- do be deleted after testing -->
 
             <div class="attachments">
                 <p>📎 Please find the attached PDF file(s) for your reference.</p>
@@ -121,7 +116,7 @@
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
             {{ app(\App\Services\TxtExportService::class)->exportData3('C-33') }}
         </div>
-        
+
     </div>
 </body>
 </html>

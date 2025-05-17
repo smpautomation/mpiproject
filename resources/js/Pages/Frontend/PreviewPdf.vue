@@ -1,7 +1,5 @@
 <template>
-    <div class="mx-auto print-container">
-      <!-- A4 Layout Box -->
-      <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
+    <div ref="pdfContent" id="pdf-content" class="mx-auto print-container">
         <div class="flex flex-row justify-between">
             <button class="px-2 py-1 mt-2 text-white bg-gray-600 rounded-lg" @click="$inertia.visit('/reports')">back</button>
             <button class="px-2 py-1 mt-2 text-black bg-gray-300 rounded-lg">Serial#: {{ printSerialNo }}</button>
@@ -12,6 +10,8 @@
             Print This Report
         </button>
         </div>
+      <!-- A4 Layout Box -->
+      <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
         <!-- Report Title -->
         <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
         <!-- Oven Heating Information -->
@@ -33,19 +33,19 @@
             <div class="space-y-1">
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Oven Machine No:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printOvenMachineNo_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Time Loading:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printTimeLoading }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Temperature:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printTimeLoading_temp }}
                     </span>
                 </div>
@@ -55,19 +55,19 @@
             <div class="space-y-1">
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Date:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printDate_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Time Unloading:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printTimeUnloading }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Temperature:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printTimeUnloading_temp }}
                     </span>
                 </div>
@@ -77,13 +77,13 @@
             <div class="space-y-1">
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Shift:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printShift_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Operator:</span>
-                    <span class="flex-grow inline-block text-sm border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
                         {{ printOperator_ovenInfo }}
                     </span>
                 </div>
@@ -287,24 +287,24 @@
                         </tr>
                         <!-- VT Row 1: Sample + Remarks (Grid layout with 3 columns) -->
                         <tr v-if="showVTData && noteReasonForReject.includes('- N.G iHc')" class="text-center bg-gray-200">
-                        <th colspan="2" class="border border-black px-2 py-1 text-xs whitespace-nowrap bg-gray-200">VT Data</th>
+                        <th colspan="2" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">VT Data</th>
 
-                        <th colspan="3" class="border border-black px-2 py-1 whitespace-nowrap bg-gray-200 text-xs">
+                        <th colspan="3" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">
                             Samples
                         </th>
 
-                        <th class="border border-black px-2 py-1 text-xs whitespace-nowrap bg-gray-200">Remarks</th>
+                        <th class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">Remarks</th>
                         </tr>
 
                         <tr v-if="showVTData && noteReasonForReject.includes('- N.G iHc')" class="text-center">
-                        <td class="border border-black px-2 py-1 text-xs whitespace-nowrap">
+                        <td class="px-2 py-1 text-xs border border-black whitespace-nowrap">
                             {{ printVT_Temp }} <span class="align-baseline">°C</span>
                         </td>
-                        <td class="border border-black px-2 py-1 text-xs whitespace-nowrap">
+                        <td class="px-2 py-1 text-xs border border-black whitespace-nowrap">
                             iHc (kOe) &#8805; {{ printVT_iHc }} (kOe)
                         </td>
-                        <td colspan="3" class="border border-black px-0 py-0 text-xs whitespace-nowrap">
-                            <table class="table-fixed w-full border-collapse">
+                        <td colspan="3" class="px-0 py-0 text-xs border border-black whitespace-nowrap">
+                            <table class="w-full border-collapse table-fixed">
                                 <tr v-for="rowIndex in Math.ceil(printVT_samples.length / 3)" :key="'row-' + rowIndex">
                                 <td
                                     v-for="colIndex in 3"
@@ -324,7 +324,7 @@
                                 </tr>
                             </table>
                         </td>
-                        <td class="border border-black px-2 py-1 text-xs whitespace-nowrap">{{ printVT_remarks }}</td>
+                        <td class="px-2 py-1 text-xs border border-black whitespace-nowrap">{{ printVT_remarks }}</td>
                         </tr>
                         <tr v-show="showCpkFrom_iHc" class="bg-gray-200">
                             <th rowspan="2" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Computation of Cpk from iHc</th>
@@ -411,16 +411,16 @@
                     <div class="relative flex items-center justify-center flex-grow w-full bg-white">
                         <!-- The stamp -->
                         <span
-                            class="absolute w-[100px] h-[100px] items-center flex text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
+                            class="absolute w-[100px] h-[100px] items-center flex flex-col text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
                             :style="{
-                                backgroundImage: printPreparedBy != '' && printPreparedBy != null
-                                    ? 'url(\'/photo/Prepared_by_stamp.png\')'
-                                    : printPreparedBy === 'HOLD'
-                                    ? 'url(\'/photo/cancel.png\')'
-                                    : 'url(\'/photo/cancel.png\')',
+                                backgroundImage: printPreparedBy != null && printPreparedBy !== ''
+                                    ? 'url(\'/photo/template.png\')'
+                                    : 'none',
                                 backgroundSize: 'contain'
                             }">
-                            {{ printPreparedBy_date }}
+                            <span :class="getFontSize(printPreparedBy_firstName)">{{ printPreparedBy_firstName }}</span>
+                            <span class="my-[0px]">{{ printPreparedBy_date }}</span>
+                            <span :class="getFontSize(printPreparedBy_lastName)">{{ printPreparedBy_lastName }}</span>
                         </span>
                     </div>
                 </div>
@@ -434,16 +434,16 @@
                     <div class="relative flex items-center justify-center flex-grow w-full bg-white">
                         <!-- The stamp -->
                         <span
-                            class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
+                            class="absolute w-[100px] h-[100px] items-center flex flex-col text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
                             :style="{
-                                backgroundImage: printCheckedBy != '' && printCheckedBy != null
-                                    ? 'url(\'/photo/Checked_by_stamp.png\')'
-                                    : printCheckedBy === 'HOLD'
-                                    ? 'url(\'/photo/cancel.png\')'
-                                    : 'url(\'/photo/cancel.png\')',
+                                backgroundImage: printCheckedBy != null && printCheckedBy !== ''
+                                    ? 'url(\'/photo/template.png\')'
+                                    : 'none',
                                 backgroundSize: 'contain'
                             }">
-                            {{ printCheckedBy_date }}
+                            <span :class="getFontSize(printCheckedBy_firstName)">{{ printCheckedBy_firstName }}</span>
+                            <span class="my-[0px]">{{ printCheckedBy_date }}</span>
+                            <span :class="getFontSize(printCheckedBy_lastName)">{{ printCheckedBy_lastName }}</span>
                         </span>
                     </div>
                 </div>
@@ -459,11 +459,9 @@
                         <span
                             class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
                             :style="{
-                                backgroundImage: printApprovedBy != '' && printApprovedBy != null
+                                backgroundImage: printApprovedBy != null && printApprovedBy !== ''
                                     ? 'url(\'/photo/Approved_by_stamp.png\')'
-                                    : printApprovedBy === 'HOLD'
-                                    ? 'url(\'/photo/cancel.png\')'
-                                    : 'url(\'/photo/cancel.png\')',
+                                    : 'none',
                                 backgroundSize: 'contain'
                             }">
                             {{ printApprovedBy_date }}
@@ -1196,6 +1194,13 @@
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { Chart, registerables } from 'chart.js'; // Import all required components
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+const printMassProd = ref('')
+const pdfContent = ref(null)
+const success = ref(false)
+
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
 
@@ -1396,6 +1401,25 @@ const showBHData = ref(false);
 
 //special judgement UI variables end
 
+const printPreparedBy_firstName = ref('');
+const printPreparedBy_lastName = ref('');
+const printCheckedBy_firstName = ref('');
+const printCheckedBy_lastName = ref('');
+
+// Method to dynamically adjust font size based on string length
+const getFontSize = (name) => {
+  const length = name.length;
+
+  if (length <= 4) return 'text-[24 px]';         // Very short names
+  if (length === 5) return 'text-[22px]';
+  if (length === 6) return 'text-[18px]';
+  if (length === 7) return 'text-[16px]';
+  if (length === 8) return 'text-[14px]';         // Mid point
+  if (length === 9) return 'text-[12px]';
+  if (length === 10) return 'text-[10px]';
+  if (length === 11) return 'text-[8px]';
+  return 'text-[14px]';                          // 12 or more characters
+};
 
 const standardSampleDimention = computed(() => ({
   'LENGTH (mm)': printLength.value,
@@ -1587,6 +1611,44 @@ const dataFrom_reportdata = async () => {
         printPreparedBy_date.value = rd.prepared_by_date ? rd.prepared_by_date.split(' ')[0] : '';
         printCheckedBy_date.value = rd.checked_by_date ? rd.checked_by_date.split(' ')[0] : '';
         printApprovedBy_date.value = rd.approved_by_date ? rd.approved_by_date.split(' ')[0] : '';
+
+        // Check if printPreparedBy is not empty or null
+        if (printPreparedBy.value && typeof printPreparedBy.value === 'string' && printPreparedBy.value.trim() !== '') {
+            const nameParts_preparedBy = printPreparedBy.value.split(' ');
+
+            // Assign the first and last name
+            printPreparedBy_firstName.value = nameParts_preparedBy[0];
+            printPreparedBy_lastName.value = nameParts_preparedBy.length > 1 ? nameParts_preparedBy.slice(1).join(' ') : '';
+
+            // Log the results
+            console.error("Prepared By First Name: ", printPreparedBy_firstName.value);
+            console.error("Prepared By Last Name: ", printPreparedBy_lastName.value);
+        } else {
+            // Handle the case where printPreparedBy is null, empty, or not a string
+            console.error("printPreparedBy is invalid:", printPreparedBy.value);
+            // You can also assign default values to first and last names if needed
+            printPreparedBy_firstName.value = '';
+            printPreparedBy_lastName.value = '';
+        }
+
+        // Check if printCheckedBy is not empty or null
+        if (printCheckedBy.value && typeof printCheckedBy.value === 'string' && printCheckedBy.value.trim() !== '') {
+            const nameParts_checkedBy = printCheckedBy.value.split(' ');
+
+            // Assign the first and last name
+            printCheckedBy_firstName.value = nameParts_checkedBy[0];
+            printCheckedBy_lastName.value = nameParts_checkedBy.length > 1 ? nameParts_checkedBy.slice(1).join(' ') : '';
+
+            // Log the results
+            console.error("Checked By First Name: ", printCheckedBy_firstName.value);
+            console.error("Checked By Last Name: ", printCheckedBy_lastName.value);
+        } else {
+            // Handle the case where printCheckedBy is null, empty, or not a string
+            console.error("printCheckedBy is invalid:", printCheckedBy.value);
+            // You can also assign default values to first and last names if needed
+            printCheckedBy_firstName.value = '';
+            printCheckedBy_lastName.value = '';
+        }
 
         // Debug output
         /*console.log("SMP Judgement Data:", {
@@ -2187,6 +2249,61 @@ const nsa_renderChart = (setIndex) => {
     });
 };
 
+const exportMultiPagePdf = async () => {
+  try {
+    console.log('[PDF Export] Starting multi-page export...');
+    const pages = document.querySelectorAll('.a4-page');
+    console.log(`[PDF Export] Found ${pages.length} page(s)`);
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    for (let i = 0; i < pages.length; i++) {
+      console.log(`[PDF Export] Processing page ${i + 1}/${pages.length}...`);
+
+      const canvas = await html2canvas(pages[i], {
+        scale: 2, // balance between quality and size
+        useCORS: true,
+        logging: false,
+      });
+
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      console.log(`[PDF Export] Canvas size for page ${i + 1}: ${canvasWidth}x${canvasHeight}`);
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95); // JPEG w/ quality compression
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+      console.log(`[PDF Export] Image height for page ${i + 1}: ${imgHeight.toFixed(2)} mm`);
+
+      if (i > 0) {
+        pdf.addPage();
+        console.log(`[PDF Export] Added new page to PDF`);
+      }
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
+      console.log(`[PDF Export] Image added to PDF page ${i + 1}`);
+    }
+
+    const blob = pdf.output('blob');
+    console.log(`[PDF Export] PDF Blob generated`);
+    console.log(`[PDF Export] Blob size: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
+
+    const formData = new FormData();
+    formData.append('massProd', printMassProdName.value);
+    formData.append('pdf', blob, 'MultiPage_MPI.pdf');
+
+    console.log(`[PDF Export] Uploading PDF to server...`);
+    const response = await axios.post('/upload-pdf', formData);
+    console.log(`[PDF Export] Upload successful. Server response:`, response.data);
+
+    success.value = true;
+  } catch (error) {
+    console.error('[PDF Export] Error during multi-page export:', error);
+    alert('Failed to generate/upload PDF.');
+  }
+};
+
 // Define the prop that will receive the serialParam
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
@@ -2204,6 +2321,7 @@ onMounted( async () => {
     await checkingNSA();
     await nsa_dataFrom_tpmData();
     await nsa_graph();
+    await exportMultiPagePdf();
 });
 </script>
 
@@ -2224,14 +2342,6 @@ onMounted( async () => {
     margin: 0;
     background: white;
   }
-
-  .a4-page {
-    width: 210mm;
-    height: 297mm;
-    page-break-after: always;
-    background: white;
-    overflow: hidden;
-}
 
   .print-container {
     padding: 0;

@@ -15,7 +15,9 @@ use App\Http\Controllers\StandardDataController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TestMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
@@ -102,9 +104,10 @@ Route::post('/send-test-email', function(Request $request){
         'serial' => 'required|alpha_num',
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
+        'massProd' => 'required|string',
     ]);
 
-    $emailList = array_map('trim', explode(',', $validated['emails'])); 
+    $emailList = array_map('trim', explode(',', $validated['emails']));
     $username = 'TestUser';
 
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');

@@ -19,6 +19,7 @@ Route::get('/settings', [FrontendController::class,'settings'])->name('settings'
 Route::get('/data_ins', [FrontendController::class,'data_ins'])->name('data_ins');
 Route::get('/create_pdf', [FrontendController::class,'generatePdf'])->name('create_pdf');
 Route::get('/sec_additional', [FrontendController::class,'sec_additional'])->name('sec_additional');
+Route::get('/email_form', [FrontendController::class,'emailForm'])->name('email');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -38,7 +39,7 @@ Route::middleware('auth')->group(function () {
 //         'message' => 'nullable|string|max:5000',
 //     ]);
 
-//     $emailList = array_map('trim', explode(',', $validated['emails'])); 
+//     $emailList = array_map('trim', explode(',', $validated['emails']));
 //     $username = 'TestUser';
 
 //     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
@@ -46,5 +47,32 @@ Route::middleware('auth')->group(function () {
 //     Mail::to($emailList)->send(new TestMail($username, $validated['serial'], $customMessage));
 //     return 'Test Email Sent';
 // });
+
+Route::post('/upload-pdf', function (Request $request) { //Saves to folder /files/(massprodnumber)
+    $request->validate([
+        'massProd' => 'required|string',
+        'pdf' => 'required|file|mimes:pdf|max:51200' // 50 MB
+    ]);
+
+    $massProd = $request->input('massProd');
+    $file = $request->file('pdf');
+
+    // Define target path inside /public/files/{massProd}
+    $destinationPath = public_path("files/$massProd");
+
+    // Ensure folder exists
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0755, true);
+    }
+
+    // Store the uploaded file
+    $fileName = $file->getClientOriginalName();
+    $file->move($destinationPath, $fileName);
+
+    return response()->json([
+        'message' => 'PDF uploaded successfully.',
+        'path' => "files/$massProd/$fileName"
+    ]);
+});
 
 require __DIR__.'/auth.php';

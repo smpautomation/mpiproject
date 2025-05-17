@@ -10,16 +10,22 @@
         <!-- Overlay -->
         <div class="absolute inset-0 z-0 bg-black bg-opacity-50"></div>
             <div v-show="showStartManageDiv" class="z-10">
-                <div v-show="showCreateExistingFurnaceBtn" class="flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
-                    <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
-                        <span
-                            class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
-                            :style="{
-                            backgroundImage: 'url(\'/photo/manage_logo.png\')',
-                            backgroundSize: '80%'
-                            }"
-                        ></span>
-                        <p class="text-2xl font-bold text-blue-900">MANAGE</p>
+                <div v-show="showCreateExistingFurnaceBtn" class="animate-fade-in-down flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
+                    <div class="flex flex-row items-center justify-between w-full mb-10">
+                        <div class="flex flex-row items-center space-x-4">
+                            <span
+                                class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
+                                style="
+                                    background-image: url('/photo/manage_logo.png');
+                                    background-size: 80%;
+                                "
+                            ></span>
+                            <p class="text-2xl font-bold text-blue-900">MANAGE</p>
+                        </div>
+
+                        <button @click="$inertia.visit('/email_form')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[180px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">
+                            Send Email to SEC
+                        </button>
                     </div>
                     <div class="flex flex-row">
                         <!-- Quick Add Furnace -->
@@ -65,7 +71,7 @@
                     <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-white animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
                     <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-white animate-pulse">No furnace detected in the system. Create one by clicking <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">Quick Add Furnace</span> first.</p>
                 </div>
-                <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
+                <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
                         <span
                             class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
@@ -105,7 +111,7 @@
                         </button>
                     </div>
                 </div>
-                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
+                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
                         <span
                             class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
@@ -144,7 +150,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="z-10 flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg border-4">
+            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="z-10 flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
                 <div class="flex flex-col items-center justify-center space-x-4 text-lg font-extrabold text-white align-middle">
                     <p>Currently selected: </p>
                     <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
@@ -156,7 +162,7 @@
                     Cancel
                 </button>
             </div>
-            <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
+            <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
                 <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold text-white">Serial: {{ serialNo }}</p>
                 <div v-if="showGraphAndTables" class="mt-[100px]">
 
@@ -455,6 +461,28 @@
                                     v-model="jhCurveLotNo"
                                     @input="jhCurveLotNo = jhCurveLotNo.toUpperCase()"
                                     placeholder="e.g. 100/101-1"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                        <div class="flex flex-row">
+                            <div class="flex flex-col items-start justify-start">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Box no.:</label>
+                                <input
+                                    type="text"
+                                    v-model="massProd_boxNo"
+                                    @input="massProd_boxNo = massProd_boxNo.toUpperCase()"
+                                    placeholder="e.g. UBP8 5071"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">WT:</label>
+                                <input
+                                    type="text"
+                                    v-model="massProd_WT"
+                                    @input="massProd_WT = massProd_WT.toUpperCase()"
+                                    placeholder="e.g. 15.23"
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
@@ -779,6 +807,7 @@
     import Frontend from '@/Layouts/FrontendLayout.vue';
     import { ref, computed, onMounted, nextTick } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
+    import { Inertia } from '@inertiajs/inertia';
     import Papa from 'papaparse';
     import axios from 'axios';
     import DotsLoader from '@/Components/DotsLoader.vue';
@@ -1904,6 +1933,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     "Br4pai_remarks": saveBr4paiRemarks.value,
                     "iHr95_remarks": saveIHr95Remarks.value,
                     "iHr98_remarks": saveIHr98Remarks.value,
+                    "box_no": massProd_boxNo.value,
+                    "wt": massProd_WT.value,
                 };
                 //console.log("Layer Data:", layerData);
 
@@ -2016,6 +2047,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     // Variables for aggregate end
 
+    const massProd_boxNo = ref("");
+    const massProd_WT = ref(0);
 
     // Function to fetch data from the API
     const showAllData = async () => {
@@ -2623,3 +2656,23 @@ const renderChart = () => {
 
 
   </script>
+
+<style scoped>
+
+@keyframes fade-in-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-1.75rem);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    }
+
+.animate-fade-in-down {
+    animation: fade-in-down 1s ease-out forwards;
+}
+
+
+</style>

@@ -17,6 +17,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/ViewList');
     }
 
+    public function emailForm(){
+        return Inertia::render('Frontend/Email');
+    }
+
     public function manage(Request $request) {
         // Capture the manageSerialParam query parameter from the URL
         $manageSerialParam = $request->query('manageSerialParam'); // Use $request->query() to get the value

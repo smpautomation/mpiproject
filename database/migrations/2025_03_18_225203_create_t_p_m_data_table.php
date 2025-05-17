@@ -63,6 +63,8 @@ return new class extends Migration
                     ->onUpdate('cascade');
             $table->float('temperature')->nullable();
             $table->string('data_status')->nullable();
+            $table->string('box_no')->nullable();
+            $table->float('wt')->nullable();
         });
 
         Schema::create('tpm_data_remarks', function (Blueprint $table) {

@@ -65,6 +65,8 @@ return new class extends Migration
                     ->onUpdate('cascade');
             $table->float('temperature')->nullable();
             $table->string('data_status')->nullable();
+            $table->string('factor_emp')->nullable();
+            $table->string('mias_emp')->nullable();
         });
 
         Schema::create('nsa_remarks', function (Blueprint $table) {
