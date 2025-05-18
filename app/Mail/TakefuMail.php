@@ -10,18 +10,15 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
-class TestMail extends Mailable
+class TakefuMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public string $username;
-    public string $serial;
+    public string $massPro;
     protected $customMessage;
 
-    public function __construct(string $username, string $serial, $customMessage = '')
+    public function __construct(string $massPro, $customMessage = '')
     {
-        $this->username = $username;
-        $this->serial = preg_replace('/[^A-Za-z0-9_\-]/', '', $serial);
+        $this->massPro = $massPro;
         $this->customMessage = $customMessage;
     }
 
@@ -31,7 +28,7 @@ class TestMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Test Mail',
+            subject: $this->massPro . 'Mass Production',
         );
     }
 
@@ -43,7 +40,8 @@ class TestMail extends Mailable
         return new Content(
             view: 'emails.test',
             with: [
-                'username' => $this->username
+                'massPro' => $this->massPro,
+                'customMessage' => $this->customMessage
             ]
         );
     }
@@ -63,10 +61,9 @@ class TestMail extends Mailable
         //need to sanitize the serial number.
 
         $mail = $this->view('emails.test', [
-            'username' => $this->username,
             'customMessage' => $this->customMessage
             ])->subject('Test Mail');
-        $directory = "public/files/{$this->serial}";
+        $directory = "public/files/{$this->massPro}";
         if (!Storage::exists($directory)) {
             //throw new \RuntimeException("The folder for serial number {$this->serial} does not exist.");
         }

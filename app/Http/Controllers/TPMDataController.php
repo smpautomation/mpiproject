@@ -14,6 +14,7 @@ use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\StandardData;
+use App\Models\TPMBoxes;
 use App\Models\TPMDataCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
@@ -245,6 +246,22 @@ class TPMDataController extends Controller
                 }
             }
 
+            $checkTpmBoxes = TPMBoxes::where('tpm_data_serial', $tpmData->serial_no)->exists();
+            if(!$checkTpmBoxes){
+                try{
+                    foreach (range('A', 'K') as $letter){
+                        $tpmBoxesInputs = [
+                        'tpm_data_serial' => $tpmData->serial_no,
+                        'box_letter' => $letter
+                        ];
+                        $TPMBoxes = TPMBoxes::create($tpmBoxesInputs);
+                    }
+                    
+                }catch(\Exception $e){
+
+                }
+            }
+
 
             $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
             if(!$checkReportData){
@@ -326,6 +343,7 @@ class TPMDataController extends Controller
                     $remark,
                     $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
                     $checkTpmDataCategory ?? $tpmDataCategory,
+                    $checkTpmBoxes ?? $TPMBoxes,
                     $checkReportData ?? $reportData,
                     $checkStandardData ?? $standardData,
                     $checkDataInstructions ?? $dataInstructions,
@@ -501,6 +519,34 @@ class TPMDataController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Error updating Category',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function updateBoxes(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $boxes = TPMBoxes::where('tpm_data_serial',$id)
+                                ->where('box_letter', $request->input('box_letter'))
+                                ->first();
+            $boxesFields = $request->all();
+            $boxes->update($boxesFields);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Boxes updated successfully',
+                'data' => $boxes
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Error updating Boxes',
                 'error' => $e->getMessage(),
             ], 500);
         }

@@ -27,6 +27,10 @@ class TPMData extends Model
     {
         return $this->hasOne(TPMDataCategory::class, 'tpm_data_serial', 'serial_no');
     }
+    public function boxes()
+    {
+        return $this->hasOne(TPMBoxes::class, 'tpm_data_serial', 'serial_no');
+    }
     public function reportData()
     {
         return $this->hasOne(ReportData::class, 'tpm_data_serial', 'serial_no');

@@ -13,7 +13,8 @@ use App\Http\Controllers\MieGxDataInstructionsAggregateController;
 use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
 use Illuminate\Support\Facades\Route;
-use App\Mail\TestMail;
+use App\Mail\TakefuMail;
+use App\Mail\RouteMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData'])
 Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
 Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
 Route::patch('/updatecategory/{id}', [TPMDataController::class, 'updateCategory']);
+Route::patch('/updateboxes/{id}', [TPMDataController::class, 'updateBoxes']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
 
 Route::get('/reportdata', [ReportDataController::class, 'index']);
@@ -101,18 +103,16 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 Route::post('/send-test-email', function(Request $request){
 
     $validated = $request->validate([
-        'serial' => 'required|alpha_num',
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
-        'massProd' => 'required|string',
+        'mass_pro' => 'required|string'
     ]);
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
-    $username = 'TestUser';
 
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
 
-    Mail::to($emailList)->send(new TestMail($username, $validated['serial'], $customMessage));
+    Mail::to($emailList)->send(new TakefuMail($validated['mass_pro'], $customMessage));
     return 'Test Email Sent';
 });
 
@@ -121,4 +121,25 @@ Route::get('/test-email', function () {
         'username' => 'PreviewUser',
         'message' => 'customMessage'
     ]);
+});
+
+Route::post('/route-email', function (Request $request) {
+    // return view('emails.route-email', [
+    //     'username' => 'User',
+    //     'serial' => [
+    //         'serial1',
+    //         'serial2',
+    //         'serial3'
+    //     ],
+    //     'message' => 'customMessage'
+    // ]);
+    $validated = $request->validate([
+        'serial' => 'required|array',
+        'emails' => 'required|string'
+    ]);
+
+
+    $emailList = array_map('trim', explode(',', $validated['emails']));
+    Mail::to($emailList)->send(new RouteMail($validated['username'], $validated['serial']));
+    return redirect()->route('approval')->with('success', 'Emails sent successfully!');
 });
