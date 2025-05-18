@@ -530,7 +530,7 @@ class TPMDataController extends Controller
         DB::beginTransaction();
         try {
             $boxes = TPMBoxes::where('tpm_data_serial',$id)
-                                ->where('box_letter', $request->input('box_letter'))
+                                ->where('box')
                                 ->first();
             $boxesFields = $request->all();
             $boxes->update($boxesFields);
@@ -548,6 +548,30 @@ class TPMDataController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Error updating Boxes',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    public function showBoxes($id){
+        try{
+            $boxes = TPMBoxes::where('tpm_data_serial',$id)
+                                ->get();
+            if($boxes->isEmpty()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No boxes found for this serial number.'
+                ], 404);
+            }else{
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Boxes found successfully',
+                    'data' => $boxes
+                ], 200);
+            }
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => 'Error retrieving boxes',
                 'error' => $e->getMessage(),
             ], 500);
         }
