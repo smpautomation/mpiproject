@@ -81,7 +81,7 @@
         <div class="header">
             {{-- Company Logo --}}
             <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
-            <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo">
+            {{-- <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo"> --}}
             <h1>Hello, {{ $username }}!</h1>
         </div>
 

@@ -128,6 +128,22 @@ return new class extends Migration
             $table->string('mias_emp')->nullable();
             $table->string('factor_emp')->nullable();
         });
+
+        Schema::create('tpm_boxes', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->unsignedBigInteger('tpm_data_serial')->index();
+            $table->foreign('tpm_data_serial')
+                    ->references('serial_no')
+                    ->on('tpm_data')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $table->integer('layer_no')->nullable();
+            $table->string('box_letter')->index()->nullable();
+            $table->integer('quantity')->nullable();
+            $table->float('weight')->nullable();
+            $table->string('box_no')->nullable();
+        });
     }
 
     /**
@@ -139,5 +155,6 @@ return new class extends Migration
         Schema::dropIfExists('tpm_data_remarks');
         Schema::dropIfExists('tpm_data_aggregate_functions');
         Schema::dropIfExists('tpm_data_category');
+        Schema::dropIfExists('tpm_boxes');
     }
 };
