@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TestMail;
@@ -74,5 +75,9 @@ Route::post('/upload-pdf', function (Request $request) { //Saves to folder /file
         'path' => "files/$massProd/$fileName"
     ]);
 });
+
+Route::get('/export-data1/{furnace_no}', [ExportController::class, 'exportData1'])->name('exportData1');
+Route::get('/export-data3/{furnace_no}', [ExportController::class, 'exportData3'])->name('exportData3');
+Route::view('/test-export', 'test');
 
 require __DIR__.'/auth.php';

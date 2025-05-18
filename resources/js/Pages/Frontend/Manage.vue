@@ -419,6 +419,7 @@
                         </div>
                     </div>
                 </div>
+                <DotsLoader v-show="showCsvLoading" />
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
@@ -465,7 +466,73 @@
                                 />
                             </div>
                         </div>
+                        <button
+                            class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                            @click="proceedToFinal_showConfirm"
+                            >
+                                Submit
+                        </button>
+                    </div>
+
+                    <div
+                    v-show="showProceed2_confirmation"
+                    class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
+                    >
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure all information is correct?</p>
+                        </div>
+                        <div class="flex space-x-6">
+                            <button
+                            @click="proceedToFinal"
+                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
+                            >
+                            YES
+                            </button>
+                            <button
+                            @click="proceedToFinal_cancel"
+                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
+                            >
+                            NO
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        v-show="showIncompleteInformationError"
+                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
+                        >
+                        <svg
+                            class="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                        <span>All fields are required.</span>
+                    </div>
+                </div>
+                <div>
+                    <div v-show="showProceed2_massprod" class="flex flex-col items-center justify-center">
+                        <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
+                        <p class="mt-5 text-white">Please fill in the details for mass production control sheet before proceeding</p>
                         <div class="flex flex-row">
+                            <span class="my-4">BOX {{ massProd_letter }}</span>
+                            <div class="flex flex-col items-start justify-start">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Quantity:</label>
+                                <input
+                                    type="number"
+                                    v-model="massProd_qty"
+                                    placeholder="e.g. K40 541st"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
                             <div class="flex flex-col items-start justify-start">
                                 <label class="mt-5 mb-1 text-sm font-extrabold text-white">Box no.:</label>
                                 <input
@@ -479,7 +546,7 @@
                             <div class="flex flex-col items-start justify-start ml-5">
                                 <label class="mt-5 mb-1 text-sm font-extrabold text-white">WT:</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     v-model="massProd_WT"
                                     @input="massProd_WT = massProd_WT.toUpperCase()"
                                     placeholder="e.g. 15.23"
@@ -538,9 +605,6 @@
                         </svg>
                         <span>All fields are required.</span>
                     </div>
-
-                    <DotsLoader v-show="showCsvLoading" />
-
                 </div>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
@@ -825,6 +889,7 @@
     const showProceed1 = ref(false);
     const showProceed2 = ref(false);
     const showProceed3 = ref(false);
+    const showProceed2_massprod = ref(false);
     const csvUpload = ref(false);
     const showAddNewDataLayer = ref(false);
     const showAddNewLayer = ref(false);
@@ -953,36 +1018,14 @@
         }catch(error){
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
-                /*
+    }
+
+    const saveToTpmBoxes = async () => {
         try{
-            const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
-            console.log('API Response showallData:', response.data);
-            const tpm_category_id = response.data.data.map(item => item.category?.id ?? null);
-            const category_id = tpm_category_id[0];
-            console.log('Show tpm category ID: ',category_id);
-            console.log('Actual model: ',jhCurveActualModel.value);
-            console.log('factor employee: ',propData_factorEmp.value);
-            console.log('mias employee: ',propData_miasEmp.value);
-            console.log('mass prod name: ',jhCurveMassProdName.value);
-            console.log('jh curve lot no: ',jhCurveLotNo.value);
-            try{
-                const responsePatchCategory = await axios.patch(`/api/updatecategory/${category_id}`,{
-                    actual_model: jhCurveActualModel.value,
-                    factor_emp: propData_factorEmp.value,
-                    jhcurve_lotno: jhCurveLotNo.value,
-                    mias_emp: propData_miasEmp.value,
-                    massprod_name: jhCurveMassProdName.value,
-                });
-                console.log("API PATCHED category: ",responsePatchCategory);
-            }catch(error){
-                console.error("Error patching API responsePatchCategory:", error);
-            }
+
         }catch(error){
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
-            */
-
-
     }
 
     const isLoadingForAddFurnaces = ref(false); // Initialize loading state
@@ -1933,8 +1976,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     "Br4pai_remarks": saveBr4paiRemarks.value,
                     "iHr95_remarks": saveIHr95Remarks.value,
                     "iHr98_remarks": saveIHr98Remarks.value,
-                    "box_no": massProd_boxNo.value,
-                    "wt": massProd_WT.value,
                 };
                 //console.log("Layer Data:", layerData);
 
@@ -2049,6 +2090,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     const massProd_boxNo = ref("");
     const massProd_WT = ref(0);
+    const massProd_letter = ref("");
+    const massProd_qty = ref(0);
 
     // Function to fetch data from the API
     const showAllData = async () => {

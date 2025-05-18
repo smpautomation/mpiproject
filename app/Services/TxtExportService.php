@@ -7,9 +7,90 @@ use Illuminate\Support\Facades\File;
 
 class TxtExportService
 {
-    public function exportData1(string $data)
+    public function exportData1(string $furnace_no)
     {
+        $dateToGet = TpmData::where('furnace_no', $furnace_no)
+            ->orderBy('date', 'desc')
+            ->value('date');
 
+        $tpmData = TpmData::with('category')
+            ->where('furnace_no', $furnace_no)
+            ->where('date', $dateToGet)
+            ->get();
+
+        if ($tpmData->isEmpty()) {
+            return 'No data found.';
+        }
+
+        $labelToAttribute = [
+            'LAYER' => 'layer_no',
+            'AREA' => 'area',
+            'MODEL_NAME' => 'model_name',
+            'COATING_MC_NO' => 'coating_mc_no',
+            'LOT_NO' => 'lot_no',
+            'QTY' => 'qty',
+            'COATING' => 'coating',
+            'WT' => 'wt',
+            'BOX_NO' => 'box_no',
+            'MODEL_CODE' => 'model_code',
+            'RAW_MATERIAL_CODE' => 'raw_material_code'
+        ];
+
+        // Use labels as headers
+        $headers = array_keys($labelToAttribute);
+
+        // Start file lines with headers
+        $lines = [];
+        $lines[] = implode(',', $headers);
+
+        foreach ($tpmData as $item) {
+            $category = $item->category;
+            //$category = $item->category;
+            dd($category);
+            $row = [];
+
+            $row[] = $this->convertToString($item->layer_no);
+            $lot_no = trim(
+                ($item->press_1 ?? '') . ' ' .
+                ($item->press_2 ?? '') . ' ' .
+                ($item->machine_no ?? '')
+            );
+            $row[] = $lot_no;
+
+
+            foreach ($headers as $column) {
+                if (in_array($column, ['LAYER', 'AREA'])) {
+                    continue; // already added
+                }
+
+                if (isset($item->$column)) {
+                    $row[] = $this->convertToString($item->{$column} ?? '0');
+                } elseif ($category  && property_exists($category , $column)) {
+                    $row[] = $this->convertToString($category ->{$column} ?? '0');
+                } else {
+                    $row[] = '0';
+                }
+            }
+
+            // Escape values (commas, newlines)
+            $escapedRow = array_map(function ($value) {
+                $value = $this->convertToString($value);
+                $value = str_replace(["\r", "\n"], [' ', ' '], $value);
+                return str_contains($value, ',') ? "\"$value\"" : $value;
+            }, $row);
+
+            $lines[] = implode(',', $escapedRow);
+        }
+
+        $directory = public_path("files/{$furnace_no}");
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        $filePath = "{$directory}/Data1.txt";
+        File::put($filePath, implode("\n", $lines));
+
+        return "Exported successfully to: {$filePath}";
     }
 
     public function exportData2(string $furnace_no)
@@ -137,6 +218,7 @@ class TxtExportService
 
             $lines[] = implode(',', $escapedRow);
         }
+        dd($escapedRow);
 
         $directory = public_path("files/{$furnace_no}");
         if (!File::exists($directory)) {
