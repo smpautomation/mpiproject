@@ -13,7 +13,7 @@ class TxtExportService
             ->orderBy('date', 'desc')
             ->value('date');
 
-        $tpmData = TpmData::with('category')
+        $tpmData = TpmData::with('category','tpmboxes')
             ->where('furnace_no', $furnace_no)
             ->where('date', $dateToGet)
             ->get();

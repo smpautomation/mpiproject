@@ -520,20 +520,23 @@
                 </div>
                 <div>
                     <div v-show="showProceed2_massprod" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
-                        <p class="mt-5 text-white">Please fill in the details for mass production control sheet before proceeding</p>
+                        <p class="mb-8 text-lg font-extrabold text-white animate-pulse">Please fill in the details for <span class="text-xl text-green-200">Mass Production Control Sheet</span> before proceeding</p>
                         <div class="flex flex-row">
-                            <span class="my-4">BOX {{ massProd_letter }}</span>
+                            <span class="px-2 my-2 text-lg font-extrabold text-white rounded-lg bg-gradient-to-br from-cyan-300/30 to-green-800/10 backdrop-blur-lg">Box: <span class="text-cyan-300">{{ massProd_letter[currentBoxIndex] }}</span></span>
+                            <span class="my-2 text-lg font-extrabold text-white ml-[200px] ">Current Layer: {{ currentLayerNo }}</span>
+
+                        </div>
+                        <div class="flex flex-row">
                             <div class="flex flex-col items-start justify-start">
                                 <label class="mt-5 mb-1 text-sm font-extrabold text-white">Quantity:</label>
                                 <input
                                     type="number"
                                     v-model="massProd_qty"
-                                    placeholder="e.g. K40 541st"
+                                    placeholder="e.g. 1600"
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
-                            <div class="flex flex-col items-start justify-start">
+                            <div class="flex flex-col items-start justify-start ml-5">
                                 <label class="mt-5 mb-1 text-sm font-extrabold text-white">Box no.:</label>
                                 <input
                                     type="text"
@@ -548,22 +551,38 @@
                                 <input
                                     type="number"
                                     v-model="massProd_WT"
-                                    @input="massProd_WT = massProd_WT.toUpperCase()"
                                     placeholder="e.g. 15.23"
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Coating:</label>
+                                <input
+                                    type="number"
+                                    v-model="massProd_coating"
+                                    placeholder="e.g. 4"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
                         </div>
-                        <button
-                            class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="proceedToFinal_showConfirm"
-                            >
-                                Submit
-                        </button>
+                        <div class="flex flex-row">
+                            <button
+                                class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-300 active:scale-95"
+                                @click="revert_boxLetter"
+                                >
+                                    Redo Previous
+                            </button>
+                            <button
+                                class="px-4 py-2 mt-10 ml-5 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                                @click="saveToTpmBoxes"
+                                >
+                                    Next
+                            </button>
+                        </div>
                     </div>
 
                     <div
-                    v-show="showProceed2_confirmation"
+                    v-show="showProceed2_massprod_confirmation"
                     class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
                     >
                         <div class="mb-6">
@@ -571,39 +590,18 @@
                         </div>
                         <div class="flex space-x-6">
                             <button
-                            @click="proceedToFinal"
+                            @click="proceedNextToGraph"
                             class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
                             >
                             YES
                             </button>
                             <button
-                            @click="proceedToFinal_cancel"
+                            @click="proceedNextToGraph_cancel"
                             class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
                             >
                             NO
                             </button>
                         </div>
-                    </div>
-
-                    <div
-                        v-show="showIncompleteInformationError"
-                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
-                        >
-                        <svg
-                            class="w-5 h-5 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                        <span>All fields are required.</span>
                     </div>
                 </div>
                 <div>
@@ -913,6 +911,7 @@
     const showProceed2_confirmation = ref(false);
     const showIncompleteInformationError = ref(false);
     const showCsvLoading = ref(false);
+    const showProceed2_massprod_confirmation = ref(false);
 
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
@@ -994,7 +993,7 @@
     }
 
     const proceedToFinal = () => {
-        showProceed3.value = true;
+        showProceed2_massprod.value = true;
         showProceed2.value = false;
         showProceed2_confirmation.value = false;
         saveToTpmCategory();
@@ -1004,6 +1003,28 @@
         showProceed2_confirmation.value = false;
         showProceed2.value = true;
     }
+
+    const proceedNextToGraph_confirmation = () => {
+        showProceed2_massprod_confirmation.value = true;
+        showProceed2_massprod.value = false;
+    }
+
+    const proceedNextToGraph = () => {
+        currentBoxIndex.value = 0;
+        showProceed2_massprod_confirmation.value = false;
+        showProceed3.value = true;
+    }
+
+    const proceedNextToGraph_cancel = () => {
+        currentBoxIndex.value = massProd_letter.value.length - 1;
+        showProceed2_massprod_confirmation.value = false;
+        showProceed2_massprod.value = true;
+    }
+
+    const revert_boxLetter = () => {
+        currentBoxIndex.value --;
+    }
+
 
     const saveToTpmCategory = async () => {
         try{
@@ -1021,12 +1042,33 @@
     }
 
     const saveToTpmBoxes = async () => {
-        try{
+        try {
+            const responseTpmBoxes = await axios.patch(`/api/updateboxes/${serialNo.value}`, {
+                layer_no: currentLayerNo.value,
+                box_letter: massProd_letter.value[currentBoxIndex.value],
+                quantity: massProd_qty.value,
+                weight: massProd_WT.value,
+                coating: massProd_coating.value,
+                box_no: massProd_boxNo.value,
+            });
+            console.log("TPM Boxes: ", responseTpmBoxes.data);
 
-        }catch(error){
+            // Step 1: Reset fields after saving
+            massProd_qty.value = '';
+            massProd_WT.value = '';
+            massProd_boxNo.value = '';
+            massProd_coating.value = '';
+
+            // Step 2: Advance box letter or trigger final step
+            if (currentBoxIndex.value < massProd_letter.value.length - 1) {
+                currentBoxIndex.value++;
+            } else {
+                proceedNextToGraph_confirmation(); // Call next step function
+            }
+        } catch (error) {
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
-    }
+    };
 
     const isLoadingForAddFurnaces = ref(false); // Initialize loading state
 
@@ -2089,9 +2131,11 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     // Variables for aggregate end
 
     const massProd_boxNo = ref("");
-    const massProd_WT = ref(0);
-    const massProd_letter = ref("");
-    const massProd_qty = ref(0);
+    const massProd_WT = ref();
+    const massProd_coating = ref();
+    const massProd_letter = ref(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']);
+    const currentBoxIndex = ref(0);
+    const massProd_qty = ref();
 
     // Function to fetch data from the API
     const showAllData = async () => {
@@ -2678,8 +2722,8 @@ const renderChart = () => {
 
     // onMounted logic to call the function based on serialParam existence
     onMounted(() => {
-    // Log the value to check if it's being passed correctly
-    console.log('Serial Param in Manage.vue:', props.manageSerialParam);
+        // Log the value to check if it's being passed correctly
+        console.log('Serial Param in Manage.vue:', props.manageSerialParam);
     showLoadingForGraphAndTables
     if (props.manageSerialParam) {
         showStartManageDiv.value = false;

@@ -127,8 +127,6 @@ return new class extends Migration
             $table->string('jhcurve_lotno')->nullable();
             $table->string('mias_emp')->nullable();
             $table->string('factor_emp')->nullable();
-            $table->string('box_no')->nullable();
-            $table->float('wt')->nullable();
         });
 
         Schema::create('tpm_boxes', function (Blueprint $table) {
@@ -145,6 +143,7 @@ return new class extends Migration
             $table->integer('quantity')->nullable();
             $table->float('weight')->nullable();
             $table->string('box_no')->nullable();
+            $table->integer('coating')->nullable();
         });
     }
 

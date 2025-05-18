@@ -105,7 +105,8 @@ Route::post('/send-test-email', function(Request $request){
     $validated = $request->validate([
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
-        'mass_pro' => 'required|string'
+        'mass_pro' => 'required|string',
+        'massProd' => 'required|string',
     ]);
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
@@ -121,25 +122,4 @@ Route::get('/test-email', function () {
         'username' => 'PreviewUser',
         'message' => 'customMessage'
     ]);
-});
-
-Route::post('/route-email', function (Request $request) {
-    // return view('emails.route-email', [
-    //     'username' => 'User',
-    //     'serial' => [
-    //         'serial1',
-    //         'serial2',
-    //         'serial3'
-    //     ],
-    //     'message' => 'customMessage'
-    // ]);
-    $validated = $request->validate([
-        'serial' => 'required|array',
-        'emails' => 'required|string'
-    ]);
-
-
-    $emailList = array_map('trim', explode(',', $validated['emails']));
-    Mail::to($emailList)->send(new RouteMail($validated['username'], $validated['serial']));
-    return redirect()->route('approval')->with('success', 'Emails sent successfully!');
 });
