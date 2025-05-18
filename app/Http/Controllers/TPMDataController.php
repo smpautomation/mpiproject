@@ -529,7 +529,7 @@ class TPMDataController extends Controller
         DB::beginTransaction();
         try {
             $boxes = TPMBoxes::where('tpm_data_serial',$id)
-                                ->where('box')
+                                ->where('box_letter', $request->input('box_letter'))
                                 ->first();
             $boxesFields = $request->all();
             $boxes->update($boxesFields);
