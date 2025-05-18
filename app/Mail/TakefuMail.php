@@ -65,21 +65,21 @@ class TakefuMail extends Mailable
             ])->subject('Test Mail');
         $directory = "public/files/{$this->massPro}";
         if (!Storage::exists($directory)) {
-            //throw new \RuntimeException("The folder for serial number {$this->serial} does not exist.");
+            throw new \RuntimeException("The folder for this {$this->massPro} does not exist.");
         }
         $files = Storage::files($directory);
         $pdfFilesAttached = 0;
 
         foreach ($files as $file) {
             // Attach only PDF files securely
-            if (str_ends_with(strtolower($file), '.pdf')) {
+            if (str_ends_with(strtolower($file), '.pdf') || str_ends_with(strtolower($file), '.txt')) {
                 $mail->attach(Storage::path($file));
                 $pdfFilesAttached++;
             }
         }
         // Optionally throw an error or skip sending if no PDFs found
         if ($pdfFilesAttached === 0) {
-            //throw new \RuntimeException("No PDF files found in the folder for serial number {$this->serial}.");
+            throw new \RuntimeException("No PDF files found in the folder for this {$this->massPro}.");
         }
         return $mail;
     }
