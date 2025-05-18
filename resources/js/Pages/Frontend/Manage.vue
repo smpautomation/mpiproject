@@ -555,11 +555,23 @@
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
+                        </div>
+                        <div class="flex flex-row">
                             <div class="flex flex-col items-start justify-start ml-5">
                                 <label class="mt-5 mb-1 text-sm font-extrabold text-white">Coating:</label>
                                 <input
                                     type="number"
                                     v-model="massProd_coating"
+                                    placeholder="e.g. 4"
+                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div class="flex flex-col items-start justify-start ml-5">
+                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Raw Material Code:</label>
+                                <input
+                                    type="text"
+                                    v-model="massProd_rawMatCode"
+                                    @input="massProd_rawMatCode = massProd_rawMatCode.toUpperCase()"
                                     placeholder="e.g. 4"
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
@@ -1022,7 +1034,9 @@
     }
 
     const revert_boxLetter = () => {
-        currentBoxIndex.value --;
+       if (currentBoxIndex.value > 0) {
+            currentBoxIndex.value--;
+        }
     }
 
 
@@ -1050,6 +1064,7 @@
                 weight: massProd_WT.value,
                 coating: massProd_coating.value,
                 box_no: massProd_boxNo.value,
+                raw_mat_code: massProd_rawMatCode.value,
             });
             console.log("TPM Boxes: ", responseTpmBoxes.data);
 
@@ -1058,6 +1073,7 @@
             massProd_WT.value = '';
             massProd_boxNo.value = '';
             massProd_coating.value = '';
+            massProd_rawMatCode.value = '';
 
             // Step 2: Advance box letter or trigger final step
             if (currentBoxIndex.value < massProd_letter.value.length - 1) {
@@ -2133,6 +2149,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const massProd_boxNo = ref("");
     const massProd_WT = ref();
     const massProd_coating = ref();
+    const massProd_rawMatCode = ref("");
     const massProd_letter = ref(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']);
     const currentBoxIndex = ref(0);
     const massProd_qty = ref();

@@ -111,6 +111,7 @@ const viewAllSerialedLayers = async () => {
   try {
     const response = await axios.get('/api/tpmdata');
     const rawData = response.data.data?.tpmData || {};
+    console.log("Show respone raw data: ",response.data);
     tpmData.value = Object.values(rawData);
     console.log('[Fetched Data]:', tpmData.value);
   } catch (error) {

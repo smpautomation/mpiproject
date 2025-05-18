@@ -29,7 +29,7 @@ class TPMData extends Model
     }
     public function boxes()
     {
-        return $this->hasOne(TPMBoxes::class, 'tpm_data_serial', 'serial_no');
+        return $this->hasMany(TPMBoxes::class, 'tpm_data_serial', 'serial_no');
     }
     public function reportData()
     {
@@ -61,5 +61,5 @@ class TPMData extends Model
     {
         return $this->hasOne(MieGxDataInstructionsAggregate::class, 'tpm_data_serial', 'serial_no');
     }
-    
+
 }

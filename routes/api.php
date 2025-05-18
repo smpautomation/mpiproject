@@ -12,6 +12,7 @@ use App\Http\Controllers\MieGxDataInstructionsController;
 use App\Http\Controllers\MieGxDataInstructionsAggregateController;
 use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
+use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -23,7 +24,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::post('/tpmdata', [TPMDataController::class, 'store']);
-Route::patch('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
+Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
 Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
 Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
 Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
@@ -100,6 +101,7 @@ Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
+Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
 Route::post('/send-test-email', function(Request $request){
 
@@ -116,6 +118,10 @@ Route::post('/send-test-email', function(Request $request){
 
     Mail::to($emailList)->send(new TakefuMail($validated['mass_pro'], $customMessage));
     return 'Test Email Sent';
+});
+
+Route::get('/test-pdf-view', function () {
+    return view('preview-pdf');
 });
 
 Route::get('/test-email', function () {

@@ -256,7 +256,7 @@ class TPMDataController extends Controller
                         ];
                         $TPMBoxes = TPMBoxes::create($tpmBoxesInputs);
                     }
-                    
+
                 }catch(\Exception $e){
 
                 }

@@ -11,7 +11,7 @@
         <div
           class="relative z-10 flex flex-col items-center justify-center text-5xl font-bold text-white -translate-y-3 opacity-0 stamp-text drop-shadow animate-fade-in-down"
         >
-          Welcome to MPI Website
+          Welcome to the MPI Website
         </div>
 
         <!-- Button -->

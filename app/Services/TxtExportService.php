@@ -9,11 +9,15 @@ class TxtExportService
 {
     public function exportData1(string $furnace_no)
     {
+        // Step 1: Get the latest date for the specified furnace
         $dateToGet = TpmData::where('furnace_no', $furnace_no)
             ->orderBy('date', 'desc')
             ->value('date');
 
-        $tpmData = TpmData::with('category','tpmboxes')
+        // Step 2: Fetch TPM data for that furnace and date, including category and boxes
+        $tpmData = TpmData::with(['category', 'boxes' => function ($q) {
+                $q->whereIn('box_letter', range('A', 'K'));
+            }])
             ->where('furnace_no', $furnace_no)
             ->where('date', $dateToGet)
             ->get();
@@ -22,76 +26,83 @@ class TxtExportService
             return 'No data found.';
         }
 
-        $labelToAttribute = [
-            'LAYER' => 'layer_no',
-            'AREA' => 'area',
-            'MODEL_NAME' => 'model_name',
-            'COATING_MC_NO' => 'coating_mc_no',
-            'LOT_NO' => 'lot_no',
-            'QTY' => 'qty',
-            'COATING' => 'coating',
-            'WT' => 'wt',
-            'BOX_NO' => 'box_no',
-            'MODEL_CODE' => 'model_code',
-            'RAW_MATERIAL_CODE' => 'raw_material_code'
-        ];
+        // Step 3: Prepare layer/area structure as integers 10 down to 1
+        $layers = range(1, 10);
+        rsort($layers); // [10, 9, 8, ..., 1]
 
-        // Use labels as headers
-        $headers = array_keys($labelToAttribute);
+        $areas = range('A', 'K');
 
-        // Start file lines with headers
-        $lines = [];
-        $lines[] = implode(',', $headers);
+        // Step 4: Build a quick index from layer_no + box_letter to data (using numeric layer keys)
+        $boxMap = [];
 
-        foreach ($tpmData as $item) {
-            $category = $item->category;
-            //$category = $item->category;
-            dd($category);
-            $row = [];
+        foreach ($tpmData as $tpm) {
+            $layerKey = $tpm->layer_no; // keep as integer, 1 to 10
 
-            $row[] = $this->convertToString($item->layer_no);
-            $lot_no = trim(
-                ($item->press_1 ?? '') . ' ' .
-                ($item->press_2 ?? '') . ' ' .
-                ($item->machine_no ?? '')
-            );
-            $row[] = $lot_no;
+            $category = $tpm->category;
+            $modelName = $category->actual_model ?? '';
+            $lotNo = $category->jhcurve_lotno ?? '';
+            $rawMaterialCode = $category->raw_material_code ?? '';
+            $modelCode = $tpm->code_no;
+            $coatingMcNo = $tpm->furnace_no;
 
-
-            foreach ($headers as $column) {
-                if (in_array($column, ['LAYER', 'AREA'])) {
-                    continue; // already added
-                }
-
-                if (isset($item->$column)) {
-                    $row[] = $this->convertToString($item->{$column} ?? '0');
-                } elseif ($category  && property_exists($category , $column)) {
-                    $row[] = $this->convertToString($category ->{$column} ?? '0');
-                } else {
-                    $row[] = '0';
-                }
+            foreach ($tpm->boxes as $box) {
+                $boxMap[$layerKey][$box->box_letter] = [
+                    'MODEL_NAME' => $modelName,
+                    'COATING_MC_NO' => $coatingMcNo,
+                    'LOT_NO' => $lotNo,
+                    'QTY' => $box->quantity,
+                    'COATING' => 3,
+                    'WT' => $box->weight,
+                    'BOX_NO' => $box->box_no,
+                    'MODEL_CODE' => $modelCode,
+                    'RAW_MATERIAL_CODE' => $rawMaterialCode,
+                ];
             }
-
-            // Escape values (commas, newlines)
-            $escapedRow = array_map(function ($value) {
-                $value = $this->convertToString($value);
-                $value = str_replace(["\r", "\n"], [' ', ' '], $value);
-                return str_contains($value, ',') ? "\"$value\"" : $value;
-            }, $row);
-
-            $lines[] = implode(',', $escapedRow);
         }
 
+        // Step 5: Build rows using fixed structure, converting layer 10 to 'T' only here
+        $outputRows = [];
+
+        foreach ($layers as $layer) {
+            $outputLayer = $layer === 10 ? 'T' : (string)$layer;
+
+            foreach ($areas as $area) {
+                $row = data_get($boxMap, "$layer.$area", [
+                    'MODEL_NAME' => 0,
+                    'COATING_MC_NO' => 0,
+                    'LOT_NO' => 0,
+                    'QTY' => 0,
+                    'COATING' => 0,
+                    'WT' => 0,
+                    'BOX_NO' => 0,
+                    'MODEL_CODE' => 0,
+                    'RAW_MATERIAL_CODE' => 0,
+                ]);
+
+                $outputRows[] = array_merge([
+                    'LAYER' => $outputLayer,
+                    'AREA' => $area,
+                ], $row);
+            }
+        }
+
+        // Step 6: Format into lines
+        $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
+        $lines = collect($outputRows)
+            ->map(fn($row) => implode(',', $row))
+            ->prepend($header);
+
+        // Step 7: Save file
         $directory = public_path("files/{$furnace_no}");
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
-
         $filePath = "{$directory}/Data1.txt";
-        File::put($filePath, implode("\n", $lines));
+        File::put($filePath, implode("\n", $lines->toArray()));
 
         return "Exported successfully to: {$filePath}";
     }
+
 
     public function exportData2(string $furnace_no)
     {

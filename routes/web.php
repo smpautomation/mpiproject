@@ -3,6 +3,8 @@
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\PdfController;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TestMail;
@@ -21,6 +23,8 @@ Route::get('/data_ins', [FrontendController::class,'data_ins'])->name('data_ins'
 Route::get('/create_pdf', [FrontendController::class,'generatePdf'])->name('create_pdf');
 Route::get('/sec_additional', [FrontendController::class,'sec_additional'])->name('sec_additional');
 Route::get('/email_form', [FrontendController::class,'emailForm'])->name('email');
+
+Route::get('/generate-pdf', [PdfController::class, 'generate']);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -79,5 +83,9 @@ Route::post('/upload-pdf', function (Request $request) { //Saves to folder /file
 Route::get('/export-data1/{furnace_no}', [ExportController::class, 'exportData1'])->name('exportData1');
 Route::get('/export-data3/{furnace_no}', [ExportController::class, 'exportData3'])->name('exportData3');
 Route::view('/test-export', 'test');
+
+Route::get('/generate-pdf', function () {
+    return Pdf::loadView('preview-pdf')->download('example.pdf');
+});
 
 require __DIR__.'/auth.php';

@@ -2249,6 +2249,8 @@ const nsa_renderChart = (setIndex) => {
     });
 };
 
+
+
 const exportMultiPagePdf = async () => {
   try {
     console.log('[PDF Export] Starting multi-page export...');
@@ -2323,6 +2325,9 @@ onMounted( async () => {
     await nsa_graph();
     await exportMultiPagePdf();
 });
+
+
+
 </script>
 
 <style scoped>

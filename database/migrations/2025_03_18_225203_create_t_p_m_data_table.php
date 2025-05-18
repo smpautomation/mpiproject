@@ -144,6 +144,7 @@ return new class extends Migration
             $table->float('weight')->nullable();
             $table->string('box_no')->nullable();
             $table->integer('coating')->nullable();
+            $table->string('raw_mat_code')->nullable();
         });
     }
 
