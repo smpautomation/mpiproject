@@ -23,6 +23,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::post('/tpmdata', [TPMDataController::class, 'store']);
+Route::patch('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
 Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
 Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
 Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
