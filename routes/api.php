@@ -131,3 +131,15 @@ Route::get('/takefu-email', function () {
         'message' => 'customMessage'
     ]);
 });
+
+Route::post('/route-email', function (Request $request) {
+    $validated = $request->validate([
+        'serial' => 'required|array',
+        'emails' => 'required|string'
+    ]);
+
+
+    $emailList = array_map('trim', explode(',', $validated['emails']));
+    Mail::to($emailList)->send(new RouteMail($validated['username'], $validated['serial']));
+    return redirect()->route('approval')->with('success', 'Emails sent successfully!');
+});
