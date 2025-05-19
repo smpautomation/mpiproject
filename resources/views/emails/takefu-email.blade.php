@@ -82,11 +82,11 @@
             {{-- Company Logo --}}
             <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
             <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo">
-            <h1>Hello, {{ $username }}!</h1>
+            <h1>Hello!, </h1>
         </div>
 
         <div class="content">
-            <p>This is a test email sent from your Laravel application using SMTP.</p>
+            {{-- <p>This is a test email sent from your Laravel application using SMTP.</p> --}}
 
             @if(!empty($customMessage))
                 <div class="custom-message" style="margin-top: 20px;">
@@ -95,7 +95,7 @@
             @endif
 
             <div class="attachments">
-                <p>📎 Please find the attached PDF file(s) for your reference.</p>
+                <p>Please find the attached PDF file(s) for your reference.</p>
                 <p>If you were expecting specific documents and cannot find them, please contact support.</p>
             </div>
 
@@ -114,7 +114,7 @@
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
-            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33') }}
+            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33', $massPro) }}
         </div>
 
     </div>
