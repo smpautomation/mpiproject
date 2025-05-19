@@ -81,21 +81,25 @@
         <div class="header">
             {{-- Company Logo --}}
             <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
-            <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo">
-            <h1>Hello, {{ $username }}!</h1>
+            {{-- <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo"> --}}
+            <h1>Hello!, </h1>
         </div>
 
         <div class="content">
-            <p>This is a test email sent from your Laravel application using SMTP.</p>
+            {{-- <p>This is a test email sent from your Laravel application using SMTP.</p> --}}
 
             @if(!empty($customMessage))
                 <div class="custom-message" style="margin-top: 20px;">
                     {!! $customMessage !!}
                 </div>
             @endif
+<<<<<<< HEAD:resources/views/emails/test.blade.php
+=======
+            
+>>>>>>> 2a833bdc7e4115eeafe68a0f4b22d120daaf5d9c:resources/views/emails/takefu-email.blade.php
 
             <div class="attachments">
-                <p>📎 Please find the attached PDF file(s) for your reference.</p>
+                <p>Please find the attached PDF file(s) for your reference.</p>
                 <p>If you were expecting specific documents and cannot find them, please contact support.</p>
             </div>
 
@@ -114,7 +118,7 @@
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
-            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33') }}
+            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33', $massPro) }}
         </div>
 
     </div>

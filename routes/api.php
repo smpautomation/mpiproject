@@ -23,6 +23,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
+Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
 Route::post('/tpmdata', [TPMDataController::class, 'store']);
 Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
 Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
@@ -103,7 +104,7 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
-Route::post('/send-test-email', function(Request $request){
+Route::post('/send-takefu-email', function(Request $request){
 
     $validated = $request->validate([
         'emails' => 'required|string',
@@ -124,9 +125,9 @@ Route::get('/test-pdf-view', function () {
     return view('preview-pdf');
 });
 
-Route::get('/test-email', function () {
-    return view('emails.test', [
-        'username' => 'PreviewUser',
+Route::get('/takefu-email', function () {
+    return view('emails.takefu-email', [
+
         'message' => 'customMessage'
     ]);
 });
