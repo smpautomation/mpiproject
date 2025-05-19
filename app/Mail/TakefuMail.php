@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class TakefuMail extends Mailable
@@ -28,7 +29,7 @@ class TakefuMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->massPro . 'Mass Production',
+            subject: $this->massPro . ' Reports',
         );
     }
 
@@ -38,7 +39,7 @@ class TakefuMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.test',
+            view: 'emails.takefu-email',
             with: [
                 'massPro' => $this->massPro,
                 'customMessage' => $this->customMessage
@@ -60,20 +61,22 @@ class TakefuMail extends Mailable
     {
         //need to sanitize the serial number.
 
-        $mail = $this->view('emails.test', [
-            'customMessage' => $this->customMessage
-            ])->subject('Test Mail');
-        $directory = "public/files/{$this->massPro}";
-        if (!Storage::exists($directory)) {
+        $mail = $this->view('emails.takefu-email', [
+            'customMessage' => $this->customMessage,
+            'massPro' => $this->massPro
+            ])->subject($this->massPro . ' Reports');
+        $directory = public_path("files/{$this->massPro}");
+        if (!File::exists($directory)) {
             throw new \RuntimeException("The folder for this {$this->massPro} does not exist.");
         }
-        $files = Storage::files($directory);
+        $files = File::files($directory);
         $pdfFilesAttached = 0;
 
         foreach ($files as $file) {
-            // Attach only PDF files securely
-            if (str_ends_with(strtolower($file), '.pdf') || str_ends_with(strtolower($file), '.txt')) {
-                $mail->attach(Storage::path($file));
+            $path = $file->getRealPath();
+            $filename = strtolower($file->getFilename());
+            if (str_ends_with(strtolower($filename), '.pdf') || str_ends_with(strtolower($filename), '.txt')) {
+                $mail->attach($path);
                 $pdfFilesAttached++;
             }
         }

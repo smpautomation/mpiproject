@@ -99,7 +99,7 @@ Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 
-Route::post('/send-test-email', function(Request $request){
+Route::post('/send-takefu-email', function(Request $request){
 
     $validated = $request->validate([
         'emails' => 'required|string',
@@ -115,9 +115,9 @@ Route::post('/send-test-email', function(Request $request){
     return 'Test Email Sent';
 });
 
-Route::get('/test-email', function () {
-    return view('emails.test', [
-        'username' => 'PreviewUser',
+Route::get('/takefu-email', function () {
+    return view('emails.takefu-email', [
+        
         'message' => 'customMessage'
     ]);
 });

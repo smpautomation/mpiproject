@@ -17,7 +17,7 @@ class TxtExportService
 
     }
     
-    public function exportData3(string $furnace_no)
+    public function exportData3(string $furnace_no, string $massPro)
     {
         $dateToGet = TpmData::where('furnace_no', $furnace_no)
             ->orderBy('date', 'desc')
@@ -138,7 +138,7 @@ class TxtExportService
             $lines[] = implode(',', $escapedRow);
         }
 
-        $directory = public_path("files/{$furnace_no}");
+        $directory = public_path("files/{$massPro}");
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
