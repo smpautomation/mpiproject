@@ -107,7 +107,7 @@ Route::post('/send-takefu-email', function(Request $request){
         'mass_pro' => 'required|string'
     ]);
 
-    $emailList = array_map('trim', explode(',', $validated['emails'])); 
+    $emailList = array_map('trim', explode(',', $validated['emails']));
 
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
 
@@ -117,28 +117,19 @@ Route::post('/send-takefu-email', function(Request $request){
 
 Route::get('/takefu-email', function () {
     return view('emails.takefu-email', [
-        
+
         'message' => 'customMessage'
     ]);
 });
 
 Route::post('/route-email', function (Request $request) {
-    // return view('emails.route-email', [
-    //     'username' => 'User',
-    //     'serial' => [
-    //         'serial1',
-    //         'serial2',
-    //         'serial3'
-    //     ],
-    //     'message' => 'customMessage'
-    // ]);
     $validated = $request->validate([
         'serial' => 'required|array',
         'emails' => 'required|string'
     ]);
-    
 
-    $emailList = array_map('trim', explode(',', $validated['emails'])); 
+
+    $emailList = array_map('trim', explode(',', $validated['emails']));
     Mail::to($emailList)->send(new RouteMail($validated['username'], $validated['serial']));
     return redirect()->route('approval')->with('success', 'Emails sent successfully!');
 });
