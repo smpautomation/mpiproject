@@ -1,19 +1,19 @@
 <template>
-    <div ref="pdfContent" id="pdf-content" class="mx-auto print-container">
-        <div class="flex flex-row justify-between">
+        <div class="flex flex-row justify-center px-4 py-2 bg-gray-200 mb-4 no-print">
             <button class="px-2 py-1 mt-2 text-white bg-gray-600 rounded-lg" @click="$inertia.visit('/reports')">back</button>
-            <button class="px-2 py-1 mt-2 text-black bg-gray-300 rounded-lg">Serial#: {{ printSerialNo }}</button>
+            <button class="px-2 py-1 mt-2 text-black bg-gray-300 rounded-lg ml-16">Serial#: {{ printSerialNo }}</button>
             <button
-            @click="window.print()"
-            class="px-2 py-1 mt-2 text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600"
-            >
-            Print This Report
-        </button>
+                @click="handlePrint"
+                class="ml-16 px-2 py-1 mt-2 text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600"
+                >
+                Print This Report
+            </button>
         </div>
+    <div ref="pdfContent" id="pdf-content" class="mx-auto print-container">
       <!-- A4 Layout Box -->
       <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
         <!-- Report Title -->
-        <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
+        <h1 class="my-6 text-2xl font-bold text-center bg-gray-300 leading-loose">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
         <!-- Oven Heating Information -->
         <div class="flex flex-row justify-between">
             <p class="mb-4 text-xl font-extrabold">Oven Heating Information</p>
@@ -33,19 +33,19 @@
             <div class="space-y-1">
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Oven Machine No:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm border-b leading-loose border-gray-500">
                         {{ printOvenMachineNo_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Time Loading:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printTimeLoading }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Temperature:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printTimeLoading_temp }}
                     </span>
                 </div>
@@ -55,19 +55,19 @@
             <div class="space-y-1">
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Date:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printDate_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Time Unloading:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printTimeUnloading }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Temperature:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printTimeUnloading_temp }}
                     </span>
                 </div>
@@ -77,13 +77,13 @@
             <div class="space-y-1">
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Shift:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printShift_ovenInfo }}
                     </span>
                 </div>
                 <div class="flex items-center">
                     <span class="mr-2 text-sm font-semibold">Operator:</span>
-                    <span class="flex-grow inline-block text-sm leading-none border-b border-gray-500">
+                    <span class="flex-grow inline-block text-sm leading-loose border-b border-gray-500">
                         {{ printOperator_ovenInfo }}
                     </span>
                 </div>
@@ -100,7 +100,7 @@
             <!-- First Column -->
             <div class="flex items-center">
                 <span class="mr-2 text-sm font-semibold">Model:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printActualModel }}
                 </span>
             </div>
@@ -108,7 +108,7 @@
             <!-- Second Column -->
             <div class="flex items-center">
                 <span class="font-semibold mr-2 text-[10px]">MATERIAL&nbsp;CODE:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printMaterialCode }}
                 </span>
             </div>
@@ -116,7 +116,7 @@
             <!-- Third Column -->
             <div class="flex items-center">
                 <span class="mr-2 text-sm font-semibold">Partial&nbsp;No.:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printPartialNo }}
                 </span>
             </div>
@@ -124,14 +124,14 @@
             <!-- Fourth Column -->
             <div class="flex items-center">
                 <span class="font-semibold mr-2 text-[10px]">TOTAL&nbsp;QUANTITY:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printTotalQuantity }}
                 </span>
             </div>
             <!-- Fifth Column -->
             <div class="flex items-center">
                 <span class="mr-2 text-sm font-semibold">Pulse&nbsp;Tracer&nbsp;No:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printPulseTracer }}
                 </span>
             </div>
@@ -139,7 +139,7 @@
             <!-- Sixth Column -->
             <div class="flex items-center">
                 <span class="mr-2 text-sm font-semibold">Date:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printDate }}
                 </span>
             </div>
@@ -147,7 +147,7 @@
             <!-- Seventh Column -->
             <div class="flex items-center">
                 <span class="mr-2 text-sm font-semibold">Shift:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printShift }}
                 </span>
             </div>
@@ -155,7 +155,7 @@
             <!-- Eighth Column -->
             <div class="flex items-center">
                 <span class="mr-2 text-sm font-semibold">Operator:</span>
-                <span class="inline-block w-full text-sm border-b border-gray-500">
+                <span class="inline-block w-full text-sm border-b border-gray-500 leading-loose">
                     {{ printOperator }}
                 </span>
             </div>
@@ -186,11 +186,13 @@
                             <th colspan="7" class="border border-black px-[3.04px] py-[4.5px] text-sm">Magnetic Property Data</th>
                         </tr>
                         <tr class="text-center bg-gray-200">
-                            <th rowspan="2" class="border border-black px-[3.04px] py-[3.04px]">Items</th>
-                            <th rowspan="2" class="border border-black px-[3.04px] py-[3.04px]">Standard</th>
+                            <th class="border-l border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Items -->
+                            <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
                             <th colspan="5" class="border border-black px-[3.04px] py-[2.04px]">Actual Data</th>
                         </tr>
                         <tr class="text-center bg-gray-200">
+                            <th class="border-l border-r border-b border-black px-[3.04px] py-[3.04px]">Items</th>
+                            <th class="border-r border-black px-[3.04px] py-[3.04px]">Standard</th>
                             <th class="border border-black px-[3.04px] py-[3.04px]">Average</th>
                             <th class="border border-black px-[3.04px] py-[3.04px]">Maximum</th>
                             <th class="border border-black px-[3.04px] py-[3.04px]">Minimum</th>
@@ -420,7 +422,7 @@
                             }">
                             <span :class="getFontSize(printPreparedBy_firstName)">{{ printPreparedBy_firstName }}</span>
                             <span class="my-[0px]">{{ printPreparedBy_date }}</span>
-                            <span :class="getFontSize(printPreparedBy_lastName)">{{ printPreparedBy_lastName }}</span>
+                            <span class="pb-4" :class="getFontSize(printPreparedBy_lastName)">{{ printPreparedBy_lastName }}</span>
                         </span>
                     </div>
                 </div>
@@ -443,7 +445,7 @@
                             }">
                             <span :class="getFontSize(printCheckedBy_firstName)">{{ printCheckedBy_firstName }}</span>
                             <span class="my-[0px]">{{ printCheckedBy_date }}</span>
-                            <span :class="getFontSize(printCheckedBy_lastName)">{{ printCheckedBy_lastName }}</span>
+                            <span class="pb-4" :class="getFontSize(printCheckedBy_lastName)">{{ printCheckedBy_lastName }}</span>
                         </span>
                     </div>
                 </div>
@@ -464,7 +466,7 @@
                                     : 'none',
                                 backgroundSize: 'contain'
                             }">
-                            {{ printApprovedBy_date }}
+                            <span class="pb-4">{{ printApprovedBy_date }}</span>
                         </span>
                     </div>
                 </div>
@@ -505,20 +507,20 @@
         <!-- A4 Layout Box -->
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
             <!-- Report Title -->
-            <h1 class="my-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA</h1>
+            <h1 class="my-6 text-2xl font-bold text-center bg-gray-300 leading-loose">PROPERTY&nbsp;DATA</h1>
             <!-- Information Grid -->
             <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
                 <!-- First Column -->
                 <div class="space-y-1">
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Code&nbsp;No:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printCodeNo }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Sintering#:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printSinteringNo }}
                         </span>
                     </div>
@@ -527,13 +529,13 @@
                 <div class="space-y-1">
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Type&nbsp;Code:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printTypeCode }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">coating:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printCoating }}
                         </span>
                     </div>
@@ -542,13 +544,13 @@
                 <div class="space-y-1">
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Judge&nbsp;Code:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printJudgeCode }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Pass#:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printPassNo }}
                         </span>
                     </div>
@@ -557,13 +559,13 @@
                 <div class="space-y-1">
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Press#:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printPressNo }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Mias.&nbsp;Employee:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printMiasEmployee }}
                         </span>
                     </div>
@@ -572,13 +574,13 @@
                 <div class="space-y-1">
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Sintering&nbsp;Furnace#:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printSinteringFurnaceNo }}
                         </span>
                     </div>
                     <div class="flex items-center">
                         <span class="mr-2 text-xs font-semibold">Factor&nbsp;Employee:</span>
-                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500">
+                        <span class="flex-grow inline-block text-[10px] border-b border-gray-500 leading-loose">
                             {{ printFactoryEmployee }}
                         </span>
                     </div>
@@ -2250,7 +2252,6 @@ const nsa_renderChart = (setIndex) => {
 };
 
 
-
 const exportMultiPagePdf = async () => {
   try {
     console.log('[PDF Export] Starting multi-page export...');
@@ -2261,27 +2262,35 @@ const exportMultiPagePdf = async () => {
     const pageWidth = pdf.internal.pageSize.getWidth();
 
     for (let i = 0; i < pages.length; i++) {
-      console.log(`[PDF Export] Processing page ${i + 1}/${pages.length}...`);
+      const canvasElements = pages[i].querySelectorAll('canvas');
 
-      const canvas = await html2canvas(pages[i], {
-        scale: 2, // balance between quality and size
+      // Convert all canvases to images
+      canvasElements.forEach((canvas) => {
+        const graphImage = canvas.toDataURL('image/png');
+        const imgElement = document.createElement('img');
+        imgElement.src = graphImage;
+        imgElement.style.width = canvas.style.width;
+        imgElement.style.height = canvas.style.height;
+        canvas.parentNode.replaceChild(imgElement, canvas);
+      });
+
+      const canvasOutput = await html2canvas(pages[i], {
+        scale: 2,
         useCORS: true,
         logging: false,
       });
 
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
-      console.log(`[PDF Export] Canvas size for page ${i + 1}: ${canvasWidth}x${canvasHeight}`);
+      // Restore canvas elements
+      const imageElements = pages[i].querySelectorAll('img');
+      imageElements.forEach((img, index) => {
+        img.parentNode.replaceChild(canvasElements[index], img);
+      });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.95); // JPEG w/ quality compression
+      const imgData = canvasOutput.toDataURL('image/jpeg', 0.80);
       const imgProps = pdf.getImageProperties(imgData);
       const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
-      console.log(`[PDF Export] Image height for page ${i + 1}: ${imgHeight.toFixed(2)} mm`);
 
-      if (i > 0) {
-        pdf.addPage();
-        console.log(`[PDF Export] Added new page to PDF`);
-      }
+      if (i > 0) pdf.addPage();
 
       pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
       console.log(`[PDF Export] Image added to PDF page ${i + 1}`);
@@ -2291,9 +2300,18 @@ const exportMultiPagePdf = async () => {
     console.log(`[PDF Export] PDF Blob generated`);
     console.log(`[PDF Export] Blob size: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
 
+    const massProd_forPDF = printMassProdName.value.split(' ').slice(1).join(' ');
+
     const formData = new FormData();
-    formData.append('massProd', printMassProdName.value);
-    formData.append('pdf', blob, 'MultiPage_MPI.pdf');
+    formData.append('massProd', massProd_forPDF);
+    console.log('[PDF Export] massProd_forPDF:', massProd_forPDF);
+
+    formData.append('pdf', blob, `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}.pdf`);
+    console.log('[PDF Export] PDF file info:', {
+    filename: `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}.pdf`,
+    sizeMB: (blob.size / (1024 * 1024)).toFixed(2),
+    type: blob.type
+    });
 
     console.log(`[PDF Export] Uploading PDF to server...`);
     const response = await axios.post('/upload-pdf', formData);
@@ -2303,6 +2321,43 @@ const exportMultiPagePdf = async () => {
   } catch (error) {
     console.error('[PDF Export] Error during multi-page export:', error);
     alert('Failed to generate/upload PDF.');
+  }
+};
+
+function handleRowspanIssues(container) {
+  const rows = Array.from(container.querySelectorAll('tr')); // Convert NodeList to Array for easy indexing
+
+  rows.forEach((row, rowIndex) => {
+    const cells = Array.from(row.querySelectorAll('[rowspan]'));
+
+    cells.forEach((cell) => {
+      const rowspan = parseInt(cell.getAttribute('rowspan'), 10);
+      if (rowspan > 1) {
+        const cellIndex = Array.from(row.children).indexOf(cell); // Find the cell's position in the row
+
+        // Distribute the rowspan across subsequent rows
+        for (let i = 1; i < rowspan; i++) {
+          const targetRow = rows[rowIndex + i]; // Get the row below
+          if (targetRow) {
+            const placeholderCell = document.createElement('td');
+            placeholderCell.style.border = cell.style.border; // Copy border style
+            placeholderCell.style.padding = cell.style.padding; // Copy padding for alignment
+            placeholderCell.innerHTML = ''; // Empty cell for alignment
+            targetRow.insertBefore(placeholderCell, targetRow.children[cellIndex]);
+          }
+        }
+        cell.removeAttribute('rowspan'); // Remove rowspan from the original cell
+      }
+    });
+  });
+}
+
+const handlePrint = async () => {
+  await nextTick(); // Ensures DOM is fully rendered
+  if (typeof window !== 'undefined' && typeof window.print === 'function') {
+    window.print();
+  } else {
+    console.error('Print functionality is not available.');
   }
 };
 
@@ -2357,6 +2412,10 @@ onMounted( async () => {
   }
 
   button {
+    display: none !important;
+  }
+
+.no-print {
     display: none !important;
   }
 }

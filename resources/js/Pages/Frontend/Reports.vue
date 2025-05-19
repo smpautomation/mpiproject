@@ -715,7 +715,7 @@
 
                     <!-- SMP Judgement -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">
                         SMP Judgement
                     </p>
                     <p class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
@@ -735,9 +735,9 @@
 
                     <!-- Prepared By -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Prepared By:</p>
-                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showPreparedByDefault" class="px-2 py-[67px]">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Prepared By:</p>
+                    <div class="p-1 text-center items-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showPreparedByDefault" class="w-[153px] h-[153px]">
                             <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
                                 Waiting for stamp...
                             </span>
@@ -784,10 +784,10 @@
 
                     <!-- Checked By -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Checked By:</p>
-                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showCheckedByDefault" class="px-2 py-[67px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Checked By:</p>
+                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white items-center">
+                        <div v-show="showCheckedByDefault" class="w-[153px] h-[153px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
                         </span>
                         </div>
@@ -833,10 +833,10 @@
 
                     <!-- Approved By -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Approved By:</p>
-                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Approved By:</p>
+                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white items-center">
+                        <div v-show="showApprovedByDefault" class="w-[153px] h-[153px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
                         </span>
                         </div>

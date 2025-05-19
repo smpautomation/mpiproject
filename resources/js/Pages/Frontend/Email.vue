@@ -63,26 +63,29 @@ import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
 const form = reactive({
-    massProd: '',
-    emails: '',
-    message: '',
-})
+    massProd: '',  // Matches 'massProd' in the backend
+    mass_pro: '',  // Matches 'mass_pro' in the backend
+    emails: '',    // Matches 'emails' in the backend
+    message: '',   // Matches 'message' in the backend
+});
 
-const success = ref(false)
+const success = ref(false);
 
 const submitEmail = async () => {
   try {
-    const response = await axios.post('/api/send-test-email', form);
-    console.log(response.data);
-    success.value = true
+    const response = await axios.post('/api/send-test-email', form); // Updated endpoint to match backend route
+    console.log(response.data); // Log response for debugging or confirmation
+
+    success.value = true;
 
     // Reset form
-    form.massProd = ''
-    form.emails = ''
-    form.message = ''
+    form.massProd = '';
+    form.mass_pro = '';
+    form.emails = '';
+    form.message = '';
   } catch (error) {
-    console.error('Failed to send email:', error);
+    console.error('Failed to send email:', error.response?.data || error.message);
     alert('Failed to send email. Please check your inputs or try again later.');
   }
-}
+};
 </script>

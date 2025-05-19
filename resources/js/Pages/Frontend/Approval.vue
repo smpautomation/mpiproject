@@ -70,10 +70,12 @@
                     </div>
                     <div class="flex justify-center mb-10 space-y-6">
                         <!-- Approve Button -->
-                        <button v-show="showApproveButton" @click="approveSelected"
-                            class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
-                            Approve Selected
-                        </button>
+                         <div v-if="!approveNotif">
+                            <button v-show="showApproveButton" @click="approveSelected"
+                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
+                                Approve Selected
+                            </button>
+                         </div>
 
                         <!-- Confirmation Box -->
                         <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
@@ -127,11 +129,12 @@ const showApprovedNotification = (message) => {
     // Show notification and set the message
     approveNotif.value = true;
     reportNotificationMessage.value = message;
+    showApproveButton.value = false;
 
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         approveNotif.value = false;
-        showApproveButton.value = false;
+        showApproveButton.value = true;
     }, 3000);  // 3000ms = 3 seconds
 }
 

@@ -572,7 +572,7 @@
                                     type="text"
                                     v-model="massProd_rawMatCode"
                                     @input="massProd_rawMatCode = massProd_rawMatCode.toUpperCase()"
-                                    placeholder="e.g. 4"
+                                    placeholder="e.g. 0G0V755"
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
