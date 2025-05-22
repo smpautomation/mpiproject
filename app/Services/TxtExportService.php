@@ -108,13 +108,8 @@ class TxtExportService
     {
 
     }
-<<<<<<< HEAD
 
-    public function exportData3(string $furnace_no)
-=======
-    
     public function exportData3(string $furnace_no, string $massPro)
->>>>>>> 2a833bdc7e4115eeafe68a0f4b22d120daaf5d9c
     {
         $dateToGet = TpmData::where('furnace_no', $furnace_no)
             ->orderBy('date', 'desc')

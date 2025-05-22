@@ -48,25 +48,6 @@
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
-                    <div v-if="!isFromApproval">
-                        <!-- Checkbox + Label -->
-                        <label v-if="isAutomotiveInitiallyMarked == false" class="flex items-center mb-5 space-x-3 text-lg">
-                            <!--
-                            <input
-                            v-model="isTTM_model"
-                            type="checkbox"
-                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                                <span>(Tick this box if the TTM model applies.)</span>
-                            -->
-                            <input
-                            v-model="isAutomotive"
-                            type="checkbox"
-                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                                <span>(Tick this box if the model is for Automotive)</span>
-                        </label>
-                    </div>
                     <div v-if="isFromApproval">
                         <p class="mb-10 text-xl font-extrabold animate-pulse">Report Data is ready for viewing...</p>
                     </div>
@@ -110,16 +91,28 @@
                         <p class="text-sm font-bold text-blue-800">Layer</p>
                         <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
                         </div>
-                        <div>
-                        <span
-                            v-show="isAutomotive"
-                            class="flex items-center justify-center w-[150px] h-[82px] text-center  bg-center bg-no-repeat"
-                            :style="{
-                                backgroundImage: 'url(\'/photo/carmark_logo.png\')',
-                                backgroundSize: '100%'
-                            }">
-                        </span>
-                    </div>
+                        <div class="flex flex-col">
+                            <div v-show="showCarMarkButton && !isAutomotive" class="p-1 text-center items-center border-4 border-white">
+                                <button
+                                    @click="addCarmark"
+                                    class="w-[160px] h-[80px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
+                                    >
+                                    <span class="text-md inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
+                                        ADD&nbsp;CARMARK
+                                    </span>
+                                </button>
+                            </div>
+                            <div>
+                                <span
+                                    v-show="isAutomotive"
+                                    class="flex items-center justify-center w-[150px] h-[82px] text-center  bg-center bg-no-repeat"
+                                    :style="{
+                                        backgroundImage: 'url(\'/photo/carmark_logo.png\')',
+                                        backgroundSize: '100%'
+                                    }">
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
@@ -258,11 +251,10 @@
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Material Code:</label>&nbsp;
-                            <span
-                                class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
-                                >
-                                {{ reportMaterialCode }}
-                            </span>
+                            <input v-model="reportMaterialCode" @input="reportMaterialCode = reportMaterialCode.toUpperCase()" type="text" name="materialCode" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out">
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Partial No.:</label>&nbsp;
@@ -891,10 +883,14 @@
                         Apply SEC Additionals
                     </button>
                     <button
+                        v-if="approvedByPerson"
                         @click="finalizeReport(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
                         Finalize Report
+                    </button>
+                    <button @click="finalizeReport(currentSerialSelected)" class="bg-white rounded-lg p-2">
+                        Finalize Report BYPASS
                     </button>
                     <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -959,7 +955,11 @@ const isReportDataReady = ref(false);
 
 const isTTM_model = ref(false);
 const isAutomotive = ref(false);
-const isAutomotiveInitiallyMarked = ref(false);
+watch(isAutomotive, (newVal, oldVal) => {
+  console.log(`isAutomotive changed from ${oldVal} to ${newVal}`);
+  // Your reactive logic here
+}, { immediate: true });
+const showCarMarkButton = ref(true);
 const show1x1x1Data_withoutCorner = ref(false);
 const show1x1x1Data_Corner = ref(false);
 const showVTData = ref(false);
@@ -1195,9 +1195,6 @@ const exitReport = () => {
 
 const showReportButton = async () => {
     showReportProceedButtons.value = false;
-    if(isAutomotiveInitiallyMarked.value == false){
-        checkCarmark();
-    }
     showReportLoading.value = true;
     await showReportData();
     // Poll until isReportDataReady is true
@@ -1412,7 +1409,6 @@ const reportReset = () => {
     reportRemarksDisplayNG_bhc.value = false;
     isTTM_model.value = false;
     isAutomotive.value = false;
-    isAutomotiveInitiallyMarked.value = false;
     noteReasonForReject.value = [];
     show1x1x1Data_Corner.value = false;
     show1x1x1Data_withoutCorner.value = false;
@@ -1451,7 +1447,6 @@ const sec_additional_button = () => {
 const generateReport = async () => {
     showReportContent.value = true;
     showSelectionPanel.value = false;
-    initialCarmarkChecking();
     await fetchAllData();
 
 }
@@ -1649,8 +1644,6 @@ const fetchAllData = async () => {
                 inspectionShift_OvenInfo.value = item.shift;
                 inspectionOperator_OvenInfo.value = item.operator;
             });
-
-
         } else {
             showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
             showReportContent.value = false;
@@ -1916,6 +1909,7 @@ const saveReport = async () => {
         "shift_oven_info": reportShift_OvenInfo.value,
         "operator_oven_info": reportOperator_OvenInfo.value,
         "date": reportDate.value,
+        "material_code": reportMaterialCode.value,
         "partial_number": reportPartialNo.value,
         "shift": reportShift.value,
         "total_quantity": reportTotalQuantity.value,
@@ -2099,7 +2093,32 @@ const confirmPreparedByStamp = async () => {
     };
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
-    //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+
+    try {
+        const emailPayload = {
+            serial: [currentSerialSelected.value],
+            emails: 'automation5@smp.com.ph,automation2@smp.com.ph',
+        };
+
+        console.log('[DEBUG] Sending email payload:', emailPayload);
+
+        const sendEmail = await axios.post('/api/route-email', emailPayload);
+
+        console.log('[DEBUG] Email API response:', sendEmail.data);
+    } catch (error) {
+        if (error.response) {
+            console.error('[ERROR] Email API failed with response:', {
+                status: error.response.status,
+                data: error.response.data,
+            });
+        } else if (error.request) {
+            console.error('[ERROR] Email API request made but no response:', error.request);
+        } else {
+            console.error('[ERROR] Email API setup error:', error.message);
+        }
+    }
+
     showReportData();
 }
 
@@ -2141,6 +2160,31 @@ const confirmCheckedByStamp = async () => {
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, checkedByData);
     //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+
+    try {
+        const emailPayload = {
+            serial: [currentSerialSelected.value],
+            emails: 'automation5@smp.com.ph,automation2@smp.com.ph',
+        };
+
+        console.log('[DEBUG] Sending email payload:', emailPayload);
+
+        const sendEmail = await axios.post('/api/route-email', emailPayload);
+
+        console.log('[DEBUG] Email API response:', sendEmail);
+    } catch (error) {
+        if (error.response) {
+            console.error('[ERROR] Email API failed with response:', {
+                status: error.response.status,
+                data: error.response.data,
+            });
+        } else if (error.request) {
+            console.error('[ERROR] Email API request made but no response:', error.request);
+        } else {
+            console.error('[ERROR] Email API setup error:', error.message);
+        }
+    }
+
     showReportData();
 }
 
@@ -2320,27 +2364,16 @@ const evaluateAllRejectReasons = () => {
   }
 }
 
-const checkCarmark = async () => {
+const addCarmark = async () => {
     try{
         const responseCarMark = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, {
-            "withCarmark": isAutomotive.value,
+            "withCarmark": 1,
         });
-        //console.log("Saved carmark data: ", responseCarMark.data);
+        console.log("Saved carmark data: ", responseCarMark.data);
         isAutomotive.value = true;
+        showCarMarkButton.value = false;
     }catch(error){
         console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
-    }
-}
-
-const initialCarmarkChecking = async () => {
-    try{
-        const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data.data);
-        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        isAutomotiveInitiallyMarked.value = filterBySerial[0].withCarmark == 1;
-        console.warn("Is carmarked initially marked? = ",isAutomotiveInitiallyMarked.value);
-    }catch(error){
-        console.error("ERROR GET REQUEST FOR CARMARK: ", error);
     }
 }
 

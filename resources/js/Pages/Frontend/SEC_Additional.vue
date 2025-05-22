@@ -750,6 +750,7 @@ const csv_selectedFile = ref(null)
     const finishProceed = () => {
         finishProceed_showConfirm.value = false;
         showProceed3.value = true;
+        saveToNsaCategory();
     }
 
     const finishProceed_showConfirmationButton = () => {
@@ -1235,14 +1236,47 @@ const checkTPMCategory = async () => {
 
         const responsePatchCategory = await axios.patch(`/api/nsaupdatecategory/${currentSerialSelected.value}`,{
             actual_model: jhCurveActualModel.value,
-            factor_emp: propData_factorEmp.value,
             jhcurve_lotno: jhCurveLotNo.value,
-            mias_emp: propData_miasEmp.value,
             massprod_name: jhCurveMassProdName.value,
         });
-        //console.log("API PATCHED category: ",responsePatchCategory);
+        console.log("API PATCHED category: ",responsePatchCategory);
     }catch(error){
         console.error("Error fetching for checkTPMCategory-data: ",error);
+    }
+}
+
+const saveToNsaCategory = async () => {
+    try{
+
+        const responseTPMCAT = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value); // Adjust this URL to your API endpoint
+        console.log('saveToNsaCategory - API Response responseTPMCAT:', responseTPMCAT.data);
+        tpmCatData.value = responseTPMCAT.data.data;
+
+        const tpm_category_actualmodel = tpmCatData.value.map(item => item.category?.actual_model ?? null);
+        console.log('tpm_category_actualmodel:', tpm_category_actualmodel);
+        jhCurveActualModel.value = tpm_category_actualmodel[0];
+        console.log('jhCurveActualModel:', jhCurveActualModel.value);
+
+        const tpm_category_jhCurveLotno = tpmCatData.value.map(item => item.category?.jhcurve_lotno ?? null);
+        console.log('tpm_category_jhCurveLotno:', tpm_category_jhCurveLotno);
+        jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
+        console.log('jhCurveLotNo:', jhCurveLotNo.value);
+
+        const tpm_category_massProdName = tpmCatData.value.map(item => item.category?.massprod_name ?? null);
+        console.log('tpm_category_massProdName:', tpm_category_massProdName);
+        jhCurveMassProdName.value = tpm_category_massProdName[0];
+        console.log('jhCurveMassProdName:', jhCurveMassProdName.value);
+
+        const responsePatchCategory = await axios.patch(`/api/nsaupdatecategory/${currentSerialSelected.value}`,{
+                mias_emp: nsa_MiasEmp.value,
+                factor_emp: nsa_FactorEmp.value,
+                actual_model: jhCurveActualModel.value,
+                jhcurve_lotno: jhCurveLotNo.value,
+                massprod_name: jhCurveMassProdName.value,
+            });
+            console.log("API PATCHED category: ",responsePatchCategory);
+    }catch(error){
+        console.error("Error fetching API Response saveToNsaCategory:", error);
     }
 }
 
@@ -1517,7 +1551,7 @@ const showAllData = async () => {
 
             console.log('Aggregate Data:', aggregateData);
             console.log('Aggregate ID for patch:', nsaData_aggID.value)
-            sendAggData(aggregateData, nsaData_aggID.value);
+            await sendAggData(aggregateData, nsaData_aggID.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);

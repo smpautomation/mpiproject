@@ -14,12 +14,10 @@ class RouteMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $username;
     public array $serial;
 
-    public function __construct(string $username, array $serial)
+    public function __construct(array $serial)
     {
-        $this->username = $username;
         $this->serial = $serial;
         //$this->serial = preg_replace('/[^A-Za-z0-9_\-]/', '', $serial);
     }
@@ -42,7 +40,6 @@ class RouteMail extends Mailable
         return new Content(
             view: 'emails.route-email',
             with: [
-                'username' => $this->username,
                 'serial' => $this->serial
             ]
         );
@@ -63,10 +60,9 @@ class RouteMail extends Mailable
         //need to sanitize the serial number.
 
         $mail = $this->view('emails.route-email', [
-            'username' => $this->username,
             'serial' => $this->serial
             ])->subject('MPI Reports for Approval');
-        
+
         return $mail;
     }
 }

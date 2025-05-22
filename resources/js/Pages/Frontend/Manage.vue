@@ -2429,7 +2429,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             };
 
             console.log('Aggregate Data:', aggregateData);
-            sendAggData(aggregateData, serialNo.value);
+            await sendAggData(aggregateData, serialNo.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);

@@ -138,8 +138,7 @@ Route::post('/route-email', function (Request $request) {
         'emails' => 'required|string'
     ]);
 
-
     $emailList = array_map('trim', explode(',', $validated['emails']));
-    Mail::to($emailList)->send(new RouteMail($validated['username'], $validated['serial']));
+    Mail::to($emailList)->send(new RouteMail( $validated['serial']));
     return redirect()->route('approval')->with('success', 'Emails sent successfully!');
 });

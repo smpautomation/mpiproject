@@ -82,23 +82,23 @@
             {{-- Company Logo --}}
             <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
             {{-- <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo"> --}}
-            <h1>Hello, {{ $username }}!</h1>
+            <h1>Hello!</h1>
         </div>
 
         <div class="content">
             <p>You have MPI reports that are pending for approval</p>
 
-            
-            
+
+
             <div class="custom-message" style="margin-top: 20px;">
                 <p>Below are serial numbers that need your approval</p>
                 @foreach($serial as $serialNumber)
                     <p style="font-weight: bold;">{{ $serialNumber }}</p>
                 @endforeach
             </div>
-            
 
-            
+
+
 
             <div class="contact">
                 <h3>Contact Support</h3>
@@ -115,7 +115,7 @@
             {{-- Department or System Footer Logo --}}
 
         </div>
-        
+
     </div>
 </body>
 </html>
