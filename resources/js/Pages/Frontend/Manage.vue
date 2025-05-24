@@ -342,7 +342,9 @@
                 <div>
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-white">Upload file for Temperature and Data Status:</p>
+                        <p class="mb-4 text-xl font-semibold text-white text-center">
+                            Upload Property Data CSV file:
+                        </p>
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
                         <!-- File Input Label -->
@@ -523,7 +525,9 @@
                         <p class="mb-8 text-lg font-extrabold text-white animate-pulse">Please fill in the details for <span class="text-xl text-green-200">Mass Production Control Sheet</span> before proceeding</p>
                         <div class="flex flex-row">
                             <span class="px-2 my-2 text-lg font-extrabold text-white rounded-lg bg-gradient-to-br from-cyan-300/30 to-green-800/10 backdrop-blur-lg">Box: <span class="text-cyan-300">{{ massProd_letter[currentBoxIndex] }}</span></span>
-                            <span class="my-2 text-lg font-extrabold text-white ml-[200px] ">Current Layer: {{ currentLayerNo }}</span>
+                            <span class="my-2 text-lg font-extrabold text-white ml-[200px]">
+                                Current Layer: {{ displayLayerNo }}
+                            </span>
 
                         </div>
                         <div class="flex flex-row">
@@ -633,7 +637,7 @@
             <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
             <div v-show="showGraphAndTables" class="z-10 flex flex-col">
                 <div class="flex flex-col items-center justify-center">
-                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-cyan-900/80 to-green-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="text-2xl font-extrabold text-blue-400">Report</span> section and select {{ serialNo }} </p>
+                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-cyan-900/80 to-green-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="text-2xl font-extrabold text-blue-400">Report</span> section and select <span class="text-2xl font-extrabold text-blue-400"> {{ serialNo }}</span></p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
                     <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
@@ -937,6 +941,10 @@
 
     const propData_miasEmp = ref("");
     const propData_factorEmp = ref("");
+
+    const displayLayerNo = computed(() => {
+        return currentLayerNo.value === 10 ? 9.5 : currentLayerNo.value
+    });
 
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
@@ -1584,20 +1592,28 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     };
 
     const createDefaultLayers = async (furnaceNo) => {
-        for (let i = 1; i <= 10; i++) {
-            const layerDatabase = {
-                layer_no: i,
-                layer_name: `Layer ${i}`,
+        // Define the exact order of layers you want to create
+        const layerNos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 9.5];
+
+        for (const num of layerNos) {
+            const layerData = {
+                layer_no: num,
+                layer_name: `Layer ${num}`,
                 furnace_id: furnaceNo,
                 description: "Enter description here"
             };
 
             try {
-                console.log(`Sending Layer ${i}:`, layerDatabase);
-                const response = await axios.post('/api/layerdata', layerDatabase);
-                console.log(`Layer ${i} created:`, response.data.data["Layer Name"]);
+                console.log(`Creating Layer ${num}...`);
+                const response = await axios.post('/api/layerdata', layerData);
+                console.log(`Layer ${num} created:`, response.data.data["Layer Name"]);
             } catch (error) {
-                console.error(`Failed to create Layer ${i}:`, error);
+                console.error(`Failed to create Layer ${num}:`, error.message);
+                if (error.response) {
+                    console.error("Server responded with:", error.response.status, error.response.data);
+                } else if (error.request) {
+                    console.error("No response received from API. Request details:", error.request);
+                }
             }
         }
     };

@@ -8,7 +8,7 @@
             <div>
                 <label for="massProd" class="block mb-1 font-medium text-gray-700">Mass Production Name:</label>
                 <input
-                v-model="form.massProd"
+                v-model="form.massPro"
                 type="text"
                 id="massProd"
                 class="w-full px-4 py-2 placeholder-gray-500 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-opacity-40"
@@ -63,29 +63,36 @@ import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
 const form = reactive({
-    massProd: '',  // Matches 'massProd' in the backend
-    mass_pro: '',  // Matches 'mass_pro' in the backend
-    emails: '',    // Matches 'emails' in the backend
-    message: '',   // Matches 'message' in the backend
-});
+    massPro: '',
+    emails: '',
+    message: '',
+})
 
-const success = ref(false);
+const success = ref(false)
 
 const submitEmail = async () => {
   try {
-    const response = await axios.post('/api/send-test-email', form); // Updated endpoint to match backend route
-    console.log(response.data); // Log response for debugging or confirmation
-
-    success.value = true;
+    const response = await axios.post('/api/send-takefu-email', form, {
+        headers: {
+            Accept: 'application/json',
+        }
+    });
+    console.log(response.data);
+    success.value = true
 
     // Reset form
-    form.massProd = '';
-    form.mass_pro = '';
-    form.emails = '';
-    form.message = '';
+    form.massPro = ''
+    form.emails = ''
+    form.message = ''
   } catch (error) {
-    console.error('Failed to send email:', error.response?.data || error.message);
-    alert('Failed to send email. Please check your inputs or try again later.');
+    if (error.response) {
+      console.error('Backend error status:', error.response.status);
+      console.error('Backend error data:', error.response.data);
+      alert('Server error: ' + JSON.stringify(error.response.data));
+    } else {
+      console.error('Request error:', error.message);
+      alert('Failed to send email. Please check your inputs or try again later.');
+    }
   }
-};
+}
 </script>

@@ -668,82 +668,92 @@
                             <td class="border-l border-b border-t border-black px-[2px] py-[2px] text-[10px]">{{ item.temperature }}</td>
                             <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.data_status }}</td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
-                    <thead>
-                        <tr class="text-center bg-gray-200">
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black"></th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">Br</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">iHc</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">iHk</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">[BH]m</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">Hr95</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">Hr98</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">iHc&#8209;iHk</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">Br&#960;Ia</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">bHc</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">Squareness</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Id</th>
-                            <th class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Is</th>
-                            <th class="px-1 py-1 text-xs border border-black">4&#960;Ia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- AVERAGE ROW -->
-                        <tr class="text-center">
+                        <tr>
                             <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Average</th>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printBrAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printiHcAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printiHkAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printBHMaxAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printHr95Average }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printHr98Average }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printiHciHkAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printBrpaiIaAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printbHcAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ printSquarenessAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ print4paiIdAverage }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ print4paiIsAverage }}</td>
-                            <td class="border border-black px-1 py-[2px] text-[10px]">{{ print4paiIaAverage }}</td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printBrAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printiHcAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printiHkAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printBHMaxAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printHr95Average }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printHr98Average }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printiHciHkAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printBrpaiIaAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printbHcAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printSquarenessAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ print4paiIdAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ print4paiIsAverage }}</td>
+                            <td></td>
+                            <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ print4paiIaAverage }}</td>
+                            <td class="border-r border-black"></td>
                         </tr>
-
-                        <!-- MAXIMUM ROW -->
-                        <tr class="text-center">
+                        <tr>
                             <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Maximum</th>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printBrMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printiHcMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printiHkMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printBHMaxMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printHr95Maximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printHr98Maximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printiHciHkMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printbHcaxMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ print4paiIdMaximum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ print4paiIsMaximum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMaximum }}</td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHcMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHkMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBHMaxMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printHr95Maximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printHr98Maximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHciHkMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrpaiIaMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printbHcaxMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printSquarenessaxMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIdMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIsMaximum }}</td>
+                            <td class="border-t border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIaMaximum }}</td>
+                            <td class="border-r border-t border-black"></td>
                         </tr>
-
-                        <!-- MINIMUM ROW -->
-                        <tr class="text-center">
+                        <tr>
                             <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Minimum</th>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printBrMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printiHcMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printiHkMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printBHMaxMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printHr95Minimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printHr98Minimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printiHciHkMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printBrpaiIaMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printbHcaxMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ printSquarenessaxMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ print4paiIdMinimum }}</td>
-                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ print4paiIsMinimum }}</td>
-                            <td class="border border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrMinimum }}</td>
+                            <td class="border-t border-b border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHcMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHkMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBHMaxMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printHr95Minimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printHr98Minimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHciHkMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrpaiIaMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printbHcaxMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printSquarenessaxMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIdMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIsMinimum }}</td>
+                            <td class="border-t border-b border-black"></td>
+                            <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
+                            <td class="border-r border-t border-b border-black"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -882,7 +892,7 @@
         <div v-for="index in numberOfSet" :key="index">
             <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
                 <!-- Report Title -->
-                <h1 :class="{ 'leading-loose': adjustStyling }" class="mt-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button>Set #:{{ index }}</button></h1>
+                <h1 :class="{ 'leading-loose': adjustStyling }" class="mt-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button v-if="!adjustStyling">Set #:{{ index }}</button></h1>
                 <div class="flex flex-row items-center justify-center mt-2 mb-5 text-blue-600">
                     <p class="text-sm">{{ additionalRemarks[index - 1] }}</p>
                 </div>
@@ -1095,7 +1105,7 @@
         <div v-for="index in numberOfSet" :key="index">
             <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page p-7">
                 <div class="flex flex-col my-6">
-                    <button :class="{ 'leading-loose': adjustStyling }" >Set #{{ index }}</button>
+                    <button v-if="!adjustStyling" :class="{ 'leading-loose': adjustStyling }">Set #{{ index }}</button>
                     <div class="flex flex-row">
                         <div class="mb-10 border border-black w-[480px] h-[360px]">
                             <canvas

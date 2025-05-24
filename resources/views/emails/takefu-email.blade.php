@@ -79,24 +79,16 @@
 <body>
     <div class="email-container">
         <div class="header">
-            {{-- Company Logo --}}
             <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
-            {{-- <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo"> --}}
             <h1>Hello!, </h1>
         </div>
 
         <div class="content">
-            {{-- <p>This is a test email sent from your Laravel application using SMTP.</p> --}}
-
             @if(!empty($customMessage))
                 <div class="custom-message" style="margin-top: 20px;">
                     {!! $customMessage !!}
                 </div>
             @endif
-<<<<<<< HEAD:resources/views/emails/test.blade.php
-=======
-            
->>>>>>> 2a833bdc7e4115eeafe68a0f4b22d120daaf5d9c:resources/views/emails/takefu-email.blade.php
 
             <div class="attachments">
                 <p>Please find the attached PDF file(s) for your reference.</p>
@@ -105,22 +97,21 @@
 
             <div class="contact">
                 <h3>Contact Support</h3>
-                <p><strong>Email:</strong> ae@smp.com.ph;misd@smp.com.ph</p>
-                <p><strong>Phone:</strong> (049) 541 3190 </p>
+                <p><strong>Email:</strong> ae@smp.com.ph; misd@smp.com.ph</p>
+                <p><strong>Phone:</strong> (049) 541 3190</p>
                 <p><strong>Hours:</strong> Monday – Friday, 6:00 AM – 6:00 PM (GMT+8)</p>
             </div>
         </div>
 
         <div class="footer">
             <p>This is an automated message. Please do not reply directly to this email.</p>
-
             <p>&copy; 2025 Automation Engineering Department. All rights reserved.</p>
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
             {{ app(\App\Services\TxtExportService::class)->exportData3('C-33', $massPro) }}
+            {{ app(\App\Services\TxtExportService::class)->exportData1('C-33', $massPro) }}
         </div>
-
     </div>
 </body>
 </html>

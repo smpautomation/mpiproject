@@ -689,7 +689,7 @@
                         />
                         <div class="px-0 py-5 mx-5 bg-blue-300 shadow-xl rounded-2xl">
                             <p
-                                class="mx-10 text-5xl font-extrabold transition-opacity duration-1000 animate-pulse"
+                                class="mx-10 text-xl font-extrabold transition-opacity duration-1000 animate-pulse"
                                 :class="{
                                     'text-red-500': reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD',
                                     'text-green-500': reportRemarksDisplay !== 'E' && reportRemarksDisplay !== 'HOLD'
@@ -880,7 +880,7 @@
                         @click="sec_additional_redirect(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
-                        Apply SEC Additionals
+                        Apply Additional
                     </button>
                     <button
                         v-if="approvedByPerson"

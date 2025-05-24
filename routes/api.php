@@ -104,21 +104,31 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
-Route::post('/send-takefu-email', function(Request $request){
+Route::post('/send-takefu-email', function(Request $request) {
 
     $validated = $request->validate([
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
-        'mass_pro' => 'required|string',
-        'massProd' => 'required|string',
+        'massPro' => 'required|string',
     ]);
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
-
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
+    Log::info('Starting mail send');
+    try {
+        Mail::to($emailList)->send(new TakefuMail($validated['massPro'], $customMessage));
+        Log::info('Mail sent successfully');
+    } catch (\Throwable $e) {
+        Log::error('Mail sending failed: ' . $e->getMessage());
+        Log::error($e->getTraceAsString());
 
-    Mail::to($emailList)->send(new TakefuMail($validated['mass_pro'], $customMessage));
-    return 'Test Email Sent';
+        return response()->json([
+            'error' => 'Mail sending failed',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+
+    return response()->json(['message' => 'Test Email Sent'], 200);
 });
 
 Route::get('/test-pdf-view', function () {

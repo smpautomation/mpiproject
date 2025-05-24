@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 
 class TxtExportService
 {
-    public function exportData1(string $furnace_no)
+    public function exportData1(string $furnace_no, string $massPro)
     {
         // Step 1: Get the latest date for the specified furnace
         $dateToGet = TpmData::where('furnace_no', $furnace_no)
@@ -93,7 +93,7 @@ class TxtExportService
             ->prepend($header);
 
         // Step 7: Save file
-        $directory = public_path("files/{$furnace_no}");
+        $directory = public_path("files/{$massPro}");
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
@@ -229,7 +229,6 @@ class TxtExportService
 
             $lines[] = implode(',', $escapedRow);
         }
-        dd($escapedRow);
 
         $directory = public_path("files/{$massPro}");
         if (!File::exists($directory)) {
