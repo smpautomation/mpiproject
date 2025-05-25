@@ -31,7 +31,7 @@
                         <button
                             @click="generateReport"
                             :disabled="showNotif2"
-                            class="disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            class="px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         >
                             Generate Report
                         </button>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <!-- Report Content -->
-            <DotsLoader v-show="showReportLoading" class="mt-8 z-10"/>
+            <DotsLoader v-show="showReportLoading" class="z-10 mt-8"/>
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
                     <div v-if="currentUserName != 'ITADANI KAZUYA' && ipAddress == currentUserIP" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
@@ -92,12 +92,12 @@
                         <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
                         </div>
                         <div class="flex flex-col">
-                            <div v-show="showCarMarkButton && !isAutomotive" class="p-1 text-center items-center border-4 border-white">
+                            <div v-show="showCarMarkButton && !isAutomotive" class="items-center p-1 text-center border-4 border-white">
                                 <button
                                     @click="addCarmark"
                                     class="w-[160px] h-[80px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
                                     >
-                                    <span class="text-md inline-block transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:opacity-90">
+                                    <span class="inline-block transition-all duration-300 ease-in-out transform text-md group-hover:scale-110 group-hover:opacity-90">
                                         ADD&nbsp;CARMARK
                                     </span>
                                 </button>
@@ -728,7 +728,7 @@
                     <!-- Prepared By -->
                     <div class="flex flex-col">
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Prepared By:</p>
-                    <div class="p-1 text-center items-center border-b-4 border-l-4 border-r-4 border-white">
+                    <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showPreparedByDefault" class="w-[153px] h-[153px]">
                             <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
                                 Waiting for stamp...
@@ -777,7 +777,7 @@
                     <!-- Checked By -->
                     <div class="flex flex-col">
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Checked By:</p>
-                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white items-center">
+                    <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showCheckedByDefault" class="w-[153px] h-[153px]">
                         <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
@@ -826,7 +826,7 @@
                     <!-- Approved By -->
                     <div class="flex flex-col">
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Approved By:</p>
-                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white items-center">
+                    <div class="items-center p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showApprovedByDefault" class="w-[153px] h-[153px]">
                         <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
@@ -850,7 +850,7 @@
                     <div class="p-2 border-4 border-white w-[320px] h-[190px] box-border">
                         <div class="flex flex-col items-start w-full h-full overflow-auto bg-blue-100">
                             <span
-                                v-for="(note, index) in noteReasonForReject"
+                                v-for="(note, index) in sortedNotes"
                                 :key="index"
                                 class="font-extrabold text-red-700 opacity-100"
                             >
@@ -889,7 +889,7 @@
                     >
                         Finalize Report
                     </button>
-                    <button @click="finalizeReport(currentSerialSelected)" class="bg-white rounded-lg p-2">
+                    <button @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
                         Finalize Report BYPASS
                     </button>
                     <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
@@ -908,7 +908,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted, nextTick, watch } from 'vue';
+import { ref, onMounted, nextTick, watch, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
@@ -947,7 +947,28 @@ const preparedByStampPhoto = ref(false);
 const checkedByStampPhoto = ref(false);
 const approvedByStampPhoto = ref(false);
 
+const priorityOrder = {
+  '- LOW BR': 1,
+  '- HIGH BR': 1,
+  '- N.G iHc': 2,
+  '- iHc Below Target+500 Oe': 2,
+  '- N.G iHk': 3,
+  '- N.G Hr95': 4,
+  '- N.G Hr98': 5,
+  '- N.G iHc-iHk': 6,
+  '- N.G Br-4PIa': 7,
+  '- N.G bHc': 8,
+};
+
 const noteReasonForReject = ref([]);
+
+const sortedNotes = computed(() => {
+  return noteReasonForReject.value.slice().sort((a, b) => {
+    const aPriority = priorityOrder[a] || 99;
+    const bPriority = priorityOrder[b] || 99;
+    return aPriority - bPriority;
+  });
+});
 
 const isReportDataReady = ref(false);
 
