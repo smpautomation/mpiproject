@@ -102,6 +102,11 @@
                 <p><strong>Hours:</strong> Monday – Friday, 6:00 AM – 6:00 PM (GMT+8)</p>
             </div>
         </div>
+        @php
+            $parts = explode(' ', $massPro);
+            $actualFurnaceNo = $parts[0] ?? null;
+            $actualMassPro = $parts[1] ?? null;
+        @endphp
 
         <div class="footer">
             <p>This is an automated message. Please do not reply directly to this email.</p>
@@ -109,8 +114,12 @@
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
-            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33', $massPro) }}
-            {{ app(\App\Services\TxtExportService::class)->exportData1('C-33', $massPro) }}
+            @if($actualFurnaceNo && $actualMassPro)
+                {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
+                {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
+            @else
+                <p style="color:red;">Invalid massPro: "{{ $massPro }}"</p>
+            @endif
         </div>
     </div>
 </body>

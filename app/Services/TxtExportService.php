@@ -10,7 +10,7 @@ class TxtExportService
     public function exportData1(string $furnace_no, string $massPro)
     {
         // Step 1: Get the latest date for the specified furnace
-        $dateToGet = TpmData::where('furnace_no', $furnace_no)
+        $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
             ->orderBy('date', 'desc')
             ->value('date');
 
@@ -18,7 +18,7 @@ class TxtExportService
         $tpmData = TpmData::with(['category', 'boxes' => function ($q) {
                 $q->whereIn('box_letter', range('A', 'K'));
             }])
-            ->where('furnace_no', $furnace_no)
+            ->where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
             ->where('date', $dateToGet)
             ->get();
 
@@ -111,12 +111,12 @@ class TxtExportService
 
     public function exportData3(string $furnace_no, string $massPro)
     {
-        $dateToGet = TpmData::where('furnace_no', $furnace_no)
+        $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
             ->orderBy('date', 'desc')
             ->value('date');
 
         $tpmData = TpmData::with('remark', 'category')
-        ->where('furnace_no', $furnace_no)
+        ->where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
         ->where('date', $dateToGet)
         ->get();
 

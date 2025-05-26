@@ -729,7 +729,7 @@
                         <tr>
                             <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Minimum</th>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrMinimum }}</td>
-                            <td class="border-t border-b border-b border-black"></td>
+                            <td class="border-t border-b border-black"></td>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHcMinimum }}</td>
                             <td class="border-t border-b border-black"></td>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHkMinimum }}</td>
