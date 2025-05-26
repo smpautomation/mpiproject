@@ -52,6 +52,7 @@
 
             <!-- Success Message -->
             <p v-if="success" class="font-medium text-green-600">Test Email Sent!</p>
+            <DotsLoader v-if="loading" class="mx-auto text-blue-600" />
         </div>
     </Frontend>
 </template>
@@ -68,9 +69,11 @@ const form = reactive({
     message: '',
 })
 
-const success = ref(false)
+const success = ref(false);
+const loading = ref(false);
 
 const submitEmail = async () => {
+loading.value = true;
   try {
     const response = await axios.post('/api/send-takefu-email', form, {
         headers: {
@@ -78,7 +81,10 @@ const submitEmail = async () => {
         }
     });
     console.log(response.data);
-    success.value = true
+    success.value = true;
+    setTimeout(() => {
+        success.value = false;
+    }, 3000); // 3000 milliseconds = 3 seconds
 
     // Reset form
     form.massPro = ''
@@ -93,6 +99,8 @@ const submitEmail = async () => {
       console.error('Request error:', error.message);
       alert('Failed to send email. Please check your inputs or try again later.');
     }
+  }finally {
+    loading.value = false;
   }
 }
 </script>

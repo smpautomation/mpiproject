@@ -93,7 +93,7 @@ class TxtExportService
             ->prepend($header);
 
         // Step 7: Save file
-        $directory = public_path("files/{$massPro}");
+        $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
@@ -230,7 +230,7 @@ class TxtExportService
             $lines[] = implode(',', $escapedRow);
         }
 
-        $directory = public_path("files/{$massPro}");
+        $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }

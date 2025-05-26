@@ -114,12 +114,9 @@
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
-            @if($actualFurnaceNo && $actualMassPro)
-                {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
-                {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
-            @else
-                <p style="color:red;">Invalid massPro: "{{ $massPro }}"</p>
-            @endif
+            {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
+            {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
+
         </div>
     </div>
 </body>

@@ -2429,7 +2429,7 @@ const exportMultiPagePdf = async () => {
     console.log(`[PDF Export] PDF Blob generated`);
     console.log(`[PDF Export] Blob size: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
 
-    const massProd_forPDF = printMassProdName.value.split(' ').slice(1).join(' ');
+    const massProd_forPDF = printMassProdName.value;
     if (!massProd_forPDF || !massProd_forPDF.trim()) {
         console.error('[PDF Export] ERROR: massProd_forPDF is empty or invalid. Cannot upload.');
         return; // Abort upload. Fix upstream
