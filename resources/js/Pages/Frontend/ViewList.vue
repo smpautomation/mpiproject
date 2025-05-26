@@ -8,7 +8,16 @@
         placeholder="Search model name or lot no..."
         class="w-full max-w-md p-2 border rounded shadow-sm"
       />
+      <div class="flex flex-row items-center align-middle space-x-4">
+        <label>Status: </label>
+      <!-- Status Filter -->
+        <select v-model="statusFilter" class="w-[150px] p-2 border rounded shadow-sm">
+        <option value="">All</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="PENDING">Pending</option>
+        </select>
 
+      </div>
       <!-- No Data -->
       <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
             No matching data found.
@@ -105,6 +114,7 @@ const tpmData = ref([]);
 const searchQuery = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 20;
+const statusFilter = ref('');
 
 // Fetch data
 const viewAllSerialedLayers = async () => {
@@ -123,27 +133,19 @@ onMounted(viewAllSerialedLayers);
 
 // Search + filter
 const filteredData = computed(() => {
-  if (!searchQuery.value) {
-    console.log('[Filtered Data]: No search query. Returning full data.');
-    return tpmData.value;
-  }
-
   const query = searchQuery.value.toLowerCase();
-  const filtered = tpmData.value.filter(item => {
+  const status = statusFilter.value;
+
+  return tpmData.value.filter(item => {
     const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
     const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
-    return model.includes(query) || lot.includes(query);
+    const judgmentStatus = item.report?.[0]?.approved_by ? 'COMPLETED' : 'PENDING';
+
+    const matchesQuery = !query || model.includes(query) || lot.includes(query);
+    const matchesStatus = !status || judgmentStatus === status;
+
+    return matchesQuery && matchesStatus;
   });
-
-  console.log('[Filtered Data]: Query =', searchQuery.value, '| Results =', filtered.length);
-  return filtered;
-});
-
-// Pagination
-const totalPages = computed(() => {
-  const pages = Math.ceil(filteredData.value.length / itemsPerPage);
-  console.log('[Pagination]: Total Pages =', pages);
-  return pages;
 });
 
 const paginatedData = computed(() => {
@@ -171,5 +173,9 @@ const prevPage = () => {
 watch(searchQuery, (newVal) => {
   console.log('[Search Query Changed]:', newVal);
   currentPage.value = 1; // Reset to page 1 on new search
+});
+
+watch(statusFilter, () => {
+  currentPage.value = 1;
 });
 </script>

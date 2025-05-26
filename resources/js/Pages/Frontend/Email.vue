@@ -10,10 +10,11 @@
                 <input
                 v-model="form.massPro"
                 type="text"
+                @input="form.massPro = form.massPro.toUpperCase()"
                 id="massProd"
                 class="w-full px-4 py-2 placeholder-gray-500 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-opacity-40"
                 required
-                placeholder="e.g. 541st"
+                placeholder="e.g. K40 541ST"
                 />
             </div>
 
@@ -25,7 +26,7 @@
                 id="emails"
                 class="w-full px-4 py-2 placeholder-gray-500 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-opacity-40"
                 required
-                placeholder="e.g. automation3@smp.com.ph;automation2@smp.com.ph"
+                placeholder="e.g. automation3@smp.com.ph,automation2@smp.com.ph"
                 />
             </div>
 

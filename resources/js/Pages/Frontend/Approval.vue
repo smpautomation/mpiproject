@@ -16,48 +16,57 @@
                     <p class="text-lg font-extrabold">No data available yet for approval</p>
                 </div>
                 <div v-else>
+                    <!-- Status Filter -->
+                    <div class="flex justify-end mb-4 align-middle items-center">
+                    <label for="statusFilter" class="mr-2 font-semibold">Filter by Status:</label>
+                    <select id="statusFilter" v-model="statusFilter" class="p-2 w-[125px] border rounded">
+                        <option value="ALL">ALL</option>
+                        <option value="APPROVED">APPROVED</option>
+                        <option value="PENDING">PENDING</option>
+                    </select>
+                    </div>
                     <div class="m-10">
                         <table class="w-full overflow-hidden border-collapse rounded-lg shadow-lg table-auto">
                             <thead class="text-white bg-gray-800 ">
                                 <tr>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Date</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Partial No</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Total Quantity</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300 whitespace-nowrap">SMP Judgement</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Prepared By</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Checked By</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300">Action</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-800 border-b border-gray-300">Status</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center bg-red-400 border-b border-gray-300">Approval</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Date</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Partial No</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Total Quantity</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300 whitespace-nowrap">SMP Judgement</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300 whitespace-nowrap">Prepared By</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300 whitespace-nowrap">Checked By</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300 whitespace-nowrap">Action</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-green-800 border-b border-gray-300 whitespace-nowrap">Status</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-red-400 border-b border-gray-300 whitespace-nowrap">Approval</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center bg-white">
-                                <tr v-for="(report, index) in reportDataList" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.date }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.partial_number }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.total_quantity }}</td>
-                                    <td class="px-6 py-3 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
+                                <tr v-for="(report, index) in filteredReports" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.date }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.partial_number }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.total_quantity }}</td>
+                                    <td class="px-3 py-2 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
                                         {{ report.smp_judgement }}
                                     </td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
-                                    <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
+                                    <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
                                         <button @click="viewReport(report.tpm_data_serial)"
-                                                class="px-4 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+                                                class="px-3 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
                                             View Report
                                         </button>
                                     </td>
-                                    <td class="px-6 py-3 text-lg font-extrabold text-gray-700 border-b border-gray-300">
+                                    <td class="px-3 py-2 text-lg font-extrabold text-gray-700 border-b border-gray-300">
                                         <span v-if="report.approved_by === 'ITADANI KAZUYA'" class="text-green-600">APPROVED</span>
                                         <span v-else class="text-yellow-600">PENDING</span>
                                     </td>
-                                    <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
+                                    <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
                                         <input type="checkbox"
                                             :value="report.tpm_data_serial"
                                             v-model="selectedRows"
@@ -110,6 +119,8 @@ import { Inertia } from '@inertiajs/inertia';
 
 // UI
 
+const statusFilter = ref('ALL');
+
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
@@ -118,6 +129,16 @@ const reportNotificationMessage = ref('');
 // UI end
 const ipAddress = ref('');
 const reportDataList = ref([]);
+const filteredReports = computed(() => {
+  if (statusFilter.value === 'ALL') return reportDataList.value;
+
+  return reportDataList.value.filter(report => {
+    const isApproved = report.approved_by === 'ITADANI KAZUYA';
+    if (statusFilter.value === 'APPROVED') return isApproved;
+    if (statusFilter.value === 'PENDING') return !isApproved;
+  });
+});
+
 const selectedRows = ref([]); // Track selected rows by their serial numbers
 
 const props = defineProps({

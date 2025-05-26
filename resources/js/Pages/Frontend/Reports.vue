@@ -1437,6 +1437,8 @@ const reportReset = () => {
     showGX.value = false;
     showVTData.value = false;
     showCpkFrom_iHc.value = false;
+    preparedByStampConfirmation.value = false;
+    checkedByStampConfirmation.value = false;
 }
 
 const showNotification = (message) => {
@@ -1473,56 +1475,41 @@ const generateReport = async () => {
 }
 
 const checkSpecialJudgement = async () => {
-    //special judgement conditions //used sample model TIC-0755G
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    if (!hasNGihc) return;
 
-    if (jhCurveActualModel.value === "DNS-0A54G" || jhCurveActualModel.value === "MIS-0766G" || jhCurveActualModel.value === "MIE-0751G") {  //VT data MIS-0766G, DNS-0A54G, MIE-0751G
+    const model = jhCurveActualModel.value;
 
-        const hasSamples = reportVT_samplesQty.value > 0;
-        const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-        const shouldShowFullVT = hasSamples && hasNGihc;
+    // === Model Groups by Behavior ===
+    const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
+    const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
+    const MODELS_SHOW_CPK         = ["DNS0917G"];
+    const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
+    const MODELS_SHOW_BH          = ["ZFS0982G"];
 
-        console.log("reportVT_samplesQty:", reportVT_samplesQty.value);
-        console.log("noteReasonForReject:", noteReasonForReject.value);
-        console.log("hasSamples:", hasSamples);
-        console.log("hasNGihc:", hasNGihc);
-        console.log("shouldShowFullVT:", shouldShowFullVT);
+    // === Logic Blocks ===
 
-        showVTData_default.value = !shouldShowFullVT;
-        showVTData.value = shouldShowFullVT;
-
-        console.log("showVTData_default set to:", showVTData_default.value);
-        console.log("showVTData set to:", showVTData.value);
+    if (MODELS_SHOW_VT_DATA.includes(model) && reportVT_samplesQty.value > 0) {
+        showVTData.value = true;
+        showVTData_default.value = false;
+    }else if(MODELS_SHOW_VT_DATA.includes(model)){
+        showVTData.value = false;
+        showVTData_default.value = true;
     }
 
-    //TTM Models conditions
-    if(jhCurveActualModel.value.includes("TTM-")) { //ALL TTM models use .includes("TTM-")
-        isTTM_model.value = true;
-        if(noteReasonForReject.value.includes('- N.G iHc')){
-            if(jhCurveActualModel.value === "TTM-0A58D" || jhCurveActualModel.value === "TTM-0C16D") { //TTM models without corners , TTM-0A58D, TTM-0C16D
-                show1x1x1Data_withoutCorner.value = true;
-            }else{ // with corners
-                show1x1x1Data_withoutCorner.value = true;
-                show1x1x1Data_Corner.value = true;
-            }
+    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
+        show1x1x1Data_withoutCorner.value = true;
+        isTTM_model.value = model.includes("TTM");
+
+        if (model.includes("TTM") && !["TTM0A58D", "TTM0C16D"].includes(model)) {
+            show1x1x1Data_Corner.value = true;
         }
     }
 
-    if(jhCurveActualModel.value === "AAW-0935G" && noteReasonForReject.value.includes('- N.G iHc')){ // AAW-0935G
-        show1x1x1Data_withoutCorner.value = true;
-    }
-
-    if(jhCurveActualModel.value === "DNS-0917G" && noteReasonForReject.value.includes('- N.G iHc')){ // DNS-0917G
-        showCpkFrom_iHc.value = true;
-    }
-
-    if(jhCurveActualModel.value === "MIE-0983G" && noteReasonForReject.value.includes('- N.G iHc')){ // MIE-0983G
-        showGX.value = true;
-    }
-
-    if(jhCurveActualModel.value === "ZFS-0982G" && noteReasonForReject.value.includes('- N.G iHc')){ // ZFS-0982G
-        showBHData.value = true;
-    }
-}
+    if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
+    if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
+    if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
+};
 
 const fetchAllData = async () => {
     try {
@@ -2011,10 +1998,12 @@ const saveReportUpdate = async (saveData, serial) => {
     }catch (error){
         console.error("Patch report data Error:", error);
     }finally{
+        reportReset();
         fetchAllData();
         showReportData();
         showReportContent.value = false;
         showSelectionPanel.value = true;
+
     }
 }
 
