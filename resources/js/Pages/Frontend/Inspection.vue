@@ -280,18 +280,18 @@ const formData = ref({
 
 // Function to send data using Axios
 const submitData = async () => {
-    console.log("Form Data: ", formData.value);
+    //console.log("Form Data: ", formData.value);
     try {
         const response = await axios.post("/api/inspectiondata", formData.value);
         // Handle response
-        console.log("Insection api post Data submitted successfully!");
-        console.log("API Response:", response.data);
+        //console.log("Insection api post Data submitted successfully!");
+        //console.log("API Response:", response.data);
         showMainUI.value = true;
         showInputData.value = false;
         showInspectionData();
         resetAllField();
     } catch (error) {
-        console.log("Error submitting data!");
+        console.warn("Error submitting data!");
         console.error("API Error:", error);
     }
 };
@@ -301,9 +301,9 @@ const inspectionDataList = ref([]);
 const showInspectionData = async () => {
     try{
         const response = await axios.get("/api/inspectiondata");
-        console.log("Show All inspection data API respone: ",response.data);
+        //console.log("Show All inspection data API respone: ",response.data);
         inspectionDataList.value = response.data.data || [];
-        console.log("Show All inspection data list : ",inspectionDataList.value);
+        //console.log("Show All inspection data list : ",inspectionDataList.value);
     }catch{
         console.error("API get request showInspectionData Error:", error);
     }

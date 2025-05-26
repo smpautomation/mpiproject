@@ -407,6 +407,61 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
+                                <!--
+                                on going --- ROB special instruction
+                                <tr class="bg-blue-400">
+                                    <th colspan="7" class="py-1 text-md font-semibold text-center text-white border-4 border-white">BH Tracer Measurement</th>
+                                </tr>
+                                <tr class="bg-blue-400">
+                                    <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
+                                    <th rowspan="2" class="px-4 text-white border-4 border-white">SPECS</th>
+                                    <th class="px-4 text-white border-4 border-white">Br Min</th>
+                                    <th class="px-4 text-white border-4 border-white">Br Max</th>
+                                    <th class="px-4 text-white border-4 border-white">iHc Min</th>
+                                    <th class="px-4 text-white border-4 border-white">iHc Max</th>
+                                    <th rowspan="2" class="px-4 text-white border-4 border-white">Result</th>
+                                </tr>
+                                <tr class="text-center">
+                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMin" name="robBrMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></th>
+                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMax" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></th>
+                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMin" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></th>
+                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMax" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></th>
+                                </tr>
+                                <tr class="text-center">
+                                    <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ RT</th>
+                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">13.0 kG</td>
+                                    <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"></td>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">reportROB_BrRT_result</td>
+                                </tr>
+                                -->
+
                                 <template v-if="isTTM_model">
                                     <tr class="bg-blue-300">
                                         <th rowspan="2" colspan="2" class="text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
@@ -889,9 +944,14 @@
                     >
                         Finalize Report
                     </button>
+                    <!-- Finalize Report BYPASS Button
+
                     <button @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
                         Finalize Report BYPASS
                     </button>
+
+                    -->
+
                     <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
@@ -977,7 +1037,7 @@ const isReportDataReady = ref(false);
 const isTTM_model = ref(false);
 const isAutomotive = ref(false);
 watch(isAutomotive, (newVal, oldVal) => {
-  console.log(`isAutomotive changed from ${oldVal} to ${newVal}`);
+  //console.log(`isAutomotive changed from ${oldVal} to ${newVal}`);
   // Your reactive logic here
 }, { immediate: true });
 const showCarMarkButton = ref(true);
@@ -1243,11 +1303,11 @@ watch(
       showVTData.value === true
     ) {
       if (reportVT_iHcResults.value.length == 0 || reportVT_iHcResults.value.some(sample => sample < reportVT_iHc.value)) {
-        console.log('One or more samples below threshold — NG');
+        //console.log('One or more samples below threshold — NG');
         reportVT_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('All samples OK');
+        //console.log('All samples OK');
         reportVT_remarks.value = 'OK';
         reportSMPJudgement.value = 'HOLD';
       }
@@ -1262,29 +1322,29 @@ watch(
 watch(
   [reportSurface_cpk, reportCore_cpk, reportSurface_remarks, reportCore_remarks, reportSMPJudgement],
   () => {
-    console.log('Watch triggered for 1x1x1 without corner evaluation');
-    console.log('noteReasonForReject:', noteReasonForReject.value);
-    console.log('show1x1x1Data_withoutCorner:', show1x1x1Data_withoutCorner.value);
-    console.log('reportSurface_cpk:', reportSurface_cpk.value);
-    console.log('reportCore_cpk:', reportCore_cpk.value);
+    //console.log('Watch triggered for 1x1x1 without corner evaluation');
+    //console.log('noteReasonForReject:', noteReasonForReject.value);
+    //console.log('show1x1x1Data_withoutCorner:', show1x1x1Data_withoutCorner.value);
+    //console.log('reportSurface_cpk:', reportSurface_cpk.value);
+    //console.log('reportCore_cpk:', reportCore_cpk.value);
 
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
       show1x1x1Data_withoutCorner.value === true && reportSurface_cpk.value !== null && reportCore_cpk.value !== null
     ) {
       if (reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value) {
-        console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
+        //console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
         reportSurface_remarks.value = 'NG';
         reportCore_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
+        //console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
         reportCore_remarks.value = 'OK';
         reportSurface_remarks.value = 'OK';
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('Conditions not met for 1x1x1 CPK check — skipping');
+      //console.log('Conditions not met for 1x1x1 CPK check — skipping');
     }
   },
   { immediate: true }
@@ -1293,27 +1353,27 @@ watch(
 watch(
   [reportCpkFrom_iHc_Cpk, reportCpkFrom_iHc_remarks, reportSMPJudgement],
   () => {
-    console.log('Watch triggered for CPK from iHc evaluation');
-    console.log('noteReasonForReject:', noteReasonForReject.value);
-    console.log('showCpkFrom_iHc:', showCpkFrom_iHc.value);
-    console.log('reportCpkFrom_iHc_Cpk:', reportCpkFrom_iHc_Cpk.value);
-    console.log('cpkStandardValue:', cpkStandardValue.value);
+    //console.log('Watch triggered for CPK from iHc evaluation');
+    //console.log('noteReasonForReject:', noteReasonForReject.value);
+    //console.log('showCpkFrom_iHc:', showCpkFrom_iHc.value);
+    //console.log('reportCpkFrom_iHc_Cpk:', reportCpkFrom_iHc_Cpk.value);
+    //console.log('cpkStandardValue:', cpkStandardValue.value);
 
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
       showCpkFrom_iHc.value === true && reportCpkFrom_iHc_Cpk.value !== null
     ) {
       if (reportCpkFrom_iHc_Cpk.value < cpkStandardValue.value) {
-        console.log('reportCpkFrom_iHc_Cpk is below standard — setting NG/REJECT');
+        //console.log('reportCpkFrom_iHc_Cpk is below standard — setting NG/REJECT');
         reportCpkFrom_iHc_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('reportCpkFrom_iHc_Cpk meets or exceeds standard — setting OK/HOLD');
+        //console.log('reportCpkFrom_iHc_Cpk meets or exceeds standard — setting OK/HOLD');
         reportCpkFrom_iHc_remarks.value = 'OK';
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('Conditions not met for CPK from iHc check — skipping');
+      //console.log('Conditions not met for CPK from iHc check — skipping');
     }
   },
   { immediate: true }
@@ -1323,22 +1383,22 @@ watch(
 watch(
   [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement],
   () => {
-    console.log('Watch triggered for GX iHc evaluation');
-    console.log('showGX:', showGX.value);
-    console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
-    console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
+    //console.log('Watch triggered for GX iHc evaluation');
+    //console.log('showGX:', showGX.value);
+    //console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
+    //console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
 
     if (noteReasonForReject.value.includes('- N.G iHc') && showGX.value === true &&
     reportGX_iHcMinimum.value !== null && reportGX_iHcStandard.value !== null) {
       if (reportGX_iHcMinimum.value < reportGX_iHcStandard.value) {
-        console.log('GX iHc minimum is below standard — setting NG/REJECT');
+        //console.log('GX iHc minimum is below standard — setting NG/REJECT');
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+        //console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('GX display not active — skipping GX iHc check');
+      //console.log('GX display not active — skipping GX iHc check');
     }
   },
   { immediate: true }
@@ -1362,7 +1422,7 @@ watch(
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('BH display not active — skipping BH check');
+      //console.log('BH display not active — skipping BH check');
     }
   },
   { immediate: true }
@@ -1372,41 +1432,41 @@ watch(
 watch(
   [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks],
   () => {
-    console.log('Watch triggered for isTTM_model or reportCpk');
-    console.log('isTTM_model:', isTTM_model.value);
-    console.log('reportCpk:', reportCpk.value);
+    //console.log('Watch triggered for isTTM_model or reportCpk');
+    //console.log('isTTM_model:', isTTM_model.value);
+    //console.log('reportCpk:', reportCpk.value);
 
 
     if (isTTM_model.value === true && reportCpk.value !== null) {
         if (reportCpk.value < 1.00) {
-            console.log('reportCpk is below 1.00 — setting NG/REJECT');
+            //console.log('reportCpk is below 1.00 — setting NG/REJECT');
             reportCpkRemarks.value = 'NG';
         } else {
-            console.log('reportCpk is 1.00 or higher — setting OK/HOLD');
+            //console.log('reportCpk is 1.00 or higher — setting OK/HOLD');
             reportCpkRemarks.value = 'OK';
         }
 
         if(noteReasonForReject.value.includes('- N.G iHc') && show1x1x1Data_withoutCorner.value === true && show1x1x1Data_Corner.value === false){
             if(reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value){
-            console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
+            //console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
             reportSurface_remarks.value = 'NG';
             reportCore_remarks.value = 'NG';
             reportSMPJudgement.value = 'REJECT';
             }else{
-                console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
+                //console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
                 reportCore_remarks.value = 'OK';
                 reportSurface_remarks.value = 'OK';
                 reportSMPJudgement.value = 'HOLD';
             }
         }else if(noteReasonForReject.value.includes('- N.G iHc') && show1x1x1Data_withoutCorner.value === true && show1x1x1Data_Corner.value === true){
             if(reportCorner_cpk.value < cpkStandardValue.value || reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value){
-                console.log('Surface, Core and Corner CPK below 1.33 — setting NG/REJECT');
+                //console.log('Surface, Core and Corner CPK below 1.33 — setting NG/REJECT');
                 reportSurface_remarks.value = 'NG';
                 reportCore_remarks.value = 'NG';
                 reportCorner_remarks.value = 'NG';
                 reportSMPJudgement.value = 'REJECT';
             }else{
-                console.log('Surface, Core and Corner CPK 1.33 or higher — setting OK/HOLD');
+                //console.log('Surface, Core and Corner CPK 1.33 or higher — setting OK/HOLD');
                 reportCore_remarks.value = 'OK';
                 reportSurface_remarks.value = 'OK';
                 reportCorner_remarks.value = 'OK';
@@ -1414,7 +1474,7 @@ watch(
             }
         }
     } else {
-      console.log('isTTM_model is false — skipping TTM CPK check');
+      //console.log('isTTM_model is false — skipping TTM CPK check');
     }
   },
   { immediate: true }
@@ -1768,16 +1828,16 @@ const showReportData = async () => {
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
         reportStdDev.value = filterBySerial[0].std_dev;
-        console.log('reportStdDev:', reportStdDev.value);
+        //console.log('reportStdDev:', reportStdDev.value);
         reportCp.value = filterBySerial[0].cp;
-        console.log('reportCp:', reportCp.value);
+        //console.log('reportCp:', reportCp.value);
         reportCpk.value = filterBySerial[0].cpk;
-        console.log('reportCpk:', reportCpk.value);
+        //console.log('reportCpk:', reportCpk.value);
         reportCpkRemarks.value = filterBySerial[0].br_cpk_remarks;
-        console.log('reportCpkRemarks:', reportCpkRemarks.value);
+        //console.log('reportCpkRemarks:', reportCpkRemarks.value);
 
         const noteRejectReasons = JSON.parse(filterBySerial[0].note_reason_reject);
-        console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
+        //console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
 
         if (noteRejectReasons && Array.isArray(noteRejectReasons)) {
             noteReasonForReject.value = []; // Clear existing values
@@ -1788,7 +1848,7 @@ const showReportData = async () => {
             console.warn("No valid noteRejectReasons found (null or not an array).");
         }
 
-        console.log("Model value: ",reportModel.value);
+        //console.log("Model value: ",reportModel.value);
 
         //console.log("Report Data Model", reportModel.value);
 
@@ -1825,7 +1885,7 @@ const showReportData = async () => {
 
         const oneby = JSON.parse(filterBySerial[0].data_1x1x1_info || '{}');
         const VT = JSON.parse(filterBySerial[0].data_VT_info || '{}');
-        console.log("VT Data: ",VT);
+        //console.log("VT Data: ",VT);
         const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || '{}');
         const GX = JSON.parse(filterBySerial[0].data_GX_info || '{}');
         const bh = JSON.parse(filterBySerial[0].data_bh_info || '{}');
@@ -1985,14 +2045,14 @@ const saveReport = async () => {
             "result": reportBH_result.value,
         }),
     }
-    console.log("Save report data: ", saveReportData);
+    //console.log("Save report data: ", saveReportData);
     saveReportUpdate(saveReportData, currentSerialSelected.value);
 }
 
 const saveReportUpdate = async (saveData, serial) => {
     try{
         const responseSave = await axios.patch(`/api/reportdata/${serial}`, saveData);
-        console.log("Saved Report data: ", responseSave.data);
+        //console.log("Saved Report data: ", responseSave.data);
         checkApprovalStates();
         showNotification2("Saved Successfully");
     }catch (error){
@@ -2049,7 +2109,7 @@ const props = defineProps({
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
-console.log('isFromApproval:', isFromApproval.value);
+//console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
 //console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
@@ -2103,7 +2163,7 @@ const confirmPreparedByStamp = async () => {
     };
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
-    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
 
     try {
         const emailPayload = {
@@ -2111,11 +2171,11 @@ const confirmPreparedByStamp = async () => {
             emails: 'automation5@smp.com.ph,automation2@smp.com.ph',
         };
 
-        console.log('[DEBUG] Sending email payload:', emailPayload);
+        //console.log('[DEBUG] Sending email payload:', emailPayload);
 
         const sendEmail = await axios.post('/api/route-email', emailPayload);
 
-        console.log('[DEBUG] Email API response:', sendEmail.data);
+        //console.log('[DEBUG] Email API response:', sendEmail.data);
     } catch (error) {
         if (error.response) {
             console.error('[ERROR] Email API failed with response:', {
@@ -2177,11 +2237,11 @@ const confirmCheckedByStamp = async () => {
             emails: 'automation5@smp.com.ph,automation2@smp.com.ph',
         };
 
-        console.log('[DEBUG] Sending email payload:', emailPayload);
+        //console.log('[DEBUG] Sending email payload:', emailPayload);
 
         const sendEmail = await axios.post('/api/route-email', emailPayload);
 
-        console.log('[DEBUG] Email API response:', sendEmail);
+        //console.log('[DEBUG] Email API response:', sendEmail);
     } catch (error) {
         if (error.response) {
             console.error('[ERROR] Email API failed with response:', {
@@ -2379,11 +2439,11 @@ const addCarmark = async () => {
         const responseCarMark = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, {
             "withCarmark": 1,
         });
-        console.log("Saved carmark data: ", responseCarMark.data);
+        //console.log("Saved carmark data: ", responseCarMark.data);
         isAutomotive.value = true;
         showCarMarkButton.value = false;
     }catch(error){
-        console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
+        //console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
     }
 }
 

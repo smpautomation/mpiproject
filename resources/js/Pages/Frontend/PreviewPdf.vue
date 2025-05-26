@@ -487,7 +487,7 @@
                     <div class="flex flex-col p-1 border border-black">
                         <div class="text-[10px] pb-1 font-extrabold">Note: (REASON OF HOLD/REJECT)</div>
                         <p class="text-[10px] text-red-600 font-extrabold" v-if="noteReasonForReject.length">
-                            <span v-for="(reason, index) in noteReasonForReject" :key="index" class="block">
+                            <span v-for="(reason, index) in sortedNotes" :key="index" class="block">
                                 {{ reason }}
                             </span>
                         </p>
@@ -1315,7 +1315,29 @@ const printCheckedBy_date = ref('');
 const printApprovedBy = ref('');
 const printApprovedBy_date = ref('');
 
+const priorityOrder = {
+  '- LOW BR': 1,
+  '- HIGH BR': 1,
+  '- N.G iHc': 2,
+  '- iHc Below Target+500 Oe': 2,
+  '- N.G iHk': 3,
+  '- N.G Hr95': 4,
+  '- N.G Hr98': 5,
+  '- N.G iHc-iHk': 6,
+  '- N.G Br-4PIa': 7,
+  '- N.G bHc': 8,
+};
+
 const noteReasonForReject = ref([]);
+
+const sortedNotes = computed(() => {
+  return noteReasonForReject.value.slice().sort((a, b) => {
+    const aPriority = priorityOrder[a] || 99;
+    const bPriority = priorityOrder[b] || 99;
+    return aPriority - bPriority;
+  });
+});
+
 const nsa_noteReasonForReject = ref([]);
 
 const printTPMData = ref([]);
@@ -1483,50 +1505,48 @@ const standardSampleDimention = computed(() => ({
 }));
 
 const checkSpecialJudgement = async () => {
-    //special judgement conditions //used sample model TIC-0755G
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    if (!hasNGihc) return;
 
-    if ((printActualModel.value === "DNS-0A54G" || printActualModel.value === "MIS-0766G" || printActualModel.value === "MIE-0751G") && noteReasonForReject.value.includes('- N.G iHc')) { //VT data MIS-0766G, DNS-0A54G, MIE-0751G
+    const model = printActualModel.value;
 
+    // === Model Groups by Behavior ===
+    const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
+    const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
+    const MODELS_SHOW_CPK         = ["DNS0917G"];
+    const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
+    const MODELS_SHOW_BH          = ["ZFS0982G"];
+
+    // === Logic Blocks ===
+
+    if (MODELS_SHOW_VT_DATA.includes(model) && printVT_sampleQty.value > 0) {
         showVTData.value = true;
-        console.log("showVTData set to:", showVTData.value);
+        showVTData_default.value = false;
+    }else if(MODELS_SHOW_VT_DATA.includes(model)){
+        showVTData.value = false;
+        showVTData_default.value = true;
     }
 
-    //TTM Models conditions
-    if(printActualModel.value.includes("TTM-")) { //ALL TTM models use .includes("TTM-")
-        isTTM_model.value = true;
-        if(noteReasonForReject.value.includes('- N.G iHc')){
-            if(printActualModel.value === "TTM-0A58D" || printActualModel.value === "TTM-0C16D") { //TTM models without corners , TTM-0A58D, TTM-0C16D
-                show1x1x1Data_withoutCorner.value = true;
-            }else{ // with corners
-                show1x1x1Data_withoutCorner.value = true;
-                show1x1x1Data_Corner.value = true;
-            }
+    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
+        show1x1x1Data_withoutCorner.value = true;
+        isTTM_model.value = model.includes("TTM");
+
+        if (model.includes("TTM") && !["TTM0A58D", "TTM0C16D"].includes(model)) {
+            show1x1x1Data_Corner.value = true;
         }
     }
 
-    if(printActualModel.value === "AAW-0935G" && noteReasonForReject.value.includes('- N.G iHc')){ // AAW-0935G
-        show1x1x1Data_withoutCorner.value = true;
-    }
-
-    if(printActualModel.value === "DNS-0917G" && noteReasonForReject.value.includes('- N.G iHc')){ // DNS-0917G
-        showCpkFrom_iHc.value = true;
-    }
-
-    if(printActualModel.value === "MIE-0983G" && noteReasonForReject.value.includes('- N.G iHc')){ // MIE-0983G
-        showGX.value = true;
-    }
-
-    if(printActualModel.value === "ZFS-0982G" && noteReasonForReject.value.includes('- N.G iHc')){ // ZFS-0982G
-        showBHData.value = true;
-    }
-}
+    if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
+    if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
+    if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
+};
 
 const dataFrom_reportdata = async () => {
     try{
         const responseReport = await axios.get("/api/reportdata");
         //console.log('API GET request-responseReport',responseReport.data);
         const reportData = responseReport.data.data.filter(column => column.tpm_data_serial == printSerialNo.value); // filter by serial
-        console.log("reportData-data: ",reportData);
+        //console.log("reportData-data: ",reportData);
         const rd = reportData[0];
 
         isAutomotive.value = rd.withCarmark == 1;
@@ -1820,12 +1840,12 @@ const dataFrom_tpmData = async () => {
         const responseTpmData = await axios.get("api/tpmdata?serial=" + printSerialNo.value);
         //console.log("API GET request-responseTpmData",responseTpmData.data);
         printTPMData.value = responseTpmData.data.data;
-        console.log("printTPMData-data: ",printTPMData.value);
+        //console.log("printTPMData-data: ",printTPMData.value);
         const TPM = responseTpmData.data.data[0];
         const [furnaceNo, sinteringNo] = TPM.sintering_furnace_no.split('-');
 
         const tpmCat = printTPMData.value[0].category;
-        console.log("tpmCat-data: ",tpmCat);
+        //console.log("tpmCat-data: ",tpmCat);
         printCodeNo.value = TPM.code_no;
         printTypeCode.value = TPM.type;
         printSinteringNo.value = sinteringNo;
@@ -1839,7 +1859,7 @@ const dataFrom_tpmData = async () => {
         printFactoryEmployee.value = tpmCat.factor_emp;
         printMiasEmployee.value = tpmCat.mias_emp;
         const printAggregateData = responseTpmData.data[0][0];
-        console.log("AggregateData-data: ",printAggregateData);
+        //console.log("AggregateData-data: ",printAggregateData);
         const aggMax = JSON.parse(printAggregateData.maximum);
         const aggAve = JSON.parse(printAggregateData.average);
         const aggMin = JSON.parse(printAggregateData.minimum);
@@ -2074,21 +2094,21 @@ const renderChart = () => {
 const checkingNSA = async () => {
     try {
         const responseCheckNSA = await axios.get("api/nsadata/");
-        console.log("API GET REQUEST responseCheckNSA-data:", responseCheckNSA.data);
+        //console.log("API GET REQUEST responseCheckNSA-data:", responseCheckNSA.data);
         const nsadata = responseCheckNSA.data.data["NSAData"] || [];
         const nsafilteredData = nsadata.filter(item => item.serial_no == printSerialNo.value);
         if (nsafilteredData.length > 0) {
             const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
             numberOfSet.value = maxSetNo;
             additionalRemarks.value = [...new Set(nsadata.map(item => item.set_name))];
-            console.log('getting all the additional descriptions:',additionalRemarks.value);
+            //console.log('getting all the additional descriptions:',additionalRemarks.value);
         }else{
-            console.log('NOT ARRAY!!');
+            //console.log('NOT ARRAY!!');
         }
 
        // console.log('tpm data filtered by serial: ',nsafilteredData);
 
-        console.log("NUMBER OF SETS: ",numberOfSet.value);
+        //console.log("NUMBER OF SETS: ",numberOfSet.value);
     } catch (error) {
         console.error("ERROR GET REQUEST responseCheckNSA-data:", error);
     }
@@ -2096,10 +2116,10 @@ const checkingNSA = async () => {
 
 const pagesData = ref([]);
 const nsa_dataFrom_tpmData = async () => {
-    console.log("You have entered nsa_dataFrom_tpmData");
+    //console.log("You have entered nsa_dataFrom_tpmData");
 
     try {
-        console.log("You have entered nsa_dataFrom_tpmData TRY CATCH");
+        //console.log("You have entered nsa_dataFrom_tpmData TRY CATCH");
 
         if (numberOfSet.value <= 0) {
             console.warn("numberOfSet.value is zero or negative, skipping loop.");
@@ -2107,22 +2127,22 @@ const nsa_dataFrom_tpmData = async () => {
         }
 
         for (let x = 1; x <= numberOfSet.value; x++) {
-            console.log(`Fetching data for set #${x}...`);
+            //console.log(`Fetching data for set #${x}...`);
 
             // Fetch data from API
             const responseNsaData = await axios.get("api/nsadata?serial=" + printSerialNo.value + "&set=" + x);
-            console.log(`API response for set #${x}:`, responseNsaData.data);
+            //console.log(`API response for set #${x}:`, responseNsaData.data);
 
             const nsadata = responseNsaData.data.data;
             const nsaGeneral = responseNsaData.data;
-            console.log("NSA GENERAL DATA: ",nsaGeneral);
+            //console.log("NSA GENERAL DATA: ",nsaGeneral);
 
             if (!nsadata || nsadata.length === 0) {
                 console.warn(`No data found for set #${x}`);
                 continue; // Skip this iteration if no data is available
             }
 
-            console.log(`NSA data for set #${x}:`, nsadata);
+            //console.log(`NSA data for set #${x}:`, nsadata);
 
             if (nsadata.length === 0) {
                 console.warn(`No data found for set #${x}`);
@@ -2138,7 +2158,7 @@ const nsa_dataFrom_tpmData = async () => {
 
                 // Skip the iteration if required properties are missing
                 if (!TPM || !tpmCat || !TPM.sintering_furnace_no) {
-                    console.log(`Skipping TPM #${i} due to missing required properties.`);
+                    //console.log(`Skipping TPM #${i} due to missing required properties.`);
                     continue;
                 }
 
@@ -2176,7 +2196,7 @@ const nsa_dataFrom_tpmData = async () => {
             // General page-level info
             const firstTPM = nsadata[0];
             const [furnaceNo, sinteringNo] = firstTPM?.sintering_furnace_no?.split('-') ?? ["", ""];
-            console.log(`furnace and sintering no for page:`, { furnaceNo, sinteringNo });
+            //console.log(`furnace and sintering no for page:`, { furnaceNo, sinteringNo });
 
             const page = {
                 codeNo: firstTPM?.code_no ?? "",
@@ -2197,7 +2217,7 @@ const nsa_dataFrom_tpmData = async () => {
 
             // Check if nsaGeneral exists and parse additional data
             if (nsaGeneral[0][x-1].average && nsaGeneral[0][x-1].maximum && nsaGeneral[0][x-1].minimum) {
-                console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral);
+                //console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral);
 
                 const average = JSON.parse(nsaGeneral[0][x-1].average);
                 const maximum = JSON.parse(nsaGeneral[0][x-1].maximum);
@@ -2259,12 +2279,12 @@ const nsa_dataFrom_tpmData = async () => {
                 console.warn(`nsaGeneral[${0}] or nsaGeneral[0][${x-1}] is undefined!`);
             }
 
-            console.log(`Page contents for set #${x}:`, page);
+            //console.log(`Page contents for set #${x}:`, page);
 
             // Add page data to the pagesData array
             pagesData.value.push(page);
 
-            console.log("PAGESDATA contents: ",pagesData.value);
+            //console.log("PAGESDATA contents: ",pagesData.value);
         }
     } catch (error) {
         console.error(`Error processing!}:`, error);
@@ -2383,9 +2403,9 @@ const nsa_renderChart = (setIndex) => {
 
 const exportMultiPagePdf = async () => {
   try {
-    console.log('[PDF Export] Starting multi-page export...');
+    //console.log('[PDF Export] Starting multi-page export...');
     const pages = document.querySelectorAll('.a4-page');
-    console.log(`[PDF Export] Found ${pages.length} page(s)`);
+    //console.log(`[PDF Export] Found ${pages.length} page(s)`);
 
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
@@ -2422,12 +2442,12 @@ const exportMultiPagePdf = async () => {
       if (i > 0) pdf.addPage();
 
       pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
-      console.log(`[PDF Export] Image added to PDF page ${i + 1}`);
+      //console.log(`[PDF Export] Image added to PDF page ${i + 1}`);
     }
 
     const blob = pdf.output('blob');
-    console.log(`[PDF Export] PDF Blob generated`);
-    console.log(`[PDF Export] Blob size: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
+    //console.log(`[PDF Export] PDF Blob generated`);
+    //console.log(`[PDF Export] Blob size: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
 
     const massProd_forPDF = printMassProdName.value;
     if (!massProd_forPDF || !massProd_forPDF.trim()) {
@@ -2437,18 +2457,18 @@ const exportMultiPagePdf = async () => {
 
     const formData = new FormData();
     formData.append('massProd', massProd_forPDF);
-    console.log('[PDF Export] massProd_forPDF:', massProd_forPDF);
+    //console.log('[PDF Export] massProd_forPDF:', massProd_forPDF);
 
     formData.append('pdf', blob, `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}.pdf`);
-    console.log('[PDF Export] PDF file info:', {
+    /*console.log('[PDF Export] PDF file info:', {
     filename: `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}.pdf`,
     sizeMB: (blob.size / (1024 * 1024)).toFixed(2),
     type: blob.type
-    });
+    });*/
 
-    console.log(`[PDF Export] Uploading PDF to server...`);
+    //console.log(`[PDF Export] Uploading PDF to server...`);
     const response = await axios.post('/upload-pdf', formData);
-    console.log(`[PDF Export] Upload successful. Server response:`, response.data);
+    //console.log(`[PDF Export] Upload successful. Server response:`, response.data);
 
     success.value = true;
   } catch (error) {
@@ -2471,7 +2491,7 @@ const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
 });
 printSerialNo.value = props.serialParam;
-console.log('Serial Param in PreviewPdf.vue:', props.serialParam); // You can use this for debugging
+//console.log('Serial Param in PreviewPdf.vue:', props.serialParam); // You can use this for debugging
 
 // Optional: auto print on page load
 onMounted( async () => {

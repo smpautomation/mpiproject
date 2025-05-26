@@ -1057,7 +1057,7 @@
                     mias_emp: propData_miasEmp.value,
                     massprod_name: jhCurveMassProdName.value,
                 });
-                console.log("API PATCHED category: ",responsePatchCategory);
+                //console.log("API PATCHED category: ",responsePatchCategory);
         }catch(error){
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
@@ -1074,7 +1074,7 @@
                 box_no: massProd_boxNo.value,
                 raw_mat_code: massProd_rawMatCode.value,
             });
-            console.log("TPM Boxes: ", responseTpmBoxes.data);
+            //console.log("TPM Boxes: ", responseTpmBoxes.data);
 
             // Step 1: Reset fields after saving
             massProd_qty.value = '';
@@ -1146,7 +1146,7 @@
             console.error("Error fetching furnace data:", error);
         } finally {
             isLoadingForAddFurnaces.value = false; // Stop loading
-            console.log("Loading state reset.");
+            //console.log("Loading state reset.");
 
             showFurnaceCreatedNotif.value = true;
 
@@ -1208,8 +1208,8 @@
                     status: row["Data class"]
                 }));
 
-                console.log('CSV Parsed Data:', csv_parsedData.value);
-                console.log('Temp with Data class:', csv_tempWithDataStat.value);
+                //console.log('CSV Parsed Data:', csv_parsedData.value);
+                //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
             },
                 error: (err) => {
@@ -1243,7 +1243,7 @@
                 temperature: csv_tempWithDataStat.value[i]?.temp || null,
                 data_status: csv_tempWithDataStat.value[i]?.status || null
             }).then(response => {
-                console.log(`Patched ID ${id} with row ${i}:`, response.data);
+                //console.log(`Patched ID ${id} with row ${i}:`, response.data);
                 return response.data; // optionally return result
             }).catch(error => {
                 console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
@@ -1253,7 +1253,7 @@
 
             // 👇 Run them all at once
             const patchResults = await Promise.all(patchPromises);
-            console.log('All patch results:', patchResults);
+            //console.log('All patch results:', patchResults);
 
         } catch (error) {
             console.error("Something went wrong in mergeTempToTPM:", error);
@@ -1300,7 +1300,7 @@
     // Function to fetch layer data
     const fetchLayers = async () => {
         try {
-            console.log("Fetching layer data from /api/layerdata...");
+            //console.log("Fetching layer data from /api/layerdata...");
 
             const response = await axios.get("/api/layerdata");
             //console.log("API Response:", response.data.data["Layer Data"]);
@@ -1348,7 +1348,7 @@
 
     const getFurnaceNoByName = async (furnaceName) => {
         try {
-            console.log("Fetching furnace_id for furnace:", furnaceName);
+            //console.log("Fetching furnace_id for furnace:", furnaceName);
 
             // Fetch all furnaces from the API
             const response = await axios.get('/api/furnacedata');
@@ -1372,7 +1372,7 @@
 
     const getLayerNoByName = async (layerName) => {
         try {
-            console.log("Fetching layer_no for layer:", layerName);
+            //console.log("Fetching layer_no for layer:", layerName);
 
             // Fetch all layers from the API
             const response = await axios.get('/api/layerdata');
@@ -1408,7 +1408,7 @@
         try{
             const response = await axios.get('/api/furnacedata');
             const existingFurnaces = response.data.data["Furnace Data"] || [];
-            console.log("Existing furnaces: ", existingFurnaces.length);
+            //console.log("Existing furnaces: ", existingFurnaces.length);
             if(existingFurnaces.length === 0){
                 showNoFurnaceDetectedNotif.value = true;
                 setTimeout(() => {
@@ -1491,7 +1491,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             // Step 1: Fetch the data from the API
             const response = await axios.get("/api/tpmdata"); // Adjust this URL to your API endpoint
             const tpmData = response.data.data.tpmDataAll || [];  // Fallback to an empty array if undefined
-            console.log("tpmData-data result = ",tpmData);
+            //console.log("tpmData-data result = ",tpmData);
 
             if (tpmData.length > 0) {
                 // Step 2: Loop through tpmData to find serial_no values and filter out invalid serial numbers
@@ -1518,7 +1518,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     // Combine year, month, and the new incremented serial number
                     serialNo.value = `${year}${month}${paddedNumericPart}`;
 
-                    console.log('Generated Serial Number:', serialNo.value);
+                    //console.log('Generated Serial Number:', serialNo.value);
                 } else {
                     // Step 4: If no valid serial number exists, generate the first one
                     const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
@@ -1530,12 +1530,12 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     // Generate the first serial number
                     serialNo.value = `${year}${month}${firstSerialNumber}`;
 
-                    console.log('Generated First Serial Number:', serialNo.value);
+                    //console.log('Generated First Serial Number:', serialNo.value);
                     //alert(`Generated First Serial Number: ${serialNo.value}`);
                 }
             } else {
                 // Handle case where there's no data
-                console.log('No data available in tpmData');
+                //console.log('No data available in tpmData');
                 const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
                 const firstSerialNumber = '000001';
@@ -1553,7 +1553,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     const saveNewFurnace = async (newFurnace) => {
         try {
-            console.log("Attempting to save new furnace:", JSON.stringify(newFurnace, null, 2));
+            //console.log("Attempting to save new furnace:", JSON.stringify(newFurnace, null, 2));
 
             // First, check if the furnace already exists
             const checkResponse = await axios.get('/api/furnacedata');
@@ -1567,11 +1567,11 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
             // Send the new furnace data
             const response = await axios.post('/api/furnacedata', newFurnace);
-            console.log("Furnace created successfully:", response.data);
+            //console.log("Furnace created successfully:", response.data);
 
             // Extract furnace_id from response (assuming API returns the created furnace object)
             const newFurnaceNo = response.data.data.id; // Adjust based on API response
-            console.log("Get furnace no: ", newFurnaceNo);
+            //console.log("Get furnace no: ", newFurnaceNo);
             // Now, create default layers under this furnace
             await createDefaultLayers(newFurnaceNo);
 
@@ -1604,9 +1604,9 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             };
 
             try {
-                console.log(`Creating Layer ${num}...`);
+                //console.log(`Creating Layer ${num}...`);
                 const response = await axios.post('/api/layerdata', layerData);
-                console.log(`Layer ${num} created:`, response.data.data["Layer Name"]);
+                //console.log(`Layer ${num} created:`, response.data.data["Layer Name"]);
             } catch (error) {
                 console.error(`Failed to create Layer ${num}:`, error.message);
                 if (error.response) {
@@ -1621,7 +1621,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const saveNewLayer = async () => {
         try {
             currentLayerNo.value = await getLayerNoByName(currentLayerName.value);
-            console.log("Current layer no from save new layer: ", currentLayerNo.value);
+            //console.log("Current layer no from save new layer: ", currentLayerNo.value);
             //alert('New Layer Added');
         } catch (error) {
             console.error('Error fetching layer number:', error);
@@ -2105,7 +2105,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     fileLists.value = [];
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = ''; // Clear the input field
-    console.log('File upload cleared');
+    //console.log('File upload cleared');
     };
 
     // Function to send raw data via API
@@ -2182,9 +2182,9 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             toggleManageForm.value = false;
             showAddNewDataLayer.value = false;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
-            console.log('API Response showallData:', response.data);
+            //console.log('API Response showallData:', response.data);
 
-            console.log('Serial No value = ', serialNo.value);
+            //console.log('Serial No value = ', serialNo.value);
 
             items.value = response.data;
 
@@ -2192,7 +2192,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
             tpmRemarks.value = response.data.remark || [];
             getAggregateID.value = response.data[0][0].id || [];
-            console.log("Aggregate ID: ", getAggregateID.value);
+            //console.log("Aggregate ID: ", getAggregateID.value);
 
             const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
             jhCurveActualModel.value = tpm_category_actualmodel[0];
@@ -2207,7 +2207,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            console.log('Combined Data: ', combinedData.value);
+            //console.log('Combined Data: ', combinedData.value);
 
             jhCurveFurnaceName.value = tpmData.value[0].sintering_furnace_no || "No data found";
             jhCurveModel.value = tpmData.value[0].code_no || "No data found";
@@ -2444,7 +2444,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 })
             };
 
-            console.log('Aggregate Data:', aggregateData);
+            //console.log('Aggregate Data:', aggregateData);
             await sendAggData(aggregateData, serialNo.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
@@ -2548,7 +2548,7 @@ const sendAggData = async (aggData, id) => {  // Make sure to pass 'id' as a par
         // Correct string interpolation for the URL
         const response = await axios.patch(`/api/tpmaggregateupdate/${id}`, aggData); // Proper string interpolation for URL
         // Uncomment this to see the response
-        console.log('API Response sendAggData:', response.data);
+        //console.log('API Response sendAggData:', response.data);
     } catch (error) {
         console.error('Error sending aggregate data to API:', error.response?.data || error.message);
     }
@@ -2751,12 +2751,12 @@ const renderChart = () => {
         manageSerialParam: String,  // Expecting the serialParam to be a string
     });
 
-    console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
+    //console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
 
     // onMounted logic to call the function based on serialParam existence
     onMounted(() => {
         // Log the value to check if it's being passed correctly
-        console.log('Serial Param in Manage.vue:', props.manageSerialParam);
+        //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
     showLoadingForGraphAndTables
     if (props.manageSerialParam) {
         showStartManageDiv.value = false;
@@ -2767,7 +2767,7 @@ const renderChart = () => {
         showUploadData.value = false;
         //console.log("Showdiv graphs ",showGraphAndTables.value);
         showAllData();
-        console.log('serialParam is provided, skipping fetchSerial.');
+        //console.log('serialParam is provided, skipping fetchSerial.');
     } else {
         // If serialParam does not have a value, proceed with fetchSerial
         fetchFurnaces();

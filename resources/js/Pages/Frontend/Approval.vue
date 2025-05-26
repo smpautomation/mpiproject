@@ -161,12 +161,12 @@ const showApprovedNotification = (message) => {
 
 // Watcher to observe changes to selectedRows and log them
 watch(selectedRows, (newValue) => {
-    console.log("Currently selected rows:", newValue);
+    //console.log("Currently selected rows:", newValue);
 }, { deep: true });
 
 const viewReport = (serial) => {
     saveReportChecked(serial);
-    console.log('Navigating to report with serial:', serial);
+    //console.log('Navigating to report with serial:', serial);
     Inertia.visit('/reports', {
         method: 'get',   // You can keep 'get' since we are not modifying any data
         data: { serialParam: serial, fromApproval: true },   // Passing the serialParam here
@@ -178,7 +178,7 @@ const viewReport = (serial) => {
 const showReportData = async () => {
     try {
         const response = await axios.get(`/api/reportdata/`);
-        console.log("Getting report data API result: ", response.data);
+        //console.log("Getting report data API result: ", response.data);
 
         // Filter out rows where smp_judgement is null or an empty string
         reportDataList.value = response.data.data.filter(report =>
@@ -187,7 +187,7 @@ const showReportData = async () => {
             report.prepared_by && report.prepared_by.trim() !== ''
         );
 
-        console.log("Filtered report data arrays: ", reportDataList.value);
+        //console.log("Filtered report data arrays: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
     }
@@ -200,7 +200,7 @@ const saveReportChecked = async (serial) => {
 
     try {
         const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-        console.log("Patched checked report data: ", response.data);
+        //console.log("Patched checked report data: ", response.data);
     } catch (error) {
         console.error("Patch report data Error:", error);
     }
@@ -208,7 +208,7 @@ const saveReportChecked = async (serial) => {
 
 const approveSelected = async () => {
     if (selectedRows.value.length === 0) {
-        console.log("No rows selected for approval");
+        //console.log("No rows selected for approval");
         return;
     }else{
         showApproveButton.value = false;
@@ -249,7 +249,7 @@ const confirmationApprove = async () => {
 
             // Send a PATCH request to update the 'approved_by' field
             const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-            console.log(`Successfully approved report with serial ${serial}:`, response.data);
+            //console.log(`Successfully approved report with serial ${serial}:`, response.data);
             showApprovedNotification("Approved Successfully");
             showReportData();
             showApproveButton.value = true;

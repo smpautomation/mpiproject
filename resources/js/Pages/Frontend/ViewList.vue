@@ -121,9 +121,9 @@ const viewAllSerialedLayers = async () => {
   try {
     const response = await axios.get('/api/tpmdata');
     const rawData = response.data.data?.tpmData || {};
-    console.log("Show respone raw data: ",response.data);
+    //console.log("Show respone raw data: ",response.data);
     tpmData.value = Object.values(rawData);
-    console.log('[Fetched Data]:', tpmData.value);
+    //console.log('[Fetched Data]:', tpmData.value);
   } catch (error) {
     console.error('[Error Fetching Data]:', error);
   }
@@ -151,27 +151,27 @@ const filteredData = computed(() => {
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
   const paginated = filteredData.value.slice(start, start + itemsPerPage);
-  console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
+  //console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
   return paginated;
 });
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
-    console.log('[Pagination]: Next Page →', currentPage.value);
+    //console.log('[Pagination]: Next Page →', currentPage.value);
   }
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
-    console.log('[Pagination]: Previous Page ←', currentPage.value);
+    //console.log('[Pagination]: Previous Page ←', currentPage.value);
   }
 };
 
 // Watchers for debugging
 watch(searchQuery, (newVal) => {
-  console.log('[Search Query Changed]:', newVal);
+  //console.log('[Search Query Changed]:', newVal);
   currentPage.value = 1; // Reset to page 1 on new search
 });
 
