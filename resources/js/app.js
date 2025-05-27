@@ -23,7 +23,7 @@ HTMLCanvasElement.prototype.getContext = function(type, options) {
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
-  title: (title) => title ? `${title} MPISystemOnline` : 'MPISystemOnline',
+  title: (title) => title ? `${title} MPIOnlineSystem` : 'MPIOnlineSystem',
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.vue`,
