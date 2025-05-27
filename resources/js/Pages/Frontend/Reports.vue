@@ -2344,7 +2344,7 @@ const confirmPreparedByStamp = async () => {
     try {
         const emailPayload = {
             serial: [currentSerialSelected.value],
-            emails: 'automation5@smp.com.ph,automation2@smp.com.ph',
+            emails: 'rizza@smp.com.ph,qa_trainingp8@smp.com.ph,mpi-engr.p8@smp.com.ph,p7_mpi_ahi@smp.com.ph',
         };
 
         //console.log('[DEBUG] Sending email payload:', emailPayload);
@@ -2410,7 +2410,7 @@ const confirmCheckedByStamp = async () => {
     try {
         const emailPayload = {
             serial: [currentSerialSelected.value],
-            emails: 'automation5@smp.com.ph,automation2@smp.com.ph',
+            emails: 'itadani@shinetsu.jp',
         };
 
         //console.log('[DEBUG] Sending email payload:', emailPayload);
