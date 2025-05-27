@@ -1289,6 +1289,32 @@ const printBrVariance = ref('N/A');
 const printiHcVariance = ref('N/A');
 const printiHkVariance = ref('N/A');
 
+const printROB_brMax = ref('');
+const printROB_brMin = ref('');
+const printROB_iHcMax = ref('');
+const printROB_iHcMin = ref('');
+const printROB_BrRTstandard = ref(13.0);
+const printROB_BrVTstandard = ref(10.5);
+const printROB_HD5standard = ref(10.053);
+const printROB_JD5standard = ref(9.6);
+const printROB_BrRT_brMin = ref(0);
+const printROB_BrRT_brMax = ref(0);
+const printROB_BrRT_iHcMin = ref(0);
+const printROB_BrRT_iHcMax = ref(0);
+const printROB_BrVT_brMin = ref(0);
+const printROB_BrVT_brMax = ref(0);
+const printROB_BrVT_iHcMin = ref(0);
+const printROB_BrVT_iHcMax = ref(0);
+const printROB_HD5_brMin = ref(0);
+const printROB_HD5_brMax = ref(0);
+const printROB_HD5_iHcMin = ref(0);
+const printROB_HD5_iHcMax = ref(0);
+const printROB_JD5_brMin = ref(0);
+const printROB_JD5_brMax = ref(0);
+const printROB_JD5_iHcMin = ref(0);
+const printROB_JD5_iHcMax = ref(0);
+const printROB_remarks = ref('NA');
+
 const nsa_printActualModel = ref('N/A');
 
 const nsa_printBrStandard = ref('N/A');
@@ -1459,6 +1485,7 @@ const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showGX = ref(false);
 const showBHData = ref(false);
+const showROB = ref(false);
 
 //special judgement UI variables end
 
@@ -1516,6 +1543,7 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_CPK         = ["DNS0917G"];
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
     const MODELS_SHOW_BH          = ["ZFS0982G"];
+    const MODELS_SHOW_ROB         = ["TIC0755G"]; //ROB0A70G
 
     // === Logic Blocks ===
 
@@ -1539,6 +1567,7 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
     if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
     if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
+    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
 };
 
 const dataFrom_reportdata = async () => {
@@ -1613,6 +1642,7 @@ const dataFrom_reportdata = async () => {
         const diHc_cpk = JSON.parse(rd.data_iHc_cpk_info);
         const dGX = JSON.parse(rd.data_GX_info);
         const dBH = JSON.parse(rd.data_bh_info);
+        const rob = JSON.parse(rd.data_ROB_info);
 
         printCore.value = d1x1x1.core;
         printCorner.value = d1x1x1.corner;
@@ -1661,6 +1691,32 @@ const dataFrom_reportdata = async () => {
         printBH_result.value = dBH.result;
         printBH_sample.value = dBH.sample;
         printBH_remarks.value = dBH.remarks;
+
+        printROB_brMin.value = rob.brMin;
+        printROB_brMax.value = rob.brMax;
+        printROB_iHcMin.value = rob.iHcMin;
+        printROB_iHcMax.value = rob.iHcMax;
+        printROB_BrRTstandard.value = rob.brRTStandard;
+        printROB_BrVTstandard.value = rob.brVTStandard;
+        printROB_HD5standard.value = rob.hd5Standard;
+        printROB_JD5standard.value = rob.jd5Standard;
+        printROB_BrRT_brMin.value = rob.brRT_brMin;
+        printROB_BrRT_brMax.value = rob.brRT_brMax;
+        printROB_BrRT_iHcMin.value = rob.brRT_iHcMin;
+        printROB_BrRT_iHcMax.value = rob.brRT_iHcMax;
+        printROB_BrVT_brMin.value = rob.brVT_brMin;
+        printROB_BrVT_brMax.value = rob.brVT_brMax;
+        printROB_BrVT_iHcMin.value = rob.brVT_iHcMin;
+        printROB_BrVT_iHcMax.value = rob.brVT_iHcMax;
+        printROB_HD5_brMin.value = rob.hd5_brMin;
+        printROB_HD5_brMax.value = rob.hd5_brMax;
+        printROB_HD5_iHcMin.value = rob.hd5_iHcMin;
+        printROB_HD5_iHcMax.value = rob.hd5_iHcMax;
+        printROB_JD5_brMin.value = rob.jd5_brMin;
+        printROB_JD5_brMax.value = rob.jd5_brMax;
+        printROB_JD5_iHcMin.value = rob.jd5_iHcMin;
+        printROB_JD5_iHcMax.value = rob.jd5_iHcMax;
+        printROB_remarks.value = rob.remarks;
 
 
         if (nRR && Array.isArray(nRR)) {

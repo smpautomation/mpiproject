@@ -407,60 +407,123 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
-                                <!--
-                                on going --- ROB special instruction
-                                <tr class="bg-blue-400">
-                                    <th colspan="7" class="py-1 text-md font-semibold text-center text-white border-4 border-white">BH Tracer Measurement</th>
-                                </tr>
-                                <tr class="bg-blue-400">
-                                    <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
-                                    <th rowspan="2" class="px-4 text-white border-4 border-white">SPECS</th>
-                                    <th class="px-4 text-white border-4 border-white">Br Min</th>
-                                    <th class="px-4 text-white border-4 border-white">Br Max</th>
-                                    <th class="px-4 text-white border-4 border-white">iHc Min</th>
-                                    <th class="px-4 text-white border-4 border-white">iHc Max</th>
-                                    <th rowspan="2" class="px-4 text-white border-4 border-white">Result</th>
-                                </tr>
-                                <tr class="text-center">
-                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMin" name="robBrMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></th>
-                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMax" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></th>
-                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMin" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></th>
-                                    <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMax" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></th>
-                                </tr>
-                                <tr class="text-center">
-                                    <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ RT</th>
-                                    <td class="px-4 py-2 text-blue-600 border-4 border-white">13.0 kG</td>
-                                    <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                        <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                        <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                        <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
-                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">reportROB_BrRT_result</td>
-                                </tr>
-                                -->
+
+                                <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
+                                    <tr class="bg-blue-400">
+                                        <th colspan="7" class="py-1 text-md font-semibold text-center text-white border-4 border-white">BH Tracer Measurement</th>
+                                    </tr>
+                                    <tr class="bg-blue-400">
+                                        <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
+                                        <th rowspan="2" class="px-4 text-white border-4 border-white">SPECS</th>
+                                        <th class="px-4 text-white border-4 border-white">Br Min</th>
+                                        <th class="px-4 text-white border-4 border-white">Br Max</th>
+                                        <th class="px-4 text-white border-4 border-white">iHc Min</th>
+                                        <th class="px-4 text-white border-4 border-white">iHc Max</th>
+                                        <th rowspan="2" class="px-4 text-white border-4 border-white">Result</th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMin" @input="reportROB_brMin = reportROB_brMin?.toUpperCase()" name="robBrMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMax" @input="reportROB_brMax = reportROB_brMax?.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMin" @input="reportROB_iHcMin = reportROB_iHcMin?.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMax" @input="reportROB_iHcMax = reportROB_iHcMax?.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ RT</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrRTstandard }} kg</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ VT (180°C)</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrVTstardard }} kg</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrVT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrVT_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrVT_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrVT_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">HD5 (180°C)</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_HD5standard }} kOe</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_HD5_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_HD5_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_HD5_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_HD5_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">JD5 (180°C)</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_JD5standard }} kG</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_JD5_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_JD5_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_JD5_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_JD5_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                </template>
 
                                 <template v-if="isTTM_model">
                                     <tr class="bg-blue-300">
@@ -968,7 +1031,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted, nextTick, watch, computed } from 'vue';
+import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
@@ -1048,7 +1111,7 @@ const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showGX = ref(false);
 const showBHData = ref(false);
-
+const showROB = ref(false);
 
 const isLoading = ref(true);
 
@@ -1106,6 +1169,32 @@ const reportBH_remarks = ref('NA');
 const reportBH_sample = ref(0);
 const reportBH_temp = ref(0);
 const reportBH_result = ref(0);
+
+const reportROB_brMax = ref('');
+const reportROB_brMin = ref('');
+const reportROB_iHcMax = ref('');
+const reportROB_iHcMin = ref('');
+const reportROB_BrRTstandard = ref(13.0);
+const reportROB_BrVTstandard = ref(10.5);
+const reportROB_HD5standard = ref(10.053);
+const reportROB_JD5standard = ref(9.6);
+const reportROB_BrRT_brMin = ref(0);
+const reportROB_BrRT_brMax = ref(0);
+const reportROB_BrRT_iHcMin = ref(0);
+const reportROB_BrRT_iHcMax = ref(0);
+const reportROB_BrVT_brMin = ref(0);
+const reportROB_BrVT_brMax = ref(0);
+const reportROB_BrVT_iHcMin = ref(0);
+const reportROB_BrVT_iHcMax = ref(0);
+const reportROB_HD5_brMin = ref(0);
+const reportROB_HD5_brMax = ref(0);
+const reportROB_HD5_iHcMin = ref(0);
+const reportROB_HD5_iHcMax = ref(0);
+const reportROB_JD5_brMin = ref(0);
+const reportROB_JD5_brMax = ref(0);
+const reportROB_JD5_iHcMin = ref(0);
+const reportROB_JD5_iHcMax = ref(0);
+const reportROB_remarks = ref('NA');
 
 //general variables start
 
@@ -1294,6 +1383,42 @@ const showReportButton = async () => {
 
 
 // special judgement conditions logic
+
+//FOR ROB - models ROB-0A70G
+watchEffect(() => {
+    if (noteReasonForReject.value.includes('- N.G iHc') && showROB.value === true) {
+        const belowStandard = (
+            reportROB_BrRT_brMin.value < reportROB_BrRTstandard.value ||
+            reportROB_BrRT_brMax.value < reportROB_BrRTstandard.value ||
+            reportROB_BrRT_iHcMin.value < reportROB_BrRTstandard.value ||
+            reportROB_BrRT_iHcMax.value < reportROB_BrRTstandard.value ||
+
+            reportROB_BrVT_brMin.value < reportROB_BrVTstandard.value ||
+            reportROB_BrVT_brMax.value < reportROB_BrVTstandard.value ||
+            reportROB_BrVT_iHcMin.value < reportROB_BrVTstandard.value ||
+            reportROB_BrVT_iHcMax.value < reportROB_BrVTstandard.value ||
+
+            reportROB_HD5_brMin.value < reportROB_HD5standard.value ||
+            reportROB_HD5_brMax.value < reportROB_HD5standard.value ||
+            reportROB_HD5_iHcMin.value < reportROB_HD5standard.value ||
+            reportROB_HD5_iHcMax.value < reportROB_HD5standard.value ||
+
+            reportROB_JD5_brMin.value < reportROB_JD5standard.value ||
+            reportROB_JD5_brMax.value < reportROB_JD5standard.value ||
+            reportROB_JD5_iHcMin.value < reportROB_JD5standard.value ||
+            reportROB_JD5_iHcMax.value < reportROB_JD5standard.value
+        );
+
+        if (belowStandard) {
+            reportROB_remarks.value = 'NG';
+            reportSMPJudgement.value = 'REJECT';
+        } else {
+            reportROB_remarks.value = 'OK';
+            reportSMPJudgement.value = 'HOLD';
+        }
+    }
+});
+
 //FOR VT - models DNS-0A54G, MIE-0751G, MIS-0766G
 watch(
   [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement],
@@ -1536,6 +1661,7 @@ const generateReport = async () => {
 
 const checkSpecialJudgement = async () => {
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    isTTM_model.value = model.includes("TTM");
     if (!hasNGihc) return;
 
     const model = jhCurveActualModel.value;
@@ -1546,6 +1672,7 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_CPK         = ["DNS0917G"];
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
     const MODELS_SHOW_BH          = ["ZFS0982G"];
+    const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
 
     // === Logic Blocks ===
 
@@ -1559,7 +1686,6 @@ const checkSpecialJudgement = async () => {
 
     if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
         show1x1x1Data_withoutCorner.value = true;
-        isTTM_model.value = model.includes("TTM");
 
         if (model.includes("TTM") && !["TTM0A58D", "TTM0C16D"].includes(model)) {
             show1x1x1Data_Corner.value = true;
@@ -1569,6 +1695,7 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
     if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
     if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
+    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
 };
 
 const fetchAllData = async () => {
@@ -1889,7 +2016,7 @@ const showReportData = async () => {
         const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || '{}');
         const GX = JSON.parse(filterBySerial[0].data_GX_info || '{}');
         const bh = JSON.parse(filterBySerial[0].data_bh_info || '{}');
-        const VT2 = JSON.parse(filterBySerial[0].data_VT2_info || '{}');
+        const ROB = JSON.parse(filterBySerial[0].data_ROB_info || '{}');
 
         reportCorner.value = oneby.corner || '';
         reportCorner_average.value = oneby.corner_average || '';
@@ -1945,6 +2072,28 @@ const showReportData = async () => {
         reportBH_sample.value = bh.sample || '';
         reportBH_temp.value = bh.temp || '';
         reportBH_result.value = bh.result || '';
+
+        reportROB_brMin.value = ROB.brMin || '';
+        reportROB_brMax.value = ROB.brMax || '';
+        reportROB_iHcMin.value = ROB.iHcMin || '';
+        reportROB_iHcMax.value = ROB.iHcMax || '';
+        reportROB_BrRT_brMin.value = ROB.brRT_brMin || '';
+        reportROB_BrRT_brMax.value = ROB.brRT_brMax || '';
+        reportROB_BrRT_iHcMin.value = ROB.brRT_iHcMin || '';
+        reportROB_BrRT_iHcMax.value = ROB.brRT_iHcMax || '';
+        reportROB_BrVT_brMax.value = ROB.brVT_brMax || '';
+        reportROB_BrVT_brMin.value = ROB.brVT_brMin || '';
+        reportROB_BrVT_iHcMax.value = ROB.brVT_iHcMax || '';
+        reportROB_BrVT_iHcMin.value = ROB.brVT_iHcMin || '';
+        reportROB_HD5_brMax.value = ROB.HD5_brMax || '';
+        reportROB_HD5_brMin.value = ROB.HD5_brMin || '';
+        reportROB_HD5_iHcMax.value = ROB.HD5_iHcMax || '';
+        reportROB_HD5_iHcMin.value = ROB.HD5_iHcMin || '';
+        reportROB_JD5_brMax.value = ROB.JD5_brMax || '';
+        reportROB_JD5_brMin.value = ROB.JD5_brMin || '';
+        reportROB_JD5_iHcMax.value = ROB.JD5_iHcMax || '';
+        reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
+        reportROB_remarks.value = ROB.result || '';
 
         evaluateAllRejectReasons();
         checkApprovalStates();
@@ -2043,6 +2192,33 @@ const saveReport = async () => {
             "sample": reportBH_sample.value,
             "temp": reportBH_temp.value,
             "result": reportBH_result.value,
+        }),
+        "data_ROB_info": JSON.stringify({
+            "brMin": reportROB_brMin.value,
+            "brMax": reportROB_brMax.value,
+            "iHcMin": reportROB_iHcMin.value,
+            "iHcMax": reportROB_iHcMax.value,
+            "brRTStandard": reportROB_BrRTstandard,
+            "brVTStandard": reportROB_BrVTstandard,
+            "hd5Standard": reportROB_HD5standard,
+            "jd5Standard": reportROB_JD5standard,
+            "brRT_brMin": reportROB_BrRT_brMin.value,
+            "brRT_brMax": reportROB_BrRT_brMax.value,
+            "brRT_iHcMin": reportROB_BrRT_iHcMin.value,
+            "brRT_iHcMax": reportROB_BrRT_iHcMax.value,
+            "brVT_brMin": reportROB_BrVT_brMin.value,
+            "brVT_brMax": reportROB_BrVT_brMax.value,
+            "brVT_iHcMin": reportROB_BrVT_iHcMin.value,
+            "brVT_iHcMax": reportROB_BrVT_iHcMax.value,
+            "HD5_brMin": reportROB_HD5_brMin.value,
+            "HD5_brMax": reportROB_HD5_brMax.value,
+            "HD5_iHcMin": reportROB_HD5_iHcMin.value,
+            "HD5_iHcMax": reportROB_HD5_iHcMax.value,
+            "JD5_brMin": reportROB_JD5_brMin.value,
+            "JD5_brMax": reportROB_JD5_brMax.value,
+            "JD5_iHcMin": reportROB_JD5_iHcMin.value,
+            "JD5_iHcMax": reportROB_JD5_iHcMax.value,
+            "result": reportROB_remarks.value,
         }),
     }
     //console.log("Save report data: ", saveReportData);
