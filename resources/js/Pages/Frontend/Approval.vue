@@ -197,9 +197,9 @@ const checkCurrentUser = async () => {
                 currentUserApproverStage.value = userData.approval_stage;
                 currentUserIP.value = userData.ip_address;
 
-                console.log('current user name: ', currentUserName.value);
-                console.log('current approver stage: ', currentUserApproverStage.value);
-                console.log('current user IP: ', currentUserIP.value);
+                //console.log('current user name: ', currentUserName.value);
+                //console.log('current approver stage: ', currentUserApproverStage.value);
+                //console.log('current user IP: ', currentUserIP.value);
             } else {
                 console.warn("User found by IP, but name does not match ITADANI KAZUYA.");
                 currentUserData.value = [];
