@@ -29,7 +29,6 @@
                         <table class="w-full overflow-hidden border-collapse rounded-lg shadow-lg table-auto">
                             <thead class="text-white bg-gray-800 ">
                                 <tr>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Date</th>
                                     <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
                                     <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
                                     <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
@@ -45,7 +44,6 @@
                             </thead>
                             <tbody class="text-center bg-white">
                                 <tr v-for="(report, index) in filteredReports" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.date }}</td>
                                     <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
                                     <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
                                     <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>

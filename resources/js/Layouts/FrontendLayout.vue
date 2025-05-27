@@ -1,5 +1,6 @@
 <template>
     <div class="flex flex-col min-h-screen">
+    <Head title="MPIOnlineSystem" />
       <Navbar />
       <main class="flex-grow">
         <slot />
