@@ -28,8 +28,7 @@
                                 <th class="px-2 py-1 text-center border">Shift</th>
                                 <th class="px-2 py-1 text-center border">Operator</th>
                                 <th class="px-2 py-1 text-center border">MPI&nbsp;Sample</th>
-                                <th class="px-2 py-1 text-center border">iHc&#8209;iHk</th>
-                                <th class="px-2 py-1 text-center border">Br&#8209;4πla</th>
+                                <th class="px-2 py-1 text-center border">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,8 +54,9 @@
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'null' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'null' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc_ihk || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item["br_4-pie-la"] || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -72,7 +72,9 @@
 
                 <div class="flex-col items-center justify-center">
                     <!-- Title -->
-                    <p class="mb-6 text-3xl font-bold text-center text-gray-800">Register New Data</p>
+                    <p class="mb-6 text-3xl font-bold text-center text-gray-800">
+                      {{ isEditMode ? 'Update Data' : 'Register New Data' }}
+                    </p>
 
                     <!-- Model Input -->
                     <div class="w-full mb-6">
@@ -130,7 +132,7 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature(load):</label>
+                                <label class="block font-medium text-gray-600">Temperature&nbsp;1:</label>
                                 <input v-model="formData.temperature_1" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
@@ -142,9 +144,10 @@
                                 <input v-model="formData.time_unloading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
+
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature(unload):</label>
+                                <label class="block font-medium text-gray-600">Temperature&nbsp;2:</label>
                                 <input v-model="formData.temperature_2" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
@@ -156,29 +159,24 @@
                                 <input @input="convertToUppercase" v-model="formData.operator" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
+
                         <div class="space-y-4">
                             <div>
                                 <label class="block font-medium text-gray-600">MPI&nbsp;Sample:</label>
                                 <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">iHc&#8209;iHk:</label>
-                                <input @input="convertToUppercase" v-model="formData.ihc_ihk" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Br&#8209;4πla:</label>
-                                <input @input="convertToUppercase" v-model="formData['br_4-pie-la']" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex justify-center">
-                    <button @click="submitData" class="flex flex-row items-center px-6 py-3 m-10 overflow-hidden text-xl font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
-                        Register
-                    </button>
+                    <div class="flex justify-center mt-8">
+                        <button
+                            @click="submitData"
+                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 rounded-xl shadow-md hover:brightness-110 hover:shadow-lg active:scale-95"
+                        >
+                            {{ isEditMode ? 'Update' : 'Register' }}
+                        </button>
+                    </div>
                 </div>
-
             </div>
         </div>
     </Frontend>
@@ -186,77 +184,58 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from "axios";
 
-//UI Visibility Variables
-
+// UI visibility reactive states
 const showMainUI = ref(true);
 const showInputData = ref(false);
 
-//UI Visibility Variables end
-// UI visibility functions
+// Edit mode and currently editing record ID
+const isEditMode = ref(false);
+const currentEditId = ref(null);
+
+// Reactive state for form data
+const formData = ref({
+  model: null,
+  length: null,
+  width: null,
+  thickness: null,
+  material_grade: null,
+  br: null,
+  ihc: null,
+  ihk: null,
+  oven_machine_no: null,
+  time_loading: null,
+  temperature_1: null,
+  date: null,
+  time_unloading: null,
+  temperature_2: null,
+  shift: null,
+  operator: null,
+  mpi_sample: null,
+});
+
+// Inspection data list fetched from backend
+const inspectionDataList = ref([]);
+
+// Functions to toggle UI
 const insertBtn = () => {
-    showMainUI.value = false;
-    showInputData.value = true;
-}
+  showMainUI.value = false;
+  showInputData.value = true;
+};
 
 const registerBackBtn = () => {
-    showMainUI.value = true;
-    showInputData.value = false;
-    resetAllField();
-}
+  showMainUI.value = true;
+  showInputData.value = false;
+  resetAllField();
+  isEditMode.value = false;
+  currentEditId.value = null;
+};
 
+// Reset form fields
 const resetAllField = () => {
-    formData.value = {
-        model: null,
-        length: null,
-        width: null,
-        thickness: null,
-        material_grade: null,
-        br: null,
-        ihc: null,
-        ihk: null,
-        oven_machine_no: null,
-        time_loading: null,
-        temperature_1: null,
-        date: null,
-        time_unloading: null,
-        temperature_2: null,
-        shift: null,
-        operator: null,
-        mpi_sample: null,
-        ihc_ihk: null,
-        "br_4-pie-la": null
-    };
-}
-
-// UI visibility functions end
-
-function convertToUppercase() { //make sure textinputs are upper case
-    const fields = [
-    'model',
-    'material_grade',
-    'br',
-    'ihc',
-    'ihk',
-    'oven_machine_no',
-    'shift',
-    'operator',
-    'mpi_sample',
-    'ihc_ihk',
-    'br_4-pie-la'
-  ];
-
-  fields.forEach(field => {
-    if (formData.value[field] && typeof formData.value[field] === 'string') {
-      formData.value[field] = formData.value[field].toUpperCase();
-    }
-  });
-}
-
-// Reactive state for user input
-const formData = ref({
+  formData.value = {
     model: null,
     length: null,
     width: null,
@@ -274,41 +253,91 @@ const formData = ref({
     shift: null,
     operator: null,
     mpi_sample: null,
-    ihc_ihk: null,
-    "br_4-pie-la": null,
-});
-
-// Function to send data using Axios
-const submitData = async () => {
-    //console.log("Form Data: ", formData.value);
-    try {
-        const response = await axios.post("/api/inspectiondata", formData.value);
-        // Handle response
-        //console.log("Insection api post Data submitted successfully!");
-        //console.log("API Response:", response.data);
-        showMainUI.value = true;
-        showInputData.value = false;
-        showInspectionData();
-        resetAllField();
-    } catch (error) {
-        console.warn("Error submitting data!");
-        console.error("API Error:", error);
-    }
+  };
 };
 
-const inspectionDataList = ref([]);
+// Convert input fields to uppercase for specific keys
+function convertToUppercase() {
+  const fields = [
+    'model',
+    'material_grade',
+    'br',
+    'ihc',
+    'ihk',
+    'oven_machine_no',
+    'shift',
+    'operator',
+    'mpi_sample',
+  ];
 
-const showInspectionData = async () => {
-    try{
-        const response = await axios.get("/api/inspectiondata");
-        //console.log("Show All inspection data API respone: ",response.data);
-        inspectionDataList.value = response.data.data || [];
-        //console.log("Show All inspection data list : ",inspectionDataList.value);
-    }catch{
-        console.error("API get request showInspectionData Error:", error);
+  fields.forEach(field => {
+    if (formData.value[field] && typeof formData.value[field] === 'string') {
+      formData.value[field] = formData.value[field].toUpperCase();
     }
+  });
 }
 
+// Submit form data — POST for new, PATCH for update
+const submitData = async () => {
+  try {
+    if (isEditMode.value) {
+      await axios.patch(`/api/inspectiondata/${currentEditId.value}`, formData.value);
+    } else {
+      await axios.post("/api/inspectiondata", formData.value);
+    }
+
+    isEditMode.value = false;
+    currentEditId.value = null;
+    showMainUI.value = true;
+    showInputData.value = false;
+    await showInspectionData();
+    resetAllField();
+  } catch (error) {
+    console.warn("Error submitting data!");
+    console.error("API Error:", error);
+  }
+};
+
+// Fetch all inspection data records
+const showInspectionData = async () => {
+  try {
+    const response = await axios.get("/api/inspectiondata");
+    inspectionDataList.value = response.data.data || [];
+  } catch (error) {
+    console.error("API get request showInspectionData Error:", error);
+  }
+};
+
+// Edit button handler — load record into form and show input UI
+const editRecord = (item) => {
+  isEditMode.value = true;
+  currentEditId.value = item.id;
+
+  formData.value = {
+    model: item.model,
+    length: item.length,
+    width: item.width,
+    thickness: item.thickness,
+    material_grade: item.material_grade,
+    br: item.br,
+    ihc: item.ihc,
+    ihk: item.ihk,
+    oven_machine_no: item.oven_machine_no,
+    time_loading: item.time_loading,
+    temperature_1: item.temperature_1,
+    date: item.date,
+    time_unloading: item.time_unloading,
+    temperature_2: item.temperature_2,
+    shift: item.shift,
+    operator: item.operator,
+    mpi_sample: item.mpi_sample,
+  };
+
+  showMainUI.value = false;
+  showInputData.value = true;
+};
+
+// Load data on mount
 onMounted(showInspectionData);
 
 </script>

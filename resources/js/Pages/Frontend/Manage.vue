@@ -281,7 +281,7 @@
                             v-model="jhCurveActualModel"
                             @input="jhCurveActualModel = jhCurveActualModel.toUpperCase()"
                             class="px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="E.G. TIC-0755G"
+                            placeholder="E.G. TIC0755G"
                         />
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
