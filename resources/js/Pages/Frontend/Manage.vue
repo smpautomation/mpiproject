@@ -695,11 +695,12 @@
                                             class="border-b hover:bg-gray-50"
                                         >
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.date }}</td>
-                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.serial_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.code_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.order_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.type }}</td>
-                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_2 }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.machine_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.sintering_furnace_no }}</td>
                                             <td class="whitespace-nowrap px-[0px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.furnace_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.zone }}</td>
@@ -1633,11 +1634,12 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     //table main layer header dynamic
     const tableLayerColumnHeaders = ref([
         {name: 'Date', colspan: 1},
-        {name: 'Serial\u00A0No', colspan: 1},
         {name: 'Code\u00A0No', colspan: 1},
         {name: 'Order\u00A0No', colspan: 1},
         {name: 'Type', colspan: 1},
         {name: 'Lot\u00A0No', colspan: 1},
+        {name: ' ', colspan: 1},
+        {name: ' ', colspan: 1},
         {name: 'Furnace\u00A0No', colspan: 1},
         {name: 'Coating\u00A0No', colspan: 1},
         {name: 'Zone', colspan: 1},

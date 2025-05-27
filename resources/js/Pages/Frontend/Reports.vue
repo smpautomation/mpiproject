@@ -1661,7 +1661,7 @@ const generateReport = async () => {
 
 const checkSpecialJudgement = async () => {
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-    isTTM_model.value = model.includes("TTM");
+    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
     if (!hasNGihc) return;
 
     const model = jhCurveActualModel.value;
