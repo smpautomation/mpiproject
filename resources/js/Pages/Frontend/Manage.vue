@@ -163,15 +163,12 @@
                 </button>
             </div>
             <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
-                <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold text-white">Serial: {{ serialNo }}</p>
+                <p v-if="showUploadTPMFiles" class="mb-4 text-xl font-semibold text-white">Please select and upload TPM files:</p>
                 <div v-if="showGraphAndTables" class="mt-[100px]">
 
                 </div>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
-                        <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-gray-800">Upload Raw Data:</p>
-
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
                             <!-- File Input Label -->
@@ -234,7 +231,7 @@
                     </div>
 
                     <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
-                        <div v-if="fileLists.length > 0" class="w-[410px] h-[230px] overflow-auto">
+                        <div v-if="fileLists.length > 0" class="w-[380px] h-[200px] overflow-auto">
                             <p><span class="text-lg font-extrabold">Files:</span> ( You have selected {{ fileLists.length }} files. ) </p>
                             <div
                                 v-for="(fileList, index) in fileLists"
@@ -246,7 +243,7 @@
                         </div>
 
                         <!-- This div shows when there are no files -->
-                        <div v-else class="flex flex-row justify-center items-center w-[410px] h-[230px]">
+                        <div v-else class="flex flex-row justify-center items-center w-[400px] h-[195px]">
                             <span class="text-2xl animate-pulse">No files selected</span>
                         </div>
                     </div>
@@ -949,7 +946,6 @@
 
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
-        generateSerialNumber();
     }
 
     const showAddNewDataLayer_cancel = () => {
@@ -1899,6 +1895,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     }
 
     const saveToDatabase = async () => {
+        await generateSerialNumber();
         showUploadData.value = false;
         // Sort the files alphabetically by their name
         fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically

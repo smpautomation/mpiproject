@@ -1750,8 +1750,8 @@ const dataFrom_reportdata = async () => {
             printPreparedBy_lastName.value = nameParts_preparedBy.length > 1 ? nameParts_preparedBy.slice(1).join(' ') : '';
 
             // Log the results
-            console.error("Prepared By First Name: ", printPreparedBy_firstName.value);
-            console.error("Prepared By Last Name: ", printPreparedBy_lastName.value);
+            //console.error("Prepared By First Name: ", printPreparedBy_firstName.value);
+            //console.error("Prepared By Last Name: ", printPreparedBy_lastName.value);
         } else {
             // Handle the case where printPreparedBy is null, empty, or not a string
             console.error("printPreparedBy is invalid:", printPreparedBy.value);
@@ -1769,8 +1769,8 @@ const dataFrom_reportdata = async () => {
             printCheckedBy_lastName.value = nameParts_checkedBy.length > 1 ? nameParts_checkedBy.slice(1).join(' ') : '';
 
             // Log the results
-            console.error("Checked By First Name: ", printCheckedBy_firstName.value);
-            console.error("Checked By Last Name: ", printCheckedBy_lastName.value);
+            //console.error("Checked By First Name: ", printCheckedBy_firstName.value);
+            //console.error("Checked By Last Name: ", printCheckedBy_lastName.value);
         } else {
             // Handle the case where printCheckedBy is null, empty, or not a string
             console.error("printCheckedBy is invalid:", printCheckedBy.value);
