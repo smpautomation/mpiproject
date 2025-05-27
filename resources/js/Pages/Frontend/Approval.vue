@@ -1,7 +1,7 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-            <div v-if="ipAddress != '192.168.88.168'">
+            <div v-if="ipAddress != currentUserIP">
                 <p class="text-lg font-extrabold">You are not an authorized user for this section </p>
             </div>
             <div v-else>
@@ -128,6 +128,10 @@ const reportNotificationMessage = ref('');
 
 // UI end
 const ipAddress = ref('');
+const currentUserData = ref('');
+const currentUserName = ref('');
+const currentUserApproverStage = ref('');
+const currentUserIP = ref('');
 const reportDataList = ref([]);
 const filteredReports = computed(() => {
   if (statusFilter.value === 'ALL') return reportDataList.value;
@@ -174,6 +178,48 @@ const viewReport = (serial) => {
         preserveScroll: true,
     });
 };
+
+const checkCurrentUser = async () => {
+    try {
+        const responseFindApprovers = await axios.get("/api/approver");
+        const approvers = responseFindApprovers.data.data?.Approvers || [];
+
+        // Filter by IP first
+        const matchingUsers = approvers.filter(column => column.ip_address === ipAddress.value);
+
+        if (matchingUsers.length > 0) {
+            const userData = matchingUsers[0];
+
+            // ✅ Check name gate
+            if (userData.approver_name === "ITADANI KAZUYA") {
+                currentUserData.value = [userData];
+                currentUserName.value = userData.approver_name;
+                currentUserApproverStage.value = userData.approval_stage;
+                currentUserIP.value = userData.ip_address;
+
+                console.log('current user name: ', currentUserName.value);
+                console.log('current approver stage: ', currentUserApproverStage.value);
+                console.log('current user IP: ', currentUserIP.value);
+            } else {
+                console.warn("User found by IP, but name does not match ITADANI KAZUYA.");
+                currentUserData.value = [];
+                currentUserName.value = '';
+                currentUserApproverStage.value = '';
+                currentUserIP.value = '';
+            }
+
+        } else {
+            console.warn("No approver found for the current IP address.");
+            currentUserData.value = [];
+            currentUserName.value = '';
+            currentUserApproverStage.value = '';
+            currentUserIP.value = '';
+        }
+
+    } catch (error) {
+        console.error("Error on checkCurrentUser API GET request", error);
+    }
+}
 
 const showReportData = async () => {
     try {
@@ -263,6 +309,9 @@ const confirmationApprove = async () => {
     }
 }
 
-onMounted(showReportData);
+onMounted( async () => {
+    await checkCurrentUser();
+    await showReportData();
+});
 
 </script>
