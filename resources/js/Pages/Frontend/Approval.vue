@@ -1,8 +1,8 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-            <div v-if="ipAddress != '127.0.0.1'">
-                <p class="text-lg font-extrabold">You are not an authorized user for this section</p>
+            <div v-if="ipAddress != '192.168.88.168'">
+                <p class="text-lg font-extrabold">You are not an authorized user for this section </p>
             </div>
             <div v-else>
                 <div v-if="reportDataList == null || reportDataList.length <= 0" class="flex flex-col items-center justify-center animate-pulse">
