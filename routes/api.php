@@ -113,8 +113,19 @@ Route::post('/send-takefu-email', function(Request $request) {
     ]);
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
+
+    // ✅ Append hardcoded recipients
+    $emailList[] = 'automation2@smp.com.ph';
+    $emailList[] = 'automation5@smp.com.ph';
+    $emailList[] = 'myke@smp.com.ph';
+
+    // Optionally remove duplicates (not required, but clean)
+    $emailList = array_unique($emailList);
+
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
+
     Log::info('Starting mail send');
+
     try {
         Mail::to($emailList)->send(new TakefuMail($validated['massPro'], $customMessage));
         Log::info('Mail sent successfully');
@@ -128,7 +139,7 @@ Route::post('/send-takefu-email', function(Request $request) {
         ], 500);
     }
 
-    return response()->json(['message' => 'Test Email Sent'], 200);
+    return response()->json(['message' => 'Email sent successfully'], 200);
 });
 
 Route::get('/test-pdf-view', function () {

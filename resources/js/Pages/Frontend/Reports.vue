@@ -2594,12 +2594,12 @@ const evaluateAllRejectReasons = () => {
       noteReasonForReject.value.push('- N.G iHk');
     }
 
-    if (reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) {
+    if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.includes("1"))) {
       //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
       noteReasonForReject.value.push('- N.G Hr95');
     }
 
-    if (reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) {
+    if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.includes("1"))) {
       //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
       noteReasonForReject.value.push('- N.G Hr98');
     }

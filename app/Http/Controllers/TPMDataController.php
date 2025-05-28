@@ -30,7 +30,7 @@ class TPMDataController extends Controller
                 $latestSerials = TPMData::select('serial_no')
                             ->groupBy('serial_no')
                             ->orderByRaw('MAX(created_at) DESC')
-                            ->limit(20)
+                            ->limit(100)
                             ->pluck('serial_no');
                 $tpmData = TPMData::whereIn('serial_no', $latestSerials)
                             ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace_id', 'layer_no')
