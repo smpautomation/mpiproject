@@ -124,11 +124,13 @@ const viewAllSerialedLayers = async () => {
   try {
     const response = await axios.get('/api/tpmdata');
     const rawData = response.data.data?.tpmData || {};
-    console.log("Show respone raw data: ",response.data);
-    tpmData.value = Object.values(rawData);
-    console.log('[Fetched Data]:', tpmData.value);
+    //console.log("Show respone raw data: ",response.data);
+    tpmData.value = Object.entries(rawData)
+        .map(([serial, data]) => ({ serial: Number(serial), ...data }))
+        .sort((a, b) => b.serial - a.serial); // Sort DESC by serial
+    //console.log('[Fetched Data]:', tpmData.value);
     totalPages.value = Math.ceil(tpmData.value.length / itemsPerPage);
-    console.log(totalPages.value);
+    //console.log(totalPages.value);
   } catch (error) {
     console.error('[Error Fetching Data]:', error);
   }
