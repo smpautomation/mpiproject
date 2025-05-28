@@ -2251,28 +2251,26 @@ const fetchSerial = async () => {
     const response = await axios.get("/api/tpmdata");
     //console.log("API Response fetchSerial-data:", response.data);
 
-    // Extract furnace data dynamically
-    tpmData.value = response.data.data["tpmDataAll"] || [];
-    //console.log("TPM DATA response: ", tpmData.value);
+    // Grab the raw tpmData object
+    const rawTpmData = response.data.data["tpmData"] || {};
 
-    // Extract unique serial numbers by using a Set
-    serialList.value = [...new Set(tpmData.value.map(item => item.serial_no))];
+    // Assign it to tpmData for future access
+    tpmData.value = rawTpmData;
 
-    // Sort the serialList in descending order (highest value first)
-    serialList.value = serialList.value.sort((a, b) => {
-      return Number(b) - Number(a); // Convert to number for proper sorting
-    });
+    // Extract the serial numbers (object keys)
+    serialList.value = Object.keys(rawTpmData);
 
-    //console.log("Unique Serial lists (Descending):", serialList.value);
+    // Sort in descending order
+    serialList.value = serialList.value.sort((a, b) => Number(b) - Number(a));
 
-    // Set default selection to first serial, if available
+    // Set default selected serial
     if (serialList.value.length > 0) {
-        currentSerialSelected.value = serialList.value[0];
+      currentSerialSelected.value = serialList.value[0];
     }
 
-
+    //console.log("Serials ↓", serialList.value);
   } catch (error) {
-    //console.error("Error fetching serial data:", error);
+    console.error("Error fetching serial data:", error);
   }
 };
 // Fetching the serial start end
