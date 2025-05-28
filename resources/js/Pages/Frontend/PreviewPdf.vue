@@ -1581,28 +1581,28 @@ const dataFrom_reportdata = async () => {
         isAutomotive.value = rd.withCarmark == 1;
 
         //Under Oven Heating Information
-        printOvenMachineNo_ovenInfo.value = rd.oven_machine_no;
+        printOvenMachineNo_ovenInfo.value = rd.oven_machine_no || 'N/A';
         //console.log("printOvenMachineNo: ",printOvenMachineNo_ovenInfo.value);
-        printTimeLoading.value = rd.time_loading;
-        printTimeLoading_temp.value = rd.temp_time_loading;
-        printTimeUnloading.value = rd.time_unloading;
-        printTimeUnloading_temp.value = rd.temp_time_unloading;
-        printDate_ovenInfo.value = rd.date_oven_info;
-        printShift_ovenInfo.value = rd.shift_oven_info;
-        printOperator_ovenInfo.value = rd.operator_oven_info;
+        printTimeLoading.value = rd.time_loading || 'N/A';
+        printTimeLoading_temp.value = rd.temp_time_loading || 'N/A';
+        printTimeUnloading.value = rd.time_unloading || 'N/A';
+        printTimeUnloading_temp.value = rd.temp_time_unloading || 'N/A';
+        printDate_ovenInfo.value = rd.date_oven_info || 'N/A';
+        printShift_ovenInfo.value = rd.shift_oven_info || 'N/A';
+        printOperator_ovenInfo.value = rd.operator_oven_info || 'N/A';
 
         //Under Magnetic Property Inspection
-        printActualModel.value = rd.model;
-        nsa_printActualModel.value = rd.model;
-        printMaterialCode.value = rd.material_code;
-        printPartialNo.value = rd.partial_number;
-        printPulseTracer.value = rd.pulse_tracer_machine_number;
-        printDate.value = rd.date;
-        printShift.value = rd.shift;
-        printOperator.value = rd.operator;
-        printTotalQuantity.value = rd.total_quantity;
-        printRemarks.value = rd.remarks;
-        printRemarksResult.value = rd.remarks_display;
+        printActualModel.value = rd.model || 'N/A';
+        nsa_printActualModel.value = rd.model || 'N/A';
+        printMaterialCode.value = rd.material_code || 'N/A';
+        printPartialNo.value = rd.partial_number || 'N/A';
+        printPulseTracer.value = rd.pulse_tracer_machine_number || 'N/A';
+        printDate.value = rd.date || 'N/A';
+        printShift.value = rd.shift || 'N/A';
+        printOperator.value = rd.operator || 'N/A';
+        printTotalQuantity.value = rd.total_quantity || 'N/A';
+        printRemarks.value = rd.remarks || 'N/A';
+        printRemarksResult.value = rd.remarks_display || 'N/A';
 
         //Under Standard Sample Dimention and Material Grade
         printLength.value = rd.length;
@@ -1621,20 +1621,20 @@ const dataFrom_reportdata = async () => {
         const mPD = JSON.parse(rd.magnetic_property_data);
         const nRR = JSON.parse(rd.note_reason_reject);
 
-        printBrStandard.value = mPD.brStandard;
-        printBrAverage.value = mPD.brAverage;
-        printBrMaximum.value = mPD.brMaximum;
-        printBrMinimum.value = mPD.brMinimum;
+        printBrStandard.value = mPD.brStandard || '----';
+        printBrAverage.value = mPD.brAverage || '----';
+        printBrMaximum.value = mPD.brMaximum || '----';
+        printBrMinimum.value = mPD.brMinimum || '----';
 
-        printiHcStandard.value = mPD.ihcStandard;
-        printiHcAverage.value = mPD.ihcAverage;
-        printiHcMaximum.value = mPD.ihcMaximum;
-        printiHcMinimum.value = mPD.ihcMinimum;
+        printiHcStandard.value = mPD.ihcStandard || '----';
+        printiHcAverage.value = mPD.ihcAverage || '----';
+        printiHcMaximum.value = mPD.ihcMaximum || '----';
+        printiHcMinimum.value = mPD.ihcMinimum || '----';
 
-        printiHkStandard.value = mPD.ihkStandard;
-        printiHkAverage.value = mPD.ihkAverage;
-        printiHkMaximum.value = mPD.ihkMaximum;
-        printiHkMinimum.value = mPD.ihkMinimum;
+        printiHkStandard.value = mPD.ihkStandard || '----';
+        printiHkAverage.value = mPD.ihkAverage || '----';
+        printiHkMaximum.value = mPD.ihkMaximum || '----';
+        printiHkMinimum.value = mPD.ihkMinimum || '----';
 
         //Under special judgements
         const d1x1x1 = JSON.parse(rd.data_1x1x1_info);
@@ -1644,79 +1644,79 @@ const dataFrom_reportdata = async () => {
         const dBH = JSON.parse(rd.data_bh_info);
         const rob = JSON.parse(rd.data_ROB_info);
 
-        printCore.value = d1x1x1.core;
-        printCorner.value = d1x1x1.corner;
-        printSurface.value = d1x1x1.surface;
-        printCoreCpk.value = d1x1x1.core_cpk;
-        printCornerCpk.value = d1x1x1.corner_cpk;
-        printSurfaceCpk.value = d1x1x1.surface_cpk;
-        printCoreAverage.value = d1x1x1.core_average;
-        printCornerAverage.value = d1x1x1.corner_average;
-        printSurfaceAverage.value = d1x1x1.surface_average;
-        printCoreMaximum.value = d1x1x1.core_maximum;
-        printCornerMaximum.value = d1x1x1.corner_maximum;
-        printSurfaceMaximum.value = d1x1x1.surface_maximum;
-        printCoreMinimum.value = d1x1x1.core_minimum;
-        printCornerMinimum.value = d1x1x1.corner_minimum;
-        printSurfaceMinimum.value = d1x1x1.surface_minimum;
-        printCoreRemarks.value = d1x1x1.core_remarks;
-        printCornerRemarks.value = d1x1x1.corner_remarks;
-        printSurfaceRemarks.value = d1x1x1.surface_remarks;
+        printCore.value = d1x1x1.core || '----';
+        printCorner.value = d1x1x1.corner || '----';
+        printSurface.value = d1x1x1.surface || '----';
+        printCoreCpk.value = d1x1x1.core_cpk || '----';
+        printCornerCpk.value = d1x1x1.corner_cpk || '----';
+        printSurfaceCpk.value = d1x1x1.surface_cpk || '----';
+        printCoreAverage.value = d1x1x1.core_average || '----';
+        printCornerAverage.value = d1x1x1.corner_average || '----';
+        printSurfaceAverage.value = d1x1x1.surface_average || '----';
+        printCoreMaximum.value = d1x1x1.core_maximum || '----';
+        printCornerMaximum.value = d1x1x1.corner_maximum || '----';
+        printSurfaceMaximum.value = d1x1x1.surface_maximum || '----';
+        printCoreMinimum.value = d1x1x1.core_minimum || '----';
+        printCornerMinimum.value = d1x1x1.corner_minimum || '----';
+        printSurfaceMinimum.value = d1x1x1.surface_minimum || '----';
+        printCoreRemarks.value = d1x1x1.core_remarks || '----';
+        printCornerRemarks.value = d1x1x1.corner_remarks || '----';
+        printSurfaceRemarks.value = d1x1x1.surface_remarks || '----';
 
-        printVT_iHc.value = dVT.iHc;
-        printVT_Temp.value = dVT.temp;
+        printVT_iHc.value = dVT.iHc || '----';
+        printVT_Temp.value = dVT.temp || '----';
         printVT_samples.value = Array.isArray(dVT.sample) ? dVT.sample : [];
         printVT_sampleRemarks.value = Array.isArray(dVT.sample_remarks) ? dVT.sample_remarks : [];
         printVT_iHcResults.value = Array.isArray(dVT.iHcResult) ? dVT.iHcResult : [];
-        printVT_remarks.value = dVT.remarks;
-        printVT_sampleQty.value = dVT.sample_qty;
+        printVT_remarks.value = dVT.remarks || '----';
+        printVT_sampleQty.value = dVT.sample_qty || '----';
 
-        printiHc_cpk_info_cpk.value = diHc_cpk.cpk;
-        printiHc_cpk_info_remarks.value = diHc_cpk.remarks;
-        printiHc_cpk_info_stdDev.value = diHc_cpk.std_dev;
+        printiHc_cpk_info_cpk.value = diHc_cpk.cpk || '----';
+        printiHc_cpk_info_remarks.value = diHc_cpk.remarks || '----';
+        printiHc_cpk_info_stdDev.value = diHc_cpk.std_dev || '----';
 
-        printGX_iHcAverage.value = dGX.iHcAverage;
-        printGX_iHcMaximum.value = dGX.iHcMaximum;
-        printGX_iHcMinimum.value = dGX.iHcMinimum;
-        printGX_iHcStandard.value = dGX.iHcStandard;
-        printGX_iHcVariance.value = dGX.iHcVariance;
-        printGX_iHkAverage.value = dGX.iHkAverage;
-        printGX_iHkMaximum.value = dGX.iHkMaximum;
-        printGX_iHkMinimum.value = dGX.iHkMinimum;
-        printGX_iHkVariance.value = dGX.iHkVariance;
+        printGX_iHcAverage.value = dGX.iHcAverage || '----';
+        printGX_iHcMaximum.value = dGX.iHcMaximum || '----';
+        printGX_iHcMinimum.value = dGX.iHcMinimum || '----';
+        printGX_iHcStandard.value = dGX.iHcStandard || '----';
+        printGX_iHcVariance.value = dGX.iHcVariance || '----';
+        printGX_iHkAverage.value = dGX.iHkAverage || '----';
+        printGX_iHkMaximum.value = dGX.iHkMaximum || '----';
+        printGX_iHkMinimum.value = dGX.iHkMinimum || '----';
+        printGX_iHkVariance.value = dGX.iHkVariance || '----';
 
-        printBH_data.value = dBH.data;
-        printBH_dataStandard.value = dBH.dataStandard;
-        printBH_temp.value = dBH.temp;
-        printBH_result.value = dBH.result;
-        printBH_sample.value = dBH.sample;
-        printBH_remarks.value = dBH.remarks;
+        printBH_data.value = dBH.data || '----';
+        printBH_dataStandard.value = dBH.dataStandard || '----';
+        printBH_temp.value = dBH.temp || '----';
+        printBH_result.value = dBH.result || '----';
+        printBH_sample.value = dBH.sample || '----';
+        printBH_remarks.value = dBH.remarks || '----';
 
-        printROB_brMin.value = rob.brMin;
-        printROB_brMax.value = rob.brMax;
-        printROB_iHcMin.value = rob.iHcMin;
-        printROB_iHcMax.value = rob.iHcMax;
-        printROB_BrRTstandard.value = rob.brRTStandard;
-        printROB_BrVTstandard.value = rob.brVTStandard;
-        printROB_HD5standard.value = rob.hd5Standard;
-        printROB_JD5standard.value = rob.jd5Standard;
-        printROB_BrRT_brMin.value = rob.brRT_brMin;
-        printROB_BrRT_brMax.value = rob.brRT_brMax;
-        printROB_BrRT_iHcMin.value = rob.brRT_iHcMin;
-        printROB_BrRT_iHcMax.value = rob.brRT_iHcMax;
-        printROB_BrVT_brMin.value = rob.brVT_brMin;
-        printROB_BrVT_brMax.value = rob.brVT_brMax;
-        printROB_BrVT_iHcMin.value = rob.brVT_iHcMin;
-        printROB_BrVT_iHcMax.value = rob.brVT_iHcMax;
-        printROB_HD5_brMin.value = rob.hd5_brMin;
-        printROB_HD5_brMax.value = rob.hd5_brMax;
-        printROB_HD5_iHcMin.value = rob.hd5_iHcMin;
-        printROB_HD5_iHcMax.value = rob.hd5_iHcMax;
-        printROB_JD5_brMin.value = rob.jd5_brMin;
-        printROB_JD5_brMax.value = rob.jd5_brMax;
-        printROB_JD5_iHcMin.value = rob.jd5_iHcMin;
-        printROB_JD5_iHcMax.value = rob.jd5_iHcMax;
-        printROB_remarks.value = rob.remarks;
+        printROB_brMin.value = rob.brMin || '----';
+        printROB_brMax.value = rob.brMax || '----';
+        printROB_iHcMin.value = rob.iHcMin || '----';
+        printROB_iHcMax.value = rob.iHcMax || '----';
+        printROB_BrRTstandard.value = rob.brRTStandard || '----';
+        printROB_BrVTstandard.value = rob.brVTStandard || '----';
+        printROB_HD5standard.value = rob.hd5Standard || '----';
+        printROB_JD5standard.value = rob.jd5Standard || '----';
+        printROB_BrRT_brMin.value = rob.brRT_brMin || '----';
+        printROB_BrRT_brMax.value = rob.brRT_brMax || '----';
+        printROB_BrRT_iHcMin.value = rob.brRT_iHcMin || '----';
+        printROB_BrRT_iHcMax.value = rob.brRT_iHcMax || '----';
+        printROB_BrVT_brMin.value = rob.brVT_brMin || '----';
+        printROB_BrVT_brMax.value = rob.brVT_brMax || '----';
+        printROB_BrVT_iHcMin.value = rob.brVT_iHcMin || '----';
+        printROB_BrVT_iHcMax.value = rob.brVT_iHcMax || '----';
+        printROB_HD5_brMin.value = rob.hd5_brMin || '----';
+        printROB_HD5_brMax.value = rob.hd5_brMax || '----';
+        printROB_HD5_iHcMin.value = rob.hd5_iHcMin || '----';
+        printROB_HD5_iHcMax.value = rob.hd5_iHcMax || '----';
+        printROB_JD5_brMin.value = rob.jd5_brMin || '----';
+        printROB_JD5_brMax.value = rob.jd5_brMax || '----';
+        printROB_JD5_iHcMin.value = rob.jd5_iHcMin || '----';
+        printROB_JD5_iHcMax.value = rob.jd5_iHcMax || '----';
+        printROB_remarks.value = rob.remarks || '----';
 
 
         if (nRR && Array.isArray(nRR)) {
