@@ -230,7 +230,7 @@ class InspectionDataController extends Controller
                     'temperature_2' => $this->sanitizeTemperature($row['Temperature2'] ?? null),
                     'shift' => $this->sanitizeField($row['Shift'] ?? null),
                     'operator' => $this->sanitizeField($row['Operator'] ?? null),
-                    'mpi_sample' => $this->sanitizeField($row['MPI Sample'] ?? null),
+                    'mpi_sample' => $this->sanitizeField($row['MPI sample'] ?? null),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
