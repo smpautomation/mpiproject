@@ -98,7 +98,7 @@
                         <label class="font-extrabold text-white text-lg pb-6">Upload Bulk Initial Data specs</label>
                         <div class="flex flex-row">
                             <input type="file" accept=".csv" @change="handleFileChange" />
-                            <button class="bg-blue-500 hover:shadow-xl hover:brightness-110 active:scale-95 p-2 rounded-md" @click="uploadCsv">Upload CSV</button>
+                            <button class="bg-blue-500 hover:shadow-xl hover:brightness-110 active:scale-95 p-2 rounded-md text-white font-extrabold" @click="uploadCsv">Upload csv</button>
                         </div>
                         <p :class="{'pt-6 text-red-500':uploadStatusType == 'failed',
                                     'pt-6 text-green-500':uploadStatusType == 'success',
@@ -414,7 +414,7 @@ const uploadCsv = () => {
                 setTimeout(() => {
                     uploadStatus.value = '';
                     showInspectionData();
-                },3000);
+                },1000);
             } catch (err) {
                 uploadStatus.value = 'Upload failed: ' + (err.response?.data?.message || err.message);
             }

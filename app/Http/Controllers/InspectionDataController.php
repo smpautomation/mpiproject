@@ -156,6 +156,21 @@ class InspectionDataController extends Controller
         return (float) $temp;
     }
 
+    private function sanitizeModel($value)
+    {
+        if (!isset($value)) return null;
+
+        $value = trim($value);
+
+        // Reject obvious garbage
+        if (strtolower($value) === 'n/a' || $value === '') return null;
+
+        // Remove all dashes
+        $value = str_replace('-', '', $value);
+
+        return $value;
+    }
+
     private function sanitizeField($value)
     {
         if (!isset($value)) return null;
@@ -210,7 +225,7 @@ class InspectionDataController extends Controller
                 }
 
                 $insertData[] = [
-                    'model' => $row['Model'] ?? null,
+                    'model' => $this->sanitizeModel($row['Model'] ?? null),
                     'length' => $row['L'] ?? null,
                     'width' => $row['W'] ?? null,
                     'thickness' => $thickness,
