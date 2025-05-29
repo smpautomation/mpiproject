@@ -959,7 +959,6 @@
             showNoModelError.value = true;
             showSerialNo.value = false;
             showProceed1.value = false;
-
             setTimeout(() => {
                 showNoModelError.value = false;
                 showSerialNo.value = true;

@@ -37,29 +37,74 @@
                                 :key="item.id"
                                 class="text-xs bg-gray-50"
                             >
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">
                                     <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
                                 </td>
+
+                                                                <!--
+                                                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    <input
+                                        type="checkbox"
+                                        :checked="item.with_carmark === true || item.with_carmark === 1"
+                                        @change="item.with_carmark = $event.target.checked ? 1 : 0"
+                                    />
+                                </td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.encoded_by || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
+                                </td>
+
+                                -->
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div>
+                    <div v-if="inspectionDataList.length <= 0" class="flex flex-col justify-center align-middle items-center p-6 rounded-xl shadow-xl bg-gradient-to-l from-blue-300 to-green-300">
+                        <label class="font-extrabold text-white text-lg pb-6">Upload Bulk Initial Data specs</label>
+                        <div class="flex flex-row">
+                            <input type="file" accept=".csv" @change="handleFileChange" />
+                            <button class="bg-blue-500 hover:shadow-xl hover:brightness-110 active:scale-95 p-2 rounded-md" @click="uploadCsv">Upload CSV</button>
+                        </div>
+                        <p :class="{'pt-6 text-red-500':uploadStatusType == 'failed',
+                                    'pt-6 text-green-500':uploadStatusType == 'success',
+                                    'pt-6 text-blue-500':uploadStatusType == 'info',
+                        }">{{ uploadStatus }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -185,6 +230,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, onMounted } from 'vue';
+import Papa from 'papaparse';
 import axios from "axios";
 
 // UI visibility reactive states
@@ -335,6 +381,52 @@ const editRecord = (item) => {
 
   showMainUI.value = false;
   showInputData.value = true;
+};
+
+const csvFile = ref(null);
+const uploadStatus = ref('');
+const uploadStatusType = ref('');
+
+const handleFileChange = (event) => {
+    csvFile.value = event.target.files[0];
+};
+
+const uploadCsv = () => {
+    if (!csvFile.value) {
+        uploadStatus.value = 'Please select a CSV file first.';
+        setTimeout(() => {
+            uploadStatus.value = '';
+        },3000);
+        uploadStatusType.value = 'info';
+        return;
+    }
+
+    Papa.parse(csvFile.value, {
+        header: true,
+        skipEmptyLines: true,
+        complete: async (results) => {
+            try {
+                const response = await axios.post('/api/inspection/bulk-upload', {
+                data: results.data,
+                });
+                uploadStatus.value = response.data.message + ` (${response.data.inserted} records inserted)`;
+                uploadStatusType.value = 'success';
+                setTimeout(() => {
+                    uploadStatus.value = '';
+                    showInspectionData();
+                },3000);
+            } catch (err) {
+                uploadStatus.value = 'Upload failed: ' + (err.response?.data?.message || err.message);
+            }
+        },
+        error: (err) => {
+        uploadStatus.value = 'CSV parse error: ' + err.message;
+        uploadStatusType.value = 'failed';
+        setTimeout(() => {
+            uploadStatus.value = '';
+        },3000);
+        },
+    });
 };
 
 // Load data on mount

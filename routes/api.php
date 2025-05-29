@@ -163,3 +163,5 @@ Route::post('/route-email', function (Request $request) {
     Mail::to($emailList)->send(new RouteMail( $validated['serial']));
     return redirect()->route('approval')->with('success', 'Emails sent successfully!');
 });
+
+Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUpload']);
