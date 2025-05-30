@@ -2096,9 +2096,9 @@ const showReportData = async () => {
         reportROB_remarks.value = ROB.result || '';
 
         console.log('Entering Evalation for Reject reasons...');
-        evaluateAllRejectReasons();
-        checkApprovalStates();
-        checkSpecialJudgement();
+        await evaluateAllRejectReasons();
+        await checkApprovalStates();
+        await checkSpecialJudgement();
 
         // Final result conditions
 
@@ -2540,7 +2540,12 @@ const checkCurrentUser = async () => {
     }
 }
 
-const evaluateAllRejectReasons = () => {
+const evaluateAllRejectReasons = async () => {
+    console.log('Have already entered Evalation for Reject reasons...');
+
+    // force some async delay for testing
+    await new Promise(res => setTimeout(res, 100));
+
     if (!noteReasonForReject.value || noteReasonForReject.value.length === 0) {
     noteReasonForReject.value = []; // Reset before evaluation
 
