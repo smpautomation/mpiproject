@@ -377,6 +377,8 @@ const editRecord = (item) => {
     shift: item.shift,
     operator: item.operator,
     mpi_sample: item.mpi_sample,
+    is_automotive: item.is_automotive,
+    encoded_by: item.encoded_by
   };
 
   showMainUI.value = false;

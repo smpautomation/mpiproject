@@ -2575,12 +2575,12 @@ const evaluateAllRejectReasons = () => {
     }
 
     if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-      //console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
+      console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
       noteReasonForReject.value.push('- HIGH BR');
     }
 
     if (reportihcMinimum.value < inspectioniHcStandard.value) {
-      //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
+      console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
       noteReasonForReject.value.push('- N.G iHc');
     } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
       //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
@@ -2588,7 +2588,7 @@ const evaluateAllRejectReasons = () => {
     }
 
     if (reportihkMinimum.value < inspectioniHkStandard.value) {
-      //console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
+      console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
       noteReasonForReject.value.push('- N.G iHk');
     }
 

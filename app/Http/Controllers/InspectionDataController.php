@@ -196,6 +196,18 @@ class InspectionDataController extends Controller
         return null;
     }
 
+    private function keepNAorEmpty($value): ?string
+    {
+        if (!isset($value)) return null;
+
+        $value = trim((string) $value);
+
+        if (strtolower($value) === 'n/a') return 'N/A';
+        if ($value === '') return '';
+
+        return $value;
+    }
+
     public function bulkUpload(Request $request)
     {
         $data = $request->input('data');
@@ -237,15 +249,16 @@ class InspectionDataController extends Controller
                     ),
                     'ihc' => $row['iHc'] ?? null,
                     'ihk' => $row['iHk'] ?? null,
-                    'oven_machine_no' => $row['Oven Machine No'] ?? null,
-                    'time_loading' => $this->sanitizeTime($row['Time Loading'] ?? null),
-                    'temperature_1' => $this->sanitizeTemperature($row['Temperature1'] ?? null),
-                    'date' => (!empty($row['Date']) && strtolower(trim($row['Date'])) !== 'n/a') ? $row['Date'] : null,
-                    'time_unloading' => $this->sanitizeTime($row['Time Unloading'] ?? null),
-                    'temperature_2' => $this->sanitizeTemperature($row['Temperature2'] ?? null),
-                    'shift' => $this->sanitizeField($row['Shift'] ?? null),
-                    'operator' => $this->sanitizeField($row['Operator'] ?? null),
-                    'mpi_sample' => $this->sanitizeField($row['MPI sample'] ?? null),
+                    'oven_machine_no' => $this->keepNAorEmpty($row['Oven Machine No'] ?? null),
+                    'time_loading' => $this->keepNAorEmpty($row['Time Loading'] ?? null),
+                    'temperature_1' => $this->keepNAorEmpty($row['Temperature1'] ?? null),
+                    'date' => $this->keepNAorEmpty($row['Date'] ?? null),
+                    'time_unloading' => $this->keepNAorEmpty($row['Time Unloading'] ?? null),
+                    'temperature_2' => $this->keepNAorEmpty($row['Temperature2'] ?? null),
+                    'shift' => $this->keepNAorEmpty($row['Shift'] ?? null),
+                    'operator' => $this->keepNAorEmpty($row['Operator'] ?? null),
+                    'mpi_sample' => $this->keepNAorEmpty($row['MPI sample'] ?? null),
+                    'is_automotive' => $row['Check Automotive'] ?? null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
