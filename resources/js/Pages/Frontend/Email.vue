@@ -8,12 +8,13 @@
             <div>
                 <label for="massProd" class="block mb-1 font-medium text-gray-700">Mass Production Name:</label>
                 <input
-                v-model="form.massProd"
+                v-model="form.massPro"
                 type="text"
+                @input="form.massPro = form.massPro.toUpperCase()"
                 id="massProd"
                 class="w-full px-4 py-2 placeholder-gray-500 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-opacity-40"
                 required
-                placeholder="e.g. 541st"
+                placeholder="e.g. K40 541ST"
                 />
             </div>
 
@@ -25,7 +26,7 @@
                 id="emails"
                 class="w-full px-4 py-2 placeholder-gray-500 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-opacity-40"
                 required
-                placeholder="e.g. automation3@smp.com.ph;automation2@smp.com.ph"
+                placeholder="e.g. automation3@smp.com.ph,automation2@smp.com.ph"
                 />
             </div>
 
@@ -52,6 +53,7 @@
 
             <!-- Success Message -->
             <p v-if="success" class="font-medium text-green-600">Test Email Sent!</p>
+            <DotsLoader v-if="loading" class="mx-auto text-blue-600" />
         </div>
     </Frontend>
 </template>
@@ -63,26 +65,43 @@ import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
 const form = reactive({
-    massProd: '',
+    massPro: '',
     emails: '',
     message: '',
 })
 
-const success = ref(false)
+const success = ref(false);
+const loading = ref(false);
 
 const submitEmail = async () => {
+loading.value = true;
   try {
-    const response = await axios.post('/api/send-test-email', form);
-    console.log(response.data);
-    success.value = true
+    const response = await axios.post('/api/send-takefu-email', form, {
+        headers: {
+            Accept: 'application/json',
+        }
+    });
+    //console.log(response.data);
+    success.value = true;
+    setTimeout(() => {
+        success.value = false;
+    }, 3000); // 3000 milliseconds = 3 seconds
 
     // Reset form
-    form.massProd = ''
+    form.massPro = ''
     form.emails = ''
     form.message = ''
   } catch (error) {
-    console.error('Failed to send email:', error);
-    alert('Failed to send email. Please check your inputs or try again later.');
+    if (error.response) {
+      console.error('Backend error status:', error.response.status);
+      console.error('Backend error data:', error.response.data);
+      alert('Server error: ' + JSON.stringify(error.response.data));
+    } else {
+      console.error('Request error:', error.message);
+      alert('Failed to send email. Please check your inputs or try again later.');
+    }
+  }finally {
+    loading.value = false;
   }
 }
 </script>

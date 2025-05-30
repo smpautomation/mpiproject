@@ -79,15 +79,11 @@
 <body>
     <div class="email-container">
         <div class="header">
-            {{-- Company Logo --}}
-            <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
             <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo">
             <h1>Hello!, </h1>
         </div>
 
         <div class="content">
-            {{-- <p>This is a test email sent from your Laravel application using SMTP.</p> --}}
-
             @if(!empty($customMessage))
                 <div class="custom-message" style="margin-top: 20px;">
                     {!! $customMessage !!}
@@ -101,22 +97,27 @@
 
             <div class="contact">
                 <h3>Contact Support</h3>
-                <p><strong>Email:</strong> ae@smp.com.ph;misd@smp.com.ph</p>
-                <p><strong>Phone:</strong> (049) 541 3190 </p>
+                <p><strong>Email:</strong> ae@smp.com.ph; misd@smp.com.ph</p>
+                <p><strong>Phone:</strong> (049) 541 3190</p>
                 <p><strong>Hours:</strong> Monday – Friday, 6:00 AM – 6:00 PM (GMT+8)</p>
             </div>
         </div>
+        @php
+            $parts = explode(' ', $massPro);
+            $actualFurnaceNo = $parts[0] ?? null;
+            $actualMassPro = $parts[1] ?? null;
+        @endphp
 
         <div class="footer">
             <p>This is an automated message. Please do not reply directly to this email.</p>
-
             <p>&copy; 2025 Automation Engineering Department. All rights reserved.</p>
             {{-- Department or System Footer Logo --}}
 
             {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
-            {{ app(\App\Services\TxtExportService::class)->exportData3('C-33', $massPro) }}
-        </div>
+            {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
+            {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
 
+        </div>
     </div>
 </body>
 </html>

@@ -64,6 +64,7 @@ return new class extends Migration
             $table->json('data_GX_info')->nullable();
             $table->json('data_bh_info')->nullable();
             $table->json('data_VT2_info')->nullable();
+            $table->json('data_ROB_info')->nullable();
         });
 
     }

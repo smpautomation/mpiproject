@@ -28,8 +28,7 @@
                                 <th class="px-2 py-1 text-center border">Shift</th>
                                 <th class="px-2 py-1 text-center border">Operator</th>
                                 <th class="px-2 py-1 text-center border">MPI&nbsp;Sample</th>
-                                <th class="px-2 py-1 text-center border">iHc&#8209;iHk</th>
-                                <th class="px-2 py-1 text-center border">Br&#8209;4πla</th>
+                                <th class="px-2 py-1 text-center border">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,28 +37,74 @@
                                 :key="item.id"
                                 class="text-xs bg-gray-50"
                             >
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc_ihk || 'null' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item["br_4-pie-la"] || 'null' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
+                                </td>
+
+                                                                <!--
+                                                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.model || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.length || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.width || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.thickness || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.material_grade || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    <input
+                                        type="checkbox"
+                                        :checked="item.with_carmark === true || item.with_carmark === 1"
+                                        @change="item.with_carmark = $event.target.checked ? 1 : 0"
+                                    />
+                                </td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.encoded_by || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
+                                </td>
+
+                                -->
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div>
+                    <div v-if="inspectionDataList.length <= 0" class="flex flex-col justify-center align-middle items-center p-6 rounded-xl shadow-xl bg-gradient-to-l from-blue-300 to-green-300">
+                        <label class="font-extrabold text-white text-lg pb-6">Upload Bulk Initial Data specs</label>
+                        <div class="flex flex-row">
+                            <input type="file" accept=".csv" @change="handleFileChange" />
+                            <button class="bg-blue-500 hover:shadow-xl hover:brightness-110 active:scale-95 p-2 rounded-md text-white font-extrabold" @click="uploadCsv">Upload csv</button>
+                        </div>
+                        <p :class="{'pt-6 text-red-500':uploadStatusType == 'failed',
+                                    'pt-6 text-green-500':uploadStatusType == 'success',
+                                    'pt-6 text-blue-500':uploadStatusType == 'info',
+                        }">{{ uploadStatus }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -72,7 +117,9 @@
 
                 <div class="flex-col items-center justify-center">
                     <!-- Title -->
-                    <p class="mb-6 text-3xl font-bold text-center text-gray-800">Register New Data</p>
+                    <p class="mb-6 text-3xl font-bold text-center text-gray-800">
+                      {{ isEditMode ? 'Update Data' : 'Register New Data' }}
+                    </p>
 
                     <!-- Model Input -->
                     <div class="w-full mb-6">
@@ -130,7 +177,7 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature(load):</label>
+                                <label class="block font-medium text-gray-600">Temperature&nbsp;1:</label>
                                 <input v-model="formData.temperature_1" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
@@ -142,9 +189,10 @@
                                 <input v-model="formData.time_unloading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
+
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature(unload):</label>
+                                <label class="block font-medium text-gray-600">Temperature&nbsp;2:</label>
                                 <input v-model="formData.temperature_2" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
@@ -156,29 +204,24 @@
                                 <input @input="convertToUppercase" v-model="formData.operator" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
+
                         <div class="space-y-4">
                             <div>
                                 <label class="block font-medium text-gray-600">MPI&nbsp;Sample:</label>
                                 <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">iHc&#8209;iHk:</label>
-                                <input @input="convertToUppercase" v-model="formData.ihc_ihk" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Br&#8209;4πla:</label>
-                                <input @input="convertToUppercase" v-model="formData['br_4-pie-la']" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex justify-center">
-                    <button @click="submitData" class="flex flex-row items-center px-6 py-3 m-10 overflow-hidden text-xl font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
-                        Register
-                    </button>
+                    <div class="flex justify-center mt-8">
+                        <button
+                            @click="submitData"
+                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 rounded-xl shadow-md hover:brightness-110 hover:shadow-lg active:scale-95"
+                        >
+                            {{ isEditMode ? 'Update' : 'Register' }}
+                        </button>
+                    </div>
                 </div>
-
             </div>
         </div>
     </Frontend>
@@ -186,77 +229,59 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import Papa from 'papaparse';
 import axios from "axios";
 
-//UI Visibility Variables
-
+// UI visibility reactive states
 const showMainUI = ref(true);
 const showInputData = ref(false);
 
-//UI Visibility Variables end
-// UI visibility functions
+// Edit mode and currently editing record ID
+const isEditMode = ref(false);
+const currentEditId = ref(null);
+
+// Reactive state for form data
+const formData = ref({
+  model: null,
+  length: null,
+  width: null,
+  thickness: null,
+  material_grade: null,
+  br: null,
+  ihc: null,
+  ihk: null,
+  oven_machine_no: null,
+  time_loading: null,
+  temperature_1: null,
+  date: null,
+  time_unloading: null,
+  temperature_2: null,
+  shift: null,
+  operator: null,
+  mpi_sample: null,
+});
+
+// Inspection data list fetched from backend
+const inspectionDataList = ref([]);
+
+// Functions to toggle UI
 const insertBtn = () => {
-    showMainUI.value = false;
-    showInputData.value = true;
-}
+  showMainUI.value = false;
+  showInputData.value = true;
+};
 
 const registerBackBtn = () => {
-    showMainUI.value = true;
-    showInputData.value = false;
-    resetAllField();
-}
+  showMainUI.value = true;
+  showInputData.value = false;
+  resetAllField();
+  isEditMode.value = false;
+  currentEditId.value = null;
+};
 
+// Reset form fields
 const resetAllField = () => {
-    formData.value = {
-        model: null,
-        length: null,
-        width: null,
-        thickness: null,
-        material_grade: null,
-        br: null,
-        ihc: null,
-        ihk: null,
-        oven_machine_no: null,
-        time_loading: null,
-        temperature_1: null,
-        date: null,
-        time_unloading: null,
-        temperature_2: null,
-        shift: null,
-        operator: null,
-        mpi_sample: null,
-        ihc_ihk: null,
-        "br_4-pie-la": null
-    };
-}
-
-// UI visibility functions end
-
-function convertToUppercase() { //make sure textinputs are upper case
-    const fields = [
-    'model',
-    'material_grade',
-    'br',
-    'ihc',
-    'ihk',
-    'oven_machine_no',
-    'shift',
-    'operator',
-    'mpi_sample',
-    'ihc_ihk',
-    'br_4-pie-la'
-  ];
-
-  fields.forEach(field => {
-    if (formData.value[field] && typeof formData.value[field] === 'string') {
-      formData.value[field] = formData.value[field].toUpperCase();
-    }
-  });
-}
-
-// Reactive state for user input
-const formData = ref({
+  formData.value = {
     model: null,
     length: null,
     width: null,
@@ -274,41 +299,137 @@ const formData = ref({
     shift: null,
     operator: null,
     mpi_sample: null,
-    ihc_ihk: null,
-    "br_4-pie-la": null,
-});
-
-// Function to send data using Axios
-const submitData = async () => {
-    console.log("Form Data: ", formData.value);
-    try {
-        const response = await axios.post("/api/inspectiondata", formData.value);
-        // Handle response
-        console.log("Insection api post Data submitted successfully!");
-        console.log("API Response:", response.data);
-        showMainUI.value = true;
-        showInputData.value = false;
-        showInspectionData();
-        resetAllField();
-    } catch (error) {
-        console.log("Error submitting data!");
-        console.error("API Error:", error);
-    }
+  };
 };
 
-const inspectionDataList = ref([]);
+// Convert input fields to uppercase for specific keys
+function convertToUppercase() {
+  const fields = [
+    'model',
+    'material_grade',
+    'br',
+    'ihc',
+    'ihk',
+    'oven_machine_no',
+    'shift',
+    'operator',
+    'mpi_sample',
+  ];
 
-const showInspectionData = async () => {
-    try{
-        const response = await axios.get("/api/inspectiondata");
-        console.log("Show All inspection data API respone: ",response.data);
-        inspectionDataList.value = response.data.data || [];
-        console.log("Show All inspection data list : ",inspectionDataList.value);
-    }catch{
-        console.error("API get request showInspectionData Error:", error);
+  fields.forEach(field => {
+    if (formData.value[field] && typeof formData.value[field] === 'string') {
+      formData.value[field] = formData.value[field].toUpperCase();
     }
+  });
 }
 
+// Submit form data — POST for new, PATCH for update
+const submitData = async () => {
+  try {
+    if (isEditMode.value) {
+      await axios.patch(`/api/inspectiondata/${currentEditId.value}`, formData.value);
+    } else {
+      await axios.post("/api/inspectiondata", formData.value);
+    }
+
+    isEditMode.value = false;
+    currentEditId.value = null;
+    showMainUI.value = true;
+    showInputData.value = false;
+    await showInspectionData();
+    resetAllField();
+  } catch (error) {
+    console.warn("Error submitting data!");
+    console.error("API Error:", error);
+  }
+};
+
+// Fetch all inspection data records
+const showInspectionData = async () => {
+  try {
+    const response = await axios.get("/api/inspectiondata");
+    inspectionDataList.value = response.data.data || [];
+  } catch (error) {
+    console.error("API get request showInspectionData Error:", error);
+  }
+};
+
+// Edit button handler — load record into form and show input UI
+const editRecord = (item) => {
+  isEditMode.value = true;
+  currentEditId.value = item.id;
+
+  formData.value = {
+    model: item.model,
+    length: item.length,
+    width: item.width,
+    thickness: item.thickness,
+    material_grade: item.material_grade,
+    br: item.br,
+    ihc: item.ihc,
+    ihk: item.ihk,
+    oven_machine_no: item.oven_machine_no,
+    time_loading: item.time_loading,
+    temperature_1: item.temperature_1,
+    date: item.date,
+    time_unloading: item.time_unloading,
+    temperature_2: item.temperature_2,
+    shift: item.shift,
+    operator: item.operator,
+    mpi_sample: item.mpi_sample,
+  };
+
+  showMainUI.value = false;
+  showInputData.value = true;
+};
+
+const csvFile = ref(null);
+const uploadStatus = ref('');
+const uploadStatusType = ref('');
+
+const handleFileChange = (event) => {
+    csvFile.value = event.target.files[0];
+};
+
+const uploadCsv = () => {
+    if (!csvFile.value) {
+        uploadStatus.value = 'Please select a CSV file first.';
+        setTimeout(() => {
+            uploadStatus.value = '';
+        },3000);
+        uploadStatusType.value = 'info';
+        return;
+    }
+
+    Papa.parse(csvFile.value, {
+        header: true,
+        skipEmptyLines: true,
+        complete: async (results) => {
+            try {
+                const response = await axios.post('/api/inspection/bulk-upload', {
+                data: results.data,
+                });
+                uploadStatus.value = response.data.message + ` (${response.data.inserted} records inserted)`;
+                uploadStatusType.value = 'success';
+                setTimeout(() => {
+                    uploadStatus.value = '';
+                    showInspectionData();
+                },1000);
+            } catch (err) {
+                uploadStatus.value = 'Upload failed: ' + (err.response?.data?.message || err.message);
+            }
+        },
+        error: (err) => {
+        uploadStatus.value = 'CSV parse error: ' + err.message;
+        uploadStatusType.value = 'failed';
+        setTimeout(() => {
+            uploadStatus.value = '';
+        },3000);
+        },
+    });
+};
+
+// Load data on mount
 onMounted(showInspectionData);
 
 </script>

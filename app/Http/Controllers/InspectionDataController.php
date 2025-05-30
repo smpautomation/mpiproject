@@ -135,4 +135,152 @@ class InspectionDataController extends Controller
             ], 500);
         }
     }
+
+    private function sanitizeTemperature($temp)
+    {
+        if (!isset($temp)) return null;
+
+        $temp = trim($temp);
+
+        // Handle junk values
+        if (strtolower($temp) === 'n/a' || $temp === '' || $temp === '-') {
+            return null;
+        }
+
+        // Remove common units/symbols
+        $temp = preg_replace('/[^\d.\-]/', '', $temp); // keep only digits, dot, minus
+
+        // If it still isn't a number, kill it
+        if (!is_numeric($temp)) return null;
+
+        return (float) $temp;
+    }
+
+    private function sanitizeModel($value)
+    {
+        if (!isset($value)) return null;
+
+        $value = trim($value);
+
+        // Reject obvious garbage
+        if (strtolower($value) === 'n/a' || $value === '') return null;
+
+        // Remove all dashes
+        $value = str_replace('-', '', $value);
+
+        return $value;
+    }
+
+    private function sanitizeField($value)
+    {
+        if (!isset($value)) return null;
+        $value = trim($value);
+        return (strtolower($value) === 'n/a' || $value === '') ? null : $value;
+    }
+
+    private function sanitizeTime($value)
+    {
+        if (!isset($value)) return null;
+        $value = trim($value);
+
+        // Reject common non-time inputs
+        if (in_array(strtolower($value), ['n/a', 'na', '-', '--', ''], true)) {
+            return null;
+        }
+
+        // Validate actual time format (e.g., HH:MM or HH:MM:SS)
+        if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $value)) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    public function bulkUpload(Request $request)
+    {
+        $data = $request->input('data');
+
+        if (!is_array($data) || empty($data)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid or empty data provided',
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $insertData = [];
+
+            foreach ($data as $row) {
+                if (!array_filter($row)) continue;
+
+                $thickness = $row['T'] ?? null;
+                if ($thickness !== null) {
+                    $thickness = trim($thickness);
+                    $thickness = preg_replace('/\s*mm$/i', '', $thickness);
+                    $thickness = $thickness === '' ? null : (float)$thickness;
+                } else {
+                    $thickness = null;
+                }
+
+                $insertData[] = [
+                    'model' => $this->sanitizeModel($row['Model'] ?? null),
+                    'length' => $row['L'] ?? null,
+                    'width' => $row['W'] ?? null,
+                    'thickness' => $thickness,
+                    'material_grade' => $row['Material Grade'] ?? null,
+                    'br' => trim(
+                        ($row['Br1'] ?? '') . ' ' .
+                        ($row['Br2'] ?? '') . ' ' .
+                        ($row['Br3'] ?? '')
+                    ),
+                    'ihc' => $row['iHc'] ?? null,
+                    'ihk' => $row['iHk'] ?? null,
+                    'oven_machine_no' => $row['Oven Machine No'] ?? null,
+                    'time_loading' => $this->sanitizeTime($row['Time Loading'] ?? null),
+                    'temperature_1' => $this->sanitizeTemperature($row['Temperature1'] ?? null),
+                    'date' => (!empty($row['Date']) && strtolower(trim($row['Date'])) !== 'n/a') ? $row['Date'] : null,
+                    'time_unloading' => $this->sanitizeTime($row['Time Unloading'] ?? null),
+                    'temperature_2' => $this->sanitizeTemperature($row['Temperature2'] ?? null),
+                    'shift' => $this->sanitizeField($row['Shift'] ?? null),
+                    'operator' => $this->sanitizeField($row['Operator'] ?? null),
+                    'mpi_sample' => $this->sanitizeField($row['MPI sample'] ?? null),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            if (empty($insertData)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No valid rows to insert (all rows may have been empty)',
+                ], 400);
+            }
+
+            InspectionData::insert($insertData);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Bulk inspection data uploaded successfully',
+                'inserted' => count($insertData),
+            ], 201);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            \Log::error('Bulk upload error:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Bulk upload failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

@@ -8,7 +8,16 @@
         placeholder="Search model name or lot no..."
         class="w-full max-w-md p-2 border rounded shadow-sm"
       />
+      <div class="flex flex-row items-center align-middle space-x-4">
+        <label>Status: </label>
+      <!-- Status Filter -->
+        <select v-model="statusFilter" class="w-[150px] p-2 border rounded shadow-sm">
+        <option value="">All</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="PENDING">Pending</option>
+        </select>
 
+      </div>
       <!-- No Data -->
       <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
             No matching data found.
@@ -105,15 +114,23 @@ const tpmData = ref([]);
 const searchQuery = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 20;
+const statusFilter = ref('');
+const totalPages = ref(0);
+const maxPagesAllowed = ref(20);
+
 
 // Fetch data
 const viewAllSerialedLayers = async () => {
   try {
     const response = await axios.get('/api/tpmdata');
     const rawData = response.data.data?.tpmData || {};
-    console.log("Show respone raw data: ",response.data);
-    tpmData.value = Object.values(rawData);
-    console.log('[Fetched Data]:', tpmData.value);
+    //console.log("Show respone raw data: ",response.data);
+    tpmData.value = Object.entries(rawData)
+        .map(([serial, data]) => ({ serial: Number(serial), ...data }))
+        .sort((a, b) => b.serial - a.serial); // Sort DESC by serial
+    //console.log('[Fetched Data]:', tpmData.value);
+    totalPages.value = Math.ceil(tpmData.value.length / itemsPerPage);
+    //console.log(totalPages.value);
   } catch (error) {
     console.error('[Error Fetching Data]:', error);
   }
@@ -123,53 +140,49 @@ onMounted(viewAllSerialedLayers);
 
 // Search + filter
 const filteredData = computed(() => {
-  if (!searchQuery.value) {
-    console.log('[Filtered Data]: No search query. Returning full data.');
-    return tpmData.value;
-  }
-
   const query = searchQuery.value.toLowerCase();
-  const filtered = tpmData.value.filter(item => {
+  const status = statusFilter.value;
+
+  return tpmData.value.filter(item => {
     const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
     const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
-    return model.includes(query) || lot.includes(query);
+    const judgmentStatus = item.report?.[0]?.approved_by ? 'COMPLETED' : 'PENDING';
+
+    const matchesQuery = !query || model.includes(query) || lot.includes(query);
+    const matchesStatus = !status || judgmentStatus === status;
+
+    return matchesQuery && matchesStatus;
   });
-
-  console.log('[Filtered Data]: Query =', searchQuery.value, '| Results =', filtered.length);
-  return filtered;
-});
-
-// Pagination
-const totalPages = computed(() => {
-  const pages = Math.ceil(filteredData.value.length / itemsPerPage);
-  console.log('[Pagination]: Total Pages =', pages);
-  return pages;
 });
 
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
   const paginated = filteredData.value.slice(start, start + itemsPerPage);
-  console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
+  //console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
   return paginated;
 });
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
-    console.log('[Pagination]: Next Page →', currentPage.value);
+    //console.log('[Pagination]: Next Page →', currentPage.value);
   }
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
-    console.log('[Pagination]: Previous Page ←', currentPage.value);
+    //console.log('[Pagination]: Previous Page ←', currentPage.value);
   }
 };
 
 // Watchers for debugging
 watch(searchQuery, (newVal) => {
-  console.log('[Search Query Changed]:', newVal);
+  //console.log('[Search Query Changed]:', newVal);
   currentPage.value = 1; // Reset to page 1 on new search
+});
+
+watch(statusFilter, () => {
+  currentPage.value = 1;
 });
 </script>

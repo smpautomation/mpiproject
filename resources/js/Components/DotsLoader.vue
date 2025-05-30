@@ -50,7 +50,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 }
-
+/*
 .loading-text {
   margin-top: 2rem;
   font-size: 1.4rem;
@@ -60,7 +60,7 @@ onMounted(() => {
   text-align: center;
   text-shadow: 0 0 10px #769ffd, 0 0 20px #a3bfff;
   animation: flicker 0.7s infinite alternate;
-}
+}*/
 
 /* dot animation styles (as in your original code) */
 .dot {
@@ -90,6 +90,18 @@ onMounted(() => {
 </style>
 
 <style>
+.loading-text {
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  color: #769ffd;
+  font-style: italic;
+  font-weight: bolder;
+  text-align: center;
+  text-shadow: 0 0 10px #769ffd, 0 0 20px #a3bfff;
+  animation: flicker 0.7s infinite alternate;
+}
+
+
 @keyframes pulse-dots {
   0% {
     transform: scale(0.8);
@@ -118,6 +130,18 @@ onMounted(() => {
   100% {
     opacity: 0.4;
     text-shadow: 0 0 5px #5f8dfa, 0 0 20px #5386fd;
+  }
+}
+
+@media (max-width: 480px) {
+  .dot {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
+
+  .loading-text {
+    font-size: 1.1rem;
   }
 }
 </style>

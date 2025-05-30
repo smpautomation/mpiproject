@@ -1,8 +1,8 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-            <div v-if="ipAddress != '127.0.0.1'">
-                <p class="text-lg font-extrabold">You are not an authorized user for this section</p>
+            <div v-if="ipAddress != currentUserIP">
+                <p class="text-lg font-extrabold">You are not an authorized user for this section </p>
             </div>
             <div v-else>
                 <div v-if="reportDataList == null || reportDataList.length <= 0" class="flex flex-col items-center justify-center animate-pulse">
@@ -16,48 +16,55 @@
                     <p class="text-lg font-extrabold">No data available yet for approval</p>
                 </div>
                 <div v-else>
+                    <!-- Status Filter -->
+                    <div class="flex justify-end mb-4 align-middle items-center">
+                    <label for="statusFilter" class="mr-2 font-semibold">Filter by Status:</label>
+                    <select id="statusFilter" v-model="statusFilter" class="p-2 w-[125px] border rounded">
+                        <option value="ALL">ALL</option>
+                        <option value="APPROVED">APPROVED</option>
+                        <option value="PENDING">PENDING</option>
+                    </select>
+                    </div>
                     <div class="m-10">
                         <table class="w-full overflow-hidden border-collapse rounded-lg shadow-lg table-auto">
                             <thead class="text-white bg-gray-800 ">
                                 <tr>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300">Date</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Partial No</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Total Quantity</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300 whitespace-nowrap">SMP Judgement</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Prepared By</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300">Checked By</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300">Action</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center bg-green-800 border-b border-gray-300">Status</th>
-                                    <th class="px-6 py-3 text-lg font-extrabold text-center bg-red-400 border-b border-gray-300">Approval</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Partial No</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Total Quantity</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300 whitespace-nowrap">SMP Judgement</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300 whitespace-nowrap">Prepared By</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300 whitespace-nowrap">Checked By</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300 whitespace-nowrap">Action</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-green-800 border-b border-gray-300 whitespace-nowrap">Status</th>
+                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-red-400 border-b border-gray-300 whitespace-nowrap">Approval</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center bg-white">
-                                <tr v-for="(report, index) in reportDataList" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.date }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.partial_number }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300">{{ report.total_quantity }}</td>
-                                    <td class="px-6 py-3 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
+                                <tr v-for="(report, index) in filteredReports" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.partial_number }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.total_quantity }}</td>
+                                    <td class="px-3 py-2 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
                                         {{ report.smp_judgement }}
                                     </td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
-                                    <td class="px-6 py-3 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
-                                    <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
+                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
+                                    <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
                                         <button @click="viewReport(report.tpm_data_serial)"
-                                                class="px-4 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+                                                class="px-3 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
                                             View Report
                                         </button>
                                     </td>
-                                    <td class="px-6 py-3 text-lg font-extrabold text-gray-700 border-b border-gray-300">
+                                    <td class="px-3 py-2 text-lg font-extrabold text-gray-700 border-b border-gray-300">
                                         <span v-if="report.approved_by === 'ITADANI KAZUYA'" class="text-green-600">APPROVED</span>
                                         <span v-else class="text-yellow-600">PENDING</span>
                                     </td>
-                                    <td class="px-6 py-3 text-sm text-center border-b border-gray-300">
+                                    <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
                                         <input type="checkbox"
                                             :value="report.tpm_data_serial"
                                             v-model="selectedRows"
@@ -70,10 +77,12 @@
                     </div>
                     <div class="flex justify-center mb-10 space-y-6">
                         <!-- Approve Button -->
-                        <button v-show="showApproveButton" @click="approveSelected"
-                            class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
-                            Approve Selected
-                        </button>
+                         <div v-if="!approveNotif">
+                            <button v-show="showApproveButton" @click="approveSelected"
+                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
+                                Approve Selected
+                            </button>
+                         </div>
 
                         <!-- Confirmation Box -->
                         <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
@@ -108,6 +117,8 @@ import { Inertia } from '@inertiajs/inertia';
 
 // UI
 
+const statusFilter = ref('ALL');
+
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
@@ -115,34 +126,50 @@ const reportNotificationMessage = ref('');
 
 // UI end
 const ipAddress = ref('');
+const currentUserData = ref('');
+const currentUserName = ref('');
+const currentUserApproverStage = ref('');
+const currentUserIP = ref('');
 const reportDataList = ref([]);
+const filteredReports = computed(() => {
+  if (statusFilter.value === 'ALL') return reportDataList.value;
+
+  return reportDataList.value.filter(report => {
+    const isApproved = report.approved_by === 'ITADANI KAZUYA';
+    if (statusFilter.value === 'APPROVED') return isApproved;
+    if (statusFilter.value === 'PENDING') return !isApproved;
+  });
+});
+
 const selectedRows = ref([]); // Track selected rows by their serial numbers
 
 const props = defineProps({
   ipAddress: String
 })
 ipAddress.value = props.ipAddress;
+console.log("Current IP Detected: ",ipAddress.value);
 
 const showApprovedNotification = (message) => {
     // Show notification and set the message
     approveNotif.value = true;
     reportNotificationMessage.value = message;
+    showApproveButton.value = false;
 
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         approveNotif.value = false;
-        showApproveButton.value = false;
+        showApproveButton.value = true;
     }, 3000);  // 3000ms = 3 seconds
 }
 
 // Watcher to observe changes to selectedRows and log them
 watch(selectedRows, (newValue) => {
-    console.log("Currently selected rows:", newValue);
+    //console.log("Currently selected rows:", newValue);
 }, { deep: true });
 
 const viewReport = (serial) => {
     saveReportChecked(serial);
-    console.log('Navigating to report with serial:', serial);
+    //console.log('Navigating to report with serial:', serial);
     Inertia.visit('/reports', {
         method: 'get',   // You can keep 'get' since we are not modifying any data
         data: { serialParam: serial, fromApproval: true },   // Passing the serialParam here
@@ -151,10 +178,52 @@ const viewReport = (serial) => {
     });
 };
 
+const checkCurrentUser = async () => {
+    try {
+        const responseFindApprovers = await axios.get("/api/approver");
+        const approvers = responseFindApprovers.data.data?.Approvers || [];
+
+        // Filter by IP first
+        const matchingUsers = approvers.filter(column => column.ip_address === ipAddress.value);
+
+        if (matchingUsers.length > 0) {
+            const userData = matchingUsers[0];
+
+            // ✅ Check name gate
+            if (userData.approver_name === "ITADANI KAZUYA") {
+                currentUserData.value = [userData];
+                currentUserName.value = userData.approver_name;
+                currentUserApproverStage.value = userData.approval_stage;
+                currentUserIP.value = userData.ip_address;
+
+                console.log('current user name: ', currentUserName.value);
+                console.log('current approver stage: ', currentUserApproverStage.value);
+                console.log('current user IP: ', currentUserIP.value);
+            } else {
+                console.warn("User found by IP, but name does not match ITADANI KAZUYA.");
+                currentUserData.value = [];
+                currentUserName.value = '';
+                currentUserApproverStage.value = '';
+                currentUserIP.value = '';
+            }
+
+        } else {
+            console.warn("No approver found for the current IP address.");
+            currentUserData.value = [];
+            currentUserName.value = '';
+            currentUserApproverStage.value = '';
+            currentUserIP.value = '';
+        }
+
+    } catch (error) {
+        console.error("Error on checkCurrentUser API GET request", error);
+    }
+}
+
 const showReportData = async () => {
     try {
         const response = await axios.get(`/api/reportdata/`);
-        console.log("Getting report data API result: ", response.data);
+        //console.log("Getting report data API result: ", response.data);
 
         // Filter out rows where smp_judgement is null or an empty string
         reportDataList.value = response.data.data.filter(report =>
@@ -163,7 +232,7 @@ const showReportData = async () => {
             report.prepared_by && report.prepared_by.trim() !== ''
         );
 
-        console.log("Filtered report data arrays: ", reportDataList.value);
+        //console.log("Filtered report data arrays: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
     }
@@ -176,7 +245,7 @@ const saveReportChecked = async (serial) => {
 
     try {
         const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-        console.log("Patched checked report data: ", response.data);
+        //console.log("Patched checked report data: ", response.data);
     } catch (error) {
         console.error("Patch report data Error:", error);
     }
@@ -184,7 +253,7 @@ const saveReportChecked = async (serial) => {
 
 const approveSelected = async () => {
     if (selectedRows.value.length === 0) {
-        console.log("No rows selected for approval");
+        //console.log("No rows selected for approval");
         return;
     }else{
         showApproveButton.value = false;
@@ -225,7 +294,7 @@ const confirmationApprove = async () => {
 
             // Send a PATCH request to update the 'approved_by' field
             const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-            console.log(`Successfully approved report with serial ${serial}:`, response.data);
+            //console.log(`Successfully approved report with serial ${serial}:`, response.data);
             showApprovedNotification("Approved Successfully");
             showReportData();
             showApproveButton.value = true;
@@ -239,6 +308,9 @@ const confirmationApprove = async () => {
     }
 }
 
-onMounted(showReportData);
+onMounted( async () => {
+    await checkCurrentUser();
+    await showReportData();
+});
 
 </script>

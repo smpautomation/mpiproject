@@ -31,7 +31,7 @@
                         <button
                             @click="generateReport"
                             :disabled="showNotif2"
-                            class="disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            class="px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         >
                             Generate Report
                         </button>
@@ -48,25 +48,6 @@
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
-                    <div v-if="!isFromApproval">
-                        <!-- Checkbox + Label -->
-                        <label v-if="isAutomotiveInitiallyMarked == false" class="flex items-center mb-5 space-x-3 text-lg">
-                            <!--
-                            <input
-                            v-model="isTTM_model"
-                            type="checkbox"
-                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                                <span>(Tick this box if the TTM model applies.)</span>
-                            -->
-                            <input
-                            v-model="isAutomotive"
-                            type="checkbox"
-                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                                <span>(Tick this box if the model is for Automotive)</span>
-                        </label>
-                    </div>
                     <div v-if="isFromApproval">
                         <p class="mb-10 text-xl font-extrabold animate-pulse">Report Data is ready for viewing...</p>
                     </div>
@@ -76,7 +57,7 @@
                 </div>
             </div>
             <!-- Report Content -->
-            <DotsLoader v-show="showReportLoading" class="mt-8 z-10"/>
+            <DotsLoader v-show="showReportLoading" class="z-10 mt-8"/>
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
                     <div v-if="currentUserName != 'ITADANI KAZUYA' && ipAddress == currentUserIP" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
@@ -110,16 +91,28 @@
                         <p class="text-sm font-bold text-blue-800">Layer</p>
                         <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
                         </div>
-                        <div>
-                        <span
-                            v-show="isAutomotive"
-                            class="flex items-center justify-center w-[150px] h-[82px] text-center  bg-center bg-no-repeat"
-                            :style="{
-                                backgroundImage: 'url(\'/photo/carmark_logo.png\')',
-                                backgroundSize: '100%'
-                            }">
-                        </span>
-                    </div>
+                        <div class="flex flex-col">
+                            <div v-show="showCarMarkButton && !isAutomotive" class="items-center p-1 text-center border-4 border-white">
+                                <button
+                                    @click="addCarmark"
+                                    class="w-[160px] h-[80px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
+                                    >
+                                    <span class="inline-block transition-all duration-300 ease-in-out transform text-md group-hover:scale-110 group-hover:opacity-90">
+                                        ADD&nbsp;CARMARK
+                                    </span>
+                                </button>
+                            </div>
+                            <div>
+                                <span
+                                    v-show="isAutomotive"
+                                    class="flex items-center justify-center w-[150px] h-[82px] text-center  bg-center bg-no-repeat"
+                                    :style="{
+                                        backgroundImage: 'url(\'/photo/carmark_logo.png\')',
+                                        backgroundSize: '100%'
+                                    }">
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
@@ -258,11 +251,10 @@
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Material Code:</label>&nbsp;
-                            <span
-                                class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
-                                >
-                                {{ reportMaterialCode }}
-                            </span>
+                            <input v-model="reportMaterialCode" @input="reportMaterialCode = reportMaterialCode.toUpperCase()" type="text" name="materialCode" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out">
                         </div>
                         <div class="flex flex-row items-baseline">
                             <label class="text-lg font-semibold">Partial No.:</label>&nbsp;
@@ -415,6 +407,124 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
+
+                                <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
+                                    <tr class="bg-blue-400">
+                                        <th colspan="7" class="py-1 text-md font-semibold text-center text-white border-4 border-white">BH Tracer Measurement</th>
+                                    </tr>
+                                    <tr class="bg-blue-400">
+                                        <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
+                                        <th rowspan="2" class="px-4 text-white border-4 border-white">SPECS</th>
+                                        <th class="px-4 text-white border-4 border-white">Br Min</th>
+                                        <th class="px-4 text-white border-4 border-white">Br Max</th>
+                                        <th class="px-4 text-white border-4 border-white">iHc Min</th>
+                                        <th class="px-4 text-white border-4 border-white">iHc Max</th>
+                                        <th rowspan="2" class="px-4 text-white border-4 border-white">Result</th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMin" @input="reportROB_brMin = reportROB_brMin?.toUpperCase()" name="robBrMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_brMax" @input="reportROB_brMax = reportROB_brMax?.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMin" @input="reportROB_iHcMin = reportROB_iHcMin?.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white"><input type="text" v-model="reportROB_iHcMax" @input="reportROB_iHcMax = reportROB_iHcMax?.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ RT</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrRTstandard }} kg</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrRT_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ VT (180°C)</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrVTstardard }} kg</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrVT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrVT_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrVT_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_BrVT_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">HD5 (180°C)</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_HD5standard }} kOe</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_HD5_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_HD5_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_HD5_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_HD5_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th class="px-4 py-2 text-blue-600 border-4 border-white">JD5 (180°C)</th>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_JD5standard }} kG</td>
+                                        <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_JD5_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_JD5_brMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_JD5_iHcMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportROB_JD5_iHcMax" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                            <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_remarks }}</td>
+                                    </tr>
+                                </template>
+
                                 <template v-if="isTTM_model">
                                     <tr class="bg-blue-300">
                                         <th rowspan="2" colspan="2" class="text-xl text-white border-4 border-white whitespace-nowrap">Computation of Cpk from Br</th>
@@ -697,7 +807,7 @@
                         />
                         <div class="px-0 py-5 mx-5 bg-blue-300 shadow-xl rounded-2xl">
                             <p
-                                class="mx-10 text-5xl font-extrabold transition-opacity duration-1000 animate-pulse"
+                                class="mx-10 text-xl font-extrabold transition-opacity duration-1000 animate-pulse"
                                 :class="{
                                     'text-red-500': reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD',
                                     'text-green-500': reportRemarksDisplay !== 'E' && reportRemarksDisplay !== 'HOLD'
@@ -715,7 +825,7 @@
 
                     <!-- SMP Judgement -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">
                         SMP Judgement
                     </p>
                     <p class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
@@ -735,9 +845,9 @@
 
                     <!-- Prepared By -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Prepared By:</p>
-                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showPreparedByDefault" class="px-2 py-[67px]">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Prepared By:</p>
+                    <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showPreparedByDefault" class="w-[153px] h-[153px]">
                             <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
                                 Waiting for stamp...
                             </span>
@@ -784,10 +894,10 @@
 
                     <!-- Checked By -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Checked By:</p>
-                    <div class="p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showCheckedByDefault" class="px-2 py-[67px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Checked By:</p>
+                    <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showCheckedByDefault" class="w-[153px] h-[153px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
                         </span>
                         </div>
@@ -833,10 +943,10 @@
 
                     <!-- Approved By -->
                     <div class="flex flex-col">
-                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white">Approved By:</p>
-                    <div class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
-                        <div v-show="showApprovedByDefault" class="px-2 py-[64px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                    <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Approved By:</p>
+                    <div class="items-center p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <div v-show="showApprovedByDefault" class="w-[153px] h-[153px]">
+                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
                         </span>
                         </div>
@@ -858,7 +968,7 @@
                     <div class="p-2 border-4 border-white w-[320px] h-[190px] box-border">
                         <div class="flex flex-col items-start w-full h-full overflow-auto bg-blue-100">
                             <span
-                                v-for="(note, index) in noteReasonForReject"
+                                v-for="(note, index) in sortedNotes"
                                 :key="index"
                                 class="font-extrabold text-red-700 opacity-100"
                             >
@@ -888,14 +998,23 @@
                         @click="sec_additional_redirect(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
-                        Apply SEC Additionals
+                        Apply Additional
                     </button>
                     <button
+                        v-if="checkedByPerson"
                         @click="finalizeReport(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
                         Finalize Report
                     </button>
+                    <!-- Finalize Report BYPASS Button
+
+                    <button @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
+                        Finalize Report BYPASS
+                    </button>
+
+                    -->
+
                     <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
@@ -912,7 +1031,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted, nextTick, watch } from 'vue';
+import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
@@ -951,7 +1070,28 @@ const preparedByStampPhoto = ref(false);
 const checkedByStampPhoto = ref(false);
 const approvedByStampPhoto = ref(false);
 
+const priorityOrder = {
+  '- LOW BR': 1,
+  '- HIGH BR': 1,
+  '- N.G iHc': 2,
+  '- iHc Below Target+500 Oe': 2,
+  '- N.G iHk': 3,
+  '- N.G Hr95': 4,
+  '- N.G Hr98': 5,
+  '- N.G iHc-iHk': 6,
+  '- N.G Br-4PIa': 7,
+  '- N.G bHc': 8,
+};
+
 const noteReasonForReject = ref([]);
+
+const sortedNotes = computed(() => {
+  return noteReasonForReject.value.slice().sort((a, b) => {
+    const aPriority = priorityOrder[a] || 99;
+    const bPriority = priorityOrder[b] || 99;
+    return aPriority - bPriority;
+  });
+});
 
 const isReportDataReady = ref(false);
 
@@ -959,7 +1099,11 @@ const isReportDataReady = ref(false);
 
 const isTTM_model = ref(false);
 const isAutomotive = ref(false);
-const isAutomotiveInitiallyMarked = ref(false);
+watch(isAutomotive, (newVal, oldVal) => {
+  //console.log(`isAutomotive changed from ${oldVal} to ${newVal}`);
+  // Your reactive logic here
+}, { immediate: true });
+const showCarMarkButton = ref(true);
 const show1x1x1Data_withoutCorner = ref(false);
 const show1x1x1Data_Corner = ref(false);
 const showVTData = ref(false);
@@ -967,7 +1111,7 @@ const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showGX = ref(false);
 const showBHData = ref(false);
-
+const showROB = ref(false);
 
 const isLoading = ref(true);
 
@@ -1025,6 +1169,32 @@ const reportBH_remarks = ref('NA');
 const reportBH_sample = ref(0);
 const reportBH_temp = ref(0);
 const reportBH_result = ref(0);
+
+const reportROB_brMax = ref('');
+const reportROB_brMin = ref('');
+const reportROB_iHcMax = ref('');
+const reportROB_iHcMin = ref('');
+const reportROB_BrRTstandard = ref(13.0);
+const reportROB_BrVTstandard = ref(10.5);
+const reportROB_HD5standard = ref(10.053);
+const reportROB_JD5standard = ref(9.6);
+const reportROB_BrRT_brMin = ref(0);
+const reportROB_BrRT_brMax = ref(0);
+const reportROB_BrRT_iHcMin = ref(0);
+const reportROB_BrRT_iHcMax = ref(0);
+const reportROB_BrVT_brMin = ref(0);
+const reportROB_BrVT_brMax = ref(0);
+const reportROB_BrVT_iHcMin = ref(0);
+const reportROB_BrVT_iHcMax = ref(0);
+const reportROB_HD5_brMin = ref(0);
+const reportROB_HD5_brMax = ref(0);
+const reportROB_HD5_iHcMin = ref(0);
+const reportROB_HD5_iHcMax = ref(0);
+const reportROB_JD5_brMin = ref(0);
+const reportROB_JD5_brMax = ref(0);
+const reportROB_JD5_iHcMin = ref(0);
+const reportROB_JD5_iHcMax = ref(0);
+const reportROB_remarks = ref('NA');
 
 //general variables start
 
@@ -1195,9 +1365,6 @@ const exitReport = () => {
 
 const showReportButton = async () => {
     showReportProceedButtons.value = false;
-    if(isAutomotiveInitiallyMarked.value == false){
-        checkCarmark();
-    }
     showReportLoading.value = true;
     await showReportData();
     // Poll until isReportDataReady is true
@@ -1216,6 +1383,42 @@ const showReportButton = async () => {
 
 
 // special judgement conditions logic
+
+//FOR ROB - models ROB-0A70G
+watchEffect(() => {
+    if (noteReasonForReject.value.includes('- N.G iHc') && showROB.value === true) {
+        const belowStandard = (
+            reportROB_BrRT_brMin.value < reportROB_BrRTstandard.value ||
+            reportROB_BrRT_brMax.value < reportROB_BrRTstandard.value ||
+            reportROB_BrRT_iHcMin.value < reportROB_BrRTstandard.value ||
+            reportROB_BrRT_iHcMax.value < reportROB_BrRTstandard.value ||
+
+            reportROB_BrVT_brMin.value < reportROB_BrVTstandard.value ||
+            reportROB_BrVT_brMax.value < reportROB_BrVTstandard.value ||
+            reportROB_BrVT_iHcMin.value < reportROB_BrVTstandard.value ||
+            reportROB_BrVT_iHcMax.value < reportROB_BrVTstandard.value ||
+
+            reportROB_HD5_brMin.value < reportROB_HD5standard.value ||
+            reportROB_HD5_brMax.value < reportROB_HD5standard.value ||
+            reportROB_HD5_iHcMin.value < reportROB_HD5standard.value ||
+            reportROB_HD5_iHcMax.value < reportROB_HD5standard.value ||
+
+            reportROB_JD5_brMin.value < reportROB_JD5standard.value ||
+            reportROB_JD5_brMax.value < reportROB_JD5standard.value ||
+            reportROB_JD5_iHcMin.value < reportROB_JD5standard.value ||
+            reportROB_JD5_iHcMax.value < reportROB_JD5standard.value
+        );
+
+        if (belowStandard) {
+            reportROB_remarks.value = 'NG';
+            reportSMPJudgement.value = 'REJECT';
+        } else {
+            reportROB_remarks.value = 'OK';
+            reportSMPJudgement.value = 'HOLD';
+        }
+    }
+});
+
 //FOR VT - models DNS-0A54G, MIE-0751G, MIS-0766G
 watch(
   [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement],
@@ -1225,11 +1428,11 @@ watch(
       showVTData.value === true
     ) {
       if (reportVT_iHcResults.value.length == 0 || reportVT_iHcResults.value.some(sample => sample < reportVT_iHc.value)) {
-        console.log('One or more samples below threshold — NG');
+        //console.log('One or more samples below threshold — NG');
         reportVT_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('All samples OK');
+        //console.log('All samples OK');
         reportVT_remarks.value = 'OK';
         reportSMPJudgement.value = 'HOLD';
       }
@@ -1244,29 +1447,29 @@ watch(
 watch(
   [reportSurface_cpk, reportCore_cpk, reportSurface_remarks, reportCore_remarks, reportSMPJudgement],
   () => {
-    console.log('Watch triggered for 1x1x1 without corner evaluation');
-    console.log('noteReasonForReject:', noteReasonForReject.value);
-    console.log('show1x1x1Data_withoutCorner:', show1x1x1Data_withoutCorner.value);
-    console.log('reportSurface_cpk:', reportSurface_cpk.value);
-    console.log('reportCore_cpk:', reportCore_cpk.value);
+    //console.log('Watch triggered for 1x1x1 without corner evaluation');
+    //console.log('noteReasonForReject:', noteReasonForReject.value);
+    //console.log('show1x1x1Data_withoutCorner:', show1x1x1Data_withoutCorner.value);
+    //console.log('reportSurface_cpk:', reportSurface_cpk.value);
+    //console.log('reportCore_cpk:', reportCore_cpk.value);
 
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
       show1x1x1Data_withoutCorner.value === true && reportSurface_cpk.value !== null && reportCore_cpk.value !== null
     ) {
       if (reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value) {
-        console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
+        //console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
         reportSurface_remarks.value = 'NG';
         reportCore_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
+        //console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
         reportCore_remarks.value = 'OK';
         reportSurface_remarks.value = 'OK';
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('Conditions not met for 1x1x1 CPK check — skipping');
+      //console.log('Conditions not met for 1x1x1 CPK check — skipping');
     }
   },
   { immediate: true }
@@ -1275,27 +1478,27 @@ watch(
 watch(
   [reportCpkFrom_iHc_Cpk, reportCpkFrom_iHc_remarks, reportSMPJudgement],
   () => {
-    console.log('Watch triggered for CPK from iHc evaluation');
-    console.log('noteReasonForReject:', noteReasonForReject.value);
-    console.log('showCpkFrom_iHc:', showCpkFrom_iHc.value);
-    console.log('reportCpkFrom_iHc_Cpk:', reportCpkFrom_iHc_Cpk.value);
-    console.log('cpkStandardValue:', cpkStandardValue.value);
+    //console.log('Watch triggered for CPK from iHc evaluation');
+    //console.log('noteReasonForReject:', noteReasonForReject.value);
+    //console.log('showCpkFrom_iHc:', showCpkFrom_iHc.value);
+    //console.log('reportCpkFrom_iHc_Cpk:', reportCpkFrom_iHc_Cpk.value);
+    //console.log('cpkStandardValue:', cpkStandardValue.value);
 
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
       showCpkFrom_iHc.value === true && reportCpkFrom_iHc_Cpk.value !== null
     ) {
       if (reportCpkFrom_iHc_Cpk.value < cpkStandardValue.value) {
-        console.log('reportCpkFrom_iHc_Cpk is below standard — setting NG/REJECT');
+        //console.log('reportCpkFrom_iHc_Cpk is below standard — setting NG/REJECT');
         reportCpkFrom_iHc_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('reportCpkFrom_iHc_Cpk meets or exceeds standard — setting OK/HOLD');
+        //console.log('reportCpkFrom_iHc_Cpk meets or exceeds standard — setting OK/HOLD');
         reportCpkFrom_iHc_remarks.value = 'OK';
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('Conditions not met for CPK from iHc check — skipping');
+      //console.log('Conditions not met for CPK from iHc check — skipping');
     }
   },
   { immediate: true }
@@ -1305,22 +1508,22 @@ watch(
 watch(
   [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement],
   () => {
-    console.log('Watch triggered for GX iHc evaluation');
-    console.log('showGX:', showGX.value);
-    console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
-    console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
+    //console.log('Watch triggered for GX iHc evaluation');
+    //console.log('showGX:', showGX.value);
+    //console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
+    //console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
 
     if (noteReasonForReject.value.includes('- N.G iHc') && showGX.value === true &&
     reportGX_iHcMinimum.value !== null && reportGX_iHcStandard.value !== null) {
       if (reportGX_iHcMinimum.value < reportGX_iHcStandard.value) {
-        console.log('GX iHc minimum is below standard — setting NG/REJECT');
+        //console.log('GX iHc minimum is below standard — setting NG/REJECT');
         reportSMPJudgement.value = 'REJECT';
       } else {
-        console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+        //console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('GX display not active — skipping GX iHc check');
+      //console.log('GX display not active — skipping GX iHc check');
     }
   },
   { immediate: true }
@@ -1344,7 +1547,7 @@ watch(
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.log('BH display not active — skipping BH check');
+      //console.log('BH display not active — skipping BH check');
     }
   },
   { immediate: true }
@@ -1354,41 +1557,41 @@ watch(
 watch(
   [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks],
   () => {
-    console.log('Watch triggered for isTTM_model or reportCpk');
-    console.log('isTTM_model:', isTTM_model.value);
-    console.log('reportCpk:', reportCpk.value);
+    //console.log('Watch triggered for isTTM_model or reportCpk');
+    //console.log('isTTM_model:', isTTM_model.value);
+    //console.log('reportCpk:', reportCpk.value);
 
 
     if (isTTM_model.value === true && reportCpk.value !== null) {
         if (reportCpk.value < 1.00) {
-            console.log('reportCpk is below 1.00 — setting NG/REJECT');
+            //console.log('reportCpk is below 1.00 — setting NG/REJECT');
             reportCpkRemarks.value = 'NG';
         } else {
-            console.log('reportCpk is 1.00 or higher — setting OK/HOLD');
+            //console.log('reportCpk is 1.00 or higher — setting OK/HOLD');
             reportCpkRemarks.value = 'OK';
         }
 
         if(noteReasonForReject.value.includes('- N.G iHc') && show1x1x1Data_withoutCorner.value === true && show1x1x1Data_Corner.value === false){
             if(reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value){
-            console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
+            //console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
             reportSurface_remarks.value = 'NG';
             reportCore_remarks.value = 'NG';
             reportSMPJudgement.value = 'REJECT';
             }else{
-                console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
+                //console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
                 reportCore_remarks.value = 'OK';
                 reportSurface_remarks.value = 'OK';
                 reportSMPJudgement.value = 'HOLD';
             }
         }else if(noteReasonForReject.value.includes('- N.G iHc') && show1x1x1Data_withoutCorner.value === true && show1x1x1Data_Corner.value === true){
             if(reportCorner_cpk.value < cpkStandardValue.value || reportSurface_cpk.value < cpkStandardValue.value || reportCore_cpk.value < cpkStandardValue.value){
-                console.log('Surface, Core and Corner CPK below 1.33 — setting NG/REJECT');
+                //console.log('Surface, Core and Corner CPK below 1.33 — setting NG/REJECT');
                 reportSurface_remarks.value = 'NG';
                 reportCore_remarks.value = 'NG';
                 reportCorner_remarks.value = 'NG';
                 reportSMPJudgement.value = 'REJECT';
             }else{
-                console.log('Surface, Core and Corner CPK 1.33 or higher — setting OK/HOLD');
+                //console.log('Surface, Core and Corner CPK 1.33 or higher — setting OK/HOLD');
                 reportCore_remarks.value = 'OK';
                 reportSurface_remarks.value = 'OK';
                 reportCorner_remarks.value = 'OK';
@@ -1396,7 +1599,7 @@ watch(
             }
         }
     } else {
-      console.log('isTTM_model is false — skipping TTM CPK check');
+      //console.log('isTTM_model is false — skipping TTM CPK check');
     }
   },
   { immediate: true }
@@ -1412,7 +1615,6 @@ const reportReset = () => {
     reportRemarksDisplayNG_bhc.value = false;
     isTTM_model.value = false;
     isAutomotive.value = false;
-    isAutomotiveInitiallyMarked.value = false;
     noteReasonForReject.value = [];
     show1x1x1Data_Corner.value = false;
     show1x1x1Data_withoutCorner.value = false;
@@ -1420,6 +1622,8 @@ const reportReset = () => {
     showGX.value = false;
     showVTData.value = false;
     showCpkFrom_iHc.value = false;
+    preparedByStampConfirmation.value = false;
+    checkedByStampConfirmation.value = false;
 }
 
 const showNotification = (message) => {
@@ -1451,62 +1655,48 @@ const sec_additional_button = () => {
 const generateReport = async () => {
     showReportContent.value = true;
     showSelectionPanel.value = false;
-    initialCarmarkChecking();
     await fetchAllData();
 
 }
 
 const checkSpecialJudgement = async () => {
-    //special judgement conditions //used sample model TIC-0755G
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
+    if (!hasNGihc) return;
 
-    if (jhCurveActualModel.value === "DNS-0A54G" || jhCurveActualModel.value === "MIS-0766G" || jhCurveActualModel.value === "MIE-0751G") {  //VT data MIS-0766G, DNS-0A54G, MIE-0751G
+    const model = jhCurveActualModel.value;
 
-        const hasSamples = reportVT_samplesQty.value > 0;
-        const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-        const shouldShowFullVT = hasSamples && hasNGihc;
+    // === Model Groups by Behavior ===
+    const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
+    const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
+    const MODELS_SHOW_CPK         = ["DNS0917G"];
+    const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
+    const MODELS_SHOW_BH          = ["ZFS0982G"];
+    const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
 
-        console.log("reportVT_samplesQty:", reportVT_samplesQty.value);
-        console.log("noteReasonForReject:", noteReasonForReject.value);
-        console.log("hasSamples:", hasSamples);
-        console.log("hasNGihc:", hasNGihc);
-        console.log("shouldShowFullVT:", shouldShowFullVT);
+    // === Logic Blocks ===
 
-        showVTData_default.value = !shouldShowFullVT;
-        showVTData.value = shouldShowFullVT;
-
-        console.log("showVTData_default set to:", showVTData_default.value);
-        console.log("showVTData set to:", showVTData.value);
+    if (MODELS_SHOW_VT_DATA.includes(model) && reportVT_samplesQty.value > 0) {
+        showVTData.value = true;
+        showVTData_default.value = false;
+    }else if(MODELS_SHOW_VT_DATA.includes(model)){
+        showVTData.value = false;
+        showVTData_default.value = true;
     }
 
-    //TTM Models conditions
-    if(jhCurveActualModel.value.includes("TTM-")) { //ALL TTM models use .includes("TTM-")
-        isTTM_model.value = true;
-        if(noteReasonForReject.value.includes('- N.G iHc')){
-            if(jhCurveActualModel.value === "TTM-0A58D" || jhCurveActualModel.value === "TTM-0C16D") { //TTM models without corners , TTM-0A58D, TTM-0C16D
-                show1x1x1Data_withoutCorner.value = true;
-            }else{ // with corners
-                show1x1x1Data_withoutCorner.value = true;
-                show1x1x1Data_Corner.value = true;
-            }
+    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
+        show1x1x1Data_withoutCorner.value = true;
+
+        if (model.includes("TTM") && !["TTM0A58D", "TTM0C16D"].includes(model)) {
+            show1x1x1Data_Corner.value = true;
         }
     }
 
-    if(jhCurveActualModel.value === "AAW-0935G" && noteReasonForReject.value.includes('- N.G iHc')){ // AAW-0935G
-        show1x1x1Data_withoutCorner.value = true;
-    }
-
-    if(jhCurveActualModel.value === "DNS-0917G" && noteReasonForReject.value.includes('- N.G iHc')){ // DNS-0917G
-        showCpkFrom_iHc.value = true;
-    }
-
-    if(jhCurveActualModel.value === "MIE-0983G" && noteReasonForReject.value.includes('- N.G iHc')){ // MIE-0983G
-        showGX.value = true;
-    }
-
-    if(jhCurveActualModel.value === "ZFS-0982G" && noteReasonForReject.value.includes('- N.G iHc')){ // ZFS-0982G
-        showBHData.value = true;
-    }
-}
+    if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
+    if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
+    if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
+    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
+};
 
 const fetchAllData = async () => {
     try {
@@ -1649,8 +1839,6 @@ const fetchAllData = async () => {
                 inspectionShift_OvenInfo.value = item.shift;
                 inspectionOperator_OvenInfo.value = item.operator;
             });
-
-
         } else {
             showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
             showReportContent.value = false;
@@ -1767,16 +1955,16 @@ const showReportData = async () => {
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
         reportStdDev.value = filterBySerial[0].std_dev;
-        console.log('reportStdDev:', reportStdDev.value);
+        //console.log('reportStdDev:', reportStdDev.value);
         reportCp.value = filterBySerial[0].cp;
-        console.log('reportCp:', reportCp.value);
+        //console.log('reportCp:', reportCp.value);
         reportCpk.value = filterBySerial[0].cpk;
-        console.log('reportCpk:', reportCpk.value);
+        //console.log('reportCpk:', reportCpk.value);
         reportCpkRemarks.value = filterBySerial[0].br_cpk_remarks;
-        console.log('reportCpkRemarks:', reportCpkRemarks.value);
+        //console.log('reportCpkRemarks:', reportCpkRemarks.value);
 
         const noteRejectReasons = JSON.parse(filterBySerial[0].note_reason_reject);
-        console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
+        //console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
 
         if (noteRejectReasons && Array.isArray(noteRejectReasons)) {
             noteReasonForReject.value = []; // Clear existing values
@@ -1787,7 +1975,7 @@ const showReportData = async () => {
             console.warn("No valid noteRejectReasons found (null or not an array).");
         }
 
-        console.log("Model value: ",reportModel.value);
+        //console.log("Model value: ",reportModel.value);
 
         //console.log("Report Data Model", reportModel.value);
 
@@ -1824,11 +2012,11 @@ const showReportData = async () => {
 
         const oneby = JSON.parse(filterBySerial[0].data_1x1x1_info || '{}');
         const VT = JSON.parse(filterBySerial[0].data_VT_info || '{}');
-        console.log("VT Data: ",VT);
+        //console.log("VT Data: ",VT);
         const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || '{}');
         const GX = JSON.parse(filterBySerial[0].data_GX_info || '{}');
         const bh = JSON.parse(filterBySerial[0].data_bh_info || '{}');
-        const VT2 = JSON.parse(filterBySerial[0].data_VT2_info || '{}');
+        const ROB = JSON.parse(filterBySerial[0].data_ROB_info || '{}');
 
         reportCorner.value = oneby.corner || '';
         reportCorner_average.value = oneby.corner_average || '';
@@ -1885,6 +2073,28 @@ const showReportData = async () => {
         reportBH_temp.value = bh.temp || '';
         reportBH_result.value = bh.result || '';
 
+        reportROB_brMin.value = ROB.brMin || '';
+        reportROB_brMax.value = ROB.brMax || '';
+        reportROB_iHcMin.value = ROB.iHcMin || '';
+        reportROB_iHcMax.value = ROB.iHcMax || '';
+        reportROB_BrRT_brMin.value = ROB.brRT_brMin || '';
+        reportROB_BrRT_brMax.value = ROB.brRT_brMax || '';
+        reportROB_BrRT_iHcMin.value = ROB.brRT_iHcMin || '';
+        reportROB_BrRT_iHcMax.value = ROB.brRT_iHcMax || '';
+        reportROB_BrVT_brMax.value = ROB.brVT_brMax || '';
+        reportROB_BrVT_brMin.value = ROB.brVT_brMin || '';
+        reportROB_BrVT_iHcMax.value = ROB.brVT_iHcMax || '';
+        reportROB_BrVT_iHcMin.value = ROB.brVT_iHcMin || '';
+        reportROB_HD5_brMax.value = ROB.HD5_brMax || '';
+        reportROB_HD5_brMin.value = ROB.HD5_brMin || '';
+        reportROB_HD5_iHcMax.value = ROB.HD5_iHcMax || '';
+        reportROB_HD5_iHcMin.value = ROB.HD5_iHcMin || '';
+        reportROB_JD5_brMax.value = ROB.JD5_brMax || '';
+        reportROB_JD5_brMin.value = ROB.JD5_brMin || '';
+        reportROB_JD5_iHcMax.value = ROB.JD5_iHcMax || '';
+        reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
+        reportROB_remarks.value = ROB.result || '';
+
         evaluateAllRejectReasons();
         checkApprovalStates();
         checkSpecialJudgement();
@@ -1916,6 +2126,7 @@ const saveReport = async () => {
         "shift_oven_info": reportShift_OvenInfo.value,
         "operator_oven_info": reportOperator_OvenInfo.value,
         "date": reportDate.value,
+        "material_code": reportMaterialCode.value,
         "partial_number": reportPartialNo.value,
         "shift": reportShift.value,
         "total_quantity": reportTotalQuantity.value,
@@ -1982,24 +2193,53 @@ const saveReport = async () => {
             "temp": reportBH_temp.value,
             "result": reportBH_result.value,
         }),
+        "data_ROB_info": JSON.stringify({
+            "brMin": reportROB_brMin.value,
+            "brMax": reportROB_brMax.value,
+            "iHcMin": reportROB_iHcMin.value,
+            "iHcMax": reportROB_iHcMax.value,
+            "brRTStandard": reportROB_BrRTstandard,
+            "brVTStandard": reportROB_BrVTstandard,
+            "hd5Standard": reportROB_HD5standard,
+            "jd5Standard": reportROB_JD5standard,
+            "brRT_brMin": reportROB_BrRT_brMin.value,
+            "brRT_brMax": reportROB_BrRT_brMax.value,
+            "brRT_iHcMin": reportROB_BrRT_iHcMin.value,
+            "brRT_iHcMax": reportROB_BrRT_iHcMax.value,
+            "brVT_brMin": reportROB_BrVT_brMin.value,
+            "brVT_brMax": reportROB_BrVT_brMax.value,
+            "brVT_iHcMin": reportROB_BrVT_iHcMin.value,
+            "brVT_iHcMax": reportROB_BrVT_iHcMax.value,
+            "HD5_brMin": reportROB_HD5_brMin.value,
+            "HD5_brMax": reportROB_HD5_brMax.value,
+            "HD5_iHcMin": reportROB_HD5_iHcMin.value,
+            "HD5_iHcMax": reportROB_HD5_iHcMax.value,
+            "JD5_brMin": reportROB_JD5_brMin.value,
+            "JD5_brMax": reportROB_JD5_brMax.value,
+            "JD5_iHcMin": reportROB_JD5_iHcMin.value,
+            "JD5_iHcMax": reportROB_JD5_iHcMax.value,
+            "result": reportROB_remarks.value,
+        }),
     }
-    console.log("Save report data: ", saveReportData);
+    //console.log("Save report data: ", saveReportData);
     saveReportUpdate(saveReportData, currentSerialSelected.value);
 }
 
 const saveReportUpdate = async (saveData, serial) => {
     try{
         const responseSave = await axios.patch(`/api/reportdata/${serial}`, saveData);
-        console.log("Saved Report data: ", responseSave.data);
+        //console.log("Saved Report data: ", responseSave.data);
         checkApprovalStates();
         showNotification2("Saved Successfully");
     }catch (error){
         console.error("Patch report data Error:", error);
     }finally{
+        reportReset();
         fetchAllData();
         showReportData();
         showReportContent.value = false;
         showSelectionPanel.value = true;
+
     }
 }
 
@@ -2011,28 +2251,26 @@ const fetchSerial = async () => {
     const response = await axios.get("/api/tpmdata");
     //console.log("API Response fetchSerial-data:", response.data);
 
-    // Extract furnace data dynamically
-    tpmData.value = response.data.data["tpmDataAll"] || [];
-    //console.log("TPM DATA response: ", tpmData.value);
+    // Grab the raw tpmData object
+    const rawTpmData = response.data.data["tpmData"] || {};
 
-    // Extract unique serial numbers by using a Set
-    serialList.value = [...new Set(tpmData.value.map(item => item.serial_no))];
+    // Assign it to tpmData for future access
+    tpmData.value = rawTpmData;
 
-    // Sort the serialList in descending order (highest value first)
-    serialList.value = serialList.value.sort((a, b) => {
-      return Number(b) - Number(a); // Convert to number for proper sorting
-    });
+    // Extract the serial numbers (object keys)
+    serialList.value = Object.keys(rawTpmData);
 
-    //console.log("Unique Serial lists (Descending):", serialList.value);
+    // Sort in descending order
+    serialList.value = serialList.value.sort((a, b) => Number(b) - Number(a));
 
-    // Set default selection to first serial, if available
+    // Set default selected serial
     if (serialList.value.length > 0) {
-        currentSerialSelected.value = serialList.value[0];
+      currentSerialSelected.value = serialList.value[0];
     }
 
-
+    //console.log("Serials ↓", serialList.value);
   } catch (error) {
-    //console.error("Error fetching serial data:", error);
+    console.error("Error fetching serial data:", error);
   }
 };
 // Fetching the serial start end
@@ -2045,7 +2283,7 @@ const props = defineProps({
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
-console.log('isFromApproval:', isFromApproval.value);
+//console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
 //console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
@@ -2100,6 +2338,31 @@ const confirmPreparedByStamp = async () => {
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
     //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+
+    try {
+        const emailPayload = {
+            serial: [currentSerialSelected.value],
+            emails: 'rizza@smp.com.ph,qa_trainingp8@smp.com.ph,mpi-engr.p8@smp.com.ph,p7_mpi_ahi@smp.com.ph',
+        };
+
+        //console.log('[DEBUG] Sending email payload:', emailPayload);
+
+        const sendEmail = await axios.post('/api/route-email', emailPayload);
+
+        //console.log('[DEBUG] Email API response:', sendEmail.data);
+    } catch (error) {
+        if (error.response) {
+            console.error('[ERROR] Email API failed with response:', {
+                status: error.response.status,
+                data: error.response.data,
+            });
+        } else if (error.request) {
+            console.error('[ERROR] Email API request made but no response:', error.request);
+        } else {
+            console.error('[ERROR] Email API setup error:', error.message);
+        }
+    }
+
     showReportData();
 }
 
@@ -2141,6 +2404,31 @@ const confirmCheckedByStamp = async () => {
 
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, checkedByData);
     //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+
+    try {
+        const emailPayload = {
+            serial: [currentSerialSelected.value],
+            emails: 'itadani@shinetsu.jp',
+        };
+
+        //console.log('[DEBUG] Sending email payload:', emailPayload);
+
+        const sendEmail = await axios.post('/api/route-email', emailPayload);
+
+        //console.log('[DEBUG] Email API response:', sendEmail);
+    } catch (error) {
+        if (error.response) {
+            console.error('[ERROR] Email API failed with response:', {
+                status: error.response.status,
+                data: error.response.data,
+            });
+        } else if (error.request) {
+            console.error('[ERROR] Email API request made but no response:', error.request);
+        } else {
+            console.error('[ERROR] Email API setup error:', error.message);
+        }
+    }
+
     showReportData();
 }
 
@@ -2304,12 +2592,12 @@ const evaluateAllRejectReasons = () => {
       noteReasonForReject.value.push('- N.G iHk');
     }
 
-    if (reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) {
+    if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.includes("1"))) {
       //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
       noteReasonForReject.value.push('- N.G Hr95');
     }
 
-    if (reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) {
+    if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.includes("1"))) {
       //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
       noteReasonForReject.value.push('- N.G Hr98');
     }
@@ -2320,27 +2608,16 @@ const evaluateAllRejectReasons = () => {
   }
 }
 
-const checkCarmark = async () => {
+const addCarmark = async () => {
     try{
         const responseCarMark = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, {
-            "withCarmark": isAutomotive.value,
+            "withCarmark": 1,
         });
         //console.log("Saved carmark data: ", responseCarMark.data);
         isAutomotive.value = true;
+        showCarMarkButton.value = false;
     }catch(error){
-        console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
-    }
-}
-
-const initialCarmarkChecking = async () => {
-    try{
-        const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data.data);
-        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        isAutomotiveInitiallyMarked.value = filterBySerial[0].withCarmark == 1;
-        console.warn("Is carmarked initially marked? = ",isAutomotiveInitiallyMarked.value);
-    }catch(error){
-        console.error("ERROR GET REQUEST FOR CARMARK: ", error);
+        //console.log("ERROR API RESPONSE PATCH REQUEST: ",error);
     }
 }
 

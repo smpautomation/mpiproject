@@ -163,15 +163,12 @@
                 </button>
             </div>
             <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
-                <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold text-white">Serial: {{ serialNo }}</p>
+                <p v-if="showUploadTPMFiles" class="mb-4 text-xl font-semibold text-white">Please select and upload TPM files:</p>
                 <div v-if="showGraphAndTables" class="mt-[100px]">
 
                 </div>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
                     <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
-                        <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-gray-800">Upload Raw Data:</p>
-
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
                             <!-- File Input Label -->
@@ -234,7 +231,7 @@
                     </div>
 
                     <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
-                        <div v-if="fileLists.length > 0" class="w-[410px] h-[230px] overflow-auto">
+                        <div v-if="fileLists.length > 0" class="w-[380px] h-[200px] overflow-auto">
                             <p><span class="text-lg font-extrabold">Files:</span> ( You have selected {{ fileLists.length }} files. ) </p>
                             <div
                                 v-for="(fileList, index) in fileLists"
@@ -246,7 +243,7 @@
                         </div>
 
                         <!-- This div shows when there are no files -->
-                        <div v-else class="flex flex-row justify-center items-center w-[410px] h-[230px]">
+                        <div v-else class="flex flex-row justify-center items-center w-[400px] h-[195px]">
                             <span class="text-2xl animate-pulse">No files selected</span>
                         </div>
                     </div>
@@ -284,7 +281,7 @@
                             v-model="jhCurveActualModel"
                             @input="jhCurveActualModel = jhCurveActualModel.toUpperCase()"
                             class="px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="E.G. TIC-0755G"
+                            placeholder="E.G. TIC0755G"
                         />
                         <button
                             class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
@@ -342,7 +339,9 @@
                 <div>
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-white">Upload file for Temperature and Data Status:</p>
+                        <p class="mb-4 text-xl font-semibold text-white text-center">
+                            Upload Property Data CSV file:
+                        </p>
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
                         <!-- File Input Label -->
@@ -523,7 +522,9 @@
                         <p class="mb-8 text-lg font-extrabold text-white animate-pulse">Please fill in the details for <span class="text-xl text-green-200">Mass Production Control Sheet</span> before proceeding</p>
                         <div class="flex flex-row">
                             <span class="px-2 my-2 text-lg font-extrabold text-white rounded-lg bg-gradient-to-br from-cyan-300/30 to-green-800/10 backdrop-blur-lg">Box: <span class="text-cyan-300">{{ massProd_letter[currentBoxIndex] }}</span></span>
-                            <span class="my-2 text-lg font-extrabold text-white ml-[200px] ">Current Layer: {{ currentLayerNo }}</span>
+                            <span class="my-2 text-lg font-extrabold text-white ml-[200px]">
+                                Current Layer: {{ displayLayerNo }}
+                            </span>
 
                         </div>
                         <div class="flex flex-row">
@@ -572,7 +573,7 @@
                                     type="text"
                                     v-model="massProd_rawMatCode"
                                     @input="massProd_rawMatCode = massProd_rawMatCode.toUpperCase()"
-                                    placeholder="e.g. 4"
+                                    placeholder="e.g. 0G0V755"
                                     class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
@@ -633,7 +634,7 @@
             <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
             <div v-show="showGraphAndTables" class="z-10 flex flex-col">
                 <div class="flex flex-col items-center justify-center">
-                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-cyan-900/80 to-green-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="text-2xl font-extrabold text-blue-400">Report</span> section and select {{ serialNo }} </p>
+                    <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-cyan-900/80 to-green-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="text-2xl font-extrabold text-blue-400">Report</span> section and select <span class="text-2xl font-extrabold text-blue-400"> {{ serialNo }}</span></p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
                     <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
@@ -691,11 +692,12 @@
                                             class="border-b hover:bg-gray-50"
                                         >
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.date }}</td>
-                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.serial_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.code_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.order_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.type }}</td>
-                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_2 }}</td>
+                                            <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.machine_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.sintering_furnace_no }}</td>
                                             <td class="whitespace-nowrap px-[0px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.furnace_no }}</td>
                                             <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.zone }}</td>
@@ -938,9 +940,12 @@
     const propData_miasEmp = ref("");
     const propData_factorEmp = ref("");
 
+    const displayLayerNo = computed(() => {
+        return currentLayerNo.value === 10 ? 9.5 : currentLayerNo.value
+    });
+
     const showManageForm = () => {
         toggleManageForm.value = !toggleManageForm.value;
-        generateSerialNumber();
     }
 
     const showAddNewDataLayer_cancel = () => {
@@ -954,7 +959,6 @@
             showNoModelError.value = true;
             showSerialNo.value = false;
             showProceed1.value = false;
-
             setTimeout(() => {
                 showNoModelError.value = false;
                 showSerialNo.value = true;
@@ -1049,7 +1053,7 @@
                     mias_emp: propData_miasEmp.value,
                     massprod_name: jhCurveMassProdName.value,
                 });
-                console.log("API PATCHED category: ",responsePatchCategory);
+                //console.log("API PATCHED category: ",responsePatchCategory);
         }catch(error){
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
@@ -1066,7 +1070,7 @@
                 box_no: massProd_boxNo.value,
                 raw_mat_code: massProd_rawMatCode.value,
             });
-            console.log("TPM Boxes: ", responseTpmBoxes.data);
+            //console.log("TPM Boxes: ", responseTpmBoxes.data);
 
             // Step 1: Reset fields after saving
             massProd_qty.value = '';
@@ -1138,7 +1142,7 @@
             console.error("Error fetching furnace data:", error);
         } finally {
             isLoadingForAddFurnaces.value = false; // Stop loading
-            console.log("Loading state reset.");
+            //console.log("Loading state reset.");
 
             showFurnaceCreatedNotif.value = true;
 
@@ -1200,8 +1204,8 @@
                     status: row["Data class"]
                 }));
 
-                console.log('CSV Parsed Data:', csv_parsedData.value);
-                console.log('Temp with Data class:', csv_tempWithDataStat.value);
+                //console.log('CSV Parsed Data:', csv_parsedData.value);
+                //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
             },
                 error: (err) => {
@@ -1235,7 +1239,7 @@
                 temperature: csv_tempWithDataStat.value[i]?.temp || null,
                 data_status: csv_tempWithDataStat.value[i]?.status || null
             }).then(response => {
-                console.log(`Patched ID ${id} with row ${i}:`, response.data);
+                //console.log(`Patched ID ${id} with row ${i}:`, response.data);
                 return response.data; // optionally return result
             }).catch(error => {
                 console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
@@ -1245,7 +1249,7 @@
 
             // 👇 Run them all at once
             const patchResults = await Promise.all(patchPromises);
-            console.log('All patch results:', patchResults);
+            //console.log('All patch results:', patchResults);
 
         } catch (error) {
             console.error("Something went wrong in mergeTempToTPM:", error);
@@ -1292,7 +1296,7 @@
     // Function to fetch layer data
     const fetchLayers = async () => {
         try {
-            console.log("Fetching layer data from /api/layerdata...");
+            //console.log("Fetching layer data from /api/layerdata...");
 
             const response = await axios.get("/api/layerdata");
             //console.log("API Response:", response.data.data["Layer Data"]);
@@ -1340,7 +1344,7 @@
 
     const getFurnaceNoByName = async (furnaceName) => {
         try {
-            console.log("Fetching furnace_id for furnace:", furnaceName);
+            //console.log("Fetching furnace_id for furnace:", furnaceName);
 
             // Fetch all furnaces from the API
             const response = await axios.get('/api/furnacedata');
@@ -1364,7 +1368,7 @@
 
     const getLayerNoByName = async (layerName) => {
         try {
-            console.log("Fetching layer_no for layer:", layerName);
+            //console.log("Fetching layer_no for layer:", layerName);
 
             // Fetch all layers from the API
             const response = await axios.get('/api/layerdata');
@@ -1400,7 +1404,7 @@
         try{
             const response = await axios.get('/api/furnacedata');
             const existingFurnaces = response.data.data["Furnace Data"] || [];
-            console.log("Existing furnaces: ", existingFurnaces.length);
+            //console.log("Existing furnaces: ", existingFurnaces.length);
             if(existingFurnaces.length === 0){
                 showNoFurnaceDetectedNotif.value = true;
                 setTimeout(() => {
@@ -1483,7 +1487,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             // Step 1: Fetch the data from the API
             const response = await axios.get("/api/tpmdata"); // Adjust this URL to your API endpoint
             const tpmData = response.data.data.tpmDataAll || [];  // Fallback to an empty array if undefined
-            console.log("tpmData-data result = ",tpmData);
+            //console.log("tpmData-data result = ",tpmData);
 
             if (tpmData.length > 0) {
                 // Step 2: Loop through tpmData to find serial_no values and filter out invalid serial numbers
@@ -1510,7 +1514,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     // Combine year, month, and the new incremented serial number
                     serialNo.value = `${year}${month}${paddedNumericPart}`;
 
-                    console.log('Generated Serial Number:', serialNo.value);
+                    //console.log('Generated Serial Number:', serialNo.value);
                 } else {
                     // Step 4: If no valid serial number exists, generate the first one
                     const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
@@ -1522,12 +1526,12 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     // Generate the first serial number
                     serialNo.value = `${year}${month}${firstSerialNumber}`;
 
-                    console.log('Generated First Serial Number:', serialNo.value);
+                    //console.log('Generated First Serial Number:', serialNo.value);
                     //alert(`Generated First Serial Number: ${serialNo.value}`);
                 }
             } else {
                 // Handle case where there's no data
-                console.log('No data available in tpmData');
+                //console.log('No data available in tpmData');
                 const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
                 const firstSerialNumber = '000001';
@@ -1545,7 +1549,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     const saveNewFurnace = async (newFurnace) => {
         try {
-            console.log("Attempting to save new furnace:", JSON.stringify(newFurnace, null, 2));
+            //console.log("Attempting to save new furnace:", JSON.stringify(newFurnace, null, 2));
 
             // First, check if the furnace already exists
             const checkResponse = await axios.get('/api/furnacedata');
@@ -1559,11 +1563,11 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
             // Send the new furnace data
             const response = await axios.post('/api/furnacedata', newFurnace);
-            console.log("Furnace created successfully:", response.data);
+            //console.log("Furnace created successfully:", response.data);
 
             // Extract furnace_id from response (assuming API returns the created furnace object)
             const newFurnaceNo = response.data.data.id; // Adjust based on API response
-            console.log("Get furnace no: ", newFurnaceNo);
+            //console.log("Get furnace no: ", newFurnaceNo);
             // Now, create default layers under this furnace
             await createDefaultLayers(newFurnaceNo);
 
@@ -1584,20 +1588,28 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     };
 
     const createDefaultLayers = async (furnaceNo) => {
-        for (let i = 1; i <= 10; i++) {
-            const layerDatabase = {
-                layer_no: i,
-                layer_name: `Layer ${i}`,
+        // Define the exact order of layers you want to create
+        const layerNos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 9.5];
+
+        for (const num of layerNos) {
+            const layerData = {
+                layer_no: num,
+                layer_name: `Layer ${num}`,
                 furnace_id: furnaceNo,
                 description: "Enter description here"
             };
 
             try {
-                console.log(`Sending Layer ${i}:`, layerDatabase);
-                const response = await axios.post('/api/layerdata', layerDatabase);
-                console.log(`Layer ${i} created:`, response.data.data["Layer Name"]);
+                //console.log(`Creating Layer ${num}...`);
+                const response = await axios.post('/api/layerdata', layerData);
+                //console.log(`Layer ${num} created:`, response.data.data["Layer Name"]);
             } catch (error) {
-                console.error(`Failed to create Layer ${i}:`, error);
+                console.error(`Failed to create Layer ${num}:`, error.message);
+                if (error.response) {
+                    console.error("Server responded with:", error.response.status, error.response.data);
+                } else if (error.request) {
+                    console.error("No response received from API. Request details:", error.request);
+                }
             }
         }
     };
@@ -1605,7 +1617,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const saveNewLayer = async () => {
         try {
             currentLayerNo.value = await getLayerNoByName(currentLayerName.value);
-            console.log("Current layer no from save new layer: ", currentLayerNo.value);
+            //console.log("Current layer no from save new layer: ", currentLayerNo.value);
             //alert('New Layer Added');
         } catch (error) {
             console.error('Error fetching layer number:', error);
@@ -1617,11 +1629,12 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     //table main layer header dynamic
     const tableLayerColumnHeaders = ref([
         {name: 'Date', colspan: 1},
-        {name: 'Serial\u00A0No', colspan: 1},
         {name: 'Code\u00A0No', colspan: 1},
         {name: 'Order\u00A0No', colspan: 1},
         {name: 'Type', colspan: 1},
         {name: 'Lot\u00A0No', colspan: 1},
+        {name: ' ', colspan: 1},
+        {name: ' ', colspan: 1},
         {name: 'Furnace\u00A0No', colspan: 1},
         {name: 'Coating\u00A0No', colspan: 1},
         {name: 'Zone', colspan: 1},
@@ -1881,6 +1894,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     }
 
     const saveToDatabase = async () => {
+        await generateSerialNumber();
         showUploadData.value = false;
         // Sort the files alphabetically by their name
         fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
@@ -2089,7 +2103,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     fileLists.value = [];
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = ''; // Clear the input field
-    console.log('File upload cleared');
+    //console.log('File upload cleared');
     };
 
     // Function to send raw data via API
@@ -2166,9 +2180,9 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             toggleManageForm.value = false;
             showAddNewDataLayer.value = false;
             const response = await axios.get("/api/tpmdata?serial=" + serialNo.value); // Adjust this URL to your API endpoint
-            console.log('API Response showallData:', response.data);
+            //console.log('API Response showallData:', response.data);
 
-            console.log('Serial No value = ', serialNo.value);
+            //console.log('Serial No value = ', serialNo.value);
 
             items.value = response.data;
 
@@ -2176,7 +2190,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             tpmData.value = response.data.data || []; // Fallback to an empty array if undefined
             tpmRemarks.value = response.data.remark || [];
             getAggregateID.value = response.data[0][0].id || [];
-            console.log("Aggregate ID: ", getAggregateID.value);
+            //console.log("Aggregate ID: ", getAggregateID.value);
 
             const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
             jhCurveActualModel.value = tpm_category_actualmodel[0];
@@ -2191,7 +2205,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
             // Combine the arrays
             combinedData.value = tpmData.value;
-            console.log('Combined Data: ', combinedData.value);
+            //console.log('Combined Data: ', combinedData.value);
 
             jhCurveFurnaceName.value = tpmData.value[0].sintering_furnace_no || "No data found";
             jhCurveModel.value = tpmData.value[0].code_no || "No data found";
@@ -2428,8 +2442,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 })
             };
 
-            console.log('Aggregate Data:', aggregateData);
-            sendAggData(aggregateData, serialNo.value);
+            //console.log('Aggregate Data:', aggregateData);
+            await sendAggData(aggregateData, serialNo.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
             //console.log('Sample with Variance:', sampleWithVariances.value);
@@ -2532,7 +2546,7 @@ const sendAggData = async (aggData, id) => {  // Make sure to pass 'id' as a par
         // Correct string interpolation for the URL
         const response = await axios.patch(`/api/tpmaggregateupdate/${id}`, aggData); // Proper string interpolation for URL
         // Uncomment this to see the response
-        console.log('API Response sendAggData:', response.data);
+        //console.log('API Response sendAggData:', response.data);
     } catch (error) {
         console.error('Error sending aggregate data to API:', error.response?.data || error.message);
     }
@@ -2735,12 +2749,12 @@ const renderChart = () => {
         manageSerialParam: String,  // Expecting the serialParam to be a string
     });
 
-    console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
+    //console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
 
     // onMounted logic to call the function based on serialParam existence
     onMounted(() => {
         // Log the value to check if it's being passed correctly
-        console.log('Serial Param in Manage.vue:', props.manageSerialParam);
+        //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
     showLoadingForGraphAndTables
     if (props.manageSerialParam) {
         showStartManageDiv.value = false;
@@ -2751,7 +2765,7 @@ const renderChart = () => {
         showUploadData.value = false;
         //console.log("Showdiv graphs ",showGraphAndTables.value);
         showAllData();
-        console.log('serialParam is provided, skipping fetchSerial.');
+        //console.log('serialParam is provided, skipping fetchSerial.');
     } else {
         // If serialParam does not have a value, proceed with fetchSerial
         fetchFurnaces();

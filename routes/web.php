@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/upload-pdf', function (Request $request) { //Saves to folder /files/(massprodnumber)
     $request->validate([
         'massProd' => 'required|string',
-        'pdf' => 'required|file|mimes:pdf|max:51200' // 50 MB
+        'pdf' => 'required|file|mimes:pdf|max:102400' // 100 MB
     ]);
 
     $massProd = $request->input('massProd');

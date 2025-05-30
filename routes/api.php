@@ -104,26 +104,64 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
-Route::post('/send-takefu-email', function(Request $request){
+Route::post('/send-takefu-email', function(Request $request) {
 
     $validated = $request->validate([
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
-        'mass_pro' => 'required|string',
-        'massProd' => 'required|string',
+        'massPro' => 'required|string',
     ]);
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
 
+    // ✅ Append hardcoded recipients
+    $emailList[] = 'automation2@smp.com.ph';
+    $emailList[] = 'automation5@smp.com.ph';
+    $emailList[] = 'myke@smp.com.ph';
+
+    // Optionally remove duplicates (not required, but clean)
+    $emailList = array_unique($emailList);
+
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
 
-    Mail::to($emailList)->send(new TakefuMail($validated['mass_pro'], $customMessage));
-    return 'Test Email Sent';
+    Log::info('Starting mail send');
+
+    try {
+        Mail::to($emailList)->send(new TakefuMail($validated['massPro'], $customMessage));
+        Log::info('Mail sent successfully');
+    } catch (\Throwable $e) {
+        Log::error('Mail sending failed: ' . $e->getMessage());
+        Log::error($e->getTraceAsString());
+
+        return response()->json([
+            'error' => 'Mail sending failed',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+
+    return response()->json(['message' => 'Email sent successfully'], 200);
+});
+
+Route::get('/test-pdf-view', function () {
+    return view('preview-pdf');
 });
 
 Route::get('/takefu-email', function () {
     return view('emails.takefu-email', [
-        
+
         'message' => 'customMessage'
     ]);
 });
+
+Route::post('/route-email', function (Request $request) {
+    $validated = $request->validate([
+        'serial' => 'required|array',
+        'emails' => 'required|string'
+    ]);
+
+    $emailList = array_map('trim', explode(',', $validated['emails']));
+    Mail::to($emailList)->send(new RouteMail( $validated['serial']));
+    return redirect()->route('approval')->with('success', 'Emails sent successfully!');
+});
+
+Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUpload']);
