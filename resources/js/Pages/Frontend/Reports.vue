@@ -1437,7 +1437,7 @@ watch(
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      console.warn('Conditions not met: skipping check');
+      //console.warn('Conditions not met: skipping check');
     }
   },
   { immediate: true }
@@ -2095,6 +2095,7 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
+        console.log('Entering Evalation for Reject reasons...');
         evaluateAllRejectReasons();
         checkApprovalStates();
         checkSpecialJudgement();
