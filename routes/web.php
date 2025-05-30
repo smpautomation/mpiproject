@@ -89,3 +89,7 @@ Route::get('/generate-pdf', function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/login', function () {
+    return Inertia::render('Frontend/Login');
+})->middleware('guest')->name('login');
