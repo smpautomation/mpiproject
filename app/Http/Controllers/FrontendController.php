@@ -40,6 +40,9 @@ class FrontendController extends Controller
         // Debug: Log all the headers
         Log::debug($request->headers->all());  // <-- Now the Log class will work
 
+        Log::info('Is Authenticated?', ['check' => auth()->check()]);
+        Log::info('Current User', ['user' => auth()->user()]);
+
         // Get the real client IP address
         $xForwardedFor = $request->header('X-Forwarded-For');
         if ($xForwardedFor) {

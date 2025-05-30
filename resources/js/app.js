@@ -5,9 +5,19 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createApp, h } from 'vue';
+import axios from 'axios';
 
 // Import VueApexCharts
 import VueApexCharts from 'vue3-apexcharts';
+
+// Set CSRF and credentials for all axios calls
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+axios.defaults.withCredentials = true;
+
+const csrfToken = document.querySelector('meta[name="csrf-token"]');
+if (csrfToken) {
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+}
 
 // ===== Patch canvas getContext globally =====
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
@@ -19,8 +29,6 @@ HTMLCanvasElement.prototype.getContext = function(type, options) {
   return originalGetContext.call(this, type, options);
 };
 // ============================================
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
   title: (title) => title ? `${title} MPIOnlineSystem` : 'MPIOnlineSystem',
