@@ -46,20 +46,6 @@
                             </p>
                         </div>
 
-<<<<<<< HEAD
-                    <!-- File Upload Input -->
-                    <input
-                        id="file-upload"
-                        type="file"
-                        accept=".tpm"
-                        class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <input type="submit" id="submitRawdata" class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-
-
-                    <!-- Optional Instruction Text -->
-                    <p class="mt-2 text-sm text-gray-500">Only .tpm files are allowed</p>
-=======
                         <!-- Existing Furnaces -->
                         <div
                             @click="existingFurnaceBtn"
@@ -162,7 +148,6 @@
                             ></span>
                         </button>
                     </div>
->>>>>>> 6e0251cea2274d14a7de3d87e19dc48f9fb67961
                 </div>
             </div>
             <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="z-10 flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
@@ -354,7 +339,7 @@
                 <div>
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-white text-center">
+                        <p class="mb-4 text-xl font-semibold text-center text-white">
                             Upload Property Data CSV file:
                         </p>
                         <!-- File Input Section -->
