@@ -1,10 +1,14 @@
 <template>
-    <div>
-        <Navbar />
+    <div class="flex flex-col min-h-screen">
+      <Navbar />
+      <main class="flex-grow">
         <slot />
+      </main>
+      <Footer />
     </div>
-</template>
+  </template>
 
-<script setup>
-import Navbar from '@/Components/Navbar.vue';
-</script>
+  <script setup>
+  import Navbar from '@/Components/Navbar.vue';
+  import Footer from '@/Components/Footer.vue';
+  </script>
