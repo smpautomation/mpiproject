@@ -94,11 +94,11 @@
                         <div class="flex flex-col">
                             <div v-show="showCarMarkButton && !isAutomotive" class="items-center p-1 text-center border-4 border-white">
                                 <button
-                                    @click="addCarmark"
+                                    disabled
                                     class="w-[160px] h-[80px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
                                     >
-                                    <span class="inline-block transition-all duration-300 ease-in-out transform text-md group-hover:scale-110 group-hover:opacity-90">
-                                        ADD&nbsp;CARMARK
+                                    <span class="inline-block text-sm transition-all duration-300 ease-in-out transform text-md group-hover:scale-110 group-hover:opacity-90">
+                                        NON-AUTOMOTIVE
                                     </span>
                                 </button>
                             </div>
@@ -410,7 +410,7 @@
 
                                 <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
                                     <tr class="bg-blue-400">
-                                        <th colspan="7" class="py-1 text-md font-semibold text-center text-white border-4 border-white">BH Tracer Measurement</th>
+                                        <th colspan="7" class="py-1 font-semibold text-center text-white border-4 border-white text-md">BH Tracer Measurement</th>
                                     </tr>
                                     <tr class="bg-blue-400">
                                         <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
@@ -832,11 +832,17 @@
                         <span
                         class="inline-block w-40 h-40 bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: reportSMPJudgement === 'REJECT'
-                            ? 'url(\'/photo/reject_stamp.png\')'
-                            : reportSMPJudgement === 'HOLD'
-                            ? 'url(\'/photo/hold_stamp.png\')'
-                            : 'url(\'/photo/pass_stamp.png\')',
+                            backgroundImage:
+                                reportSMPJudgement === 'REJECT'
+                                ? 'url(\'/photo/reject_stamp.png\')'
+                                : reportSMPJudgement === 'HOLD'
+                                ? 'url(\'/photo/hold_stamp.png\')'
+                                : reportSMPJudgement === null ||
+                                    reportSMPJudgement === undefined ||
+                                    reportSMPJudgement === '' ||
+                                    reportSMPJudgement === 'null'
+                                ? 'url(\'/photo/template.png\')'
+                                : 'url(\'/photo/pass_stamp.png\')',
                             backgroundSize: '101%'
                         }">
                         </span>
@@ -1014,6 +1020,10 @@
                     </button>
 
                     -->
+
+                    <button @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
+                        Finalize Report BYPASS
+                    </button>
 
                     <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -1264,6 +1274,15 @@ const reportiHcVariance = ref('NA');
 const reportiHkVariance = ref('NA');
 
 const reportSMPJudgement = ref('');
+// Immediate watch
+watch(
+  reportSMPJudgement,
+  (newVal, oldVal) => {
+    console.log('reportSMPJudgement changed:', oldVal, '→', newVal);
+    // Add your reactive logic here
+  },
+  { immediate: true } // Triggers on component mount
+);
 const reportExistingSMPJudgement = ref(null);
 const reportPreparedByDate = ref(null);
 const reportCheckedByDate = ref(null);
@@ -1295,7 +1314,7 @@ const inspectionBrStandard_higher = ref('');
 const inspectionBrStandard_lower = ref('');
 const inspectioniHcStandard = ref('');
 const inspectioniHkStandard = ref('');
-const inspectionOvenMachineNo = ref('');
+const inspectionOvenMachineNo = ref(0);
 const inspectionTimeLoading = ref('');
 const inspectionTemperature_TimeLoading = ref('');
 const inspectionDate_OvenInfo = ref('');
@@ -1303,6 +1322,7 @@ const inspectionTimeUnloading = ref('');
 const inspectionTemperature_TimeUnloading = ref('');
 const inspectionShift_OvenInfo = ref('');
 const inspectionOperator_OvenInfo = ref('');
+const inspectionAutomotive = ref(0);
 
 const tpmData_brAve = ref('');
 const tpmData_brMax = ref('');
@@ -1838,6 +1858,7 @@ const fetchAllData = async () => {
                 inspectionTemperature_TimeUnloading.value = item.temperature_2;
                 inspectionShift_OvenInfo.value = item.shift;
                 inspectionOperator_OvenInfo.value = item.operator;
+                inspectionAutomotive.value = item.is_automotive;
             });
         } else {
             showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
@@ -1845,6 +1866,7 @@ const fetchAllData = async () => {
             showSelectionPanel.value = true;
             return;
         }
+
 
         //console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
 
@@ -1883,7 +1905,8 @@ const fetchAllData = async () => {
             "mpi_sample_quantity": inspectionMpiSampleQty.value,
             "pulse_tracer_machine_number": tpmData_tracerNo.value,
             "thickness": inspectionThickness.value,
-            "width": inspectionWidth.value
+            "width": inspectionWidth.value,
+            "withCarmark": inspectionAutomotive.value,
         }
 
         //console.log("Rep Data: ",repData);
@@ -1943,17 +1966,29 @@ const showReportData = async () => {
         ? filterBySerial[0].approved_by_date.split(' ')[0]
         : '';
 
-        reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
-        reportTimeLoading.value = filterBySerial[0].time_loading;
-        reportTimeUnloading.value = filterBySerial[0].time_unloading;
-        reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
-        reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
-        reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
-        reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
-        reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
-
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
+
+        //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
+        if(inspectionOvenMachineNo.value == 0){
+            reportTimeLoading.value = 'N/A';
+            reportTimeUnloading.value = 'N/A';
+            reportTemperature_TimeLoading.value = 'N/A';
+            reportTemperature_TimeUnloading.value = 'N/A';
+            reportDate_OvenInfo.value = 'N/A';
+            reportShift_OvenInfo.value = 'N/A';
+            reportOperator_OvenInfo.value = 'N/A';
+        }else{
+            reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
+            reportTimeLoading.value = filterBySerial[0].time_loading;
+            reportTimeUnloading.value = filterBySerial[0].time_unloading;
+            reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
+            reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
+            reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
+            reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
+            reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
+        }
+
         reportStdDev.value = filterBySerial[0].std_dev;
         //console.log('reportStdDev:', reportStdDev.value);
         reportCp.value = filterBySerial[0].cp;
@@ -2134,7 +2169,6 @@ const saveReport = async () => {
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
         "smp_judgement":reportSMPJudgement.value,
-        "withCarmark": isAutomotive.value,
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
         "std_dev": reportStdDev.value,
@@ -2434,71 +2468,62 @@ const confirmCheckedByStamp = async () => {
 }
 
 const checkApprovalStates = async () => {
-    try{
-        //console.log("Checking approval states...");
+    try {
         const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data.data);
-        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        //console.log("Filtered data: ", filterBySerial);
+        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value);
 
-        const prepared_by = filterBySerial[0].prepared_by;
-        const checked_by = filterBySerial[0].checked_by;
-        const approved_by = filterBySerial[0].approved_by;
+        const prepared_by = filterBySerial[0]?.prepared_by;
+        const checked_by = filterBySerial[0]?.checked_by;
+        const approved_by = filterBySerial[0]?.approved_by;
 
-        //console.log("prepared by: ",prepared_by);
-        //console.log("checked by: ",checked_by);
-        //console.log("approved by: ",approved_by);
-
-        if(prepared_by != "" && prepared_by != null){ //Approver Conditions
+        if (prepared_by != "" && prepared_by != null) {
             showPreparedByDefault.value = false;
-            preparedByButton.value = false;  //Already approved condition
+            preparedByButton.value = false;
             preparedByStampPhoto.value = true;
 
-            const nameParts = prepared_by.split(' ');
+            const nameParts = prepared_by ? prepared_by.split(' ') : [''];
             preparedByPerson_firstName.value = nameParts[0];
             preparedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
             console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
             console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
-        }else if(currentUserApproverStage.value == "PREPARED BY"){
+        } else if (currentUserApproverStage.value == "PREPARED BY") {
             showPreparedByDefault.value = false;
-            preparedByButton.value = true; //Not approved yet but ready for approval
+            preparedByButton.value = true;
             preparedByStampPhoto.value = false;
-        }else{
+        } else {
             preparedByButton.value = false;
-            showPreparedByDefault.value = true; //Not approver, not approved yet
+            showPreparedByDefault.value = true;
             preparedByStampPhoto.value = false;
         }
 
-        if(checked_by != "" && checked_by != null){ //Approver Conditions
+        if (checked_by != "" && checked_by != null) {
             showCheckedByDefault.value = false;
-            checkedByButton.value = false;          //Already approved condition
+            checkedByButton.value = false;
             checkedByStampPhoto.value = true;
 
-            const nameParts = checked_by.split(' ');
+            const nameParts = checked_by ? checked_by.split(' ') : [''];
             checkedByPerson_firstName.value = nameParts[0];
             checkedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            console.error("Prepared By First Name: ", checkedByPerson_firstName.value);
-            console.error("Prepared By Last Name: ", checkedByPerson_lastName.value);
-        }else if(currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)){
+        } else if (currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)) {
             showCheckedByDefault.value = false;
-            checkedByButton.value = true;       //Not approved yet but ready for approval
+            checkedByButton.value = true;
             checkedByStampPhoto.value = false;
-        }else{
+        } else {
             checkedByButton.value = false;
-            showCheckedByDefault.value = true; //Not approver, not approved yet
+            showCheckedByDefault.value = true;
             checkedByStampPhoto.value = false;
         }
 
-        if(approved_by == "" || approved_by == null){
-            //approvedByButton.value = true; //uncomment on designated ip address
+        if (approved_by == "" || approved_by == null) {
             showApprovedByDefault.value = true;
             approvedByStampPhoto.value = false;
-            const nameParts = checked_by.split(' ');
+
+            const nameParts = checked_by ? checked_by.split(' ') : [''];
             approvedByPerson_firstName.value = nameParts[0];
             approvedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            console.error("Checked By First Name: ", approvedByPerson_firstName.value);
-            console.error("Checked By Last Name: ", approvedByPerson_lastName.value);
-        }else{
+            //console.error("Checked By First Name: ", approvedByPerson_firstName.value);
+            //console.error("Checked By Last Name: ", approvedByPerson_lastName.value);
+        } else {
             approvedByButton.value = false;
             showApprovedByDefault.value = false;
             approvedByStampPhoto.value = true;
@@ -2506,10 +2531,10 @@ const checkApprovalStates = async () => {
             //insert finalize button here the button for printing
         }
 
-    }catch(error){
+    } catch (error) {
         console.error("ERROR Getting report data API result: ", error);
     }
-}
+};
 
 const checkCurrentUser = async () => {
     try {
@@ -2598,12 +2623,12 @@ const evaluateAllRejectReasons = async () => {
       noteReasonForReject.value.push('- N.G iHk');
     }
 
-    if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.includes("1"))) {
+    if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.value.includes("1"))) {
       //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
       noteReasonForReject.value.push('- N.G Hr95');
     }
 
-    if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.includes("1"))) {
+    if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.value.includes("1"))) {
       //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
       noteReasonForReject.value.push('- N.G Hr98');
     }

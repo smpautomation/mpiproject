@@ -19,15 +19,10 @@
                                 <th class="px-2 py-1 text-center border">Br</th>
                                 <th class="px-2 py-1 text-center border">iHc</th>
                                 <th class="px-2 py-1 text-center border">iHk</th>
-                                <th class="px-2 py-1 text-center border">Oven&nbsp;Machine&nbsp;No</th>
-                                <th class="px-2 py-1 text-center border">Time&nbsp;Loading</th>
-                                <th class="px-2 py-1 text-center border">Temperature</th>
-                                <th class="px-2 py-1 text-center border">Date</th>
-                                <th class="px-2 py-1 text-center border">Time&nbsp;Unloading</th>
-                                <th class="px-2 py-1 text-center border">Temperature</th>
-                                <th class="px-2 py-1 text-center border">Shift</th>
-                                <th class="px-2 py-1 text-center border">Operator</th>
+                                <th class="px-2 py-1 text-center border">Oven</th>
                                 <th class="px-2 py-1 text-center border">MPI&nbsp;Sample</th>
+                                <th class="px-2 py-1 text-center border">Carmark</th>
+                                <th class="px-2 py-1 text-center border">Encoded By</th>
                                 <th class="px-2 py-1 text-center border">Actions</th>
                             </tr>
                         </thead>
@@ -45,15 +40,12 @@
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    {{ item.oven_machine_no === 1 ? 'With Oven' : 'N/A' }}
+                                </td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.is_automotive === 1 ? 'Automotive' : 'Non-Automotive' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.encoded_by || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">
                                     <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
                                 </td>
@@ -94,11 +86,11 @@
                     </table>
                 </div>
                 <div>
-                    <div v-if="inspectionDataList.length <= 0" class="flex flex-col justify-center align-middle items-center p-6 rounded-xl shadow-xl bg-gradient-to-l from-blue-300 to-green-300">
-                        <label class="font-extrabold text-white text-lg pb-6">Upload Bulk Initial Data specs</label>
+                    <div v-if="inspectionDataList.length <= 0" class="flex flex-col items-center justify-center p-6 align-middle shadow-xl rounded-xl bg-gradient-to-l from-blue-300 to-green-300">
+                        <label class="pb-6 text-lg font-extrabold text-white">Upload Bulk Initial Data specs</label>
                         <div class="flex flex-row">
                             <input type="file" accept=".csv" @change="handleFileChange" />
-                            <button class="bg-blue-500 hover:shadow-xl hover:brightness-110 active:scale-95 p-2 rounded-md text-white font-extrabold" @click="uploadCsv">Upload csv</button>
+                            <button class="p-2 font-extrabold text-white bg-blue-500 rounded-md hover:shadow-xl hover:brightness-110 active:scale-95" @click="uploadCsv">Upload csv</button>
                         </div>
                         <p :class="{'pt-6 text-red-500':uploadStatusType == 'failed',
                                     'pt-6 text-green-500':uploadStatusType == 'success',
@@ -216,7 +208,7 @@
                     <div class="flex justify-center mt-8">
                         <button
                             @click="submitData"
-                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 rounded-xl shadow-md hover:brightness-110 hover:shadow-lg active:scale-95"
+                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95"
                         >
                             {{ isEditMode ? 'Update' : 'Register' }}
                         </button>

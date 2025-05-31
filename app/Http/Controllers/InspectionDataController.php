@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InspectionData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InspectionDataController extends Controller
 {
@@ -249,16 +250,10 @@ class InspectionDataController extends Controller
                     ),
                     'ihc' => $row['iHc'] ?? null,
                     'ihk' => $row['iHk'] ?? null,
-                    'oven_machine_no' => $this->keepNAorEmpty($row['Oven Machine No'] ?? null),
-                    'time_loading' => $this->keepNAorEmpty($row['Time Loading'] ?? null),
-                    'temperature_1' => $this->keepNAorEmpty($row['Temperature1'] ?? null),
-                    'date' => $this->keepNAorEmpty($row['Date'] ?? null),
-                    'time_unloading' => $this->keepNAorEmpty($row['Time Unloading'] ?? null),
-                    'temperature_2' => $this->keepNAorEmpty($row['Temperature2'] ?? null),
-                    'shift' => $this->keepNAorEmpty($row['Shift'] ?? null),
-                    'operator' => $this->keepNAorEmpty($row['Operator'] ?? null),
+                    'oven_machine_no' => $row['Oven'] ?? null,
                     'mpi_sample' => $this->keepNAorEmpty($row['MPI sample'] ?? null),
-                    'is_automotive' => $row['Check Automotive'] ?? null,
+                    'is_automotive' => $row['Automotive'] ?? null,
+                    'encoded_by' => $row['Encoded By'] ?? null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -284,10 +279,7 @@ class InspectionDataController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            \Log::error('Bulk upload error:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            Log::error('Bulk upload failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 
             return response()->json([
                 'status' => false,
