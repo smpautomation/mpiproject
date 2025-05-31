@@ -11,19 +11,19 @@
                     <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
                         <thead class="text-white bg-gradient-to-l from-blue-600 to-green-600 ">
                             <tr class="text-sm">
-                                <th class="px-2 py-1 text-center border">Model</th>
-                                <th class="px-2 py-1 text-center border">L</th>
-                                <th class="px-2 py-1 text-center border">W</th>
-                                <th class="px-2 py-1 text-center border">T</th>
-                                <th class="px-2 py-1 text-center border">Material&nbsp;Grade</th>
-                                <th class="px-2 py-1 text-center border">Br</th>
-                                <th class="px-2 py-1 text-center border">iHc</th>
-                                <th class="px-2 py-1 text-center border">iHk</th>
-                                <th class="px-2 py-1 text-center border">Oven</th>
-                                <th class="px-2 py-1 text-center border">MPI&nbsp;Sample</th>
-                                <th class="px-2 py-1 text-center border">Carmark</th>
-                                <th class="px-2 py-1 text-center border">Encoded By</th>
-                                <th class="px-2 py-1 text-center border">Actions</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Model</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">L</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">W</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">T</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Material&nbsp;Grade</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Br</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">iHc</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">iHk</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Oven</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">MPI&nbsp;Sample</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Carmark</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Encoded By</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

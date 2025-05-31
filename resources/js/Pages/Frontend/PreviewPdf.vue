@@ -211,18 +211,18 @@
                     <tbody>
                         <tr class="text-center">
                             <td class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">Br&nbsp;(G)</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrStandard }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrAverage }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrMaximum }}</td>
-                            <td class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrMinimum }}</td>
-                            <td colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrVariance }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrStandard }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrAverage }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrMaximum }}</td>
+                            <td class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrMinimum }}</td>
+                            <td colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrVariance }}</td>
                         </tr>
                         <tr class="text-center">
-                            <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" :class="{ 'leading-loose': adjustStyling }" class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">iHc (Oe)</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs"><span v-if="showGX">GM </span>{{ printiHcStandard }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcAverage }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcMaximum }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcMinimum }}</td>
+                            <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" :class="{ 'leading-loose': adjustStyling }" class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">iHc (Oe)</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"><span v-if="showGX">GM </span>{{ printiHcStandard }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHcAverage }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHcMaximum }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHcMinimum }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcVariance }}</td>
                         </tr>
                         <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">

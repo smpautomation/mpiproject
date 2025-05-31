@@ -992,7 +992,7 @@
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button v-if="(currentUserIP == ipAddress) && (approvedByPerson == '' || approvedByPerson == null)" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-if="(currentUserIP == ipAddress) && (approvedByPerson == '' || approvedByPerson == null) && !isFromApproval" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
@@ -1020,14 +1020,14 @@
                     </button>
 
                     -->
-
-                    <button @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
-                        Finalize Report BYPASS
-                    </button>
-
-                    <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="showExitButton && !isFromApproval" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
+
+                    <button v-if="isFromApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                        BACK TO APPROVAL
+                    </button>
+
                 </div>
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
@@ -1043,8 +1043,12 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
+import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
 
+const page = usePage();
+
+console.log('Current page props:', page.props)
 //UI Control start
 
 const isOn = ref(false);
@@ -2314,7 +2318,7 @@ const fetchSerial = async () => {
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
   ipAddress: String,
-  fromApproval: Boolean,
+  fromApproval: [Boolean, String],
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
@@ -2484,8 +2488,8 @@ const checkApprovalStates = async () => {
             const nameParts = prepared_by ? prepared_by.split(' ') : [''];
             preparedByPerson_firstName.value = nameParts[0];
             preparedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
-            console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
+            //console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
+            //console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
         } else if (currentUserApproverStage.value == "PREPARED BY") {
             showPreparedByDefault.value = false;
             preparedByButton.value = true;

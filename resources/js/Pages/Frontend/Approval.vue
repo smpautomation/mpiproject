@@ -17,7 +17,7 @@
                 </div>
                 <div v-else>
                     <!-- Status Filter -->
-                    <div class="flex justify-end mb-4 align-middle items-center">
+                    <div class="flex items-center justify-end mb-4 align-middle">
                     <label for="statusFilter" class="mr-2 font-semibold">Filter by Status:</label>
                     <select id="statusFilter" v-model="statusFilter" class="p-2 w-[125px] border rounded">
                         <option value="ALL">ALL</option>
