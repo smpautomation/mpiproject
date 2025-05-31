@@ -45,6 +45,9 @@
 
 
         <div v-show="showReportContent">
+
+            <!---
+
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
@@ -56,7 +59,13 @@
                     </div>
                 </div>
             </div>
+
+            -->
+
             <!-- Report Content -->
+            <div v-if="reportErrorMessage" class="p-4 mt-4 text-red-700 bg-red-100 border border-red-400 rounded">
+                {{ reportErrorMessage }}
+            </div>
             <DotsLoader v-show="showReportLoading" class="z-10 mt-8"/>
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
@@ -1676,12 +1685,49 @@ const sec_additional_button = () => {
     //redirect here
 }
 
-const generateReport = async () => {
-    showReportContent.value = true;
-    showSelectionPanel.value = false;
-    await fetchAllData();
+const reportErrorMessage = ref('');
 
-}
+const generateReport = async () => {
+    try {
+        showReportLoading.value = true;
+        showReportContent.value = true;
+        showSelectionPanel.value = false;
+
+        await fetchAllData();
+        showReportProceedButtons.value = false;
+        await showReportData();
+
+        const waitForFlag = (timeout = 8000) => { // 8s timeout
+            return new Promise((resolve, reject) => {
+                const start = Date.now();
+                const check = () => {
+                    if (isReportDataReady.value) return resolve();
+                    if (Date.now() - start >= timeout) {
+                        console.error("Timeout: Report data not ready");
+                        return reject(new Error("Timeout waiting for report data"));
+                    }
+                    setTimeout(check, 50);
+                };
+                check();
+            });
+        };
+
+        await waitForFlag();
+        showReportLoading.value = false;
+        showReportMain.value = true;
+
+    } catch (error) {
+        showReportLoading.value = false;
+        reportErrorMessage.value = "Failed to generate report. Please try again.";
+        setTimeout(() => {
+            reportErrorMessage.value = '';
+            showReportContent.value = false;
+            showSelectionPanel.value = true;
+        }, 2000); // Clear after 3 seconds
+        console.error("generateReport failed:", error.message);
+        // Optional: show user an error message
+    }
+};
 
 const checkSpecialJudgement = async () => {
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
@@ -2142,8 +2188,7 @@ const showReportData = async () => {
         // Final result conditions
 
         setTimeout(() => {
-            isReportDataReady.value = true;
-            showReportLoading.value = false;
+            isReportDataReady.value = true; //!important this is flag for when date is ready. (it must be always set to true)
         }, 1000); // 1 second delay
     } catch (error) {
         console.error("API get request showReportData Error:", error);
@@ -2689,22 +2734,18 @@ const sec_additional_redirect = (sec_serial) => {
 };
 
 // onMounted logic to call the function based on serialParam existence
-onMounted(() => {
+onMounted(async () => {
     checkCurrentUser();
-  if (props.serialParam) {
-    // If serialParam has a value, do not fetch serial
-    // Placeholder for additional actions when serialParam exists
-    currentSerialSelected.value = props.serialParam;
-    showReportContent.value = true;
-    showSelectionPanel.value = false;
-    showReportSaveButton.value = false;
-    showExitButton.value = false;
-    fetchAllData();
-    showReportData();
-    //console.log('serialParam is provided, skipping fetchSerial.');
-  } else {
-    // If serialParam does not have a value, proceed with fetchSerial
-    fetchSerial();
-  }
+
+    if (props.serialParam && props.fromApproval) {
+        currentSerialSelected.value = props.serialParam;
+
+        // This ensures reactivity is flushed before running the report logic
+        await Promise.resolve();
+
+        generateReport();
+    } else {
+        fetchSerial();
+    }
 });
 </script>
