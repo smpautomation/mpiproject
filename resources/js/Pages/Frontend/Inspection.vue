@@ -120,87 +120,83 @@
                     </div>
 
                     <!-- Grid for Inputs -->
-                    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-6">
-                        <div class="space-y-4">
+                    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
+                        <!-- Column 1 -->
+                        <div class="space-y-5">
                             <div>
-                                <label class="block font-medium text-gray-600">Length:</label>
-                                <input v-model="formData.length" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Length:</label>
+                                <input v-model="formData.length" type="number"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block font-medium text-gray-600">Width:</label>
-                                <input v-model="formData.width" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Thickness:</label>
-                                <input v-model="formData.thickness" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium text-gray-600">Material&nbsp;Grade:</label>
-                                <input @input="convertToUppercase" v-model="formData.material_grade" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Br:&nbsp;(ex:&nbsp;1234&nbsp;~&nbsp;5678&nbsp;)</label>
-                                <input @input="convertToUppercase" v-model="formData.br" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">iHc:</label>
-                                <input @input="convertToUppercase" v-model="formData.ihc" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium text-gray-600">iHk:</label>
-                                <input @input="convertToUppercase" v-model="formData.ihk" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Oven&nbsp;Machine&nbsp;No:</label>
-                                <input @input="convertToUppercase" v-model="formData.oven_machine_no" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Time&nbsp;Loading:</label>
-                                <input v-model="formData.time_loading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Width:</label>
+                                <input v-model="formData.width" type="number"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
 
-                        <div class="space-y-4">
+                        <!-- Column 2 -->
+                        <div class="space-y-5">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature&nbsp;1:</label>
-                                <input v-model="formData.temperature_1" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Thickness:</label>
+                                <input v-model="formData.thickness" type="number"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block font-medium text-gray-600">Date:</label>
-                                <input v-model="formData.date" type="date" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Time&nbsp;Unloading:</label>
-                                <input v-model="formData.time_unloading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium text-gray-600">Temperature&nbsp;2:</label>
-                                <input v-model="formData.temperature_2" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Shift:</label>
-                                <input @input="convertToUppercase" v-model="formData.shift" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Operator:</label>
-                                <input @input="convertToUppercase" v-model="formData.operator" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Material&nbsp;Grade:</label>
+                                <input @input="convertToUppercase" v-model="formData.material_grade" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
 
-                        <div class="space-y-4">
+                        <!-- Column 3 -->
+                        <div class="space-y-5">
                             <div>
-                                <label class="block font-medium text-gray-600">MPI&nbsp;Sample:</label>
-                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">
+                                    Br:&nbsp;<span class="text-xs text-gray-500">(ex: 1234 ~ 5678)</span>
+                                </label>
+                                <input @input="convertToUppercase" v-model="formData.br" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">iHc:</label>
+                                <input @input="convertToUppercase" v-model="formData.ihc" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        <!-- Column 4 -->
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">iHk:</label>
+                                <input @input="convertToUppercase" v-model="formData.ihk" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Encoded&nbsp;By:</label>
+                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        <!-- Column 5 -->
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">MPI&nbsp;Sample:</label>
+                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div class="pt-6">
+                                <label class="inline-flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                                    <input type="checkbox" v-model="formData.is_automotive"
+                                        class="text-blue-600 form-checkbox" />
+                                    <span>Is it Automotive?</span>
+                                </label>
+                                <label class="inline-flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                                    <input type="checkbox" v-model="formData.oven_machine_no"
+                                        class="text-blue-600 form-checkbox" />
+                                    <span>With Oven?</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -244,14 +240,9 @@ const formData = ref({
   ihc: null,
   ihk: null,
   oven_machine_no: null,
-  time_loading: null,
-  temperature_1: null,
-  date: null,
-  time_unloading: null,
-  temperature_2: null,
-  shift: null,
-  operator: null,
   mpi_sample: null,
+  is_automotive: null,
+  encoded_by: null,
 });
 
 // Inspection data list fetched from backend
@@ -283,14 +274,9 @@ const resetAllField = () => {
     ihc: null,
     ihk: null,
     oven_machine_no: null,
-    time_loading: null,
-    temperature_1: null,
-    date: null,
-    time_unloading: null,
-    temperature_2: null,
-    shift: null,
-    operator: null,
     mpi_sample: null,
+    is_automotive: null,
+    encoded_by: null,
   };
 };
 
@@ -302,10 +288,8 @@ function convertToUppercase() {
     'br',
     'ihc',
     'ihk',
-    'oven_machine_no',
-    'shift',
-    'operator',
     'mpi_sample',
+    'encoded_by',
   ];
 
   fields.forEach(field => {
@@ -351,27 +335,20 @@ const editRecord = (item) => {
   isEditMode.value = true;
   currentEditId.value = item.id;
 
-  formData.value = {
-    model: item.model,
-    length: item.length,
-    width: item.width,
-    thickness: item.thickness,
-    material_grade: item.material_grade,
-    br: item.br,
-    ihc: item.ihc,
-    ihk: item.ihk,
-    oven_machine_no: item.oven_machine_no,
-    time_loading: item.time_loading,
-    temperature_1: item.temperature_1,
-    date: item.date,
-    time_unloading: item.time_unloading,
-    temperature_2: item.temperature_2,
-    shift: item.shift,
-    operator: item.operator,
-    mpi_sample: item.mpi_sample,
-    is_automotive: item.is_automotive,
-    encoded_by: item.encoded_by
-  };
+    formData.value = {
+        model: item.model,
+        length: item.length,
+        width: item.width,
+        thickness: item.thickness,
+        material_grade: item.material_grade,
+        br: item.br,
+        ihc: item.ihc,
+        ihk: item.ihk,
+        oven_machine_no: Boolean(Number(item.oven_machine_no)),
+        mpi_sample: item.mpi_sample,
+        is_automotive: Boolean(Number(item.is_automotive)),
+        encoded_by: item.encoded_by
+    };
 
   showMainUI.value = false;
   showInputData.value = true;
