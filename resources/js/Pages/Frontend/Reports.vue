@@ -1886,7 +1886,7 @@ const fetchAllData = async () => {
         const getAllInspModels = inspectionDataList.value.map(item => item.model);
         //console.log("List of models in inspection: ", getAllInspModels);
         //console.log("Current model in tpm: ",tpm_current_model);
-
+        console.log("entering filteredInspectiondata...");
         // Check if tpm_current_model exists in getAllInspModels
         if (getAllInspModels.includes(fetchActualModel.value)) {
             const filteredInspectionData = inspectionDataList.value.filter(item => item.model == fetchActualModel.value);
@@ -2182,7 +2182,7 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
-        console.log('Entering Evalation for Reject reasons...');
+        //console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
@@ -2617,7 +2617,7 @@ const checkCurrentUser = async () => {
 }
 
 const evaluateAllRejectReasons = async () => {
-    console.log('Have already entered Evalation for Reject reasons...');
+    //console.log('Have already entered Evalation for Reject reasons...');
 
     // force some async delay for testing
     await new Promise(res => setTimeout(res, 100));
@@ -2657,12 +2657,12 @@ const evaluateAllRejectReasons = async () => {
     }
 
     if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-      console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
+      //console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
       noteReasonForReject.value.push('- HIGH BR');
     }
 
     if (reportihcMinimum.value < inspectioniHcStandard.value) {
-      console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
+      //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
       noteReasonForReject.value.push('- N.G iHc');
     } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
       //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
@@ -2670,7 +2670,7 @@ const evaluateAllRejectReasons = async () => {
     }
 
     if (reportihkMinimum.value < inspectioniHkStandard.value) {
-      console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
+     // console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
       noteReasonForReject.value.push('- N.G iHk');
     }
 
