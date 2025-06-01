@@ -98,7 +98,7 @@
                         <!-- Approve Button -->
                          <div v-if="!approveNotif">
                             <button v-show="showApproveButton" @click="approveSelected"
-                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
+                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
                                 Approve Selected
                             </button>
                          </div>
