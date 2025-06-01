@@ -45,6 +45,9 @@
 
 
         <div v-show="showReportContent">
+
+            <!---
+
             <div v-show="showReportProceedButtons">
                 <div v-if="isLoading">Generating Report...</div>
                 <div v-else>
@@ -56,7 +59,13 @@
                     </div>
                 </div>
             </div>
+
+            -->
+
             <!-- Report Content -->
+            <div v-if="reportErrorMessage" class="p-4 mt-4 text-red-700 bg-red-100 border border-red-400 rounded">
+                {{ reportErrorMessage }}
+            </div>
             <DotsLoader v-show="showReportLoading" class="z-10 mt-8"/>
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
@@ -94,11 +103,11 @@
                         <div class="flex flex-col">
                             <div v-show="showCarMarkButton && !isAutomotive" class="items-center p-1 text-center border-4 border-white">
                                 <button
-                                    @click="addCarmark"
+                                    disabled
                                     class="w-[160px] h-[80px] m-0 font-semibold text-blue-400 bg-white/30 hover:bg-white/80 rounded-lg shadow-md hover:shadow-blue-400 hover:shadow-lg hover:text-blue-700 transition duration-300 ease-in-out backdrop-blur-md border border-white/40 hover:border-white/70 relative overflow-hidden group"
                                     >
-                                    <span class="inline-block transition-all duration-300 ease-in-out transform text-md group-hover:scale-110 group-hover:opacity-90">
-                                        ADD&nbsp;CARMARK
+                                    <span class="inline-block text-sm transition-all duration-300 ease-in-out transform text-md group-hover:scale-110 group-hover:opacity-90">
+                                        NON-AUTOMOTIVE
                                     </span>
                                 </button>
                             </div>
@@ -410,7 +419,7 @@
 
                                 <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
                                     <tr class="bg-blue-400">
-                                        <th colspan="7" class="py-1 text-md font-semibold text-center text-white border-4 border-white">BH Tracer Measurement</th>
+                                        <th colspan="7" class="py-1 font-semibold text-center text-white border-4 border-white text-md">BH Tracer Measurement</th>
                                     </tr>
                                     <tr class="bg-blue-400">
                                         <th rowspan="2" class="px-4 text-white border-4 border-white">ITEMS</th>
@@ -462,7 +471,7 @@
                                     </tr>
                                     <tr class="text-center">
                                         <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ VT (180°C)</th>
-                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrVTstardard }} kg</td>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrVTstandard }} kg</td>
                                         <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrVT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
@@ -832,11 +841,17 @@
                         <span
                         class="inline-block w-40 h-40 bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: reportSMPJudgement === 'REJECT'
-                            ? 'url(\'/photo/reject_stamp.png\')'
-                            : reportSMPJudgement === 'HOLD'
-                            ? 'url(\'/photo/hold_stamp.png\')'
-                            : 'url(\'/photo/pass_stamp.png\')',
+                            backgroundImage:
+                                reportSMPJudgement === 'REJECT'
+                                ? 'url(\'/photo/reject_stamp.png\')'
+                                : reportSMPJudgement === 'HOLD'
+                                ? 'url(\'/photo/hold_stamp.png\')'
+                                : reportSMPJudgement === null ||
+                                    reportSMPJudgement === undefined ||
+                                    reportSMPJudgement === '' ||
+                                    reportSMPJudgement === 'null'
+                                ? 'url(\'/photo/template.png\')'
+                                : 'url(\'/photo/pass_stamp.png\')',
                             backgroundSize: '101%'
                         }">
                         </span>
@@ -986,7 +1001,7 @@
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button v-if="(currentUserIP == ipAddress) && (approvedByPerson == '' || approvedByPerson == null)" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-if="(currentUserIP == ipAddress) && (approvedByPerson == '' || approvedByPerson == null) && !isFromApproval" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
@@ -1014,10 +1029,16 @@
                     </button>
 
                     -->
+                    <button @click="finalizeReport(currentSerialSelected)" class="bg-white">Finalize rep bypass</button>
 
-                    <button v-show="showExitButton" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="showExitButton && !isFromApproval" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
+
+                    <button v-if="isFromApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                        BACK TO APPROVAL
+                    </button>
+
                 </div>
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
@@ -1033,8 +1054,12 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
+import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
 
+const page = usePage();
+
+console.log('Current page props:', page.props)
 //UI Control start
 
 const isOn = ref(false);
@@ -1264,6 +1289,15 @@ const reportiHcVariance = ref('NA');
 const reportiHkVariance = ref('NA');
 
 const reportSMPJudgement = ref('');
+// Immediate watch
+watch(
+  reportSMPJudgement,
+  (newVal, oldVal) => {
+    console.log('reportSMPJudgement changed:', oldVal, '→', newVal);
+    // Add your reactive logic here
+  },
+  { immediate: true } // Triggers on component mount
+);
 const reportExistingSMPJudgement = ref(null);
 const reportPreparedByDate = ref(null);
 const reportCheckedByDate = ref(null);
@@ -1295,7 +1329,7 @@ const inspectionBrStandard_higher = ref('');
 const inspectionBrStandard_lower = ref('');
 const inspectioniHcStandard = ref('');
 const inspectioniHkStandard = ref('');
-const inspectionOvenMachineNo = ref('');
+const inspectionOvenMachineNo = ref(0);
 const inspectionTimeLoading = ref('');
 const inspectionTemperature_TimeLoading = ref('');
 const inspectionDate_OvenInfo = ref('');
@@ -1303,6 +1337,7 @@ const inspectionTimeUnloading = ref('');
 const inspectionTemperature_TimeUnloading = ref('');
 const inspectionShift_OvenInfo = ref('');
 const inspectionOperator_OvenInfo = ref('');
+const inspectionAutomotive = ref(0);
 
 const tpmData_brAve = ref('');
 const tpmData_brMax = ref('');
@@ -1652,12 +1687,50 @@ const sec_additional_button = () => {
     //redirect here
 }
 
-const generateReport = async () => {
-    showReportContent.value = true;
-    showSelectionPanel.value = false;
-    await fetchAllData();
+const reportErrorMessage = ref('');
 
-}
+const generateReport = async () => {
+    try {
+        showReportLoading.value = true;
+        showReportContent.value = true;
+        showSelectionPanel.value = false;
+
+        await fetchAllData();
+        showReportProceedButtons.value = false;
+        await showReportData();
+
+        const waitForFlag = (timeout = 8000) => { // 8s timeout
+            return new Promise((resolve, reject) => {
+                const start = Date.now();
+                const check = () => {
+                    if (isReportDataReady.value) return resolve();
+                    if (Date.now() - start >= timeout) {
+                        console.error("Timeout: Report data not ready");
+                        return reject(new Error("Timeout waiting for report data"));
+                    }
+                    setTimeout(check, 50);
+                };
+                check();
+            });
+        };
+
+        await waitForFlag();
+        await new Promise(r => setTimeout(r, 50)); // tiny tick delay
+        showReportLoading.value = false;
+        showReportMain.value = true;
+
+    } catch (error) {
+        showReportLoading.value = false;
+        reportErrorMessage.value = "Failed to generate report. Please try again.";
+        setTimeout(() => {
+            reportErrorMessage.value = '';
+            showReportContent.value = false;
+            showSelectionPanel.value = true;
+        }, 2000); // Clear after 3 seconds
+        console.error("generateReport failed:", error.message);
+        // Optional: show user an error message
+    }
+};
 
 const checkSpecialJudgement = async () => {
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
@@ -1838,6 +1911,7 @@ const fetchAllData = async () => {
                 inspectionTemperature_TimeUnloading.value = item.temperature_2;
                 inspectionShift_OvenInfo.value = item.shift;
                 inspectionOperator_OvenInfo.value = item.operator;
+                inspectionAutomotive.value = item.is_automotive;
             });
         } else {
             showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
@@ -1845,6 +1919,7 @@ const fetchAllData = async () => {
             showSelectionPanel.value = true;
             return;
         }
+
 
         //console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
 
@@ -1883,7 +1958,8 @@ const fetchAllData = async () => {
             "mpi_sample_quantity": inspectionMpiSampleQty.value,
             "pulse_tracer_machine_number": tpmData_tracerNo.value,
             "thickness": inspectionThickness.value,
-            "width": inspectionWidth.value
+            "width": inspectionWidth.value,
+            "withCarmark": inspectionAutomotive.value,
         }
 
         //console.log("Rep Data: ",repData);
@@ -1943,17 +2019,29 @@ const showReportData = async () => {
         ? filterBySerial[0].approved_by_date.split(' ')[0]
         : '';
 
-        reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
-        reportTimeLoading.value = filterBySerial[0].time_loading;
-        reportTimeUnloading.value = filterBySerial[0].time_unloading;
-        reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
-        reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
-        reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
-        reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
-        reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
-
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
+
+        //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
+        if(inspectionOvenMachineNo.value == 0){
+            reportTimeLoading.value = 'N/A';
+            reportTimeUnloading.value = 'N/A';
+            reportTemperature_TimeLoading.value = 'N/A';
+            reportTemperature_TimeUnloading.value = 'N/A';
+            reportDate_OvenInfo.value = 'N/A';
+            reportShift_OvenInfo.value = 'N/A';
+            reportOperator_OvenInfo.value = 'N/A';
+        }else{
+            reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
+            reportTimeLoading.value = filterBySerial[0].time_loading;
+            reportTimeUnloading.value = filterBySerial[0].time_unloading;
+            reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
+            reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
+            reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
+            reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
+            reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
+        }
+
         reportStdDev.value = filterBySerial[0].std_dev;
         //console.log('reportStdDev:', reportStdDev.value);
         reportCp.value = filterBySerial[0].cp;
@@ -2056,15 +2144,15 @@ const showReportData = async () => {
         reportCpkFrom_iHc_Cpk.value = iHc_cpk.cpk || '';
         reportCpkFrom_iHc_remarks.value = iHc_cpk.remarks || '';
 
-        reportGX_iHcStandard.value = GX.iHcStandard || '';
-        reportGX_iHcAverage.value = GX.iHcAverage || '';
-        reportGX_iHcMaximum.value = GX.iHcMaximum || '';
-        reportGX_iHcMinimum.value = GX.iHcMinimum || '';
-        reportGX_iHcVariance.value = (GX.iHcMaximum - GX.iHcMinimum) || '';
-        reportGX_iHkAverage.value = GX.iHkAverage || '';
-        reportGX_iHkMaximum.value = GX.iHkMaximum || '';
-        reportGX_iHkMinimum.value = GX.iHkMinimum || '';
-        reportGX_iHkVariance.value = (GX.iHkMaximum - GX.iHkMinimum) || '';
+        reportGX_iHcStandard.value = GX.iHcStandard || 0;
+        reportGX_iHcAverage.value = GX.iHcAverage || 0;
+        reportGX_iHcMaximum.value = GX.iHcMaximum || 0;
+        reportGX_iHcMinimum.value = GX.iHcMinimum || 0;
+        reportGX_iHcVariance.value = (GX.iHcMaximum - GX.iHcMinimum) || 0;
+        reportGX_iHkAverage.value = GX.iHkAverage || 0;
+        reportGX_iHkMaximum.value = GX.iHkMaximum || 0;
+        reportGX_iHkMinimum.value = GX.iHkMinimum || 0;
+        reportGX_iHkVariance.value = (GX.iHkMaximum - GX.iHkMinimum) || 0;
 
         reportBH_data.value = bh.data || '';
         reportBH_dataStandard.value = bh.dataStandard || '';
@@ -2103,8 +2191,7 @@ const showReportData = async () => {
         // Final result conditions
 
         setTimeout(() => {
-            isReportDataReady.value = true;
-            showReportLoading.value = false;
+            isReportDataReady.value = true; //!important this is flag for when date is ready. (it must be always set to true)
         }, 1000); // 1 second delay
     } catch (error) {
         console.error("API get request showReportData Error:", error);
@@ -2134,7 +2221,6 @@ const saveReport = async () => {
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
         "smp_judgement":reportSMPJudgement.value,
-        "withCarmark": isAutomotive.value,
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
         "std_dev": reportStdDev.value,
@@ -2199,10 +2285,10 @@ const saveReport = async () => {
             "brMax": reportROB_brMax.value,
             "iHcMin": reportROB_iHcMin.value,
             "iHcMax": reportROB_iHcMax.value,
-            "brRTStandard": reportROB_BrRTstandard,
-            "brVTStandard": reportROB_BrVTstandard,
-            "hd5Standard": reportROB_HD5standard,
-            "jd5Standard": reportROB_JD5standard,
+            "brRTStandard": reportROB_BrRTstandard.value,
+            "brVTStandard": reportROB_BrVTstandard.value,
+            "hd5Standard": reportROB_HD5standard.value,
+            "jd5Standard": reportROB_JD5standard.value,
             "brRT_brMin": reportROB_BrRT_brMin.value,
             "brRT_brMax": reportROB_BrRT_brMax.value,
             "brRT_iHcMin": reportROB_BrRT_iHcMin.value,
@@ -2240,7 +2326,7 @@ const saveReportUpdate = async (saveData, serial) => {
         showReportData();
         showReportContent.value = false;
         showSelectionPanel.value = true;
-
+        showReportMain.value = false;
     }
 }
 
@@ -2280,7 +2366,7 @@ const fetchSerial = async () => {
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
   ipAddress: String,
-  fromApproval: Boolean,
+  fromApproval: [Boolean, String],
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
@@ -2434,71 +2520,62 @@ const confirmCheckedByStamp = async () => {
 }
 
 const checkApprovalStates = async () => {
-    try{
-        //console.log("Checking approval states...");
+    try {
         const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data.data);
-        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
-        //console.log("Filtered data: ", filterBySerial);
+        const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value);
 
-        const prepared_by = filterBySerial[0].prepared_by;
-        const checked_by = filterBySerial[0].checked_by;
-        const approved_by = filterBySerial[0].approved_by;
+        const prepared_by = filterBySerial[0]?.prepared_by;
+        const checked_by = filterBySerial[0]?.checked_by;
+        const approved_by = filterBySerial[0]?.approved_by;
 
-        //console.log("prepared by: ",prepared_by);
-        //console.log("checked by: ",checked_by);
-        //console.log("approved by: ",approved_by);
-
-        if(prepared_by != "" && prepared_by != null){ //Approver Conditions
+        if (prepared_by != "" && prepared_by != null) {
             showPreparedByDefault.value = false;
-            preparedByButton.value = false;  //Already approved condition
+            preparedByButton.value = false;
             preparedByStampPhoto.value = true;
 
-            const nameParts = prepared_by.split(' ');
+            const nameParts = prepared_by ? prepared_by.split(' ') : [''];
             preparedByPerson_firstName.value = nameParts[0];
             preparedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
-            console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
-        }else if(currentUserApproverStage.value == "PREPARED BY"){
+            //console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
+            //console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
+        } else if (currentUserApproverStage.value == "PREPARED BY") {
             showPreparedByDefault.value = false;
-            preparedByButton.value = true; //Not approved yet but ready for approval
+            preparedByButton.value = true;
             preparedByStampPhoto.value = false;
-        }else{
+        } else {
             preparedByButton.value = false;
-            showPreparedByDefault.value = true; //Not approver, not approved yet
+            showPreparedByDefault.value = true;
             preparedByStampPhoto.value = false;
         }
 
-        if(checked_by != "" && checked_by != null){ //Approver Conditions
+        if (checked_by != "" && checked_by != null) {
             showCheckedByDefault.value = false;
-            checkedByButton.value = false;          //Already approved condition
+            checkedByButton.value = false;
             checkedByStampPhoto.value = true;
 
-            const nameParts = checked_by.split(' ');
+            const nameParts = checked_by ? checked_by.split(' ') : [''];
             checkedByPerson_firstName.value = nameParts[0];
             checkedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            console.error("Prepared By First Name: ", checkedByPerson_firstName.value);
-            console.error("Prepared By Last Name: ", checkedByPerson_lastName.value);
-        }else if(currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)){
+        } else if (currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)) {
             showCheckedByDefault.value = false;
-            checkedByButton.value = true;       //Not approved yet but ready for approval
+            checkedByButton.value = true;
             checkedByStampPhoto.value = false;
-        }else{
+        } else {
             checkedByButton.value = false;
-            showCheckedByDefault.value = true; //Not approver, not approved yet
+            showCheckedByDefault.value = true;
             checkedByStampPhoto.value = false;
         }
 
-        if(approved_by == "" || approved_by == null){
-            //approvedByButton.value = true; //uncomment on designated ip address
+        if (approved_by == "" || approved_by == null) {
             showApprovedByDefault.value = true;
             approvedByStampPhoto.value = false;
-            const nameParts = checked_by.split(' ');
+
+            const nameParts = checked_by ? checked_by.split(' ') : [''];
             approvedByPerson_firstName.value = nameParts[0];
             approvedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            console.error("Checked By First Name: ", approvedByPerson_firstName.value);
-            console.error("Checked By Last Name: ", approvedByPerson_lastName.value);
-        }else{
+            //console.error("Checked By First Name: ", approvedByPerson_firstName.value);
+            //console.error("Checked By Last Name: ", approvedByPerson_lastName.value);
+        } else {
             approvedByButton.value = false;
             showApprovedByDefault.value = false;
             approvedByStampPhoto.value = true;
@@ -2506,10 +2583,10 @@ const checkApprovalStates = async () => {
             //insert finalize button here the button for printing
         }
 
-    }catch(error){
+    } catch (error) {
         console.error("ERROR Getting report data API result: ", error);
     }
-}
+};
 
 const checkCurrentUser = async () => {
     try {
@@ -2598,12 +2675,12 @@ const evaluateAllRejectReasons = async () => {
       noteReasonForReject.value.push('- N.G iHk');
     }
 
-    if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.includes("1"))) {
+    if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.value.includes("1"))) {
       //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
       noteReasonForReject.value.push('- N.G Hr95');
     }
 
-    if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.includes("1"))) {
+    if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.value.includes("1"))) {
       //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
       noteReasonForReject.value.push('- N.G Hr98');
     }
@@ -2660,22 +2737,18 @@ const sec_additional_redirect = (sec_serial) => {
 };
 
 // onMounted logic to call the function based on serialParam existence
-onMounted(() => {
+onMounted(async () => {
     checkCurrentUser();
-  if (props.serialParam) {
-    // If serialParam has a value, do not fetch serial
-    // Placeholder for additional actions when serialParam exists
-    currentSerialSelected.value = props.serialParam;
-    showReportContent.value = true;
-    showSelectionPanel.value = false;
-    showReportSaveButton.value = false;
-    showExitButton.value = false;
-    fetchAllData();
-    showReportData();
-    //console.log('serialParam is provided, skipping fetchSerial.');
-  } else {
-    // If serialParam does not have a value, proceed with fetchSerial
-    fetchSerial();
-  }
+
+    if (props.serialParam && props.fromApproval) {
+        currentSerialSelected.value = props.serialParam;
+
+        // This ensures reactivity is flushed before running the report logic
+        await Promise.resolve();
+
+        generateReport();
+    } else {
+        fetchSerial();
+    }
 });
 </script>

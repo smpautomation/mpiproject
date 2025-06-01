@@ -11,24 +11,19 @@
                     <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
                         <thead class="text-white bg-gradient-to-l from-blue-600 to-green-600 ">
                             <tr class="text-sm">
-                                <th class="px-2 py-1 text-center border">Model</th>
-                                <th class="px-2 py-1 text-center border">L</th>
-                                <th class="px-2 py-1 text-center border">W</th>
-                                <th class="px-2 py-1 text-center border">T</th>
-                                <th class="px-2 py-1 text-center border">Material&nbsp;Grade</th>
-                                <th class="px-2 py-1 text-center border">Br</th>
-                                <th class="px-2 py-1 text-center border">iHc</th>
-                                <th class="px-2 py-1 text-center border">iHk</th>
-                                <th class="px-2 py-1 text-center border">Oven&nbsp;Machine&nbsp;No</th>
-                                <th class="px-2 py-1 text-center border">Time&nbsp;Loading</th>
-                                <th class="px-2 py-1 text-center border">Temperature</th>
-                                <th class="px-2 py-1 text-center border">Date</th>
-                                <th class="px-2 py-1 text-center border">Time&nbsp;Unloading</th>
-                                <th class="px-2 py-1 text-center border">Temperature</th>
-                                <th class="px-2 py-1 text-center border">Shift</th>
-                                <th class="px-2 py-1 text-center border">Operator</th>
-                                <th class="px-2 py-1 text-center border">MPI&nbsp;Sample</th>
-                                <th class="px-2 py-1 text-center border">Actions</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Model</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">L</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">W</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">T</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Material&nbsp;Grade</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Br</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">iHc</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">iHk</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Oven</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">MPI&nbsp;Sample</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Carmark</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Encoded By</th>
+                                <th class="px-2 py-1 text-center border whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,15 +40,12 @@
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.br || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihc || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.ihk || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.oven_machine_no || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_loading || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_1 || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.date || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.time_unloading || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.temperature_2 || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.shift || 'N/A' }}</td>
-                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.operator || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">
+                                    {{ item.oven_machine_no === 1 ? 'With Oven' : 'N/A' }}
+                                </td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.mpi_sample || 'N/A' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.is_automotive === 1 ? 'Automotive' : 'Non-Automotive' }}</td>
+                                <td class="px-2 py-1 text-center border whitespace-nowrap">{{ item.encoded_by || 'N/A' }}</td>
                                 <td class="px-2 py-1 text-center border whitespace-nowrap">
                                     <button @click="editRecord(item)" class="text-blue-600 hover:underline">Edit</button>
                                 </td>
@@ -94,11 +86,11 @@
                     </table>
                 </div>
                 <div>
-                    <div v-if="inspectionDataList.length <= 0" class="flex flex-col justify-center align-middle items-center p-6 rounded-xl shadow-xl bg-gradient-to-l from-blue-300 to-green-300">
-                        <label class="font-extrabold text-white text-lg pb-6">Upload Bulk Initial Data specs</label>
+                    <div v-if="inspectionDataList.length <= 0" class="flex flex-col items-center justify-center p-6 align-middle shadow-xl rounded-xl bg-gradient-to-l from-blue-300 to-green-300">
+                        <label class="pb-6 text-lg font-extrabold text-white">Upload Bulk Initial Data specs</label>
                         <div class="flex flex-row">
                             <input type="file" accept=".csv" @change="handleFileChange" />
-                            <button class="bg-blue-500 hover:shadow-xl hover:brightness-110 active:scale-95 p-2 rounded-md text-white font-extrabold" @click="uploadCsv">Upload csv</button>
+                            <button class="p-2 font-extrabold text-white bg-blue-500 rounded-md hover:shadow-xl hover:brightness-110 active:scale-95" @click="uploadCsv">Upload csv</button>
                         </div>
                         <p :class="{'pt-6 text-red-500':uploadStatusType == 'failed',
                                     'pt-6 text-green-500':uploadStatusType == 'success',
@@ -128,87 +120,83 @@
                     </div>
 
                     <!-- Grid for Inputs -->
-                    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-6">
-                        <div class="space-y-4">
+                    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
+                        <!-- Column 1 -->
+                        <div class="space-y-5">
                             <div>
-                                <label class="block font-medium text-gray-600">Length:</label>
-                                <input v-model="formData.length" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Length:</label>
+                                <input v-model="formData.length" type="number"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block font-medium text-gray-600">Width:</label>
-                                <input v-model="formData.width" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Thickness:</label>
-                                <input v-model="formData.thickness" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium text-gray-600">Material&nbsp;Grade:</label>
-                                <input @input="convertToUppercase" v-model="formData.material_grade" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Br:&nbsp;(ex:&nbsp;1234&nbsp;~&nbsp;5678&nbsp;)</label>
-                                <input @input="convertToUppercase" v-model="formData.br" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">iHc:</label>
-                                <input @input="convertToUppercase" v-model="formData.ihc" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium text-gray-600">iHk:</label>
-                                <input @input="convertToUppercase" v-model="formData.ihk" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Oven&nbsp;Machine&nbsp;No:</label>
-                                <input @input="convertToUppercase" v-model="formData.oven_machine_no" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Time&nbsp;Loading:</label>
-                                <input v-model="formData.time_loading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Width:</label>
+                                <input v-model="formData.width" type="number"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
 
-                        <div class="space-y-4">
+                        <!-- Column 2 -->
+                        <div class="space-y-5">
                             <div>
-                                <label class="block font-medium text-gray-600">Temperature&nbsp;1:</label>
-                                <input v-model="formData.temperature_1" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Thickness:</label>
+                                <input v-model="formData.thickness" type="number"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block font-medium text-gray-600">Date:</label>
-                                <input v-model="formData.date" type="date" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Time&nbsp;Unloading:</label>
-                                <input v-model="formData.time_unloading" type="time" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium text-gray-600">Temperature&nbsp;2:</label>
-                                <input v-model="formData.temperature_2" type="number" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Shift:</label>
-                                <input @input="convertToUppercase" v-model="formData.shift" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            </div>
-                            <div>
-                                <label class="block font-medium text-gray-600">Operator:</label>
-                                <input @input="convertToUppercase" v-model="formData.operator" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Material&nbsp;Grade:</label>
+                                <input @input="convertToUppercase" v-model="formData.material_grade" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
 
-                        <div class="space-y-4">
+                        <!-- Column 3 -->
+                        <div class="space-y-5">
                             <div>
-                                <label class="block font-medium text-gray-600">MPI&nbsp;Sample:</label>
-                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">
+                                    Br:&nbsp;<span class="text-xs text-gray-500">(ex: 1234 ~ 5678)</span>
+                                </label>
+                                <input @input="convertToUppercase" v-model="formData.br" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">iHc:</label>
+                                <input @input="convertToUppercase" v-model="formData.ihc" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        <!-- Column 4 -->
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">iHk:</label>
+                                <input @input="convertToUppercase" v-model="formData.ihk" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">Encoded&nbsp;By:</label>
+                                <input @input="convertToUppercase" v-model="formData.encoded_by" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        <!-- Column 5 -->
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block mb-1 text-sm font-semibold text-gray-700">MPI&nbsp;Sample:</label>
+                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text"
+                                    class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                            </div>
+                            <div class="pt-6">
+                                <label class="inline-flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                                    <input type="checkbox" v-model="formData.is_automotive"
+                                        class="text-blue-600 form-checkbox" />
+                                    <span>Is it Automotive?</span>
+                                </label>
+                                <label class="inline-flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                                    <input type="checkbox" v-model="formData.oven_machine_no"
+                                        class="text-blue-600 form-checkbox" />
+                                    <span>With Oven?</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -216,7 +204,7 @@
                     <div class="flex justify-center mt-8">
                         <button
                             @click="submitData"
-                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 rounded-xl shadow-md hover:brightness-110 hover:shadow-lg active:scale-95"
+                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95"
                         >
                             {{ isEditMode ? 'Update' : 'Register' }}
                         </button>
@@ -251,15 +239,10 @@ const formData = ref({
   br: null,
   ihc: null,
   ihk: null,
-  oven_machine_no: null,
-  time_loading: null,
-  temperature_1: null,
-  date: null,
-  time_unloading: null,
-  temperature_2: null,
-  shift: null,
-  operator: null,
+  oven_machine_no: 0,
   mpi_sample: null,
+  is_automotive: 0,
+  encoded_by: null,
 });
 
 // Inspection data list fetched from backend
@@ -291,14 +274,9 @@ const resetAllField = () => {
     ihc: null,
     ihk: null,
     oven_machine_no: null,
-    time_loading: null,
-    temperature_1: null,
-    date: null,
-    time_unloading: null,
-    temperature_2: null,
-    shift: null,
-    operator: null,
     mpi_sample: null,
+    is_automotive: null,
+    encoded_by: null,
   };
 };
 
@@ -310,10 +288,8 @@ function convertToUppercase() {
     'br',
     'ihc',
     'ihk',
-    'oven_machine_no',
-    'shift',
-    'operator',
     'mpi_sample',
+    'encoded_by',
   ];
 
   fields.forEach(field => {
@@ -359,27 +335,20 @@ const editRecord = (item) => {
   isEditMode.value = true;
   currentEditId.value = item.id;
 
-  formData.value = {
-    model: item.model,
-    length: item.length,
-    width: item.width,
-    thickness: item.thickness,
-    material_grade: item.material_grade,
-    br: item.br,
-    ihc: item.ihc,
-    ihk: item.ihk,
-    oven_machine_no: item.oven_machine_no,
-    time_loading: item.time_loading,
-    temperature_1: item.temperature_1,
-    date: item.date,
-    time_unloading: item.time_unloading,
-    temperature_2: item.temperature_2,
-    shift: item.shift,
-    operator: item.operator,
-    mpi_sample: item.mpi_sample,
-    is_automotive: item.is_automotive,
-    encoded_by: item.encoded_by
-  };
+    formData.value = {
+        model: item.model,
+        length: item.length,
+        width: item.width,
+        thickness: item.thickness,
+        material_grade: item.material_grade,
+        br: item.br,
+        ihc: item.ihc,
+        ihk: item.ihk,
+        oven_machine_no: Boolean(Number(item.oven_machine_no)),
+        mpi_sample: item.mpi_sample,
+        is_automotive: Boolean(Number(item.is_automotive)),
+        encoded_by: item.encoded_by
+    };
 
   showMainUI.value = false;
   showInputData.value = true;
