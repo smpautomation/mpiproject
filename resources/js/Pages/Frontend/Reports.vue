@@ -1029,7 +1029,6 @@
                     </button>
 
                     -->
-                    <button @click="finalizeReport(currentSerialSelected)" class="bg-white">Finalize rep bypass</button>
 
                     <button v-if="showExitButton && !isFromApproval" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
