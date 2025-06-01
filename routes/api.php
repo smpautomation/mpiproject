@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -115,7 +116,7 @@ Route::post('/send-takefu-email', function(Request $request) {
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
 
-    // ✅ Append hardcoded recipients
+    // Append hardcoded recipients
     $emailList[] = 'automation2@smp.com.ph';
     $emailList[] = 'automation5@smp.com.ph';
     $emailList[] = 'myke@smp.com.ph';

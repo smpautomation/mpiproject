@@ -53,30 +53,48 @@ Route::middleware('auth')->group(function () {
 //     return 'Test Email Sent';
 // });
 
-Route::post('/upload-pdf', function (Request $request) { //Saves to folder /files/(massprodnumber)
-    $request->validate([
-        'massProd' => 'required|string',
-        'pdf' => 'required|file|mimes:pdf|max:102400' // 100 MB
+Route::post('/upload-pdf', function (Request $request) {
+    Log::info('Incoming PDF upload request:', [
+        'massProd' => $request->input('massProd'),
+        'originalFileName' => $request->file('pdf')->getClientOriginalName(),
     ]);
 
-    $massProd = $request->input('massProd');
-    $file = $request->file('pdf');
+    $request->validate([
+        'massProd' => 'required|string',
+        'pdf' => 'required|file|mimes:pdf|max:102400',
+    ]);
 
-    // Define target path inside /public/files/{massProd}
+    $rawMassProd = $request->input('massProd');
+    $massProd = preg_replace('/[^A-Za-z0-9\-\s#]/', '_', $rawMassProd);
+
+    $originalName = $request->file('pdf')->getClientOriginalName();
+    $baseName = pathinfo($originalName, PATHINFO_FILENAME);
+
+    // Allow alphanumeric, space, hyphen, parentheses, and #
+    $safeBaseName = preg_replace('/[^A-Za-z0-9\-\s\(\)#]/', '_', $baseName);
+
+    // Replace slashes and whitespace sequences with underscore
+    $safeBaseName = preg_replace('/[\/\s]+/', '_', $safeBaseName);
+
+    $fileName = $safeBaseName . '.pdf';
+
+    Log::info('Sanitized values:', [
+        'sanitizedMassProd' => $massProd,
+        'sanitizedFileName' => $fileName,
+        'destinationPath' => public_path("files/$massProd"),
+    ]);
+
     $destinationPath = public_path("files/$massProd");
 
-    // Ensure folder exists
     if (!file_exists($destinationPath)) {
         mkdir($destinationPath, 0755, true);
     }
 
-    // Store the uploaded file
-    $fileName = $file->getClientOriginalName();
-    $file->move($destinationPath, $fileName);
+    $request->file('pdf')->move($destinationPath, $fileName);
 
     return response()->json([
         'message' => 'PDF uploaded successfully.',
-        'path' => "files/$massProd/$fileName"
+        'path' => "files/$massProd/$fileName",
     ]);
 });
 

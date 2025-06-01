@@ -1,10 +1,10 @@
 <template>
-        <div class="flex flex-row justify-center px-4 py-2 bg-gray-200 mb-4 no-print">
+        <div class="flex flex-row justify-center px-4 py-2 mb-4 bg-gray-200 no-print">
             <button class="px-2 py-1 mt-2 text-white bg-gray-600 rounded-lg" @click="$inertia.visit('/reports')">back</button>
-            <button class="px-2 py-1 mt-2 text-black bg-gray-300 rounded-lg ml-16">Serial#: {{ printSerialNo }}</button>
+            <button class="px-2 py-1 mt-2 ml-16 text-black bg-gray-300 rounded-lg">Serial#: {{ printSerialNo }}</button>
             <button
                 @click="handlePrint"
-                class="ml-16 px-2 py-1 mt-2 text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600"
+                class="px-2 py-1 mt-2 ml-16 text-white transition bg-yellow-500 rounded-lg hover:bg-yellow-600"
                 >
                 Print This Report
             </button>
@@ -13,7 +13,7 @@
 <!-- Fullscreen Overlay -->
     <div
     v-show="adjustStyling"
-    class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
     >
         <!-- Loader Centered -->
         <DotsLoader />
@@ -22,10 +22,10 @@
       <!-- A4 Layout Box -->
       <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
         <!-- Report Title -->
-        <h1 :class="{ 'leading-loose': adjustStyling }" class="my-6 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
+        <h1 :class="{ 'leading-loose': adjustStyling }" class="mt-4 mb-2 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
         <!-- Oven Heating Information -->
         <div class="flex flex-row justify-between">
-            <p class="mb-4 text-xl font-extrabold">Oven Heating Information</p>
+            <p class="mb-2 text-xl font-extrabold">Oven Heating Information</p>
             <span
                 v-show="isAutomotive"
                 class="flex items-center justify-center w-[70px] h-[40px] text-center bg-center bg-no-repeat"
@@ -100,9 +100,9 @@
         </div>
 
         <!-- Divider -->
-        <hr class="my-2" />
+        <hr class="mt-2" />
 
-        <p class="mb-4 text-xl font-extrabold">Magnetic Property Inspection Information</p>
+        <p class="mb-2 text-xl font-extrabold">Magnetic Property Inspection Information</p>
 
         <!-- Single Row Information -->
         <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-4">
@@ -211,18 +211,18 @@
                     <tbody>
                         <tr class="text-center">
                             <td class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">Br&nbsp;(G)</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrStandard }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrAverage }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrMaximum }}</td>
-                            <td class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrMinimum }}</td>
-                            <td colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printBrVariance }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrStandard }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrAverage }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrMaximum }}</td>
+                            <td class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrMinimum }}</td>
+                            <td colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printBrVariance }}</td>
                         </tr>
                         <tr class="text-center">
-                            <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" :class="{ 'leading-loose': adjustStyling }" class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">iHc (Oe)</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs"><span v-if="showGX">GM </span>{{ printiHcStandard }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcAverage }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcMaximum }}</td>
-                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcMinimum }}</td>
+                            <td :rowspan="(noteReasonForReject.includes('- N.G iHc')) && showGX ? 2 : 1" :class="{ 'leading-loose': adjustStyling }" class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">iHc (Oe)</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"><span v-if="showGX">GM </span>{{ printiHcStandard }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHcAverage }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHcMaximum }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHcMinimum }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printiHcVariance }}</td>
                         </tr>
                         <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
@@ -248,14 +248,72 @@
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkMinimum }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkVariance }}</td>
                         </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center bg-gray-200">
+                            <th colspan="7" :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[4.5px] text-sm">BH Tracer Measurement</th>
+                        </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center bg-gray-200">
+                            <th class="border-l border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Items -->
+                            <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Br Min</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Br Max</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">iHc Min</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">iHc Max</th>
+                            <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
+                        </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">ITEMS</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">SPECS</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_brMin }}</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_brMax }}</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_iHcMin }}</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_iHcMax }}</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Result</th>
+                        </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ RT</th>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRTstandard }} kg</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_iHcMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_iHcMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
+                        </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ VT (180°C)</th>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVTstandard }} kg</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_iHcMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_iHcMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
+                        </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">HD5 (180°C)</th>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5standard }} kOe</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_iHcMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_iHcMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
+                        </tr>
+                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">JD5 (180°C)</th>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5standard }} kG</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_iHcMin }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_iHcMax }}</td>
+                                <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
+                        </tr>
                         <tr v-if="isTTM_model" class="text-center bg-gray-200">
-                            <th :class="{ 'leading-loose': adjustStyling }" rowspan="2" colspan="2" class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Computation of Cpk from Br</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border-l border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"></th> <!-- empty slot for rowspan -->
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">STD DEV</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Cp</th>
-                            <th :class="{ 'leading-loose': adjustStyling }" class="v">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Cpk &#8805; 1.00</th> <!-- &#8805; is greater than equal to symbol -->
                             <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Remarks</th>
                         </tr>
                         <tr v-if="isTTM_model" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border-l border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">Computation of Cpk from Br</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printStdDev }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printCpk }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs">{{ printCp }}</td>
@@ -338,12 +396,13 @@
                         <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">{{ printVT_remarks }}</td>
                         </tr>
                         <tr v-show="showCpkFrom_iHc" class="bg-gray-200">
-                            <th :class="{ 'leading-loose': adjustStyling }" rowspan="2" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Computation of Cpk from iHc</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap"></th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">STD DEV</th>
                             <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Cpk &#8805; {{ cpkStandardValue }}</th> <!-- &#8805; is greater than equal to symbol -->
                             <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Remarks</th>
                         </tr>
                         <tr v-show="showCpkFrom_iHc" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap bg-gray-200">Computation of Cpk from iHc</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_stdDev }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" colspan="2" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_cpk }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_remarks }}</td>
@@ -368,7 +427,7 @@
                 </table>
             </div>
         </div>
-        <div class="mb-5">
+        <div class="mb-2">
             <div class="flex flex-row">
                 <span class="mr-2 text-sm font-semibold">Remarks:</span>
                 <span :class="{ 'leading-loose': adjustStyling }" class="inline-block w-full text-sm border-b border-gray-500">
@@ -385,10 +444,10 @@
         </div>
 
         <!-- Divider -->
-        <hr class="my-2" />
+        <hr class="mt-2" />
 
-        <div class="mb-5">
-            <p :class="{ 'leading-loose': adjustStyling }" class="mb-4 text-xl font-extrabold">SMP Judgement:</p>
+        <div class="mb-2">
+            <p :class="{ 'leading-loose': adjustStyling }" class="mb-2 text-xl font-extrabold">SMP Judgement:</p>
             <div class="flex flex-row">
                 <!-- SMP Judgement -->
                 <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
@@ -406,6 +465,11 @@
                                     ? 'url(\'/photo/reject_stamp.png\')'
                                     : printSMPJudgement === 'HOLD'
                                     ? 'url(\'/photo/hold_stamp.png\')'
+                                    : printSMPJudgement == null ||
+                                        printSMPJudgement == undefined ||
+                                        printSMPJudgement == '' ||
+                                        printSMPJudgement == 'null'
+                                    ? 'url(\'/photo/template.png\')'
                                     : 'url(\'/photo/pass_stamp.png\')',
                                 backgroundSize: 'contain'
                             }">
@@ -498,11 +562,11 @@
         </div>
 
         <!-- Divider -->
-        <hr class="my-4" />
+        <hr class="mt-2" />
 
 
         <div>
-            <p class="mb-4 text-xl font-extrabold">SEC / C-Mark Judgement:</p>
+            <p class="mb-2 text-xl font-extrabold">SEC / C-Mark Judgement:</p>
             <div class="flex flex-row">
                 <div class="min-w-[300px] min-h-[80px] border border-black">
                     <!-- empty -->
@@ -520,7 +584,7 @@
         <!-- A4 Layout Box -->
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
             <!-- Report Title -->
-            <h1 class="my-6 text-2xl font-bold text-center bg-gray-300 leading-loose">PROPERTY&nbsp;DATA</h1>
+            <h1 class="my-6 text-2xl font-bold leading-loose text-center bg-gray-300">PROPERTY&nbsp;DATA</h1>
             <!-- Information Grid -->
             <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
                 <!-- First Column -->
@@ -669,7 +733,7 @@
                             <td class="border border-black px-[2px] py-[2px] text-[10px]">{{ item.data_status }}</td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Average</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-t border-b border-l border-black">Average</th>
                             <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printBrAverage }}</td>
                             <td></td>
                             <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px] text-center">{{ printiHcAverage }}</td>
@@ -698,7 +762,7 @@
                             <td class="border-r border-black"></td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Maximum</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-t border-b border-l border-black">Maximum</th>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrMaximum }}</td>
                             <td class="border-t border-black"></td>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHcMaximum }}</td>
@@ -724,10 +788,10 @@
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIsMaximum }}</td>
                             <td class="border-t border-black"></td>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIaMaximum }}</td>
-                            <td class="border-r border-t border-black"></td>
+                            <td class="border-t border-r border-black"></td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Minimum</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-t border-b border-l border-black">Minimum</th>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printBrMinimum }}</td>
                             <td class="border-t border-b border-black"></td>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ printiHcMinimum }}</td>
@@ -753,7 +817,7 @@
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px] text-center">{{ print4paiIsMinimum }}</td>
                             <td class="border-t border-b border-black"></td>
                             <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
-                            <td class="border-r border-t border-b border-black"></td>
+                            <td class="border-t border-b border-r border-black"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -978,21 +1042,21 @@
                     <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
                         <thead>
                             <tr class="text-center bg-gray-200">
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Zone</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Br</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">iHc</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">iHk</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">[BH]m</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Hr95</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Hr98</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">iHc&#8209;iHk</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Br&#960;Ia</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">bHc</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Squareness</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Id</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Is</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Ia</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Temperature</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Zone</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Br</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">iHc</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">iHk</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">[BH]m</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Hr95</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Hr98</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">iHc&#8209;iHk</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Br&#960;Ia</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">bHc</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Squareness</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">4&#960;Id</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">4&#960;Is</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">4&#960;Ia</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Temperature</th>
                                 <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border border-black">Data&nbsp;Status</th>
                             </tr>
                         </thead>
@@ -1026,26 +1090,26 @@
                     <table class="w-full mb-6 text-sm border border-collapse border-gray-400" style="border-spacing: 0;">
                         <thead>
                             <tr class="text-center bg-gray-200">
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black"></th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Br</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">iHc</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">iHk</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">[BH]m</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Hr95</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Hr98</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">iHc&#8209;iHk</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Br&#960;Ia</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">bHc</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">Squareness</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Id</th>
-                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-l border-b border-t border-black">4&#960;Is</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black"></th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Br</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">iHc</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">iHk</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">[BH]m</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Hr95</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Hr98</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">iHc&#8209;iHk</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Br&#960;Ia</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">bHc</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">Squareness</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">4&#960;Id</th>
+                                <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border-t border-b border-l border-black">4&#960;Is</th>
                                 <th :class="{ 'leading-loose': adjustStyling }" class="px-1 py-1 text-xs border border-black">4&#960;Ia</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- AVERAGE ROW -->
                             <tr class="text-center">
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Average</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-t border-b border-l border-black">Average</th>
                                 <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.brAverage }}</td>
                                 <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHcAverage }}</td>
                                 <td class="border-l border-b border-t border-black px-1 py-[2px] text-[10px]">{{ pagesData[index-1]?.iHkAverage }}</td>
@@ -1063,7 +1127,7 @@
 
                             <!-- MAXIMUM ROW -->
                             <tr class="text-center">
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Maximum</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-t border-b border-l border-black">Maximum</th>
                                 <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brMaximum }}</td>
                                 <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHcMaximum }}</td>
                                 <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHkMaximum }}</td>
@@ -1081,7 +1145,7 @@
 
                             <!-- MINIMUM ROW -->
                             <tr class="text-center">
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-t border-black">Minimum</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-t border-b border-l border-black">Minimum</th>
                                 <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.brMinimum }}</td>
                                 <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHcMinimum }}</td>
                                 <td class="border-l border-b border-t border-black px-1 py-1 text-[10px]">{{ pagesData[index-1]?.iHkMinimum }}</td>
@@ -1364,6 +1428,11 @@ const sortedNotes = computed(() => {
   });
 });
 
+const inspectionDataList = ref([]);
+const inspectionBrStandard = ref();
+const inspectioniHcStandard = ref();
+const inspectioniHkStandard = ref();
+
 const nsa_noteReasonForReject = ref([]);
 
 const printTPMData = ref([]);
@@ -1543,7 +1612,7 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_CPK         = ["DNS0917G"];
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
     const MODELS_SHOW_BH          = ["ZFS0982G"];
-    const MODELS_SHOW_ROB         = ["TIC0755G"]; //ROB0A70G
+    const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
 
     // === Logic Blocks ===
 
@@ -1708,15 +1777,15 @@ const dataFrom_reportdata = async () => {
         printROB_BrVT_brMax.value = rob.brVT_brMax || '----';
         printROB_BrVT_iHcMin.value = rob.brVT_iHcMin || '----';
         printROB_BrVT_iHcMax.value = rob.brVT_iHcMax || '----';
-        printROB_HD5_brMin.value = rob.hd5_brMin || '----';
-        printROB_HD5_brMax.value = rob.hd5_brMax || '----';
-        printROB_HD5_iHcMin.value = rob.hd5_iHcMin || '----';
-        printROB_HD5_iHcMax.value = rob.hd5_iHcMax || '----';
-        printROB_JD5_brMin.value = rob.jd5_brMin || '----';
-        printROB_JD5_brMax.value = rob.jd5_brMax || '----';
-        printROB_JD5_iHcMin.value = rob.jd5_iHcMin || '----';
-        printROB_JD5_iHcMax.value = rob.jd5_iHcMax || '----';
-        printROB_remarks.value = rob.remarks || '----';
+        printROB_HD5_brMin.value = rob.HD5_brMin || '----';
+        printROB_HD5_brMax.value = rob.HD5_brMax || '----';
+        printROB_HD5_iHcMin.value = rob.HD5_iHcMin || '----';
+        printROB_HD5_iHcMax.value = rob.HD5_iHcMax || '----';
+        printROB_JD5_brMin.value = rob.JD5_brMin || '----';
+        printROB_JD5_brMax.value = rob.JD5_brMax || '----';
+        printROB_JD5_iHcMin.value = rob.JD5_iHcMin || '----';
+        printROB_JD5_iHcMax.value = rob.JD5_iHcMax || '----';
+        printROB_remarks.value = rob.result || '----';
 
 
         if (nRR && Array.isArray(nRR)) {
@@ -2508,19 +2577,26 @@ const exportMultiPagePdf = async () => {
     const massProd_forPDF = printMassProdName.value;
     if (!massProd_forPDF || !massProd_forPDF.trim()) {
         console.error('[PDF Export] ERROR: massProd_forPDF is empty or invalid. Cannot upload.');
-        return; // Abort upload. Fix upstream
+        return;
     }
 
+    const sanitizeFilename = (str) => {
+        return str.replace(/\//g, ' ');
+    };
+
+    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}`;
+    const filename = sanitizeFilename(rawFilename) + '.pdf';
+
+    // Build FormData
     const formData = new FormData();
     formData.append('massProd', massProd_forPDF);
-    //console.log('[PDF Export] massProd_forPDF:', massProd_forPDF);
+    formData.append('pdf', blob, filename);
 
-    formData.append('pdf', blob, `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}.pdf`);
-    /*console.log('[PDF Export] PDF file info:', {
-    filename: `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}.pdf`,
-    sizeMB: (blob.size / (1024 * 1024)).toFixed(2),
-    type: blob.type
-    });*/
+     console.log('[PDF Export] PDF file info:', {
+      filename: filename,
+      sizeMB: (blob.size / (1024 * 1024)).toFixed(2),
+      type: blob.type
+    });
 
     //console.log(`[PDF Export] Uploading PDF to server...`);
     const response = await axios.post('/upload-pdf', formData);
@@ -2564,6 +2640,7 @@ onMounted( async () => {
     ]);
 
     // only after all complete:
+    console.log('SMP JUDGEMENT RESULT: ',printSMPJudgement.value);
     await exportMultiPagePdf();
     adjustStyling.value = false;
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InspectionData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InspectionDataController extends Controller
 {
@@ -65,16 +66,9 @@ class InspectionDataController extends Controller
                 "ihc" => $request->input("ihc"),
                 "ihk" => $request->input("ihk"),
                 "oven_machine_no" => $request->input("oven_machine_no"),
-                "time_loading" => $request->input("time_loading"),
-                "temperature_1" => $request->input("temperature_1"),
-                "date" => $request->input("date"),
-                "time_unloading" => $request->input("time_unloading"),
-                "temperature_2" => $request->input("temperature_2"),
-                "shift" => $request->input("shift"),
-                "operator" => $request->input("operator"),
                 "mpi_sample" => $request->input("mpi_sample"),
-                "ihc_ihk" => $request->input("ihc_ihk"),
-                "br_4-pie-la" => $request->input("br_4-pie-la"),
+                "is_automotive" => $request->input("is_automotive"),
+                "encoded_by" => $request->input("encoded_by"),
             ];
             $inspectionData = InspectionData::create($inspectionDataInputs);
             DB::commit();
@@ -196,6 +190,18 @@ class InspectionDataController extends Controller
         return null;
     }
 
+    private function keepNAorEmpty($value): ?string
+    {
+        if (!isset($value)) return null;
+
+        $value = trim((string) $value);
+
+        if (strtolower($value) === 'n/a') return 'N/A';
+        if ($value === '') return '';
+
+        return $value;
+    }
+
     public function bulkUpload(Request $request)
     {
         $data = $request->input('data');
@@ -237,15 +243,10 @@ class InspectionDataController extends Controller
                     ),
                     'ihc' => $row['iHc'] ?? null,
                     'ihk' => $row['iHk'] ?? null,
-                    'oven_machine_no' => $row['Oven Machine No'] ?? null,
-                    'time_loading' => $this->sanitizeTime($row['Time Loading'] ?? null),
-                    'temperature_1' => $this->sanitizeTemperature($row['Temperature1'] ?? null),
-                    'date' => (!empty($row['Date']) && strtolower(trim($row['Date'])) !== 'n/a') ? $row['Date'] : null,
-                    'time_unloading' => $this->sanitizeTime($row['Time Unloading'] ?? null),
-                    'temperature_2' => $this->sanitizeTemperature($row['Temperature2'] ?? null),
-                    'shift' => $this->sanitizeField($row['Shift'] ?? null),
-                    'operator' => $this->sanitizeField($row['Operator'] ?? null),
-                    'mpi_sample' => $this->sanitizeField($row['MPI sample'] ?? null),
+                    'oven_machine_no' => $row['Oven'] ?? null,
+                    'mpi_sample' => $this->keepNAorEmpty($row['MPI sample'] ?? null),
+                    'is_automotive' => $row['Automotive'] ?? null,
+                    'encoded_by' => $row['Encoded By'] ?? null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -271,10 +272,7 @@ class InspectionDataController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            \Log::error('Bulk upload error:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            Log::error('Bulk upload failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 
             return response()->json([
                 'status' => false,
