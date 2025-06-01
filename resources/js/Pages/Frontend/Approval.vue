@@ -223,7 +223,7 @@ const checkCurrentUser = async () => {
             const userData = matchingUsers[0];
 
             // ✅ Check name gate
-            if (userData.approver_name === "ITADANI KAZUYA") {
+            if (userData.approver_name === "ITADANI KAZUYA" || userData.approver_name === "AUTOMATION" || userData.approver_name === "RIZZA ENDAYA") {
                 currentUserData.value = [userData];
                 currentUserName.value = userData.approver_name;
                 currentUserApproverStage.value = userData.approval_stage;
