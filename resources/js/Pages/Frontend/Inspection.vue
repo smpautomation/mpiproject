@@ -174,7 +174,7 @@
                             </div>
                             <div>
                                 <label class="block mb-1 text-sm font-semibold text-gray-700">Encoded&nbsp;By:</label>
-                                <input @input="convertToUppercase" v-model="formData.mpi_sample" type="text"
+                                <input @input="convertToUppercase" v-model="formData.encoded_by" type="text"
                                     class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                             </div>
                         </div>
@@ -239,9 +239,9 @@ const formData = ref({
   br: null,
   ihc: null,
   ihk: null,
-  oven_machine_no: null,
+  oven_machine_no: 0,
   mpi_sample: null,
-  is_automotive: null,
+  is_automotive: 0,
   encoded_by: null,
 });
 

@@ -66,16 +66,9 @@ class InspectionDataController extends Controller
                 "ihc" => $request->input("ihc"),
                 "ihk" => $request->input("ihk"),
                 "oven_machine_no" => $request->input("oven_machine_no"),
-                "time_loading" => $request->input("time_loading"),
-                "temperature_1" => $request->input("temperature_1"),
-                "date" => $request->input("date"),
-                "time_unloading" => $request->input("time_unloading"),
-                "temperature_2" => $request->input("temperature_2"),
-                "shift" => $request->input("shift"),
-                "operator" => $request->input("operator"),
                 "mpi_sample" => $request->input("mpi_sample"),
-                "ihc_ihk" => $request->input("ihc_ihk"),
-                "br_4-pie-la" => $request->input("br_4-pie-la"),
+                "is_automotive" => $request->input("is_automotive"),
+                "encoded_by" => $request->input("encoded_by"),
             ];
             $inspectionData = InspectionData::create($inspectionDataInputs);
             DB::commit();

@@ -471,7 +471,7 @@
                                     </tr>
                                     <tr class="text-center">
                                         <th class="px-4 py-2 text-blue-600 border-4 border-white">Br @ VT (180°C)</th>
-                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrVTstardard }} kg</td>
+                                        <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportROB_BrVTstandard }} kg</td>
                                         <td class="px-4 text-white border-4 border-white"><input type="number" v-model="reportROB_BrVT_brMin" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
@@ -1029,6 +1029,8 @@
                     </button>
 
                     -->
+                    <button @click="finalizeReport(currentSerialSelected)" class="bg-white">Finalize rep bypass</button>
+
                     <button v-if="showExitButton && !isFromApproval" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
@@ -1713,6 +1715,7 @@ const generateReport = async () => {
         };
 
         await waitForFlag();
+        await new Promise(r => setTimeout(r, 50)); // tiny tick delay
         showReportLoading.value = false;
         showReportMain.value = true;
 
@@ -2141,15 +2144,15 @@ const showReportData = async () => {
         reportCpkFrom_iHc_Cpk.value = iHc_cpk.cpk || '';
         reportCpkFrom_iHc_remarks.value = iHc_cpk.remarks || '';
 
-        reportGX_iHcStandard.value = GX.iHcStandard || '';
-        reportGX_iHcAverage.value = GX.iHcAverage || '';
-        reportGX_iHcMaximum.value = GX.iHcMaximum || '';
-        reportGX_iHcMinimum.value = GX.iHcMinimum || '';
-        reportGX_iHcVariance.value = (GX.iHcMaximum - GX.iHcMinimum) || '';
-        reportGX_iHkAverage.value = GX.iHkAverage || '';
-        reportGX_iHkMaximum.value = GX.iHkMaximum || '';
-        reportGX_iHkMinimum.value = GX.iHkMinimum || '';
-        reportGX_iHkVariance.value = (GX.iHkMaximum - GX.iHkMinimum) || '';
+        reportGX_iHcStandard.value = GX.iHcStandard || 0;
+        reportGX_iHcAverage.value = GX.iHcAverage || 0;
+        reportGX_iHcMaximum.value = GX.iHcMaximum || 0;
+        reportGX_iHcMinimum.value = GX.iHcMinimum || 0;
+        reportGX_iHcVariance.value = (GX.iHcMaximum - GX.iHcMinimum) || 0;
+        reportGX_iHkAverage.value = GX.iHkAverage || 0;
+        reportGX_iHkMaximum.value = GX.iHkMaximum || 0;
+        reportGX_iHkMinimum.value = GX.iHkMinimum || 0;
+        reportGX_iHkVariance.value = (GX.iHkMaximum - GX.iHkMinimum) || 0;
 
         reportBH_data.value = bh.data || '';
         reportBH_dataStandard.value = bh.dataStandard || '';
@@ -2282,10 +2285,10 @@ const saveReport = async () => {
             "brMax": reportROB_brMax.value,
             "iHcMin": reportROB_iHcMin.value,
             "iHcMax": reportROB_iHcMax.value,
-            "brRTStandard": reportROB_BrRTstandard,
-            "brVTStandard": reportROB_BrVTstandard,
-            "hd5Standard": reportROB_HD5standard,
-            "jd5Standard": reportROB_JD5standard,
+            "brRTStandard": reportROB_BrRTstandard.value,
+            "brVTStandard": reportROB_BrVTstandard.value,
+            "hd5Standard": reportROB_HD5standard.value,
+            "jd5Standard": reportROB_JD5standard.value,
             "brRT_brMin": reportROB_BrRT_brMin.value,
             "brRT_brMax": reportROB_BrRT_brMax.value,
             "brRT_iHcMin": reportROB_BrRT_iHcMin.value,
@@ -2323,7 +2326,7 @@ const saveReportUpdate = async (saveData, serial) => {
         showReportData();
         showReportContent.value = false;
         showSelectionPanel.value = true;
-
+        showReportMain.value = false;
     }
 }
 
