@@ -79,7 +79,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <img src="{{ asset('photo/smp_logo.png') }}" alt="Company Logo">
+            <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo">
             <h1>Hello!, </h1>
         </div>
 

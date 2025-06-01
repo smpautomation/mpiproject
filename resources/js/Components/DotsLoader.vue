@@ -24,8 +24,38 @@ const messages = [
   "Inducing current flow...",
   "Tuning magnetic resonance...",
   "Spinning up the magnetic moment...",
-  "Forging the perfect field..."
+  "Forging the perfect field...",
+
+  // New Additions
+  "Cooling neodymium cores...",
+  "Optimizing coercivity levels...",
+  "Measuring hysteresis loop...",
+  "Coating magnets with precision...",
+  "Synchronizing field vectors...",
+  "Running gaussmeter diagnostics...",
+  "Stacking magnet arrays...",
+  "Stabilizing magnetic flux...",
+  "Crushing eddy currents...",
+  "Amplifying magnetic strength...",
+  "Mapping dipole alignments...",
+  "Prepping sintering furnace...",
+  "Balancing north and south...",
+  "Filtering magnetic anomalies...",
+  "Resisting demagnetization...",
+  "Finalizing isotropic orientation...",
+  "Warming up domain walls...",
+  "Constructing magnetic lattice...",
 ];
+
+// bossing easter egg
+if (Math.random() < 0.033333333) {
+    messages.push("一也さんの磁力には逆らえない。");
+}
+
+//SHIN-ETSU supremacy easter egg
+if (Math.random() < 0.2) {
+    messages.push("シンエツは絶対に最高です！");
+}
 
 const loadingMessage = ref('');
 

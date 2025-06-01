@@ -17,13 +17,33 @@
                 </div>
                 <div v-else>
                     <!-- Status Filter -->
-                    <div class="flex justify-end mb-4 align-middle items-center">
+                    <div class="flex items-center justify-end mb-4 align-middle">
                     <label for="statusFilter" class="mr-2 font-semibold">Filter by Status:</label>
                     <select id="statusFilter" v-model="statusFilter" class="p-2 w-[125px] border rounded">
                         <option value="ALL">ALL</option>
                         <option value="APPROVED">APPROVED</option>
                         <option value="PENDING">PENDING</option>
                     </select>
+                    <button
+                        @click="checkAllToggle"
+                        :disabled="filteredReports.filter(r => r.checked === 1).length === 0"
+                        :class="[
+                            'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
+                            filteredReports.filter(r => r.checked === 1 && !r.approved_by).length === 0
+                                ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
+                                : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
+                        ]"
+                    >
+                        {{
+                            filteredReports.filter(r => r.checked === 1 && !r.approved_by).length === 0
+                                ? 'No eligible data to approve'
+                                : filteredReports
+                                    .filter(r => r.checked === 1)
+                                    .every(r => selectedRows.includes(r.tpm_data_serial))
+                                    ? 'Uncheck All Eligible'
+                                    : 'Check All Eligible'
+                        }}
+                    </button>
                     </div>
                     <div class="m-10">
                         <table class="w-full overflow-hidden border-collapse rounded-lg shadow-lg table-auto">
@@ -61,14 +81,13 @@
                                         </button>
                                     </td>
                                     <td class="px-3 py-2 text-lg font-extrabold text-gray-700 border-b border-gray-300">
-                                        <span v-if="report.approved_by === 'ITADANI KAZUYA'" class="text-green-600">APPROVED</span>
+                                        <span v-if="report.approved_by" class="text-green-600">APPROVED</span>
                                         <span v-else class="text-yellow-600">PENDING</span>
                                     </td>
                                     <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
-                                        <input type="checkbox"
+                                        <input v-if="!report.approved_by && report.checked == 1" type="checkbox"
                                             :value="report.tpm_data_serial"
                                             v-model="selectedRows"
-                                            :disabled="report.checked == 0 || report.checked == null || report.approved_by == 'ITADANI KAZUYA'"
                                             class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded-md cursor-pointer focus:ring-blue-500 focus:ring-2">
                                     </td>
                                 </tr>
@@ -79,7 +98,7 @@
                         <!-- Approve Button -->
                          <div v-if="!approveNotif">
                             <button v-show="showApproveButton" @click="approveSelected"
-                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
+                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
                                 Approve Selected
                             </button>
                          </div>
@@ -135,7 +154,7 @@ const filteredReports = computed(() => {
   if (statusFilter.value === 'ALL') return reportDataList.value;
 
   return reportDataList.value.filter(report => {
-    const isApproved = report.approved_by === 'ITADANI KAZUYA';
+    const isApproved = report.approved_by;
     if (statusFilter.value === 'APPROVED') return isApproved;
     if (statusFilter.value === 'PENDING') return !isApproved;
   });
@@ -178,6 +197,20 @@ const viewReport = (serial) => {
     });
 };
 
+const checkAllToggle = () => {
+    const eligibleSerials = filteredReports.value
+        .filter(report => report.checked === 1 && !report.approved_by)
+        .map(report => report.tpm_data_serial);
+
+    const allEligibleSelected = eligibleSerials.every(serial => selectedRows.value.includes(serial));
+
+    if (allEligibleSelected) {
+        selectedRows.value = selectedRows.value.filter(serial => !eligibleSerials.includes(serial));
+    } else {
+        selectedRows.value = Array.from(new Set([...selectedRows.value, ...eligibleSerials]));
+    }
+};
+
 const checkCurrentUser = async () => {
     try {
         const responseFindApprovers = await axios.get("/api/approver");
@@ -190,7 +223,7 @@ const checkCurrentUser = async () => {
             const userData = matchingUsers[0];
 
             // ✅ Check name gate
-            if (userData.approver_name === "ITADANI KAZUYA") {
+            if (userData.approver_name === "ITADANI KAZUYA" || userData.approver_name === "AUTOMATION" || userData.approver_name === "RIZZA ENDAYA") {
                 currentUserData.value = [userData];
                 currentUserName.value = userData.approver_name;
                 currentUserApproverStage.value = userData.approval_stage;
@@ -200,7 +233,7 @@ const checkCurrentUser = async () => {
                 console.log('current approver stage: ', currentUserApproverStage.value);
                 console.log('current user IP: ', currentUserIP.value);
             } else {
-                console.warn("User found by IP, but name does not match ITADANI KAZUYA.");
+                console.warn("User found by IP, but name does not match Authorized users.");
                 currentUserData.value = [];
                 currentUserName.value = '';
                 currentUserApproverStage.value = '';

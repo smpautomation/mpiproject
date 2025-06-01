@@ -59,7 +59,7 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Reports', [
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
             'ipAddress' => $ipAddress,  // Pass ipAddress as a prop to the Reports.vue component
-            'fromApproval' => $fromApproval
+            'fromApproval' => filter_var($request->fromApproval, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 

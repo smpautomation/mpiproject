@@ -339,7 +339,7 @@
                 <div>
                     <div v-show="csvUpload">
                         <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-white text-center">
+                        <p class="mb-4 text-xl font-semibold text-center text-white">
                             Upload Property Data CSV file:
                         </p>
                         <!-- File Input Section -->
