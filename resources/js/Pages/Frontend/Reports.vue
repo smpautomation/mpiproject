@@ -15,6 +15,12 @@
                 </div>
             </div>
         </div>
+        <div v-if="showNotif2 && isFromApproval" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
+            <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+        </div>
+        <button v-if="backToApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+            BACK TO APPROVAL
+        </button>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
                 <div> <!-- Selection Panel -->
@@ -1069,6 +1075,7 @@ function toggleSwitch() {
 const showReportLoading = ref(false);
 
 const isFromApproval = ref(false);
+const backToApproval = ref(false);
 
 const showNotif = ref(false);
 const showNotif2 = ref(false);
@@ -1675,7 +1682,9 @@ const showNotification2 = (message) => {
     // Show notification and set the message
     showNotif2.value = true;
     reportNotificationMessage.value = message;
-
+    if(isFromApproval.value){
+        backToApproval.value = true;
+    }
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         showNotif2.value = false;
