@@ -108,7 +108,6 @@ class TxtExportService
     {
 
     }
-
     public function exportData3(string $furnace_no, string $massPro)
     {
         $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")

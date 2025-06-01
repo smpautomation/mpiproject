@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class TakefuMail extends Mailable
 {
@@ -60,7 +61,7 @@ class TakefuMail extends Mailable
     public function build()
     {
         try {
-            \Log::info("Attempting to render email view...");
+            Log::info("Attempting to render email view...");
 
             // Force the Blade view to render here inside try/catch
             try {
@@ -69,10 +70,10 @@ class TakefuMail extends Mailable
                     'massPro' => $this->massPro
                 ])->render();
 
-                \Log::info("View rendered successfully. Length: " . strlen($html));
+                Log::info("View rendered successfully. Length: " . strlen($html));
             } catch (\Throwable $e) {
-                \Log::error("View rendering failed: " . $e->getMessage());
-                \Log::error($e->getTraceAsString());
+                Log::error("View rendering failed: " . $e->getMessage());
+                Log::error($e->getTraceAsString());
                 throw $e;
             }
 
@@ -80,21 +81,21 @@ class TakefuMail extends Mailable
             $mail = $this->html($html)->subject($this->massPro . ' Reports');
 
             $directory = public_path("files/{$this->massPro}");
-            \Log::info("Resolved directory path: {$directory}");
+            Log::info("Resolved directory path: {$directory}");
 
             if (!File::exists($directory)) {
                 throw new \RuntimeException("The folder for this {$this->massPro} does not exist.");
             }
 
             $files = File::files($directory);
-            \Log::info("Files found in directory {$directory}: " . json_encode(array_map(fn($f) => $f->getFilename(), $files)));
+            Log::info("Files found in directory {$directory}: " . json_encode(array_map(fn($f) => $f->getFilename(), $files)));
 
             $pdfFilesAttached = 0;
 
             foreach ($files as $file) {
                 $path = $file->getRealPath();
                 $filename = strtolower($file->getFilename());
-                \Log::info("Attempting to attach file: {$path}");
+                Log::info("Attempting to attach file: {$path}");
 
                 if (str_ends_with($filename, '.pdf') || str_ends_with($filename, '.txt')) {
                     $mail->attach($path);
@@ -102,7 +103,7 @@ class TakefuMail extends Mailable
                 }
             }
 
-            \Log::info("Building mail with attachments count: {$pdfFilesAttached}");
+            Log::info("Building mail with attachments count: {$pdfFilesAttached}");
 
             if ($pdfFilesAttached === 0) {
                 throw new \RuntimeException("No PDF files found in the folder for this {$this->massPro}.");
@@ -111,8 +112,8 @@ class TakefuMail extends Mailable
             return $mail;
 
         } catch (\Throwable $e) {
-            \Log::error('Error building mail: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+            Log::error('Error building mail: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
             throw $e; // Let Laravel error handler handle it
         }
     }
