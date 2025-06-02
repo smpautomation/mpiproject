@@ -1844,6 +1844,37 @@ const fetchAllData = async () => {
 
         await matchInspectionModel(fetchActualModel.value);
 
+        // Build the patch data object
+        const repData = {
+            length: inspectionLength.value,
+            magnetic_property_data: JSON.stringify({
+                brStandard: inspectionBrStandard.value,
+                brAverage: tpmData_brAve.value,
+                brMaximum: tpmData_brMax.value,
+                brMinimum: tpmData_brMin.value,
+                ihcStandard: inspectioniHcStandard.value,
+                ihcAverage: tpmData_ihcAve.value,
+                ihcMaximum: tpmData_ihcMax.value,
+                ihcMinimum: tpmData_ihcMin.value,
+                ihkStandard: inspectioniHkStandard.value,
+                ihkAverage: tpmData_ihkAve.value,
+                ihkMaximum: tpmData_ihkMax.value,
+                ihkMinimum: tpmData_ihkMin.value,
+                ihr95Minimum: tpmData_ihr95Min.value,
+                ihr98Minimum: tpmData_ihr98Min.value
+            }),
+            material_grade: inspectionMaterialGrade.value,
+            material_code: fetchMaterialCode.value,
+            model: fetchActualModel.value,
+            mpi_sample_quantity: inspectionMpiSampleQty.value,
+            pulse_tracer_machine_number: tpmData_tracerNo.value,
+            thickness: inspectionThickness.value,
+            width: inspectionWidth.value,
+            withCarmark: inspectionAutomotive.value,
+        };
+
+        await createReport(repData, serial);
+
         isLoading.value = false;
 
     } catch (error) {
