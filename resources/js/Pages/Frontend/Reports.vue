@@ -1,5 +1,8 @@
 <template>
     <Frontend>
+        <div v-if="onTestServer" class="flex flex-row justify-center items-center text-green-500 text-xl font-extrabold">
+            YOU ARE ON TEST SERVER
+        </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
         <div v-if="!isFromApproval">
             <div v-if="serialList.length == 0"> <!-- default div -->
@@ -1028,13 +1031,11 @@
                     >
                         Finalize Report
                     </button>
-                    <!-- Finalize Report BYPASS Button
 
-                    <button @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
+                    <button v-if="onTestServer" @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
                         Finalize Report BYPASS
                     </button>
 
-                    -->
 
                     <button v-if="showExitButton && !isFromApproval" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -1061,6 +1062,9 @@ import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
+
+//Debug mode --
+const onTestServer = ref(false);
 
 const page = usePage();
 
@@ -2421,6 +2425,10 @@ const props = defineProps({
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
+
+if(ipAddress.value === '127.0.0.1'){
+    onTestServer.value = true;
+}
 //console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
 
