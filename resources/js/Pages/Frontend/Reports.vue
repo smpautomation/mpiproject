@@ -1684,6 +1684,7 @@ const showNotification2 = (message) => {
     reportNotificationMessage.value = message;
     if(isFromApproval.value){
         backToApproval.value = true;
+        showSelectionPanel.value = false;
     }
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
