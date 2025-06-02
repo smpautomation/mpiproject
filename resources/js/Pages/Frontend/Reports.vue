@@ -1697,6 +1697,37 @@ const sec_additional_button = () => {
 
 const reportErrorMessage = ref('');
 
+const ensureFetchAllDataCompletes = async (timeout = 10000) => {
+    return new Promise(async (resolve, reject) => {
+        let completed = false;
+
+        const timer = setTimeout(() => {
+            if (!completed) {
+                console.error("Timeout: fetchAllData took too long");
+                reject(new Error("Timeout waiting for fetchAllData"));
+            }
+        }, timeout);
+
+        try {
+            await fetchAllData();
+
+            // Optional: add post-fetch validation here
+            if (!finalPayload.value || finalPayload.value.length === 0) {
+                clearTimeout(timer);
+                return reject(new Error("fetchAllData returned empty or invalid payload"));
+            }
+
+            completed = true;
+            clearTimeout(timer);
+            resolve();
+        } catch (e) {
+            clearTimeout(timer);
+            console.error("fetchAllData failed:", e.message);
+            reject(new Error("fetchAllData failed: " + e.message));
+        }
+    });
+};
+
 const generateReport = async () => {
     try {
         showReportLoading.value = true;
@@ -1781,204 +1812,164 @@ const checkSpecialJudgement = async () => {
 
 const fetchAllData = async () => {
     try {
-        const responseTpm = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value);
-        //console.log("Show All tpm data API response: ", responseTpm.data);
+        const serial = currentSerialSelected.value;
+        if (!serial) throw new Error("No serial selected.");
 
-        // Filter the data to include only rows with serial_no like '0002'
-        tpmData.value = responseTpm.data[0] || [];
-        //console.log("Filtered tpm aggregate data list: ", tpmData.value);
-        getTpmModel.value = responseTpm.data.data || [];
-        //console.log("GetModelValue: ", getTpmModel.value[0].code_no);
-        fetchMaterialCode.value = getTpmModel.value[0].code_no;
-        const tpm_category_actualmodel = getTpmModel.value.map(item => item.category?.actual_model ?? null);
-        jhCurveActualModel.value = tpm_category_actualmodel[0];
+        const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
 
-        //Remarks checking start
-        getAllBrNG.value = getTpmModel.value.map(item => item.remark.Br_remarks || null);
-        getAlliHcNG.value = getTpmModel.value.map(item => item.remark.iHc_remarks || null);
-        getAlliHkNG.value = getTpmModel.value.map(item => item.remark.iHk_remarks || null);
-        getAll4paildNG.value = getTpmModel.value.map(item => item.remark["4paild_remarks"] || null);
-        getAll4pailsNG.value = getTpmModel.value.map(item => item.remark["4pails_remarks"] || null);
-        getAll4pailaNG.value = getTpmModel.value.map(item => item.remark["4paila_remarks"] || null);
-        getAllbHcNG.value = getTpmModel.value.map(item => item.remark.bHc_remarks || null);
-        getAllBHMaxNG.value = getTpmModel.value.map(item => item.remark.BHMax_remarks || null);
-        getAllSquarenessNG.value = getTpmModel.value.map(item => item.remark.Squareness_remarks || null);
-        getAllDensityNG.value = getTpmModel.value.map(item => item.remark.Density_remarks || null);
-        getAlliHkiHcNG.value = getTpmModel.value.map(item => item.remark.iHkiHc_remarks || null);
-        getAllBr4paiNG.value = getTpmModel.value.map(item => item.remark.Br4pai_remarks || null);
-        getAlliHr95NG.value = getTpmModel.value.map(item => item.remark.iHr95_remarks || null);
-        getAlliHr98NG.value = getTpmModel.value.map(item => item.remark.iHr98_remarks || null);
-        //console.log("check br remarks: ", getAllBrNG);
-
-
-        if (getAllBrNG.value.includes("1") || getAlliHr95NG.value.includes("1") || getAlliHr98NG.value.includes("1") || getAllSquarenessNG.value.includes("1") || getAllDensityNG.value.includes("1") || getAlliHkiHcNG.value.includes("1") || getAllBr4paiNG.value.includes("1") || getAll4paildNG.value.includes("1") || getAll4pailsNG.value.includes("1") || getAll4pailaNG.value.includes("1") || getAllbHcNG.value.includes("1")) {
-
-            reportRemarksDisplay.value = "E";
-            reportSMPJudgement.value = "HOLD";
-
-            if(getAlliHcNG.value.includes("1") || getAlliHkNG.value.includes("1") || getAllBHMaxNG.value.includes("1")){
-                // Perform your action here (leave it blank for now)
-                reportSMPJudgement.value = "REJECT";
-            }
-        }else{
-            reportRemarksDisplay.value = "OK";
-            reportSMPJudgement.value = "PASSED";
+        // Unwrap nested array if exists
+        let rawData = responseTpm.data?.[0];
+        if (Array.isArray(rawData)) {
+            rawData = rawData[0];
         }
-        //Remarks checking end
+        const modelData = responseTpm.data?.data;
 
-        //console.log("SMP JUDGEMENT IS: ",reportSMPJudgement.value);
-        //console.log("REPORT REMARKS IS: ",reportRemarksDisplay.value);
+        if (!rawData || !modelData?.length) throw new Error("TPM data missing or malformed.");
+        if (!rawData.average || !rawData.minimum || !rawData.maximum) {
+            throwError("Missing average/min/max data.");
+        }
 
+        tpmData.value = rawData;
+        getTpmModel.value = modelData;
 
+        fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");
+        jhCurveActualModel.value = modelData[0].category?.actual_model || throwError("Missing actual model.");
         fetchActualModel.value = jhCurveActualModel.value;
-        const tpm_current_model = jhCurveActualModel.value;
-        tpmData_tracerNo.value = getTpmModel.value[0].Tracer;
-        const thisLayerId = getTpmModel.value[0].layer_no;
-        const thisfurnaceId = getTpmModel.value[0].furnace_id;
-        //console.log("Finding layer no: ", thisLayerId);
-        //console.log("Finding furnace id: ",thisfurnaceId);
 
-        const responseFurnaceAPI = await axios.get(`/api/furnacedata/`); //getting furnace Name
-        //console.log("Show All furnace id API response: ", responseFurnaceAPI.data);
-        const furnaceNames = responseFurnaceAPI.data.data["Furnace Data"];
-        //console.log("Furnaces arrays: ",furnaceNames);
-        const filteredFurnaceName = furnaceNames.find(f => f.furnace_id === thisfurnaceId);
-        //console.log("filtered furnace Names: ",filteredFurnaceName);
-        if (filteredFurnaceName) {
-            currentFurnaceName.value = filteredFurnaceName.furnace_name;
-        } else {
-            console.error("Furnace not found for ID:", thisfurnaceId);
-            currentFurnaceName.value = "Unknown Furnace"; // or whatever default value makes sense
-        }
+        setJudgmentFlags(modelData);
 
-        const responseLayerAPI = await axios.get(`/api/layerdata/`);
-        //console.log("Show All layer id API response: ", responseLayerAPI.data);
-        const layerNames = responseLayerAPI.data.data["Layer Data"];
-        //console.log("Layer arrays: ",layerNames);
-        const filteredLayerName = layerNames.find(f =>
-            f.layer_no == thisLayerId && f.furnace_id == thisfurnaceId
-        );
-        //console.log("filtered Layer Names: ",filteredLayerName);
-        currentLayerName.value = filteredLayerName.layer_name;
+        await resolveFurnaceAndLayer(modelData[0]);
 
-        //console.log("currently selected serial: ",currentSerialSelected.value);
-        //console.log("Aggregate Averages: ",tpmData.value[0].average);
-        // Access the 'average' property (which is a stringified JSON)
-        const averageJsonString = tpmData.value[0].average;
-        const maximumJsonString = tpmData.value[0].maximum;
-        const minimumJsonString = tpmData.value[0].minimum;
+        parseAggregates(rawData);
 
-        // Parse the stringified JSON into an actual JavaScript object
-        const averageData = JSON.parse(averageJsonString);
-        const maximumData = JSON.parse(maximumJsonString);
-        const minimumData = JSON.parse(minimumJsonString);
+        await matchInspectionModel(fetchActualModel.value);
 
-        // Now you can access the variables inside the parsed object
-        //console.log("Parsed Aggregate Averages: ", averageData);
-        tpmData_brAve.value = averageData.Br;
-        tpmData_brMax.value = maximumData.Br;
-        tpmData_brMin.value = minimumData.Br;
-        tpmData_ihcAve.value = averageData.iHc;
-        tpmData_ihcMax.value = maximumData.iHc;
-        tpmData_ihcMin.value = minimumData.iHc;
-        tpmData_ihkAve.value = averageData.iHk;
-        tpmData_ihkMax.value = maximumData.iHk;
-        tpmData_ihkMin.value = minimumData.iHk;
-        tpmData_ihr95Min.value = minimumData.Hr95;
-        tpmData_ihr98Min.value = minimumData.Hr98;
-
-        const responseInsp = await axios.get("/api/inspectiondata");
-        //console.log("Show All inspection data API response: ", responseInsp.data);
-        inspectionDataList.value = responseInsp.data.data || [];
-        //console.log("Show All inspection data list : ", inspectionDataList.value);
-
-        const getAllInspModels = inspectionDataList.value.map(item => item.model);
-        //console.log("List of models in inspection: ", getAllInspModels);
-        //console.log("Current model in tpm: ",tpm_current_model);
-        console.log("entering filteredInspectiondata...");
-        // Check if tpm_current_model exists in getAllInspModels
-        if (getAllInspModels.includes(fetchActualModel.value)) {
-            const filteredInspectionData = inspectionDataList.value.filter(item => item.model == fetchActualModel.value);
-            //console.log("Filtered inspection data for the selected model: ", filteredInspectionData);
-            //console.log("Fetched model:", fetchActualModel.value);
-            // Access the `br` value for each item in filteredInspectionData
-            filteredInspectionData.forEach(item => {
-                inspectionBrStandard.value = item.br;
-                inspectioniHcStandard.value = item.ihc;
-                inspectioniHkStandard.value = item.ihk;
-                inspectionLength.value = item.length;
-                inspectionWidth.value = item.width;
-                inspectionThickness.value = item.thickness;
-                inspectionMaterialGrade.value = item.material_grade;
-                inspectionMpiSampleQty.value = item.mpi_sample;
-                inspectionOvenMachineNo.value = item.oven_machine_no;
-                inspectionTimeLoading.value = item.time_loading;
-                inspectionTemperature_TimeLoading.value = item.temperature_1;
-                inspectionDate_OvenInfo.value = item.date;
-                inspectionTimeUnloading.value = item.time_unloading;
-                inspectionTemperature_TimeUnloading.value = item.temperature_2;
-                inspectionShift_OvenInfo.value = item.shift;
-                inspectionOperator_OvenInfo.value = item.operator;
-                inspectionAutomotive.value = item.is_automotive;
-            });
-        } else {
-            showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
-            showReportContent.value = false;
-            showSelectionPanel.value = true;
-            return;
-        }
-
-
-        //console.log("Getting br value: ", inspectionBrStandard.value);  // Assuming each item has a `br` property
-
-        if (inspectionBrStandard.value && inspectionBrStandard.value.includes('~')) {
-            const [lower, higher] = inspectionBrStandard.value.split('~');
-            inspectionBrStandard_lower.value = lower;
-            inspectionBrStandard_higher.value = higher;
-        } else {
-            inspectionBrStandard_lower.value = '';
-            inspectionBrStandard_higher.value = '';
-        }
-        //console.log("brStandard LOWER: ",inspectionBrStandard_lower.value);
-        //console.log("brStandard HIGHER: ",inspectionBrStandard_higher.value);
-
-        const repData = {
-            "length": inspectionLength.value,
-            "magnetic_property_data": JSON.stringify({
-                "brStandard": inspectionBrStandard.value,
-                "brAverage": tpmData_brAve.value,
-                "brMaximum": tpmData_brMax.value,
-                "brMinimum": tpmData_brMin.value,
-                "ihcStandard": inspectioniHcStandard.value,
-                "ihcAverage": tpmData_ihcAve.value,
-                "ihcMaximum": tpmData_ihcMax.value,
-                "ihcMinimum": tpmData_ihcMin.value,
-                "ihkStandard": inspectioniHkStandard.value,
-                "ihkAverage": tpmData_ihkAve.value,
-                "ihkMaximum": tpmData_ihkMax.value,
-                "ihkMinimum": tpmData_ihkMin.value,
-                "ihr95Minimum": tpmData_ihr95Min.value,
-                "ihr98Minimum": tpmData_ihr98Min.value
-            }),
-            "material_grade": inspectionMaterialGrade.value,
-            "material_code": fetchMaterialCode.value,
-            "model": fetchActualModel.value,
-            "mpi_sample_quantity": inspectionMpiSampleQty.value,
-            "pulse_tracer_machine_number": tpmData_tracerNo.value,
-            "thickness": inspectionThickness.value,
-            "width": inspectionWidth.value,
-            "withCarmark": inspectionAutomotive.value,
-        }
-
-        //console.log("Rep Data: ",repData);
-        createReport(repData, currentSerialSelected.value);
-
-        await nextTick();
         isLoading.value = false;
+
     } catch (error) {
-        console.error("API get request showTpmData Error:", error);
-        showNotification2("Data is incomplete for this serial. Please Rerun the data.");
+        console.error("fetchAllData failed:", error);
+        showNotification2("Data is incomplete for this serial. Please rerun the data.");
         exitReport();
+        throw new Error("fetchAllData returned empty or invalid payload");
+    }
+};
+
+// SUPPORT FUNCTIONS
+
+const throwError = (msg) => { throw new Error(msg); };
+
+const setJudgmentFlags = (models) => {
+    const flag = (arr) => arr.includes("1");
+
+    const extract = (key) => models.map(m => m.remark?.[key] || null);
+
+    getAllBrNG.value         = extract("Br_remarks");
+    getAlliHcNG.value        = extract("iHc_remarks");
+    getAlliHkNG.value        = extract("iHk_remarks");
+    getAll4paildNG.value     = extract("4paild_remarks");
+    getAll4pailsNG.value     = extract("4pails_remarks");
+    getAll4pailaNG.value     = extract("4paila_remarks");
+    getAllbHcNG.value        = extract("bHc_remarks");
+    getAllBHMaxNG.value      = extract("BHMax_remarks");
+    getAllSquarenessNG.value = extract("Squareness_remarks");
+    getAllDensityNG.value    = extract("Density_remarks");
+    getAlliHkiHcNG.value     = extract("iHkiHc_remarks");
+    getAllBr4paiNG.value     = extract("Br4pai_remarks");
+    getAlliHr95NG.value      = extract("iHr95_remarks");
+    getAlliHr98NG.value      = extract("iHr98_remarks");
+
+    const primary = flag(getAllBrNG.value) || flag(getAlliHr95NG.value) || flag(getAlliHr98NG.value)
+        || flag(getAllSquarenessNG.value) || flag(getAllDensityNG.value) || flag(getAlliHkiHcNG.value)
+        || flag(getAllBr4paiNG.value) || flag(getAll4paildNG.value) || flag(getAll4pailsNG.value)
+        || flag(getAll4pailaNG.value) || flag(getAllbHcNG.value);
+
+    if (primary) {
+        reportRemarksDisplay.value = "E";
+        reportSMPJudgement.value = (flag(getAlliHcNG.value) || flag(getAlliHkNG.value) || flag(getAllBHMaxNG.value))
+            ? "REJECT"
+            : "HOLD";
+    } else {
+        reportRemarksDisplay.value = "OK";
+        reportSMPJudgement.value = "PASSED";
+    }
+};
+
+const resolveFurnaceAndLayer = async (model) => {
+    const [layerRes, furnaceRes] = await Promise.all([
+        axios.get(`/api/layerdata/`),
+        axios.get(`/api/furnacedata/`)
+    ]);
+
+    const layerData = layerRes.data?.data?.["Layer Data"];
+    const furnaceData = furnaceRes.data?.data?.["Furnace Data"];
+    if (!layerData || !furnaceData) throwError("Layer or Furnace data missing.");
+
+    const furnace = furnaceData.find(f => f.furnace_id === model.furnace_id);
+    const layer = layerData.find(l => l.layer_no == model.layer_no && l.furnace_id === model.furnace_id);
+
+    if (!furnace) throwError("Furnace not found.");
+    if (!layer) throwError("Layer not found.");
+
+    currentFurnaceName.value = furnace.furnace_name;
+    currentLayerName.value = layer.layer_name;
+
+    tpmData_tracerNo.value = model.Tracer;
+};
+
+const parseAggregates = (raw) => {
+    if (!raw.average || !raw.minimum || !raw.maximum) throwError("Missing average/min/max data.");
+
+    const avg = JSON.parse(raw.average);
+    const min = JSON.parse(raw.minimum);
+    const max = JSON.parse(raw.maximum);
+
+    tpmData_brAve.value = avg.Br;
+    tpmData_brMax.value = max.Br;
+    tpmData_brMin.value = min.Br;
+
+    tpmData_ihcAve.value = avg.iHc;
+    tpmData_ihcMax.value = max.iHc;
+    tpmData_ihcMin.value = min.iHc;
+
+    tpmData_ihkAve.value = avg.iHk;
+    tpmData_ihkMax.value = max.iHk;
+    tpmData_ihkMin.value = min.iHk;
+
+    tpmData_ihr95Min.value = min.Hr95;
+    tpmData_ihr98Min.value = min.Hr98;
+};
+
+const matchInspectionModel = async (model) => {
+    const res = await axios.get("/api/inspectiondata");
+    const data = res.data?.data || [];
+    inspectionDataList.value = data;
+
+    const found = data.find(item => item.model === model);
+    if (!found) throwError("Model not found in inspection data.");
+
+    inspectionBrStandard.value = found.br;
+    inspectioniHcStandard.value = found.ihc;
+    inspectioniHkStandard.value = found.ihk;
+    inspectionLength.value = found.length;
+    inspectionWidth.value = found.width;
+    inspectionThickness.value = found.thickness;
+    inspectionMaterialGrade.value = found.material_grade;
+    inspectionMpiSampleQty.value = found.mpi_sample;
+    inspectionOvenMachineNo.value = found.oven_machine_no;
+    inspectionTimeLoading.value = found.time_loading;
+    inspectionTemperature_TimeLoading.value = found.temperature_1;
+    inspectionDate_OvenInfo.value = found.date;
+    inspectionTimeUnloading.value = found.time_unloading;
+    inspectionTemperature_TimeUnloading.value = found.temperature_2;
+    inspectionShift_OvenInfo.value = found.shift;
+    inspectionOperator_OvenInfo.value = found.operator;
+    inspectionAutomotive.value = found.is_automotive;
+
+    // Parse br bounds
+    if (inspectionBrStandard.value.includes("~")) {
+        const [lower, upper] = inspectionBrStandard.value.split("~");
+        inspectionBrStandard_lower.value = lower;
+        inspectionBrStandard_higher.value = upper;
     }
 };
 
