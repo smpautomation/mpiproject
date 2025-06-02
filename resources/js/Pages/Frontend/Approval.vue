@@ -272,15 +272,13 @@ const showReportData = async () => {
 };
 
 const saveReportChecked = async (serial) => {
-    const reportData = {
-        "checked": 1
-    }
-
     try {
-        const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
+        const response = await axios.patch(`/api/reportdata/${serial}`, {
+            "checked": 1
+        });
         //console.log("Patched checked report data: ", response.data);
     } catch (error) {
-        console.error("Patch report data Error:", error);
+        console.error("Patch data checking report error:", error);
     }
 }
 

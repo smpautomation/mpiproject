@@ -1678,17 +1678,29 @@ const showNotification = (message) => {
     }, 2000);  // 2000ms = 3 seconds
 }
 
-const showNotification2 = (message) => {
+const showNotification2 = async(message) => {
     // Show notification and set the message
     showNotif2.value = true;
     reportNotificationMessage.value = message;
-    if(isFromApproval.value){
-        backToApproval.value = true;
-    }
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         showNotif2.value = false;
+        if(isFromApproval.value){
+            backToApproval.value = true;
+            uncheckReport();
+        }
     }, 2000);  // 2000ms = 2 seconds
+}
+
+const uncheckReport = async () => {
+    try {
+        const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, {
+            "checked": 0
+        });
+        //console.log("Patched checked report data: ", response.data);
+    } catch (error) {
+        console.error("Patch data checking report error:", error);
+    }
 }
 
 const sec_additional_button = () => {
