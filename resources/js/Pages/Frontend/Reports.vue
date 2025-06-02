@@ -1684,7 +1684,6 @@ const showNotification2 = (message) => {
     reportNotificationMessage.value = message;
     if(isFromApproval.value){
         backToApproval.value = true;
-        showSelectionPanel.value = false;
     }
     // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
@@ -1843,7 +1842,8 @@ const fetchAllData = async () => {
 
         parseAggregates(rawData);
 
-        await matchInspectionModel(fetchActualModel.value);
+        const modelMatched = await matchInspectionModel(fetchActualModel.value);
+        if (!modelMatched) return;
 
         // Build the patch data object
         const repData = {
@@ -1977,7 +1977,12 @@ const matchInspectionModel = async (model) => {
     inspectionDataList.value = data;
 
     const found = data.find(item => item.model === model);
-    if (!found) throwError("Model not found in inspection data.");
+    if (!found) {
+        showNotification2("The specified model does not exist in the inspection data. Please create the necessary inspection data first in the Inspection section of the website.");
+        showReportContent.value = false;
+        showSelectionPanel.value = true;
+        return false; // prevent further execution
+    }
 
     inspectionBrStandard.value = found.br;
     inspectioniHcStandard.value = found.ihc;
@@ -2003,8 +2008,9 @@ const matchInspectionModel = async (model) => {
         inspectionBrStandard_lower.value = lower;
         inspectionBrStandard_higher.value = upper;
     }
-};
 
+    return true;
+};
 const createReport = async (reportData, serial) => {
     try {
         //console.log("Rep Data: ",reportData);
