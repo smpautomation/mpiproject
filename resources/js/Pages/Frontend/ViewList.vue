@@ -109,6 +109,13 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
+import { useAuth } from '@/Composables/useAuth.js'
+
+const { state, login, logout, fetchUser } = useAuth();
+
+// access like:
+console.log(state.user);
+console.log(state.isAuthenticated);
 
 const tpmData = ref([]);
 const searchQuery = ref('');

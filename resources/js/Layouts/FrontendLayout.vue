@@ -9,6 +9,14 @@
   </template>
 
   <script setup>
-  import Navbar from '@/Components/Navbar.vue';
-  import Footer from '@/Components/Footer.vue';
+    import Navbar from '@/Components/Navbar.vue';
+    import Footer from '@/Components/Footer.vue';
+    import { onMounted } from 'vue'
+    import { useAuth } from '@/Composables/useAuth'
+
+    const { fetchUser } = useAuth()
+
+    onMounted(() => {
+        fetchUser()
+    })
   </script>

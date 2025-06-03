@@ -36,6 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth'])->get('/user', function (Request $request) {
+    return $request->user();
+});
+
 // Route::post('/send-test-email', function(Request $request){
 
 //     $validated = $request->validate([

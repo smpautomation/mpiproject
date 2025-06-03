@@ -887,6 +887,14 @@
     import Papa from 'papaparse';
     import axios from 'axios';
     import DotsLoader from '@/Components/DotsLoader.vue';
+    import { useAuth } from '@/Composables/useAuth.js'
+
+    const { state, login, logout, fetchUser } = useAuth();
+
+    // access like:
+    console.log(state.user);
+    console.log(state.isAuthenticated);
+
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
 
@@ -2755,21 +2763,22 @@ const renderChart = () => {
     onMounted(() => {
         // Log the value to check if it's being passed correctly
         //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
-    showLoadingForGraphAndTables
-    if (props.manageSerialParam) {
-        showStartManageDiv.value = false;
-        // If serialParam has a value, do not fetch serial
-        serialNo.value = props.manageSerialParam;
-        toggleManageForm.value = true;
-        showGraphAndTables.value = true;
-        showUploadData.value = false;
-        //console.log("Showdiv graphs ",showGraphAndTables.value);
-        showAllData();
-        //console.log('serialParam is provided, skipping fetchSerial.');
-    } else {
-        // If serialParam does not have a value, proceed with fetchSerial
-        fetchFurnaces();
-    }
+        fetchUser();
+        showLoadingForGraphAndTables
+        if (props.manageSerialParam) {
+            showStartManageDiv.value = false;
+            // If serialParam has a value, do not fetch serial
+            serialNo.value = props.manageSerialParam;
+            toggleManageForm.value = true;
+            showGraphAndTables.value = true;
+            showUploadData.value = false;
+            //console.log("Showdiv graphs ",showGraphAndTables.value);
+            showAllData();
+            //console.log('serialParam is provided, skipping fetchSerial.');
+        } else {
+            // If serialParam does not have a value, proceed with fetchSerial
+            fetchFurnaces();
+        }
     });
 
 
