@@ -104,7 +104,7 @@ class AuthController extends Controller
             'plant' => $validated['plant'] ?? null,
             'employee_id' => $validated['employee_id'] ?? null,
             'password' => Hash::make($validated['password']),
-            'access_type' => $userAccess,
+            'access_type' => $userAccess ?? 'Basic User',
         ]);
 
         // Log the created user's data

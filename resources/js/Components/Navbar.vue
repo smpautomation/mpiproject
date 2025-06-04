@@ -37,7 +37,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { useAuth } from '@/Composables/useAuth.js';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
 const { state, logout } = useAuth();

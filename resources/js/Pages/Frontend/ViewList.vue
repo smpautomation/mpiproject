@@ -111,7 +111,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js'
 
-const { state, login, logout, fetchUser } = useAuth();
+const { state } = useAuth();
 
 // access like:
 console.log(state.user);

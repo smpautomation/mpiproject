@@ -24,7 +24,7 @@
 
                 <!-- Form Container -->
                 <div class="form-container flex-shrink-0 w-full max-w-md">
-                    <div :class="['card', cardClass]">
+                    <div :class="['card', cardClass, { flipped: showRegister }]">
                         <!-- Front: Login -->
                         <div class="card-face front">
                             <!-- Login Form -->
@@ -246,7 +246,9 @@
                             role="alert"
                             aria-live="assertive"
                           >
-                            <h2 class="text-3xl font-extrabold mb-4 drop-shadow-md">Login Successful!</h2>
+                            <h2 class="text-3xl font-extrabold mb-4 drop-shadow-md">
+                              <span class="gradient-metallic" data-text="Login Successful!">Login Successful!</span>
+                            </h2>
                             <p class="text-center text-base mb-6 drop-shadow-sm">
                               You can now access different sections via the navigation bar at the top.
                             </p>
@@ -270,23 +272,6 @@ import { useAuth } from '@/Composables/useAuth.js';
 
 const { state, fetchUser } = useAuth();
 
-// Function to check authentication
-const checkAuthentication = async () => {
-    try {
-        await fetchUser(); // Ensure the user data is up-to-date
-
-        if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
-            return false; // Indicate not authenticated
-        }
-        return true; // Indicate authenticated
-    } catch (error) {
-        console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
-        return false; // Indicate not authenticated
-    }
-};
-
 const username = ref('');
 const password = ref('');
 const error = ref('');
@@ -300,7 +285,7 @@ const loginSuccess = ref(false);
 // Computed property for the card's class
 const cardClass = computed(() => {
   if (state.isAuthenticated) return 'face-success';
-  return showRegister.value ? 'face-back' : 'face-front';
+  return showRegister.value ? 'face-back flipped' : 'face-front';
 });
 
 function checkCapsLock(e) {
@@ -593,5 +578,83 @@ For Login form...
   transform: rotateY(360deg); /* Logical position for the third face */
 }
 
+.gradient-metallic {
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: transparent;
+  background: linear-gradient(135deg, #d1fae5, #6ee7b7, #10b981, #059669);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow:
+    0 0 1px rgba(16, 185, 129, 0.3),
+    0 0 3px rgba(5, 150, 105, 0.2);
+
+  overflow: hidden;
+}
+
+.gradient-metallic::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: inner-shine 2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes inner-shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.god-tier-shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.god-tier-shine-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+
+  animation: god-tier-shine 2.5s ease-in-out infinite;
+  pointer-events: none;
+
+  /* Key trick: only show inside text */
+  mix-blend-mode: lighten;
+  filter: brightness(1.5);
+}
 
 </style>

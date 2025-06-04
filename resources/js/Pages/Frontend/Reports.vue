@@ -78,36 +78,35 @@
             <DotsLoader v-show="showReportLoading" class="z-10 mt-8"/>
             <div v-show="showReportMain" class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl">
                 <div class="flex flex-row w-full max-w-4xl px-4 mx-auto mb-10">
-                    <div v-if="currentUserName != 'ITADANI KAZUYA' && ipAddress == currentUserIP" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
-                        <p class="text-sm font-medium">Hello, Welcome!</p>
-                        <p class="text-xl font-bold uppercase">Ma'am {{ currentUserName.split(' ')[0] }}</p>
-                    </div>
-                    <div v-else-if="currentUserName == 'ITADANI KAZUYA'" class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
-                        <p class="text-sm font-medium">Hello, Welcome!</p>
-                        <p class="text-xl font-bold uppercase">{{ currentUserName.split(' ')[0] }} SAN</p>
+                    <div
+                        v-if="state.user && state.user.employee_id === '005009'"
+                        class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1"
+                    >
+                        <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
+                        <p class="text-xl font-bold">{{ state.user.firstName }} {{ state.user.surname }} san</p>
                     </div>
                     <div v-else class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
-                        <p class="text-sm font-medium">Hello, Welcome!</p>
-                        <p class="text-xl font-bold">You are not yet registered</p>
+                        <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
+                        <p class="text-xl font-bold"> {{ state.user.firstName }} {{ state.user.surname }} </p>
                     </div>
                     <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
 
                         <!-- Serial -->
                         <div class="text-center sm:text-left">
-                        <p class="text-sm font-bold text-blue-800">Serial</p>
-                        <p class="text-xl font-extrabold text-blue-900">{{ currentSerialSelected }}</p>
+                            <p class="text-sm font-bold text-blue-800">Serial</p>
+                            <p class="text-xl font-extrabold text-blue-900">{{ currentSerialSelected }}</p>
                         </div>
 
                         <!-- Furnace -->
                         <div class="text-center sm:text-left">
-                        <p class="text-sm font-bold text-blue-800">Furnace</p>
-                        <p class="text-lg font-semibold text-blue-900">{{ currentFurnaceName }}</p>
+                            <p class="text-sm font-bold text-blue-800">Furnace</p>
+                            <p class="text-lg font-semibold text-blue-900">{{ currentFurnaceName }}</p>
                         </div>
 
                         <!-- Layer -->
                         <div class="text-center sm:text-left">
-                        <p class="text-sm font-bold text-blue-800">Layer</p>
-                        <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
+                            <p class="text-sm font-bold text-blue-800">Layer</p>
+                            <p class="text-lg font-semibold text-blue-900">{{ currentLayerName }}</p>
                         </div>
                         <div class="flex flex-col">
                             <div v-show="showCarMarkButton && !isAutomotive" class="items-center p-1 text-center border-4 border-white">
@@ -909,9 +908,9 @@
                             backgroundImage: 'url(\'/photo/template.png\')',
                             backgroundSize: '101%'
                         }">
-                        <span :class="getFontSize(preparedByPerson_firstName)">{{ preparedByPerson_firstName }}</span>
+                        <span :class="preparedByPerson_firstNameFontSize">{{ preparedByPerson_firstName }}</span>
                         <span class="my-[6.5px]">{{ reportPreparedByDate }}</span>
-                        <span :class="getFontSize(preparedByPerson_lastName)">{{ preparedByPerson_lastName }}</span>
+                        <span :class="preparedByPerson_lastNameFontSize">{{ preparedByPerson_lastName }}</span>
                         </span>
                     </div>
                     </div>
@@ -981,7 +980,9 @@
                             backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
                             backgroundSize: '101%'
                         }">
-                        {{ reportApprovedByDate }}
+                        <span :class="getFontSize(approvedByPerson_firstName)">{{ approvedByPerson_firstName }}</span>
+                        <span class="my-[9px]">{{ reportApprovedByDate }}</span>
+                        <span :class="getFontSize(approvedByPerson_lastName)">{{ approvedByPerson_lastName }}</span>
                         </span>
                     </div>
                     </div>
@@ -1062,6 +1063,34 @@ import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
+import axios from 'axios';
+import { useAuth } from '@/Composables/useAuth.js';
+
+const { state } = useAuth();
+
+const timeOfDay = computed(() => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Morning';
+  if (hour < 18) return 'Afternoon';
+  return 'Evening';
+});
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+            return false; // Indicate not authenticated
+        }
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
 
 //Debug mode --
 const onTestServer = ref(false);
@@ -1244,6 +1273,7 @@ const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
 const currentUserData = ref([]);
+const loggedUserData = ref([]);
 const currentUserName = ref('');
 const currentUserApproverStage = ref('');
 const currentUserIP = ref('');
@@ -1260,7 +1290,6 @@ const approvedByPerson_lastName = ref('');
 const reportNotificationMessage = ref('');
 
 //general variables end
-
 
 /// to be put in the form
 const reportModel = ref('NA');
@@ -1384,18 +1413,31 @@ const getAlliHr98NG = ref('');
 
 // Method to dynamically adjust font size based on string length
 const getFontSize = (name) => {
-  const length = name.length;
+    if (!name || name.trim() === '') {
+        return '';  // Or 'text-[14px]' if you want a default size
+    }
 
-  if (length <= 4) return 'text-[32px]';         // Very short names
-  if (length === 5) return 'text-[30px]';
-  if (length === 6) return 'text-[26px]';
-  if (length === 7) return 'text-[24px]';
-  if (length === 8) return 'text-[22px]';         // Mid point
-  if (length === 9) return 'text-[20px]';
-  if (length === 10) return 'text-[18px]';
-  if (length === 11) return 'text-[16px]';
-  return 'text-[14px]';                          // 12 or more characters
+    const length = name.length;
+
+    if (length <= 4) return 'text-[37px]';         // Very short names
+    if (length === 5) return 'text-[30px]';
+    if (length === 6) return 'text-[26px]';
+    if (length === 7) return 'text-[24px]';
+    if (length === 8) return 'text-[22px]';         // Mid point
+    if (length === 9) return 'text-[20px]';
+    if (length === 10) return 'text-[18px]';
+    if (length === 11) return 'text-[16px]';
+    return 'text-[14px]';                          // 12 or more characters
 };
+
+// Use computed to reactively return the right class when value changes
+const preparedByPerson_firstNameFontSize = computed(() => {
+  return getFontSize(preparedByPerson_firstName.value);
+});
+
+const preparedByPerson_lastNameFontSize = computed(() => {
+  return getFontSize(preparedByPerson_lastName.value);
+});
 
 const exitReport = () => {
     //fetchAllData();
@@ -2476,7 +2518,8 @@ const confirmPreparedByStamp = async () => {
     const dateNow = datenow();
     //console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
     const preparedByData = {
-        prepared_by: preparedByPerson.value, // Set the approved_by field to "ITADANI KAZUYA"
+        prepared_by_firstname: state.user.firstName,
+        prepared_by_surname: state.user.surname,
         prepared_by_date: dateNow
     };
 
@@ -2578,101 +2621,55 @@ const confirmCheckedByStamp = async () => {
 
 const checkApprovalStates = async () => {
     try {
+
+        if(state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver'){
+            preparedByButton.value = true;
+            showPreparedByDefault.value = false;
+        }
+
+        if(state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver'){
+            checkedByButton.value = true;
+            showCheckedByDefault.value = false;
+        }
+
         const response = await axios.get(`/api/reportdata/`);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value);
 
-        const prepared_by = filterBySerial[0]?.prepared_by;
-        const checked_by = filterBySerial[0]?.checked_by;
-        const approved_by = filterBySerial[0]?.approved_by;
+        const prepared_by_firstname = filterBySerial[0]?.prepared_by_firstname;
+        const prepared_by_surname = filterBySerial[0]?.prepared_by_surname;
+        const checked_by_firstname = filterBySerial[0]?.checked_by_firstname;
+        const checked_by_surname = filterBySerial[0]?.checked_by_surname;
+        const approved_by_firstname = filterBySerial[0]?.approved_by_firstname;
+        const approved_by_surname = filterBySerial[0]?.approved_by_surname;
 
-        if (prepared_by != "" && prepared_by != null) {
-            showPreparedByDefault.value = false;
-            preparedByButton.value = false;
+        preparedByPerson_firstName.value = prepared_by_firstname ?? '';
+        preparedByPerson_lastName.value = prepared_by_surname ?? '';
+
+        checkedByPerson_firstName.value = checked_by_firstname ?? '';
+        checkedByPerson_lastName.value = checked_by_surname ?? '';
+
+        approvedByPerson_firstName.value = approved_by_firstname ?? '';
+        approvedByPerson_lastName.value = approved_by_surname ?? '';
+
+        if(preparedByPerson_firstName.value && preparedByPerson_lastName){
             preparedByStampPhoto.value = true;
-
-            const nameParts = prepared_by ? prepared_by.split(' ') : [''];
-            preparedByPerson_firstName.value = nameParts[0];
-            preparedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            //console.error("Prepared By First Name: ", preparedByPerson_firstName.value);
-            //console.error("Prepared By Last Name: ", preparedByPerson_lastName.value);
-        } else if (currentUserApproverStage.value == "PREPARED BY") {
-            showPreparedByDefault.value = false;
-            preparedByButton.value = true;
-            preparedByStampPhoto.value = false;
-        } else {
             preparedByButton.value = false;
-            showPreparedByDefault.value = true;
-            preparedByStampPhoto.value = false;
         }
 
-        if (checked_by != "" && checked_by != null) {
-            showCheckedByDefault.value = false;
-            checkedByButton.value = false;
+        if(checkedByPerson_firstName.value && checkedByPerson_lastName){
             checkedByStampPhoto.value = true;
-
-            const nameParts = checked_by ? checked_by.split(' ') : [''];
-            checkedByPerson_firstName.value = nameParts[0];
-            checkedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-        } else if (currentUserApproverStage.value == "CHECKED BY" && (prepared_by != "" && prepared_by != null)) {
-            showCheckedByDefault.value = false;
-            checkedByButton.value = true;
-            checkedByStampPhoto.value = false;
-        } else {
             checkedByButton.value = false;
-            showCheckedByDefault.value = true;
-            checkedByStampPhoto.value = false;
         }
 
-        if (approved_by == "" || approved_by == null) {
-            showApprovedByDefault.value = true;
-            approvedByStampPhoto.value = false;
-
-            const nameParts = checked_by ? checked_by.split(' ') : [''];
-            approvedByPerson_firstName.value = nameParts[0];
-            approvedByPerson_lastName.value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-            //console.error("Checked By First Name: ", approvedByPerson_firstName.value);
-            //console.error("Checked By Last Name: ", approvedByPerson_lastName.value);
-        } else {
-            approvedByButton.value = false;
-            showApprovedByDefault.value = false;
+        if(approvedByPerson_firstName.value && approvedByPerson_lastName){
             approvedByStampPhoto.value = true;
-            showReportSaveButton.value = false;
-            //insert finalize button here the button for printing
+            approvedByButton.value = false;
         }
 
     } catch (error) {
         console.error("ERROR Getting report data API result: ", error);
     }
 };
-
-const checkCurrentUser = async () => {
-    try {
-        const responseFindApprovers = await axios.get("/api/approver");
-        //console.log('API GET requestFrom-responseFindPreparedBy: ', responseFindApprovers.data);
-
-        const approvers = responseFindApprovers.data.data?.Approvers || [];
-
-        currentUserData.value = approvers.filter(column => column.ip_address === ipAddress.value);
-        //console.log('Current approver data array: ', currentUserData.value);
-
-        if (currentUserData.value.length > 0) {
-            const userData = currentUserData.value[0];
-            currentUserName.value = userData.approver_name;
-            currentUserApproverStage.value = userData.approval_stage;
-            currentUserIP.value = userData.ip_address;
-            //console.log('current user name: ', currentUserName.value);
-            //console.log('current approver stage: ', currentUserApproverStage.value);
-            //console.log('current user IP: ',currentUserIP.value);
-        } else {
-            console.warn("No approver found for the current IP address.");
-            currentUserName.value = '';
-            currentUserApproverStage.value = '';
-        }
-
-    } catch (error) {
-        console.error("Error on checkCurrentUser API GET request", error);
-    }
-}
 
 const evaluateAllRejectReasons = async () => {
     //console.log('Have already entered Evalation for Reject reasons...');
@@ -2681,9 +2678,9 @@ const evaluateAllRejectReasons = async () => {
     await new Promise(res => setTimeout(res, 100));
 
     if (!noteReasonForReject.value || noteReasonForReject.value.length === 0) {
-    noteReasonForReject.value = []; // Reset before evaluation
+        noteReasonForReject.value = []; // Reset before evaluation
 
-    //console.log('Evaluating rejection reasons part1...');
+        //console.log('Evaluating rejection reasons part1...');
 
     if (getAlliHkiHcNG.value.includes("1")) {
       //console.log('Condition met: getAlliHkiHcNG includes "1"');
@@ -2795,8 +2792,8 @@ const sec_additional_redirect = (sec_serial) => {
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
-    checkCurrentUser();
-
+    await checkAuthentication();
+    await checkApprovalStates();
     if (props.serialParam && props.fromApproval) {
         currentSerialSelected.value = props.serialParam;
 

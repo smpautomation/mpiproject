@@ -889,12 +889,11 @@
     import DotsLoader from '@/Components/DotsLoader.vue';
     import { useAuth } from '@/Composables/useAuth.js'
 
-    const { state, login, logout, fetchUser } = useAuth();
+    const { state } = useAuth();
 
     // Function to check authentication
     const checkAuthentication = async () => {
         try {
-            await fetchUser(); // Ensure the user data is up-to-date
 
             if (!state.isAuthenticated) {
                 Inertia.visit('/'); // Redirect if not authenticated

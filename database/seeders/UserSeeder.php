@@ -10,18 +10,21 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Create 10 random users via factory (make sure your UserFactory is set up)
-        User::factory()->count(50)->create();
+        // Create 50 random users with firstName, surname, username, etc.
+        User::factory()->count(15)->create();
 
+        // Admin user with all required fields
         User::updateOrCreate(
-            ['email' => 'admin@example.com'], // unique identifier
+            ['email' => 'admin@example.com'],
             [
-                'name' => 'Admin User',
-                'username' => 'admin',
-                'email' => 'admin@example.com',
-                'plant' => 'Main Plant',
-                'employee_id' => '006645',
-                'password' => Hash::make('password123'), // choose a secure default password here
+                'firstName'   => 'Admin',
+                'surname'     => 'User',
+                'username'    => 'admin',
+                'email'       => 'admin@example.com',
+                'plant'       => 'Main Plant',
+                'employee_id' => '006644',
+                'access_type' => 'Final Approver',
+                'password'    => Hash::make('password123'),
             ]
         );
     }
