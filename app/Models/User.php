@@ -26,6 +26,7 @@ class User extends Authenticatable
         'plant',
         'employee_id',
         'password',
+        'access_type',
     ];
 
     /**

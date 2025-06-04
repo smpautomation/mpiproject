@@ -3,7 +3,7 @@
     <nav class="bg-white border-gray-200 dark:bg-gray-900 top-0 left-0 right-0 z-50">
       <div class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
         <a class="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="photo\smp_logo.png" class="h-8" alt="SMP Logo" />
+          <img src="photo/smp_logo.png" class="h-8" alt="SMP Logo" />
           <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">MPI Online System</span>
         </a>
 
@@ -15,8 +15,8 @@
         </button>
 
         <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-          <ul class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:text-white md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li v-for="(item, index) in navItems" :key="index">
+          <ul v-if="state.isAuthenticated" class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:text-white md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <li v-for="(item, index) in filteredNavItems" :key="index">
               <Link :href="route(item.route)" :class="{'text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500': route().current(item.route)}" aria-current="page">
                 {{ item.label }}
               </Link>
@@ -24,7 +24,7 @@
 
             <!-- User Info & Logout -->
             <li v-if="state.isAuthenticated" class="flex items-center space-x-4 md:ml-6 rtl:space-x-reverse">
-              <span class="text-gray-700 dark:text-gray-300">User: {{ state.user.username }}</span>
+              <span class="text-gray-700 dark:text-gray-300 ml-10">User: {{ state.user.username }}</span>
               <button @click="handleLogout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600 font-semibold">Logout</button>
             </li>
           </ul>
@@ -34,24 +34,33 @@
   </div>
 </template>
 
-  <script setup>
-    import { Link } from '@inertiajs/vue3';
-    import { useAuth } from '@/Composables/useAuth.js';
+<script setup>
+import { Link } from '@inertiajs/vue3';
+import { useAuth } from '@/Composables/useAuth.js';
+import { computed } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
-    const { state, logout } = useAuth();
+const { state, logout } = useAuth();
 
-    const handleLogout = () => {
-      logout();
-    };
+const handleLogout = () => {
+  logout();
+  Inertia.visit('/');
+};
 
-    // Define the navigation lists here..
-    const navItems = [
-        { label: 'Home', route: 'homePage' },
-        { label: 'Manage', route: 'manage' },
-        { label: 'Report', route: 'reports' },
-        { label: 'Inspection', route: 'inspection' },
-        { label: 'View List', route: 'viewList' },
-        { label: 'Approval', route: 'approval' },
-        //{ label: 'Settings', route: 'settings' }
-    ];
-  </script>
+// Define the navigation lists here
+const navItems = [
+  { label: 'Home', route: 'homePage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation', 'Final Approver', 'Proxy Approver'] },
+  { label: 'Manage', route: 'manage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
+  { label: 'Report', route: 'reports', access: ['Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
+  { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
+  { label: 'View List', route: 'viewList', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
+  { label: 'Approval', route: 'approval', access: ['Final Approver', 'Proxy Approver', 'Automation'] },
+  { label: 'Admin', route: 'admin', access: ['Final Approver', 'Proxy Approver', 'Automation'] }
+];
+
+// Filter nav items based on user access
+const filteredNavItems = computed(() => {
+  if (!state.user) return [];
+  return navItems.filter(item => item.access.includes(state.user.access_type));
+});
+</script>

@@ -18,7 +18,7 @@ Route::get('/manage', [FrontendController::class,'manage'])->name('manage');
 Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspection');
 Route::get('/reports', [FrontendController::class,'reports'])->name('reports');
 Route::get('/approval', [FrontendController::class,'approval'])->name('approval');
-Route::get('/settings', [FrontendController::class,'settings'])->name('settings');
+Route::get('/admin', [FrontendController::class,'admin'])->name('admin');
 Route::get('/data_ins', [FrontendController::class,'data_ins'])->name('data_ins');
 Route::get('/create_pdf', [FrontendController::class,'generatePdf'])->name('create_pdf');
 Route::get('/sec_additional', [FrontendController::class,'sec_additional'])->name('sec_additional');

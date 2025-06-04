@@ -86,8 +86,8 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function settings(){
-        return Inertia::render('Frontend/Settings');
+    public function admin(){
+        return Inertia::render('Frontend/Admin');
     }
 
     public function data_ins(){

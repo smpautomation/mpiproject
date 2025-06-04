@@ -9,49 +9,56 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index(){
-        $user = User::all();
+    public function index()
+    {
+        $users = User::all();
         return response()->json([
             'status' => true,
             'message' => 'Users retrieved successfully',
-            'data' => $user
+            'data' => $users,
         ], 200);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $user = User::find($id);
-        if(!empty($user)){
+
+        if ($user) {
             return response()->json([
                 'status' => true,
                 'message' => 'User found successfully',
-                'data' => $user
+                'data' => $user,
             ], 200);
-        }else{
+        } else {
             return response()->json([
                 'status' => false,
-                'message' => 'User not found'
+                'message' => 'User not found',
             ], 404);
         }
-
     }
 
-    public function store(Request $request){
-         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'firstName' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed', // need password_confirmation field
+            'email' => 'nullable|email|max:255|unique:users',
             'plant' => 'nullable|string|max:255',
-            'employee_id' => 'nullable|string|max:255',
+            'employee_id' => 'nullable|string|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'access_type' => 'nullable|string|max:255',
         ]);
 
         $user = User::create([
-            'name' => $validated['name'],
+            'firstName' => $validated['firstName'],
+            'surname' => $validated['surname'],
             'username' => $validated['username'],
-            'email' => $validated['email'],
+            'email' => $validated['email'] ?? null,
             'plant' => $validated['plant'] ?? null,
             'employee_id' => $validated['employee_id'] ?? null,
             'password' => Hash::make($validated['password']),
+            'access_type' => $validated['access_type'] ?? null,
         ]);
 
         return response()->json([
@@ -61,26 +68,29 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $user = User::find($id);
+
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User not found'
+                'message' => 'User not found',
             ], 404);
         }
 
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
+            'firstName' => 'sometimes|required|string|max:255',
+            'surname' => 'sometimes|required|string|max:255',
             'username' => 'sometimes|required|string|max:255|unique:users,username,' . $user->id,
             'email' => 'sometimes|required|email|max:255|unique:users,email,' . $user->id,
             'plant' => 'nullable|string|max:255',
             'employee_id' => 'nullable|string|max:255|unique:users,employee_id,' . $user->id,
             'password' => 'sometimes|required|string|min:8|confirmed',
+            'access_type' => 'sometimes|required|string|max:255',
         ]);
 
-        // Update fields only if present in validated data
-        foreach (['name', 'username', 'email', 'plant', 'employee_id'] as $field) {
+        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type'] as $field) {
             if (isset($validated[$field])) {
                 $user->$field = $validated[$field];
             }
@@ -99,7 +109,8 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $user = User::find($id);
 
         if (!$user) {

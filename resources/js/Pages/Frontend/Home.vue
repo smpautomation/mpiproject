@@ -24,12 +24,12 @@
 
                 <!-- Form Container -->
                 <div class="form-container flex-shrink-0 w-full max-w-md">
-                    <div :class="['card', { flipped: showRegister }]">
+                    <div :class="['card', cardClass]">
                         <!-- Front: Login -->
                         <div class="card-face front">
                             <!-- Login Form -->
                             <div
-                                class="relative z-10 flex flex-col items-center opacity-0 w-full max-w-sm bg-white/20 backdrop-blur-lg rounded-xl p-10 shadow-lg animate-fade-in"
+                                class="relative z-10 flex flex-col items-center w-full max-w-sm bg-white/20 backdrop-blur-lg rounded-xl p-10 shadow-lg animate-fade-in"
                                 >
                                 <form @submit.prevent="login" class="w-full flex flex-col gap-6">
                                     <div class="input-field">
@@ -82,7 +82,7 @@
                                 <p class="mt-6 text-white text-center text-sm select-none">
                                     Not registered yet?
                                     <button
-                                        @click="showRegister = true"
+                                        @click="switchToRegister"
                                         class="text-blue-400 hover:text-blue-600 font-semibold underline focus:outline-none"
                                         aria-label="Go to registration form"
                                     >
@@ -131,7 +131,7 @@
                                         <div class="flex-1">
                                             <div class="input-field">
                                                 <input
-                                                v-model="registerForm.empId"
+                                                v-model="registerForm.employee_id"
                                                 type="text"
                                                 id="reg-empId"
                                                 placeholder=" "
@@ -234,108 +234,202 @@
 
                                     <p class="text-sm mt-4 text-center text-white">
                                         Already have an account?
-                                        <button @click="showRegister = false" class="text-blue-400 hover:text-blue-600 font-semibold underline focus:outline-none">Login here</button>
+                                        <button @click="switchToLogin" class="text-blue-400 hover:text-blue-600 font-semibold underline focus:outline-none">Login here</button>
                                     </p>
                                 </div>
                         </div>
+
+                        <!-- Third Face: Success -->
+                        <div class="card-face success">
+                          <div
+                            class="mt-24 relative z-10 flex flex-col items-center w-full max-w-sm bg-green-700/30 backdrop-blur-lg rounded-xl p-10 shadow-lg animate-fade-in text-white select-none"
+                            role="alert"
+                            aria-live="assertive"
+                          >
+                            <h2 class="text-3xl font-extrabold mb-4 drop-shadow-md">Login Successful!</h2>
+                            <p class="text-center text-base mb-6 drop-shadow-sm">
+                              You can now access different sections via the navigation bar at the top.
+                            </p>
+                          </div>
+                        </div>
+
                     </div>
-                </div>
+                </div> <!-- end of form container -->
             </div>
         </div>
     </Frontend>
 </template>
 
 <script setup>
-    import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
-    import { Inertia } from '@inertiajs/inertia';
-    import DotsLoader from '@/Components/DotsLoader.vue';
-    import axios from 'axios'
+import Frontend from '@/Layouts/FrontendLayout.vue';
+import { ref, computed, watch } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import DotsLoader from '@/Components/DotsLoader.vue';
+import axios from 'axios';
+import { useAuth } from '@/Composables/useAuth.js';
 
-    const username = ref('');
-    const password = ref('');
-    const error = ref('');
-    const showRegister = ref(false);
-    const registerError = ref('');
-    const capsLockOn = ref(false)
-    const registerSuccess = ref(false);
-    const loginFailed = ref(false);
+const { state, fetchUser } = useAuth();
 
-    function checkCapsLock(e) {
-      capsLockOn.value = e.getModifierState && e.getModifierState('CapsLock')
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+        await fetchUser(); // Ensure the user data is up-to-date
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+            return false; // Indicate not authenticated
+        }
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
     }
+};
 
-    const registerForm = ref({
+const username = ref('');
+const password = ref('');
+const error = ref('');
+const showRegister = ref(false);
+const registerError = ref('');
+const capsLockOn = ref(false);
+const registerSuccess = ref(false);
+const loginFailed = ref(false);
+const loginSuccess = ref(false);
+
+// Computed property for the card's class
+const cardClass = computed(() => {
+  if (state.isAuthenticated) return 'face-success';
+  return showRegister.value ? 'face-back' : 'face-front';
+});
+
+function checkCapsLock(e) {
+    capsLockOn.value = e.getModifierState && e.getModifierState('CapsLock');
+}
+
+const switchToLogin = () => {
+  loginSuccess.value = false;  // Reset success when switching forms
+  showRegister.value = false;
+  resetRegisterForm();
+  username.value = '';
+  password.value = '';
+};
+
+const switchToRegister = () => {
+  loginSuccess.value = false;  // Reset success here too
+  showRegister.value = true;
+  username.value = '';
+  password.value = '';
+};
+
+const showSuccessFace = () => {
+  loginSuccess.value = true;
+  showRegister.value = false;
+  username.value = '';
+  password.value = '';
+  resetRegisterForm();
+}
+
+// Registration form fields with updated keys
+const registerForm = ref({
+    firstName: '',       // Updated from name
+    surname: '',         // Added to match backend changes
+    employee_id: '',     // Fixed typo from employeed_id
+    plant: '',
+    username: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+});
+
+const resetRegisterForm = () => {
+    registerForm.value = {
         firstName: '',
         surname: '',
-        employeed_id: '',
+        employee_id: '',
         plant: '',
         username: '',
         email: '',
         password: '',
         password_confirmation: '',
-    })
-    console.log(JSON.stringify(registerForm.value, null, 2));
-
-    // CSRF token setup (only needed once globally, ideally)
-    axios.defaults.withCredentials = true
-    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-
-    const login = async () => {
-      try {
-          await axios.get('/sanctum/csrf-cookie');
-
-          const response = await axios.post('/api/login', {
-              username: username.value,
-              password: password.value,
-          });
-
-          localStorage.setItem('access_token', response.data.access_token);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
-
-          Inertia.visit('/manage');
-      } catch (e) {
-          error.value = e.response?.data?.message || 'Login failed';
-          loginFailed.value = true;
-          setTimeout(() => {
-              loginFailed.value = false;
-              error.value = '';
-              password.value = '';
-          }, 3000);
-      }
-  };
-
-    const register = async () => {
-        registerError.value = '';
-        registerSuccess.value = false;
-
-        if (registerForm.value.password !== registerForm.value.password_confirmation) {
-            registerError.value = 'Passwords do not match.';
-            return;
-        }
-
-        try {
-            await axios.get('/sanctum/csrf-cookie'); // CSRF for security
-
-            await axios.post('/api/register', { ...registerForm.value });
-
-            registerSuccess.value = true;
-
-            setTimeout(() => {
-                showRegister.value = false;
-                registerSuccess.value = false;
-                // reset form here if needed
-            }, 2000);
-        } catch (e) {
-            console.error(e.response?.data);
-            registerError.value = e.response?.data?.message || 'Registration failed';
-            registerSuccess.value = false;
-        }
     };
+};
 
+// Log the registration form state for debugging
+console.log(JSON.stringify(registerForm.value, null, 2));
+
+// CSRF token setup (only needed once globally, ideally)
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+const login = async () => {
+  try {
+    await axios.get('/sanctum/csrf-cookie');
+
+    const response = await axios.post('/api/login', {
+      username: username.value,
+      password: password.value,
+    });
+
+    localStorage.setItem('access_token', response.data.access_token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
+
+    loginSuccess.value = true;    // ✅ Set here on success
+    showRegister.value = false;   // Hide register form
+
+    // Optionally reset errors
+    loginFailed.value = false;
+    error.value = '';
+
+    // Optionally fetchUser or redirect here if needed
+    await fetchUser();
+
+  } catch (e) {
+    loginSuccess.value = false;   // Reset here on failure
+    loginFailed.value = true;
+    password.value = '';
+    setTimeout(() => {
+      loginFailed.value = false;
+      error.value = '';
+    }, 3000);
+  }
+};
+
+const register = async () => {
+    registerError.value = '';
+    registerSuccess.value = false;
+
+    if (registerForm.value.password !== registerForm.value.password_confirmation) {
+        registerError.value = 'Passwords do not match.';
+        return;
+    }
+
+    try {
+        // CSRF for security
+        await axios.get('/sanctum/csrf-cookie');
+
+        // Submit registration form
+        await axios.post('/api/register', { ...registerForm.value });
+
+        registerSuccess.value = true;
+
+        setTimeout(() => {
+            showRegister.value = false;
+            registerSuccess.value = false;
+            // Reset the form
+            Object.keys(registerForm.value).forEach((key) => {
+                registerForm.value[key] = '';
+            });
+        }, 1500);
+    } catch (e) {
+        console.error(e.response?.data);
+        registerError.value = e.response?.data?.message || 'Registration failed';
+        registerSuccess.value = false;
+    }
+};
 </script>
+
 
 <style scoped>
 @keyframes fade-in-down {
@@ -462,7 +556,7 @@ For Login form...
 .card {
   position: relative;
   width: 100%;
-  height: auto; /* instead of 100% */
+  height: auto; /* Adapt to content */
   transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
 }
@@ -476,15 +570,28 @@ For Login form...
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
   backface-visibility: hidden;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease, z-index 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.card-face.front {
+.card.face-front .card-face.front,
+.card.face-back .card-face.back,
+.card.face-success .card-face.success {
+  opacity: 1;
+  pointer-events: auto;
   z-index: 2;
 }
 
 .card-face.back {
   transform: rotateY(180deg);
 }
+
+.card-face.success {
+  transform: rotateY(360deg); /* Logical position for the third face */
+}
+
+
 </style>

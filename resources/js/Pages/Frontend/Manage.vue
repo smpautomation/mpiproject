@@ -891,9 +891,23 @@
 
     const { state, login, logout, fetchUser } = useAuth();
 
-    // access like:
-    console.log(state.user);
-    console.log(state.isAuthenticated);
+    // Function to check authentication
+    const checkAuthentication = async () => {
+        try {
+            await fetchUser(); // Ensure the user data is up-to-date
+
+            if (!state.isAuthenticated) {
+                Inertia.visit('/'); // Redirect if not authenticated
+                return false; // Indicate not authenticated
+            }
+
+            return true; // Indicate authenticated
+        } catch (error) {
+            console.error('Error checking authentication:', error);
+            Inertia.visit('/'); // Redirect on error
+            return false; // Indicate not authenticated
+        }
+    };
 
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
@@ -2760,11 +2774,9 @@ const renderChart = () => {
     //console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
 
     // onMounted logic to call the function based on serialParam existence
-    onMounted(() => {
+    onMounted(async () => {
         // Log the value to check if it's being passed correctly
         //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
-        fetchUser();
-        showLoadingForGraphAndTables
         if (props.manageSerialParam) {
             showStartManageDiv.value = false;
             // If serialParam has a value, do not fetch serial
@@ -2779,6 +2791,9 @@ const renderChart = () => {
             // If serialParam does not have a value, proceed with fetchSerial
             fetchFurnaces();
         }
+
+        await checkAuthentication();
+
     });
 
 
