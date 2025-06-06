@@ -488,14 +488,14 @@
                         <span
                             class="absolute w-[100px] h-[100px] items-center flex flex-col text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
                             :style="{
-                                backgroundImage: printPreparedBy != null && printPreparedBy !== ''
+                                backgroundImage: (printPreparedBy_firstName != null && printPreparedBy_firstName !== '') || (printPreparedBy != null && printPreparedBy !== '')
                                     ? 'url(\'/photo/template.png\')'
                                     : 'none',
                                 backgroundSize: 'contain'
                             }">
                             <span :class="getFontSize(printPreparedBy_firstName)">{{ printPreparedBy_firstName }}</span>
-                            <span class="my-[2px]">{{ printPreparedBy_date }}</span>
-                            <span :class="dynamicClass_preparedby">
+                            <span class="my-[0px]">{{ printPreparedBy_date }}</span>
+                            <span :class="[dynamicClass_preparedby, getFontSize(printPreparedBy_lastName)]">
                                 {{ printPreparedBy_lastName }}
                             </span>
                         </span>
@@ -513,14 +513,14 @@
                         <span
                             class="absolute w-[100px] h-[100px] items-center flex flex-col text-red-600 font-extrabold bg-center bg-no-repeat justify-center"
                             :style="{
-                                backgroundImage: printCheckedBy != null && printCheckedBy !== ''
+                                backgroundImage: (printCheckedBy_firstName != null && printCheckedBy_firstName !== '') || (printCheckedBy != null && printCheckedBy !== '')
                                     ? 'url(\'/photo/template.png\')'
                                     : 'none',
                                 backgroundSize: 'contain'
                             }">
                             <span :class="getFontSize(printCheckedBy_firstName)">{{ printCheckedBy_firstName }}</span>
-                            <span class="my-[2px]">{{ printCheckedBy_date }}</span>
-                            <span :class="dynamicClass_checkedby">
+                            <span class="my-[0px]">{{ printCheckedBy_date }}</span>
+                            <span :class="[dynamicClass_approvedby, getFontSize(printCheckedBy_lastName)]">
                                 {{ printCheckedBy_lastName }}
                             </span>
                         </span>
@@ -536,14 +536,18 @@
                     <div class="relative flex items-center justify-center flex-grow w-full bg-white">
                         <!-- The stamp -->
                         <span
-                            class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex text-red-600 font-extrabold justify-center"
+                            class="absolute w-[100px] h-[100px] bg-center bg-no-repeat items-center flex flex-col text-red-600 font-extrabold justify-center"
                             :style="{
-                                backgroundImage: printApprovedBy != null && printApprovedBy !== ''
-                                    ? 'url(\'/photo/Approved_by_stamp.png\')'
+                                backgroundImage: (printApprovedBy_firstName != null && printApprovedBy_firstName !== '') || (printApprovedBy != null && printApprovedBy !== '')
+                                    ? 'url(\'/photo/template.png\')'
                                     : 'none',
                                 backgroundSize: 'contain'
                             }">
-                            <span :class="{ 'pb-4': adjustStyling }">{{ printApprovedBy_date }}</span>
+                            <span :class="getFontSize(printApprovedBy_firstName)">{{ printApprovedBy_firstName }}</span>
+                            <span class="my-[0px]">{{ printApprovedBy_date }}</span>
+                            <span :class="[dynamicClass_checkedby, getFontSize(printApprovedBy_lastName)]">
+                                {{ printApprovedBy_lastName }}
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -1562,12 +1566,14 @@ const printPreparedBy_firstName = ref('');
 const printPreparedBy_lastName = ref('');
 const printCheckedBy_firstName = ref('');
 const printCheckedBy_lastName = ref('');
+const printApprovedBy_firstName = ref('');
+const printApprovedBy_lastName = ref('');
 
 // Method to dynamically adjust font size based on string length
 const getFontSize = (name) => {
   const length = name.length;
 
-  if (length <= 4) return 'text-[24 px]';         // Very short names
+  if (length <= 4) return 'text-[23px]';         // Very short names
   if (length === 5) return 'text-[22px]';
   if (length === 6) return 'text-[18px]';
   if (length === 7) return 'text-[12px]';
@@ -1581,13 +1587,20 @@ const getFontSize = (name) => {
 const dynamicClass_preparedby = computed(() => {
   return [
     getFontSize(printPreparedBy_lastName),
-    { 'pb-4': adjustStyling.value }
+    { 'pb-5': adjustStyling.value }
   ];
 });
 
 const dynamicClass_checkedby = computed(() => {
   return [
     getFontSize(printCheckedBy_lastName),
+    { 'pb-5': adjustStyling.value }
+  ];
+});
+
+const dynamicClass_approvedby = computed(() => {
+  return [
+    getFontSize(printApprovedBy_lastName),
     { 'pb-5': adjustStyling.value }
   ];
 });
@@ -1810,43 +1823,18 @@ const dataFrom_reportdata = async () => {
         printCheckedBy_date.value = rd.checked_by_date ? rd.checked_by_date.split(' ')[0] : '';
         printApprovedBy_date.value = rd.approved_by_date ? rd.approved_by_date.split(' ')[0] : '';
 
-        // Check if printPreparedBy is not empty or null
-        if (printPreparedBy.value && typeof printPreparedBy.value === 'string' && printPreparedBy.value.trim() !== '') {
-            const nameParts_preparedBy = printPreparedBy.value.split(' ');
+        // Assign the first and last name
+        printPreparedBy_firstName.value = rd.prepared_by_firstname ?? '';
+        printPreparedBy_lastName.value = rd.prepared_by_surname ?? '';
 
-            // Assign the first and last name
-            printPreparedBy_firstName.value = nameParts_preparedBy[0];
-            printPreparedBy_lastName.value = nameParts_preparedBy.length > 1 ? nameParts_preparedBy.slice(1).join(' ') : '';
+        // Assign the first and last name
+        printCheckedBy_firstName.value = rd.checked_by_firstname ?? '';
+        printCheckedBy_lastName.value = rd.checked_by_surname ?? '';
 
-            // Log the results
-            //console.error("Prepared By First Name: ", printPreparedBy_firstName.value);
-            //console.error("Prepared By Last Name: ", printPreparedBy_lastName.value);
-        } else {
-            // Handle the case where printPreparedBy is null, empty, or not a string
-            console.error("printPreparedBy is invalid:", printPreparedBy.value);
-            // You can also assign default values to first and last names if needed
-            printPreparedBy_firstName.value = '';
-            printPreparedBy_lastName.value = '';
-        }
+        // Assign the first and last name
+        printApprovedBy_firstName.value = rd.approved_by_firstname ?? '';
+        printApprovedBy_lastName.value = rd.approved_by_surname ?? '';
 
-        // Check if printCheckedBy is not empty or null
-        if (printCheckedBy.value && typeof printCheckedBy.value === 'string' && printCheckedBy.value.trim() !== '') {
-            const nameParts_checkedBy = printCheckedBy.value.split(' ');
-
-            // Assign the first and last name
-            printCheckedBy_firstName.value = nameParts_checkedBy[0];
-            printCheckedBy_lastName.value = nameParts_checkedBy.length > 1 ? nameParts_checkedBy.slice(1).join(' ') : '';
-
-            // Log the results
-            //console.error("Checked By First Name: ", printCheckedBy_firstName.value);
-            //console.error("Checked By Last Name: ", printCheckedBy_lastName.value);
-        } else {
-            // Handle the case where printCheckedBy is null, empty, or not a string
-            console.error("printCheckedBy is invalid:", printCheckedBy.value);
-            // You can also assign default values to first and last names if needed
-            printCheckedBy_firstName.value = '';
-            printCheckedBy_lastName.value = '';
-        }
 
         // Debug output
         /*console.log("SMP Judgement Data:", {

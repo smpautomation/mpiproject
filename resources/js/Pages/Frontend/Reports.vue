@@ -83,11 +83,11 @@
                         class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1"
                     >
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
-                        <p class="text-xl font-bold">{{ state.user.firstName }} {{ state.user.surname }} san</p>
+                        <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }} san</p>
                     </div>
                     <div v-else class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
-                        <p class="text-xl font-bold"> {{ state.user.firstName }} {{ state.user.surname }} </p>
+                        <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
                     </div>
                     <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
 
@@ -975,9 +975,9 @@
                         </div>
                         <span
                         v-show="approvedByStampPhoto"
-                        class="flex items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
+                        class="flex flex-col items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
                         :style="{
-                            backgroundImage: 'url(\'/photo/Approved_by_stamp.png\')',
+                            backgroundImage: 'url(\'/photo/template.png\')',
                             backgroundSize: '101%'
                         }">
                         <span :class="getFontSize(approvedByPerson_firstName)">{{ approvedByPerson_firstName }}</span>
@@ -1026,7 +1026,7 @@
                         Apply Additional
                     </button>
                     <button
-                        v-if="checkedByPerson"
+                        v-if="checkedByPerson_firstName"
                         @click="finalizeReport(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
@@ -1068,21 +1068,33 @@ import { useAuth } from '@/Composables/useAuth.js';
 
 const { state } = useAuth();
 
-const timeOfDay = computed(() => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Morning';
-  if (hour < 18) return 'Afternoon';
-  return 'Evening';
-});
-
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
 
+        const start = Date.now();
+        const timeout = 5000; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
         if (!state.isAuthenticated) {
             Inertia.visit('/'); // Redirect if not authenticated
+
             return false; // Indicate not authenticated
         }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        greetingsWindowFirstName.value = state.user.firstName;
+        greetingsWindowLastName.value = state.user.surname;
 
         return true; // Indicate authenticated
     } catch (error) {
@@ -1091,6 +1103,13 @@ const checkAuthentication = async () => {
         return false; // Indicate not authenticated
     }
 };
+
+const timeOfDay = computed(() => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Morning';
+  if (hour < 18) return 'Afternoon';
+  return 'Evening';
+});
 
 //Debug mode --
 const onTestServer = ref(false);
@@ -1109,6 +1128,9 @@ const showReportLoading = ref(false);
 
 const isFromApproval = ref(false);
 const backToApproval = ref(false);
+
+const greetingsWindowFirstName = ref('');
+const greetingsWindowLastName = ref('');
 
 const showNotif = ref(false);
 const showNotif2 = ref(false);
@@ -1274,7 +1296,6 @@ const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
 const currentUserData = ref([]);
 const loggedUserData = ref([]);
-const currentUserName = ref('');
 const currentUserApproverStage = ref('');
 const currentUserIP = ref('');
 const preparedByPerson = ref('');
@@ -2510,8 +2531,8 @@ const cancelPreparedByStamp = () => {
 }
 
 const confirmPreparedByStamp = async () => {
-
-    preparedByPerson.value = currentUserName.value;
+    preparedByButton.value = false;
+    showPreparedByDefault.value = false;
     // Split the full name into first and last name
     preparedByStampPhoto.value = true;
     preparedByStampConfirmation.value = false;
@@ -2522,7 +2543,7 @@ const confirmPreparedByStamp = async () => {
         prepared_by_surname: state.user.surname,
         prepared_by_date: dateNow
     };
-
+    //console.log('preparedBy Payload: ',preparedByData.value);
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
     //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
 
@@ -2579,18 +2600,21 @@ const cancelCheckedByStamp = () => {
 }
 
 const confirmCheckedByStamp = async () => {
-    checkedByPerson.value = currentUserName.value;
+    checkedByButton.value = false;
+    showCheckedByDefault.value = false;
+    // Split the full name into first and last name
     checkedByStampPhoto.value = true;
     checkedByStampConfirmation.value = false;
     const dateNow = datenow();
-    //console.log("Checked By Has been stamped by -> ", checkedByPerson.value);
+    //console.log("Prepared By Has been stamped by -> ", preparedByPerson.value);
     const checkedByData = {
-        checked_by: checkedByPerson.value,
+        checked_by_firstname: state.user.firstName,
+        checked_by_surname: state.user.surname,
         checked_by_date: dateNow
     };
-
+    console.log('checkedBy Payload: ',checkedByData.value);
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, checkedByData);
-    //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
 
     try {
         const emailPayload = {
@@ -2622,16 +2646,6 @@ const confirmCheckedByStamp = async () => {
 const checkApprovalStates = async () => {
     try {
 
-        if(state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver'){
-            preparedByButton.value = true;
-            showPreparedByDefault.value = false;
-        }
-
-        if(state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver'){
-            checkedByButton.value = true;
-            showCheckedByDefault.value = false;
-        }
-
         const response = await axios.get(`/api/reportdata/`);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value);
 
@@ -2651,19 +2665,32 @@ const checkApprovalStates = async () => {
         approvedByPerson_firstName.value = approved_by_firstname ?? '';
         approvedByPerson_lastName.value = approved_by_surname ?? '';
 
+        if((state.user.access_type) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')){
+            preparedByButton.value = true;
+            showPreparedByDefault.value = false;
+        }
+
+        if((state.user.access_type) && (prepared_by_firstname) && (state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')){
+            checkedByButton.value = true;
+            showCheckedByDefault.value = false;
+        }
+
         if(preparedByPerson_firstName.value && preparedByPerson_lastName){
             preparedByStampPhoto.value = true;
             preparedByButton.value = false;
+            showPreparedByDefault.value = false;
         }
 
         if(checkedByPerson_firstName.value && checkedByPerson_lastName){
             checkedByStampPhoto.value = true;
             checkedByButton.value = false;
+            showCheckedByDefault.value = false;
         }
 
         if(approvedByPerson_firstName.value && approvedByPerson_lastName){
             approvedByStampPhoto.value = true;
             approvedByButton.value = false;
+            showApprovedByDefault.value = false;
         }
 
     } catch (error) {

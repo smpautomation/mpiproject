@@ -75,7 +75,7 @@
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.report[0]?.approved_by ? 'COMPLETED' : 'PENDING' }}
+                    {{ item.report[0]?.approved_by_firstName ? 'COMPLETED' : 'PENDING' }}
                     </div>
                 </td>
                 </tr>
@@ -113,9 +113,38 @@ import { useAuth } from '@/Composables/useAuth.js'
 
 const { state } = useAuth();
 
-// access like:
-console.log(state.user);
-console.log(state.isAuthenticated);
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 5000; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
 
 const tpmData = ref([]);
 const searchQuery = ref('');
@@ -143,7 +172,10 @@ const viewAllSerialedLayers = async () => {
   }
 };
 
-onMounted(viewAllSerialedLayers);
+onMounted(async ()=>{
+    await checkAuthentication();
+    await viewAllSerialedLayers();
+});
 
 // Search + filter
 const filteredData = computed(() => {
@@ -153,7 +185,7 @@ const filteredData = computed(() => {
   return tpmData.value.filter(item => {
     const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
     const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
-    const judgmentStatus = item.report?.[0]?.approved_by ? 'COMPLETED' : 'PENDING';
+    const judgmentStatus = item.report?.[0]?.approved_by_firstName ? 'COMPLETED' : 'PENDING';
 
     const matchesQuery = !query || model.includes(query) || lot.includes(query);
     const matchesStatus = !status || judgmentStatus === status;

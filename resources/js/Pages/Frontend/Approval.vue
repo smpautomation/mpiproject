@@ -1,10 +1,7 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-            <div v-if="ipAddress != currentUserIP">
-                <p class="text-lg font-extrabold">You are not an authorized user for this section </p>
-            </div>
-            <div v-else>
+            <div>
                 <div v-if="reportDataList == null || reportDataList.length <= 0" class="flex flex-col items-center justify-center animate-pulse">
                     <div
                         class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
@@ -29,13 +26,13 @@
                         :disabled="filteredReports.filter(r => r.checked === 1).length === 0"
                         :class="[
                             'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
-                            filteredReports.filter(r => r.checked === 1 && !r.approved_by).length === 0
+                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by || !r.approved_by_firstname)).length === 0
                                 ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
                                 : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
                         ]"
                     >
                         {{
-                            filteredReports.filter(r => r.checked === 1 && !r.approved_by).length === 0
+                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by || !r.approved_by_firstname)).length === 0
                                 ? 'No eligible data to approve'
                                 : filteredReports
                                     .filter(r => r.checked === 1)
@@ -81,11 +78,11 @@
                                         </button>
                                     </td>
                                     <td class="px-3 py-2 text-lg font-extrabold text-gray-700 border-b border-gray-300">
-                                        <span v-if="report.approved_by" class="text-green-600">APPROVED</span>
+                                        <span v-if="report.approved_by_firstname || approved_by" class="text-green-600">APPROVED</span>
                                         <span v-else class="text-yellow-600">PENDING</span>
                                     </td>
                                     <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
-                                        <input v-if="!report.approved_by && report.checked == 1" type="checkbox"
+                                        <input v-if="!report.approved_by_firstname && report.checked == 1" type="checkbox"
                                             :value="report.tpm_data_serial"
                                             v-model="selectedRows"
                                             class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded-md cursor-pointer focus:ring-blue-500 focus:ring-2">
@@ -133,7 +130,42 @@
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, toRaw, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
+import { useAuth } from '@/Composables/useAuth.js'
 
+const { state } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 5000; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
 // UI
 
 const statusFilter = ref('ALL');
@@ -154,7 +186,7 @@ const filteredReports = computed(() => {
   if (statusFilter.value === 'ALL') return reportDataList.value;
 
   return reportDataList.value.filter(report => {
-    const isApproved = report.approved_by;
+    const isApproved = report.approved_by_firstname || report.approved_by;
     if (statusFilter.value === 'APPROVED') return isApproved;
     if (statusFilter.value === 'PENDING') return !isApproved;
   });
@@ -199,7 +231,7 @@ const viewReport = (serial) => {
 
 const checkAllToggle = () => {
     const eligibleSerials = filteredReports.value
-        .filter(report => report.checked === 1 && !report.approved_by)
+        .filter(report => report.checked === 1 && (!report.approved_by || !report.approved_by_firstname))
         .map(report => report.tpm_data_serial);
 
     const allEligibleSelected = eligibleSerials.every(serial => selectedRows.value.includes(serial));
@@ -261,8 +293,9 @@ const showReportData = async () => {
         // Filter out rows where smp_judgement is null or an empty string
         reportDataList.value = response.data.data.filter(report =>
             report.smp_judgement && report.smp_judgement.trim() !== '' &&
-            report.checked_by && report.checked_by.trim() !== '' &&
-            report.prepared_by && report.prepared_by.trim() !== ''
+            (report.checked_by && report.checked_by.trim() !== '' &&
+            report.prepared_by && report.prepared_by.trim() !== '') || (report.checked_by_firstname && report.checked_by_firstname.trim() !== '' &&
+            report.prepared_by_firstname && report.prepared_by_firstname.trim() !== '')
         );
 
         //console.log("Filtered report data arrays: ", reportDataList.value);
@@ -319,7 +352,8 @@ const confirmationApprove = async () => {
         for (let serial of selectedRows.value) {
             const dateNow = datenow();
             const reportData = {
-                approved_by: "ITADANI KAZUYA", // Set the approved_by field to "ITADANI KAZUYA"
+                approved_by_firstname: state.user.firstName,
+                approved_by_surname: state.user.surname, // Set the approved_by field to "ITADANI KAZUYA"
                 approved_by_date: dateNow
             };
 
@@ -340,7 +374,7 @@ const confirmationApprove = async () => {
 }
 
 onMounted( async () => {
-    await checkCurrentUser();
+    await checkAuthentication();
     await showReportData();
 });
 

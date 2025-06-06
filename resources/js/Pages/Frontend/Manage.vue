@@ -895,10 +895,26 @@
     const checkAuthentication = async () => {
         try {
 
+            const start = Date.now();
+            const timeout = 5000; // 5 seconds
+
+            while (!state.user) {
+                if (Date.now() - start > timeout) {
+                    console.error('Auth timeout: user data failed to load within 5 seconds.');
+                    return false;
+                }
+                await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+            }
+
             if (!state.isAuthenticated) {
                 Inertia.visit('/'); // Redirect if not authenticated
+
                 return false; // Indicate not authenticated
             }
+
+            console.warn("USER AUTHENTICATED!");
+            console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+            console.warn("Access: ", state.user.access_type);
 
             return true; // Indicate authenticated
         } catch (error) {
