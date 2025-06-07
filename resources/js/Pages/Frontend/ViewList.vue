@@ -35,6 +35,7 @@
                 <th class="px-2 py-2 whitespace-nowrap">Tracer No</th>
                 <th class="px-2 py-2 whitespace-nowrap">SMP Judgement</th>
                 <th class="px-2 py-2 whitespace-nowrap">Status</th>
+                <th class="px-2 py-2 whitespace-nowrap">Action</th> <!-- New Action Column -->
                 </tr>
             </thead>
             <tbody>
@@ -75,7 +76,44 @@
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.report[0]?.approved_by ? 'COMPLETED' : 'PENDING' }}
+                    {{ item.report[0]?.approved_by ? "COMPLETED" : "PENDING" }}
+                    </div>
+                </td>
+                <td class="p-[1px] text-center"> <!-- New Cell -->
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        <div>
+                            <template v-if="confirmDeleteFor === item.category[0].tpm_data_serial">
+                              <button
+                                @click="deleteRow(item.category[0].tpm_data_serial)"
+                                class="bg-green-600 text-white rounded-sm w-[40px] mr-2
+                                      hover:bg-green-500 active:bg-green-700
+                                      transition-colors duration-200 ease-in-out
+                                      focus:outline-none focus:ring-2 focus:ring-green-400"
+                              >
+                                Yes
+                              </button>
+                              <button
+                                @click="confirmDeleteFor = null"
+                                class="bg-gray-300 text-gray-800 rounded-sm w-[60px]
+                                      hover:bg-gray-400 active:bg-gray-500
+                                      transition-colors duration-200 ease-in-out
+                                      focus:outline-none focus:ring-2 focus:ring-gray-400"
+                              >
+                                Cancel
+                              </button>
+                            </template>
+                            <template v-else>
+                              <button
+                                @click="confirmDeleteFor = item.category[0].tpm_data_serial"
+                                class="bg-red-700 text-white rounded-sm w-[100px]
+                                      hover:bg-red-600 active:bg-red-800
+                                      transition-colors duration-200 ease-in-out
+                                      focus:outline-none focus:ring-2 focus:ring-red-500"
+                              >
+                                Delete
+                              </button>
+                            </template>
+                        </div>
                     </div>
                 </td>
                 </tr>
@@ -117,6 +155,7 @@ const itemsPerPage = 20;
 const statusFilter = ref('');
 const totalPages = ref(0);
 const maxPagesAllowed = ref(20);
+const confirmDeleteFor = ref(null);
 
 
 // Fetch data
@@ -124,7 +163,7 @@ const viewAllSerialedLayers = async () => {
   try {
     const response = await axios.get('/api/tpmdata');
     const rawData = response.data.data?.tpmData || {};
-    //console.log("Show respone raw data: ",response.data);
+    console.log("Show respone raw data: ",response.data);
     tpmData.value = Object.entries(rawData)
         .map(([serial, data]) => ({ serial: Number(serial), ...data }))
         .sort((a, b) => b.serial - a.serial); // Sort DESC by serial
@@ -185,4 +224,16 @@ watch(searchQuery, (newVal) => {
 watch(statusFilter, () => {
   currentPage.value = 1;
 });
+
+const deleteRow = async (serial) => {
+  try {
+    await axios.delete(`/api/tpmdata/${serial}`);
+    tpmData.value = tpmData.value.filter(item => item.serial !== serial);
+    confirmDeleteFor.value = null; // reset confirm after delete
+    console.log(`[Row Deleted]: Serial ${serial}`);
+  } catch (error) {
+    console.error(`[Error Deleting Row]: Serial ${serial}`, error);
+    confirmDeleteFor.value = null; // reset confirm on error too
+  }
+};
 </script>
