@@ -927,6 +927,20 @@
     // Register all Chart.js components using registerables
     Chart.register(...registerables);
 
+    const userManageLogging = async (logEvent) => {
+        try{
+            const responseUserLogging = await axios.post('/api/userlogs', {
+                user: state.user.firstName + " " + state.user.surname,
+                event: logEvent,
+                section: 'Manage',
+            });
+
+            //console.log('responseUserLogin-data: ',responseUserLogin.data);
+        }catch(error){
+            console.error('userManageLogging post request failed: ',error);
+        }
+    }
+
     //UI VISIBILITY variables...
     const showFurnaceCreatedNotif = ref(false);
     const showNoFurnaceDetectedNotif = ref(false);
@@ -2573,6 +2587,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } finally {
             showProceed3.value = false;
             toggleManageForm.value = false;
+            await userManageLogging('created '+ serialNo.value +' data successfully');
         }
         await fetchDataCreateGraph();
     };

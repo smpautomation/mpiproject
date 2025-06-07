@@ -86,10 +86,27 @@ import { Inertia } from '@inertiajs/inertia';
 
 const { state, logout } = useAuth();
 
-const handleLogout = () => {
-  logout();
-  Inertia.visit('/');
+const handleLogout = async () => {
+    logUserLogout()
+    .then(() => {
+        logout();
+        Inertia.visit('/');
+    });
 };
+
+const logUserLogout = async () => {
+    try{
+        const responseUserLogin = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: 'has logged out',
+            section: 'System',
+        });
+
+        console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('responseUserLogin post request failed: ',error);
+    }
+}
 
 // Define the navigation lists here
 const navItems = [

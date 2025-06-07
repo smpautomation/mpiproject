@@ -14,6 +14,7 @@ use App\Http\Controllers\MieGxDataInstructionsAggregateController;
 use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\UserLogController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -101,6 +102,8 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+Route::apiResource('userlogs',UserLogController::class);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

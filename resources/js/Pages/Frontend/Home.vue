@@ -269,8 +269,58 @@ import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js';
+import { post } from 'jquery';
 
 const { state, fetchUser } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 5000; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        await logUserLogin();
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
+
+const logUserLogin = async () => {
+    try{
+        const responseUserLogin = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: 'has logged in',
+            section: 'System',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('responseUserLogin post request failed: ',error);
+    }
+}
 
 const username = ref('');
 const password = ref('');
@@ -306,14 +356,6 @@ const switchToRegister = () => {
   username.value = '';
   password.value = '';
 };
-
-const showSuccessFace = () => {
-  loginSuccess.value = true;
-  showRegister.value = false;
-  username.value = '';
-  password.value = '';
-  resetRegisterForm();
-}
 
 // Registration form fields with updated keys
 const registerForm = ref({
@@ -369,6 +411,8 @@ const login = async () => {
 
     // Optionally fetchUser or redirect here if needed
     await fetchUser();
+
+    await checkAuthentication();
 
   } catch (e) {
     loginSuccess.value = false;   // Reset here on failure

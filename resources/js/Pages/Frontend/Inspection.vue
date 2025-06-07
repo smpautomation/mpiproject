@@ -257,6 +257,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userInspectionLogging = async (logEvent) => {
+    try{
+        const responseInspectionLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Inspection',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('responseInspectionLogging post request failed: ',error);
+    }
+}
+
 
 // UI visibility reactive states
 const showMainUI = ref(true);
@@ -340,9 +354,11 @@ function convertToUppercase() {
 const submitData = async () => {
   try {
     if (isEditMode.value) {
-      await axios.patch(`/api/inspectiondata/${currentEditId.value}`, formData.value);
+        await axios.patch(`/api/inspectiondata/${currentEditId.value}`, formData.value);
+        userInspectionLogging(`has successfully updated existing data specs model ${formData.value.model}`);
     } else {
-      await axios.post("/api/inspectiondata", formData.value);
+        await axios.post("/api/inspectiondata", formData.value);
+        userInspectionLogging(`has successfully inserted new data specs model ${formData.value.model}`);
     }
 
     isEditMode.value = false;

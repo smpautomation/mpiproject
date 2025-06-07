@@ -26,13 +26,13 @@
                         :disabled="filteredReports.filter(r => r.checked === 1).length === 0"
                         :class="[
                             'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
-                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by || !r.approved_by_firstname)).length === 0
+                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by_firstname)).length === 0
                                 ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
                                 : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
                         ]"
                     >
                         {{
-                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by || !r.approved_by_firstname)).length === 0
+                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by_firstname)).length === 0
                                 ? 'No eligible data to approve'
                                 : filteredReports
                                     .filter(r => r.checked === 1)
@@ -166,6 +166,21 @@ const checkAuthentication = async () => {
         return false; // Indicate not authenticated
     }
 };
+
+const userApprovalLogging = async (logEvent) => {
+    try{
+        const responseApprovalLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Approval',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userApprovalLogging post request failed: ',error);
+    }
+}
+
 // UI
 
 const statusFilter = ref('ALL');
@@ -243,48 +258,6 @@ const checkAllToggle = () => {
     }
 };
 
-const checkCurrentUser = async () => {
-    try {
-        const responseFindApprovers = await axios.get("/api/approver");
-        const approvers = responseFindApprovers.data.data?.Approvers || [];
-
-        // Filter by IP first
-        const matchingUsers = approvers.filter(column => column.ip_address === ipAddress.value);
-
-        if (matchingUsers.length > 0) {
-            const userData = matchingUsers[0];
-
-            // ✅ Check name gate
-            if (userData.approver_name === "ITADANI KAZUYA" || userData.approver_name === "AUTOMATION" || userData.approver_name === "RIZZA ENDAYA") {
-                currentUserData.value = [userData];
-                currentUserName.value = userData.approver_name;
-                currentUserApproverStage.value = userData.approval_stage;
-                currentUserIP.value = userData.ip_address;
-
-                console.log('current user name: ', currentUserName.value);
-                console.log('current approver stage: ', currentUserApproverStage.value);
-                console.log('current user IP: ', currentUserIP.value);
-            } else {
-                console.warn("User found by IP, but name does not match Authorized users.");
-                currentUserData.value = [];
-                currentUserName.value = '';
-                currentUserApproverStage.value = '';
-                currentUserIP.value = '';
-            }
-
-        } else {
-            console.warn("No approver found for the current IP address.");
-            currentUserData.value = [];
-            currentUserName.value = '';
-            currentUserApproverStage.value = '';
-            currentUserIP.value = '';
-        }
-
-    } catch (error) {
-        console.error("Error on checkCurrentUser API GET request", error);
-    }
-}
-
 const showReportData = async () => {
     try {
         const response = await axios.get(`/api/reportdata/`);
@@ -354,12 +327,13 @@ const confirmationApprove = async () => {
             const reportData = {
                 approved_by_firstname: state.user.firstName,
                 approved_by_surname: state.user.surname, // Set the approved_by field to "ITADANI KAZUYA"
-                approved_by_date: dateNow
+                approved_by_date: dateNow,
             };
 
             // Send a PATCH request to update the 'approved_by' field
             const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
             //console.log(`Successfully approved report with serial ${serial}:`, response.data);
+            await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
             showApprovedNotification("Approved Successfully");
             showReportData();
             showApproveButton.value = true;

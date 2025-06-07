@@ -1011,7 +1011,7 @@
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button v-if="(currentUserIP == ipAddress) && (approvedByPerson == '' || approvedByPerson == null) && !isFromApproval" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-if="(!checkedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
@@ -1104,6 +1104,26 @@ const checkAuthentication = async () => {
     }
 };
 
+const userReportLogging = async (logEvent) => {
+    try{
+        const responseReportLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Report',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userReportLogging post request failed: ',error);
+    }
+}
+
+const saveReportButtonVisibility = () => {
+    if(!checkedByPerson_firstName.value && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')){
+        showReportSaveButton.value = true;
+    }
+}
+
 const timeOfDay = computed(() => {
   const hour = new Date().getHours();
   if (hour < 12) return 'Morning';
@@ -1139,7 +1159,7 @@ const showReportContent = ref(false);
 const showReportMain = ref(false);
 const showReportProceedButtons = ref(true);
 const showSelectionPanel = ref(true);
-const showReportSaveButton = ref(true);
+const showReportSaveButton = ref(false);
 const showExitButton = ref(true);
 
 const showApprovedByDefault = ref(true);
@@ -2303,7 +2323,7 @@ const showReportData = async () => {
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
-
+        saveReportButtonVisibility();
         // Final result conditions
 
         setTimeout(() => {
@@ -2546,6 +2566,7 @@ const confirmPreparedByStamp = async () => {
     //console.log('preparedBy Payload: ',preparedByData.value);
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, preparedByData);
     //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    await userReportLogging(`has successfully stamped Prepared By of serial ${currentSerialSelected.value}`);
 
     try {
         const emailPayload = {
@@ -2612,9 +2633,11 @@ const confirmCheckedByStamp = async () => {
         checked_by_surname: state.user.surname,
         checked_by_date: dateNow
     };
-    console.log('checkedBy Payload: ',checkedByData.value);
+    //console.log('checkedBy Payload: ',checkedByData.value);
     const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, checkedByData);
-    console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+    //console.log(`Successfully approved report with serial ${currentSerialSelected.value}:`, response.data);
+
+    await userReportLogging(`has successfully stamped Checked By of serial ${currentSerialSelected.value}`);
 
     try {
         const emailPayload = {

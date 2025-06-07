@@ -105,76 +105,135 @@
 
             <!-- Logs Panel -->
             <div class="w-full max-w-4xl p-6 bg-gray-700 rounded-2xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-200">System Logs</h3>
+                <div>
+                    <!-- Filters Section -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
+                    <!-- Search Logs -->
+                    <input
+                        type="text"
+                        placeholder="Search logs..."
+                        v-model="searchQuery"
+                        class="flex-grow px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                <!-- Filters Section -->
-                <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
-                    <input type="text" placeholder="Search logs..." class="flex-grow px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                    <select class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <!-- Filter by User -->
+                    <select
+                        v-model="selectedUser"
+                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
                         <option value="">All Users</option>
-                        <option value="JohnDoe">JohnDoe</option>
-                        <option value="JaneDoe">JaneDoe</option>
+                        <option v-for="user in uniqueUsers" :key="user" :value="user">{{ user }}</option>
                     </select>
-                    <select class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <!-- Filter by Section -->
+                    <select
+                        v-model="selectedSection"
+                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">All Section</option>
+                        <option v-for="section in uniqueSections" :key="section" :value="section">{{ section }}</option>
+                    </select>
+
+                    <!-- Sort Logs -->
+                    <select
+                        v-model="sortOrder"
+                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
                         <option value="">Sort by</option>
                         <option value="newest">Newest</option>
                         <option value="oldest">Oldest</option>
                     </select>
-                    <input type="date" class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
 
-                <!-- Manual Log Buttons -->
-                <div class="flex flex-wrap items-center gap-4 mt-4">
-                    <button class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">Register Bug Fix</button>
-                    <button class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700">Register System Update</button>
-                    <button class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700">Register Maintenance</button>
-                </div>
+                    <!-- Filter by Date -->
+                    <input
+                        type="date"
+                        v-model="selectedDate"
+                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    </div>
 
-                <!-- Logs Section -->
-                <div class="mt-4 space-y-2 max-h-64 overflow-auto">
-                    <div class="p-3 bg-gray-600 rounded-lg shadow-sm">
-                        <span class="text-sm text-gray-300">System initialized at 09:45 AM</span>
+                    <!-- Logs Section -->
+                    <div class="mt-4 space-y-2 max-h-64 overflow-auto">
+                    <div
+                        v-for="log in filteredLogs"
+                        :key="log.id"
+                        class="p-3 bg-gray-600 rounded-lg shadow-sm"
+                    >
+                        <span class="text-sm">
+                        <span class="text-orange-600 mr-2">[{{ log.section }}]</span>
+                        <span class="text-gray-200 mr-2">[{{ formatDate(log.created_at) }}]</span>
+                        <span class="text-green-400 mr-2">{{ log.user }}</span>
+                        <span class="text-blue-400 mr-2">{{ log.event }}</span>
+                        <span class="text-gray-400 mr-2">at {{ formatTime(log.created_at) }}</span>
+                        </span>
                     </div>
-                    <div class="p-3 bg-gray-600 rounded-lg shadow-sm">
-                        <span class="text-sm text-gray-300">User JohnDoe added at 10:15 AM</span>
-                    </div>
-                    <div class="p-3 bg-gray-600 rounded-lg shadow-sm">
-                        <span class="text-sm text-gray-300">Server updated at 11:30 AM</span>
-                    </div>
-                    <div class="p-3 bg-gray-600 rounded-lg shadow-sm">
-                        <span class="text-sm text-gray-300">User JaneDoe logged in at 09:50 AM</span>
-                    </div>
-                    <div class="p-3 bg-gray-600 rounded-lg shadow-sm">
-                        <span class="text-sm text-gray-300">Password changed by User JohnDoe at 10:20 AM</span>
-                    </div>
-                    <div class="p-3 bg-gray-600 rounded-lg shadow-sm">
-                        <span class="text-sm text-gray-300">Database backup completed at 12:00 PM</span>
                     </div>
                 </div>
             </div>
+            <!-- End of Logs Panel -->
         </div>
     </Frontend>
 </template>
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import axios from 'axios';
+import { useAuth } from '@/Composables/useAuth.js'
+
+const { state } = useAuth();
+
+const userAdminLogging = async (logEvent) => {
+    try{
+        const responseAdminLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Admin',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('responseAdminLogging post request failed: ',error);
+    }
+}
+
+const getToday = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0]; // Formats to YYYY-MM-DD
+};
 
 const users = ref([]);
 const editingUser = ref(null);
 const tempRole = ref("");
+const allUserLogs = ref([]);
+const searchQuery = ref('');
+const selectedUser = ref('');
+const selectedSection = ref('');
+const sortOrder = ref('');
+const selectedDate = ref(getToday());
+const uniqueUsers = ref([]);
+const uniqueSections = ref([]);
 
 const startEditing = (user) => {
-  editingUser.value = user.employee_id; // Updated to match API response
-  tempRole.value = user.access_type;   // Updated to match API response
+    editingUser.value = user.employee_id; // Updated to match API response
+    tempRole.value = user.access_type;   // Updated to match API response
 };
 
 const cancelEditing = () => {
-  editingUser.value = null;
-  tempRole.value = "";
+    editingUser.value = null;
+    tempRole.value = "";
 };
 
+const formatDate = (isoString) => {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',  // Jun, Jul etc.
+    day: 'numeric',
+    timeZone: 'Asia/Manila'  // Set your timezone here
+  });
+};
 
 const saveRole = async (user) => {
   try {
@@ -182,19 +241,25 @@ const saveRole = async (user) => {
         access_type: tempRole.value
     });
 
-    console.log(`Response from server:`, response.data);
+    //console.log(`Response from server:`, response.data);
 
     // Update the user's role in the local state if the update succeeds
     user.access_type = tempRole.value;
     editingUser.value = null;
     tempRole.value = "";
 
-    console.log(`Role for ${user.username} updated to: ${user.access_type}`);
+    //console.log(`Role for ${user.username} updated to: ${user.access_type}`);
+    await userAdminLogging(`Updated role for ${user.firstName} ${user.surname} to: ${user.access_type}`);
   } catch (error) {
     console.error(`Error updating role for ${user.username}:`, error);
     // Optional: Add error handling logic, e.g., show a toast notification
   }
 };
+
+const formatTime = (date) => {
+    if (!date) return '';
+    return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
 const fetchAllUsers = async () => {
   try {
@@ -207,8 +272,64 @@ const fetchAllUsers = async () => {
   }
 };
 
+const fetchAllLogs = async () => {
+    try {
+        const response = await axios.get('/api/userlogs');
+        allUserLogs.value = response.data;
+        console.log('allUserLogs-array: ',allUserLogs.value);
+        // Extract unique users dynamically
+        const usersSet = new Set(allUserLogs.value.map(log => log.user).filter(Boolean));
+        uniqueUsers.value = Array.from(usersSet).sort();
+        const sectionsSet = new Set(allUserLogs.value.map(log => log.section).filter(Boolean));
+        uniqueSections.value = Array.from(sectionsSet).sort();
+        //console.log('uniqueUsers array: ',uniqueUsers.value);
+        //console.log('uniqueSections array: ',uniqueSections.value);
+    } catch (error) {
+        console.error('Failed to fetch logs:', error);
+    }
+}
+
+// Computed: filtered and sorted logs
+const filteredLogs = computed(() => {
+    let logs = [...allUserLogs.value]
+
+    // Filter by search query (event or user)
+    if (searchQuery.value.trim()) {
+        const query = searchQuery.value.toLowerCase()
+        logs = logs.filter(log =>
+        (log.event?.toLowerCase().includes(query)) ||
+        (log.user?.toLowerCase().includes(query))
+        )
+    }
+
+    // Filter by selected user
+    if (selectedUser.value) {
+        logs = logs.filter(log => log.user === selectedUser.value)
+    }
+
+    // Filter by selected section
+    if (selectedSection.value) {
+        logs = logs.filter(log => log.section === selectedSection.value);
+    }
+
+    // Filter by selected date (exact date match)
+    if (selectedDate.value) {
+        logs = logs.filter(log => log.created_at?.startsWith(selectedDate.value))
+    }
+
+    // Sort by date
+    if (sortOrder.value === 'newest') {
+        logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    } else if (sortOrder.value === 'oldest') {
+        logs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    }
+
+    return logs
+})
+
 onMounted(async() => {
   await fetchAllUsers();
+  await fetchAllLogs();
 });
 
 </script>

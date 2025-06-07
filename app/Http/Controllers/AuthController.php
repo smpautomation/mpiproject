@@ -63,7 +63,7 @@ class AuthController extends Controller
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'plant' => ['nullable', 'string', 'max:255'],
             'employee_id' => ['nullable', 'string', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'password' => ['required', 'confirmed', 'min:4'],
         ]);
 
         // Log the validated input
