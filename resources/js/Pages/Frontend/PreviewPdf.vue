@@ -1610,14 +1610,16 @@ const printApprovedBy_lastName = ref('');
 const getFontSize = (name) => {
   const length = name.length;
 
-  if (length <= 4) return 'text-[23px]';         // Very short names
-  if (length === 5) return 'text-[22px]';
-  if (length === 6) return 'text-[18px]';
-  if (length === 7) return 'text-[12px]';
-  if (length === 8) return 'text-[14px]';         // Mid point
-  if (length === 9) return 'text-[12px]';
-  if (length === 10) return 'text-[10px]';
-  if (length === 11) return 'text-[8px]';
+    if (length <= 4) return 'text-[23px]';         // Very short names
+    if (length === 5) return 'text-[22px]';
+    if (length === 6) return 'text-[18px]';
+    if (length === 7) return 'text-[12px]';
+    if (length === 8) return 'text-[14px]';         // Mid point
+    if (length === 9) return 'text-[13px]';
+    if (length === 10) return 'text-[12px]';
+    if (length === 11) return 'text-[12px]';
+    if (length === 12) return 'text-[12px] mt-4 mb-1';
+    if (length === 13) return 'text-[11px]';
   return 'text-[14px]';                          // 12 or more characters
 };
 
