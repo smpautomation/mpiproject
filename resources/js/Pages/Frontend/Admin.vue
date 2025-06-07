@@ -3,23 +3,41 @@
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-500">
             <!-- User Access Control Panel -->
             <div class="w-full max-w-5xl p-6 bg-gray-700 rounded-2xl shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-200">User Access Control</h2>
-                <div class="mt-4 space-y-4">
+                <div class="flex flex-row items-center self-start justify-start mb-4 space-x-1">
+                    <span
+                        class="w-12 h-12 transition duration-300 bg-center bg-no-repeat bg-cover"
+                        :style="{
+                        backgroundImage: 'url(\'/photo/cogwheel.png\')',
+                        backgroundSize: '80%'
+                        }"
+                    ></span>
+                    <h2 class="text-xl font-semibold text-gray-200">User Access Control</h2>
+                </div>
+                <div class="mt-2 space-y-2">
                 <!-- Manage Roles Section -->
                 <div class="bg-gray-600 rounded-lg shadow-sm">
-                    <h3 class="px-4 py-2 text-lg font-medium text-gray-300">Manage Roles</h3>
+                    <div class="flex flex-row items-center self-start justify-start space-x-1 pl-4 pt-3">
+                        <span
+                            class="w-8 h-8 transition duration-300 bg-center bg-no-repeat bg-cover"
+                            :style="{
+                            backgroundImage: 'url(\'/photo/user-gear.png\')',
+                            backgroundSize: '80%'
+                            }"
+                        ></span>
+                        <h3 class="text-lg font-medium text-gray-300">Manage Roles</h3>
+                    </div>
                     <div class="p-4 space-y-2">
                     <div class="overflow-auto max-h-64">
                         <table class="w-full text-sm text-left text-gray-300">
                         <thead class="text-gray-400 uppercase bg-gray-700">
                             <tr>
-                            <th scope="col" class="px-4 py-3">First Name</th>
-                            <th scope="col" class="px-4 py-3">Last Name</th>
-                            <th scope="col" class="px-4 py-3">Username</th>
-                            <th scope="col" class="px-4 py-3">Employee ID</th>
-                            <th scope="col" class="px-4 py-3">Plant</th>
-                            <th scope="col" class="px-4 py-3">Current Role</th>
-                            <th scope="col" class="px-4 py-3">Actions</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">First&nbsp;Name</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Last&nbsp;Name</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Username</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Employee&nbsp;ID</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Plant</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Current&nbsp;Role</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
                             <tbody>
@@ -90,7 +108,7 @@
                     <div class="mt-4 p-4 max-h-40 overflow-y-auto bg-gray-700 text-gray-300 text-xs rounded-lg border border-gray-600">
                     <strong class="block mb-2 text-sm text-yellow-300">Role Instructions</strong>
                     <ul class="list-disc list-inside space-y-1 leading-tight">
-                        <li><strong>Basic User</strong> → Manage, Inspection, and View List (Cannot stamp)</li>
+                        <li><strong>Basic User (default)</strong> → Manage, Inspection, and View List (Cannot stamp)</li>
                         <li><strong>Preparation Approver</strong> → All except Approval/Admin (Prepared By Stamping)</li>
                         <li><strong>Checking Approver</strong> → All except Approval/Admin (Checked By Stamping)</li>
                         <li><strong>Hybrid Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)</li>
