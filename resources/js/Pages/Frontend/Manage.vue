@@ -896,11 +896,12 @@
         try {
 
             const start = Date.now();
-            const timeout = 5000; // 5 seconds
+            const timeout = 500; // 5 seconds
 
             while (!state.user) {
                 if (Date.now() - start > timeout) {
                     console.error('Auth timeout: user data failed to load within 5 seconds.');
+                    Inertia.visit('/'); // Redirect if not authenticated
                     return false;
                 }
                 await new Promise(resolve => setTimeout(resolve, 50)); // small delay

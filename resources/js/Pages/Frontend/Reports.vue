@@ -1073,11 +1073,12 @@ const checkAuthentication = async () => {
     try {
 
         const start = Date.now();
-        const timeout = 5000; // 5 seconds
+        const timeout = 500; // 5 seconds
 
         while (!state.user) {
             if (Date.now() - start > timeout) {
                 console.error('Auth timeout: user data failed to load within 5 seconds.');
+                Inertia.visit('/'); // Redirect if not authenticated
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50)); // small delay
@@ -1465,9 +1466,11 @@ const getFontSize = (name) => {
     if (length === 6) return 'text-[26px]';
     if (length === 7) return 'text-[24px]';
     if (length === 8) return 'text-[22px]';         // Mid point
-    if (length === 9) return 'text-[20px]';
-    if (length === 10) return 'text-[18px]';
-    if (length === 11) return 'text-[16px]';
+    if (length === 9) return 'text-[21px]';
+    if (length === 10) return 'text-[20px]';
+    if (length === 11) return 'text-[19px]';
+    if (length === 12) return 'text-[19px]';
+    if (length === 13) return 'text-[18px]';
     return 'text-[14px]';                          // 12 or more characters
 };
 
