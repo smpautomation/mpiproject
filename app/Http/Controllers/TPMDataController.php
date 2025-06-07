@@ -575,18 +575,32 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
-    public function destroy($id){
-        try{
-            $tpmData = TPMData::findorfail($id);
-            $tpmData->delete();
+    public function destroy($serial_no)
+    {
+        try {
+            // Begin database transaction
+            DB::beginTransaction();
+
+            // Delete related records
+            TPMData::where('serial_no', $serial_no)->delete();
+            TPMDataCategory::where('tpm_data_serial', $serial_no)->delete();
+            ReportData::where('tpm_data_serial', $serial_no)->delete();
+            TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->delete();
+
+            // Commit the transaction
+            DB::commit();
+
             return response()->json([
                 'status' => true,
-                'message' => 'tmp Data deleted successfully'
+                'message' => 'TPM data and related records deleted successfully'
             ], 200);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of error
+            DB::rollBack();
+
             return response()->json([
                 'status' => false,
-                'message' => 'Error deleting tmp Data',
+                'message' => 'Error deleting TPM data and related records',
                 'error' => $e->getMessage(),
             ], 500);
         }

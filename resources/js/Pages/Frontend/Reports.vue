@@ -814,14 +814,23 @@
                             </tbody>
                         </table>
                     </div>
+
                     <div class="flex flex-row items-center justify-center mx-5 mt-5 align-middle">
                         <p class="m-5 text-lg font-extrabold">Remarks:</p>
-                        <input
-                            v-model="reportRemarks"
-                            type="text"
-                            @input="reportRemarks = reportRemarks.toUpperCase()"
-                            class="w-full px-2 py-1 text-sm transition duration-200 ease-in-out bg-transparent bg-white border border-white rounded-md hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white"
-                        />
+                        <div class="flex flex-col w-full">
+                            <span class="text-blue-600">
+                                {{ reportRemarks2 }}
+                            </span>
+                            <span class="text-blue-600">
+                                {{ reportRemarks3 }}
+                            </span>
+                            <input
+                                v-model="reportRemarks"
+                                type="text"
+                                @input="reportRemarks = reportRemarks.toUpperCase()"
+                                class="px-2 py-1 text-sm transition duration-200 ease-in-out bg-transparent bg-white border border-white rounded-md hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white"
+                            />
+                        </div>
                         <div class="px-0 py-5 mx-5 bg-blue-300 shadow-xl rounded-2xl">
                             <p
                                 class="mx-10 text-xl font-extrabold transition-opacity duration-1000 animate-pulse"
@@ -834,6 +843,7 @@
                             </p>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE -->
@@ -1331,6 +1341,9 @@ const approvedByPerson_lastName = ref('');
 
 const reportNotificationMessage = ref('');
 
+const tpmDataQuantity = ref(0);
+const withAdditionalSampleForRemarks = ref(false);
+
 //general variables end
 
 /// to be put in the form
@@ -1343,6 +1356,8 @@ const reportShift = ref('NA');
 const reportTotalQuantity = ref('0');
 const reportOperator = ref('NA');
 const reportRemarks = ref('NA');
+const reportRemarks2 = ref(' - ');
+const reportRemarks3 = ref(' - ');
 
 const reportLength = ref('NA');
 const reportWidth = ref('NA');
@@ -1793,42 +1808,7 @@ const uncheckReport = async () => {
     }
 }
 
-const sec_additional_button = () => {
-    //redirect here
-}
-
 const reportErrorMessage = ref('');
-
-const ensureFetchAllDataCompletes = async (timeout = 10000) => {
-    return new Promise(async (resolve, reject) => {
-        let completed = false;
-
-        const timer = setTimeout(() => {
-            if (!completed) {
-                console.error("Timeout: fetchAllData took too long");
-                reject(new Error("Timeout waiting for fetchAllData"));
-            }
-        }, timeout);
-
-        try {
-            await fetchAllData();
-
-            // Optional: add post-fetch validation here
-            if (!finalPayload.value || finalPayload.value.length === 0) {
-                clearTimeout(timer);
-                return reject(new Error("fetchAllData returned empty or invalid payload"));
-            }
-
-            completed = true;
-            clearTimeout(timer);
-            resolve();
-        } catch (e) {
-            clearTimeout(timer);
-            console.error("fetchAllData failed:", e.message);
-            reject(new Error("fetchAllData failed: " + e.message));
-        }
-    });
-};
 
 const generateReport = async () => {
     try {
@@ -1912,6 +1892,18 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
 };
 
+const autoCheckRemarks = () => {
+    //console.log("AUTOCHECK REMARKS WAS ENTERED!")
+    if(reportiHcVariance.value > 1500 || tpmDataQuantity.value > 5 || withAdditionalSampleForRemarks.value == true){
+        reportRemarks2.value = 'With Additional Samples';
+        //console.log("withAdditionalSampleForRemarks is currently: ", withAdditionalSampleForRemarks.value);
+    }
+
+    if(reportiHcVariance.value > 1500){
+        reportRemarks3.value = 'With iHc Variance above 1500 Oe';
+    }
+}
+
 const fetchAllData = async () => {
     try {
         const serial = currentSerialSelected.value;
@@ -1932,6 +1924,8 @@ const fetchAllData = async () => {
         }
 
         tpmData.value = rawData;
+        tpmDataQuantity.value = modelData.length;
+        //console.log('TPM TOTAL -> ',tpmDataQuantity.value);
         getTpmModel.value = modelData;
 
         fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");
@@ -1977,6 +1971,8 @@ const fetchAllData = async () => {
         };
 
         await createReport(repData, serial);
+
+
 
         isLoading.value = false;
 
@@ -2144,6 +2140,8 @@ const showReportData = async () => {
         reportMaterialGrade.value = filterBySerial[0].material_grade;
         reportMPISampleQty.value = filterBySerial[0].mpi_sample_quantity;
         reportRemarks.value = filterBySerial[0].remarks;
+        reportRemarks2.value = filterBySerial[0].remarks2;
+        reportRemarks3.value = filterBySerial[0].remarks3;
         reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
         preparedByPerson.value = filterBySerial[0].prepared_by;
         checkedByPerson.value = filterBySerial[0].checked_by;
@@ -2327,6 +2325,8 @@ const showReportData = async () => {
         await checkApprovalStates();
         await checkSpecialJudgement();
         saveReportButtonVisibility();
+        autoCheckRemarks();
+
         // Final result conditions
 
         setTimeout(() => {
@@ -2359,6 +2359,8 @@ const saveReport = async () => {
         "total_quantity": reportTotalQuantity.value,
         "operator": reportOperator.value,
         "remarks": reportRemarks.value,
+        "remarks2": reportRemarks2.value,
+        "remarks3": reportRemarks3.value,
         "smp_judgement":reportSMPJudgement.value,
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
@@ -2736,23 +2738,27 @@ const evaluateAllRejectReasons = async () => {
         //console.log('Evaluating rejection reasons part1...');
 
     if (getAlliHkiHcNG.value.includes("1")) {
-      //console.log('Condition met: getAlliHkiHcNG includes "1"');
-      noteReasonForReject.value.push('- N.G iHc-iHk');
+        //console.log('Condition met: getAlliHkiHcNG includes "1"');
+        noteReasonForReject.value.push('- N.G iHc-iHk');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     if (getAllBr4paiNG.value.includes("1")) {
-      //console.log('Condition met: getAllBr4paiNG includes "1"');
-      noteReasonForReject.value.push('- N.G Br-4PIa');
+        //console.log('Condition met: getAllBr4paiNG includes "1"');
+        noteReasonForReject.value.push('- N.G Br-4PIa');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     if (getAllBHMaxNG.value.includes("1")) {
-      //console.log('Condition met: getAllBHMaxNG includes "1"');
-      noteReasonForReject.value.push('- N.G BH(max)');
+        //console.log('Condition met: getAllBHMaxNG includes "1"');
+        noteReasonForReject.value.push('- N.G BH(max)');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     if (getAllbHcNG.value.includes("1")) {
-      //console.log('Condition met: getAllbHcNG includes "1"');
-      noteReasonForReject.value.push('- N.G bHc');
+        //console.log('Condition met: getAllbHcNG includes "1"');
+        noteReasonForReject.value.push('- N.G bHc');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
@@ -2770,26 +2776,32 @@ const evaluateAllRejectReasons = async () => {
     }
 
     if (reportihcMinimum.value < inspectioniHcStandard.value) {
-      //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
-      noteReasonForReject.value.push('- N.G iHc');
+        //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
+        withAdditionalSampleForRemarks.value =  true;
+        //console.log("This is NG IHC triggered and the value is currently: ",withAdditionalSampleForRemarks.value);
+        noteReasonForReject.value.push('- N.G iHc');
     } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
-      //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
-      noteReasonForReject.value.push('- iHc Below Target+500 Oe');
+        //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
+        noteReasonForReject.value.push('- iHc Below Target+500 Oe');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     if (reportihkMinimum.value < inspectioniHkStandard.value) {
-     // console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
-      noteReasonForReject.value.push('- N.G iHk');
+        //console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
+        noteReasonForReject.value.push('- N.G iHk');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     if ((reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) && (getAlliHr95NG.value.includes("1"))) {
-      //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
-      noteReasonForReject.value.push('- N.G Hr95');
+        //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
+        noteReasonForReject.value.push('- N.G Hr95');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     if ((reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) && (getAlliHr98NG.value.includes("1"))) {
-      //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
-      noteReasonForReject.value.push('- N.G Hr98');
+        //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
+        noteReasonForReject.value.push('- N.G Hr98');
+        withAdditionalSampleForRemarks.value =  true;
     }
 
     //console.log('Final Rejection Reasons part 2:', noteReasonForReject.value);

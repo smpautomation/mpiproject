@@ -22,7 +22,16 @@
       <!-- A4 Layout Box -->
       <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
         <!-- Report Title -->
-        <h1 :class="{ 'leading-loose': adjustStyling }" class="mt-4 mb-2 text-2xl font-bold text-center bg-gray-300">GBDP MAGNETIC PROPERTY INSPECTION REPORT</h1>
+        <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="text-center bg-gray-300 overflow-visible">
+            <h1
+                :class="{
+                    'relative -top-3': adjustStyling // Forces the text outside the top bounds
+                }"
+                class="text-2xl font-bold"
+            >
+                GBDP&nbsp;MAGNETIC&nbsp;PROPERTY&nbsp;INSPECTION&nbsp;REPORT
+            </h1>
+        </div>
         <!-- Oven Heating Information -->
         <div class="flex flex-row justify-between">
             <p class="mb-2 text-xl font-extrabold">Oven Heating Information</p>
@@ -428,11 +437,19 @@
             </div>
         </div>
         <div class="mb-2">
-            <div class="flex flex-row">
-                <span class="mr-2 text-sm font-semibold">Remarks:</span>
-                <span :class="{ 'leading-loose': adjustStyling }" class="inline-block w-full text-sm border-b border-gray-500">
-                    {{ printRemarks }}
-                </span>
+            <div class="flex flex-row justify-center items-center">
+                <span :class="{ 'mb-14': adjustStyling }" class="mr-2 text-sm font-semibold align-top mb-10">Remarks:</span>
+                <div class="flex flex-col w-full">
+                    <span :class="{ 'leading-loose': adjustStyling }" class="inline-block w-full text-sm border-b border-gray-500">
+                        {{ printRemarks2 }}
+                    </span>
+                    <span :class="{ 'leading-loose': adjustStyling }" class="inline-block w-full text-sm border-b border-gray-500">
+                        {{ printRemarks3 }}
+                    </span>
+                    <span :class="{ 'leading-loose': adjustStyling }" class="inline-block w-full text-sm border-b border-gray-500">
+                        {{ printRemarks }}
+                    </span>
+                </div>
                 <div class="mx-10">
                     <span class="font-extrabold text-center"
                     :class="{
@@ -588,7 +605,16 @@
         <!-- A4 Layout Box -->
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
             <!-- Report Title -->
-            <h1 class="my-6 text-2xl font-bold leading-loose text-center bg-gray-300">PROPERTY&nbsp;DATA</h1>
+            <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="text-center bg-gray-300 overflow-visible">
+                <h1
+                    :class="{
+                        'relative -top-3': adjustStyling // Forces the text outside the top bounds
+                    }"
+                    class="text-2xl font-bold"
+                >
+                    PROPERTY&nbsp;DATA
+                </h1>
+            </div>
             <!-- Information Grid -->
             <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-5">
                 <!-- First Column -->
@@ -958,9 +984,18 @@
         <!-- A4 Layout Box -->
 
         <div v-for="index in numberOfSet" :key="index">
-            <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
-                <!-- Report Title -->
-                <h1 :class="{ 'leading-loose': adjustStyling }" class="mt-6 text-2xl font-bold text-center bg-gray-300">PROPERTY&nbsp;DATA <button v-if="!adjustStyling">Set #:{{ index }}</button></h1>
+                <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
+                    <!-- Report Title -->
+                                <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="text-center bg-gray-300 overflow-visible">
+                    <h1
+                        :class="{
+                            'relative -top-3': adjustStyling // Forces the text outside the top bounds
+                        }"
+                        class="text-2xl font-bold"
+                    >
+                        PROPERTY&nbsp;DATA <button v-if="!adjustStyling">Set #:{{ index }}</button>
+                    </h1>
+                </div>
                 <div class="flex flex-row items-center justify-center mt-2 mb-5 text-blue-600">
                     <p class="text-sm">{{ additionalRemarks[index - 1] }}</p>
                 </div>
@@ -1399,6 +1434,8 @@ const nsa_printiHcMinimum = ref('N/A');
 const nsa_printiHkMinimum = ref('N/A');
 
 const printRemarks = ref('N/A');
+const printRemarks2 = ref(' - ');
+const printRemarks3 = ref(' - ');
 const printRemarksResult = ref('N/A');
 
 const printSMPJudgement = ref('');
@@ -1684,6 +1721,8 @@ const dataFrom_reportdata = async () => {
         printOperator.value = rd.operator || 'N/A';
         printTotalQuantity.value = rd.total_quantity || 'N/A';
         printRemarks.value = rd.remarks || 'N/A';
+        printRemarks2.value = rd.remarks2 || 'N/A';
+        printRemarks3.value = rd.remarks3 || 'N/A';
         printRemarksResult.value = rd.remarks_display || 'N/A';
 
         //Under Standard Sample Dimention and Material Grade
@@ -1852,75 +1891,6 @@ const dataFrom_reportdata = async () => {
     }catch(error){
         console.error("Error on API GET REQUEST-dataFrom_reportdata function",error);
     }
-}
-
-const evaluateAllRejectReasons = () => {
-    if (!noteReasonForReject.value || noteReasonForReject.value.length === 0) {
-    noteReasonForReject.value = []; // Reset before evaluation
-
-    //console.log('Evaluating rejection reasons part1...');
-
-    if (getAlliHciHkNG.value.includes("1")) {
-      //console.log('Condition met: getAlliHkiHcNG includes "1"');
-      noteReasonForReject.value.push('- N.G iHc-iHk');
-    }
-
-    if (getAllBr4paiRemarks.value.includes("1")) {
-      //console.log('Condition met: getAllBr4paiNG includes "1"');
-      noteReasonForReject.value.push('- N.G Br-4PIa');
-    }
-
-    if (getAllBHMaxRemarks.value.includes("1")) {
-      //console.log('Condition met: getAllBHMaxNG includes "1"');
-      noteReasonForReject.value.push('- N.G BH(max)');
-    }
-
-    if (getAllbHcRemarks.value.includes("1")) {
-      //console.log('Condition met: getAllbHcNG includes "1"');
-      noteReasonForReject.value.push('- N.G bHc');
-    }
-
-    //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
-
-    //console.log('Evaluating rejection reasons part2...');
-
-    if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
-      //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
-      noteReasonForReject.value.push('- LOW BR');
-    }
-
-    if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-      //console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
-      noteReasonForReject.value.push('- HIGH BR');
-    }
-
-    if (reportihcMinimum.value < inspectioniHcStandard.value) {
-      //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
-      noteReasonForReject.value.push('- N.G iHc');
-    } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
-      //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
-      noteReasonForReject.value.push('- iHc Below Target+500 Oe');
-    }
-
-    if (reportihkMinimum.value < inspectioniHkStandard.value) {
-      //console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
-      noteReasonForReject.value.push('- N.G iHk');
-    }
-
-    if (reportihr95Minimum.value < Number(inspectioniHcStandard.value) - 750) {
-      //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
-      noteReasonForReject.value.push('- N.G Hr95');
-    }
-
-    if (reportihr98Minimum.value < Number(inspectioniHcStandard.value) - 1250) {
-      //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
-      noteReasonForReject.value.push('- N.G Hr98');
-    }
-
-    //console.log('Final Rejection Reasons part 2:', noteReasonForReject.value);
-  } else {
-    //console.log('Skipping rejection evaluation: Reasons already exist.');
-  }
 }
 
 const dataFrom_inspectiondata = async () => {
