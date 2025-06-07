@@ -1810,6 +1810,7 @@ const autoCheckRemarks = () => {
     //console.log("AUTOCHECK REMARKS WAS ENTERED!")
     if(reportiHcVariance.value > 1500 || tpmDataQuantity.value > 5 || withAdditionalSampleForRemarks.value == true){
         reportRemarks2.value = 'With Additional Samples';
+        //console.log("withAdditionalSampleForRemarks is currently: ", withAdditionalSampleForRemarks.value);
     }
 
     if(reportiHcVariance.value > 1500){
@@ -2725,8 +2726,9 @@ const evaluateAllRejectReasons = async () => {
 
     if (reportihcMinimum.value < inspectioniHcStandard.value) {
         //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
-        noteReasonForReject.value.push('- N.G iHc');
         withAdditionalSampleForRemarks.value =  true;
+        //console.log("This is NG IHC triggered and the value is currently: ",withAdditionalSampleForRemarks.value);
+        noteReasonForReject.value.push('- N.G iHc');
     } else if (reportihcMinimum.value < Number(inspectioniHcStandard.value) + 500) {
         //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
         noteReasonForReject.value.push('- iHc Below Target+500 Oe');
