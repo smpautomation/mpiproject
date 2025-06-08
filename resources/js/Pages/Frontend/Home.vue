@@ -2,36 +2,36 @@
     <Frontend>
 
         <div
-            class="relative flex flex-col md:flex-row items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-cover"
+            class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-cover md:flex-row"
             :style="{ backgroundImage: 'url(/photo/home_background.jpg)' }"
         >
             <!-- Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+            <div class="absolute inset-0 z-0 bg-black bg-opacity-60"></div>
 
-            <div class="relative z-10 flex flex-row items-center justify-center max-w-6xl w-full gap-16 px-4">
+            <div class="relative z-10 flex flex-row items-center justify-center w-full max-w-6xl gap-16 px-4">
                 <!-- Headline -->
                 <div
-                    class="flex-shrink-0 text-white font-extrabold tracking-widest animate-fade-in-down"
+                    class="flex-shrink-0 font-extrabold tracking-widest text-white animate-fade-in-down"
                     style="min-width: 320px;"
                 >
-                    <p class="text-3xl md:text-5xl mb-2 leading-tight text-left whitespace-normal">
+                    <p class="mb-2 text-3xl leading-tight text-left whitespace-normal md:text-5xl">
                     Welcome to
                     </p>
-                    <p class="text-4xl md:text-6xl leading-tight bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent text-left whitespace-normal">
+                    <p class="text-4xl leading-tight text-left text-transparent whitespace-normal md:text-6xl bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text">
                     the MPI Website
                     </p>
                 </div>
 
                 <!-- Form Container -->
-                <div class="form-container flex-shrink-0 w-full max-w-md">
+                <div class="flex-shrink-0 w-full max-w-md form-container">
                     <div :class="['card', cardClass, { flipped: showRegister }]">
                         <!-- Front: Login -->
                         <div class="card-face front">
                             <!-- Login Form -->
                             <div
-                                class="relative z-10 flex flex-col items-center w-full max-w-sm bg-white/20 backdrop-blur-lg rounded-xl p-10 shadow-lg animate-fade-in"
+                                class="relative z-10 flex flex-col items-center w-full max-w-sm p-10 shadow-lg bg-white/20 backdrop-blur-lg rounded-xl animate-fade-in"
                                 >
-                                <form @submit.prevent="login" class="w-full flex flex-col gap-6">
+                                <form @submit.prevent="login" class="flex flex-col w-full gap-6">
                                     <div class="input-field">
                                     <input
                                         v-model="username"
@@ -58,32 +58,32 @@
                                         @keyup="checkCapsLock"
                                     />
                                     <label for="password" class="text-white">Password</label>
-                                    <p v-if="capsLockOn" class="text-yellow-400 text-sm mt-1 select-none">
+                                    <p v-if="capsLockOn" class="mt-1 text-sm text-yellow-400 select-none">
                                         ⚠️ Caps Lock is ON
                                     </p>
                                     </div>
 
                                     <button
                                     type="submit"
-                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition mt-10"
+                                    class="w-full py-3 mt-10 font-semibold text-white transition bg-blue-600 rounded-md hover:bg-blue-700"
                                     >
                                     LOGIN
                                     </button>
-                                    <!--p v-if="error" class="text-red-400 text-center mt-2 font-medium">{{ error }}</p-->
+                                    <!--p v-if="error" class="mt-2 font-medium text-center text-red-400">{{ error }}</p-->
                                     <p
                                       v-show="loginFailed"
-                                      class="text-red-700 bg-white/10 backdrop-blur-md border border-red-700 rounded-md py-1 px-3 text-center font-medium text-sm select-none animate-fade-in-notif-login"
+                                      class="px-3 py-1 text-sm font-medium text-center text-red-700 border border-red-700 rounded-md select-none bg-white/10 backdrop-blur-md animate-fade-in-notif-login"
                                       style="max-width: 280px; margin: 0 auto 1rem auto; text-shadow: 0 0 6px rgba(255, 0, 0, 0.3);"
                                     >
                                       Username and Password do not match<br>Please try again.
                                     </p>
                                 </form>
 
-                                <p class="mt-6 text-white text-center text-sm select-none">
+                                <p class="mt-6 text-sm text-center text-white select-none">
                                     Not registered yet?
                                     <button
                                         @click="switchToRegister"
-                                        class="text-blue-400 hover:text-blue-600 font-semibold underline focus:outline-none"
+                                        class="font-semibold text-blue-400 underline hover:text-blue-600 focus:outline-none"
                                         aria-label="Go to registration form"
                                     >
                                         Register here
@@ -96,13 +96,13 @@
                         <div class="card-face back">
                             <!-- Registration modal or form toggle -->
                                 <div
-                                    class="bg-white/20 backdrop-blur-lg rounded-xl p-10 w-full max-w-sm shadow-lg relative"
+                                    class="relative w-full max-w-sm p-10 shadow-lg bg-white/20 backdrop-blur-lg rounded-xl"
                                     role="dialog"
                                     aria-modal="true"
                                 >
-                                    <form @submit.prevent="register" class="w-full flex flex-col gap-6 text-white">
+                                    <form @submit.prevent="register" class="flex flex-col w-full gap-6 text-white">
                                     <div class="flex gap-4">
-                                        <div class="input-field flex-1">
+                                        <div class="flex-1 input-field">
                                             <input
                                             v-model="registerForm.firstName"
                                             type="text"
@@ -112,9 +112,10 @@
                                             class="input"
                                             />
                                             <label for="reg-first-name" class="text-white">First Name</label>
+                                            <p class="mt-1 ml-2 text-xs text-gray-300">e.g. Juan</p>
                                         </div>
 
-                                        <div class="input-field flex-1">
+                                        <div class="flex-1 input-field">
                                             <input
                                             v-model="registerForm.surname"
                                             type="text"
@@ -124,6 +125,7 @@
                                             class="input"
                                             />
                                             <label for="reg-surname" class="text-white">Surname</label>
+                                            <p class="mt-1 ml-2 text-xs text-gray-300">e.g. Reyes</p>
                                         </div>
                                     </div>
 
@@ -140,7 +142,7 @@
                                                 />
                                                 <label for="reg-empId" class="text-white">Employee ID</label>
                                             </div>
-                                            <p class="text-xs text-gray-300 mt-1 ml-2">e.g. 006645</p>
+                                            <p class="mt-1 ml-2 text-xs text-gray-300">e.g. 006645</p>
                                         </div>
 
                                         <div class="flex-1">
@@ -155,7 +157,7 @@
                                                 />
                                                 <label for="reg-plant" class="text-white">Plant</label>
                                             </div>
-                                            <p class="text-xs text-gray-300 mt-1 ml-2">e.g. Plant 8, Plant 7</p>
+                                            <p class="mt-1 ml-2 text-xs text-gray-300">e.g. Plant 8, Plant 7</p>
                                         </div>
                                     </div>
 
@@ -210,13 +212,13 @@
                                         <label for="reg-password-confirm" class="text-white">Confirm Password</label>
                                     </div>
 
-                                    <p v-if="capsLockOn" class="text-yellow-400 text-sm mt-1 select-none">
+                                    <p v-if="capsLockOn" class="mt-1 text-sm text-yellow-400 select-none">
                                         ⚠️ Caps Lock is ON
                                     </p>
                                     <!-- v-if="registerSuccess" -->
                                     <p
                                     v-if="registerSuccess"
-                                    class="text-green-400 bg-white/10 backdrop-blur-md border border-green-400 rounded-md py-1 px-3 text-center font-medium text-sm select-none animate-fade-in-notif"
+                                    class="px-3 py-1 text-sm font-medium text-center text-green-400 border border-green-400 rounded-md select-none bg-white/10 backdrop-blur-md animate-fade-in-notif"
                                     style="max-width: 280px; margin: 0 auto 1rem auto;"
                                     >
                                     Registration successful!<br>You can now log in.
@@ -224,17 +226,17 @@
 
                                     <button
                                         type="submit"
-                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition"
+                                        class="w-full py-3 font-semibold text-white transition bg-blue-600 rounded-md hover:bg-blue-700"
                                     >
                                         REGISTER
                                     </button>
                                     </form>
 
-                                    <p v-if="registerError" class="text-red-400 text-center mt-4 font-medium">{{ registerError }}</p>
+                                    <p v-if="registerError" class="mt-4 font-medium text-center text-red-400">{{ registerError }}</p>
 
-                                    <p class="text-sm mt-4 text-center text-white">
+                                    <p class="mt-4 text-sm text-center text-white">
                                         Already have an account?
-                                        <button @click="switchToLogin" class="text-blue-400 hover:text-blue-600 font-semibold underline focus:outline-none">Login here</button>
+                                        <button @click="switchToLogin" class="font-semibold text-blue-400 underline hover:text-blue-600 focus:outline-none">Login here</button>
                                     </p>
                                 </div>
                         </div>
@@ -242,14 +244,14 @@
                         <!-- Third Face: Success -->
                         <div class="card-face success">
                           <div
-                            class="mt-24 relative z-10 flex flex-col items-center w-full max-w-sm bg-green-700/30 backdrop-blur-lg rounded-xl p-10 shadow-lg animate-fade-in text-white select-none"
+                            class="relative z-10 flex flex-col items-center w-full max-w-sm p-10 mt-24 text-white shadow-lg select-none bg-green-700/30 backdrop-blur-lg rounded-xl animate-fade-in"
                             role="alert"
                             aria-live="assertive"
                           >
-                            <h2 class="text-3xl font-extrabold mb-4 drop-shadow-md">
+                            <h2 class="mb-4 text-3xl font-extrabold drop-shadow-md">
                               <span class="gradient-metallic" data-text="Login Successful!">Login Successful!</span>
                             </h2>
-                            <p class="text-center text-base mb-6 drop-shadow-sm">
+                            <p class="mb-6 text-base text-center drop-shadow-sm">
                               You can now access different sections via the navigation bar at the top.
                             </p>
                           </div>
