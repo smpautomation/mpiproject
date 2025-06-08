@@ -2,7 +2,7 @@
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-500">
             <!-- User Access Control Panel -->
-            <div class="w-full max-w-5xl p-6 bg-gray-700 rounded-2xl shadow-lg">
+            <div class="w-full max-w-5xl p-6 bg-gray-700 shadow-lg rounded-2xl">
                 <div class="flex flex-row items-center self-start justify-start mb-4 space-x-1">
                     <span
                         class="w-12 h-12 transition duration-300 bg-center bg-no-repeat bg-cover"
@@ -16,7 +16,7 @@
                 <div class="mt-2 space-y-2">
                 <!-- Manage Roles Section -->
                 <div class="bg-gray-600 rounded-lg shadow-sm">
-                    <div class="flex flex-row items-center self-start justify-start space-x-1 pl-4 pt-3">
+                    <div class="flex flex-row items-center self-start justify-start pt-3 pl-4 space-x-1">
                         <span
                             class="w-8 h-8 transition duration-300 bg-center bg-no-repeat bg-cover"
                             :style="{
@@ -64,9 +64,13 @@
                                     <option value="Basic User">Basic User</option>
                                     <option value="Checking Approver">Checking Approver</option>
                                     <option value="Preparation Approver">Preparation Approver</option>
+                                    <option value="Proxy Approver">Proxy Approver</option>
+                                    <!-- hidden for now
+
                                     <option value="Hybrid Approver">Hybrid Approver</option>
                                     <option value="Bypass Approver">Bypass Approver</option>
-                                    <option value="Proxy Approver">Proxy Approver</option>
+
+                                    -->
                                 </select>
                                 </td>
 
@@ -105,15 +109,19 @@
                         </table>
                     </div>
                     <!-- Role Instructions Panel -->
-                    <div class="mt-4 p-4 max-h-40 overflow-y-auto bg-gray-700 text-gray-300 text-xs rounded-lg border border-gray-600">
+                    <div class="p-4 mt-4 overflow-y-auto text-xs text-gray-300 bg-gray-700 border border-gray-600 rounded-lg max-h-40">
                     <strong class="block mb-2 text-sm text-yellow-300">Role Instructions</strong>
-                    <ul class="list-disc list-inside space-y-1 leading-tight">
+                    <ul class="space-y-1 leading-tight list-disc list-inside">
                         <li><strong>Basic User (default)</strong> → Manage, Inspection, and View List (Cannot stamp)</li>
                         <li><strong>Preparation Approver</strong> → All except Approval/Admin (Prepared By Stamping)</li>
                         <li><strong>Checking Approver</strong> → All except Approval/Admin (Checked By Stamping)</li>
+                        <li><strong>Proxy Approver</strong> → Approval and Admin only (Approved By Stamp)</li>
+                        <!-- hidden for now
+
                         <li><strong>Hybrid Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)</li>
                         <li><strong>Bypass Approver</strong> → All except Admin (All stamps: Prepared, Checked, Approved)</li>
-                        <li><strong>Proxy Approver</strong> → Approval and Admin only (Approved By Stamp)</li>
+
+                        -->
                     </ul>
                     </div>
                     </div>
@@ -122,7 +130,7 @@
             </div>
 
             <!-- Logs Panel -->
-            <div class="w-full max-w-4xl p-6 bg-gray-700 rounded-2xl shadow-lg">
+            <div class="w-full max-w-4xl p-6 bg-gray-700 shadow-lg rounded-2xl">
                 <div>
                     <!-- Filters Section -->
                     <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
@@ -131,13 +139,13 @@
                         type="text"
                         placeholder="Search logs..."
                         v-model="searchQuery"
-                        class="flex-grow px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="flex-grow px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                     <!-- Filter by User -->
                     <select
                         v-model="selectedUser"
-                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">All Users</option>
                         <option v-for="user in uniqueUsers" :key="user" :value="user">{{ user }}</option>
@@ -146,7 +154,7 @@
                     <!-- Filter by Section -->
                     <select
                         v-model="selectedSection"
-                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">All Section</option>
                         <option v-for="section in uniqueSections" :key="section" :value="section">{{ section }}</option>
@@ -155,7 +163,7 @@
                     <!-- Sort Logs -->
                     <select
                         v-model="sortOrder"
-                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Sort by</option>
                         <option value="newest">Newest</option>
@@ -166,29 +174,30 @@
                     <input
                         type="date"
                         v-model="selectedDate"
-                        class="px-4 py-2 text-sm border border-gray-600 rounded-lg bg-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     </div>
 
                     <!-- Logs Section -->
-                    <div class="mt-4 space-y-2 max-h-64 overflow-auto">
+                    <div class="mt-4 space-y-2 overflow-auto max-h-64">
                     <div
                         v-for="log in filteredLogs"
                         :key="log.id"
                         class="p-3 bg-gray-600 rounded-lg shadow-sm"
                     >
                         <span class="text-sm">
-                        <span class="text-orange-600 mr-2">[{{ log.section }}]</span>
-                        <span class="text-gray-200 mr-2">[{{ formatDate(log.created_at) }}]</span>
-                        <span class="text-green-400 mr-2">{{ log.user }}</span>
-                        <span class="text-blue-400 mr-2">{{ log.event }}</span>
-                        <span class="text-gray-400 mr-2">at {{ formatTime(log.created_at) }}</span>
+                        <span class="mr-2 text-orange-600">[{{ log.section }}]</span>
+                        <span class="mr-2 text-gray-200">[{{ formatDate(log.created_at) }}]</span>
+                        <span class="mr-2 text-green-400">{{ log.user }}</span>
+                        <span class="mr-2 text-blue-400">{{ log.event }}</span>
+                        <span class="mr-2 text-gray-400">at {{ formatTime(log.created_at) }}</span>
                         </span>
                     </div>
                     </div>
                 </div>
             </div>
             <!-- End of Logs Panel -->
+             <button v-if="state.user && state.user.access_type == 'Automation'" @click="fixStampIssue" class="p-2 font-extrabold text-red-900 transition-transform duration-75 bg-yellow-500 rounded-lg active:scale-95 hover:bg-yellow-400 active:shadow-xl active:brightness-100">Fix Stamp Issue</button>
         </div>
     </Frontend>
 </template>
@@ -267,6 +276,9 @@ const selectedDate = ref(getToday());
 const uniqueUsers = ref([]);
 const uniqueSections = ref([]);
 
+//just for fixing stamp
+const reportData = ref([]);
+
 const startEditing = (user) => {
     editingUser.value = user.employee_id; // Updated to match API response
     tempRole.value = user.access_type;   // Updated to match API response
@@ -329,7 +341,7 @@ const fetchAllLogs = async () => {
     try {
         const response = await axios.get('/api/userlogs');
         allUserLogs.value = response.data;
-        console.log('allUserLogs-array: ',allUserLogs.value);
+        //console.log('allUserLogs-array: ',allUserLogs.value);
         // Extract unique users dynamically
         const usersSet = new Set(allUserLogs.value.map(log => log.user).filter(Boolean));
         uniqueUsers.value = Array.from(usersSet).sort();
@@ -352,12 +364,12 @@ const filteredLogs = computed(() => {
         logs = logs.filter(log =>
         (log.event?.toLowerCase().includes(query)) ||
         (log.user?.toLowerCase().includes(query))
-        )
+        );
     }
 
     // Filter by selected user
     if (selectedUser.value) {
-        logs = logs.filter(log => log.user === selectedUser.value)
+        logs = logs.filter(log => log.user === selectedUser.value);
     }
 
     // Filter by selected section
@@ -367,18 +379,57 @@ const filteredLogs = computed(() => {
 
     // Filter by selected date (exact date match)
     if (selectedDate.value) {
-        logs = logs.filter(log => log.created_at?.startsWith(selectedDate.value))
+        logs = logs.filter(log => log.created_at?.startsWith(selectedDate.value));
     }
 
     // Sort by date
     if (sortOrder.value === 'newest') {
-        logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     } else if (sortOrder.value === 'oldest') {
-        logs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+        logs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     }
 
-    return logs
-})
+    return logs;
+});
+
+const fixStampIssue = async() => {
+    const responseReport = await axios.get(`/api/reportdata`);
+    //console.log('responseReport-data get request: ',responseReport.data);
+    const rows = responseReport.data.data;
+    reportData.value = rows;
+    //console.log('reportData array: ',reportData.value);
+    //console.log(Array.isArray(rows));
+    for (const row of rows){
+        const payload = {};
+
+        if(row.prepared_by){
+            const parts = row.prepared_by.trim().split(/\s+/); // chop into pieces for each phrase separated by space
+            const surname = parts.pop(); //pop removes the last part
+            const firstname = parts.join(' ');
+            payload.prepared_by_firstname = firstname;
+            payload.prepared_by_surname = surname;
+        }
+
+        if(row.checked_by){
+            const parts = row.checked_by.trim().split(/\s+/);
+            const surname = parts.pop();
+            const firstname = parts.join(' ');
+            payload.checked_by_firstname = firstname;
+            payload.checked_by_surname = surname;
+        }
+
+        if(Object.keys(payload).length > 0 && row.tpm_data_serial){
+            try{
+                let numberOfFix = Object.keys(payload).length/2;
+                const resultPatchFix = await axios.patch(`/api/reportdata/${row.tpm_data_serial}`, payload);
+                console.log(`Detected ${numberOfFix} rows of data affected`);
+                console.log('Stamp issue FIXED successfully no errors',resultPatchFix);
+            }catch(error){
+                console.error('Fix Patch failed: ',error);
+            }
+        }
+    }
+}
 
 onMounted(async() => {
     await checkAuthentication();

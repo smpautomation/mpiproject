@@ -69,8 +69,10 @@
                                     <td class="px-3 py-2 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
                                         {{ report.smp_judgement }}
                                     </td>
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
+                                    <td v-if="report.prepared_by" class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
+                                    <td v-else class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by_firstname }} {{ report.prepared_by_surname }}</td>
+                                    <td v-if="report.checked_by" class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
+                                    <td v-else class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by_firstname }} {{ report.checked_by_surname }}</td>
                                     <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
                                         <button @click="viewReport(report.tpm_data_serial)"
                                                 class="px-3 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">

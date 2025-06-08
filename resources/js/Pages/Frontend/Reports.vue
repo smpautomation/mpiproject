@@ -1,6 +1,6 @@
 <template>
     <Frontend>
-        <div v-if="onTestServer" class="flex flex-row justify-center items-center text-green-500 text-xl font-extrabold">
+        <div v-if="onTestServer" class="flex flex-row items-center justify-center text-xl font-extrabold text-green-500">
             YOU ARE ON TEST SERVER
         </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
