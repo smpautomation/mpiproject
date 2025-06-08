@@ -139,7 +139,7 @@ loading.value = true;
         success.value = false;
     }, 3000); // 3000 milliseconds = 3 seconds
 
-    await userEmailLogging(`has successfully sent an email for ${form.massPro}`);
+    await userEmailLogging(`has successfully sent an email for ${form.massPro}`); //user logs email
 
     // Reset form
     form.massPro = ''
