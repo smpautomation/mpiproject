@@ -107,11 +107,12 @@ class FurnaceDataController extends Controller
             ], 500);
         }
     }
-    public function update(Request $request, $id)
+    public function update(Request $request, $furnace_id)
     {
         DB::beginTransaction();
+
         try {
-            $furnaceData = FurnaceData::findorfail( $id );
+            $furnaceData = FurnaceData::where('furnace_id', $furnace_id)->firstOrFail();
 
             $inputData = $request->all();
             $furnaceData->update($inputData);
@@ -126,6 +127,7 @@ class FurnaceDataController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'status' => false,
                 'message' => 'Error updating Furnace Data',

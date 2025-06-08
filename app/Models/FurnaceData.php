@@ -9,6 +9,8 @@ class FurnaceData extends Model
 {
     use HasFactory;
     protected $table = "furnace_data";
+    protected $primaryKey = 'furnace_id';
+    protected $keyType = 'int';   // or 'string' if the key is alphanumeric
     protected $guarded = [];
     public function tpmData()
     {

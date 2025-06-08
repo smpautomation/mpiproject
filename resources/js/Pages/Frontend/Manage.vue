@@ -2220,6 +2220,19 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     const currentBoxIndex = ref(0);
     const massProd_qty = ref();
 
+    const autoRenameFurnace = async () => {
+        try {
+            const furnaceShortName = jhCurveFurnaceName.value.split('-')[0];
+            const responseRenameFurnace = await axios.patch(`/api/furnacedata/${currentFurnaceNo.value}`, {
+                furnace_name: furnaceShortName,
+            });
+
+            console.log('responseRenameFurnace-data patch request result: ', responseRenameFurnace);
+        } catch (error) {
+            console.error('responseRenameFurnace-data patch request failed: ', error);
+        }
+    }
+
     // Function to fetch data from the API
     const showAllData = async () => {
         showLoadingForGraphAndTables.value = true;
@@ -2588,6 +2601,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } finally {
             showProceed3.value = false;
             toggleManageForm.value = false;
+            await autoRenameFurnace();
             await userManageLogging('created '+ serialNo.value +' data successfully');
         }
         await fetchDataCreateGraph();
