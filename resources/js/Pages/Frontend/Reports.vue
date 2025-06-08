@@ -84,10 +84,12 @@
                     >
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
                         <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }} san</p>
+                        <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
                     </div>
                     <div v-else class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
                         <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
+                        <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
                     </div>
                     <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
 
@@ -893,7 +895,7 @@
                         }">
                         </span>
                     </p>
-                    <div v-if="state.user && state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation'" class="flex flex-row items-center justify-center mt-2">
+                    <div v-if="state.user && (state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation')" class="flex flex-row items-center justify-center mt-2">
                         <label class="mr-2 text-xs">Change Judgement: </label>
                         <select v-model="modifiedSMPJudgement" class="text-blue-700 input text-xs w-[100px] h-[35px]" required>
                             <option disabled value="" selected>Change Judgement</option>
@@ -902,7 +904,7 @@
                             <option class="text-blue-700" value="PASSED">PASSED</option>
                         </select>
                     </div>
-                    <div v-if="modifiedSMPJudgement && state.user && state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation'" class="p-2 mt-2 text-sm font-extrabold text-blue-500 border-4 border-white">Origin Judgement: {{ reportSMPJudgement }}</div>
+                    <div v-if="(modifiedSMPJudgement && state.user) && (state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation')" class="p-2 mt-2 text-sm font-extrabold text-blue-500 border-4 border-white">Origin Judgement: {{ reportSMPJudgement }}</div>
                     </div>
 
                     <!-- Prepared By -->
@@ -1050,7 +1052,7 @@
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <button v-if="(!checkedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-if="(!approvedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Proxy Approver')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
                     <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
@@ -2907,6 +2909,8 @@ onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
     if (props.serialParam && props.fromApproval) {
+        await checkAuthentication();
+        await checkApprovalStates();
         currentSerialSelected.value = props.serialParam;
 
         // This ensures reactivity is flushed before running the report logic
