@@ -22,7 +22,7 @@
       <!-- A4 Layout Box -->
       <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
         <!-- Report Title -->
-        <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="text-center bg-gray-300 overflow-visible">
+        <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="overflow-visible text-center bg-gray-300">
             <h1
                 :class="{
                     'relative -top-3': adjustStyling // Forces the text outside the top bounds
@@ -437,8 +437,8 @@
             </div>
         </div>
         <div class="mb-2">
-            <div class="flex flex-row justify-center items-center">
-                <span :class="{ 'mb-14': adjustStyling }" class="mr-2 text-sm font-semibold align-top mb-10">Remarks:</span>
+            <div class="flex flex-row items-center justify-center">
+                <span :class="{ 'mb-14': adjustStyling }" class="mb-10 mr-2 text-sm font-semibold align-top">Remarks:</span>
                 <div class="flex flex-col w-full">
                     <span :class="{ 'leading-loose': adjustStyling }" class="inline-block w-full text-sm border-b border-gray-500">
                         {{ printRemarks2 }}
@@ -605,7 +605,7 @@
         <!-- A4 Layout Box -->
         <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
             <!-- Report Title -->
-            <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="text-center bg-gray-300 overflow-visible">
+            <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="overflow-visible text-center bg-gray-300">
                 <h1
                     :class="{
                         'relative -top-3': adjustStyling // Forces the text outside the top bounds
@@ -986,7 +986,7 @@
         <div v-for="index in numberOfSet" :key="index">
                 <div class="max-w-5xl mx-auto text-black bg-white border border-gray-300 shadow-lg a4-page px-7">
                     <!-- Report Title -->
-                                <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="text-center bg-gray-300 overflow-visible">
+                                <div :class="adjustStyling ? 'mt-6' : 'mt-4 mb-2'" class="overflow-visible text-center bg-gray-300">
                     <h1
                         :class="{
                             'relative -top-3': adjustStyling // Forces the text outside the top bounds

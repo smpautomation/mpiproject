@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="bg-white border-gray-200 dark:bg-gray-900 top-0 left-0 right-0 z-50">
+    <nav class="top-0 left-0 right-0 z-50 bg-white border-gray-200 dark:bg-gray-900">
       <div class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
 
         <!-- Logo and Title -->
@@ -30,7 +30,7 @@
         <div class="hidden w-full md:flex md:items-center md:w-auto" id="navbar-default">
           <ul
             v-if="state.isAuthenticated"
-            class="flex flex-col md:flex-row items-center gap-4 md:gap-8 p-4 md:p-0 mt-4 md:mt-0 font-medium border border-gray-100 rounded-lg md:border-0 md:bg-white bg-gray-50 dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700"
+            class="flex flex-col items-center gap-4 p-4 mt-4 font-medium border border-gray-100 rounded-lg md:flex-row md:gap-8 md:p-0 md:mt-0 md:border-0 md:bg-white bg-gray-50 dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700"
           >
             <li v-for="(item, index) in filteredNavItems" :key="index">
               <Link
@@ -45,9 +45,9 @@
 
             <!-- User Info & Logout -->
             <li class="flex items-center">
-              <div class="flex items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full shadow-sm">
+              <div class="flex items-center gap-3 px-4 py-2 bg-gray-100 rounded-full shadow-sm dark:bg-gray-800">
                 <!-- User Initial Avatar -->
-                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 font-bold">
+                <div class="flex items-center justify-center w-8 h-8 font-bold text-blue-600 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
                   {{ state.user.firstName.charAt(0).toUpperCase() }}
                 </div>
                 <!-- Username -->
@@ -57,11 +57,11 @@
                 <!-- Logout Button -->
                 <button
                 @click="handleLogout"
-                class="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-semibold transition-colors"
+                class="flex items-center gap-2 text-sm font-semibold text-red-500 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
                 <!-- Power Icon -->
                 <span class="relative flex items-center justify-center w-5 h-5">
-                    <div class="w-5 h-5 border-2 border-current rounded-full relative">
+                    <div class="relative w-5 h-5 border-2 border-current rounded-full">
                     <div class="absolute top-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-gray-900 z-10 rounded-full"></div>
                     </div>
                     <div class="absolute w-0.5 h-2 bg-current top-[-2px] z-20"></div>
@@ -112,9 +112,9 @@ const logUserLogout = async () => {
 const navItems = [
   { label: 'Home', route: 'homePage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation', 'Final Approver', 'Proxy Approver'] },
   { label: 'Manage', route: 'manage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
-  { label: 'Report', route: 'reports', access: ['Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
-  { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
-  { label: 'View List', route: 'viewList', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
+  { label: 'Report', route: 'reports', access: ['Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
+  { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
+  { label: 'View List', route: 'viewList', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Approval', route: 'approval', access: ['Final Approver', 'Proxy Approver', 'Bypass Approver', 'Automation'] },
   { label: 'Admin', route: 'admin', access: ['Final Approver', 'Proxy Approver', 'Automation'] }
 ];

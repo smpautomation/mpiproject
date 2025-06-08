@@ -82,6 +82,19 @@ class AuthController extends Controller
         ];
         Log::info('ItadaniSan IDs: ' . implode(', ', $itadaniSan_id));
 
+        $rizzaEndaya_id = [
+            '002202'
+        ];
+
+        $checkedByApprovers_id = [
+            '003510','005496','004514'
+        ];
+
+        $preparedByApprovers_id = [
+            '006704','006830','006748','006806','003513','004316',
+            '004884','004025','004489','005828','004391','004608'
+        ];
+
         $userAccess = null;
 
         // Log the employee_id being checked
@@ -93,7 +106,19 @@ class AuthController extends Controller
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $itadaniSan_id, true)) {
             $userAccess = 'Final Approver';
-            Log::info('Employee ID matched ItadaniSan IDs. Setting access_type to "Final Approver".');
+            Log::info('Employee ID matched ItadaniSan ID. Setting access_type to "Final Approver".');
+        }
+        if (isset($validated['employee_id']) && in_array($validated['employee_id'], $rizzaEndaya_id, true)) {
+            $userAccess = 'Proxy Approver';
+            Log::info('Employee ID matched Ms Rizza ID. Setting access_type to "Proxy Approver".');
+        }
+        if (isset($validated['employee_id']) && in_array($validated['employee_id'], $checkedByApprovers_id, true)) {
+            $userAccess = 'Checking Approver';
+            Log::info('Employee ID matched Checking approver IDs. Setting access_type to "Checking Approver".');
+        }
+        if (isset($validated['employee_id']) && in_array($validated['employee_id'], $preparedByApprovers_id, true)) {
+            $userAccess = 'Preparation Approver';
+            Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Preparation Approver".');
         }
 
         $user = User::create([

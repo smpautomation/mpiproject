@@ -855,7 +855,26 @@
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">
                         SMP Judgement
                     </p>
-                    <p class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                    <p v-if="modifiedSMPJudgement" class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                        <span
+                        class="inline-block w-40 h-40 bg-center bg-no-repeat"
+                        :style="{
+                            backgroundImage:
+                                modifiedSMPJudgement === 'REJECT'
+                                ? 'url(\'/photo/reject_stamp.png\')'
+                                : modifiedSMPJudgement === 'HOLD'
+                                ? 'url(\'/photo/hold_stamp.png\')'
+                                : modifiedSMPJudgement === null ||
+                                    modifiedSMPJudgement === undefined ||
+                                    modifiedSMPJudgement === '' ||
+                                    modifiedSMPJudgement === 'null'
+                                ? 'url(\'/photo/template.png\')'
+                                : 'url(\'/photo/pass_stamp.png\')',
+                            backgroundSize: '101%'
+                        }">
+                        </span>
+                    </p>
+                    <p v-else class="p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <span
                         class="inline-block w-40 h-40 bg-center bg-no-repeat"
                         :style="{
@@ -874,6 +893,16 @@
                         }">
                         </span>
                     </p>
+                    <div v-if="state.user && state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation'" class="flex flex-row items-center justify-center mt-2">
+                        <label class="mr-2 text-xs">Change Judgement: </label>
+                        <select v-model="modifiedSMPJudgement" class="text-blue-700 input text-xs w-[100px] h-[35px]" required>
+                            <option disabled value="" selected>Change Judgement</option>
+                            <option class="text-blue-700" value="HOLD">HOLD</option>
+                            <option class="text-blue-700" value="REJECT">REJECT</option>
+                            <option class="text-blue-700" value="PASSED">PASSED</option>
+                        </select>
+                    </div>
+                    <div v-if="modifiedSMPJudgement && state.user && state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation'" class="p-2 mt-2 text-sm font-extrabold text-blue-500 border-4 border-white">Origin Judgement: {{ reportSMPJudgement }}</div>
                     </div>
 
                     <!-- Prepared By -->
@@ -1126,6 +1155,20 @@ const userReportLogging = async (logEvent) => {
         //console.log('responseUserLogin-data: ',responseUserLogin.data);
     }catch(error){
         console.error('userReportLogging post request failed: ',error);
+    }
+}
+
+    const userFinalizedLogging = async (logEvent) => {
+    try{
+        const responseFinalizedLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Report',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userFinalizedLogging post request failed: ',error);
     }
 }
 
@@ -1385,6 +1428,7 @@ const reportiHcVariance = ref('NA');
 const reportiHkVariance = ref('NA');
 
 const reportSMPJudgement = ref('');
+const modifiedSMPJudgement = ref('');
 // Immediate watch
 watch(
   reportSMPJudgement,
@@ -2143,6 +2187,7 @@ const showReportData = async () => {
         reportRemarks2.value = filterBySerial[0].remarks2;
         reportRemarks3.value = filterBySerial[0].remarks3;
         reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
+        modifiedSMPJudgement.value = filterBySerial[0].modified_smp_judgement;
         preparedByPerson.value = filterBySerial[0].prepared_by;
         checkedByPerson.value = filterBySerial[0].checked_by;
         approvedByPerson.value = filterBySerial[0].approved_by;
@@ -2362,6 +2407,7 @@ const saveReport = async () => {
         "remarks2": reportRemarks2.value,
         "remarks3": reportRemarks3.value,
         "smp_judgement":reportSMPJudgement.value,
+        "modified_smp_judgement":modifiedSMPJudgement.value,
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
         "std_dev": reportStdDev.value,
@@ -2823,7 +2869,8 @@ const addCarmark = async () => {
     }
 }
 
-const finalizeReport = (serial) => {
+const finalizeReport = async(serial) => {
+    await userFinalizedLogging(`has finalized report serial: ${serial}`);
     Inertia.visit('/create_pdf', {
         method: 'get',   // You can keep 'get' since we are not modifying any data
         data: { serialParam: serial },   // Passing the serialParam here
