@@ -1,17 +1,65 @@
 <template>
   <div>
-    <nav class="top-0 left-0 right-0 z-50 bg-white border-gray-200 dark:bg-gray-900">
-      <div class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
+    <nav class="top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm dark:bg-gray-900 dark:border-gray-700">
+      <div class="flex items-center justify-between max-w-screen-xl px-4 py-3 mx-auto md:px-6">
 
-        <!-- Logo and Title -->
-        <a class="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="photo/smp_logo.png" class="h-8" alt="SMP Logo" />
-          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+        <!-- Logo + Title -->
+        <div class="flex items-center space-x-4 md:mr-10">
+          <img src="photo/smp_logo.png" class="h-9" alt="SMP Logo" />
+          <span class="text-xl font-bold text-gray-800 dark:text-white whitespace-nowrap">
             MPI Online System
           </span>
-        </a>
+        </div>
 
-        <!-- Mobile Toggle -->
+        <!-- Navigation -->
+        <div class="hidden md:flex md:items-center md:w-auto" id="navbar-default">
+          <ul
+            v-if="state.isAuthenticated"
+            class="flex flex-col items-center gap-4 p-4 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:gap-6 md:p-0 md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700"
+          >
+            <!-- Nav Links -->
+            <li v-for="(item, index) in filteredNavItems" :key="index">
+              <Link
+                :href="route(item.route)"
+                class="block px-4 py-2 transition-all duration-150 rounded-md whitespace-nowrap"
+                :class="{
+                  'bg-blue-600 text-white md:bg-transparent md:text-blue-600 md:font-bold': route().current(item.route),
+                  'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400': !route().current(item.route)
+                }"
+              >
+                {{ item.label }}
+              </Link>
+            </li>
+
+            <!-- User Info + Logout -->
+            <li class="flex items-center px-4 py-2 space-x-4 bg-gray-100 rounded-full shadow-inner dark:bg-gray-700">
+              <!-- Avatar -->
+              <div class="flex items-center justify-center font-semibold text-white bg-blue-500 rounded-full w-9 h-9 whitespace-nowrap">
+                {{ state.user.firstName.charAt(0).toUpperCase() }}
+              </div>
+              <!-- Name -->
+              <span class="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {{ state.user.firstName }}
+              </span>
+              <!-- Logout -->
+              <button
+                @click="handleLogout"
+                class="flex items-center gap-2 text-sm font-semibold text-red-500 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+              >
+                <!-- Power Icon -->
+                <span class="relative flex items-center justify-center w-5 h-5">
+                  <div class="relative w-5 h-5 border-2 border-current rounded-full">
+                    <div class="absolute w-2 h-2 bg-white dark:bg-gray-900 rounded-full top-[-4px] left-1/2 -translate-x-1/2 z-10"></div>
+                  </div>
+                  <div class="absolute w-0.5 h-2 bg-current top-[-2px] z-20"></div>
+                </span>
+                <span>Logout</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
         <button
           data-collapse-toggle="navbar-default"
           type="button"
@@ -25,58 +73,11 @@
               d="M1 1h15M1 7h15M1 13h15" />
           </svg>
         </button>
-
-        <!-- Navigation Items -->
-        <div class="hidden w-full md:flex md:items-center md:w-auto" id="navbar-default">
-          <ul
-            v-if="state.isAuthenticated"
-            class="flex flex-col items-center gap-4 p-4 mt-4 font-medium border border-gray-100 rounded-lg md:flex-row md:gap-8 md:p-0 md:mt-0 md:border-0 md:bg-white bg-gray-50 dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700"
-          >
-            <li v-for="(item, index) in filteredNavItems" :key="index">
-              <Link
-                :href="route(item.route)"
-                :class="{
-                  'text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500': route().current(item.route)
-                }"
-              >
-                {{ item.label }}
-              </Link>
-            </li>
-
-            <!-- User Info & Logout -->
-            <li class="flex items-center">
-              <div class="flex items-center gap-3 px-4 py-2 bg-gray-100 rounded-full shadow-sm dark:bg-gray-800">
-                <!-- User Initial Avatar -->
-                <div class="flex items-center justify-center w-8 h-8 font-bold text-blue-600 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                  {{ state.user.firstName.charAt(0).toUpperCase() }}
-                </div>
-                <!-- Username -->
-                <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
-                  {{ state.user.firstName }}
-                </span>
-                <!-- Logout Button -->
-                <button
-                @click="handleLogout"
-                class="flex items-center gap-2 text-sm font-semibold text-red-500 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                >
-                <!-- Power Icon -->
-                <span class="relative flex items-center justify-center w-5 h-5">
-                    <div class="relative w-5 h-5 border-2 border-current rounded-full">
-                    <div class="absolute top-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-gray-900 z-10 rounded-full"></div>
-                    </div>
-                    <div class="absolute w-0.5 h-2 bg-current top-[-2px] z-20"></div>
-                </span>
-                <span>Logout</span>
-                </button>
-              </div>
-            </li>
-          </ul>
-        </div>
       </div>
     </nav>
-
   </div>
 </template>
+
 
 <script setup>
 import { Link } from '@inertiajs/vue3';

@@ -43,65 +43,74 @@
                     </button>
                     </div>
                     <div class="m-10">
-                        <table class="w-full overflow-hidden border-collapse rounded-lg shadow-lg table-auto">
-                            <thead class="text-white bg-gray-800 ">
+                        <table class="w-full overflow-hidden text-sm text-left bg-white border-separate rounded-lg shadow-lg border-spacing-0">
+                            <thead class="text-white bg-gray-800">
                                 <tr>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Serial No</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Magnet Model</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Material Code</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Partial No</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center border-b border-gray-300 whitespace-nowrap">Total Quantity</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-blue-500 border-b border-gray-300 whitespace-nowrap">SMP Judgement</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300 whitespace-nowrap">Prepared By</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center text-white bg-yellow-500 border-b border-gray-300 whitespace-nowrap">Checked By</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-green-600 border-b border-gray-300 whitespace-nowrap">Action</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-green-800 border-b border-gray-300 whitespace-nowrap">Status</th>
-                                    <th class="px-4 py-2 text-lg font-extrabold text-center bg-red-400 border-b border-gray-300 whitespace-nowrap">Approval</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Serial No</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Magnet Model</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Material Code</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Partial No</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Total Quantity</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-blue-600 border-b border-gray-700">SMP Judgement</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center text-black uppercase bg-yellow-500 border-b border-gray-700">Prepared By</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center text-black uppercase bg-yellow-500 border-b border-gray-700">Checked By</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-green-600 border-b border-gray-700">Action</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-green-800 border-b border-gray-700">Status</th>
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-red-500 border-b border-gray-700">Approval</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-center bg-white">
-                                <tr v-for="(report, index) in filteredReports" :key="report.tpm_data_serial" class="transition-colors duration-200 hover:bg-gray-100">
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.tpm_data_serial }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.model }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.material_code }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.partial_number }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300">{{ report.total_quantity }}</td>
-                                    <td class="px-3 py-2 text-xl font-extrabold border-b border-gray-300" :class="{'text-red-500': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD', 'text-green-500': report.smp_judgement === 'OK'}">
-                                        {{ report.smp_judgement }}
-                                    </td>
-                                    <td v-if="report.prepared_by" class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by }}</td>
-                                    <td v-else class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.prepared_by_firstname }} {{ report.prepared_by_surname }}</td>
-                                    <td v-if="report.checked_by" class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by }}</td>
-                                    <td v-else class="px-3 py-2 text-sm text-gray-700 border-b border-gray-300 whitespace-nowrap">{{ report.checked_by_firstname }} {{ report.checked_by_surname }}</td>
-                                    <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
-                                        <button @click="viewReport(report.tpm_data_serial)"
-                                                class="px-3 py-2 text-blue-500 border border-blue-500 rounded-md whitespace-nowrap hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
-                                            View Report
-                                        </button>
-                                    </td>
-                                    <td class="px-3 py-2 text-lg font-extrabold text-gray-700 border-b border-gray-300">
-                                        <span v-if="report.approved_by_firstname || approved_by" class="text-green-600">APPROVED</span>
-                                        <span v-else class="text-yellow-600">PENDING</span>
-                                    </td>
-                                    <td class="px-3 py-2 text-sm text-center border-b border-gray-300">
-                                        <input v-if="!report.approved_by_firstname && report.checked == 1" type="checkbox"
-                                            :value="report.tpm_data_serial"
-                                            v-model="selectedRows"
-                                            class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded-md cursor-pointer focus:ring-blue-500 focus:ring-2">
-                                    </td>
+                            <tbody class="text-gray-800 bg-white">
+                                <tr v-for="(report, index) in filteredReports" :key="report.tpm_data_serial"
+                                    class="transition-colors duration-150 border-b border-gray-200 hover:bg-gray-100">
+                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.tpm_data_serial }}</td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.model }}</td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.material_code }}</td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.partial_number }}</td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.total_quantity }}</td>
+                                <td class="px-4 py-2 text-lg font-semibold text-center whitespace-nowrap"
+                                    :class="{
+                                        'text-red-600': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD',
+                                        'text-green-600': report.smp_judgement === 'OK',
+                                        'text-gray-600': !['REJECT', 'HOLD', 'OK'].includes(report.smp_judgement)
+                                    }">
+                                    {{ report.smp_judgement }}
+                                </td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">
+                                    {{ report.prepared_by ?? `${report.prepared_by_firstname} ${report.prepared_by_surname}` }}
+                                </td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">
+                                    {{ report.checked_by ?? `${report.checked_by_firstname} ${report.checked_by_surname}` }}
+                                </td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">
+                                    <button @click="viewReport(report.tpm_data_serial)"
+                                            class="inline-block px-3 py-1 text-sm font-medium text-blue-600 transition duration-150 border border-blue-500 rounded hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    View
+                                    </button>
+                                </td>
+                                <td class="px-4 py-2 text-sm font-bold text-center whitespace-nowrap">
+                                    <span v-if="report.approved_by_firstname || approved_by" class="text-green-700">APPROVED</span>
+                                    <span v-else class="text-yellow-600">PENDING</span>
+                                </td>
+                                <td class="px-4 py-2 text-center whitespace-nowrap">
+                                    <input v-if="!report.approved_by_firstname && report.checked == 1" type="checkbox"
+                                        :value="report.tpm_data_serial"
+                                        v-model="selectedRows"
+                                        class="w-5 h-5 text-blue-600 border-gray-300 rounded cursor-pointer focus:ring focus:ring-blue-300">
+                                </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="flex justify-center mb-10 space-y-6">
                         <!-- Approve Button -->
-                         <div v-if="!approveNotif">
-                            <button v-show="showApproveButton" @click="approveSelected"
-                                class="px-6 py-3 text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
-                                Approve Selected
-                            </button>
-                         </div>
-
+                        <div v-if="!approveNotif">
+                        <button
+                            v-show="showApproveButton"
+                            @click="approveSelected"
+                            class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1 transition duration-150 ease-in-out">
+                            Approve Selected
+                        </button>
+                        </div>
                         <!-- Confirmation Box -->
                         <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
                             <p class="mb-4 text-lg font-semibold text-gray-800">Are you sure?</p>
