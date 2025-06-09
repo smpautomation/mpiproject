@@ -418,6 +418,14 @@ const fixStampIssue = async() => {
             payload.checked_by_surname = surname;
         }
 
+        if(row.approved_by){
+            const parts = row.checked_by.trim().split(/\s+/);
+            const surname = parts.pop();
+            const firstname = parts.join(' ');
+            payload.approved_by_firstname = firstname;
+            payload.approved_by_surname = surname;
+        }
+
         if(Object.keys(payload).length > 0 && row.tpm_data_serial){
             try{
                 let numberOfFix = Object.keys(payload).length/2;
