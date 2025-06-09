@@ -11,10 +11,12 @@
       <div class="flex flex-row items-center align-middle space-x-4">
         <label>Status: </label>
       <!-- Status Filter -->
-        <select v-model="statusFilter" class="w-[150px] p-2 border rounded shadow-sm">
-        <option value="">All</option>
-        <option value="COMPLETED">Completed</option>
-        <option value="PENDING">Pending</option>
+        <select v-model="statusFilter" class="w-[200px] p-2 border rounded shadow-sm">
+          <option value="">All</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="PENDING">Approved by Pending</option>
+          <option value="PREPARED_PENDING">Prepared by Pending</option>
+          <option value="CHECKED_PENDING">Checked by Pending</option>
         </select>
 
       </div>
@@ -76,7 +78,7 @@
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.report[0]?.approved_by ? "COMPLETED" : "PENDING" }}
+                    {{ item.report[0]?.approved_by_firstname ? "COMPLETED" : "PENDING" }}
                     </div>
                 </td>
                 <td class="p-[1px] text-center"> <!-- New Cell -->
@@ -201,7 +203,7 @@ const viewAllSerialedLayers = async () => {
   try {
     const response = await axios.get('/api/tpmdata');
     const rawData = response.data.data?.tpmData || {};
-    console.log("Show respone raw data: ",response.data);
+    //console.log("Show respone raw data: ",response.data);
     tpmData.value = Object.entries(rawData)
         .map(([serial, data]) => ({ serial: Number(serial), ...data }))
         .sort((a, b) => b.serial - a.serial); // Sort DESC by serial
@@ -226,14 +228,37 @@ const filteredData = computed(() => {
   return tpmData.value.filter(item => {
     const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
     const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
-    const judgmentStatus = item.report?.[0]?.approved_by_firstName ? 'COMPLETED' : 'PENDING';
-
     const matchesQuery = !query || model.includes(query) || lot.includes(query);
-    const matchesStatus = !status || judgmentStatus === status;
+
+    const report = item.report?.[0] || {};
+    //console.log('TPM',tpmData.value);
+    //console.log('[REPORT]:', report);
+
+    const isEmpty = (val) =>
+      val === null ||
+      val === undefined ||
+      (typeof val === 'string' && (val.trim() === '' || val === 'null'));
+
+    let matchesStatus = true;
+
+    if (status === 'COMPLETED') {
+      matchesStatus = !isEmpty(report.approved_by_firstName);
+    } else if (status === 'PENDING') {
+      matchesStatus = isEmpty(report.approved_by_firstName);
+    } else if (status === 'PREPARED_PENDING') {
+        // console.log('[REPORT]:', report);
+            //console.log('[prepared_by_firstname]:', report.prepared_by_firstname);
+            //console.log('[isEmpty]:', isEmpty(report.prepared_by_firstname));
+      matchesStatus = isEmpty(report.prepared_by_firstname);
+    } else if (status === 'CHECKED_PENDING') {
+      matchesStatus = isEmpty(report.checked_by_firstname);
+    }
 
     return matchesQuery && matchesStatus;
   });
 });
+
+watch(statusFilter, val => console.log('[Filter Selected]:', val));
 
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
