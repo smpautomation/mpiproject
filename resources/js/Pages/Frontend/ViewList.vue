@@ -242,9 +242,9 @@ const filteredData = computed(() => {
     let matchesStatus = true;
 
     if (status === 'COMPLETED') {
-      matchesStatus = !isEmpty(report.approved_by_firstName);
+      matchesStatus = !isEmpty(report.approved_by_firstname);
     } else if (status === 'PENDING') {
-      matchesStatus = isEmpty(report.approved_by_firstName);
+      matchesStatus = isEmpty(report.approved_by_firstname);
     } else if (status === 'PREPARED_PENDING') {
         // console.log('[REPORT]:', report);
             //console.log('[prepared_by_firstname]:', report.prepared_by_firstname);
