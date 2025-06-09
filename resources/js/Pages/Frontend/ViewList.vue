@@ -244,14 +244,20 @@ const filteredData = computed(() => {
     if (status === 'COMPLETED') {
       matchesStatus = !isEmpty(report.approved_by_firstname);
     } else if (status === 'PENDING') {
-      matchesStatus = isEmpty(report.approved_by_firstname);
+      matchesStatus = isEmpty(report.approved_by_firstname) &&
+                     !isEmpty(report.prepared_by_firstname) &&
+                     !isEmpty(report.checked_by_firstname);
     } else if (status === 'PREPARED_PENDING') {
         // console.log('[REPORT]:', report);
             //console.log('[prepared_by_firstname]:', report.prepared_by_firstname);
             //console.log('[isEmpty]:', isEmpty(report.prepared_by_firstname));
-      matchesStatus = isEmpty(report.prepared_by_firstname);
+      matchesStatus = isEmpty(report.prepared_by_firstname) &&
+                     isEmpty(report.checked_by_firstname) &&
+                     isEmpty(report.approved_by_firstname);
     } else if (status === 'CHECKED_PENDING') {
-      matchesStatus = isEmpty(report.checked_by_firstname);
+      matchesStatus = isEmpty(report.checked_by_firstname) &&
+                     isEmpty(report.approved_by_firstname) &&
+                     !isEmpty(report.prepared_by_firstname);
     }
 
     return matchesQuery && matchesStatus;
