@@ -37,7 +37,7 @@
                 <th class="px-2 py-2 whitespace-nowrap">Tracer No</th>
                 <th class="px-2 py-2 whitespace-nowrap">SMP Judgement</th>
                 <th class="px-2 py-2 whitespace-nowrap">Status</th>
-                <th class="px-2 py-2 whitespace-nowrap">Action</th> <!-- New Action Column -->
+                <th v-if="state.user && state.user.access_type !== 'Basic User'" class="px-2 py-2 whitespace-nowrap">Action</th> <!-- New Action Column -->
                 </tr>
             </thead>
             <tbody>
@@ -81,7 +81,7 @@
                     {{ item.report[0]?.approved_by_firstname ? "COMPLETED" : "PENDING" }}
                     </div>
                 </td>
-                <td class="p-[1px] text-center"> <!-- New Cell -->
+                <td v-if="state.user && state.user.access_type !== 'Basic User'" class="p-[1px] text-center"> <!-- New Cell -->
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
                         <div>
                             <template v-if="confirmDeleteFor === item.category[0].tpm_data_serial">
