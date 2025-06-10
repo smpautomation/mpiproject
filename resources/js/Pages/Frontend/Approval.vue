@@ -258,7 +258,7 @@ const viewReport = (serial) => {
 
 const checkAllToggle = () => {
     const eligibleSerials = filteredReports.value
-        .filter(report => report.checked === 1 && (!report.approved_by || !report.approved_by_firstname))
+        .filter(report => report.checked === 1 && !report.approved_by_firstname)
         .map(report => report.tpm_data_serial);
 
     const allEligibleSelected = eligibleSerials.every(serial => selectedRows.value.includes(serial));
