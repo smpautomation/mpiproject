@@ -260,8 +260,11 @@ const userAdminLogging = async (logEvent) => {
 }
 
 const getToday = () => {
-  const today = new Date();
-  return today.toISOString().split('T')[0]; // Formats to YYYY-MM-DD
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 };
 
 const users = ref([]);
@@ -379,7 +382,12 @@ const filteredLogs = computed(() => {
 
     // Filter by selected date (exact date match)
     if (selectedDate.value) {
-        logs = logs.filter(log => log.created_at?.startsWith(selectedDate.value));
+        logs = logs.filter(log => {
+        if (!log.created_at) return false;
+            const date = new Date(log.created_at.replace(' ', 'T')) // convert to ISO format
+            const localDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+            return localDate === selectedDate.value
+        });
     }
 
     // Sort by date
