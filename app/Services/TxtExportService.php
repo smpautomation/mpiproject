@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\TpmData;
+use App\Models\TPMData;
 use Illuminate\Support\Facades\File;
 
 class TxtExportService

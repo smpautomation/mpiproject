@@ -1618,8 +1618,8 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             //console.log("Furnace created successfully:", response.data);
 
             // Extract furnace_id from response (assuming API returns the created furnace object)
-            const newFurnaceNo = response.data.data.id; // Adjust based on API response
-            //console.log("Get furnace no: ", newFurnaceNo);
+            const newFurnaceNo = response.data.data.furnace_id; // Adjust based on API response
+            console.log("Get furnace no: ", newFurnaceNo);
             // Now, create default layers under this furnace
             await createDefaultLayers(newFurnaceNo);
 

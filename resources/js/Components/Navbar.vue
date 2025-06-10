@@ -38,7 +38,7 @@
                 {{ state.user.firstName.charAt(0).toUpperCase() }}
               </div>
               <!-- Name -->
-              <span class="text-sm font-medium text-gray-800 dark:text-gray-100">
+              <span class="text-sm font-medium text-gray-800 dark:text-gray-100 whitespace-nowrap">
                 {{ state.user.firstName }}
               </span>
               <!-- Logout -->
