@@ -188,6 +188,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userSerialDeleteLogging = async (logEvent) => {
+    try{
+        const responseSerialDeleteLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'View List',
+        });
+
+        //console.log('responseSerialDeleteLogging-data: ',responseSerialDeleteLogging.data);
+    }catch(error){
+        console.error('userSerialDeleteLogging post request failed: ',error);
+    }
+}
+
 const tpmData = ref([]);
 const searchQuery = ref('');
 const currentPage = ref(1);
@@ -303,6 +317,7 @@ const deleteRow = async (serial) => {
     tpmData.value = tpmData.value.filter(item => item.serial !== serial);
     confirmDeleteFor.value = null; // reset confirm after delete
     console.log(`[Row Deleted]: Serial ${serial}`);
+    userSerialDeleteLogging(`has successfully deleted Serial: ${serial}`);
   } catch (error) {
     console.error(`[Error Deleting Row]: Serial ${serial}`, error);
     confirmDeleteFor.value = null; // reset confirm on error too
