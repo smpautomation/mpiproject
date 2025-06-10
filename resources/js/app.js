@@ -25,6 +25,30 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
+// Axios: intercept 401 to handle session expiry
+let alreadyRedirecting = false;
+
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !alreadyRedirecting &&
+      window.location.pathname !== '/' // avoid loop if already on home
+    ) {
+      alreadyRedirecting = true;
+      console.warn('Session expired. Redirecting to login.');
+      localStorage.removeItem('access_token');
+      import('@inertiajs/inertia').then(({ Inertia }) => {
+        Inertia.visit('/');
+      });
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 // ===== Patch canvas getContext globally =====
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
 HTMLCanvasElement.prototype.getContext = function(type, options) {
