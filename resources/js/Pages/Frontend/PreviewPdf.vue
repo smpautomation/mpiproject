@@ -1350,7 +1350,6 @@ watch(numberOfSet, (newVal, oldVal) => {
 const testing = ref("");
 const isAutomotive = ref(false);
 // You could pass these via props or retrieve via an API
-const printSerialNo = ref('');
 const printSetNo = ref ('');
 const printOvenMachineNo_ovenInfo = ref('N/A');
 const printTimeLoading = ref('N/A');
@@ -2582,7 +2581,7 @@ const handlePrint = async () => {
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
 });
-printSerialNo.value = props.serialParam;
+const printSerialNo = computed(() => props.serialParam)
 //console.log('Serial Param in PreviewPdf.vue:', props.serialParam); // You can use this for debugging
 
 // Optional: auto print on page load

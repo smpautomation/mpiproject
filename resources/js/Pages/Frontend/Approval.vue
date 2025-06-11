@@ -88,7 +88,7 @@
                                     </button>
                                 </td>
                                 <td class="px-4 py-2 text-sm font-bold text-center whitespace-nowrap">
-                                    <span v-if="report.approved_by_firstname || approved_by" class="text-green-700">APPROVED</span>
+                                    <span v-if="report.approved_by_firstname" class="text-green-700">APPROVED</span>
                                     <span v-else class="text-yellow-600">PENDING</span>
                                 </td>
                                 <td class="px-4 py-2 text-center whitespace-nowrap">
@@ -103,13 +103,13 @@
                     </div>
                     <div class="flex justify-center mb-10 space-y-6">
                         <!-- Approve Button -->
-                        <div v-if="!approveNotif">
-                        <button
-                            v-show="showApproveButton"
-                            @click="approveSelected"
-                            class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1 transition duration-150 ease-in-out">
-                            Approve Selected
-                        </button>
+                        <div v-if="!approveNotif && !blockedNotif">
+                            <button
+                                v-show="showApproveButton"
+                                @click="approveSelected"
+                                class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1 transition duration-150 ease-in-out">
+                                Approve Selected
+                            </button>
                         </div>
                         <!-- Confirmation Box -->
                         <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
@@ -128,6 +128,18 @@
                         <div v-show="approveNotif"
                             class="flex items-center max-w-md p-4 mx-auto text-green-800 bg-green-100 rounded-md shadow-md">
                             <p class="text-sm font-medium">{{ reportNotificationMessage }}</p>
+                        </div>
+                        <!-- Notification with close button -->
+                        <div v-show="blockedNotif" class="w-[1000px] h-[180px] items-center p-4 mx-auto bg-red-200 rounded-md shadow-md text-red-800 relative">
+                            <!-- Close Button -->
+                            <button @click="closeNotification" class="absolute top-2 right-2 text-md text-red-800 bg-transparent border-none cursor-pointer font-extrabold underline">
+                                close
+                            </button>
+                            
+                            <!-- Notification Content -->
+                            <div>
+                            <div v-for="(line, index) in notificationMessageLines" :key="index" v-html="line"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -200,6 +212,7 @@ const statusFilter = ref('ALL');
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
+const blockedNotif = ref(false);
 const reportNotificationMessage = ref('');
 
 // UI end
@@ -213,7 +226,7 @@ const filteredReports = computed(() => {
   if (statusFilter.value === 'ALL') return reportDataList.value;
 
   return reportDataList.value.filter(report => {
-    const isApproved = report.approved_by_firstname || report.approved_by;
+    const isApproved = report.approved_by_firstname;
     if (statusFilter.value === 'APPROVED') return isApproved;
     if (statusFilter.value === 'PENDING') return !isApproved;
   });
@@ -239,6 +252,25 @@ const showApprovedNotification = (message) => {
         showApproveButton.value = true;
     }, 3000);  // 3000ms = 3 seconds
 }
+
+// Notification message content as an array
+const notificationMessageLines = ref([]);
+
+// Function to show the blocked notification
+const showBlockedNotification = (message) => {
+  // Split the message into separate lines (use <br> for line breaks in the message)
+  notificationMessageLines.value = message.split('<br><br>');
+  
+  // Show the notification and set the message
+  blockedNotif.value = true;
+  showApproveButton.value = false;
+};
+
+// Function to close the notification
+const closeNotification = () => {
+  blockedNotif.value = false;
+  showApproveButton.value = true;
+};
 
 // Watcher to observe changes to selectedRows and log them
 watch(selectedRows, (newValue) => {
@@ -330,34 +362,94 @@ const datenow = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+let openedTabs = [];  // Move openedTabs to a higher scope
+
+const closeAllTabs = async () => {
+    // Wait for 3 seconds before closing the tabs
+    await delay(1000); 
+
+    openedTabs.forEach((tab) => {
+        if (tab && !tab.closed) {
+            tab.close();
+            //console.log(`Closed tab for serial ${tab.location.search.split('=')[1]}`);  // Log the serial number
+        }
+    });
+};
+
 const confirmationApprove = async () => {
-
     try {
-        // Loop through each selected serial number
-        for (let serial of selectedRows.value) {
-            const dateNow = datenow();
-            const reportData = {
-                approved_by_firstname: state.user.firstName,
-                approved_by_surname: state.user.surname, // Set the approved_by field to "ITADANI KAZUYA"
-                approved_by_date: dateNow,
-            };
+        let allPopupsOpened = true; // Flag to track if all pop-ups were successfully opened
 
-            // Send a PATCH request to update the 'approved_by' field
-            const response = await axios.patch(`/api/reportdata/${serial}`, reportData);
-            //console.log(`Successfully approved report with serial ${serial}:`, response.data);
-            await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
-            showApprovedNotification("Approved Successfully");
-            showReportData();
-            showApproveButton.value = true;
-            showApproveConfirmation.value = false;
+        // Loop through each selected serial number
+        for (let index = 0; index < selectedRows.value.length; index++) {
+            const serial = selectedRows.value[index];
+
+            // Adding a small delay before window open for each tab
+            await delay(1000);  // Wait for 1 second before opening each new tab
+
+            // Try to open the pop-up window and check if it was blocked
+            let newTab = window.open(`/create_pdf?serialParam=${serial}`, '_blank');
+
+            if (newTab) {
+                openedTabs.push(newTab);  // Store references of opened tabs
+                //console.log(`Opened report for serial ${serial}`);
+                
+                // If this is the last tab being opened, start the delay and close logic
+                if (index === selectedRows.value.length - 1) {
+                    //console.log("Last tab opened, starting the delay before closing tabs...");
+                    closeAllTabs(); // Close all tabs after the delay
+                }
+            } else {
+                // If the pop-up was blocked, stop the approval process for this serial
+                console.error(`Blocked opening for serial ${serial}`);
+                allPopupsOpened = false;
+            }
         }
 
-        //await showReportData();
+        // Wait for all popups to open and then proceed with approval
+        if (allPopupsOpened) {
+            // Once all tabs are opened, proceed with the approval logic
+            for (let serial of selectedRows.value) {
+                const dateNow = datenow();
+                const reportData = {
+                    approved_by_firstname: state.user.firstName,
+                    approved_by_surname: state.user.surname,
+                    approved_by_date: dateNow,
+                };
+
+                // Send the approval PATCH request only if the pop-up was successfully opened
+                //console.log(`Sending approval for serial ${serial} with data:`, reportData);
+                await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
+                await axios.patch(`/api/reportdata/${serial}`, reportData);  // Commented out for testing
+            }
+
+            showApprovedNotification("Approved Successfully");
+            await showReportData();
+        } else {
+            showBlockedNotification(`
+                Some reports couldn't be approved due to your browser's pop-up blocker. 
+                Please disable the blocker and try again.<br><br>
+
+                How to disable the pop-up blocker:<br><br>
+
+                - <strong>Chrome:</strong> Go to Settings > Privacy & Security > Site Settings > Pop-ups and redirects > Allow for this site.<br><br>
+                - <strong>Firefox:</strong> Go to Settings > Privacy & Security > Permissions > Uncheck "Block pop-up windows" or add this site to Exceptions.<br><br>
+                - <strong>Edge:</strong> Go to Settings > Cookies and Site Permissions > Pop-ups and redirects > Allow for this site.<br><br>
+                - <strong>Safari:</strong> Go to Preferences > Websites > Pop-up Windows > Select "Allow" for this site.
+            `);
+            await showReportData();
+        }
+
+        showApproveButton.value = true;
+        showApproveConfirmation.value = false;
 
     } catch (error) {
         console.error("Error approving selected reports:", error);
     }
-}
+};
+
 
 onMounted( async () => {
     await checkAuthentication();
