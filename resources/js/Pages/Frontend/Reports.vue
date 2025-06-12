@@ -2449,7 +2449,7 @@ const saveReport = async () => {
         "remarks_display": reportRemarksDisplay.value,
         "note_reason_reject": noteReasonForReject.value,
         "std_dev": reportStdDev.value,
-        "cp": reportCpk.value,
+        "cp": reportCp.value,
         "cpk": reportCpk.value,
         "br_cpk_remarks": reportCpkRemarks.value,
         "data_1x1x1_info": JSON.stringify({
