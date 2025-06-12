@@ -2560,7 +2560,7 @@ const exportMultiPagePdf = async () => {
     //console.log(`[PDF Export] Uploading PDF to server...`);
     const response = await axios.post('/upload-pdf', formData);
     //console.log(`[PDF Export] Upload successful. Server response:`, response.data);
-
+    await finalizeReport(printSerialNo.value);
     success.value = true;
   } catch (error) {
     console.error('[PDF Export] Error during multi-page export:', error);
@@ -2574,6 +2574,17 @@ const handlePrint = async () => {
     window.print();
   } else {
     console.error('Print functionality is not available.');
+  }
+};
+
+const finalizeReport = async (serial) => {
+  try {
+    const responseFinalize = await axios.patch(`/api/reportdata/${serial}`, {
+      is_finalized: 1,
+    });
+    //console.log('[Finalize Report] Response:', responseFinalize.data);
+  } catch (error) {
+    console.error('[Finalize Report] Error finalizing report:', error);
   }
 };
 

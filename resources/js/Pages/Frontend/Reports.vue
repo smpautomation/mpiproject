@@ -4,7 +4,7 @@
             YOU ARE ON TEST SERVER
         </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-        <div v-if="!isFromApproval">
+        <div v-if="!isFromApproval && !isFromViewList">
             <div v-if="serialList.length == 0"> <!-- default div -->
                 <div class="flex flex-col items-center justify-center mt-10 align-baseline">
                     <div
@@ -85,11 +85,28 @@
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
                         <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }} san</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
+                        <p v-if="report_isFinalized == true">FINALIZED 
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="green">
+                                    <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
+                                    <path fill="#fff" d="M10 14.5l-2.5-2.5-1.4 1.4L10 17.3l7.9-7.9-1.4-1.4z"/>
+                                </svg>
+                            </span>
+                        </p>
                     </div>
                     <div v-else class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
                         <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
+                        <p v-if="report_isFinalized == true" class="text-sm flex items-center gap-2 text-green-400 font-extrabold bg-green-100 p-2 rounded-lg">
+                            FINALIZED 
+                            <span class="w-4 h-4 inline-block">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-full h-full">
+                                    <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
+                                    <path fill="#fff" d="M10 14.5l-2.5-2.5-1.4 1.4L10 17.3l7.9-7.9-1.4-1.4z"/>
+                                </svg>
+                            </span>
+                        </p>
                     </div>
                     <div class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70">
 
@@ -1051,7 +1068,7 @@
                 <div v-show="showNotif3" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
-                <div class="flex flex-row items-center justify-center">
+                <div class="flex flex-row items-center justify-center mb-8">
                     <button v-if="(!approvedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Proxy Approver')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
@@ -1066,7 +1083,7 @@
                         Apply Additional
                     </button>
                     <button
-                        v-if="checkedByPerson_firstName"
+                        v-if="approvedByPerson_firstName"
                         @click="finalizeReport(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
@@ -1078,17 +1095,29 @@
                     </button>
 
 
-                    <button v-if="showExitButton && !isFromApproval" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="showExitButton && !isFromApproval && !isFromViewList" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
 
-                    <button v-if="isFromApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="isFromApproval && !isFromViewList" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK TO APPROVAL
+                    </button>
+
+                    <button v-if="isFromViewList && !isFromApproval" @click="$inertia.visit('/view')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                        BACK TO VIEW LIST
                     </button>
 
                 </div>
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                </div>
+                <div v-if="report_isFinalized" class="relative w-full overflow-hidden bg-yellow-100 text-yellow-700 h-10 flex items-center">
+                    <div class="marquee animate-marquee">
+                    <span class="mx-8">This report has already been finalized.</span>
+                    <span class="mx-8">This report has already been finalized.</span>
+                    <span class="mx-8">This report has already been finalized.</span>
+                    <span class="mx-8">This report has already been finalized.</span>
+                    </div>
                 </div>
             </div>
 
@@ -1203,6 +1232,11 @@ const showReportLoading = ref(false);
 
 const isFromApproval = ref(false);
 const backToApproval = ref(false);
+const isFromViewList = ref(false);
+
+const reportStatusReminder = ref(false);
+const report_isFinalized = ref(false);
+const report_isEmailed = ref(false);
 
 const greetingsWindowFirstName = ref('');
 const greetingsWindowLastName = ref('');
@@ -2202,6 +2236,9 @@ const showReportData = async () => {
         ? filterBySerial[0].approved_by_date.split(' ')[0]
         : '';
 
+        report_isFinalized.value = filterBySerial[0].is_finalized == 1;
+        console.log("Report is finalized: ", report_isFinalized.value);
+
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
 
@@ -2555,9 +2592,11 @@ const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
   ipAddress: String,
   fromApproval: [Boolean, String],
+  fromViewList: [Boolean, String],
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
+isFromViewList.value = props.fromViewList === true || props.fromViewList === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
 
@@ -2907,7 +2946,7 @@ const sec_additional_redirect = (sec_serial) => {
 onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
-    if (props.serialParam && props.fromApproval) {
+    if (props.serialParam && props.fromApproval || props.fromViewList) {
         await checkAuthentication();
         await checkApprovalStates();
         currentSerialSelected.value = props.serialParam;
@@ -2921,3 +2960,17 @@ onMounted(async () => {
     }
 });
 </script>
+
+<style scoped>
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(40%); }
+}
+
+.marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 10s linear infinite;
+}
+
+</style>

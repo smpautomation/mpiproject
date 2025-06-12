@@ -347,6 +347,17 @@ const cancelApprove = () => {
     showApproveConfirmation.value = false;
 }
 
+const finalizeReport = async (serial) => {
+  try {
+    const responseFinalize = await axios.patch(`/api/reportdata/${serial}`, {
+      is_finalized: 1,
+    });
+    //console.log('[Finalize Report] Response:', responseFinalize.data);
+  } catch (error) {
+    console.error('[Finalize Report] Error finalizing report:', error);
+  }
+};
+
 const datenow = () => {
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
@@ -422,6 +433,7 @@ const confirmationApprove = async () => {
                 // Send the approval PATCH request only if the pop-up was successfully opened
                 //console.log(`Sending approval for serial ${serial} with data:`, reportData);
                 await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
+                await finalizeReport(serial);  // Finalize the report
                 await axios.patch(`/api/reportdata/${serial}`, reportData);  // Commented out for testing
             }
 

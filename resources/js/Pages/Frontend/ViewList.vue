@@ -17,6 +17,7 @@
           <option value="PENDING">Approved by Pending</option>
           <option value="PREPARED_PENDING">Prepared by Pending</option>
           <option value="CHECKED_PENDING">Checked by Pending</option>
+          <option value="FINALIZED_PENDING">Finalize Pending</option>
         </select>
 
       </div>
@@ -82,7 +83,15 @@
                     </div>
                 </td>
                 <td v-if="state.user && state.user.access_type !== 'Basic User'" class="p-[1px] text-center"> <!-- New Cell -->
-                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    <div class="flex flex-row justify-center px-0 py-1 text-sm text-center bg-white rounded-sm space-x-7 whitespace-nowrap">
+                        <div>
+                          <button 
+                            @click="viewReport(item.category[0].tpm_data_serial)"
+                          class="bg-blue-600 text-white rounded-sm w-[100px] mr-2
+                                      hover:bg-blue-500 active:bg-blue-700
+                                      transition-colors duration-200 ease-in-out
+                                      focus:outline-none focus:ring-2 focus:ring-blue-400">View Report</button>
+                        </div>
                         <div>
                             <template v-if="confirmDeleteFor === item.category[0].tpm_data_serial">
                               <button
@@ -202,6 +211,15 @@ const userSerialDeleteLogging = async (logEvent) => {
     }
 }
 
+const viewReport = (serial) => {
+    Inertia.visit('/reports', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { serialParam: serial, fromViewList: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 const tpmData = ref([]);
 const searchQuery = ref('');
 const currentPage = ref(1);
@@ -272,6 +290,11 @@ const filteredData = computed(() => {
       matchesStatus = isEmpty(report.checked_by_firstname) &&
                      isEmpty(report.approved_by_firstname) &&
                      !isEmpty(report.prepared_by_firstname);
+    } else if (status === 'FINALIZED_PENDING') {
+      matchesStatus = !report.is_finalized &&
+                     !isEmpty(report.prepared_by_firstname) &&
+                     !isEmpty(report.checked_by_firstname) &&
+                     !isEmpty(report.approved_by_firstname);
     }
 
     return matchesQuery && matchesStatus;
