@@ -2552,6 +2552,9 @@ const saveReportUpdate = async (saveData, serial) => {
         showReportContent.value = false;
         showSelectionPanel.value = true;
         showReportMain.value = false;
+        if(isFromViewList.value){
+            Inertia.visit('/reports');
+        }
     }
 }
 
