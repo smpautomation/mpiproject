@@ -36,7 +36,7 @@ class TPMDataController extends Controller
                             ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace_id', 'layer_no')
                             ->orderByDesc('created_at')
                             ->get()
-                            ->groupBy('serial_no');;
+                            ->groupBy('serial_no');
                 $category = TPMDataCategory::whereIn('tpm_data_serial', $latestSerials)
                             ->orderByDesc('created_at')
                             ->select('tpm_data_serial', 'actual_model', 'massprod_name', 'jhcurve_lotno')
@@ -44,7 +44,7 @@ class TPMDataController extends Controller
                             ->groupBy('tpm_data_serial');
                 $reportData = ReportData::whereIn('tpm_data_serial', $latestSerials)
                             ->orderByDesc('created_at')
-                            ->select('tpm_data_serial', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname')
+                            ->select('tpm_data_serial', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname', 'is_finalized')
                             ->get()
                             ->groupBy('tpm_data_serial');
                 $grouped = [];

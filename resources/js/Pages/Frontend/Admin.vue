@@ -113,9 +113,9 @@
                     <strong class="block mb-2 text-sm text-yellow-300">Role Instructions</strong>
                     <ul class="space-y-1 leading-tight list-disc list-inside">
                         <li><strong>Basic User (default)</strong> → Manage, Inspection, and View List (Cannot stamp)</li>
-                        <li><strong>Preparation Approver</strong> → All except Approval/Admin (Prepared By Stamping)</li>
-                        <li><strong>Checking Approver</strong> → All except Approval/Admin (Checked By Stamping)</li>
-                        <li><strong>Proxy Approver</strong> → Approval and Admin only (Approved By Stamp)</li>
+                        <li><strong>Preparation Approver</strong> → All except Approval/Admin (Prepared By Stamping only)</li>
+                        <li><strong>Checking Approver</strong> → All except Approval/Admin (Checked By Stamping only)</li>
+                        <li><strong>Proxy Approver</strong> → Access to ALL (Approved By Stamp only)</li>
                         <!-- hidden for now
 
                         <li><strong>Hybrid Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)</li>
@@ -260,8 +260,11 @@ const userAdminLogging = async (logEvent) => {
 }
 
 const getToday = () => {
-  const today = new Date();
-  return today.toISOString().split('T')[0]; // Formats to YYYY-MM-DD
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 };
 
 const users = ref([]);
@@ -379,7 +382,12 @@ const filteredLogs = computed(() => {
 
     // Filter by selected date (exact date match)
     if (selectedDate.value) {
-        logs = logs.filter(log => log.created_at?.startsWith(selectedDate.value));
+        logs = logs.filter(log => {
+        if (!log.created_at) return false;
+            const date = new Date(log.created_at.replace(' ', 'T')) // convert to ISO format
+            const localDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+            return localDate === selectedDate.value
+        });
     }
 
     // Sort by date

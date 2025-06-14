@@ -38,7 +38,7 @@
                 {{ state.user.firstName.charAt(0).toUpperCase() }}
               </div>
               <!-- Name -->
-              <span class="text-sm font-medium text-gray-800 dark:text-gray-100">
+              <span class="text-sm font-medium text-gray-800 dark:text-gray-100 whitespace-nowrap">
                 {{ state.user.firstName }}
               </span>
               <!-- Logout -->
@@ -112,17 +112,17 @@ const logUserLogout = async () => {
 // Define the navigation lists here
 const navItems = [
   { label: 'Home', route: 'homePage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation', 'Final Approver', 'Proxy Approver'] },
-  { label: 'Manage', route: 'manage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation'] },
+  { label: 'Manage', route: 'manage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Report', route: 'reports', access: ['Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'View List', route: 'viewList', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Approval', route: 'approval', access: ['Final Approver', 'Proxy Approver', 'Bypass Approver', 'Automation'] },
-  { label: 'Admin', route: 'admin', access: ['Final Approver', 'Proxy Approver', 'Automation'] }
+  { label: 'Admin', route: 'admin', access: ['Final Approver', 'Proxy Approver', 'Automation', 'Bypass Approver'] }
 ];
 
 // Filter nav items based on user access
 const filteredNavItems = computed(() => {
   if (!state.user) return [];
-  return navItems.filter(item => item.access.includes(state.user.access_type));
-});
+      return navItems.filter(item => item.access.includes(state.user.access_type));
+  });
 </script>

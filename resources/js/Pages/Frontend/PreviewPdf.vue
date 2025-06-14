@@ -1350,7 +1350,6 @@ watch(numberOfSet, (newVal, oldVal) => {
 const testing = ref("");
 const isAutomotive = ref(false);
 // You could pass these via props or retrieve via an API
-const printSerialNo = ref('');
 const printSetNo = ref ('');
 const printOvenMachineNo_ovenInfo = ref('N/A');
 const printTimeLoading = ref('N/A');
@@ -2561,7 +2560,7 @@ const exportMultiPagePdf = async () => {
     //console.log(`[PDF Export] Uploading PDF to server...`);
     const response = await axios.post('/upload-pdf', formData);
     //console.log(`[PDF Export] Upload successful. Server response:`, response.data);
-
+    await finalizeReport(printSerialNo.value);
     success.value = true;
   } catch (error) {
     console.error('[PDF Export] Error during multi-page export:', error);
@@ -2578,11 +2577,22 @@ const handlePrint = async () => {
   }
 };
 
+const finalizeReport = async (serial) => {
+  try {
+    const responseFinalize = await axios.patch(`/api/reportdata/${serial}`, {
+      is_finalized: 1,
+    });
+    //console.log('[Finalize Report] Response:', responseFinalize.data);
+  } catch (error) {
+    console.error('[Finalize Report] Error finalizing report:', error);
+  }
+};
+
 // Define the prop that will receive the serialParam
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
 });
-printSerialNo.value = props.serialParam;
+const printSerialNo = computed(() => props.serialParam)
 //console.log('Serial Param in PreviewPdf.vue:', props.serialParam); // You can use this for debugging
 
 // Optional: auto print on page load

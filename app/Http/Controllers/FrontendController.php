@@ -36,12 +36,7 @@ class FrontendController extends Controller
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
         $fromApproval = $request->get('fromApproval');
-
-        // Debug: Log all the headers
-        Log::debug($request->headers->all());  // <-- Now the Log class will work
-
-        Log::info('Is Authenticated?', ['check' => auth()->check()]);
-        Log::info('Current User', ['user' => auth()->user()]);
+        $fromViewList = $request->get('fromViewList');
 
         // Get the real client IP address
         $xForwardedFor = $request->header('X-Forwarded-For');
@@ -60,6 +55,7 @@ class FrontendController extends Controller
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
             'ipAddress' => $ipAddress,  // Pass ipAddress as a prop to the Reports.vue component
             'fromApproval' => filter_var($request->fromApproval, FILTER_VALIDATE_BOOLEAN),
+            'fromViewList' => filter_var($request->fromViewList, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 
@@ -109,9 +105,9 @@ class FrontendController extends Controller
     public function generatePdf(Request $request){
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
-        // Return the Inertia response and pass both serialParam and ipAddress to the Reports.vue component
+        // Return the Inertia response and pass both serialParam and ipAddress to the PreviewPdf.vue component
         return Inertia::render('Frontend/PreviewPdf', [
-            'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
+            'serialParam' => $serial,  // Pass serialParam as a prop to the PreviewPdf.vue component
         ]);
     }
 }
