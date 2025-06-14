@@ -117,12 +117,12 @@ const navItems = [
   { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'View List', route: 'viewList', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Approval', route: 'approval', access: ['Final Approver', 'Proxy Approver', 'Bypass Approver', 'Automation'] },
-  { label: 'Admin', route: 'admin', access: ['Final Approver', 'Proxy Approver', 'Automation'] }
+  { label: 'Admin', route: 'admin', access: ['Final Approver', 'Proxy Approver', 'Automation', 'Bypass Approver'] }
 ];
 
 // Filter nav items based on user access
 const filteredNavItems = computed(() => {
   if (!state.user) return [];
-  return navItems.filter(item => item.access.includes(state.user.access_type));
-});
+      return navItems.filter(item => item.access.includes(state.user.access_type));
+  });
 </script>

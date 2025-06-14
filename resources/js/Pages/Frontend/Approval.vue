@@ -60,7 +60,7 @@
                                 </tr>
                             </thead>
                             <tbody class="text-gray-800 bg-white">
-                                <tr v-for="(report, index) in filteredReports" :key="report.tpm_data_serial"
+                                <tr v-for="(report, index) in paginatedReports" :key="report.tpm_data_serial"
                                     class="transition-colors duration-150 border-b border-gray-200 hover:bg-gray-100">
                                 <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.tpm_data_serial }}</td>
                                 <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.model }}</td>
@@ -142,6 +142,25 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="flex justify-between items-center mt-4">
+                    <button
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+                        @click="prevPage"
+                        :disabled="currentPage === 1"
+                    >
+                        Previous
+                    </button>
+                    <span class="text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
+                    <button
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+                        @click="nextPage"
+                        :disabled="currentPage === totalPages"
+                    >
+                        Next
+                    </button>
+                    </div>
+
                 </div>
             </div>
 
@@ -209,6 +228,13 @@ const userApprovalLogging = async (logEvent) => {
 
 const statusFilter = ref('ALL');
 
+watch(statusFilter, () => {
+  currentPage.value = 1;
+});
+
+const currentPage = ref(1);
+const itemsPerPage = ref(10); // You can change to 20, 50, etc.
+
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
@@ -217,11 +243,8 @@ const reportNotificationMessage = ref('');
 
 // UI end
 const ipAddress = ref('');
-const currentUserData = ref('');
-const currentUserName = ref('');
-const currentUserApproverStage = ref('');
-const currentUserIP = ref('');
 const reportDataList = ref([]);
+
 const filteredReports = computed(() => {
   if (statusFilter.value === 'ALL') return reportDataList.value;
 
@@ -231,6 +254,28 @@ const filteredReports = computed(() => {
     if (statusFilter.value === 'PENDING') return !isApproved;
   });
 });
+
+const paginatedReports = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredReports.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredReports.value.length / itemsPerPage.value);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
 
 const selectedRows = ref([]); // Track selected rows by their serial numbers
 
@@ -308,14 +353,22 @@ const showReportData = async () => {
         //console.log("Getting report data API result: ", response.data);
 
         // Filter out rows where smp_judgement is null or an empty string
-        reportDataList.value = response.data.data.filter(report =>
-            report.smp_judgement && report.smp_judgement.trim() !== '' &&
-            (report.checked_by && report.checked_by.trim() !== '' &&
-            report.prepared_by && report.prepared_by.trim() !== '') || (report.checked_by_firstname && report.checked_by_firstname.trim() !== '' &&
-            report.prepared_by_firstname && report.prepared_by_firstname.trim() !== '')
-        );
+        reportDataList.value = response.data.data
+            .filter(report =>
+                report.smp_judgement && report.smp_judgement.trim() !== '' &&
+                (
+                    (report.checked_by && report.checked_by.trim() !== '' &&
+                     report.prepared_by && report.prepared_by.trim() !== '') ||
+                    (report.checked_by_firstname && report.checked_by_firstname.trim() !== '' &&
+                     report.prepared_by_firstname && report.prepared_by_firstname.trim() !== '')
+                )
+            )
+            .sort((a, b) => {
+                // Ensure both values are treated as numbers for natural ordering
+                return Number(b.tpm_data_serial) - Number(a.tpm_data_serial);
+            });
 
-        //console.log("Filtered report data arrays: ", reportDataList.value);
+        //console.log("Filtered and sorted report data: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
     }
