@@ -13,6 +13,7 @@ use App\Http\Controllers\MieGxDataInstructionsController;
 use App\Http\Controllers\MieGxDataInstructionsAggregateController;
 use App\Http\Controllers\NormalSecAdditionalsController;
 use App\Http\Controllers\StandardDataController;
+use App\Http\Controllers\MiasFactorController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\UserLogController;
 use Illuminate\Support\Facades\Route;
@@ -182,3 +183,6 @@ Route::post('/route-email', function (Request $request) {
 });
 
 Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUpload']);
+
+Route::post('/mias-factor/bulk-upload', [MiasFactorController::class, 'bulkUpload']);
+Route::apiResource('mias-factor', MiasFactorController::class);
