@@ -1060,7 +1060,6 @@
                     </button>
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
                     <button
-                        v-if="reportRemarksDisplay === 'E' || reportRemarksDisplay === 'HOLD'"
                         @click="sec_additional_redirect(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >

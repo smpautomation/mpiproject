@@ -24,6 +24,7 @@ Route::get('/data_ins', [FrontendController::class,'data_ins'])->name('data_ins'
 Route::get('/create_pdf', [FrontendController::class,'generatePdf'])->name('create_pdf');
 Route::get('/sec_additional', [FrontendController::class,'sec_additional'])->name('sec_additional');
 Route::get('/email_form', [FrontendController::class,'emailForm'])->name('email');
+Route::get('/mias_factor', [FrontendController::class,'mias_factor'])->name('mias_factor');
 
 Route::get('/generate-pdf', [PdfController::class, 'generate']);
 

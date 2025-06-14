@@ -90,6 +90,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Admin');
     }
 
+    public function mias_factor(){
+        return Inertia::render('Frontend/Mias_factor');
+    }
+
     public function data_ins(){
         return Inertia::render('Frontend/Data_INS');
     }
