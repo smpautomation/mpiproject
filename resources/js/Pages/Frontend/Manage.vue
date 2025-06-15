@@ -421,6 +421,7 @@
                     </div>
                 </div>
                 <DotsLoader v-show="showCsvLoading" />
+                <p v-if="mias_factorCsvError" class="text-red-500 font-extrabold font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
@@ -925,6 +926,8 @@
     }
 
     //UI VISIBILITY variables...
+    const mias_factorCsvError = ref(false);
+
     const showFurnaceCreatedNotif = ref(false);
     const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
@@ -1196,7 +1199,7 @@
             if (factorMatch) {
                 propData_factorEmp.value = factorMatch.employee_name;
             } else {
-                console.error(`Factor ID "${factor}" not included in the list of MIAS Factor employees.`);
+                throw new Error(`Factor ID "${factor}" not included in the list of MIAS Factor employees.`);
             }
 
             const miasMatch = miasFactorData.find(
@@ -1205,11 +1208,12 @@
             if (miasMatch) {
                 propData_miasEmp.value = miasMatch.employee_name;
             } else {
-                console.error(`MIAS ID "${mias}" not included in the list of MIAS Factor employees.`);
+                throw new Error(`MIAS ID "${mias}" not included in the list of MIAS Factor employees.`);
             }
 
         } catch (error) {
             console.error("Error fetching MIAS Factor Data:", error);
+            return false;
         }
     };
 
@@ -1270,8 +1274,8 @@
             mias_no: row["Factor Employee"],
         }));
 
-        console.log('CSV Parsed Data:', csv_parsedData.value);
-        console.log('Temp with Data class:', csv_tempWithDataStat.value);
+        //console.log('CSV Parsed Data:', csv_parsedData.value);
+        //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
         for (const row of csv_tempWithDataStat.value) {
             const factor = row.employee_no;
@@ -1282,6 +1286,8 @@
                 await mias_factorData(factor, mias);
             } else {
                 console.warn('Missing factor or mias in row:', row);
+                mias_factorCsvError.value = true;
+                return;
             }
         }
 
