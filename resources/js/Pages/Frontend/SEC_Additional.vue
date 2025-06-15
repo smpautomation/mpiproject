@@ -264,83 +264,7 @@
                 </div>
                 <!-- Loading Indicator -->
                 <DotsLoader v-if="showCsvLoading" />
-                <div>
-                    <div v-show="showMiasFactorEmp" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold text-white animate-pulse">CSV DATA UPLOADED SUCCESSFULLY!</p>
-                        <p class="mt-5 text-white">Please fill in the details before proceeding</p>
-                        <div class="flex flex-row mt-10">
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mias. Employee:</label>
-                                <input
-                                    type="text"
-                                    v-model="nsa_FactorEmp"
-                                    @input="nsa_FactorEmp = nsa_FactorEmp.toUpperCase()"
-                                    placeholder="e.g. Ella"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Factor Employee:</label>
-                                <input
-                                    type="text"
-                                    v-model="nsa_MiasEmp"
-                                    @input="nsa_MiasEmp = nsa_MiasEmp.toUpperCase()"
-                                    placeholder="e.g. Kathryn"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-
-                        <button
-                            class="px-4 py-2 mt-12 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="finishProceed_showConfirmationButton"
-                            >
-                                FINISH
-                        </button>
-                    </div>
-                </div>
-                <div
-                    v-show="finishProceed_showConfirm"
-                    class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
-                    >
-                    <div class="mb-6">
-                        <p class="text-lg font-semibold text-center text-gray-800">Are you sure all information is correct?</p>
-                    </div>
-                    <div class="flex space-x-6">
-                        <button
-                        @click="finishProceed"
-                        class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-                        >
-                        YES
-                        </button>
-                        <button
-                        @click="finishProceed_cancel"
-                        class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
-                        >
-                        NO
-                        </button>
-                    </div>
-                </div>
-                <div
-                    v-show="showIncompleteInformationError"
-                    class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
-                    >
-                    <svg
-                        class="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                    <span>All fields are required.</span>
-                </div>
+                <p v-if="mias_factorCsvError" class="text-red-500 font-extrabold font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
@@ -500,6 +424,43 @@ import { Inertia } from '@inertiajs/inertia';
 import Papa from 'papaparse';
 import axios from 'axios';
 import DotsLoader from '@/Components/DotsLoader.vue';
+import { useAuth } from '@/Composables/useAuth.js'
+
+const { state } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 500; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                Inertia.visit('/'); // Redirect if not authenticated
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
 
@@ -564,9 +525,39 @@ const rowCell = ref([]);
 // Upload file related variables end
 
 //General variables
+const mias_factorCsvError = ref(false);
 const currentSerialSelected = ref('');
 const dataReady = ref(false); // Flag to track if data is ready
 const myChartCanvas = ref(null); // Ref for the canvas
+
+const mias_factorData = async (factor, mias) => {
+    try {
+        const response = await axios.get('/api/mias-factor');
+        const miasFactorData = response.data.data;
+        //console.log("MIAS Factor Data:", miasFactorData);
+        const factorMatch = miasFactorData.find(
+            (item) => item.employee_no === factor
+        );
+        if (factorMatch) {
+            nsa_FactorEmp.value = factorMatch.employee_name;
+        } else {
+            throw new Error(`Factor ID "${factor}" not included in the list of MIAS Factor employees.`);
+        }
+
+        const miasMatch = miasFactorData.find(
+            (item) => item.mias_no === mias
+        );
+        if (miasMatch) {
+            nsa_MiasEmp.value = miasMatch.employee_name;
+        } else {
+            throw new Error(`MIAS ID "${mias}" not included in the list of MIAS Factor employees.`);
+        }
+
+    } catch (error) {
+        console.error("Error fetching MIAS Factor Data:", error);
+        return false;
+    }
+};
 
 // Define the prop that will receive the serialParam
 const props = defineProps({
@@ -674,32 +665,60 @@ const csv_selectedFile = ref(null)
     }
 
     const csv_submitFile = async () => {
-    csvUpload.value = false;
-    showCsvLoading.value = true;
-    showCsvUpload_confirmation.value = false;
+        csvUpload.value = false;
+        showCsvLoading.value = true;
+        showCsvUpload_confirmation.value = false;
 
-    Papa.parse(csv_selectedFile.value, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-            csv_parsedData.value = results.data
-            const rows = results.data
-            // Combine them into one array for the table
+        try {
+            const results = await new Promise((resolve, reject) => {
+                Papa.parse(csv_selectedFile.value, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: resolve,
+                    error: reject,
+                });
+            });
+
+            csv_parsedData.value = results.data;
+            const rows = results.data;
+
             csv_tempWithDataStat.value = rows.map(row => ({
                 temp: row["Temperature"],
-                status: row["Data class"]
+                status: row["Data class"],
+                employee_no: row["Meas. Employee"],
+                mias_no: row["Factor Employee"],
             }));
 
-            //console.log('CSV Parsed Data:', csv_parsedData.value);
-            //console.log('Temp with Data class:', csv_tempWithDataStat.value);
+            for (const row of csv_tempWithDataStat.value) {
+                // Defensive cleanup
+                const factor = row.employee_no?.toString().trim();
+                const mias = row.mias_no?.toString().trim();
 
-        },
-        error: (err) => {
-        console.error('Error parsing CSV:', err)
+                // Skip rows that are completely empty
+                if (!factor && !mias && !row.temp && !row.status) {
+                    console.warn('🟡 Skipping completely empty row:', row);
+                    continue;
+                }
+
+                console.log('Raw row data:', row);
+                console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
+
+                if (factor && mias) {
+                    console.log('✅ Valid row - Processing factor:', factor, 'and mias:', mias);
+                    await mias_factorData(factor, mias);
+                } else {
+                    console.warn('❌ Missing factor or mias in cleaned row:', row);
+                    mias_factorCsvError.value = true;
+                    return;
+                }
+            }
+
+            await mergeTempToTPM();
+
+        } catch (err) {
+            console.error('Error during CSV processing:', err);
         }
-    });
-    mergeTempToTPM();
-    }
+    };
 
     const csv_clearFile = () => {
         csv_selectedFile.value = null
@@ -741,9 +760,9 @@ const csv_selectedFile = ref(null)
         } catch (error) {
            // console.log("Merge failed: ", error);
         } finally {
+            await saveToNsaCategory();
             showCsvLoading.value = false;
-            //showProceed3.value = true;
-            showMiasFactorEmp.value = true;
+            showProceed3.value = true;
         }
     }
 
@@ -1865,5 +1884,47 @@ const renderChart = () => {
         console.error("Chart cannot be rendered: Missing data or canvas context.");
     }
 };
+
+const autoDeleteNullData = async () => {
+    //console.log('[autoDeleteNullData] Starting...');
+    try {
+        const responseGetNSA = await axios.get(`/api/nsadata`);
+        const nsadata = responseGetNSA.data.data["NSAData"] || [];
+        //console.log('[autoDeleteNullData] Raw API data:', nsadata);
+        //console.log('[autoDeleteNullData] Total rows fetched:', nsadata.length);
+
+        const nsaForDelete_IDs = [];
+
+        nsadata.forEach((row, idx) => {
+            const { id, furnace_id, layer_no, factor_emp, mias_emp, ...otherFields } = row;
+            const nullFields = Object.keys(otherFields).filter(key => otherFields[key] === null);
+
+            if (nullFields.length > 0) {
+                nsaForDelete_IDs.push(id);
+                //console.log(`[Row ${idx}] ID ${id} marked for deletion. Null fields:`, nullFields);
+            }
+        });
+
+        //console.log('[autoDeleteNullData] IDs marked for deletion:', nsaForDelete_IDs);
+
+        for (const id of nsaForDelete_IDs) {
+            try {
+                const res = await axios.delete(`/api/nsadata/${id}`);
+                //console.log(`[DELETE] ID ${id} successful:`, res.data);
+            } catch (err) {
+                console.error(`[DELETE] ID ${id} failed:`, err.response?.data || err.message);
+            }
+        }
+
+    } catch (error) {
+        console.error('[autoDeleteNullData] ❌ Error deleting null data:', error.response?.data || error.message);
+    }
+};
+
+
+onMounted(async() => {
+    await autoDeleteNullData();
+    await checkAuthentication();
+});
 
 </script>

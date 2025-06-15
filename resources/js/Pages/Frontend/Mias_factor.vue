@@ -158,6 +158,58 @@ import { ref, onMounted } from 'vue';
 import DotsLoader from '@/Components/DotsLoader.vue';
 import Papa from 'papaparse';
 import axios from 'axios';
+import { useAuth } from '@/Composables/useAuth.js'
+
+const { state } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 500; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                Inertia.visit('/'); // Redirect if not authenticated
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
+
+const userMiasFactorLogging = async (logEvent) => {
+    try{
+        const responseMiasFactorLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Mias-Factor',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userMiasFactorLogging post request failed: ',error);
+    }
+}
+
 
 const file = ref(null);
 const loading = ref(false);
@@ -168,7 +220,7 @@ const newRecord = ref({ employee_name: '', employee_no: '', mias_no: '' });
 const editingRecord = ref(null);
 
 const startEditing = (record) => {
-  editingRecord.value = { ...record }; // shallow clone to prevent binding issues
+  editingRecord.value = { ...record };
 };
 
 // Add record
@@ -176,6 +228,7 @@ const addRecord = async () => {
   if (!newRecord.value.employee_name || !newRecord.value.employee_no || !newRecord.value.mias_no) return;
 
   await axios.post('/api/mias-factor', newRecord.value);
+  await userMiasFactorLogging(`has successfully added ${newRecord.value.employee_name} to the data list of MIAS factors employees`);
   await loadData();
   newRecord.value = { employee_name: '', employee_no: '', mias_no: '' };
 };
@@ -183,6 +236,7 @@ const addRecord = async () => {
 // Update record
 const updateRecord = async () => {
   await axios.put(`/api/mias-factor/${editingRecord.value.id}`, editingRecord.value);
+  await userMiasFactorLogging(`has successfully edited ${editingRecord.value.employee_name} to the data list of MIAS factors employees`);
   editingRecord.value = null;
   await loadData();
 };
@@ -218,6 +272,7 @@ const uploadFile = () => {
         uploadStatusType.value = 'failed';
       } finally {
         loading.value = false;
+        await userMiasFactorLogging("has successfully uploaded data list of MIAS factors employees");
         resetStatusAfterDelay();
       }
     },
@@ -240,7 +295,7 @@ const loadData = async () => {
   try {
     const res = await axios.get('/api/mias-factor');
     miasFactors.value = res.data.data; // assuming your API returns { data: [...] }
-    console.log('MIAS factors loaded:', miasFactors.value);
+    //console.log('MIAS factors loaded:', miasFactors.value);
   } catch (e) {
     console.error('Failed to load MIAS factors:', e);
   }
@@ -250,5 +305,6 @@ const formatDate = (date) => new Date(date).toLocaleDateString();
 
 onMounted(async () => {
   await loadData();
+  await checkAuthentication();
 });
 </script>
