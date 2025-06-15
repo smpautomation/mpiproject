@@ -76,6 +76,23 @@ class MiasFactorController extends Controller{
             ], 400);
         }
 
+        // Validate required columns exist in the first row
+        $requiredColumns = ['Employee_Name', 'Employee_Number', 'User_Number'];
+        $missingColumns = [];
+
+        foreach ($requiredColumns as $column) {
+            if (!array_key_exists($column, $data[0])) {
+                $missingColumns[] = $column;
+            }
+        }
+
+        if (!empty($missingColumns)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Missing required columns: ' . implode(', ', $missingColumns),
+            ], 422);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -85,9 +102,9 @@ class MiasFactorController extends Controller{
                 if (!array_filter($row)) continue;
 
                 $insertData[] = [
-                    'employee_name' => $row['Employee_Name'] ?? null,
-                    'employee_no' => $row['Employee_Number'] ?? null,
-                    'mias_no' => $row['User_Number'] ?? null,
+                    'employee_name' => $row['Employee_Name'],
+                    'employee_no' => $row['Employee_Number'],
+                    'mias_no' => $row['User_Number'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
