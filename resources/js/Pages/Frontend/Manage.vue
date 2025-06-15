@@ -437,26 +437,6 @@
                                 />
                             </div>
                             <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mias. Employee:</label>
-                                <input
-                                    type="text"
-                                    v-model="propData_factorEmp"
-                                    @input="propData_factorEmp = propData_factorEmp.toUpperCase()"
-                                    placeholder="e.g. Ella"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Factor Employee:</label>
-                                <input
-                                    type="text"
-                                    v-model="propData_miasEmp"
-                                    @input="propData_miasEmp = propData_miasEmp.toUpperCase()"
-                                    placeholder="e.g. Kathryn"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
                                 <label class="mt-5 mb-1 text-sm font-extrabold text-white">Lot No.:</label>
                                 <input
                                     type="text"
@@ -1043,9 +1023,7 @@
     }
 
     const proceedToFinal_showConfirm = () => {
-        if(jhCurveMassProdName.value == null || jhCurveMassProdName.value == "" ||
-            propData_factorEmp.value == null || propData_factorEmp.value == "" ||
-            propData_miasEmp.value == null || propData_miasEmp.value == "" ||
+        if(jhCurveMassProdName.value == null || jhCurveMassProdName.value == ""||
             jhCurveLotNo.value == null || jhCurveLotNo.value == ""){
 
             showIncompleteInformationError.value = true;
@@ -1207,6 +1185,34 @@
         }
     };
 
+    const mias_factorData = async (factor, mias) => {
+        try {
+            const response = await axios.get('/api/mias-factor');
+            const miasFactorData = response.data.data;
+            console.log("MIAS Factor Data:", miasFactorData);
+            const factorMatch = miasFactorData.find(
+                (item) => item.employee_no === factor
+            );
+            if (factorMatch) {
+                propData_factorEmp.value = factorMatch.employee_name;
+            } else {
+                console.error(`Factor ID "${factor}" not included in the list of MIAS Factor employees.`);
+            }
+
+            const miasMatch = miasFactorData.find(
+                (item) => item.mias_no === mias
+            );
+            if (miasMatch) {
+                propData_miasEmp.value = miasMatch.employee_name;
+            } else {
+                console.error(`MIAS ID "${mias}" not included in the list of MIAS Factor employees.`);
+            }
+
+        } catch (error) {
+            console.error("Error fetching MIAS Factor Data:", error);
+        }
+    };
+
     const csv_selectedFile = ref(null)
     const csv_parsedData = ref([])
     const csv_tempWithDataStat = ref([]);
@@ -1246,28 +1252,41 @@
         showCsvUpload_confirmation.value = false;
         showCsvLoading.value = true;
 
-        Papa.parse(csv_selectedFile.value, {
-            header: true,
-            skipEmptyLines: true,
-            complete: (results) => {
-                csv_parsedData.value = results.data
-                const rows = results.data
-                // Combine them into one array for the table
-                csv_tempWithDataStat.value = rows.map(row => ({
-                    temp: row["Temperature"],
-                    status: row["Data class"]
-                }));
+        const parsedData = await new Promise((resolve, reject) => {
+            Papa.parse(csv_selectedFile.value, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => resolve(results.data),
+                error: (err) => reject(err),
+            });
+        });
 
-                //console.log('CSV Parsed Data:', csv_parsedData.value);
-                //console.log('Temp with Data class:', csv_tempWithDataStat.value);
+        csv_parsedData.value = parsedData;
 
-            },
-                error: (err) => {
-                console.error('Error parsing CSV:', err);
+        csv_tempWithDataStat.value = parsedData.map(row => ({
+            temp: row["Temperature"],
+            status: row["Data class"],
+            employee_no: row["Meas. Employee"],
+            mias_no: row["Factor Employee"],
+        }));
+
+        console.log('CSV Parsed Data:', csv_parsedData.value);
+        console.log('Temp with Data class:', csv_tempWithDataStat.value);
+
+        for (const row of csv_tempWithDataStat.value) {
+            const factor = row.employee_no;
+            const mias = row.mias_no;
+
+            if (factor && mias) {
+                console.log('Processing factor:', factor, 'and mias:', mias);
+                await mias_factorData(factor, mias);
+            } else {
+                console.warn('Missing factor or mias in row:', row);
             }
-    });
-        mergeTempToTPM();
-    }
+        }
+
+        await mergeTempToTPM();
+    };
 
     const csv_clearFile = () => {
     csv_selectedFile.value = null
@@ -2604,7 +2623,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
             showProceed3.value = false;
             toggleManageForm.value = false;
             await autoRenameFurnace();
-            await userManageLogging('created '+ serialNo.value +' data successfully');
+            await userManageLogging('created '+ serialNo.value +' data successfully | Model : ' + jhCurveActualModel.value);
         }
         await fetchDataCreateGraph();
     };
