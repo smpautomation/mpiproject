@@ -1646,7 +1646,7 @@ watchEffect(() => {
 
 //FOR VT - models DNS-0A54G, MIE-0751G, MIS-0766G
 watch(
-  [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement],
+  [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement, showVTData],
   () => {
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
