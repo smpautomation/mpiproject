@@ -15,52 +15,55 @@ class NormalSecAdditionalsController extends Controller
         $serial_no = $request->query('serial');
         $set_no = $request->query('set');
         $report = $request->query('report');
+
         if (!$serial_no) {
-            try{
+            try {
                 $nsaData = NormalSecAdditionals::all();
                 $remarks = NSARemark::all();
                 $aggregateFunctions = NSAAggregateFunctions::all();
-                // if($report){
-                //     $reportData = ReportData::all();
-                // }
+                $nsaCategory = NSACategory::all();
+
                 return response()->json([
                     'status' => true,
                     'message' => 'NSA Datas retrieved successfully',
                     'data' => [
                         'NSAData' => $nsaData,
                         'remarks' => $remarks,
-                        'aggregateFunctions' =>  $aggregateFunctions
+                        'aggregateFunctions' => $aggregateFunctions,
+                        'nsaCategory' => $nsaCategory
                     ]
                 ], 200);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Error retrieving NSA Data',
                     'error' => $e->getMessage(),
                 ], 500);
             }
-        }else{
-            try{
+        } else {
+            try {
                 $nsaData = NormalSecAdditionals::with($report ? ['remark', 'reportData', 'category'] : ['remark', 'category'])
                                     ->where('serial_no',  $serial_no)
                                     ->where('set_no', $set_no)
                                     ->orderBy('zone', 'asc')
                                     ->get();
 
-                if(!$nsaData->isEmpty()){
+                if (!$nsaData->isEmpty()) {
                     $NSAAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial_no)->get();
+                    $nsaCategory = NSACategory::all();
+
                     return response()->json([
                         'status' => true,
                         'message' => 'NSA data found successfully',
                         'data' => $nsaData, $NSAAggregateFunctions
                     ], 200);
-                }else{
+                } else {
                     return response()->json([
                         'status' => false,
                         'message' => 'NSA data not found for this serial number.'
                     ], 404);
                 }
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
                     'message' => 'An error occurred while retrieving NSA data',
@@ -263,6 +266,36 @@ class NormalSecAdditionalsController extends Controller
             ], 500);
         }
     }
+    public function updateNSA_MiasFactor(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $serialNo = $request->input('serial_no');
+            $setNo = $request->input('set_no');
+
+            $inputData = $request->except(['serial_no', 'set_no']);
+
+            $affectedRows = NormalSecAdditionals::where('serial_no', $serialNo)
+                ->where('set_no', $setNo)
+                ->update($inputData);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => "NSA Data updated successfully. Rows affected: {$affectedRows}",
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Error updating NSA Data',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function updateRemarks(Request $request, $id)
     {
         DB::beginTransaction();
@@ -354,6 +387,54 @@ class NormalSecAdditionalsController extends Controller
                 'status' => false,
                 'message' => 'Error deleting NSA Data',
                 'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroyAggregate($id)
+    {
+        try {
+            $aggregate = NSAAggregateFunctions::findOrFail($id);
+            $aggregate->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'NSA aggregate record deleted successfully.',
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'NSA aggregate record not found.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error deleting NSA aggregate record.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function deleteCategory($id)
+    {
+        try {
+            $category = NSACategory::findOrFail($id);
+            $category->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => "NSA Category with ID {$id} deleted successfully."
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => "NSA Category with ID {$id} not found."
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error deleting NSA Category.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

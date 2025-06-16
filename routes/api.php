@@ -93,10 +93,13 @@ Route::get('/nsadata', [NormalSecAdditionalsController::class, 'index']);
 Route::get('/nsadata/{id}', [NormalSecAdditionalsController::class, 'show']);
 Route::post('/nsadata', [NormalSecAdditionalsController::class, 'store']);
 Route::patch('/nsadataupdate/{id}', [NormalSecAdditionalsController::class, 'updateNSAData']);
+Route::patch('/nsadataupdatemiasfactor', [NormalSecAdditionalsController::class, 'updateNSA_MiasFactor']);
 Route::patch('/nsaremarksupdate/{id}', [NormalSecAdditionalsController::class, 'updateRemarks']);
 Route::patch('/nsaaggregateupdate/{id}', [NormalSecAdditionalsController::class, 'updateAggregateFunctions']);
 Route::patch('/nsaupdatecategory/{id}', [NormalSecAdditionalsController::class, 'updateCategory']);
 Route::delete('/nsadata/{id}', [NormalSecAdditionalsController::class, 'destroy']);
+Route::delete('/nsaaggregate/{id}', [NormalSecAdditionalsController::class, 'destroyAggregate']);
+Route::delete('/nsacategory/{id}', [NormalSecAdditionalsController::class, 'deleteCategory']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
