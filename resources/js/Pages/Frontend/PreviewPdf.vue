@@ -1057,7 +1057,7 @@
                         <div class="flex items-center">
                             <span class="mr-2 text-xs font-semibold">Mias.&nbsp;Employee:</span>
                             <span :class="{ 'leading-loose': adjustStyling }" class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                                {{ pagesData[index-1]?.miasEmp }}
+                                {{ pagesData[index - 1]?.tableTPM?.[0]?.mias_emp }}
                             </span>
                         </div>
                     </div>
@@ -1072,7 +1072,7 @@
                         <div class="flex items-center">
                             <span class="mr-2 text-xs font-semibold">Factor&nbsp;Employee:</span>
                             <span :class="{ 'leading-loose': adjustStyling }" class="flex-grow inline-block text-[10px] border-b border-gray-500">
-                                {{ pagesData[index-1]?.factorEmp }}
+                                {{ pagesData[index - 1]?.tableTPM?.[0]?.factorEmp }}
                             </span>
                         </div>
                     </div>
@@ -2272,7 +2272,9 @@ const nsa_dataFrom_tpmData = async () => {
                     "4paiIs": TPM["4paiIs"] ?? "",
                     tracer: TPM.Tracer ?? "",
                     temperature: TPM.temperature ?? "",
-                    data_status: TPM.data_status ?? ""
+                    data_status: TPM.data_status ?? "",
+                    mias_emp: TPM.mias_emp ?? "",
+                    factorEmp: TPM.factor_emp ?? "",
                 };
                 tableTPMRows.push(row);
             }
@@ -2295,17 +2297,20 @@ const nsa_dataFrom_tpmData = async () => {
                 actualModel: firstTPM?.category.actual_model,
                 jhcurveLotNo: firstTPM?.category.jhcurve_lotno,
                 massProd: firstTPM?.category.massprod_name,
-                factorEmp: firstTPM?.category.factor_emp,
-                miasEmp: firstTPM?.category.mias_emp,
             };
 
             // Check if nsaGeneral exists and parse additional data
-            if (nsaGeneral[0][x-1].average && nsaGeneral[0][x-1].maximum && nsaGeneral[0][x-1].minimum) {
-                //console.log(`Parsing additional data for set #${x} from nsaGeneral:`, nsaGeneral);
+            if (nsaGeneral[0]?.[x - 1]?.average && nsaGeneral[0]?.[x - 1]?.maximum && nsaGeneral[0]?.[x - 1]?.minimum) {
+                //console.log(`✅ Parsing additional data for set #${x}`);
+                //console.log("Raw data from nsaGeneral[0][x-1]:", nsaGeneral[0][x - 1]);
 
-                const average = JSON.parse(nsaGeneral[0][x-1].average);
-                const maximum = JSON.parse(nsaGeneral[0][x-1].maximum);
-                const minimum = JSON.parse(nsaGeneral[0][x-1].minimum);
+                const average = JSON.parse(nsaGeneral[0][x - 1].average);
+                const maximum = JSON.parse(nsaGeneral[0][x - 1].maximum);
+                const minimum = JSON.parse(nsaGeneral[0][x - 1].minimum);
+
+                //console.debug("✅ Parsed averages:", average);
+                //console.debug("✅ Parsed maximums:", maximum);
+                //console.debug("✅ Parsed minimums:", minimum);
 
                 // Populate page with the parsed averages, max, min
                 page.brAverage = average.Br ?? "";
@@ -2359,8 +2364,12 @@ const nsa_dataFrom_tpmData = async () => {
                 page.fourpaiIaAverage = average["4paila"] ?? "";
                 page.fourpaiIaMaximum = maximum["4paila"] ?? "";
                 page.fourpaiIaMinimum = minimum["4paila"] ?? "";
+
+                //console.log(`✅ Completed parsing and assigning NSA data to page for set #${x}`);
             } else {
-                console.warn(`nsaGeneral[${0}] or nsaGeneral[0][${x-1}] is undefined!`);
+                console.warn(`⚠️ nsaGeneral[0] or nsaGeneral[0][${x - 1}] is missing or incomplete.`);
+                console.debug("nsaGeneral dump:", nsaGeneral);
+                console.debug(`x = ${x}, x - 1 = ${x - 1}`);
             }
 
             //console.log(`Page contents for set #${x}:`, page);

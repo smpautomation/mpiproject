@@ -1278,14 +1278,24 @@
         //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
         for (const row of csv_tempWithDataStat.value) {
-            const factor = row.employee_no;
-            const mias = row.mias_no;
+            // Defensive cleanup
+            const factor = row.employee_no?.toString().trim();
+            const mias = row.mias_no?.toString().trim();
+
+            // Skip rows that are completely empty
+            if (!factor && !mias && !row.temp && !row.status) {
+                //console.warn('Skipping completely empty row:', row);
+                continue;
+            }
+
+            //console.log('Raw row data:', row);
+            //console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
             if (factor && mias) {
-                console.log('Processing factor:', factor, 'and mias:', mias);
+                //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                 await mias_factorData(factor, mias);
             } else {
-                console.warn('Missing factor or mias in row:', row);
+                console.warn('Missing factor or mias in cleaned row:', row);
                 mias_factorCsvError.value = true;
                 return;
             }
