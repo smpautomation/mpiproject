@@ -83,7 +83,7 @@
                         class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1"
                     >
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
-                        <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }} san</p>
+                        <p class="text-xl font-bold whitespace-nowrap">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }} san</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
                         <p v-if="report_isFinalized == true">FINALIZED
                             <span>
@@ -96,7 +96,7 @@
                     </div>
                     <div v-else class="flex flex-col bg-blue-200 mr-10 w-[250px] h-[135px] rounded-xl shadow-xl justify-center items-start px-5 py-4 text-white space-y-1">
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
-                        <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
+                        <p class="text-xl font-bold whitespace-nowrap">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
                         <p v-if="report_isFinalized == true" class="text-sm flex items-center gap-2 text-green-400 font-extrabold bg-green-100 p-2 rounded-lg">
                             FINALIZED
@@ -929,7 +929,7 @@
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Prepared By:</p>
                     <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showPreparedByDefault" class="w-[153px] h-[153px]">
-                            <span class="font-extrabold text-blue-700 opacity-100 animate-pulse">
+                            <span class="font-semibold text-blue-700 opacity-100 animate-pulse">
                                 Waiting for stamp...
                             </span>
                         </div>
@@ -978,7 +978,7 @@
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Checked By:</p>
                     <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showCheckedByDefault" class="w-[153px] h-[153px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
+                        <span class="font-semibold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
                         </span>
                         </div>
@@ -1027,7 +1027,7 @@
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Approved By:</p>
                     <div class="items-center p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showApprovedByDefault" class="w-[153px] h-[153px]">
-                        <span class="font-extrabold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
+                        <span class="font-semibold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
                         </span>
                         </div>

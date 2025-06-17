@@ -531,25 +531,33 @@ const dataReady = ref(false); // Flag to track if data is ready
 const myChartCanvas = ref(null); // Ref for the canvas
 
 const mias_factorData = async (factor, mias) => {
-    const response = await axios.get('/api/mias-factor');
-    const miasFactorData = response.data.data;
+        const response = await axios.get('/api/mias-factor');
+        const miasFactorData = response.data.data;
+        console.log("MIAS Factor Data:", miasFactorData);
 
-    const factorMatch = miasFactorData.find(item => item.employee_no === factor);
-    if (!factorMatch) {
-        console.log('Factor not found:', factor);
-        mias_factorCsvError.value = true;
-        throw new Error(`Factor ID "${factor}" not included`);
-    }
-    nsa_FactorEmp.value = factorMatch.employee_name;
+        const findByEmpOrMiasNo = (searchValue) => {
+            return (
+                miasFactorData.find(item => item.employee_no === searchValue) ||
+                miasFactorData.find(item => item.mias_no === searchValue)
+            );
+        };
 
-    const miasMatch = miasFactorData.find(item => item.mias_no === mias);
-    if (!miasMatch) {
-        console.log('Mias not found:', mias);
-        mias_factorCsvError.value = true;
-        throw new Error(`MIAS ID "${mias}" not included`);
-    }
-    nsa_MiasEmp.value = miasMatch.employee_name;
-};
+        const factorMatch = findByEmpOrMiasNo(factor);
+        if (factorMatch) {
+            nsa_FactorEmp.value = factorMatch.employee_name;
+        } else {
+            mias_factorCsvError.value = true;
+            throw new Error(`Factor ID "${factor}" not found in either employee_no or mias_no fields.`);
+        }
+
+        const miasMatch = findByEmpOrMiasNo(mias);
+        if (miasMatch) {
+            nsa_MiasEmp.value = miasMatch.employee_name;
+        } else {
+            mias_factorCsvError.value = true;
+            throw new Error(`MIAS ID "${mias}" not found in either employee_no or mias_no fields.`);
+        }
+    };
 
 // Define the prop that will receive the serialParam
 const props = defineProps({
@@ -688,7 +696,7 @@ const csv_selectedFile = ref(null)
 
                 // Skip rows that are completely empty
                 if (!factor && !mias && !row.temp && !row.status) {
-                    console.warn('🟡 Skipping completely empty row:', row);
+                    console.warn('Skipping completely empty row:', row);
                     continue;
                 }
 
@@ -696,10 +704,10 @@ const csv_selectedFile = ref(null)
                 console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
                 if (factor && mias) {
-                    console.log('✅ Valid row - Processing factor:', factor, 'and mias:', mias);
+                    console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                     await mias_factorData(factor, mias);
                 } else {
-                    console.warn('❌ Missing factor or mias in cleaned row:', row);
+                    console.warn('Missing factor or mias in cleaned row:', row);
                     return;
                 }
             }
@@ -1230,7 +1238,7 @@ const saveToNsaCategory = async () => {
     try{
 
         const responseTPMCAT = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value); // Adjust this URL to your API endpoint
-        //console.log('saveToNsaCategory - API Response responseTPMCAT:', responseTPMCAT.data);
+        console.log('saveToNsaCategory - API Response responseTPMCAT:', responseTPMCAT.data);
         tpmCatData.value = responseTPMCAT.data.data;
 
         const tpm_category_actualmodel = tpmCatData.value.map(item => item.category?.actual_model ?? null);
@@ -1627,7 +1635,6 @@ const showAllData = async () => {
 
             //console.log("Average Values:", aggAveValues.value.map(refObj => refObj.value));
             //console.log("ng iHr95 test: ", calculateSum(getAlliHr95Remarks.value));
-            await autoDeleteNullData();
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -1710,6 +1717,7 @@ const fetchDataCreateGraph = async () => {
     } finally{
         showGraphAndTables.value = true;  // Set this to true after data is loaded
         showLoadingForGraphAndTables.value = false;
+        await autoDeleteNullData();
     }
 };
 
@@ -1875,7 +1883,7 @@ const autoDeleteNullData = async () => {
 
             if (nullFields.length > 0) {
                 nsaForDelete_IDs.push(id);
-                //console.log(`[Row ${idx}] ID ${id} marked for deletion. Null fields:`, nullFields);
+                console.log(`[Row ${idx}] ID ${id} marked for deletion. Null fields:`, nullFields);
             }
         });
 
@@ -1884,7 +1892,7 @@ const autoDeleteNullData = async () => {
         for (const id of nsaForDelete_IDs) {
             try {
                 const res = await axios.delete(`/api/nsadata/${id}`);
-                //console.log(`[DELETE] ID ${id} successful:`, res.data);
+                console.log(`[DELETE] ID ${id} successful:`, res.data);
             } catch (err) {
                 console.error(`[DELETE] ID ${id} failed:`, err.response?.data || err.message);
             }

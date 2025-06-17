@@ -276,6 +276,12 @@ class NormalSecAdditionalsController extends Controller
 
             $inputData = $request->except(['serial_no', 'set_no']);
 
+            \Log::info("Attempting NSA update", [
+                'serial_no' => $serialNo,
+                'set_no' => $setNo,
+                'payload' => $inputData,
+            ]);
+
             $affectedRows = NormalSecAdditionals::where('serial_no', $serialNo)
                 ->where('set_no', $setNo)
                 ->update($inputData);
