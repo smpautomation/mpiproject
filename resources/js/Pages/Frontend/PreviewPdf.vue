@@ -34,7 +34,7 @@
         </div>
         <!-- Oven Heating Information -->
         <div class="flex flex-row justify-between">
-            <p class="mb-2 text-xl font-extrabold">Oven Heating Information</p>
+            <p class="mb-2 text-xl font-semibold">Oven Heating Information</p>
             <span
                 v-show="isAutomotive"
                 class="flex items-center justify-center w-[70px] h-[40px] text-center bg-center bg-no-repeat"
@@ -111,7 +111,7 @@
         <!-- Divider -->
         <hr class="mt-2" />
 
-        <p class="mb-2 text-xl font-extrabold">Magnetic Property Inspection Information</p>
+        <p class="mb-2 text-xl font-semibold">Magnetic Property Inspection Information</p>
 
         <!-- Single Row Information -->
         <div class="grid grid-cols-1 gap-4 mb-2 sm:grid-cols-4">
@@ -464,7 +464,7 @@
         <hr class="mt-2" />
 
         <div class="mb-2">
-            <p :class="{ 'leading-loose': adjustStyling }" class="mb-2 text-xl font-extrabold">SMP Judgement:</p>
+            <p :class="{ 'leading-loose': adjustStyling }" class="mb-2 text-xl font-semibold">SMP Judgement:</p>
             <div class="flex flex-row">
                 <!-- SMP Judgement -->
                 <div class="flex flex-col items-center justify-start w-[130px] h-[100px] border border-black bg-gray-200">
@@ -587,7 +587,7 @@
 
 
         <div>
-            <p class="mb-2 text-xl font-extrabold">SEC / C-Mark Judgement:</p>
+            <p class="mb-2 text-xl font-semibold">SEC / C-Mark Judgement:</p>
             <div class="flex flex-row">
                 <div class="min-w-[300px] min-h-[80px] border border-black">
                     <!-- empty -->
@@ -883,7 +883,7 @@
                                 </p>
                                 <div class="text-sm" v-if="noteReasonForReject.length">
                                     Remarks Encountered:
-                                    <p class="text-[10px] text-red-600 font-extrabold">
+                                    <p class="text-[10px] text-red-600 font-semibold">
                                         <span>{{ noteReasonForReject.map(r => r.replace(/^\s*-\s*/, '')).join(', ') }}</span>
                                     </p>
                                 </div>
