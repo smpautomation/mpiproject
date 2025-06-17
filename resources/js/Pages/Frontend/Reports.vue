@@ -85,7 +85,7 @@
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
                         <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }} san</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
-                        <p v-if="report_isFinalized == true">FINALIZED 
+                        <p v-if="report_isFinalized == true">FINALIZED
                             <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="green">
                                     <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
@@ -99,7 +99,7 @@
                         <p class="text-xl font-bold">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
                         <p v-if="report_isFinalized == true" class="text-sm flex items-center gap-2 text-green-400 font-extrabold bg-green-100 p-2 rounded-lg">
-                            FINALIZED 
+                            FINALIZED
                             <span class="w-4 h-4 inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-full h-full">
                                     <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
@@ -1646,7 +1646,7 @@ watchEffect(() => {
 
 //FOR VT - models DNS-0A54G, MIE-0751G, MIS-0766G
 watch(
-  [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement],
+  [reportVT_iHcResults, reportVT_iHc, reportVT_remarks, reportSMPJudgement, showVTData],
   () => {
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
@@ -1670,7 +1670,7 @@ watch(
 
 //For Data 1x1x1 without corner - models AAW-0935G, AAW-0934G
 watch(
-  [reportSurface_cpk, reportCore_cpk, reportSurface_remarks, reportCore_remarks, reportSMPJudgement],
+  [reportSurface_cpk, reportCore_cpk, reportSurface_remarks, reportCore_remarks, reportSMPJudgement, show1x1x1Data_withoutCorner],
   () => {
     //console.log('Watch triggered for 1x1x1 without corner evaluation');
     //console.log('noteReasonForReject:', noteReasonForReject.value);
@@ -1701,7 +1701,7 @@ watch(
 );
 
 watch(
-  [reportCpkFrom_iHc_Cpk, reportCpkFrom_iHc_remarks, reportSMPJudgement],
+  [reportCpkFrom_iHc_Cpk, reportCpkFrom_iHc_remarks, reportSMPJudgement, showCpkFrom_iHc],
   () => {
     //console.log('Watch triggered for CPK from iHc evaluation');
     //console.log('noteReasonForReject:', noteReasonForReject.value);
@@ -1731,7 +1731,7 @@ watch(
 
 //FOR GX - models
 watch(
-  [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement],
+  [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement, showGX],
   () => {
     //console.log('Watch triggered for GX iHc evaluation');
     //console.log('showGX:', showGX.value);
@@ -1756,7 +1756,7 @@ watch(
 
 //FOR BH - models
 watch(
-  [reportBH_result, reportBH_dataStandard, reportSMPJudgement, reportBH_remarks],
+  [reportBH_result, reportBH_dataStandard, reportSMPJudgement, reportBH_remarks, showBHData],
   () => {
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
@@ -1780,7 +1780,7 @@ watch(
 
 //For TTM Models
 watch(
-  [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks],
+  [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks, isTTM_model, show1x1x1Data_withoutCorner, show1x1x1Data_Corner],
   () => {
     //console.log('Watch triggered for isTTM_model or reportCpk');
     //console.log('isTTM_model:', isTTM_model.value);

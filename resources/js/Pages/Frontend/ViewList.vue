@@ -85,7 +85,7 @@
                 <td v-if="state.user && state.user.access_type !== 'Basic User'" class="p-[1px] text-center"> <!-- New Cell -->
                     <div class="flex flex-row justify-center px-0 py-1 text-sm text-center bg-white rounded-sm space-x-7 whitespace-nowrap">
                         <div>
-                          <button 
+                          <button
                             @click="viewReport(item.category[0].tpm_data_serial)"
                           class="bg-blue-600 text-white rounded-sm w-[100px] mr-2
                                       hover:bg-blue-500 active:bg-blue-700
