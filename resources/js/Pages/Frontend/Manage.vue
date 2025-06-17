@@ -1189,31 +1189,31 @@
     };
 
     const mias_factorData = async (factor, mias) => {
-        try {
-            const response = await axios.get('/api/mias-factor');
-            const miasFactorData = response.data.data;
-            console.log("MIAS Factor Data:", miasFactorData);
-            const factorMatch = miasFactorData.find(
-                (item) => item.employee_no === factor
-            );
-            if (factorMatch) {
-                propData_factorEmp.value = factorMatch.employee_name;
-            } else {
-                throw new Error(`Factor ID "${factor}" not included in the list of MIAS Factor employees.`);
-            }
+        const response = await axios.get('/api/mias-factor');
+        const miasFactorData = response.data.data;
+        console.log("MIAS Factor Data:", miasFactorData);
 
-            const miasMatch = miasFactorData.find(
-                (item) => item.mias_no === mias
+        const findByEmpOrMiasNo = (searchValue) => {
+            return (
+                miasFactorData.find(item => item.employee_no === searchValue) ||
+                miasFactorData.find(item => item.mias_no === searchValue)
             );
-            if (miasMatch) {
-                propData_miasEmp.value = miasMatch.employee_name;
-            } else {
-                throw new Error(`MIAS ID "${mias}" not included in the list of MIAS Factor employees.`);
-            }
+        };
 
-        } catch (error) {
-            console.error("Error fetching MIAS Factor Data:", error);
-            return false;
+        const factorMatch = findByEmpOrMiasNo(factor);
+        if (factorMatch) {
+            propData_factorEmp.value = factorMatch.employee_name;
+        } else {
+            mias_factorCsvError.value = true;
+            throw new Error(`Factor ID "${factor}" not found in either employee_no or mias_no fields.`);
+        }
+
+        const miasMatch = findByEmpOrMiasNo(mias);
+        if (miasMatch) {
+            propData_miasEmp.value = miasMatch.employee_name;
+        } else {
+            mias_factorCsvError.value = true;
+            throw new Error(`MIAS ID "${mias}" not found in either employee_no or mias_no fields.`);
         }
     };
 
@@ -1296,7 +1296,6 @@
                 await mias_factorData(factor, mias);
             } else {
                 console.warn('Missing factor or mias in cleaned row:', row);
-                mias_factorCsvError.value = true;
                 return;
             }
         }

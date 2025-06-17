@@ -113,7 +113,7 @@
                         <!-- Serial -->
                         <div class="text-center sm:text-left">
                             <p class="text-sm font-bold text-blue-800">Serial</p>
-                            <p class="text-xl font-extrabold text-blue-900">{{ currentSerialSelected }}</p>
+                            <p class="text-xl font-semibold text-blue-900">{{ currentSerialSelected }}</p>
                         </div>
 
                         <!-- Furnace -->
@@ -154,12 +154,12 @@
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <!-- Oven Heating Information Section -->
                     <div class="flex flex-col mb-4 space-y-4">
-                        <p class="mb-2 text-xl font-extrabold">Oven Heating Information</p>
+                        <p class="mb-2 text-xl font-semibold">Oven Heating Information</p>
 
                         <!-- Row 1 -->
                         <div class="flex flex-row justify-evenly">
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Oven Machine No:</label>&nbsp;
+                                <label class="text-lg font-semibold">Oven Machine No:</label>&nbsp;
                                 <input
                                     v-model="reportOvenMachineNo"
                                     type="text"
@@ -172,7 +172,7 @@
                             </div>
 
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Time Loading:</label>&nbsp;
+                                <label class="text-lg font-semibold">Time Loading:</label>&nbsp;
                                 <input
                                     v-model="reportTimeLoading"
                                     type="text"
@@ -186,7 +186,7 @@
                             </div>
 
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Temperature (Time Loading):</label>&nbsp;
+                                <label class="text-lg font-semibold">Temperature (Time Loading):</label>&nbsp;
                                 <input
                                     v-model="reportTemperature_TimeLoading"
                                     type="text"
@@ -203,7 +203,7 @@
                         <!-- Row 2 -->
                         <div class="flex flex-row justify-evenly">
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Date:</label>&nbsp;
+                                <label class="text-lg font-semibold">Date:</label>&nbsp;
                                 <input
                                     v-model="reportDate_OvenInfo"
                                     type="date"
@@ -216,7 +216,7 @@
                             </div>
 
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Time Unloading:</label>&nbsp;
+                                <label class="text-lg font-semibold">Time Unloading:</label>&nbsp;
                                 <input
                                     v-model="reportTimeUnloading"
                                     type="text"
@@ -230,7 +230,7 @@
                             </div>
 
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Temperature (Time Unloading):</label>&nbsp;
+                                <label class="text-lg font-semibold">Temperature (Time Unloading):</label>&nbsp;
                                 <input
                                     v-model="reportTemperature_TimeUnloading"
                                     type="text"
@@ -246,7 +246,7 @@
                         <!-- Row 3 -->
                         <div class="flex flex-row justify-evenly">
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Shift:</label>&nbsp;
+                                <label class="text-lg font-semibold">Shift:</label>&nbsp;
                                 <input
                                     v-model="reportShift_OvenInfo"
                                     type="text"
@@ -260,7 +260,7 @@
                             </div>
 
                             <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-extrabold">Operator:</label>&nbsp;
+                                <label class="text-lg font-semibold">Operator:</label>&nbsp;
                                 <input
                                     v-model="reportOperator_OvenInfo"
                                     type="text"
@@ -278,7 +278,7 @@
                 <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl">
                     <div class="flex flex-row mb-4 justify-evenly">
                         <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-extrabold">Model:</label>&nbsp;
+                            <label class="text-lg font-semibold">Model:</label>&nbsp;
                             <span
                                 class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
                                 >
