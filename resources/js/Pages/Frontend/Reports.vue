@@ -799,37 +799,134 @@
                                         transition duration-200 ease-in-out"></td>
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkFrom_iHc_remarks }}</td>
                                 </tr>
-                                <tr v-show="showBHData" class="text-center">
-                                    <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBH_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                <template v-if="showBHData && (noteReasonForReject.includes('- N.G iHc'))">
+                                    <!-- VT Row 1: Sample + Remarks (Vertical Repeating Inputs) -->
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBH_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                         focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                         transition duration-200 ease-in-out"> °C</th>
-                                    <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"><input type="text" v-model="reportBH_sample" @input="reportBH_sample = reportBH_sample.toUpperCase()" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"></td>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBH_sampleQty"
+                                                    :key="'sample-remarks-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="text"
+                                                    v-model="reportBH_samples[i - 1]"
+                                                    @input="reportBH_samples[i - 1] = reportBH_samples[i - 1]?.toUpperCase()"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="18 AF"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </td>
                                         <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
-                                </tr>
-                                <tr v-show="showBHData" class="text-center">
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
-                                        <div class="flex items-center">
+                                    </tr>
+
+                                    <!-- VT Row 2: Temperature, iHc, Result, Remarks -->
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
                                             <input type="text" v-model="reportBH_data" @input="reportBH_data = reportBH_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                                 hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                                 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
                                                 transition duration-200 ease-in-out">
                                             <span class="ml-1 align-baseline"> kOe</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"> &#8805; <input type="number" v-model="reportBH_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> (kOe)</td>
-                                    <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white"><input type="number" v-model="reportBH_result" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"> kOe</td>
-                                    <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBH_remarks }}</td>
-                                </tr>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                             &#8805; <input type="number" v-model="reportBH_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (kOe)
+                                        </td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBH_sampleQty"
+                                                    :key="'result-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="number"
+                                                    v-model="reportBH_results[i - 1]"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="0"
+                                                    />
+                                                    <span class="text-gray-600">kOe</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBH_remarks }}</td>
+                                    </tr>
+                                    <!-- Reset Button with Confirmation -->
+                                    <div v-if="!confirmReset" class="text-center">
+                                    <button
+                                        @click="confirmReset = true"
+                                        class="bg-red-700 px-2 py-1 whitespace-nowrap text-white m-1 rounded-lg shadow-lg active:scale-95 transition-transform duration-200 ease-in-out hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                    >
+                                        Wrong Quantity Reset Button
+                                    </button>
+                                    </div>
+
+                                    <!-- Confirmation Prompt -->
+                                    <div v-else class="flex gap-2 justify-center items-center mt-1">
+                                    <span class="text-sm whitespace-nowrap p-1 text-blue-600">This action will reset all BH Data Input. Are you sure?</span>
+                                    <button
+                                        @click="resetReportBHData(); confirmReset = false"
+                                        class="bg-green-600 text-white text-xs px-2 py-1 rounded hover:bg-green-500 transition"
+                                    >
+                                        Yes
+                                    </button>
+                                    <button
+                                        @click="confirmReset = false"
+                                        class="bg-gray-400 text-white text-xs px-2 py-1 rounded hover:bg-gray-500 transition"
+                                    >
+                                        Cancel
+                                    </button>
+                                    </div>
+                                </template>
+
+
+                                <template v-if="showBHData_default && (noteReasonForReject.includes('- N.G iHc'))">
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBH_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> °C</th>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">Enter the number of samples first and then save</td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                                <input type="text" v-model="reportBH_data" @input="reportBH_data = reportBH_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                    transition duration-200 ease-in-out">
+                                                <span class="ml-1 align-baseline"> kOe</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"> &#8805; <input type="number" v-model="reportBH_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (kOe)</td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">Quantity of Samples: <input type="number" v-model="reportBH_sampleQty" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBH_remarks }}</td>
+                                    </tr>
+                                </template>
                             </tbody>
                         </table>
                     </div>
@@ -1306,6 +1403,7 @@ const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showGX = ref(false);
 const showBHData = ref(false);
+const showBHData_default = ref(false);
 const showROB = ref(false);
 
 const isLoading = ref(true);
@@ -1358,12 +1456,14 @@ const reportGX_iHkAverage = ref(0);
 const reportGX_iHkMaximum = ref(0);
 const reportGX_iHkMinimum = ref(0);
 const reportGX_iHkVariance =  ref(0);
+
 const reportBH_data = ref('NA');
 const reportBH_dataStandard = ref(0);
 const reportBH_remarks = ref('NA');
-const reportBH_sample = ref(0);
+const reportBH_samples = ref([]);
+const reportBH_sampleQty = ref();
 const reportBH_temp = ref(0);
-const reportBH_result = ref(0);
+const reportBH_results = ref([]);
 
 const reportROB_brMax = ref('');
 const reportROB_brMin = ref('');
@@ -1605,7 +1705,19 @@ const showReportButton = async () => {
     await waitForFlag();
     showReportMain.value = true;
 }
-
+const confirmReset = ref(false);
+const resetReportBHData = async() => {
+    reportBH_data.value = 'NA';
+    reportBH_dataStandard.value = 0;
+    reportBH_remarks.value = 'NA';
+    reportBH_samples.value = [];
+    reportBH_sampleQty.value = 0;
+    reportBH_temp.value = 0;
+    reportBH_results.value = [];
+    showBHData.value = false;
+    showBHData_default.value = true;
+    await saveReport();
+};
 
 // special judgement conditions logic
 
@@ -1754,17 +1866,18 @@ watch(
   { immediate: true }
 );
 
-//FOR BH - models
+// FOR BH - models
 watch(
-  [reportBH_result, reportBH_dataStandard, reportSMPJudgement, reportBH_remarks, showBHData],
+  [reportBH_results, reportBH_dataStandard, reportSMPJudgement, reportBH_remarks, showBHData],
   () => {
     if (
       noteReasonForReject.value.includes('- N.G iHc') &&
-      showBHData.value === true &&
-      reportBH_result.value !== null &&
-      reportBH_dataStandard.value !== null
+      showBHData.value === true
     ) {
-      if (reportBH_result.value < reportBH_dataStandard.value) {
+      if (
+        reportBH_results.value.length === 0 ||
+        reportBH_results.value.some(sample => sample < reportBH_dataStandard.value)
+      ) {
         reportBH_remarks.value = 'NG';
         reportSMPJudgement.value = 'REJECT';
       } else {
@@ -1772,12 +1885,11 @@ watch(
         reportSMPJudgement.value = 'HOLD';
       }
     } else {
-      //console.log('BH display not active — skipping BH check');
+      //console.warn('Conditions not met: skipping BH check');
     }
   },
   { immediate: true }
 );
-
 //For TTM Models
 watch(
   [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks, isTTM_model, show1x1x1Data_withoutCorner, show1x1x1Data_Corner],
@@ -1944,17 +2056,25 @@ const checkSpecialJudgement = async () => {
     const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
     const MODELS_SHOW_CPK         = ["DNS0917G"];
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
-    const MODELS_SHOW_BH          = ["ZFS0982G"];
+    const MODELS_SHOW_BH          = ["ZFS0982G"]; //["ZFS0982G"];
     const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
 
     // === Logic Blocks ===
 
-    if (MODELS_SHOW_VT_DATA.includes(model) && reportVT_samplesQty.value > 0) {
+    if (MODELS_SHOW_VT_DATA.includes(model) && reportVT_samplesQty.value > 0) { //reportBH_sampleQty
         showVTData.value = true;
         showVTData_default.value = false;
     }else if(MODELS_SHOW_VT_DATA.includes(model)){
         showVTData.value = false;
         showVTData_default.value = true;
+    }
+
+    if (MODELS_SHOW_BH.includes(model) && reportBH_sampleQty.value > 0) {
+        showBHData.value = true;
+        showBHData_default.value = false;
+    }else if(MODELS_SHOW_BH.includes(model)){
+        showBHData.value = false;
+        showBHData_default.value = true;
     }
 
     if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
@@ -1967,7 +2087,6 @@ const checkSpecialJudgement = async () => {
 
     if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
     if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
-    if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
     if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
 };
 
@@ -2377,9 +2496,10 @@ const showReportData = async () => {
         reportBH_data.value = bh.data || '';
         reportBH_dataStandard.value = bh.dataStandard || '';
         reportBH_remarks.value = bh.remarks || '';
-        reportBH_sample.value = bh.sample || '';
+        reportBH_samples.value = Array.isArray(bh.sample) ? bh.sample : [];
+        reportBH_sampleQty.value = bh.sample_qty ?? 0;
         reportBH_temp.value = bh.temp || '';
-        reportBH_result.value = bh.result || '';
+        reportBH_results.value = Array.isArray(bh.result) ? bh.result : [];
 
         reportROB_brMin.value = ROB.brMin || '';
         reportROB_brMax.value = ROB.brMax || '';
@@ -2501,9 +2621,10 @@ const saveReport = async () => {
             "data": reportBH_data.value,
             "dataStandard": reportBH_dataStandard.value,
             "remarks": reportBH_remarks.value,
-            "sample": reportBH_sample.value,
+            "sample": reportBH_samples.value,
+            "sample_qty": reportBH_sampleQty.value,
             "temp": reportBH_temp.value,
-            "result": reportBH_result.value,
+            "result": reportBH_results.value,
         }),
         "data_ROB_info": JSON.stringify({
             "brMin": reportROB_brMin.value,
