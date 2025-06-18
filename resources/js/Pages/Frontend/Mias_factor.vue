@@ -44,13 +44,13 @@
       >
         <!-- Table -->
         <div>
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Uploaded MIAS Factor Records</h2>
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">MIAS Factor Data List</h2>
           <table class="w-full table-auto text-sm border border-gray-200 rounded-md overflow-hidden">
             <thead class="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
               <tr>
                 <th class="px-4 py-3 text-left border-b">Employee Name</th>
-                <th class="px-4 py-3 text-left border-b">Meas. Employee No</th>
-                <th class="px-4 py-3 text-left border-b">Factor Employee No</th>
+                <th class="px-4 py-3 text-left border-b">Employee No</th>
+                <th class="px-4 py-3 text-left border-b">User No</th>
                 <th class="px-4 py-3 text-left border-b">Actions</th>
               </tr>
             </thead>
@@ -78,7 +78,7 @@
 
         <!-- Add New -->
         <div class="border-t pt-6">
-          <h2 class="text-lg font-semibold text-gray-800 mb-2">Add New MIAS Factor</h2>
+          <h2 class="text-lg font-semibold text-gray-800 mb-2">Add New Employee</h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <input
               v-model="newRecord.employee_name"
@@ -90,13 +90,13 @@
             <input
               v-model="newRecord.employee_no"
               type="text"
-              placeholder="Meas. Employee No"
+              placeholder="Employee No"
               class="border rounded px-3 py-2 focus:ring focus:ring-blue-200"
             />
             <input
               v-model="newRecord.mias_no"
               type="text"
-              placeholder="Factor Employee No"
+              placeholder="User No"
               class="border rounded px-3 py-2 focus:ring focus:ring-blue-200"
             />
           </div>
@@ -110,7 +110,7 @@
 
         <!-- Edit Record -->
         <div v-if="editingRecord" class="border-t pt-6">
-          <h2 class="text-lg font-semibold text-gray-800 mb-2">Edit MIAS Factor</h2>
+          <h2 class="text-lg font-semibold text-gray-800 mb-2">Edit Employee details</h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <input
               v-model="editingRecord.employee_name"
@@ -121,13 +121,13 @@
             <input
               v-model="editingRecord.employee_no"
               type="text"
-              placeholder="Meas. Employee No"
+              placeholder="Employee No"
               class="border rounded px-3 py-2 focus:ring focus:ring-green-200"
             />
             <input
               v-model="editingRecord.mias_no"
               type="text"
-              placeholder="Factor Employee No"
+              placeholder="User No"
               class="border rounded px-3 py-2 focus:ring focus:ring-green-200"
             />
           </div>

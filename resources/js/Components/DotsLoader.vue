@@ -49,7 +49,7 @@ const messages = [
 
 // bossing easter egg
 if (Math.random() < 0.033333333) {
-    messages.push("一也さんの磁力には逆らえない。");
+    messages.push("板谷（いただに）さんの磁力には絶対に逆らえません。");
 }
 
 //SHIN-ETSU supremacy easter egg
