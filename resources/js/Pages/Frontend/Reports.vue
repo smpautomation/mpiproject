@@ -835,7 +835,7 @@
                     </div>
 
                     <div class="flex flex-row items-center justify-center mx-5 mt-5 align-middle">
-                        <p class="m-5 text-lg font-extrabold">Remarks:</p>
+                        <p class="m-5 text-lg font-semibold">Remarks:</p>
                         <div class="flex flex-col w-full">
                             <span class="text-blue-600">
                                 {{ reportRemarks2 }}
