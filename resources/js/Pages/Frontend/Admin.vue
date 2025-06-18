@@ -196,8 +196,8 @@
                     </div>
                 </div>
             </div>
-            <!-- End of Logs Panel -->
-             <button v-if="state.user && state.user.access_type == 'Automation'" @click="fixStampIssue" class="p-2 font-extrabold text-red-900 transition-transform duration-75 bg-yellow-500 rounded-lg active:scale-95 hover:bg-yellow-400 active:shadow-xl active:brightness-100">Fix Stamp Issue</button>
+            <!-- End of Logs Panel
+             <button v-if="state.user && state.user.access_type == 'Automation'" @click="fixStampIssue" class="p-2 font-extrabold text-red-900 transition-transform duration-75 bg-yellow-500 rounded-lg active:scale-95 hover:bg-yellow-400 active:shadow-xl active:brightness-100">Fix Stamp Issue</button> -->
         </div>
     </Frontend>
 </template>
