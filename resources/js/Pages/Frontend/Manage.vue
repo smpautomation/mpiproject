@@ -1191,7 +1191,7 @@
     const mias_factorData = async (factor, mias) => {
         const response = await axios.get('/api/mias-factor');
         const miasFactorData = response.data.data;
-        console.log("MIAS Factor Data:", miasFactorData);
+        //console.log("MIAS Factor Data:", miasFactorData);
 
         const findByEmpOrMiasNo = (searchValue) => {
             return (
@@ -1279,8 +1279,8 @@
 
         for (const row of csv_tempWithDataStat.value) {
             // Defensive cleanup
-            const factor = row.employee_no?.toString().trim();
-            const mias = row.mias_no?.toString().trim();
+            const factor = parseInt(row.employee_no)?.toString();
+            const mias = parseInt(row.mias_no)?.toString();
 
             // Skip rows that are completely empty
             if (!factor && !mias && !row.temp && !row.status) {
