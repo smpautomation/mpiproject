@@ -2239,6 +2239,7 @@ const nsa_dataFrom_tpmData = async () => {
             for (let i = 0; i < nsadata.length; i++) {
                 const TPM = nsadata[i];
                 const tpmCat = TPM?.category;
+                const tpmRem = TPM?.remark;
 
                 // Skip the iteration if required properties are missing
                 if (!TPM || !tpmCat || !TPM.sintering_furnace_no) {
@@ -2258,18 +2259,31 @@ const nsa_dataFrom_tpmData = async () => {
                     zone: TPM.zone ?? "",
                     passNo: TPM.pass_no,
                     Br: TPM.Br ?? "",
+                    Br_remarks: tpmRem?.Br_remarks ?? "",
                     iHc: TPM.iHc ?? "",
+                    iHc_remarks: tpmRem?.iHc_remarks ?? "",
                     iHk: TPM.iHk ?? "",
+                    iHk_remarks: tpmRem?.iHk_remarks ?? "",
                     BHMax: TPM.BHMax ?? "",
+                    BHMax_remarks: tpmRem?.BHMax_remarks ?? "",
                     iHr95: TPM.iHr95 ?? "",
+                    iHr95_remarks: tpmRem?.iHr95_remarks ?? "",
                     iHr98: TPM.iHr98 ?? "",
+                    iHr98_remarks: tpmRem?.iHr98_remarks ?? "",
                     iHkiHc: TPM.iHkiHc ?? "",
+                    iHkiHc_remarks: tpmRem?.iHkiHc_remarks ?? "",
                     Br4pai: TPM.Br4pai ?? "",
+                    Br4pai_remarks: tpmRem?.Br4pai_remarks ?? "",
                     bHc: TPM.bHc ?? "",
+                    bHc_remarks: tpmRem?.bHc_remarks ?? "",
                     Squareness: TPM.Squareness ?? "",
+                    Squareness_remarks: tpmRem?.Squareness_remarks ?? "",
                     "4paiIa": TPM["4paiIa"] ?? "",
+                    "4paiIa_remarks": tpmRem?.["4paiIa_remarks"] ?? "",
                     "4paiId": TPM["4paiId"] ?? "",
+                    "4paiId_remarks": tpmRem?.["4paiId_remarks"] ?? "",
                     "4paiIs": TPM["4paiIs"] ?? "",
+                    "4paiIs_remarks": tpmRem?.["4paiIs_remarks"] ?? "",
                     tracer: TPM.Tracer ?? "",
                     temperature: TPM.temperature ?? "",
                     data_status: TPM.data_status ?? "",

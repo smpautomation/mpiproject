@@ -924,9 +924,9 @@ const saveToDatabase = async () => {
         const responseCheckNsa = await axios.get("/api/nsadata");
         //console.log('response check NSA: ',responseCheckNsa.data.data);
         const nsaData = responseCheckNsa.data.data["NSAData"] || [];
-        //console.log('tpm data: ',nsaData);
+        console.log('tpm data: ',nsaData);
         const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-       // console.log('tpm data filtered by serial: ',nsafilteredData);
+        console.log('tpm data filtered by serial: ',nsafilteredData);
 
         if(nsafilteredData.length > 0) {
             const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
@@ -1120,7 +1120,7 @@ const sendLayerData = async (layerData) => {
     try {
         //console.log("Sending layer TO API: ",layerData);
         const response = await axios.post('/api/nsadata', layerData); // Replace '/api/endpoint' with your API endpoint
-        //console.log('API Response sendlayerdata:', response.data);
+        console.log('API Response sendlayerdata:', response.data);
 
     } catch (error) {
         console.error('Error sending data to API:', error.response?.data || error.message);
@@ -1971,6 +1971,7 @@ const deleteNullOnNsaCategory = async () => {
 };
 
 onMounted(async() => {
+    await testNSA();
     await autoDeleteNullData();
     await checkAuthentication();
 });
