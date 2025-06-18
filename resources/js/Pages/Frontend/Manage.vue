@@ -23,7 +23,7 @@
                             <p class="text-2xl font-bold text-blue-900">MANAGE</p>
                         </div>
                         <div class="flex flex-row items-center space-x-4 whitespace-nowrap">
-                            <button @click="$inertia.visit('/mias_factor')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[220px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner" disabled>Upload Mias - Factor Emp</button>
+                            <button @click="$inertia.visit('/mias_factor')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[220px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">Upload Mias - Factor Emp</button>
                             <button @click="$inertia.visit('/email_form')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[180px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">
                                 Send Email to SEC
                             </button>

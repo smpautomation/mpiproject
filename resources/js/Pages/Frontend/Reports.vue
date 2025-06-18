@@ -1053,7 +1053,7 @@
                             <span
                                 v-for="(note, index) in sortedNotes"
                                 :key="index"
-                                class="font-extrabold text-red-700 opacity-100"
+                                class="font-semibold text-red-700 opacity-100"
                             >
                                 {{ note }}
                             </span>
