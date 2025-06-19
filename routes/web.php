@@ -4,6 +4,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\BackEndPdfController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -111,5 +112,9 @@ Route::view('/test-export', 'test');
 Route::get('/generate-pdf', function () {
     return Pdf::loadView('preview-pdf')->download('example.pdf');
 });
+
+Route::get('/reports/{serial}/pdf', [BackEndPdfController::class, 'generateAndMerge'])
+    ->name('reports.pdf')
+    ->where('serial', '[A-Za-z0-9\-\s#]+');
 
 require __DIR__.'/auth.php';
