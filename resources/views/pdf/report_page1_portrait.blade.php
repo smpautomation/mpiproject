@@ -638,69 +638,46 @@
 
     </div>  <!-- End of border -->
 
-    <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-        <label class="bold" style="font-size: 12px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
+<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+    <label class="bold" style="font-size: 12px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
 
+    <div class="table-block">
+        <div class="table-row">
 
-        <div class="table-block">
-            <div class="table-row">
+            <!-- Column 1: Labels -->
+            <div class="table-cell" style="font-size:8px; vertical-align: top; width: 13%; padding: 0 1px 0 0;">
+                <div style="margin-bottom: 2px;">Furnace Machine:</div>
+                <div style="margin-bottom: 2px;">CYCLE No:</div>
+                <div style="margin-bottom: 2px;">BATCH CYCLE No:</div>
+                <div style="margin-bottom: 2px;">PATTERN No:</div>
+                <div style="margin-bottom: 2px;">DATE START:</div>
+                <div style="margin-bottom: 2px;">TIME START:</div>
+                <div style="margin-bottom: 2px;">LOADER:</div>
+                <div style="margin-bottom: 2px;">DATE FINISH:</div>
+                <div style="margin-bottom: 2px;">TIME FINISH:</div>
+                <div style="margin-bottom: 2px;">UNLOADER:</div>
+                <div style="margin-bottom: 2px;">Cycle Pattern:</div>
+                <div style="margin-bottom: 2px;">Current Pattern:</div>
+            </div>
 
-                <!-- Column 1: Labels -->
-                <div class="table-cell" style="font-size:8px; vertical-align: top; padding: 0 1px 0 0;">
-                    <div style="margin-bottom: 2px;">Furnace Machine:</div>
-                    <div style="margin-bottom: 2px;">CYCLE No:</div>
-                    <div style="margin-bottom: 2px;">BATCH CYCLE No:</div>
-                    <div style="margin-bottom: 2px;">PATTERN No:</div>
-                    <div style="margin-bottom: 2px;">DATE START:</div>
-                    <div style="margin-bottom: 2px;">TIME START:</div>
-                    <div style="margin-bottom: 2px;">LOADER:</div>
-                    <div style="margin-bottom: 2px;">DATE FINISH:</div>
-                    <div style="margin-bottom: 2px;">TIME FINISH:</div>
-                    <div style="margin-bottom: 2px;">UNLOADER:</div>
-                    <div style="margin-bottom: 2px;">Cycle Pattern:</div>
-                    <div style="margin-bottom: 2px;">Current Pattern:</div>
-                </div>
+            <!-- Column 2: Underlines -->
+            <div class="table-cell" style="font-size:8px; vertical-align: top; width: 12%; padding: 0; margin: 0;">
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
+            </div>
 
-                <!-- Column 2: Underlines -->
-                <div class="table-cell" style="font-size:8px; vertical-align: top; padding-left: 0px;">
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                    <div style="margin-bottom: 2px;">
-                        <span class="underline">NA</span>
-                    </div>
-                </div>
-
-                <!-- Column 3: Table -->
-                <div class="table-cell" style="vertical-align: top;">
-                    <table class="print-table">
+            <!-- Column 3: Table -->
+            <div class="table-cell" style="vertical-align: top; width: 73%;">
+                 <table class="print-table">Add commentMore actions
                         <thead>
                             <tr>
                                 <th colspan="13">MAGNET BOX LOCATION</th>
@@ -864,12 +841,11 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-
             </div>
+
         </div>
-
-
     </div>
+</div>
+
 
 </body>
