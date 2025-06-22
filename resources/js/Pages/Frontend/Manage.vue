@@ -421,7 +421,7 @@
                     </div>
                 </div>
                 <DotsLoader v-show="showCsvLoading" />
-                <p v-if="mias_factorCsvError" class="text-red-500 font-extrabold font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
+                <p v-if="mias_factorCsvError" class="font-extrabold text-red-500 font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
@@ -1277,26 +1277,39 @@
         //console.log('CSV Parsed Data:', csv_parsedData.value);
         //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
-        for (const row of csv_tempWithDataStat.value) {
-            // Defensive cleanup
-            const factor = parseInt(row.employee_no)?.toString();
-            const mias = parseInt(row.mias_no)?.toString();
+        function cleanInteger(str) {
+            // Reject non-digit strings
+            if (!/^\d+$/.test(str)) return null;
 
-            // Skip rows that are completely empty
-            if (!factor && !mias && !row.temp && !row.status) {
-                //console.warn('Skipping completely empty row:', row);
+            const parsed = parseInt(str, 10);
+
+            // Reject if input has leading zeroes or formatting issues
+            if (parsed.toString() !== str) return null;
+
+            return parsed.toString(); // Clean, normalized numeric string
+        }
+
+        for (const row of csv_tempWithDataStat.value) {
+            const factor = cleanInteger(row.employee_no);
+            const mias   = cleanInteger(row.mias_no);
+            const temp   = row.temp;
+            const status = row.status;
+
+            const isEmptyRow = !factor && !mias && !temp && !status;
+            if (isEmptyRow) {
+                console.warn('Skipping completely empty row:', row);
                 continue;
             }
 
-            //console.log('Raw row data:', row);
-            //console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
+            console.log('Raw row data:', row);
+            console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
             if (factor && mias) {
-                //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
+                console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                 await mias_factorData(factor, mias);
             } else {
-                console.warn('Missing factor or mias in cleaned row:', row);
-                return;
+                console.warn('Invalid or missing factor/mias:', row);
+                continue; // Don't crash the loop, just skip
             }
         }
 
