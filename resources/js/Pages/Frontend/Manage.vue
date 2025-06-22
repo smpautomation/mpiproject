@@ -421,7 +421,7 @@
                     </div>
                 </div>
                 <DotsLoader v-show="showCsvLoading" />
-                <p v-if="mias_factorCsvError" class="text-red-500 font-extrabold font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
+                <p v-if="mias_factorCsvError" class="font-extrabold text-red-500 font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
                 <div>
                     <div v-show="showProceed2" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>

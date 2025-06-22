@@ -50,7 +50,7 @@
         display: inline-block;
         min-width: 80px;
     }
-    
+
     table.print-table {
         width: 100%;
         border-collapse: collapse;
@@ -111,7 +111,7 @@
 
     <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
         <label class="bold" style="font-size: 12px; padding-left: 1px;">COATING INFORMATION</label>
-        
+
         <div class="table-block">
             <div class="table-row">
                 <div class="table-cell">Coating Date:</div>
@@ -845,6 +845,40 @@
 
         </div>
     </div>
+</div> <!-- END of Border -->
+
+<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+    <label class="bold" style="font-size: 12px; padding-left: 1px;">OVEN HEATING INFORMATION</label>
+    <div class="table-block">
+        <div class="table-row">
+            <div class="table-cell">Coating Date:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Coating Machine No:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Slurry Lot No:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+        </div>
+
+        <div class="table-row">
+            <div class="table-cell">MIN. TB CONTENT:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Sample Quantity:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Total Magnet Weight:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+        </div>
+
+        <div class="table-row">
+            <div class="table-cell">Loader Operator:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Unloader Operator:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Checker Operator:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+        </div>
+    </div> <!-- End of Oven Heating Info -->
+    <label class="bold" style="font-size: 12px; padding-left: 1px;">MAGNETIC PROPERTY INSPECTION INFORMATION</label>
+
 </div>
 
 
