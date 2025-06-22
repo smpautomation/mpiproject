@@ -1301,11 +1301,11 @@
                 continue;
             }
 
-            console.log('Raw row data:', row);
-            console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
+            //console.log('Raw row data:', row);
+            //console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
             if (factor && mias) {
-                console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
+                //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                 await mias_factorData(factor, mias);
             } else {
                 console.warn('Invalid or missing factor/mias:', row);
