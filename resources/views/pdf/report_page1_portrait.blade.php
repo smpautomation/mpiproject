@@ -842,43 +842,247 @@
                         </tbody>
                     </table>
             </div>
-
         </div>
     </div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+        <tr>
+            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
+            <td style="width: 100%;">
+                <div style="border-bottom: 1px solid black; height: 9px;"></div>
+                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
+            </td>
+        </tr>
+    </table>
 </div> <!-- END of Border -->
 
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
     <label class="bold" style="font-size: 12px; padding-left: 1px;">OVEN HEATING INFORMATION</label>
     <div class="table-block">
         <div class="table-row">
-            <div class="table-cell">Coating Date:</div>
+            <div class="table-cell">Oven Machine No:</div>
             <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-            <div class="table-cell">Coating Machine No:</div>
+            <div class="table-cell">Date:</div>
             <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-            <div class="table-cell">Slurry Lot No:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-        </div>
-
-        <div class="table-row">
-            <div class="table-cell">MIN. TB CONTENT:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-            <div class="table-cell">Sample Quantity:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-            <div class="table-cell">Total Magnet Weight:</div>
+            <div class="table-cell">Shift:</div>
             <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
         </div>
 
         <div class="table-row">
-            <div class="table-cell">Loader Operator:</div>
+            <div class="table-cell">Time Loading:</div>
             <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-            <div class="table-cell">Unloader Operator:</div>
+            <div class="table-cell">Time Unloading:</div>
             <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
-            <div class="table-cell">Checker Operator:</div>
+            <div class="table-cell">Operator:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+        </div>
+
+        <div class="table-row">
+            <div class="table-cell">Temperature:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Temperature:</div>
             <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
         </div>
     </div> <!-- End of Oven Heating Info -->
     <label class="bold" style="font-size: 12px; padding-left: 1px;">MAGNETIC PROPERTY INSPECTION INFORMATION</label>
+    <div class="table-block">
+        <div class="table-row">
+            <div class="table-cell">Pulse Tracer Machine No:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Date:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Shift:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell">Operator:</div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+        </div>
+    </div>
+    <div class="table-block">
+        <div class="table-row">
+            <div class="table-cell">
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">
+                                STANDARD SAMPLE DIMENSION <br> and Material Grade
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                LENGTH (mm)
+                            </td>
+                            <td>
+                                NA
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                WIDTH (mm)
+                            </td>
+                            <td>
+                                NA
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                THICKNESS (mm)
+                            </td>
+                            <td>
+                                NA
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                MATERIAL GRADE
+                            </td>
+                            <td>
+                                NA
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                MPI Sample Qty.
+                            </td>
+                            <td>
+                                NA
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-cell">
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th colspan="6">
+                                MAGNETIC PROPERTY TABLE
+                            </th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">
+                                ITEMS
+                            </th>
+                            <th rowspan="2">
+                                STANDARD
+                            </th>
+                            <th colspan="4">ACTUAL DATA</th>
+                        </tr>
+                        <tr>
+                            <th>AVERAGE</th>
+                            <th>MAXIMUM</th>
+                            <th>MINIMUM</th>
+                            <th>Variance<br>(max-min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Br (G)
+                            </td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                iHc (Oe)
+                            </td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                iHk (Oe)
+                            </td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                            <td>NA</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="table-block">
+        <div class="table-row">
+            <div class="table-cell" style="width: 95%;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                    <tr>
+                        <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
+                        <td style="width: 100%;">
+                            <div style="border-bottom: 1px solid black; height: 9px;"></div>
+                            <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-cell" style="width: 5%;">
+                <p style="text-align: center;">E</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+    <label class="bold" style="font-size: 14px; padding-left: 1px;">SMP Judgment:</label>
+</div>
+<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+  <div class="table-block">
+    <div class="table-cell" style="width: 5%;">
+        <!-- SMP Judgment -->
+        <table style="border: 1px solid black; width: 150px; text-align: center;">
+            <thead>
+                <tr><th>SMP Judgment</th></tr>
+            </thead>
+            <tbody>
+                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
+            </tbody>
+        </table>
+    </div>
 
+    <div class="table-cell" style="width: 5%;">
+        <!-- Prepared By -->
+        <table style="border: 1px solid black; width: 150px; text-align: center;">
+            <thead>
+                <tr><th>Prepared By</th></tr>
+            </thead>
+            <tbody>
+                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-cell" style="width: 5%;">
+        <!-- Checked By -->
+        <table style="border: 1px solid black; width: 150px; text-align: center;">
+            <thead>
+                <tr><th>Checked By</th></tr>
+            </thead>
+            <tbody>
+                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-cell" style="width: 5%;">
+        <!-- Approved By -->
+        <table style="border: 1px solid black; width: 150px; text-align: center;">
+            <thead>
+                <tr><th>Approved By</th></tr>
+            </thead>
+            <tbody>
+                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
+            </tbody>
+        </table>
+    </div>
+  </div>
 </div>
 
 
