@@ -66,6 +66,10 @@ class FrontendController extends Controller
     }
 
     public function approval(Request $request){
+
+        $filterStatus = $request->get('filterStatus');
+        $fromReports = $request->get('fromReports');
+
         // Get the real client IP address
         $xForwardedFor = $request->header('X-Forwarded-For');
         if ($xForwardedFor) {
@@ -80,7 +84,9 @@ class FrontendController extends Controller
         Log::debug('Client IP Address (Approval): ' . $ipAddress);
 
         return Inertia::render('Frontend/Approval', [
-            'ipAddress' => $ipAddress  // Now passed to Approval.vue
+            'ipAddress' => $ipAddress,  // Now passed to Approval.vue
+            'filterStatus' => $filterStatus,
+            'fromReports' => filter_var($request->fromReports, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 

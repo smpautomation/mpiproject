@@ -21,9 +21,6 @@
         <div v-if="showNotif2 && isFromApproval" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
             <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
         </div>
-        <button v-if="backToApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
-            BACK TO APPROVAL
-        </button>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
                 <div> <!-- Selection Panel -->
@@ -1196,7 +1193,7 @@
                         BACK
                     </button>
 
-                    <button v-if="isFromApproval && !isFromViewList" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="isFromApproval && !isFromViewList" @click="backToApprovalFunction" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK TO APPROVAL
                     </button>
 
@@ -3068,6 +3065,17 @@ const sec_additional_redirect = (sec_serial) => {
         alert('Something went wrong during navigation.');
     }
 };
+
+const backToApprovalFunction = () => {
+    //console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/approval', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { filterStatus: filterStatus.value, fromReports: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {

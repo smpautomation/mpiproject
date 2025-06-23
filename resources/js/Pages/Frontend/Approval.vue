@@ -280,9 +280,14 @@ const prevPage = () => {
 const selectedRows = ref([]); // Track selected rows by their serial numbers
 
 const props = defineProps({
-  ipAddress: String
+  ipAddress: String,
+  filterStatus : String,
+  fromReports : Boolean
 })
 ipAddress.value = props.ipAddress;
+if(props.fromReports){
+    statusFilter.value = props.filterStatus;
+}
 console.log("Current IP Detected: ",ipAddress.value);
 
 const showApprovedNotification = (message) => {
@@ -327,7 +332,7 @@ const viewReport = (serial) => {
     //console.log('Navigating to report with serial:', serial);
     Inertia.visit('/reports', {
         method: 'get',   // You can keep 'get' since we are not modifying any data
-        data: { serialParam: serial, fromApproval: true },   // Passing the serialParam here
+        data: { serialParam: serial, fromApproval: true, filterStatus: statusFilter.value },   // Passing the serialParam here
         preserveState: true,
         preserveScroll: true,
     });
