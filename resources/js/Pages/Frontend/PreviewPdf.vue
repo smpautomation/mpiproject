@@ -2211,12 +2211,7 @@ const renderChart = () => {
                     animation: false,
                     plugins: {
                         legend: {
-                            display: false, // 👈 hides the legend completely
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => `Value: ${context.raw.y}`,
-                            },
+                            display: false,
                         },
                     },
                     scales: {
@@ -2235,6 +2230,9 @@ const renderChart = () => {
                                     weight: "bold", // Make it bold
                                 },
                             },
+                            ticks: {
+                                display: false, // ← hides x-axis values
+                            },
                         },
                         y: {
                             type: "linear",
@@ -2250,6 +2248,9 @@ const renderChart = () => {
                                     size: 14,  // Increase font size
                                     weight: "bold", // Make it bold
                                 },
+                            },
+                            ticks: {
+                                display: false, // ← hides x-axis values
                             },
                         },
                     },
@@ -2565,11 +2566,6 @@ const nsa_renderChart = (setIndex) => {
             animation: false,
             plugins: {
                 legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: context => `Value: ${context.raw.y}`,
-                    },
-                },
             },
             scales: {
                 x: {
@@ -2580,6 +2576,9 @@ const nsa_renderChart = (setIndex) => {
                         color: "#333",
                         font: { size: 14, weight: "bold" },
                     },
+                    ticks: {
+                        display: false, // ← hides x-axis values
+                    },
                 },
                 y: {
                     type: "linear",
@@ -2588,6 +2587,9 @@ const nsa_renderChart = (setIndex) => {
                         text: "←  kG  →",
                         color: "#333",
                         font: { size: 14, weight: "bold" },
+                    },
+                    ticks: {
+                        display: false, // ← hides x-axis values
                     },
                 },
             },

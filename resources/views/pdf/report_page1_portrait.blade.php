@@ -1033,57 +1033,105 @@
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
     <label class="bold" style="font-size: 14px; padding-left: 1px;">SMP Judgment:</label>
 </div>
-<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-  <div class="table-block">
-    <div class="table-cell" style="width: 5%;">
-        <!-- SMP Judgment -->
-        <table style="border: 1px solid black; width: 150px; text-align: center;">
-            <thead>
-                <tr><th>SMP Judgment</th></tr>
-            </thead>
-            <tbody>
-                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
-            </tbody>
-        </table>
-    </div>
+<table style="width: 100%; border-collapse: collapse;">
+    <tr>
+        <!-- Left Section -->
+        <td style="width: 65%; padding: 1px; border: 1px solid black;">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 5px;">
+                <tr>
 
-    <div class="table-cell" style="width: 5%;">
-        <!-- Prepared By -->
-        <table style="border: 1px solid black; width: 150px; text-align: center;">
-            <thead>
-                <tr><th>Prepared By</th></tr>
-            </thead>
-            <tbody>
-                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
-            </tbody>
-        </table>
-    </div>
+                    <!-- Spacer -->
+                    <td style="width: 6%;"></td>
 
-    <div class="table-cell" style="width: 5%;">
-        <!-- Checked By -->
-        <table style="border: 1px solid black; width: 150px; text-align: center;">
-            <thead>
-                <tr><th>Checked By</th></tr>
-            </thead>
-            <tbody>
-                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
-            </tbody>
-        </table>
-    </div>
+                    <td style="width: 18%; padding: 0;">
+                        <table style="width: 100%; border: 1px solid black; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 9px;">
+                                <tr>
+                                    <th style="padding: 2px;">SMP Judgment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
+                                        <img src="{{ public_path('photo/pass_stamp.png') }}"
+                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
+                                            alt="Pass Stamp">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
 
-    <div class="table-cell" style="width: 5%;">
-        <!-- Approved By -->
-        <table style="border: 1px solid black; width: 150px; text-align: center;">
-            <thead>
-                <tr><th>Approved By</th></tr>
-            </thead>
-            <tbody>
-                <tr><td style="height: 80px; vertical-align: middle;">(stamp here)</td></tr>
-            </tbody>
-        </table>
-    </div>
-  </div>
-</div>
+                    <!-- Spacer -->
+                    <td style="width: 8%;"></td>
+
+                    <td style="width: 18%;">
+                        <table style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 10px;"><tr><th>Prepared By</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
+                                        <img src="{{ public_path('photo/template.png') }}"
+                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
+                                            alt="Approver Stamp">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+
+                    <!-- Spacer -->
+                    <td style="width: 4%;"></td>
+
+                    <td style="width: 18%;">
+                        <table style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 10px;"><tr><th>Checked By</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
+                                        <img src="{{ public_path('photo/template.png') }}"
+                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
+                                            alt="Approver Stamp">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+
+                    <!-- Spacer -->
+                    <td style="width: 4%;"></td>
+
+                    <td style="width: 18%;">
+                        <table style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 10px;"><tr><th>Approved By</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
+                                        <img src="{{ public_path('photo/template.png') }}"
+                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
+                                            alt="Approver Stamp">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+
+                    <!-- Spacer -->
+                    <td style="width: 6%;"></td>
+
+                </tr>
+            </table>
+        </td>
+
+        <!-- Divider -->
+        <td style="width: 1px; background-color: black;"></td>
+
+        <!-- Right Section -->
+        <td style="width: 35%; padding: 1px; border: 1px solid black; vertical-align: top;">
+            <p style="font-size:9px; margin: 0; padding: 0;">Note: (Reason of REJECT/HOLD)</p>
+        </td>
+    </tr>
+</table>
 
 
 </body>
