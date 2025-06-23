@@ -35,6 +35,7 @@ class FrontendController extends Controller
     {
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
+        $filterStatus = $request->get('filterStatus');
         $fromApproval = $request->get('fromApproval');
         $fromViewList = $request->get('fromViewList');
 
@@ -53,6 +54,7 @@ class FrontendController extends Controller
         // Return the Inertia response and pass both serialParam and ipAddress to the Reports.vue component
         return Inertia::render('Frontend/Reports', [
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
+            'filterStatus' => $filterStatus,
             'ipAddress' => $ipAddress,  // Pass ipAddress as a prop to the Reports.vue component
             'fromApproval' => filter_var($request->fromApproval, FILTER_VALIDATE_BOOLEAN),
             'fromViewList' => filter_var($request->fromViewList, FILTER_VALIDATE_BOOLEAN),

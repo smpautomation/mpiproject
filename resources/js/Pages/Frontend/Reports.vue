@@ -1503,6 +1503,7 @@ const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
+const filterStatus = ref('');
 const currentUserData = ref([]);
 const loggedUserData = ref([]);
 const currentUserApproverStage = ref('');
@@ -2714,6 +2715,7 @@ const fetchSerial = async () => {
 // Define the prop that will receive the serialParam
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
+  filterStatus: String,
   ipAddress: String,
   fromApproval: [Boolean, String],
   fromViewList: [Boolean, String],
@@ -2723,6 +2725,7 @@ isFromApproval.value = props.fromApproval === true || props.fromApproval === 'tr
 isFromViewList.value = props.fromViewList === true || props.fromViewList === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
+filterStatus.value = props.filterStatus;
 
 if(ipAddress.value === '127.0.0.1'){
     onTestServer.value = true;

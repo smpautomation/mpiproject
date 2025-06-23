@@ -135,7 +135,7 @@
                             <button @click="closeNotification" class="absolute top-2 right-2 text-md text-red-800 bg-transparent border-none cursor-pointer font-extrabold underline">
                                 close
                             </button>
-                            
+
                             <!-- Notification Content -->
                             <div>
                             <div v-for="(line, index) in notificationMessageLines" :key="index" v-html="line"></div>
@@ -305,7 +305,7 @@ const notificationMessageLines = ref([]);
 const showBlockedNotification = (message) => {
   // Split the message into separate lines (use <br> for line breaks in the message)
   notificationMessageLines.value = message.split('<br><br>');
-  
+
   // Show the notification and set the message
   blockedNotif.value = true;
   showApproveButton.value = false;
@@ -432,7 +432,7 @@ let openedTabs = [];  // Move openedTabs to a higher scope
 
 const closeAllTabs = async () => {
     // Wait for 3 seconds before closing the tabs
-    await delay(1000); 
+    await delay(1000);
 
     openedTabs.forEach((tab) => {
         if (tab && !tab.closed) {
@@ -459,7 +459,7 @@ const confirmationApprove = async () => {
             if (newTab) {
                 openedTabs.push(newTab);  // Store references of opened tabs
                 //console.log(`Opened report for serial ${serial}`);
-                
+
                 // If this is the last tab being opened, start the delay and close logic
                 if (index === selectedRows.value.length - 1) {
                     //console.log("Last tab opened, starting the delay before closing tabs...");
@@ -494,7 +494,7 @@ const confirmationApprove = async () => {
             await showReportData();
         } else {
             showBlockedNotification(`
-                Some reports couldn't be approved due to your browser's pop-up blocker. 
+                Some reports couldn't be approved due to your browser's pop-up blocker.
                 Please disable the blocker and try again.<br><br>
 
                 How to disable the pop-up blocker:<br><br>
