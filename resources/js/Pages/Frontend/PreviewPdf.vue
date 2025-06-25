@@ -1749,10 +1749,12 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_BH          = ["ZFS0982G"];
     const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
 
+    const model = printActualModel.value;
+
+    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
     if (!hasNGihc) return;
 
-    const model = printActualModel.value;
 
     // === Logic Blocks ===
 
@@ -1776,7 +1778,6 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
     if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
     if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
-    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
 };
 
 const dataFrom_reportdata = async () => {

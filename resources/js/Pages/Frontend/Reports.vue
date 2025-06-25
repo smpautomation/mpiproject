@@ -2057,11 +2057,11 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_BH          = ["ZFS0982G"]; //["ZFS0982G"];
     const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
 
+    const model = jhCurveActualModel.value;
+
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
     if (!hasNGihc) return;
-
-    const model = jhCurveActualModel.value;
 
     // === Logic Blocks ===
 
