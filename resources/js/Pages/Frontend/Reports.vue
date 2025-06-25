@@ -151,124 +151,420 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
+                    <div class="flex flex-row justify-evenly gap-4 mt-4">
+                        <!-- Model (display-only) -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Model:
+                            </label>
+                            <span
+                                class="h-9 px-3 text-sm flex items-center border border-gray-300 rounded-md bg-gray-100 text-gray-800 cursor-default
+                                    hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                            >
+                                {{ jhCurveActualModel }}
+                            </span>
+                        </div>
+
+                        <!-- Material Code -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label for="materialCode" class="text-sm font-medium text-gray-700 mb-1">
+                                Material Code:
+                            </label>
+                            <input
+                                v-model="reportMaterialCode"
+                                @input="reportMaterialCode = reportMaterialCode.toUpperCase()"
+                                type="text"
+                                name="materialCode"
+                                id="materialCode"
+                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                    transition duration-200 ease-in-out"
+                            />
+                        </div>
+
+                        <!-- Partial No. -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label for="partialNo" class="text-sm font-medium text-gray-700 mb-1">
+                                Partial No.:
+                            </label>
+                            <input
+                                v-model="reportPartialNo"
+                                @input="reportPartialNo = reportPartialNo.toUpperCase()"
+                                type="text"
+                                name="partialNo"
+                                id="partialNo"
+                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                    transition duration-200 ease-in-out"
+                            />
+                        </div>
+
+                        <!-- Total Quantity -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label for="totalQuantity" class="text-sm font-medium text-gray-700 mb-1">
+                                Total Quantity:
+                            </label>
+                            <input
+                                v-model="reportTotalQuantity"
+                                type="number"
+                                name="totalQuantity"
+                                id="totalQuantity"
+                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                    transition duration-200 ease-in-out"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
+                    <!-- Coating Information Section -->
+                    <div class="flex flex-col mb-4 space-y-4">
+                        <p class="mb-2 text-xl font-semibold text-gray-700">Coating Information</p>
+
+                        <!-- Coating Row 1 -->
+                        <div class="flex flex-row justify-evenly gap-4 mt-4">
+                            <!-- Coating Date -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingDate" class="text-sm font-medium text-gray-700 mb-1">
+                                    Coating Date:
+                                </label>
+                                <input
+                                    v-model="reportCoatingDate"
+                                    type="date"
+                                    name="coatingDate"
+                                    id="coatingDate"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <!-- Coating Machine No -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingMachineNo" class="text-sm font-medium text-gray-700 mb-1">
+                                    Coating Machine No:
+                                </label>
+                                <input
+                                    v-model="reportCoatingMachineNo"
+                                    type="text"
+                                    name="coatingMachineNo"
+                                    id="coatingMachineNo"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <!-- Slurry Lot No -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingSlurryLotNo" class="text-sm font-medium text-gray-700 mb-1">
+                                    Slurry Lot No:
+                                </label>
+                                <input
+                                    v-model="reportCoatingSlurryLotNo"
+                                    type="text"
+                                    name="coatingSlurryLotNo"
+                                    id="coatingSlurryLotNo"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <!-- Loader Operator -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingLoaderOperator" class="text-sm font-medium text-gray-700 mb-1">
+                                    Loader Operator:
+                                </label>
+                                <input
+                                    v-model="reportCoatingLoaderOperator"
+                                    @input="reportCoatingLoaderOperator = reportCoatingLoaderOperator.toUpperCase()"
+                                    type="text"
+                                    name="coatingLoaderOperator"
+                                    id="coatingLoaderOperator"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Coating Row 2 -->
+                        <div class="flex flex-row justify-evenly gap-4 mt-4">
+                            <!-- MIN. TB CONTENT -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingMinTbContent" class="text-sm font-medium text-gray-700 mb-1">
+                                    MIN. TB CONTENT (µg/mm²):
+                                </label>
+                                <input
+                                    v-model="reportCoatingMinTbContent"
+                                    type="text"
+                                    name="coatingMinTbContent"
+                                    id="coatingMinTbContent"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <!-- Sample Quantity -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingSampleQuantity" class="text-sm font-medium text-gray-700 mb-1">
+                                    Sample Quantity (pcs):
+                                </label>
+                                <input
+                                    v-model="reportCoatingSampleQuantity"
+                                    type="text"
+                                    name="coatingSampleQuantity"
+                                    id="coatingSampleQuantity"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <!-- Total Magnet Weight -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingTotalMagnetWeight" class="text-sm font-medium text-gray-700 mb-1">
+                                    Total Magnet Weight:
+                                </label>
+                                <input
+                                    v-model="reportCoatingTotalMagnetWeight"
+                                    type="text"
+                                    name="coatingTotalMagnetWeight"
+                                    id="coatingTotalMagnetWeight"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+
+                            <!-- Unloader Operator -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingUnloaderOperator" class="text-sm font-medium text-gray-700 mb-1">
+                                    Unloader Operator:
+                                </label>
+                                <input
+                                    v-model="reportCoatingUnloaderOperator"
+                                    @input="reportCoatingUnloaderOperator = reportCoatingUnloaderOperator.toUpperCase()"
+                                    type="text"
+                                    name="coatingUnloaderOperator"
+                                    id="coatingUnloaderOperator"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="flex flex-row flex-wrap gap-2 text-[0.7rem]">
+                    <template v-for="group in 6" :key="'group-' + group">
+                        <div class="w-[200px] p-1 border rounded bg-white shadow-sm">
+                            <div class="mb-1 font-semibold text-gray-700 text-center text-[0.7rem]">
+                                Group {{ group }}<br />(M-01 ~ M-05)
+                            </div>
+
+                            <template v-for="j in 5" :key="'input-' + (group - 1) * 5 + j">
+                                <div class="mb-1">
+                                    <label class="block text-[0.65rem] text-gray-600 mb-[1px]">
+                                        {{ (group - 1) * 5 + j }} (M-{{ String(j).padStart(2, '0') }})
+                                    </label>
+                                    <input
+                                        v-model="reportCoatingAmounts[(group - 1) * 5 + (j - 1)]"
+                                        type="number"
+                                        placeholder="Amt"
+                                        class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded mb-[2px] focus:ring-blue-400 focus:ring-1"
+                                    />
+                                    <input
+                                        v-model="reportConcentrationValues[(group - 1) * 5 + (j - 1)]"
+                                        type="number"
+                                        placeholder="Conc."
+                                        class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded focus:ring-blue-400 focus:ring-1"
+                                    />
+                                </div>
+                            </template>
+
+                            <div class="mt-1 border-t pt-1">
+                                <div class="font-semibold text-yellow-700 text-[0.65rem] mb-1 text-center">
+                                    M-06<br />(for {{ (group - 1) * 5 + 1 }}–{{ group * 5 }})
+                                </div>
+
+                                <template v-for="k in 2" :key="'m06-' + group + '-' + k">
+                                    <input
+                                        v-model="reportConcentrationValues[35 + (group - 1) * 2 + (k - 1)]"
+                                        type="number"
+                                        placeholder="M-06"
+                                        class="w-full h-6 px-1 text-[0.65rem] border border-yellow-400 rounded mb-1 bg-yellow-50 focus:ring-yellow-500 focus:ring-1"
+                                    />
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    </div>
+
+
+                </div>
+
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <!-- Oven Heating Information Section -->
                     <div class="flex flex-col mb-4 space-y-4">
-                        <p class="mb-2 text-xl font-semibold">Oven Heating Information</p>
+                        <p class="mb-2 text-xl font-semibold text-gray-700">Oven Heating Information</p>
 
                         <!-- Row 1 -->
-                        <div class="flex flex-row justify-evenly">
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Oven Machine No:</label>&nbsp;
+                        <div class="flex flex-row justify-evenly gap-4">
+                            <!-- Oven Machine No -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenMachineNo" class="text-sm font-medium text-gray-700 mb-1">
+                                    Oven Machine No:
+                                </label>
                                 <input
                                     v-model="reportOvenMachineNo"
                                     type="text"
                                     name="ovenMachineNo"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="ovenMachineNo"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
 
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Time Loading:</label>&nbsp;
+                            <!-- Time Loading -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeLoading" class="text-sm font-medium text-gray-700 mb-1">
+                                    Time Loading:
+                                </label>
                                 <input
                                     v-model="reportTimeLoading"
-                                    type="text"
                                     @input="reportTimeLoading = reportTimeLoading.toUpperCase()"
+                                    type="text"
                                     name="timeLoading"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="timeLoading"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
 
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Temperature (Time Loading):</label>&nbsp;
+                            <!-- Temperature (Time Loading) -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_timeLoading" class="text-sm font-medium text-gray-700 mb-1">
+                                    Temperature (Time Loading):
+                                </label>
                                 <input
                                     v-model="reportTemperature_TimeLoading"
                                     type="text"
-
                                     name="temperature_timeLoading"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="temperature_timeLoading"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
+                            <!-- Shift -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="text-sm font-medium text-gray-700 mb-1">
+                                    Shift:
+                                </label>
+                                <input
+                                    v-model="reportShift_OvenInfo"
+                                    @input="reportShift_OvenInfo = reportShift_OvenInfo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
                         </div>
 
                         <!-- Row 2 -->
-                        <div class="flex flex-row justify-evenly">
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Date:</label>&nbsp;
+                        <div class="flex flex-row justify-evenly gap-4 mt-4">
+                            <!-- Date -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_date" class="text-sm font-medium text-gray-700 mb-1">
+                                    Date:
+                                </label>
                                 <input
                                     v-model="reportDate_OvenInfo"
                                     type="date"
                                     name="ovenInfo_date"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="ovenInfo_date"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
 
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Time Unloading:</label>&nbsp;
+                            <!-- Time Unloading -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeUnloading" class="text-sm font-medium text-gray-700 mb-1">
+                                    Time Unloading:
+                                </label>
                                 <input
                                     v-model="reportTimeUnloading"
-                                    type="text"
                                     @input="reportTimeUnloading = reportTimeUnloading.toUpperCase()"
+                                    type="text"
                                     name="timeUnloading"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="timeUnloading"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
 
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Temperature (Time Unloading):</label>&nbsp;
+                            <!-- Temperature (Time Unloading) -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
+                                    Temperature (Time Unloading):
+                                </label>
                                 <input
                                     v-model="reportTemperature_TimeUnloading"
                                     type="text"
                                     name="temperature_TimeUnloading"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="temperature_TimeUnloading"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
-                        </div>
-
-                        <!-- Row 3 -->
-                        <div class="flex flex-row justify-evenly">
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Shift:</label>&nbsp;
-                                <input
-                                    v-model="reportShift_OvenInfo"
-                                    type="text"
-                                    @input="reportShift_OvenInfo = reportShift_OvenInfo.toUpperCase()"
-                                    name="ovenInfo_shift"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out"
-                                />
-                            </div>
-
-                            <div class="flex flex-row items-baseline">
-                                <label class="text-lg font-semibold">Operator:</label>&nbsp;
+                            <!-- Operator -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="text-sm font-medium text-gray-700 mb-1">
+                                    Operator:
+                                </label>
                                 <input
                                     v-model="reportOperator_OvenInfo"
-                                    type="text"
                                     @input="reportOperator_OvenInfo = reportOperator_OvenInfo.toUpperCase()"
+                                    type="text"
                                     name="ovenInfo_operator"
-                                    class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    id="ovenInfo_operator"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
                                         transition duration-200 ease-in-out"
                                 />
                             </div>
@@ -276,62 +572,73 @@
                     </div>
                 </div>
                 <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl">
-                    <div class="flex flex-row mb-4 justify-evenly">
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Model:</label>&nbsp;
+                    <p class="mb-2 text-xl font-semibold text-gray-700">Magnetic Property Inspection Information</p>
+                    <!-- Pulse Tracer Info Row -->
+                    <div class="flex flex-row justify-evenly gap-4 mt-4">
+                        <!-- Pulse Tracer Machine No (display-only) -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Pulse Tracer Machine No:
+                            </label>
                             <span
-                                class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md"
-                                >
-                                {{ jhCurveActualModel }}
+                                class="h-9 px-3 text-sm flex items-center border border-gray-300 rounded-md bg-gray-100 text-gray-800 cursor-default
+                                    hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                            >
+                                {{ reportPulseTracerMachineNo }}
                             </span>
                         </div>
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Material Code:</label>&nbsp;
-                            <input v-model="reportMaterialCode" @input="reportMaterialCode = reportMaterialCode.toUpperCase()" type="text" name="materialCode" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out">
+
+                        <!-- Date -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label for="reportDate" class="text-sm font-medium text-gray-700 mb-1">
+                                Date:
+                            </label>
+                            <input
+                                v-model="reportDate"
+                                type="date"
+                                name="reportDate"
+                                id="reportDate"
+                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                    transition duration-200 ease-in-out"
+                            />
                         </div>
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Partial No.:</label>&nbsp;
-                            <input v-model="reportPartialNo" @input="reportPartialNo = reportPartialNo.toUpperCase()" type="text" name="shift" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out">
+
+                        <!-- Shift -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label for="reportShift" class="text-sm font-medium text-gray-700 mb-1">
+                                Shift:
+                            </label>
+                            <input
+                                v-model="reportShift"
+                                @input="reportShift = reportShift.toUpperCase()"
+                                type="text"
+                                name="reportShift"
+                                id="reportShift"
+                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                    transition duration-200 ease-in-out"
+                            />
                         </div>
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Total Quantity:</label>&nbsp;
-                            <input v-model="reportTotalQuantity" type="number" name="operator" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out">
-                        </div>
-                    </div>
-                    <div class="flex flex-row mb-4 justify-evenly">
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Pulse Tracer Machine No:</label>&nbsp;
-                            <span class="px-4 py-1 text-gray-800 transition duration-200 ease-in-out bg-white rounded-md cursor-default hover:ring-1 hover:ring-blue-500 hover:shadow-md">{{ reportPulseTracerMachineNo }}</span>
-                        </div>
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Date:</label>&nbsp;
-                            <input v-model="reportDate" type="date" name="date" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out">
-                        </div>
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Shift:</label>&nbsp;
-                            <input v-model="reportShift" type="text" @input="reportShift = reportShift.toUpperCase()" name="shift" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out">
-                        </div>
-                        <div class="flex flex-row items-baseline">
-                            <label class="text-lg font-semibold">Operator:</label>&nbsp;
-                            <input v-model="reportOperator" type="text" @input="reportOperator = reportOperator.toUpperCase()" name="operator" class="w-[12rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                        transition duration-200 ease-in-out">
+
+                        <!-- Operator -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label for="reportOperator" class="text-sm font-medium text-gray-700 mb-1">
+                                Operator:
+                            </label>
+                            <input
+                                v-model="reportOperator"
+                                @input="reportOperator = reportOperator.toUpperCase()"
+                                type="text"
+                                name="reportOperator"
+                                id="reportOperator"
+                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                    transition duration-200 ease-in-out"
+                            />
                         </div>
                     </div>
 
@@ -1581,6 +1888,17 @@ const reportRemarksDisplayNG_ihcihk = ref(false);
 const reportRemarksDisplayNG_br4pia = ref(false);
 const reportRemarksDisplayNG_bhMax = ref(false);
 const reportRemarksDisplayNG_bhc = ref(false);
+
+const reportCoatingDate = ref('');
+const reportCoatingLoaderOperator = ref('NA');
+const reportCoatingUnloaderOperator = ref('NA');
+const reportCoatingMachineNo = ref('NA');
+const reportCoatingTotalMagnetWeight = ref('NA');
+const reportCoatingMinTbContent = ref('NA');
+const reportCoatingSlurryLotNo = ref('NA');
+const reportCoatingSampleQuantity = ref('NA');
+const reportCoatingAmounts = ref([]);
+const reportConcentrationValues = ref([]);
 
 const reportOvenMachineNo = ref('NA');
 const reportTimeLoading = ref('NA');
