@@ -1278,15 +1278,13 @@
         //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
         function cleanInteger(str) {
-            // Reject non-digit strings
-            if (!/^\d+$/.test(str)) return null;
+            if (typeof str !== 'string') return null;
 
-            const parsed = parseInt(str, 10);
+            const trimmed = str.trim();
 
-            // Reject if input has leading zeroes or formatting issues
-            if (parsed.toString() !== str) return null;
+            if (!/^\d+$/.test(trimmed)) return null; // Only digits
 
-            return parsed.toString(); // Clean, normalized numeric string
+            return parseInt(trimmed, 10).toString(); // Normalize: remove leading zeroes
         }
 
         for (const row of csv_tempWithDataStat.value) {

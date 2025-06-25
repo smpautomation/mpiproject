@@ -433,71 +433,96 @@ const datenow = () => {
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-let openedTabs = [];  // Move openedTabs to a higher scope
+let openedTabs = [];
 
-const closeAllTabs = async () => {
-    // Wait for 3 seconds before closing the tabs
-    await delay(1000);
-
-    openedTabs.forEach((tab) => {
-        if (tab && !tab.closed) {
-            tab.close();
-            //console.log(`Closed tab for serial ${tab.location.search.split('=')[1]}`);  // Log the serial number
-        }
-    });
+const closeAllTabs = () => {
+    console.log("Scheduling tab close in 1 second...");
+    setTimeout(() => {
+        openedTabs.forEach((tab, index) => {
+            if (tab && !tab.closed) {
+                tab.close();
+                console.log(`Closed tab #${index + 1}`);
+            } else {
+                console.warn(`Tab #${index + 1} was already closed or inaccessible`);
+            }
+        });
+        console.log("All tabs close attempted.");
+    }, 1000);
 };
 
 const confirmationApprove = async () => {
     try {
-        let allPopupsOpened = true; // Flag to track if all pop-ups were successfully opened
+        console.log("== Starting approval process ==");
 
-        // Loop through each selected serial number
+        let allPopupsOpened = true;
+        openedTabs = [];
+
+        const dateNow = datenow();
+        const reportData = {
+            approved_by_firstname: state.user.firstName,
+            approved_by_surname: state.user.surname,
+            approved_by_date: dateNow,
+        };
+
+        // 🔥 STEP 1: IMMEDIATELY PATCH all approvals BEFORE opening popups
+        console.log("Patching approvals immediately...");
+        for (const serial of selectedRows.value) {
+            console.log(`Patching approval for serial: ${serial}`, reportData);
+            await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
+            await axios.patch(`/api/reportdata/${serial}`, reportData);
+        }
+
+        // 🔥 STEP 2: Open popups one-by-one
         for (let index = 0; index < selectedRows.value.length; index++) {
             const serial = selectedRows.value[index];
 
-            // Adding a small delay before window open for each tab
-            await delay(1000);  // Wait for 1 second before opening each new tab
+            console.log(`Waiting 1s before opening tab for serial: ${serial}`);
+            await delay(1000);
 
-            // Try to open the pop-up window and check if it was blocked
-            let newTab = window.open(`/create_pdf?serialParam=${serial}`, '_blank');
+            const newTab = window.open(`/create_pdf?serialParam=${serial}`, '_blank');
 
             if (newTab) {
-                openedTabs.push(newTab);  // Store references of opened tabs
-                //console.log(`Opened report for serial ${serial}`);
+                console.log(`Opened tab for serial: ${serial}`);
+                openedTabs.push(newTab);
 
-                // If this is the last tab being opened, start the delay and close logic
                 if (index === selectedRows.value.length - 1) {
-                    //console.log("Last tab opened, starting the delay before closing tabs...");
-                    closeAllTabs(); // Close all tabs after the delay
+                    console.log("Last tab opened. Triggering closeAllTabs...");
+                    closeAllTabs();
                 }
             } else {
-                // If the pop-up was blocked, stop the approval process for this serial
-                console.error(`Blocked opening for serial ${serial}`);
+                console.error(`Blocked popup for serial: ${serial}`);
                 allPopupsOpened = false;
+                break;
             }
         }
 
-        // Wait for all popups to open and then proceed with approval
+        // 🔥 STEP 3: Finalize if all tabs succeeded
         if (allPopupsOpened) {
-            // Once all tabs are opened, proceed with the approval logic
-            for (let serial of selectedRows.value) {
-                const dateNow = datenow();
-                const reportData = {
-                    approved_by_firstname: state.user.firstName,
-                    approved_by_surname: state.user.surname,
-                    approved_by_date: dateNow,
-                };
+            console.log("All tabs opened successfully. Finalizing reports...");
 
-                // Send the approval PATCH request only if the pop-up was successfully opened
-                //console.log(`Sending approval for serial ${serial} with data:`, reportData);
-                await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
-                await finalizeReport(serial);  // Finalize the report
-                await axios.patch(`/api/reportdata/${serial}`, reportData);  // Commented out for testing
+            for (const serial of selectedRows.value) {
+                console.log(`Finalizing serial ${serial}`);
+                await finalizeReport(serial);
+                console.log(`Serial ${serial} finalized.`);
             }
 
             showApprovedNotification("Approved Successfully");
-            await showReportData();
         } else {
+            // 🔥 STEP 4: Rollback if any popup failed
+            console.warn("One or more popups failed. Rolling back...");
+
+            const rollbackData = {
+                approved_by_firstname: '',
+                approved_by_surname: '',
+                approved_by_date: null,
+                is_finalized: 0,
+            };
+
+            for (const serial of selectedRows.value) {
+                console.warn(`Rolling back approval for serial: ${serial}`);
+                await axios.patch(`/api/reportdata/${serial}`, rollbackData);
+            }
+
             showBlockedNotification(`
                 Some reports couldn't be approved due to your browser's pop-up blocker.
                 Please disable the blocker and try again.<br><br>
@@ -509,16 +534,21 @@ const confirmationApprove = async () => {
                 - <strong>Edge:</strong> Go to Settings > Cookies and Site Permissions > Pop-ups and redirects > Allow for this site.<br><br>
                 - <strong>Safari:</strong> Go to Preferences > Websites > Pop-up Windows > Select "Allow" for this site.
             `);
-            await showReportData();
         }
+
+        // 🔄 Final UI Reset
+        console.log("Refreshing UI state...");
+        await showReportData();
 
         showApproveButton.value = true;
         showApproveConfirmation.value = false;
+        console.log("== Approval process complete ==");
 
     } catch (error) {
-        console.error("Error approving selected reports:", error);
+        console.error("Error during approval:", error);
     }
 };
+
 
 
 onMounted( async () => {

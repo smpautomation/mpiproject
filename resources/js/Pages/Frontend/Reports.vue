@@ -441,7 +441,7 @@
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
 
-                                <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
+                                <template v-if="showROB">
                                     <tr class="bg-blue-400">
                                         <th colspan="7" class="py-1 font-semibold text-center text-white border-4 border-white text-md">BH Tracer Measurement</th>
                                     </tr>
@@ -1469,6 +1469,7 @@ const reportROB_iHcMin = ref('');
 const reportROB_BrRTstandard = ref(13.0);
 const reportROB_BrVTstandard = ref(10.5);
 const reportROB_HD5standard = ref(10.053);
+const reportROB_HD5rejectstandard = ref(9.425);
 const reportROB_JD5standard = ref(9.6);
 const reportROB_BrRT_brMin = ref(0);
 const reportROB_BrRT_brMax = ref(0);
@@ -1721,7 +1722,7 @@ const resetReportBHData = async() => {
 
 //FOR ROB - models ROB-0A70G
 watchEffect(() => {
-    if (noteReasonForReject.value.includes('- N.G iHc') && showROB.value === true) {
+    if (showROB.value === true) {
         const belowStandard = (
             reportROB_BrRT_brMin.value < reportROB_BrRTstandard.value ||
             reportROB_BrRT_brMax.value < reportROB_BrRTstandard.value ||
@@ -1746,10 +1747,10 @@ watchEffect(() => {
 
         if (belowStandard) {
             reportROB_remarks.value = 'NG';
-            reportSMPJudgement.value = 'REJECT';
+            reportSMPJudgement.value = 'HOLD';
         } else {
             reportROB_remarks.value = 'OK';
-            reportSMPJudgement.value = 'HOLD';
+            reportSMPJudgement.value = 'PASSED';
         }
     }
 });
@@ -1959,6 +1960,10 @@ const reportReset = () => {
     showCpkFrom_iHc.value = false;
     preparedByStampConfirmation.value = false;
     checkedByStampConfirmation.value = false;
+    preparedByStampPhoto.value = false;
+    checkedByStampPhoto.value = false;
+    approvedByStampPhoto.value = false;
+    report_isFinalized.value = false;
 }
 
 const showNotification = (message) => {
@@ -2043,11 +2048,6 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
-    if (!hasNGihc) return;
-
-    const model = jhCurveActualModel.value;
 
     // === Model Groups by Behavior ===
     const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
@@ -2056,6 +2056,12 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
     const MODELS_SHOW_BH          = ["ZFS0982G"]; //["ZFS0982G"];
     const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
+
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
+    if (!hasNGihc) return;
+
+    const model = jhCurveActualModel.value;
 
     // === Logic Blocks ===
 
