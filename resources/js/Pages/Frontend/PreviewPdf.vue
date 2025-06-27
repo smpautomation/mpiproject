@@ -257,10 +257,10 @@
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkMinimum }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkVariance }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center bg-gray-200">
+                        <tr v-if="showROB" class="text-center bg-gray-200">
                             <th colspan="7" :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[4.5px] text-sm">BH Tracer Measurement</th>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center bg-gray-200">
+                        <tr v-if="showROB" class="text-center bg-gray-200">
                             <th class="border-l border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Items -->
                             <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Br Min</th>
@@ -269,7 +269,7 @@
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">iHc Max</th>
                             <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                        <tr v-if="showROB" class="text-center">
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">ITEMS</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">SPECS</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_brMin }}</th>
@@ -278,7 +278,7 @@
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_iHcMax }}</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Result</th>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                        <tr v-if="showROB" class="text-center">
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ RT</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRTstandard }} kg</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMin }}</td>
@@ -287,7 +287,7 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_iHcMax }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                        <tr v-if="showROB" class="text-center">
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ VT (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVTstandard }} kg</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMin }}</td>
@@ -296,7 +296,7 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_iHcMax }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                        <tr v-if="showROB" class="text-center">
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">HD5 (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5standard }} kOe</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMin }}</td>
@@ -305,7 +305,7 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_iHcMax }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                        <tr v-if="showROB" class="text-center">
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">JD5 (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5standard }} kG</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMin }}</td>
@@ -1740,10 +1740,6 @@ const standardSampleDimention = computed(() => ({
 }));
 
 const checkSpecialJudgement = async () => {
-    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-    if (!hasNGihc) return;
-
-    const model = printActualModel.value;
 
     // === Model Groups by Behavior ===
     const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
@@ -1752,6 +1748,13 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
     const MODELS_SHOW_BH          = ["ZFS0982G"];
     const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
+
+    const model = printActualModel.value;
+
+    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    if (!hasNGihc) return;
+
 
     // === Logic Blocks ===
 
@@ -1775,7 +1778,6 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
     if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
     if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
-    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
 };
 
 const dataFrom_reportdata = async () => {
@@ -2235,6 +2237,9 @@ const renderChart = () => {
                                     weight: "bold", // Make it bold
                                 },
                             },
+                            ticks: {
+                                display: false, // ← hides x-axis values
+                            },
                         },
                         y: {
                             type: "linear",
@@ -2250,6 +2255,9 @@ const renderChart = () => {
                                     size: 14,  // Increase font size
                                     weight: "bold", // Make it bold
                                 },
+                            },
+                            ticks: {
+                                display: false, // ← hides x-axis values
                             },
                         },
                     },
@@ -2580,6 +2588,9 @@ const nsa_renderChart = (setIndex) => {
                         color: "#333",
                         font: { size: 14, weight: "bold" },
                     },
+                    ticks: {
+                        display: false, // ← hides x-axis values
+                    },
                 },
                 y: {
                     type: "linear",
@@ -2588,6 +2599,9 @@ const nsa_renderChart = (setIndex) => {
                         text: "←  kG  →",
                         color: "#333",
                         font: { size: 14, weight: "bold" },
+                    },
+                    ticks: {
+                        display: false, // ← hides x-axis values
                     },
                 },
             },
@@ -2650,7 +2664,7 @@ const exportMultiPagePdf = async () => {
     }
 
     const sanitizeFilename = (str) => str.replace(/\//g, ' ');
-    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}`;
+    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot No ${printJhCurveLotno.value}`;
     const filename = sanitizeFilename(rawFilename) + '.pdf';
 
     const formData = new FormData();

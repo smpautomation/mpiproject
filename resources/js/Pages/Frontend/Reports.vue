@@ -21,9 +21,6 @@
         <div v-if="showNotif2 && isFromApproval" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
             <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
         </div>
-        <button v-if="backToApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
-            BACK TO APPROVAL
-        </button>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
                 <div> <!-- Selection Panel -->
@@ -444,7 +441,7 @@
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
 
-                                <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
+                                <template v-if="showROB">
                                     <tr class="bg-blue-400">
                                         <th colspan="7" class="py-1 font-semibold text-center text-white border-4 border-white text-md">BH Tracer Measurement</th>
                                     </tr>
@@ -1196,7 +1193,7 @@
                         BACK
                     </button>
 
-                    <button v-if="isFromApproval && !isFromViewList" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="isFromApproval && !isFromViewList" @click="backToApprovalFunction" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK TO APPROVAL
                     </button>
 
@@ -1472,6 +1469,7 @@ const reportROB_iHcMin = ref('');
 const reportROB_BrRTstandard = ref(13.0);
 const reportROB_BrVTstandard = ref(10.5);
 const reportROB_HD5standard = ref(10.053);
+const reportROB_HD5rejectstandard = ref(9.425);
 const reportROB_JD5standard = ref(9.6);
 const reportROB_BrRT_brMin = ref(0);
 const reportROB_BrRT_brMax = ref(0);
@@ -1503,6 +1501,7 @@ const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
+const filterStatus = ref('');
 const currentUserData = ref([]);
 const loggedUserData = ref([]);
 const currentUserApproverStage = ref('');
@@ -1723,7 +1722,7 @@ const resetReportBHData = async() => {
 
 //FOR ROB - models ROB-0A70G
 watchEffect(() => {
-    if (noteReasonForReject.value.includes('- N.G iHc') && showROB.value === true) {
+    if (showROB.value === true) {
         const belowStandard = (
             reportROB_BrRT_brMin.value < reportROB_BrRTstandard.value ||
             reportROB_BrRT_brMax.value < reportROB_BrRTstandard.value ||
@@ -1748,10 +1747,10 @@ watchEffect(() => {
 
         if (belowStandard) {
             reportROB_remarks.value = 'NG';
-            reportSMPJudgement.value = 'REJECT';
+            reportSMPJudgement.value = 'HOLD';
         } else {
             reportROB_remarks.value = 'OK';
-            reportSMPJudgement.value = 'HOLD';
+            reportSMPJudgement.value = 'PASSED';
         }
     }
 });
@@ -1961,6 +1960,11 @@ const reportReset = () => {
     showCpkFrom_iHc.value = false;
     preparedByStampConfirmation.value = false;
     checkedByStampConfirmation.value = false;
+    preparedByStampPhoto.value = false;
+    checkedByStampPhoto.value = false;
+    approvedByStampPhoto.value = false;
+    report_isFinalized.value = false;
+    reportExistingSMPJudgement.value = null;
 }
 
 const showNotification = (message) => {
@@ -2045,11 +2049,6 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
-    if (!hasNGihc) return;
-
-    const model = jhCurveActualModel.value;
 
     // === Model Groups by Behavior ===
     const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
@@ -2058,6 +2057,12 @@ const checkSpecialJudgement = async () => {
     const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
     const MODELS_SHOW_BH          = ["ZFS0982G"]; //["ZFS0982G"];
     const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
+
+    const model = jhCurveActualModel.value;
+
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
+    if (!hasNGihc) return;
 
     // === Logic Blocks ===
 
@@ -2714,6 +2719,7 @@ const fetchSerial = async () => {
 // Define the prop that will receive the serialParam
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
+  filterStatus: String,
   ipAddress: String,
   fromApproval: [Boolean, String],
   fromViewList: [Boolean, String],
@@ -2723,6 +2729,7 @@ isFromApproval.value = props.fromApproval === true || props.fromApproval === 'tr
 isFromViewList.value = props.fromViewList === true || props.fromViewList === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
+filterStatus.value = props.filterStatus;
 
 if(ipAddress.value === '127.0.0.1'){
     onTestServer.value = true;
@@ -3065,6 +3072,17 @@ const sec_additional_redirect = (sec_serial) => {
         alert('Something went wrong during navigation.');
     }
 };
+
+const backToApprovalFunction = () => {
+    //console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/approval', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { filterStatus: filterStatus.value, fromReports: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
