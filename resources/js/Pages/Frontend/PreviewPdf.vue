@@ -2664,7 +2664,7 @@ const exportMultiPagePdf = async () => {
     }
 
     const sanitizeFilename = (str) => str.replace(/\//g, ' ');
-    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}`;
+    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot No ${printJhCurveLotno.value}`;
     const filename = sanitizeFilename(rawFilename) + '.pdf';
 
     const formData = new FormData();

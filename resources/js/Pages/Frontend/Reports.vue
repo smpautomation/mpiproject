@@ -1964,6 +1964,7 @@ const reportReset = () => {
     checkedByStampPhoto.value = false;
     approvedByStampPhoto.value = false;
     report_isFinalized.value = false;
+    reportExistingSMPJudgement.value = null;
 }
 
 const showNotification = (message) => {
