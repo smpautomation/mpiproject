@@ -786,7 +786,7 @@
                             <td class="border-r border-b border-black px-[2px] py-[2px] text-[10px]">{{ item.data_status }}</td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Average</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Average</th>
                             <td class="border-b  border-black px-1 py-[2px] text-[10px] text-center">{{ printBrAverage }}</td>
                             <td class="border-b border-r border-black"></td>
                             <td class="border-b  border-black px-1 py-[2px] text-[10px] text-center">{{ printiHcAverage }}</td>
@@ -815,7 +815,7 @@
                             <td class="border-b border-r border-black"></td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Maximum</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Maximum</th>
                             <td class="border-b  border-black px-1 py-1 text-[10px] text-center">{{ printBrMaximum }}</td>
                             <td class="border-b border-r border-black"></td>
                             <td class="border-b  border-black px-1 py-1 text-[10px] text-center">{{ printiHcMaximum }}</td>
@@ -844,33 +844,33 @@
                             <td class="border-b border-r border-black"></td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Minimum</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Minimum</th>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printBrMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printiHcMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printiHkMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printBHMaxMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printHr95Minimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printHr98Minimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printiHciHkMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printBrpaiIaMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printbHcaxMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printSquarenessaxMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ print4paiIdMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ print4paiIsMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1171,7 +1171,7 @@
                             </tr>
                             <!-- AVERAGE ROW -->
                             <tr>
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Average</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Average</th>
                                 <td class="border-b border-black px-1 py-[2px] text-[10px] text-center">{{ pagesData[index-1]?.brAverage }}</td>
                                 <td class="border-b border-r border-black"></td>
                                 <td class="border-b border-black px-1 py-[2px] text-[10px] text-center">{{ pagesData[index-1]?.iHcAverage }}</td>
@@ -1202,7 +1202,7 @@
 
                             <!-- MAXIMUM ROW -->
                             <tr>
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Maximum</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Maximum</th>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.brMaximum }}</td>
                                 <td class="border-b border-r border-black"></td>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.iHcMaximum }}</td>
@@ -1233,7 +1233,7 @@
 
                             <!-- MINIMUM ROW -->
                             <tr>
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Minimum</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Minimum</th>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.brMinimum }}</td>
                                 <td class="border-b border-r border-black"></td>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.iHcMinimum }}</td>
@@ -1413,6 +1413,43 @@ import { Chart, registerables } from 'chart.js'; // Import all required componen
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import DotsLoader from '@/Components/DotsLoader.vue';
+import { useAuth } from '@/Composables/useAuth.js'
+
+const { state } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 500; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                Inertia.visit('/'); // Redirect if not authenticated
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
 
 const adjustStyling = ref(false);
 
@@ -1427,6 +1464,20 @@ const success = ref(false)
 
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
+
+const pdfFinalizeLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: 'System',
+            event: logEvent,
+            section: 'PDF File',
+        });
+
+        //console.log('responseUserLogging-data: ',responseUserLogging.data);
+    }catch(error){
+        console.error('pdfFinalizeLogging post request failed: ',error);
+    }
+}
 
 const numberOfSet = ref(0); // or whatever number you want
 // Watcher with immediate: true
@@ -2616,7 +2667,6 @@ const exportMultiPagePdf = async () => {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
 
-    // Convert canvas to images before export
     const allCanvases = document.querySelectorAll('.a4-page canvas');
     const canvasToImageMap = [];
 
@@ -2629,7 +2679,6 @@ const exportMultiPagePdf = async () => {
       canvas.parentNode.replaceChild(img, canvas);
     });
 
-    // ✅ Parallel rendering of all pages
     const canvasOutputs = await Promise.all(
       Array.from(pages).map((page) =>
         html2canvas(page, {
@@ -2641,7 +2690,6 @@ const exportMultiPagePdf = async () => {
       )
     );
 
-    // Add rendered pages to PDF
     canvasOutputs.forEach((canvas, i) => {
       const imgData = canvas.toDataURL('image/jpeg', pages.length > 5 ? 0.45 : 0.6);
       const imgProps = pdf.getImageProperties(imgData);
@@ -2650,7 +2698,6 @@ const exportMultiPagePdf = async () => {
       pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
     });
 
-    // Restore canvas elements
     canvasToImageMap.forEach(({ original, replacement }) => {
       replacement.parentNode.replaceChild(original, replacement);
     });
@@ -2660,7 +2707,7 @@ const exportMultiPagePdf = async () => {
     const massProd_forPDF = printMassProdName.value;
     if (!massProd_forPDF || !massProd_forPDF.trim()) {
       console.error('[PDF Export] ERROR: massProd_forPDF is empty or invalid. Cannot upload.');
-      return;
+      return Promise.reject(new Error('Invalid massProd name'));
     }
 
     const sanitizeFilename = (str) => str.replace(/\//g, ' ');
@@ -2677,21 +2724,28 @@ const exportMultiPagePdf = async () => {
       type: blob.type,
     });
 
+    try {
+    //console.log('🟡 Uploading PDF...');
     const response = await axios.post('/upload-pdf', formData);
+    //console.log('🟢 Upload complete, now finalizing report...');
+
     await finalizeReport(printSerialNo.value);
+    //console.log('🟢 Report finalized, now logging...');
+
+    await pdfFinalizeLogging(`has finalized Serial ${printSerialNo.value}`);
+    //console.log('✅ Log saved.');
+
     success.value = true;
+    } catch (error) {
+    console.error('❌ Report Finalization Failed:', error);
+    return Promise.reject(error);
+    }
+
+    return Promise.resolve(); // Explicit full-completion signal
   } catch (error) {
     console.error('[PDF Export] Error during multi-page export:', error);
     alert('Failed to generate/upload PDF.');
-  }
-};
-
-const handlePrint = async () => {
-  await nextTick(); // Ensures DOM is fully rendered
-  if (typeof window !== 'undefined' && typeof window.print === 'function') {
-    window.print();
-  } else {
-    console.error('Print functionality is not available.');
+    return Promise.reject(error);
   }
 };
 

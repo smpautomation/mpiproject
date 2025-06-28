@@ -132,7 +132,7 @@
                         <!-- Notification with close button -->
                         <div v-show="blockedNotif" class="w-[1000px] h-[180px] items-center p-4 mx-auto bg-red-200 rounded-md shadow-md text-red-800 relative">
                             <!-- Close Button -->
-                            <button @click="closeNotification" class="absolute top-2 right-2 text-md text-red-800 bg-transparent border-none cursor-pointer font-extrabold underline">
+                            <button @click="closeNotification" class="absolute font-extrabold text-red-800 underline bg-transparent border-none cursor-pointer top-2 right-2 text-md">
                                 close
                             </button>
 
@@ -143,9 +143,9 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-center mt-4">
+                    <div class="flex items-center justify-between mt-4">
                     <button
-                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+                        class="px-4 py-2 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
                         @click="prevPage"
                         :disabled="currentPage === 1"
                     >
@@ -153,7 +153,7 @@
                     </button>
                     <span class="text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
                     <button
-                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+                        class="px-4 py-2 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
                         @click="nextPage"
                         :disabled="currentPage === totalPages"
                     >
@@ -436,7 +436,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 let openedTabs = [];
 
 const closeAllTabs = () => {
-    console.log("Scheduling tab close in 1 second...");
+    console.log("Scheduling tab close in 4 second...");
     setTimeout(() => {
         openedTabs.forEach((tab, index) => {
             if (tab && !tab.closed) {
@@ -447,7 +447,7 @@ const closeAllTabs = () => {
             }
         });
         console.log("All tabs close attempted.");
-    }, 1000);
+    }, 4000);
 };
 
 const confirmationApprove = async () => {
