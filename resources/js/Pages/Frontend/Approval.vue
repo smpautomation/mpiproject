@@ -113,7 +113,7 @@
                         </div>
                         <!-- Confirmation Box -->
                         <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
-                            <p class="mb-4 text-lg font-semibold text-gray-800">Are you sure?</p>
+                            <p class="mb-4 text-lg font-semibold text-gray-800"><span class="font-extrabold text-blue-500">Important: </span>Upon clicking YES, please wait for all the window tabs to close automatically as the reports will undergo process of approval and finalization.</p>
                             <div class="flex justify-center gap-4">
                                 <button @click="confirmationApprove" class="px-5 py-2 text-white transition bg-green-500 rounded-md hover:bg-green-600">
                                     Yes

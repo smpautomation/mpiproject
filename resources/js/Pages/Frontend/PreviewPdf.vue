@@ -279,7 +279,7 @@
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Result</th>
                         </tr>
                         <tr v-if="showROB" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ RT</th>
+                            <th :class="{ 'leading-loose': adjustStyling, 'p-0': true }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">Br @ RT</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRTstandard }} kg</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMax }}</td>
@@ -288,7 +288,7 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
                         <tr v-if="showROB" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ VT (180°C)</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">Br @ VT (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVTstandard }} kg</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMax }}</td>
@@ -297,7 +297,7 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
                         <tr v-if="showROB" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">HD5 (180°C)</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">HD5 (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5standard }} kOe</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMax }}</td>
@@ -306,7 +306,7 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
                         <tr v-if="showROB" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">JD5 (180°C)</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">JD5 (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5standard }} kG</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMax }}</td>
@@ -1489,6 +1489,14 @@ watch(numberOfSet, (newVal, oldVal) => {
 const testing = ref("");
 const isAutomotive = ref(false);
 // You could pass these via props or retrieve via an API
+
+const MODELS_SHOW_VT_DATA = ref([]) ;
+const MODELS_1X1X1_NO_CORNER = ref([]);
+const MODELS_SHOW_CPK = ref([]);
+const MODELS_SHOW_GX = ref([]);
+const MODELS_SHOW_BH = ref([]);
+const MODELS_SHOW_ROB = ref([]);
+
 const printSetNo = ref ('');
 const printOvenMachineNo_ovenInfo = ref('N/A');
 const printTimeLoading = ref('N/A');
@@ -1792,32 +1800,49 @@ const standardSampleDimention = computed(() => ({
 
 const checkSpecialJudgement = async () => {
 
-    // === Model Groups by Behavior ===
-    const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
-    const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
-    const MODELS_SHOW_CPK         = ["DNS0917G"];
-    const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
-    const MODELS_SHOW_BH          = ["ZFS0982G"];
-    const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
+    const responseGetVTData = await axios.get('/api/vt-models');
+    const fetchAllVT = responseGetVTData.data;
+    MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
+    console.log('VT MODELS: ',MODELS_SHOW_VT_DATA.value);
+    const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
+    const fetchAllCPKIHC = responseGetCPKIHCData.data;
+    MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
+    console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
+    const responseGetGXData = await axios.get('/api/gx-models');
+    const fetchAllGX = responseGetGXData.data;
+    MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
+    console.log('GX MODELS: ',MODELS_SHOW_GX.value);
+    const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
+    const fetchAllTTMNC = responseGetTTMNCData.data;
+    MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
+    console.log('TTMNC MODELS: ',MODELS_1X1X1_NO_CORNER.value);
+    const responseGetBHData = await axios.get('/api/bh-models');
+    const fetchAllBH = responseGetBHData.data;
+    MODELS_SHOW_BH.value = fetchAllBH.map(item => item.model_name);
+    console.log('BH MODELS: ',MODELS_SHOW_BH.value);
+    const responseGetROBData = await axios.get('/api/rob-models');
+    const fetchAllROB = responseGetROBData.data;
+    MODELS_SHOW_ROB.value = fetchAllROB.map(item => item.model_name);
+    console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
 
     const model = printActualModel.value;
 
-    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
+    if (MODELS_SHOW_ROB.value.includes(model))  showROB.value = true;
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
     if (!hasNGihc) return;
 
 
     // === Logic Blocks ===
 
-    if (MODELS_SHOW_VT_DATA.includes(model) && printVT_sampleQty.value > 0) {
+    if (MODELS_SHOW_VT_DATA.value.includes(model) && printVT_sampleQty.value > 0) {
         showVTData.value = true;
         showVTData_default.value = false;
-    }else if(MODELS_SHOW_VT_DATA.includes(model)){
+    }else if(MODELS_SHOW_VT_DATA.value.includes(model)){
         showVTData.value = false;
         showVTData_default.value = true;
     }
 
-    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
+    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.value.includes(model)) {
         show1x1x1Data_withoutCorner.value = true;
         isTTM_model.value = model.includes("TTM");
 
@@ -1826,9 +1851,9 @@ const checkSpecialJudgement = async () => {
         }
     }
 
-    if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
-    if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
-    if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
+    if (MODELS_SHOW_CPK.value.includes(model))  showCpkFrom_iHc.value = true;
+    if (MODELS_SHOW_GX.value.includes(model))   showGX.value = true;
+    if (MODELS_SHOW_BH.value.includes(model))   showBHData.value = true;
 };
 
 const dataFrom_reportdata = async () => {
@@ -2766,25 +2791,31 @@ const props = defineProps({
 });
 const printSerialNo = computed(() => props.serialParam)
 //console.log('Serial Param in PreviewPdf.vue:', props.serialParam); // You can use this for debugging
-
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Optional: auto print on page load
-onMounted( async () => {
-    adjustStyling.value = true;
-    // run these in parallel:
-    await checkingNSA();
-    await Promise.all([
-        dataFrom_reportdata(),
-        dataFrom_inspectiondata(),
-        dataFrom_tpmData(),
-        fetchDataCreateGraph(),
-        nsa_dataFrom_tpmData(),
-        nsa_graph(),
-    ]);
+onMounted(async () => {
+  adjustStyling.value = true;
 
-    // only after all complete:
-    console.log('SMP JUDGEMENT RESULT: ',printSMPJudgement.value);
-    await exportMultiPagePdf();
-    adjustStyling.value = false;
+  await checkingNSA();
+
+  await Promise.all([
+    dataFrom_reportdata(),
+    dataFrom_inspectiondata(),
+    dataFrom_tpmData(),
+    fetchDataCreateGraph(),
+    nsa_dataFrom_tpmData(),
+    nsa_graph(),
+  ]);
+
+  // Ensure Vue has flushed DOM updates
+  await nextTick();
+
+  // Allow time for canvas/chart/image rendering to complete
+  await delay(1500); // tune as needed
+
+  await exportMultiPagePdf();
+
+  adjustStyling.value = false;
 });
 
 
