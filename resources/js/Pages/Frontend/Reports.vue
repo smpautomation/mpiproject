@@ -21,9 +21,6 @@
         <div v-if="showNotif2 && isFromApproval" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
             <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
         </div>
-        <button v-if="backToApproval" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
-            BACK TO APPROVAL
-        </button>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
                 <div> <!-- Selection Panel -->
@@ -98,9 +95,9 @@
                         <p class="text-sm font-medium">Good {{ timeOfDay }},</p>
                         <p class="text-xl font-bold whitespace-nowrap">{{ greetingsWindowFirstName }} {{ greetingsWindowLastName }}</p>
                         <p v-if="state.user" class="text-xs text-blue-800 animate-pulse">[{{ state.user.access_type }}]</p>
-                        <p v-if="report_isFinalized == true" class="text-sm flex items-center gap-2 text-green-400 font-extrabold bg-green-100 p-2 rounded-lg">
+                        <p v-if="report_isFinalized == true" class="flex items-center gap-2 p-2 text-sm font-extrabold text-green-400 bg-green-100 rounded-lg">
                             FINALIZED
-                            <span class="w-4 h-4 inline-block">
+                            <span class="inline-block w-4 h-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-full h-full">
                                     <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
                                     <path fill="#fff" d="M10 14.5l-2.5-2.5-1.4 1.4L10 17.3l7.9-7.9-1.4-1.4z"/>
@@ -751,7 +748,7 @@
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportGX_iHkVariance }}</td>
                                 </tr>
 
-                                <template v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))">
+                                <template v-if="showROB">
                                     <tr class="bg-blue-400">
                                         <th colspan="7" class="py-1 font-semibold text-center text-white border-4 border-white text-md">BH Tracer Measurement</th>
                                     </tr>
@@ -1179,24 +1176,24 @@
                                     <div v-if="!confirmReset" class="text-center">
                                     <button
                                         @click="confirmReset = true"
-                                        class="bg-red-700 px-2 py-1 whitespace-nowrap text-white m-1 rounded-lg shadow-lg active:scale-95 transition-transform duration-200 ease-in-out hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                        class="px-2 py-1 m-1 text-white transition-transform duration-200 ease-in-out bg-red-700 rounded-lg shadow-lg whitespace-nowrap active:scale-95 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                                     >
                                         Wrong Quantity Reset Button
                                     </button>
                                     </div>
 
                                     <!-- Confirmation Prompt -->
-                                    <div v-else class="flex gap-2 justify-center items-center mt-1">
-                                    <span class="text-sm whitespace-nowrap p-1 text-blue-600">This action will reset all BH Data Input. Are you sure?</span>
+                                    <div v-else class="flex items-center justify-center gap-2 mt-1">
+                                    <span class="p-1 text-sm text-blue-600 whitespace-nowrap">This action will reset all BH Data Input. Are you sure?</span>
                                     <button
                                         @click="resetReportBHData(); confirmReset = false"
-                                        class="bg-green-600 text-white text-xs px-2 py-1 rounded hover:bg-green-500 transition"
+                                        class="px-2 py-1 text-xs text-white transition bg-green-600 rounded hover:bg-green-500"
                                     >
                                         Yes
                                     </button>
                                     <button
                                         @click="confirmReset = false"
-                                        class="bg-gray-400 text-white text-xs px-2 py-1 rounded hover:bg-gray-500 transition"
+                                        class="px-2 py-1 text-xs text-white transition bg-gray-400 rounded hover:bg-gray-500"
                                     >
                                         Cancel
                                     </button>
@@ -1351,7 +1348,7 @@
                         <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="preparedByStampConfirmation">
                         <button
                             @click="confirmPreparedByStamp"
-                            class="whitespace-nowrap px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
+                            class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md whitespace-nowrap bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
                         >
                             Confirm Stamp
                         </button>
@@ -1400,7 +1397,7 @@
                         <div class="flex flex-col px-[11px] py-5 justify-center gap-4" v-show="checkedByStampConfirmation">
                         <button
                             @click="confirmCheckedByStamp"
-                            class="whitespace-nowrap px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
+                            class="px-3 py-4 font-medium text-white transition duration-300 ease-in-out border rounded-md shadow-md whitespace-nowrap bg-green-500/40 hover:bg-green-500/90 border-white/30 hover:border-white/60 hover:shadow-green-400 hover:shadow-lg backdrop-blur-md"
                         >
                             Confirm Stamp
                         </button>
@@ -1503,7 +1500,7 @@
                         BACK
                     </button>
 
-                    <button v-if="isFromApproval && !isFromViewList" @click="$inertia.visit('/approval')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="isFromApproval && !isFromViewList" @click="backToApprovalFunction" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK TO APPROVAL
                     </button>
 
@@ -1515,7 +1512,7 @@
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
-                <div v-if="report_isFinalized" class="relative w-full overflow-hidden bg-yellow-100 text-yellow-700 h-10 flex items-center">
+                <div v-if="report_isFinalized" class="relative flex items-center w-full h-10 overflow-hidden text-yellow-700 bg-yellow-100">
                     <div class="marquee animate-marquee">
                     <span class="mx-8">This report has already been finalized.</span>
                     <span class="mx-8">This report has already been finalized.</span>
@@ -1719,6 +1716,13 @@ const isLoading = ref(true);
 
 // variables for models with special instructions
 
+const MODELS_SHOW_VT_DATA = ref([]) ;
+const MODELS_1X1X1_NO_CORNER = ref([]);
+const MODELS_SHOW_CPK = ref([]);
+const MODELS_SHOW_GX = ref([]);
+const MODELS_SHOW_BH = ref([]);
+const MODELS_SHOW_ROB = ref([]);
+
 const reportStdDev = ref(0);
 const reportCp = ref(0);
 const reportCpk = ref(0);
@@ -1779,6 +1783,7 @@ const reportROB_iHcMin = ref('');
 const reportROB_BrRTstandard = ref(13.0);
 const reportROB_BrVTstandard = ref(10.5);
 const reportROB_HD5standard = ref(10.053);
+const reportROB_HD5rejectstandard = ref(9.425);
 const reportROB_JD5standard = ref(9.6);
 const reportROB_BrRT_brMin = ref(0);
 const reportROB_BrRT_brMax = ref(0);
@@ -1810,6 +1815,7 @@ const serialList = ref([]); // Stores all fetched furnaces
 const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
+const filterStatus = ref('');
 const currentUserData = ref([]);
 const loggedUserData = ref([]);
 const currentUserApproverStage = ref('');
@@ -2041,7 +2047,7 @@ const resetReportBHData = async() => {
 
 //FOR ROB - models ROB-0A70G
 watchEffect(() => {
-    if (noteReasonForReject.value.includes('- N.G iHc') && showROB.value === true) {
+    if (showROB.value === true) {
         const belowStandard = (
             reportROB_BrRT_brMin.value < reportROB_BrRTstandard.value ||
             reportROB_BrRT_brMax.value < reportROB_BrRTstandard.value ||
@@ -2066,10 +2072,10 @@ watchEffect(() => {
 
         if (belowStandard) {
             reportROB_remarks.value = 'NG';
-            reportSMPJudgement.value = 'REJECT';
+            reportSMPJudgement.value = 'HOLD';
         } else {
             reportROB_remarks.value = 'OK';
-            reportSMPJudgement.value = 'HOLD';
+            reportSMPJudgement.value = 'PASSED';
         }
     }
 });
@@ -2279,6 +2285,11 @@ const reportReset = () => {
     showCpkFrom_iHc.value = false;
     preparedByStampConfirmation.value = false;
     checkedByStampConfirmation.value = false;
+    preparedByStampPhoto.value = false;
+    checkedByStampPhoto.value = false;
+    approvedByStampPhoto.value = false;
+    report_isFinalized.value = false;
+    reportExistingSMPJudgement.value = null;
 }
 
 const showNotification = (message) => {
@@ -2363,39 +2374,57 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
+
+    const responseGetVTData = await axios.get('/api/vt-models');
+    const fetchAllVT = responseGetVTData.data;
+    MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
+    console.log('VT MODELS: ',MODELS_SHOW_VT_DATA.value);
+    const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
+    const fetchAllCPKIHC = responseGetCPKIHCData.data;
+    MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
+    console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
+    const responseGetGXData = await axios.get('/api/gx-models');
+    const fetchAllGX = responseGetGXData.data;
+    MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
+    console.log('GX MODELS: ',MODELS_SHOW_GX.value);
+    const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
+    const fetchAllTTMNC = responseGetTTMNCData.data;
+    MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
+    console.log('TTMNC MODELS: ',MODELS_1X1X1_NO_CORNER.value);
+    const responseGetBHData = await axios.get('/api/bh-models');
+    const fetchAllBH = responseGetBHData.data;
+    MODELS_SHOW_BH.value = fetchAllBH.map(item => item.model_name);
+    console.log('BH MODELS: ',MODELS_SHOW_BH.value);
+    const responseGetROBData = await axios.get('/api/rob-models');
+    const fetchAllROB = responseGetROBData.data;
+    MODELS_SHOW_ROB.value = fetchAllROB.map(item => item.model_name);
+    console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
+
+    const model = jhCurveActualModel.value;
+
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
     if (!hasNGihc) return;
 
-    const model = jhCurveActualModel.value;
-
-    // === Model Groups by Behavior ===
-    const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
-    const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
-    const MODELS_SHOW_CPK         = ["DNS0917G"];
-    const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
-    const MODELS_SHOW_BH          = ["ZFS0982G"]; //["ZFS0982G"];
-    const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
-
     // === Logic Blocks ===
 
-    if (MODELS_SHOW_VT_DATA.includes(model) && reportVT_samplesQty.value > 0) { //reportBH_sampleQty
+    if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) { //reportBH_sampleQty
         showVTData.value = true;
         showVTData_default.value = false;
-    }else if(MODELS_SHOW_VT_DATA.includes(model)){
+    }else if(MODELS_SHOW_VT_DATA.value.includes(model)){
         showVTData.value = false;
         showVTData_default.value = true;
     }
 
-    if (MODELS_SHOW_BH.includes(model) && reportBH_sampleQty.value > 0) {
+    if (MODELS_SHOW_BH.value.includes(model) && reportBH_sampleQty.value > 0) {
         showBHData.value = true;
         showBHData_default.value = false;
-    }else if(MODELS_SHOW_BH.includes(model)){
+    }else if(MODELS_SHOW_BH.value.includes(model)){
         showBHData.value = false;
         showBHData_default.value = true;
     }
 
-    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
+    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.value.includes(model)) {
         show1x1x1Data_withoutCorner.value = true;
 
         if (model.includes("TTM") && !["TTM0A58D", "TTM0C16D"].includes(model)) {
@@ -2403,9 +2432,9 @@ const checkSpecialJudgement = async () => {
         }
     }
 
-    if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
-    if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
-    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
+    if (MODELS_SHOW_CPK.value.includes(model))  showCpkFrom_iHc.value = true;
+    if (MODELS_SHOW_GX.value.includes(model))   showGX.value = true;
+    if (MODELS_SHOW_ROB.value.includes(model))  showROB.value = true;
 };
 
 const autoCheckRemarks = () => {
@@ -3032,6 +3061,7 @@ const fetchSerial = async () => {
 // Define the prop that will receive the serialParam
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
+  filterStatus: String,
   ipAddress: String,
   fromApproval: [Boolean, String],
   fromViewList: [Boolean, String],
@@ -3041,6 +3071,7 @@ isFromApproval.value = props.fromApproval === true || props.fromApproval === 'tr
 isFromViewList.value = props.fromViewList === true || props.fromViewList === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
+filterStatus.value = props.filterStatus;
 
 if(ipAddress.value === '127.0.0.1'){
     onTestServer.value = true;
@@ -3383,6 +3414,17 @@ const sec_additional_redirect = (sec_serial) => {
         alert('Something went wrong during navigation.');
     }
 };
+
+const backToApprovalFunction = () => {
+    //console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/approval', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { filterStatus: filterStatus.value, fromReports: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {

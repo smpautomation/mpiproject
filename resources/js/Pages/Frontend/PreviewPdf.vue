@@ -257,10 +257,10 @@
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkMinimum }}</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printGX_iHkVariance }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center bg-gray-200">
+                        <tr v-if="showROB" class="text-center bg-gray-200">
                             <th colspan="7" :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[4.5px] text-sm">BH Tracer Measurement</th>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center bg-gray-200">
+                        <tr v-if="showROB" class="text-center bg-gray-200">
                             <th class="border-l border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Items -->
                             <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">Br Min</th>
@@ -269,7 +269,7 @@
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">iHc Max</th>
                             <th class="border-r border-black px-[3.04px] py-[3.04px]"></th> <!-- empty under Standard -->
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
+                        <tr v-if="showROB" class="text-center">
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">ITEMS</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">SPECS</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_brMin }}</th>
@@ -278,8 +278,8 @@
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_iHcMax }}</th>
                             <th :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Result</th>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ RT</th>
+                        <tr v-if="showROB" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling, 'p-0': true }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">Br @ RT</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRTstandard }} kg</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_brMax }}</td>
@@ -287,8 +287,8 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrRT_iHcMax }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">Br @ VT (180°C)</th>
+                        <tr v-if="showROB" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">Br @ VT (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVTstandard }} kg</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_brMax }}</td>
@@ -296,8 +296,8 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_BrVT_iHcMax }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">HD5 (180°C)</th>
+                        <tr v-if="showROB" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">HD5 (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5standard }} kOe</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_brMax }}</td>
@@ -305,8 +305,8 @@
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_HD5_iHcMax }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_remarks }}</td>
                         </tr>
-                        <tr v-if="showROB && (noteReasonForReject.includes('- N.G iHc'))" class="text-center">
-                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs">JD5 (180°C)</th>
+                        <tr v-if="showROB" class="text-center">
+                            <th :class="{ 'leading-loose': adjustStyling }" class="border-l border-r border-b border-black px-[3.04px] py-[3.04px] bg-gray-200 text-xs whitespace-nowrap">JD5 (180°C)</th>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5standard }} kG</td>
                             <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMin }}</td>
                                 <td :class="{ 'leading-loose': adjustStyling }" class="border-b border-r border-black px-[3.04px] py-[3.04px] text-xs">{{ printROB_JD5_brMax }}</td>
@@ -786,7 +786,7 @@
                             <td class="border-r border-b border-black px-[2px] py-[2px] text-[10px]">{{ item.data_status }}</td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Average</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Average</th>
                             <td class="border-b  border-black px-1 py-[2px] text-[10px] text-center">{{ printBrAverage }}</td>
                             <td class="border-b border-r border-black"></td>
                             <td class="border-b  border-black px-1 py-[2px] text-[10px] text-center">{{ printiHcAverage }}</td>
@@ -815,7 +815,7 @@
                             <td class="border-b border-r border-black"></td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Maximum</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Maximum</th>
                             <td class="border-b  border-black px-1 py-1 text-[10px] text-center">{{ printBrMaximum }}</td>
                             <td class="border-b border-r border-black"></td>
                             <td class="border-b  border-black px-1 py-1 text-[10px] text-center">{{ printiHcMaximum }}</td>
@@ -844,33 +844,33 @@
                             <td class="border-b border-r border-black"></td>
                         </tr>
                         <tr>
-                            <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Minimum</th>
+                            <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Minimum</th>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printBrMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printiHcMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printiHkMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printBHMaxMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printHr95Minimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printHr98Minimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printiHciHkMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printBrpaiIaMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printbHcaxMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ printSquarenessaxMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ print4paiIdMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ print4paiIsMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                             <td class="border-b border-black px-1 py-1 text-[10px]">{{ print4paiIaMinimum }}</td>
-                            <td class="border-b border-r  border-black"></td>
+                            <td class="border-b border-r border-black"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1171,7 +1171,7 @@
                             </tr>
                             <!-- AVERAGE ROW -->
                             <tr>
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Average</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Average</th>
                                 <td class="border-b border-black px-1 py-[2px] text-[10px] text-center">{{ pagesData[index-1]?.brAverage }}</td>
                                 <td class="border-b border-r border-black"></td>
                                 <td class="border-b border-black px-1 py-[2px] text-[10px] text-center">{{ pagesData[index-1]?.iHcAverage }}</td>
@@ -1202,7 +1202,7 @@
 
                             <!-- MAXIMUM ROW -->
                             <tr>
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Maximum</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Maximum</th>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.brMaximum }}</td>
                                 <td class="border-b border-r border-black"></td>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.iHcMaximum }}</td>
@@ -1233,7 +1233,7 @@
 
                             <!-- MINIMUM ROW -->
                             <tr>
-                                <th class="px-1 py-1 text-xs bg-gray-200 border-l border-b border-r border-black">Minimum</th>
+                                <th class="px-1 py-1 text-xs bg-gray-200 border-b border-l border-r border-black">Minimum</th>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.brMinimum }}</td>
                                 <td class="border-b border-r border-black"></td>
                                 <td class="border-b border-black px-1 py-1 text-[10px] text-center">{{ pagesData[index-1]?.iHcMinimum }}</td>
@@ -1413,6 +1413,43 @@ import { Chart, registerables } from 'chart.js'; // Import all required componen
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import DotsLoader from '@/Components/DotsLoader.vue';
+import { useAuth } from '@/Composables/useAuth.js'
+
+const { state } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+
+        const start = Date.now();
+        const timeout = 500; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > timeout) {
+                console.error('Auth timeout: user data failed to load within 5 seconds.');
+                Inertia.visit('/'); // Redirect if not authenticated
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+        }
+
+        if (!state.isAuthenticated) {
+            Inertia.visit('/'); // Redirect if not authenticated
+
+            return false; // Indicate not authenticated
+        }
+
+        console.warn("USER AUTHENTICATED!");
+        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
+        console.warn("Access: ", state.user.access_type);
+
+        return true; // Indicate authenticated
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/'); // Redirect on error
+        return false; // Indicate not authenticated
+    }
+};
 
 const adjustStyling = ref(false);
 
@@ -1428,6 +1465,20 @@ const success = ref(false)
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
 
+const pdfFinalizeLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: 'System',
+            event: logEvent,
+            section: 'PDF File',
+        });
+
+        //console.log('responseUserLogging-data: ',responseUserLogging.data);
+    }catch(error){
+        console.error('pdfFinalizeLogging post request failed: ',error);
+    }
+}
+
 const numberOfSet = ref(0); // or whatever number you want
 // Watcher with immediate: true
 watch(numberOfSet, (newVal, oldVal) => {
@@ -1438,6 +1489,14 @@ watch(numberOfSet, (newVal, oldVal) => {
 const testing = ref("");
 const isAutomotive = ref(false);
 // You could pass these via props or retrieve via an API
+
+const MODELS_SHOW_VT_DATA = ref([]) ;
+const MODELS_1X1X1_NO_CORNER = ref([]);
+const MODELS_SHOW_CPK = ref([]);
+const MODELS_SHOW_GX = ref([]);
+const MODELS_SHOW_BH = ref([]);
+const MODELS_SHOW_ROB = ref([]);
+
 const printSetNo = ref ('');
 const printOvenMachineNo_ovenInfo = ref('N/A');
 const printTimeLoading = ref('N/A');
@@ -1740,30 +1799,50 @@ const standardSampleDimention = computed(() => ({
 }));
 
 const checkSpecialJudgement = async () => {
-    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-    if (!hasNGihc) return;
+
+    const responseGetVTData = await axios.get('/api/vt-models');
+    const fetchAllVT = responseGetVTData.data;
+    MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
+    console.log('VT MODELS: ',MODELS_SHOW_VT_DATA.value);
+    const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
+    const fetchAllCPKIHC = responseGetCPKIHCData.data;
+    MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
+    console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
+    const responseGetGXData = await axios.get('/api/gx-models');
+    const fetchAllGX = responseGetGXData.data;
+    MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
+    console.log('GX MODELS: ',MODELS_SHOW_GX.value);
+    const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
+    const fetchAllTTMNC = responseGetTTMNCData.data;
+    MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
+    console.log('TTMNC MODELS: ',MODELS_1X1X1_NO_CORNER.value);
+    const responseGetBHData = await axios.get('/api/bh-models');
+    const fetchAllBH = responseGetBHData.data;
+    MODELS_SHOW_BH.value = fetchAllBH.map(item => item.model_name);
+    console.log('BH MODELS: ',MODELS_SHOW_BH.value);
+    const responseGetROBData = await axios.get('/api/rob-models');
+    const fetchAllROB = responseGetROBData.data;
+    MODELS_SHOW_ROB.value = fetchAllROB.map(item => item.model_name);
+    console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
 
     const model = printActualModel.value;
 
-    // === Model Groups by Behavior ===
-    const MODELS_SHOW_VT_DATA     = ["DNS0A54G", "MIS0766G", "MIE0751G","DNS0942G","MIE0599G","MIE0602G","MIE0603G","MIE0605G","MIE0606G","MIE0C51G","MIE0C63G","MIE0C72G","JTT0051G","JTT0740G","NIM0C31G"];
-    const MODELS_1X1X1_NO_CORNER  = ["TTM0A58D", "TTM0C16D", "AAW0935G"];
-    const MODELS_SHOW_CPK         = ["DNS0917G"];
-    const MODELS_SHOW_GX          = ["MIE0983G", "AAW0969G","DNS0134G","MIE0860G"];
-    const MODELS_SHOW_BH          = ["ZFS0982G"];
-    const MODELS_SHOW_ROB         = ["ROB0A70G"]; //ROB0A70G
+    if (MODELS_SHOW_ROB.value.includes(model))  showROB.value = true;
+    const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
+    if (!hasNGihc) return;
+
 
     // === Logic Blocks ===
 
-    if (MODELS_SHOW_VT_DATA.includes(model) && printVT_sampleQty.value > 0) {
+    if (MODELS_SHOW_VT_DATA.value.includes(model) && printVT_sampleQty.value > 0) {
         showVTData.value = true;
         showVTData_default.value = false;
-    }else if(MODELS_SHOW_VT_DATA.includes(model)){
+    }else if(MODELS_SHOW_VT_DATA.value.includes(model)){
         showVTData.value = false;
         showVTData_default.value = true;
     }
 
-    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.includes(model)) {
+    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.value.includes(model)) {
         show1x1x1Data_withoutCorner.value = true;
         isTTM_model.value = model.includes("TTM");
 
@@ -1772,10 +1851,9 @@ const checkSpecialJudgement = async () => {
         }
     }
 
-    if (MODELS_SHOW_CPK.includes(model))  showCpkFrom_iHc.value = true;
-    if (MODELS_SHOW_GX.includes(model))   showGX.value = true;
-    if (MODELS_SHOW_BH.includes(model))   showBHData.value = true;
-    if (MODELS_SHOW_ROB.includes(model))  showROB.value = true;
+    if (MODELS_SHOW_CPK.value.includes(model))  showCpkFrom_iHc.value = true;
+    if (MODELS_SHOW_GX.value.includes(model))   showGX.value = true;
+    if (MODELS_SHOW_BH.value.includes(model))   showBHData.value = true;
 };
 
 const dataFrom_reportdata = async () => {
@@ -2604,7 +2682,6 @@ const exportMultiPagePdf = async () => {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
 
-    // Convert canvas to images before export
     const allCanvases = document.querySelectorAll('.a4-page canvas');
     const canvasToImageMap = [];
 
@@ -2617,7 +2694,6 @@ const exportMultiPagePdf = async () => {
       canvas.parentNode.replaceChild(img, canvas);
     });
 
-    // ✅ Parallel rendering of all pages
     const canvasOutputs = await Promise.all(
       Array.from(pages).map((page) =>
         html2canvas(page, {
@@ -2629,7 +2705,6 @@ const exportMultiPagePdf = async () => {
       )
     );
 
-    // Add rendered pages to PDF
     canvasOutputs.forEach((canvas, i) => {
       const imgData = canvas.toDataURL('image/jpeg', pages.length > 5 ? 0.45 : 0.6);
       const imgProps = pdf.getImageProperties(imgData);
@@ -2638,7 +2713,6 @@ const exportMultiPagePdf = async () => {
       pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
     });
 
-    // Restore canvas elements
     canvasToImageMap.forEach(({ original, replacement }) => {
       replacement.parentNode.replaceChild(original, replacement);
     });
@@ -2648,11 +2722,11 @@ const exportMultiPagePdf = async () => {
     const massProd_forPDF = printMassProdName.value;
     if (!massProd_forPDF || !massProd_forPDF.trim()) {
       console.error('[PDF Export] ERROR: massProd_forPDF is empty or invalid. Cannot upload.');
-      return;
+      return Promise.reject(new Error('Invalid massProd name'));
     }
 
     const sanitizeFilename = (str) => str.replace(/\//g, ' ');
-    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot # ${printJhCurveLotno.value}`;
+    const rawFilename = `(${printSMPJudgement.value}) ${printActualModel.value} Lot No ${printJhCurveLotno.value}`;
     const filename = sanitizeFilename(rawFilename) + '.pdf';
 
     const formData = new FormData();
@@ -2665,21 +2739,28 @@ const exportMultiPagePdf = async () => {
       type: blob.type,
     });
 
+    try {
+    //console.log('🟡 Uploading PDF...');
     const response = await axios.post('/upload-pdf', formData);
+    //console.log('🟢 Upload complete, now finalizing report...');
+
     await finalizeReport(printSerialNo.value);
+    //console.log('🟢 Report finalized, now logging...');
+
+    await pdfFinalizeLogging(`has finalized Serial ${printSerialNo.value}`);
+    //console.log('✅ Log saved.');
+
     success.value = true;
+    } catch (error) {
+    console.error('❌ Report Finalization Failed:', error);
+    return Promise.reject(error);
+    }
+
+    return Promise.resolve(); // Explicit full-completion signal
   } catch (error) {
     console.error('[PDF Export] Error during multi-page export:', error);
     alert('Failed to generate/upload PDF.');
-  }
-};
-
-const handlePrint = async () => {
-  await nextTick(); // Ensures DOM is fully rendered
-  if (typeof window !== 'undefined' && typeof window.print === 'function') {
-    window.print();
-  } else {
-    console.error('Print functionality is not available.');
+    return Promise.reject(error);
   }
 };
 
@@ -2700,25 +2781,31 @@ const props = defineProps({
 });
 const printSerialNo = computed(() => props.serialParam)
 //console.log('Serial Param in PreviewPdf.vue:', props.serialParam); // You can use this for debugging
-
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Optional: auto print on page load
-onMounted( async () => {
-    adjustStyling.value = true;
-    // run these in parallel:
-    await checkingNSA();
-    await Promise.all([
-        dataFrom_reportdata(),
-        dataFrom_inspectiondata(),
-        dataFrom_tpmData(),
-        fetchDataCreateGraph(),
-        nsa_dataFrom_tpmData(),
-        nsa_graph(),
-    ]);
+onMounted(async () => {
+  adjustStyling.value = true;
 
-    // only after all complete:
-    console.log('SMP JUDGEMENT RESULT: ',printSMPJudgement.value);
-    await exportMultiPagePdf();
-    adjustStyling.value = false;
+  await checkingNSA();
+
+  await Promise.all([
+    dataFrom_reportdata(),
+    dataFrom_inspectiondata(),
+    dataFrom_tpmData(),
+    fetchDataCreateGraph(),
+    nsa_dataFrom_tpmData(),
+    nsa_graph(),
+  ]);
+
+  // Ensure Vue has flushed DOM updates
+  await nextTick();
+
+  // Allow time for canvas/chart/image rendering to complete
+  await delay(1500); // tune as needed
+
+  await exportMultiPagePdf();
+
+  adjustStyling.value = false;
 });
 
 

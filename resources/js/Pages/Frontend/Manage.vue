@@ -23,6 +23,7 @@
                             <p class="text-2xl font-bold text-blue-900">MANAGE</p>
                         </div>
                         <div class="flex flex-row items-center space-x-4 whitespace-nowrap">
+                            <button @click="$inertia.visit('/instructions')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[200px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">Special Instructions</button>
                             <button @click="$inertia.visit('/mias_factor')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[200px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">Mias - Factor Emp</button>
                             <button @click="$inertia.visit('/email_form')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[180px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">
                                 Send Email to SEC
@@ -1277,14 +1278,25 @@
         //console.log('CSV Parsed Data:', csv_parsedData.value);
         //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
-        for (const row of csv_tempWithDataStat.value) {
-            // Defensive cleanup
-            const factor = parseInt(row.employee_no)?.toString();
-            const mias = parseInt(row.mias_no)?.toString();
+        function cleanInteger(str) {
+            if (typeof str !== 'string') return null;
 
-            // Skip rows that are completely empty
-            if (!factor && !mias && !row.temp && !row.status) {
-                //console.warn('Skipping completely empty row:', row);
+            const trimmed = str.trim();
+
+            if (!/^\d+$/.test(trimmed)) return null; // Only digits
+
+            return parseInt(trimmed, 10).toString(); // Normalize: remove leading zeroes
+        }
+
+        for (const row of csv_tempWithDataStat.value) {
+            const factor = cleanInteger(row.employee_no);
+            const mias   = cleanInteger(row.mias_no);
+            const temp   = row.temp;
+            const status = row.status;
+
+            const isEmptyRow = !factor && !mias && !temp && !status;
+            if (isEmptyRow) {
+                console.warn('Skipping completely empty row:', row);
                 continue;
             }
 
@@ -1295,8 +1307,8 @@
                 //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                 await mias_factorData(factor, mias);
             } else {
-                console.warn('Missing factor or mias in cleaned row:', row);
-                return;
+                console.warn('Invalid or missing factor/mias:', row);
+                continue; // Don't crash the loop, just skip
             }
         }
 
