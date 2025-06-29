@@ -477,7 +477,7 @@ const confirmationApprove = async () => {
             const serial = selectedRows.value[index];
 
             console.log(`Waiting 1s before opening tab for serial: ${serial}`);
-            await delay(1000);
+            await delay(3000);
 
             const newTab = window.open(`/create_pdf?serialParam=${serial}`, '_blank');
 
