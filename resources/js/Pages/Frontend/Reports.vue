@@ -417,8 +417,9 @@
 
 
                     <div class="flex flex-row">
-                        <table class="mt-4 first-line:backdrop:border-collapse table-auto border-4 border-white">
-                            <thead class="bg-blue-400 text-white text-center">
+                        <template>
+                            <table class="mt-4 table-auto border-4 border-white border-collapse">
+                                <thead class="bg-blue-400 text-white text-center">
                                 <tr>
                                     <th rowspan="2" class="px-2 border-2 border-white">MODULE</th>
                                     <th colspan="3" class="px-2 border-2 border-white">ADDITIONAL SLURRY</th>
@@ -429,96 +430,58 @@
                                     <th class="px-2 border-2 border-white">HOMO</th>
                                     <th class="px-2 border-2 border-white">TIME</th>
                                 </tr>
-                            </thead>
-                            <tbody class="text-blue-600 text-center">
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-01</td>
+                                </thead>
+                                <tbody class="text-blue-600 text-center">
+                                <tr v-for="(module, index) in modules" :key="index">
+                                    <td class="px-2 border-2 border-white">{{ module.name }}</td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_New_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.new"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_Homo_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.homo"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_Time_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.time"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_Liters_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.liters"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-02</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-03</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-04</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-05</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-06</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </template>
 
 
 
