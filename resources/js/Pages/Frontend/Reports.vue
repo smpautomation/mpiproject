@@ -371,48 +371,208 @@
 
 
                     <div class="flex flex-row flex-wrap gap-2 text-[0.7rem]">
-                    <template v-for="group in 6" :key="'group-' + group">
-                        <div class="w-[200px] p-1 border rounded bg-white shadow-sm">
-                            <div class="mb-1 font-semibold text-gray-700 text-center text-[0.7rem]">
-                                Group {{ group }}<br />(M-01 ~ M-05)
+                        <template v-for="group in 6" :key="'group-' + group">
+                            <div class="w-[200px] p-1 border rounded bg-white shadow-sm">
+                                <div class="mb-1 font-semibold text-gray-700 text-center text-[0.7rem]">
+                                    {{ (group - 1) * 5 + 1 }} – {{ group * 5 }}<br />(M-01 ~ M-05)
+                                </div>
+
+                                <template v-for="j in 5" :key="'input-' + (group - 1) * 5 + j">
+                                    <div class="mb-1">
+                                        <label class="block text-[0.65rem] text-gray-600 mb-[1px]">
+                                            {{ (group - 1) * 5 + j }} (M-{{ String(j).padStart(2, '0') }})
+                                        </label>
+                                        <input
+                                            v-model="reportCoatingAmounts[(group - 1) * 5 + (j - 1)]"
+                                            type="number"
+                                            placeholder="Amt"
+                                            class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded mb-[2px] focus:ring-blue-400 focus:ring-1"
+                                        />
+                                        <input
+                                            v-model="reportConcentrationValues[(group - 1) * 5 + (j - 1)]"
+                                            type="number"
+                                            placeholder="Conc."
+                                            class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded focus:ring-blue-400 focus:ring-1"
+                                        />
+                                    </div>
+                                </template>
+
+                                <div class="mt-1 border-t pt-1">
+                                    <div class="font-semibold text-yellow-700 text-[0.65rem] mb-1 text-center">
+                                        M-06<br />(for {{ (group - 1) * 5 + 1 }}–{{ group * 5 }})
+                                    </div>
+
+                                    <template v-for="k in 2" :key="'m06-' + group + '-' + k">
+                                        <input
+                                            v-model="reportConcentrationValues[35 + (group - 1) * 2 + (k - 1)]"
+                                            type="number"
+                                            placeholder="M-06"
+                                            class="w-full h-6 px-1 text-[0.65rem] border border-yellow-400 rounded mb-1 bg-yellow-50 focus:ring-yellow-500 focus:ring-1"
+                                        />
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+
+                    <div class="flex flex-row">
+                        <table class="mt-4 first-line:backdrop:border-collapse table-auto border-4 border-white">
+                            <thead class="bg-blue-400 text-white text-center">
+                                <tr>
+                                    <th rowspan="2" class="px-2 border-2 border-white">MODULE</th>
+                                    <th colspan="3" class="px-2 border-2 border-white">ADDITIONAL SLURRY</th>
+                                    <th rowspan="2" class="px-2 border-2 border-white">LITERS</th>
+                                </tr>
+                                <tr>
+                                    <th class="px-2 border-2 border-white">NEW</th>
+                                    <th class="px-2 border-2 border-white">HOMO</th>
+                                    <th class="px-2 border-2 border-white">TIME</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-blue-600 text-center">
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-01</td>
+                                    <td class="px-2 border-2 border-white">
+                                        <input
+                                            v-model="reportCoating_AddtnlSlurry_New_M01"
+                                            type="text"
+                                            name="coatingRemarks"
+                                            id="coatingRemarks"
+                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                                transition duration-200 ease-in-out"
+                                        />
+                                    </td>
+                                    <td class="px-2 border-2 border-white">
+                                        <input
+                                            v-model="reportCoating_AddtnlSlurry_Homo_M01"
+                                            type="text"
+                                            name="coatingRemarks"
+                                            id="coatingRemarks"
+                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                                transition duration-200 ease-in-out"
+                                        />
+                                    </td>
+                                    <td class="px-2 border-2 border-white">
+                                        <input
+                                            v-model="reportCoating_AddtnlSlurry_Time_M01"
+                                            type="text"
+                                            name="coatingRemarks"
+                                            id="coatingRemarks"
+                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                                transition duration-200 ease-in-out"
+                                        />
+                                    </td>
+                                    <td class="px-2 border-2 border-white">
+                                        <input
+                                            v-model="reportCoating_AddtnlSlurry_Liters_M01"
+                                            type="text"
+                                            name="coatingRemarks"
+                                            id="coatingRemarks"
+                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                                transition duration-200 ease-in-out"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-02</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-03</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-04</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-05</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-06</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                        <div class="flex flex-col mt-4 ml-20">
+
+                            <div class="flex flex-row">
+                                <div class="mr-10 mt-10">
+                                    <table class="table-auto border-4 border-white">
+                                        <tr>
+                                            <th class="px-2 border-2 border-white bg-blue-400 text-white">MAXIMUM:</th>
+                                            <td class="text-blue-600"> 213123</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="mr-10 mt-10">
+                                    <table class="table-auto border-4 border-white">
+                                        <tr>
+                                            <th class="px-2 border-2 border-white bg-blue-400 text-white">MINIMUM:</th>
+                                            <td class="text-blue-600"> 123123</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="mr-10 mt-10">
+                                    <table class="table-auto border-4 border-white">
+                                        <tr>
+                                            <th class="px-2 border-2 border-white bg-blue-400 text-white">AVERAGE:</th>
+                                            <td class="text-blue-600"> 123123 </td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
 
-                            <template v-for="j in 5" :key="'input-' + (group - 1) * 5 + j">
-                                <div class="mb-1">
-                                    <label class="block text-[0.65rem] text-gray-600 mb-[1px]">
-                                        {{ (group - 1) * 5 + j }} (M-{{ String(j).padStart(2, '0') }})
-                                    </label>
-                                    <input
-                                        v-model="reportCoatingAmounts[(group - 1) * 5 + (j - 1)]"
-                                        type="number"
-                                        placeholder="Amt"
-                                        class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded mb-[2px] focus:ring-blue-400 focus:ring-1"
-                                    />
-                                    <input
-                                        v-model="reportConcentrationValues[(group - 1) * 5 + (j - 1)]"
-                                        type="number"
-                                        placeholder="Conc."
-                                        class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded focus:ring-blue-400 focus:ring-1"
-                                    />
-                                </div>
-                            </template>
-
-                            <div class="mt-1 border-t pt-1">
-                                <div class="font-semibold text-yellow-700 text-[0.65rem] mb-1 text-center">
-                                    M-06<br />(for {{ (group - 1) * 5 + 1 }}–{{ group * 5 }})
-                                </div>
-
-                                <template v-for="k in 2" :key="'m06-' + group + '-' + k">
-                                    <input
-                                        v-model="reportConcentrationValues[35 + (group - 1) * 2 + (k - 1)]"
-                                        type="number"
-                                        placeholder="M-06"
-                                        class="w-full h-6 px-1 text-[0.65rem] border border-yellow-400 rounded mb-1 bg-yellow-50 focus:ring-yellow-500 focus:ring-1"
-                                    />
-                                </template>
+                            <div class="flex flex-row mt-10">
+                            <!-- Coating Remarks -->
+                            <div class="flex flex-col w-[47rem]">
+                                <label for="reportCoatingRemarks" class="text-sm font-medium text-gray-700 mb-1">
+                                    Remarks:
+                                </label>
+                                <input
+                                    v-model="reportCoatingRemarks"
+                                    type="text"
+                                    name="coatingRemarks"
+                                    id="coatingRemarks"
+                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                />
+                            </div>
                             </div>
                         </div>
-                    </template>
+
+
+
                     </div>
 
 
