@@ -397,9 +397,10 @@
                                     <th class="px-2 border-2 border-white">TIME</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-blue-600 text-center">
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-01</td>
+                            <tbody class="text-center text-blue-600">
+                                <tr v-for="(module, index) in modules" :key="index">
+                                    <td class="px-2 border-2 border-white">{{ module.name }}</td>
+
                                     <td class="px-2 border-2 border-white">
                                     <input
                                         v-model="module.new"
@@ -443,41 +444,6 @@
                                         transition duration-200 ease-in-out"
                                     />
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-02</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-03</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-04</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-05</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-06</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
                                 </tr>
                             </tbody>
                         </table>
