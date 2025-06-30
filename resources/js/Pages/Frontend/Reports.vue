@@ -383,7 +383,8 @@
 
 
                     <div class="flex flex-row">
-                        <table class="mt-4 border-4 border-white table-auto first-line:backdrop:border-collapse">
+
+                        <table class="mt-4 border-4 border-collapse border-white table-auto">
                             <thead class="text-center text-white bg-blue-400">
                                 <tr>
                                     <th rowspan="2" class="px-2 border-2 border-white">MODULE</th>
@@ -397,91 +398,52 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center text-blue-600">
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-01</td>
+                                <tr v-for="(module, index) in modules" :key="index">
+                                    <td class="px-2 border-2 border-white">{{ module.name }}</td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_New_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.new"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_Homo_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.homo"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_Time_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.time"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
+
                                     <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="reportCoating_AddtnlSlurry_Liters_M01"
-                                            type="text"
-                                            name="coatingRemarks"
-                                            id="coatingRemarks"
-                                            class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                                transition duration-200 ease-in-out"
-                                        />
+                                    <input
+                                        v-model="module.liters"
+                                        type="text"
+                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
+                                        transition duration-200 ease-in-out"
+                                    />
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-02</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-03</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-04</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-05</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 border-2 border-white">M-06</td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
-                                    <td class="px-2 border-2 border-white"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -496,7 +458,7 @@
                                         <tbody>
                                             <tr>
                                                 <th class="px-2 text-white bg-blue-400 border-2 border-white">MAXIMUM:</th>
-                                                <td class="text-blue-600"> 213123</td>
+                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleMaximum }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -506,7 +468,7 @@
                                         <tbody>
                                             <tr>
                                                 <th class="px-2 text-white bg-blue-400 border-2 border-white">MINIMUM:</th>
-                                                <td class="text-blue-600"> 213123</td>
+                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleMinimum }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -516,7 +478,7 @@
                                         <tbody>
                                             <tr>
                                                 <th class="px-2 text-white bg-blue-400 border-2 border-white">AVERAGE:</th>
-                                                <td class="text-blue-600"> 213123</td>
+                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleAverage }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -545,6 +507,185 @@
                     </div>
 
 
+                </div>
+
+                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
+                    <!-- Heat Treatment Information Section -->
+                    <div class="flex flex-col mb-4 space-y-4">
+                        <p class="mb-2 text-xl font-semibold text-gray-700">Heat Treatment Information</p>
+
+                        <!-- Row 1 -->
+                        <div class="flex flex-row gap-4 justify-evenly">
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenMachineNo" class="mb-1 text-sm font-medium text-gray-700">
+                                    Furnace Machine:
+                                </label>
+                                <input
+                                    v-model="reportHTFurnaceMachine"
+                                    type="text"
+                                    name="ovenMachineNo"
+                                    id="ovenMachineNo"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeLoading" class="mb-1 text-sm font-medium text-gray-700">
+                                    CYCLE No:
+                                </label>
+                                <input
+                                    v-model="reportHTCycleNo"
+                                    @input="reportHTCycleNo = reportHTCycleNo.toUpperCase()"
+                                    type="text"
+                                    name="timeLoading"
+                                    id="timeLoading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_timeLoading" class="mb-1 text-sm font-medium text-gray-700">
+                                    BATCH CYCLE No:
+                                </label>
+                                <input
+                                    v-model="reportHTBatchCycleNo"
+                                    type="text"
+                                    name="temperature_timeLoading"
+                                    id="temperature_timeLoading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    PATTERN No:
+                                </label>
+                                <input
+                                    v-model="reportHTPatternNo"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    DATE START:
+                                </label>
+                                <input
+                                    v-model="reportHTDateStart"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    TIME START:
+                                </label>
+                                <input
+                                    v-model="reportHTTimeStart"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_date" class="mb-1 text-sm font-medium text-gray-700">
+                                    LOADER:
+                                </label>
+                                <input
+                                    v-model="reportHTLoader"
+                                    type="text"
+                                    name="ovenInfo_date"
+                                    id="ovenInfo_date"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
+                                    DATE FINISH:
+                                </label>
+                                <input
+                                    v-model="reportHTDateFinish"
+                                    @input="reportHTDateFinish = reportHTDateFinish.toUpperCase()"
+                                    type="text"
+                                    name="timeUnloading"
+                                    id="timeUnloading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
+                                    TIME FINISH:
+                                </label>
+                                <input
+                                    v-model="reportHTTimeFinish"
+                                    type="text"
+                                    name="temperature_TimeUnloading"
+                                    id="temperature_TimeUnloading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    UNLOADER:
+                                </label>
+                                <input
+                                    v-model="reportHTUnloader"
+                                    @input="reportHTUnloader = reportHTUnloader.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    Cycle Pattern:
+                                </label>
+                                <input
+                                    v-model="reportHTCyclePattern"
+                                    @input="reportHTCyclePattern = reportHTCyclePattern.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    Current Pattern:
+                                </label>
+                                <input
+                                    v-model="reportHTCurrentPattern"
+                                    @input="reportHTCurrentPattern = reportHTCurrentPattern.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
@@ -1624,7 +1765,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
+import { ref, onMounted, nextTick, watch, computed, watchEffect, reactive } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
@@ -1998,8 +2139,12 @@ const reportCoatingTotalMagnetWeight = ref('NA');
 const reportCoatingMinTbContent = ref('NA');
 const reportCoatingSlurryLotNo = ref('NA');
 const reportCoatingSampleQuantity = ref('NA');
+const reportCoatingRemarks = ref('NA');
 const reportCoatingAmounts = ref([]);
 const reportConcentrationValues = ref([]);
+const reportCoatingModuleMaximum = ref('NA');
+const reportCoatingModuleMinimum = ref('NA');
+const reportCoatingModuleAverage = ref('NA');
 
 const reportOvenMachineNo = ref('NA');
 const reportTimeLoading = ref('NA');
@@ -2065,6 +2210,15 @@ const getAlliHkiHcNG = ref('');
 const getAllBr4paiNG = ref('');
 const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
+
+const modules = reactive([
+  { name: 'M-01', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-02', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-03', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-04', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-05', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-06', new: '', homo: '', time: '', liters: '' },
+])
 
 // Method to dynamically adjust font size based on string length
 const getFontSize = (name) => {
