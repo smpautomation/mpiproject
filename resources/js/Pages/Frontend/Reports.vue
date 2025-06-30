@@ -150,15 +150,14 @@
                 </div>
 
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
-                    <div class="flex flex-row justify-evenly gap-4 mt-4">
+                    <div class="flex flex-row gap-4 mt-4 justify-evenly">
                         <!-- Model (display-only) -->
                         <div class="flex flex-col w-[12rem]">
-                            <label class="text-sm font-medium text-gray-700 mb-1">
+                            <label class="mb-1 text-sm font-medium text-gray-700">
                                 Model:
                             </label>
                             <span
-                                class="h-9 px-3 text-sm flex items-center border border-gray-300 rounded-md bg-gray-100 text-gray-800 cursor-default
-                                    hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                                class="flex items-center px-3 text-sm text-gray-800 bg-gray-100 border border-gray-300 rounded-md cursor-default h-9 hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
                             >
                                 {{ jhCurveActualModel }}
                             </span>
@@ -166,7 +165,7 @@
 
                         <!-- Material Code -->
                         <div class="flex flex-col w-[12rem]">
-                            <label for="materialCode" class="text-sm font-medium text-gray-700 mb-1">
+                            <label for="materialCode" class="mb-1 text-sm font-medium text-gray-700">
                                 Material Code:
                             </label>
                             <input
@@ -175,16 +174,13 @@
                                 type="text"
                                 name="materialCode"
                                 id="materialCode"
-                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                    transition duration-200 ease-in-out"
+                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             />
                         </div>
 
                         <!-- Partial No. -->
                         <div class="flex flex-col w-[12rem]">
-                            <label for="partialNo" class="text-sm font-medium text-gray-700 mb-1">
+                            <label for="partialNo" class="mb-1 text-sm font-medium text-gray-700">
                                 Partial No.:
                             </label>
                             <input
@@ -193,16 +189,13 @@
                                 type="text"
                                 name="partialNo"
                                 id="partialNo"
-                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                    transition duration-200 ease-in-out"
+                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             />
                         </div>
 
                         <!-- Total Quantity -->
                         <div class="flex flex-col w-[12rem]">
-                            <label for="totalQuantity" class="text-sm font-medium text-gray-700 mb-1">
+                            <label for="totalQuantity" class="mb-1 text-sm font-medium text-gray-700">
                                 Total Quantity:
                             </label>
                             <input
@@ -210,10 +203,7 @@
                                 type="number"
                                 name="totalQuantity"
                                 id="totalQuantity"
-                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                    transition duration-200 ease-in-out"
+                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             />
                         </div>
                     </div>
@@ -225,10 +215,10 @@
                         <p class="mb-2 text-xl font-semibold text-gray-700">Coating Information</p>
 
                         <!-- Coating Row 1 -->
-                        <div class="flex flex-row justify-evenly gap-4 mt-4">
+                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
                             <!-- Coating Date -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingDate" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingDate" class="mb-1 text-sm font-medium text-gray-700">
                                     Coating Date:
                                 </label>
                                 <input
@@ -236,16 +226,13 @@
                                     type="date"
                                     name="coatingDate"
                                     id="coatingDate"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Coating Machine No -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingMachineNo" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingMachineNo" class="mb-1 text-sm font-medium text-gray-700">
                                     Coating Machine No:
                                 </label>
                                 <input
@@ -253,16 +240,13 @@
                                     type="text"
                                     name="coatingMachineNo"
                                     id="coatingMachineNo"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Slurry Lot No -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingSlurryLotNo" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingSlurryLotNo" class="mb-1 text-sm font-medium text-gray-700">
                                     Slurry Lot No:
                                 </label>
                                 <input
@@ -270,16 +254,13 @@
                                     type="text"
                                     name="coatingSlurryLotNo"
                                     id="coatingSlurryLotNo"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Loader Operator -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingLoaderOperator" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingLoaderOperator" class="mb-1 text-sm font-medium text-gray-700">
                                     Loader Operator:
                                 </label>
                                 <input
@@ -288,19 +269,16 @@
                                     type="text"
                                     name="coatingLoaderOperator"
                                     id="coatingLoaderOperator"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                         </div>
 
                         <!-- Coating Row 2 -->
-                        <div class="flex flex-row justify-evenly gap-4 mt-4">
+                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
                             <!-- MIN. TB CONTENT -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingMinTbContent" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingMinTbContent" class="mb-1 text-sm font-medium text-gray-700">
                                     MIN. TB CONTENT (µg/mm²):
                                 </label>
                                 <input
@@ -308,16 +286,13 @@
                                     type="text"
                                     name="coatingMinTbContent"
                                     id="coatingMinTbContent"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Sample Quantity -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingSampleQuantity" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingSampleQuantity" class="mb-1 text-sm font-medium text-gray-700">
                                     Sample Quantity (pcs):
                                 </label>
                                 <input
@@ -325,16 +300,13 @@
                                     type="text"
                                     name="coatingSampleQuantity"
                                     id="coatingSampleQuantity"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Total Magnet Weight -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTotalMagnetWeight" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingTotalMagnetWeight" class="mb-1 text-sm font-medium text-gray-700">
                                     Total Magnet Weight:
                                 </label>
                                 <input
@@ -342,16 +314,13 @@
                                     type="text"
                                     name="coatingTotalMagnetWeight"
                                     id="coatingTotalMagnetWeight"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Unloader Operator -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingUnloaderOperator" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="coatingUnloaderOperator" class="mb-1 text-sm font-medium text-gray-700">
                                     Unloader Operator:
                                 </label>
                                 <input
@@ -360,10 +329,7 @@
                                     type="text"
                                     name="coatingUnloaderOperator"
                                     id="coatingUnloaderOperator"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                         </div>
@@ -397,7 +363,7 @@
                                     </div>
                                 </template>
 
-                                <div class="mt-1 border-t pt-1">
+                                <div class="pt-1 mt-1 border-t">
                                     <div class="font-semibold text-yellow-700 text-[0.65rem] mb-1 text-center">
                                         M-06<br />(for {{ (group - 1) * 5 + 1 }}–{{ group * 5 }})
                                     </div>
@@ -417,9 +383,9 @@
 
 
                     <div class="flex flex-row">
-                        <template>
-                            <table class="mt-4 table-auto border-4 border-white border-collapse">
-                                <thead class="bg-blue-400 text-white text-center">
+
+                        <table class="mt-4 border-4 border-collapse border-white table-auto">
+                            <thead class="text-center text-white bg-blue-400">
                                 <tr>
                                     <th rowspan="2" class="px-2 border-2 border-white">MODULE</th>
                                     <th colspan="3" class="px-2 border-2 border-white">ADDITIONAL SLURRY</th>
@@ -430,11 +396,10 @@
                                     <th class="px-2 border-2 border-white">HOMO</th>
                                     <th class="px-2 border-2 border-white">TIME</th>
                                 </tr>
-                                </thead>
-                                <tbody class="text-blue-600 text-center">
-                                <tr v-for="(module, index) in modules" :key="index">
-                                    <td class="px-2 border-2 border-white">{{ module.name }}</td>
-
+                            </thead>
+                            <tbody class="text-blue-600 text-center">
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-01</td>
                                     <td class="px-2 border-2 border-white">
                                     <input
                                         v-model="module.new"
@@ -479,37 +444,77 @@
                                     />
                                     </td>
                                 </tr>
-                                </tbody>
-                            </table>
-                        </template>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-02</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-03</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-04</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-05</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 border-2 border-white">M-06</td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                    <td class="px-2 border-2 border-white"></td>
+                                </tr>
+                            </tbody>
+                        </table>
 
 
 
                         <div class="flex flex-col mt-4 ml-20">
 
                             <div class="flex flex-row">
-                                <div class="mr-10 mt-10">
-                                    <table class="table-auto border-4 border-white">
-                                        <tr>
-                                            <th class="px-2 border-2 border-white bg-blue-400 text-white">MAXIMUM:</th>
-                                            <td class="text-blue-600"> 213123</td>
-                                        </tr>
+                                <div class="mt-10 mr-10">
+                                    <table class="border-4 border-white table-auto">
+                                        <tbody>
+                                            <tr>
+                                                <th class="px-2 text-white bg-blue-400 border-2 border-white">MAXIMUM:</th>
+                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleMaximum }}</td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
-                                <div class="mr-10 mt-10">
-                                    <table class="table-auto border-4 border-white">
-                                        <tr>
-                                            <th class="px-2 border-2 border-white bg-blue-400 text-white">MINIMUM:</th>
-                                            <td class="text-blue-600"> 123123</td>
-                                        </tr>
+                                <div class="mt-10 mr-10">
+                                    <table class="border-4 border-white table-auto">
+                                        <tbody>
+                                            <tr>
+                                                <th class="px-2 text-white bg-blue-400 border-2 border-white">MINIMUM:</th>
+                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleMinimum }}</td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
-                                <div class="mr-10 mt-10">
-                                    <table class="table-auto border-4 border-white">
-                                        <tr>
-                                            <th class="px-2 border-2 border-white bg-blue-400 text-white">AVERAGE:</th>
-                                            <td class="text-blue-600"> 123123 </td>
-                                        </tr>
+                                <div class="mt-10 mr-10">
+                                    <table class="border-4 border-white table-auto">
+                                        <tbody>
+                                            <tr>
+                                                <th class="px-2 text-white bg-blue-400 border-2 border-white">AVERAGE:</th>
+                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleAverage }}</td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -517,7 +522,7 @@
                             <div class="flex flex-row mt-10">
                             <!-- Coating Remarks -->
                             <div class="flex flex-col w-[47rem]">
-                                <label for="reportCoatingRemarks" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="reportCoatingRemarks" class="mb-1 text-sm font-medium text-gray-700">
                                     Remarks:
                                 </label>
                                 <input
@@ -525,10 +530,7 @@
                                     type="text"
                                     name="coatingRemarks"
                                     id="coatingRemarks"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                             </div>
@@ -542,15 +544,194 @@
                 </div>
 
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
+                    <!-- Heat Treatment Information Section -->
+                    <div class="flex flex-col mb-4 space-y-4">
+                        <p class="mb-2 text-xl font-semibold text-gray-700">Heat Treatment Information</p>
+
+                        <!-- Row 1 -->
+                        <div class="flex flex-row gap-4 justify-evenly">
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenMachineNo" class="mb-1 text-sm font-medium text-gray-700">
+                                    Furnace Machine:
+                                </label>
+                                <input
+                                    v-model="reportHTFurnaceMachine"
+                                    type="text"
+                                    name="ovenMachineNo"
+                                    id="ovenMachineNo"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeLoading" class="mb-1 text-sm font-medium text-gray-700">
+                                    CYCLE No:
+                                </label>
+                                <input
+                                    v-model="reportHTCycleNo"
+                                    @input="reportHTCycleNo = reportHTCycleNo.toUpperCase()"
+                                    type="text"
+                                    name="timeLoading"
+                                    id="timeLoading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_timeLoading" class="mb-1 text-sm font-medium text-gray-700">
+                                    BATCH CYCLE No:
+                                </label>
+                                <input
+                                    v-model="reportHTBatchCycleNo"
+                                    type="text"
+                                    name="temperature_timeLoading"
+                                    id="temperature_timeLoading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    PATTERN No:
+                                </label>
+                                <input
+                                    v-model="reportHTPatternNo"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    DATE START:
+                                </label>
+                                <input
+                                    v-model="reportHTDateStart"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    TIME START:
+                                </label>
+                                <input
+                                    v-model="reportHTTimeStart"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_date" class="mb-1 text-sm font-medium text-gray-700">
+                                    LOADER:
+                                </label>
+                                <input
+                                    v-model="reportHTLoader"
+                                    type="text"
+                                    name="ovenInfo_date"
+                                    id="ovenInfo_date"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
+                                    DATE FINISH:
+                                </label>
+                                <input
+                                    v-model="reportHTDateFinish"
+                                    @input="reportHTDateFinish = reportHTDateFinish.toUpperCase()"
+                                    type="text"
+                                    name="timeUnloading"
+                                    id="timeUnloading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
+                                    TIME FINISH:
+                                </label>
+                                <input
+                                    v-model="reportHTTimeFinish"
+                                    type="text"
+                                    name="temperature_TimeUnloading"
+                                    id="temperature_TimeUnloading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    UNLOADER:
+                                </label>
+                                <input
+                                    v-model="reportHTUnloader"
+                                    @input="reportHTUnloader = reportHTUnloader.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    Cycle Pattern:
+                                </label>
+                                <input
+                                    v-model="reportHTCyclePattern"
+                                    @input="reportHTCyclePattern = reportHTCyclePattern.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    Current Pattern:
+                                </label>
+                                <input
+                                    v-model="reportHTCurrentPattern"
+                                    @input="reportHTCurrentPattern = reportHTCurrentPattern.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <!-- Oven Heating Information Section -->
                     <div class="flex flex-col mb-4 space-y-4">
                         <p class="mb-2 text-xl font-semibold text-gray-700">Oven Heating Information</p>
 
                         <!-- Row 1 -->
-                        <div class="flex flex-row justify-evenly gap-4">
+                        <div class="flex flex-row gap-4 justify-evenly">
                             <!-- Oven Machine No -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="ovenMachineNo" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="ovenMachineNo" class="mb-1 text-sm font-medium text-gray-700">
                                     Oven Machine No:
                                 </label>
                                 <input
@@ -558,16 +739,13 @@
                                     type="text"
                                     name="ovenMachineNo"
                                     id="ovenMachineNo"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Time Loading -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="timeLoading" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="timeLoading" class="mb-1 text-sm font-medium text-gray-700">
                                     Time Loading:
                                 </label>
                                 <input
@@ -576,16 +754,13 @@
                                     type="text"
                                     name="timeLoading"
                                     id="timeLoading"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Temperature (Time Loading) -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="temperature_timeLoading" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="temperature_timeLoading" class="mb-1 text-sm font-medium text-gray-700">
                                     Temperature (Time Loading):
                                 </label>
                                 <input
@@ -593,15 +768,12 @@
                                     type="text"
                                     name="temperature_timeLoading"
                                     id="temperature_timeLoading"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                             <!-- Shift -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
                                     Shift:
                                 </label>
                                 <input
@@ -610,19 +782,16 @@
                                     type="text"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                         </div>
 
                         <!-- Row 2 -->
-                        <div class="flex flex-row justify-evenly gap-4 mt-4">
+                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
                             <!-- Date -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_date" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="ovenInfo_date" class="mb-1 text-sm font-medium text-gray-700">
                                     Date:
                                 </label>
                                 <input
@@ -630,16 +799,13 @@
                                     type="date"
                                     name="ovenInfo_date"
                                     id="ovenInfo_date"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <!-- Time Unloading -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="timeUnloading" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
                                     Time Unloading:
                                 </label>
                                 <input
@@ -648,10 +814,7 @@
                                     type="text"
                                     name="timeUnloading"
                                     id="timeUnloading"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
@@ -665,15 +828,12 @@
                                     type="text"
                                     name="temperature_TimeUnloading"
                                     id="temperature_TimeUnloading"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                             <!-- Operator -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_operator" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
                                     Operator:
                                 </label>
                                 <input
@@ -682,10 +842,7 @@
                                     type="text"
                                     name="ovenInfo_operator"
                                     id="ovenInfo_operator"
-                                    class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
                         </div>
@@ -694,15 +851,14 @@
                 <div class="p-5 mx-10 border-2 border-white rounded-lg shadow-xl">
                     <p class="mb-2 text-xl font-semibold text-gray-700">Magnetic Property Inspection Information</p>
                     <!-- Pulse Tracer Info Row -->
-                    <div class="flex flex-row justify-evenly gap-4 mt-4">
+                    <div class="flex flex-row gap-4 mt-4 justify-evenly">
                         <!-- Pulse Tracer Machine No (display-only) -->
                         <div class="flex flex-col w-[12rem]">
-                            <label class="text-sm font-medium text-gray-700 mb-1">
+                            <label class="mb-1 text-sm font-medium text-gray-700">
                                 Pulse Tracer Machine No:
                             </label>
                             <span
-                                class="h-9 px-3 text-sm flex items-center border border-gray-300 rounded-md bg-gray-100 text-gray-800 cursor-default
-                                    hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                                class="flex items-center px-3 text-sm text-gray-800 bg-gray-100 border border-gray-300 rounded-md cursor-default h-9 hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
                             >
                                 {{ reportPulseTracerMachineNo }}
                             </span>
@@ -710,7 +866,7 @@
 
                         <!-- Date -->
                         <div class="flex flex-col w-[12rem]">
-                            <label for="reportDate" class="text-sm font-medium text-gray-700 mb-1">
+                            <label for="reportDate" class="mb-1 text-sm font-medium text-gray-700">
                                 Date:
                             </label>
                             <input
@@ -718,16 +874,13 @@
                                 type="date"
                                 name="reportDate"
                                 id="reportDate"
-                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                    transition duration-200 ease-in-out"
+                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             />
                         </div>
 
                         <!-- Shift -->
                         <div class="flex flex-col w-[12rem]">
-                            <label for="reportShift" class="text-sm font-medium text-gray-700 mb-1">
+                            <label for="reportShift" class="mb-1 text-sm font-medium text-gray-700">
                                 Shift:
                             </label>
                             <input
@@ -736,16 +889,13 @@
                                 type="text"
                                 name="reportShift"
                                 id="reportShift"
-                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                    transition duration-200 ease-in-out"
+                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             />
                         </div>
 
                         <!-- Operator -->
                         <div class="flex flex-col w-[12rem]">
-                            <label for="reportOperator" class="text-sm font-medium text-gray-700 mb-1">
+                            <label for="reportOperator" class="mb-1 text-sm font-medium text-gray-700">
                                 Operator:
                             </label>
                             <input
@@ -754,10 +904,7 @@
                                 type="text"
                                 name="reportOperator"
                                 id="reportOperator"
-                                class="h-9 px-3 text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                    hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                    focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                    transition duration-200 ease-in-out"
+                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             />
                         </div>
                     </div>
@@ -1652,7 +1799,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
+import { ref, onMounted, nextTick, watch, computed, watchEffect, reactive } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
@@ -2026,8 +2173,12 @@ const reportCoatingTotalMagnetWeight = ref('NA');
 const reportCoatingMinTbContent = ref('NA');
 const reportCoatingSlurryLotNo = ref('NA');
 const reportCoatingSampleQuantity = ref('NA');
+const reportCoatingRemarks = ref('NA');
 const reportCoatingAmounts = ref([]);
 const reportConcentrationValues = ref([]);
+const reportCoatingModuleMaximum = ref('NA');
+const reportCoatingModuleMinimum = ref('NA');
+const reportCoatingModuleAverage = ref('NA');
 
 const reportOvenMachineNo = ref('NA');
 const reportTimeLoading = ref('NA');
@@ -2093,6 +2244,15 @@ const getAlliHkiHcNG = ref('');
 const getAllBr4paiNG = ref('');
 const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
+
+const modules = reactive([
+  { name: 'M-01', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-02', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-03', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-04', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-05', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-06', new: '', homo: '', time: '', liters: '' },
+])
 
 // Method to dynamically adjust font size based on string length
 const getFontSize = (name) => {
