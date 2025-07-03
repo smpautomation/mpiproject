@@ -577,7 +577,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTDateStart"
-                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    @input="reportHTDateStart = reportHTDateStart.toUpperCase()"
                                     type="text"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
@@ -591,7 +591,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTTimeStart"
-                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
+                                    @input="reportHTTimeStart = reportHTTimeStart.toUpperCase()"
                                     type="text"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
@@ -636,6 +636,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTTimeFinish"
+                                    @input="reportHTTimeFinish = reportHTTimeFinish.toUpperCase()"
                                     type="text"
                                     name="temperature_TimeUnloading"
                                     id="temperature_TimeUnloading"
@@ -685,6 +686,44 @@
                                 />
                             </div>
                         </div>
+
+                            <table class="mt-[1.1rem] border-collapse table-auto border-4 border-white">
+                                <thead>
+                                    <tr class="bg-blue-400">
+                                        <th colspan="11" class="px-2 py-2 text-lg font-semibold text-center text-white">MAGNET BOX LOCATION</th>
+                                    </tr>
+                                    <tr class="bg-blue-400">
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">BOX No.</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">A</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">B</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">C</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">D</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">E</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">F</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">G</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">H</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">J</th>
+                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">K</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ currentLayerName }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLA }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLB }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLC }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLD }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLE }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLF }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLG }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLH }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLJ }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLK }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
                     </div>
                 </div>
 
@@ -2145,6 +2184,30 @@ const reportConcentrationValues = ref([]);
 const reportCoatingModuleMaximum = ref('NA');
 const reportCoatingModuleMinimum = ref('NA');
 const reportCoatingModuleAverage = ref('NA');
+
+const reportHTFurnaceMachine = ref('NA');
+const reportHTCycleNo = ref('NA');
+const reportHTBatchCycleNo = ref('NA');
+const reportHTPatternNo = ref('NA');
+const reportHTDateStart = ref('NA');
+const reportHTTimeStart = ref('NA');
+const reportHTLoader = ref('NA');
+const reportHTDateFinish = ref('NA');
+const reportHTTimeFinish = ref('NA');
+const reportHTUnloader = ref('NA');
+const reportHTCyclePattern = ref('NA');
+const reportHTCurrentPattern = ref('NA');
+
+const reportHT_MBLA = ref('NA');
+const reportHT_MBLB = ref('NA');
+const reportHT_MBLC = ref('NA');
+const reportHT_MBLD = ref('NA');
+const reportHT_MBLE = ref('NA');
+const reportHT_MBLF = ref('NA');
+const reportHT_MBLG = ref('NA');
+const reportHT_MBLH = ref('NA');
+const reportHT_MBLJ = ref('NA');
+const reportHT_MBLK = ref('NA');
 
 const reportOvenMachineNo = ref('NA');
 const reportTimeLoading = ref('NA');
