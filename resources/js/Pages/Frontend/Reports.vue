@@ -334,7 +334,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <p class="mb-2 text-md font-semibold text-gray-700">Coating Data (UNIT: µ g/mm2)</p>
 
                     <div class="flex flex-row flex-wrap gap-2 text-[0.7rem]">
                         <template v-for="group in 6" :key="'group-' + group">
