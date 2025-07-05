@@ -16,6 +16,8 @@ use App\Models\ReportData;
 use App\Models\StandardData;
 use App\Models\TPMBoxes;
 use App\Models\TPMDataCategory;
+use App\Models\Coating;
+use App\Models\HeatTreatment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
@@ -333,23 +335,47 @@ class TPMDataController extends Controller
 
                 }
             }
+            $checkCoatingData = Coating::where('serial', $tpmData->serial_no)->exists();
+            if(!$checkCoatingData){
+                try{
+                    $coatingDataInputs = [
+                        'serial' => $tpmData->serial_no,
+                    ];
+                    $coatingData = Coating::create($coatingDataInputs);
+                }catch(\Exception $e){
+
+                }
+            }
+            $checkHeatTreatmentData = HeatTreatment::where('serial', $tpmData->serial_no)->exists();
+            if(!$checkHeatTreatmentData){
+                try{
+                    $heatTreatmentDataInputs = [
+                        'serial' => $tpmData->serial_no,
+                    ];
+                    $heatTreatmentData = HeatTreatment::create($heatTreatmentDataInputs);
+                }catch(\Exception $e){
+                    
+                }
+            }
 
             DB::commit();
             return response()->json([
                 'status' => true,
                 'message' => 'tmp Data created successfully',
                 'data' => [
-                    $tpmData,
-                    $remark,
-                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
-                    $checkTpmDataCategory ?? $tpmDataCategory,
-                    $checkTpmBoxes ?? $TPMBoxes,
-                    $checkReportData ?? $reportData,
-                    $checkStandardData ?? $standardData,
-                    $checkDataInstructions ?? $dataInstructions,
-                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
-                    $checkMieGxDataInstructions ?? $mieGxDataInstructions,
-                    $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
+                        $tpmData,
+                        $remark,
+                        $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
+                        $checkTpmDataCategory ?? $tpmDataCategory,
+                        $checkTpmBoxes ?? $TPMBoxes,
+                        $checkReportData ?? $reportData,
+                        $checkStandardData ?? $standardData,
+                        $checkDataInstructions ?? $dataInstructions,
+                        $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
+                        $checkMieGxDataInstructions ?? $mieGxDataInstructions,
+                        $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate,
+                        $checkCoatingData ?? $coatingData,
+                        $checkHeatTreatmentData ?? $heatTreatmentData
                     ]
             ], 201);
         }catch(\Exception $e){

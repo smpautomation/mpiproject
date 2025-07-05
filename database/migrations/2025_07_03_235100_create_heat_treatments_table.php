@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('heat_treatments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('serial');
+            $table->unsignedBigInteger('serial')->unique();
             $table->string('furnace_machine')->nullable();
             $table->string('cycle_no')->nullable();
             $table->string('batch_cycle_no')->nullable();

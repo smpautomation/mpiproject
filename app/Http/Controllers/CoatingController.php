@@ -16,15 +16,15 @@ class CoatingController extends Controller
     {
         $validated = $request->validate([
             'serial' => 'required|integer',
-            'date' => 'required|date',
-            'machine_no' => 'required|string',
-            'slurry_lot_no' => 'required|string',
-            'loader_operator' => 'required|string',
-            'min_tb_content' => 'required|string',
-            'sample_qty' => 'required|string',
-            'total_magnet_weight' => 'required|string',
-            'unloader_operator' => 'required|string',
-            'coating_data' => 'required|array',
+            'date' => 'nullable|date',
+            'machine_no' => 'nullable|string',
+            'slurry_lot_no' => 'nullable|string',
+            'loader_operator' => 'nullable|string',
+            'min_tb_content' => 'nullable|string',
+            'sample_qty' => 'nullable|string',
+            'total_magnet_weight' => 'nullable|string',
+            'unloader_operator' => 'nullable|string',
+            'coating_data' => 'nullable|array',
         ]);
 
         $coating = Coating::create([
@@ -44,15 +44,15 @@ class CoatingController extends Controller
     {
         $validated = $request->validate([
             'serial' => 'sometimes|integer',
-            'date' => 'sometimes|date',
-            'machine_no' => 'sometimes|string',
-            'slurry_lot_no' => 'sometimes|string',
-            'loader_operator' => 'sometimes|string',
-            'min_tb_content' => 'sometimes|string',
-            'sample_qty' => 'sometimes|string',
-            'total_magnet_weight' => 'sometimes|string',
-            'unloader_operator' => 'sometimes|string',
-            'coating_data' => 'sometimes|array',
+            'date' => 'sometimes|nullable|date',
+            'machine_no' => 'sometimes|nullable|string',
+            'slurry_lot_no' => 'sometimes|nullable|string',
+            'loader_operator' => 'sometimes|nullable|string',
+            'min_tb_content' => 'sometimes|nullable|string',
+            'sample_qty' => 'sometimes|nullable|string',
+            'total_magnet_weight' => 'sometimes|nullable|string',
+            'unloader_operator' => 'sometimes|nullable|string',
+            'coating_data' => 'sometimes|nullable|array',
         ]);
 
         if (isset($validated['coating_data'])) {

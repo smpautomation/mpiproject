@@ -578,7 +578,7 @@
                                 <input
                                     v-model="reportHTDateStart"
                                     @input="reportHTDateStart = reportHTDateStart.toUpperCase()"
-                                    type="text"
+                                    type="date"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -592,7 +592,7 @@
                                 <input
                                     v-model="reportHTTimeStart"
                                     @input="reportHTTimeStart = reportHTTimeStart.toUpperCase()"
-                                    type="text"
+                                    type="time"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -623,7 +623,7 @@
                                 <input
                                     v-model="reportHTDateFinish"
                                     @input="reportHTDateFinish = reportHTDateFinish.toUpperCase()"
-                                    type="text"
+                                    type="date"
                                     name="timeUnloading"
                                     id="timeUnloading"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -637,7 +637,7 @@
                                 <input
                                     v-model="reportHTTimeFinish"
                                     @input="reportHTTimeFinish = reportHTTimeFinish.toUpperCase()"
-                                    type="text"
+                                    type="time"
                                     name="temperature_TimeUnloading"
                                     id="temperature_TimeUnloading"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -709,16 +709,106 @@
                                 <tbody>
                                     <tr>
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ currentLayerName }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLA }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLB }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLC }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLD }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLE }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLF }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLG }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLH }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLJ }}</td>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ reportHT_MBLK }}</td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLA"
+                                                @input="reportHT_MBLA = reportHT_MBLA.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLB"
+                                                @input="reportHT_MBLB = reportHT_MBLB.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLC"
+                                                @input="reportHT_MBLC = reportHT_MBLC.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLD"
+                                                @input="reportHT_MBLD = reportHT_MBLD.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLE"
+                                                @input="reportHT_MBLE = reportHT_MBLE.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLF"
+                                                @input="reportHT_MBLF = reportHT_MBLF.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLG"
+                                                @input="reportHT_MBLG = reportHT_MBLG.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLH"
+                                                @input="reportHT_MBLH = reportHT_MBLH.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLJ"
+                                                @input="reportHT_MBLJ = reportHT_MBLJ.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
+                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
+                                            <input
+                                                v-model="reportHT_MBLK"
+                                                @input="reportHT_MBLK = reportHT_MBLK.toUpperCase()"
+                                                type="text"
+                                                name="ovenInfo_operator"
+                                                id="ovenInfo_operator"
+                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                            />
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2170,7 +2260,7 @@ const reportRemarksDisplayNG_br4pia = ref(false);
 const reportRemarksDisplayNG_bhMax = ref(false);
 const reportRemarksDisplayNG_bhc = ref(false);
 
-const reportCoatingDate = ref('');
+const reportCoatingDate = ref(null);
 const reportCoatingLoaderOperator = ref('NA');
 const reportCoatingUnloaderOperator = ref('NA');
 const reportCoatingMachineNo = ref('NA');
@@ -2189,11 +2279,11 @@ const reportHTFurnaceMachine = ref('NA');
 const reportHTCycleNo = ref('NA');
 const reportHTBatchCycleNo = ref('NA');
 const reportHTPatternNo = ref('NA');
-const reportHTDateStart = ref('NA');
-const reportHTTimeStart = ref('NA');
+const reportHTDateStart = ref(null);
+const reportHTTimeStart = ref(null);
 const reportHTLoader = ref('NA');
-const reportHTDateFinish = ref('NA');
-const reportHTTimeFinish = ref('NA');
+const reportHTDateFinish = ref(null);
+const reportHTTimeFinish = ref(null);
 const reportHTUnloader = ref('NA');
 const reportHTCyclePattern = ref('NA');
 const reportHTCurrentPattern = ref('NA');
@@ -2275,12 +2365,12 @@ const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
 
 const modules = reactive([
-  { name: 'M-01', new: '', homo: '', time: '', liters: '' },
-  { name: 'M-02', new: '', homo: '', time: '', liters: '' },
-  { name: 'M-03', new: '', homo: '', time: '', liters: '' },
-  { name: 'M-04', new: '', homo: '', time: '', liters: '' },
-  { name: 'M-05', new: '', homo: '', time: '', liters: '' },
-  { name: 'M-06', new: '', homo: '', time: '', liters: '' },
+  { name: 'M-01', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
+  { name: 'M-02', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
+  { name: 'M-03', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
+  { name: 'M-04', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
+  { name: 'M-05', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
+  { name: 'M-06', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
 ])
 
 // Method to dynamically adjust font size based on string length
@@ -2983,6 +3073,13 @@ const showReportData = async () => {
         //console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
         //console.log("Filtered data: ", filterBySerial);
+
+        const responseCoating = await axios.get(`/api/coating-data/`);
+        console.log('get responseCoatingData: ', responseCoating.data);
+
+        const responseHeatTreatment = await axios.get(`/api/heat-treatment-data/`);
+        console.log('get responseHeatTreatmentData: ',responseHeatTreatment.data);
+
         reportModel.value = filterBySerial[0].model;
         reportPulseTracerMachineNo.value = filterBySerial[0].pulse_tracer_machine_number;
         reportMaterialCode.value = filterBySerial[0].material_code;
@@ -3314,7 +3411,97 @@ const saveReport = async () => {
         }),
     }
     //console.log("Save report data: ", saveReportData);
-    saveReportUpdate(saveReportData, currentSerialSelected.value);
+    const coatingData = {};
+
+    const structuredModules = {};
+
+    modules.forEach((mod) => {
+        const keyBase = `add_slurry_${mod.name.toLowerCase()}`; // "add_slurry_m01"
+        structuredModules[`${keyBase}_new`] = mod.new;
+        structuredModules[`${keyBase}_homo`] = mod.homo;
+        structuredModules[`${keyBase}_time`] = mod.time;
+        structuredModules[`${keyBase}_liters`] = mod.liters;
+    });
+
+    // M-01 to M-30 — Amounts + Concentrations
+    for (let i = 0; i < 30; i++) {
+        const num = (i + 1).toString().padStart(2, '0'); // "01" .. "30"
+        coatingData[`${i + 1}_M${num}_Amount`] = reportCoatingAmounts.value[i];
+        coatingData[`${i + 1}_M${num}_Concentration`] = reportConcentrationValues.value[i];
+    }
+
+    // M-06 values (2 per group × 6 groups = 12)
+    for (let i = 0; i < 12; i++) {
+        coatingData[`M06_${i + 1}_Concentration`] = reportConcentrationValues.value[30 + i];
+    }
+
+    const saveCoatingData = { //ggggggggggggggg
+        "serial":currentSerialSelected.value,
+        "date":reportCoatingDate.value,
+        "machine_no":reportCoatingMachineNo.value,
+        "slurry_lot_no":reportCoatingSlurryLotNo.value,
+        "loader_operator":reportCoatingLoaderOperator.value,
+        "min_tb_content":reportCoatingMinTbContent.value,
+        "sample_qty":reportCoatingSampleQuantity.value,
+        "total_magnet_weight":reportCoatingTotalMagnetWeight.value,
+        "unloader_operator":reportCoatingUnloaderOperator.value,
+        "coating_data": {
+            ...coatingData,         // structured key-value object
+            ...structuredModules,   // M-01 to M-06 slurry data
+        },
+    }
+    console.log("Save coating data: ", saveCoatingData);
+    await saveCoating_data(saveCoatingData, currentSerialSelected.value);
+
+    const saveHeatTreatmentData = {
+        "serial": currentSerialSelected.value,
+        "furnace_machine": reportHTFurnaceMachine.value,
+        "cycle_no": reportHTCycleNo.value,
+        "batch_cycle_no": reportHTBatchCycleNo.value,
+        "pattern_no": reportHTPatternNo.value,
+        "date_start": reportHTDateStart.value,
+        "time_start": reportHTTimeStart.value,
+        "loader": reportHTLoader.value,
+        "date_finish": reportHTDateFinish.value,
+        "time_finish": reportHTTimeFinish.value,
+        "unloader": reportHTUnloader.value,
+        "cycle_pattern": reportHTCyclePattern.value,
+        "current_pattern": reportHTCurrentPattern.value,
+        "magnet_box_location":{
+            "box_a": reportHT_MBLA.value,
+            "box_b": reportHT_MBLB.value,
+            "box_c": reportHT_MBLC.value,
+            "box_d": reportHT_MBLD.value,
+            "box_e": reportHT_MBLE.value,
+            "box_f": reportHT_MBLF.value,
+            "box_g": reportHT_MBLG.value,
+            "box_h": reportHT_MBLH.value,
+            "box_j": reportHT_MBLJ.value,
+            "box_k": reportHT_MBLK.value,
+        },
+    }
+    console.log("Save heat treatment data: ", saveHeatTreatmentData);
+    await saveHeatTreatment_data(saveHeatTreatmentData, currentSerialSelected.value);
+
+    await saveReportUpdate(saveReportData, currentSerialSelected.value);
+}
+
+const saveCoating_data = async (coatingData, serial) => {
+    try{
+        const responseCoatingDataPost = await axios.patch(`/api/coating-data/${serial}`,coatingData);
+        console.log('API POST REQUEST COATING DATA: ',responseCoatingDataPost.data);
+    }catch(error){
+        console.error('Error has occured for responseCoatingDataPost: ',error);
+    }
+}
+
+const saveHeatTreatment_data = async (heatTreatmentData, serial) => {
+    try{
+        const responseHeatTreatmentDataPost = await axios.patch(`/api/heat-treatment-data/${serial}`,heatTreatmentData);
+        console.log('API POST REQUEST HEAT TREATMENT DATA: ',responseHeatTreatmentDataPost.data);
+    }catch(error){
+        console.error('Error has occured for responseHeatTreatmentDataPost: ',error);
+    }
 }
 
 const saveReportUpdate = async (saveData, serial) => {

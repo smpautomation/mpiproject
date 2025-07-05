@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('coatings', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('serial');
+            $table->unsignedBigInteger('serial')->unique();
             $table->date('date')->nullable();
             $table->string('machine_no')->nullable();
             $table->string('slurry_lot_no')->nullable();
