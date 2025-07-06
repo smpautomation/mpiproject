@@ -8,4 +8,5 @@ class Coating extends Model
 {
     protected $table = "coatings";
     protected $guarded = [];
+
 }

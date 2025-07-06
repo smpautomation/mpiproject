@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coating;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CoatingController extends Controller
 {
@@ -25,6 +26,10 @@ class CoatingController extends Controller
             'total_magnet_weight' => 'nullable|string',
             'unloader_operator' => 'nullable|string',
             'coating_data' => 'nullable|array',
+            'maximum' => 'nullable|numeric',
+            'minimum' => 'nullable|numeric',
+            'average' => 'nullable|numeric',
+            'remarks' => 'nullable|string',
         ]);
 
         $coating = Coating::create([
@@ -40,8 +45,10 @@ class CoatingController extends Controller
         return response()->json($coating);
     }
 
-    public function update(Request $request, Coating $coating)
+    public function update(Request $request, $serial)
     {
+        $coating = Coating::where('serial', $serial)->firstOrFail();
+
         $validated = $request->validate([
             'serial' => 'sometimes|integer',
             'date' => 'sometimes|nullable|date',
@@ -53,6 +60,10 @@ class CoatingController extends Controller
             'total_magnet_weight' => 'sometimes|nullable|string',
             'unloader_operator' => 'sometimes|nullable|string',
             'coating_data' => 'sometimes|nullable|array',
+            'maximum' => 'nullable|numeric',
+            'minimum' => 'nullable|numeric',
+            'average' => 'nullable|numeric',
+            'remarks' => 'nullable|string',
         ]);
 
         if (isset($validated['coating_data'])) {
@@ -60,6 +71,8 @@ class CoatingController extends Controller
         }
 
         $coating->update($validated);
+
+        Log::info('Manually patched coating serial', ['serial' => $coating->serial]);
 
         return response()->json($coating);
     }

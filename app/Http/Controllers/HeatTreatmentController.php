@@ -35,6 +35,7 @@ class HeatTreatmentController extends Controller
             'cycle_pattern' => 'nullable|string',
             'current_pattern' => 'nullable|string',
             'magnet_box_location' => 'nullable|array',
+            'remarks' => 'nullable|string',
         ]);
 
         $heatTreatment = HeatTreatment::create([
@@ -56,8 +57,11 @@ class HeatTreatmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, HeatTreatment $heatTreatment)
+    public function update(Request $request, $serial)
     {
+        // Force manual resolution
+        $heatTreatment = HeatTreatment::where('serial', $serial)->firstOrFail();
+
         $validated = $request->validate([
             'serial' => 'sometimes|integer',
             'furnace_machine' => 'sometimes|nullable|string',
@@ -73,6 +77,7 @@ class HeatTreatmentController extends Controller
             'cycle_pattern' => 'sometimes|nullable|string',
             'current_pattern' => 'sometimes|nullable|string',
             'magnet_box_location' => 'sometimes|nullable|array',
+            'remarks' => 'sometimes|nullable|string',
         ]);
 
         if (isset($validated['magnet_box_location'])) {

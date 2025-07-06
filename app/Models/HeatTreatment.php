@@ -8,4 +8,5 @@ class HeatTreatment extends Model
 {
     protected $table = "heat_treatments";
     protected $guarded = [];
+
 }

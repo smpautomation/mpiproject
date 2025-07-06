@@ -813,6 +813,21 @@
                                 </tbody>
                             </table>
 
+                            <div class="flex flex-row mt-10">
+                            <!-- Coating Remarks -->
+                            <div class="flex flex-col w-[78rem]">
+                                <label for="reportCoatingRemarks" class="mb-1 text-sm font-medium text-gray-700">
+                                    Remarks:
+                                </label>
+                                <input
+                                    v-model="reportHTRemarks"
+                                    type="text"
+                                    name="coatingRemarks"
+                                    id="coatingRemarks"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+                            </div>
 
                     </div>
                 </div>
@@ -2287,6 +2302,7 @@ const reportHTTimeFinish = ref(null);
 const reportHTUnloader = ref('NA');
 const reportHTCyclePattern = ref('NA');
 const reportHTCurrentPattern = ref('NA');
+const reportHTremarks = ref('NA');
 
 const reportHT_MBLA = ref('NA');
 const reportHT_MBLB = ref('NA');
@@ -2444,6 +2460,20 @@ const resetReportBHData = async() => {
     showBHData_default.value = true;
     await saveReport();
 };
+
+watchEffect(() => {
+  const data = reportCoatingAmounts.value.filter(n => typeof n === 'number' && !isNaN(n));
+
+  if (data.length) {
+    reportCoatingModuleMaximum.value = Math.max(...data);
+    reportCoatingModuleMinimum.value = Math.min(...data);
+    reportCoatingModuleAverage.value = (data.reduce((sum, val) => sum + val, 0) / data.length).toFixed(2);
+  } else {
+    reportCoatingModuleMaximum.value = 'NA';
+    reportCoatingModuleMinimum.value = 'NA';
+    reportCoatingModuleAverage.value = 'NA';
+  }
+});
 
 // special judgement conditions logic
 
@@ -3119,13 +3149,13 @@ const showReportData = async () => {
 
         //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
         if(inspectionOvenMachineNo.value == 0){
-            reportTimeLoading.value = 'N/A';
-            reportTimeUnloading.value = 'N/A';
-            reportTemperature_TimeLoading.value = 'N/A';
-            reportTemperature_TimeUnloading.value = 'N/A';
-            reportDate_OvenInfo.value = 'N/A';
-            reportShift_OvenInfo.value = 'N/A';
-            reportOperator_OvenInfo.value = 'N/A';
+            reportTimeLoading.value = 'NA';
+            reportTimeUnloading.value = 'NA';
+            reportTemperature_TimeLoading.value = 'NA';
+            reportTemperature_TimeUnloading.value = 'NA';
+            reportDate_OvenInfo.value = 'NA';
+            reportShift_OvenInfo.value = 'NA';
+            reportOperator_OvenInfo.value = 'NA';
         }else{
             reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
             reportTimeLoading.value = filterBySerial[0].time_loading;
@@ -3423,19 +3453,18 @@ const saveReport = async () => {
         structuredModules[`${keyBase}_liters`] = mod.liters;
     });
 
-    // M-01 to M-30 — Amounts + Concentrations
     for (let i = 0; i < 30; i++) {
-        const num = (i + 1).toString().padStart(2, '0'); // "01" .. "30"
-        coatingData[`${i + 1}_M${num}_Amount`] = reportCoatingAmounts.value[i];
-        coatingData[`${i + 1}_M${num}_Concentration`] = reportConcentrationValues.value[i];
+        const mLabel = `M${((i % 5) + 1).toString().padStart(2, '0')}`; // M01 to M05, loops every 5
+        coatingData[`${i + 1}_${mLabel}_Amount`] = reportCoatingAmounts.value[i];
+        coatingData[`${i + 1}_${mLabel}_Concentration`] = reportConcentrationValues.value[i];
     }
 
     // M-06 values (2 per group × 6 groups = 12)
     for (let i = 0; i < 12; i++) {
         coatingData[`M06_${i + 1}_Concentration`] = reportConcentrationValues.value[30 + i];
-    }
+    } 
 
-    const saveCoatingData = { //ggggggggggggggg
+    const saveCoatingData = {
         "serial":currentSerialSelected.value,
         "date":reportCoatingDate.value,
         "machine_no":reportCoatingMachineNo.value,
@@ -3445,6 +3474,10 @@ const saveReport = async () => {
         "sample_qty":reportCoatingSampleQuantity.value,
         "total_magnet_weight":reportCoatingTotalMagnetWeight.value,
         "unloader_operator":reportCoatingUnloaderOperator.value,
+        "maximum":reportCoatingModuleMaximum.value,
+        "minimum":reportCoatingModuleMinimum.value,
+        "average":reportCoatingModuleAverage.value,
+
         "coating_data": {
             ...coatingData,         // structured key-value object
             ...structuredModules,   // M-01 to M-06 slurry data
@@ -3464,6 +3497,7 @@ const saveReport = async () => {
         "loader": reportHTLoader.value,
         "date_finish": reportHTDateFinish.value,
         "time_finish": reportHTTimeFinish.value,
+
         "unloader": reportHTUnloader.value,
         "cycle_pattern": reportHTCyclePattern.value,
         "current_pattern": reportHTCurrentPattern.value,
@@ -3489,7 +3523,7 @@ const saveReport = async () => {
 const saveCoating_data = async (coatingData, serial) => {
     try{
         const responseCoatingDataPost = await axios.patch(`/api/coating-data/${serial}`,coatingData);
-        console.log('API POST REQUEST COATING DATA: ',responseCoatingDataPost.data);
+        console.log('API PATCH REQUEST COATING DATA: ',responseCoatingDataPost.data);
     }catch(error){
         console.error('Error has occured for responseCoatingDataPost: ',error);
     }
@@ -3498,7 +3532,7 @@ const saveCoating_data = async (coatingData, serial) => {
 const saveHeatTreatment_data = async (heatTreatmentData, serial) => {
     try{
         const responseHeatTreatmentDataPost = await axios.patch(`/api/heat-treatment-data/${serial}`,heatTreatmentData);
-        console.log('API POST REQUEST HEAT TREATMENT DATA: ',responseHeatTreatmentDataPost.data);
+        console.log('API PATCH REQUEST HEAT TREATMENT DATA: ',responseHeatTreatmentDataPost.data);
     }catch(error){
         console.error('Error has occured for responseHeatTreatmentDataPost: ',error);
     }
