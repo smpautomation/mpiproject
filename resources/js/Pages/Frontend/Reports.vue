@@ -558,52 +558,6 @@
                             </div>
 
                             <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
-                                    PATTERN No:
-                                </label>
-                                <input
-                                    v-model="reportHTPatternNo"
-                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
-                                    type="text"
-                                    name="ovenInfo_shift"
-                                    id="ovenInfo_shift"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                                />
-                            </div>
-
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
-                                    DATE START:
-                                </label>
-                                <input
-                                    v-model="reportHTDateStart"
-                                    @input="reportHTDateStart = reportHTDateStart.toUpperCase()"
-                                    type="date"
-                                    name="ovenInfo_shift"
-                                    id="ovenInfo_shift"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                                />
-                            </div>
-
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
-                                    TIME START:
-                                </label>
-                                <input
-                                    v-model="reportHTTimeStart"
-                                    @input="reportHTTimeStart = reportHTTimeStart.toUpperCase()"
-                                    type="time"
-                                    name="ovenInfo_shift"
-                                    id="ovenInfo_shift"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Row 2 -->
-                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
-
-                            <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_date" class="mb-1 text-sm font-medium text-gray-700">
                                     LOADER:
                                 </label>
@@ -617,43 +571,45 @@
                             </div>
 
                             <div class="flex flex-col w-[12rem]">
-                                <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
-                                    DATE FINISH:
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    DATE START:
                                 </label>
                                 <input
-                                    v-model="reportHTDateFinish"
-                                    @input="reportHTDateFinish = reportHTDateFinish.toUpperCase()"
+                                    v-model="reportHTDateStart"
                                     type="date"
-                                    name="timeUnloading"
-                                    id="timeUnloading"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
 
                             <div class="flex flex-col w-[12rem]">
-                                <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
-                                    TIME FINISH:
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    TIME START:
                                 </label>
                                 <input
-                                    v-model="reportHTTimeFinish"
-                                    @input="reportHTTimeFinish = reportHTTimeFinish.toUpperCase()"
+                                    v-model="reportHTTimeStart"
                                     type="time"
-                                    name="temperature_TimeUnloading"
-                                    id="temperature_TimeUnloading"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
 
                             <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
-                                    UNLOADER:
+                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
+                                    PATTERN No:
                                 </label>
                                 <input
-                                    v-model="reportHTUnloader"
-                                    @input="reportHTUnloader = reportHTUnloader.toUpperCase()"
+                                    v-model="reportHTPatternNo"
+                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
                                     type="text"
-                                    name="ovenInfo_operator"
-                                    id="ovenInfo_operator"
+                                    name="ovenInfo_shift"
+                                    id="ovenInfo_shift"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
@@ -682,6 +638,46 @@
                                     type="text"
                                     name="ovenInfo_operator"
                                     id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
+                                    UNLOADER:
+                                </label>
+                                <input
+                                    v-model="reportHTUnloader"
+                                    @input="reportHTUnloader = reportHTUnloader.toUpperCase()"
+                                    type="text"
+                                    name="ovenInfo_operator"
+                                    id="ovenInfo_operator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
+                                    DATE FINISH:
+                                </label>
+                                <input
+                                    v-model="reportHTDateFinish"
+                                    type="date"
+                                    name="timeUnloading"
+                                    id="timeUnloading"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
+                                    TIME FINISH:
+                                </label>
+                                <input
+                                    v-model="reportHTTimeFinish"
+                                    type="time"
+                                    name="temperature_TimeUnloading"
+                                    id="temperature_TimeUnloading"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
@@ -821,6 +817,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTRemarks"
+                                    @input="reportHTRemarks = reportHTRemarks.toUpperCase()"
                                     type="text"
                                     name="coatingRemarks"
                                     id="coatingRemarks"
@@ -2286,9 +2283,9 @@ const reportCoatingSampleQuantity = ref('NA');
 const reportCoatingRemarks = ref('NA');
 const reportCoatingAmounts = ref([]);
 const reportConcentrationValues = ref([]);
-const reportCoatingModuleMaximum = ref('NA');
-const reportCoatingModuleMinimum = ref('NA');
-const reportCoatingModuleAverage = ref('NA');
+const reportCoatingModuleMaximum = ref(0);
+const reportCoatingModuleMinimum = ref(0);
+const reportCoatingModuleAverage = ref(0);
 
 const reportHTFurnaceMachine = ref('NA');
 const reportHTCycleNo = ref('NA');
@@ -2302,7 +2299,7 @@ const reportHTTimeFinish = ref(null);
 const reportHTUnloader = ref('NA');
 const reportHTCyclePattern = ref('NA');
 const reportHTCurrentPattern = ref('NA');
-const reportHTremarks = ref('NA');
+const reportHTRemarks = ref('NA');
 
 const reportHT_MBLA = ref('NA');
 const reportHT_MBLB = ref('NA');
@@ -2318,7 +2315,7 @@ const reportHT_MBLK = ref('NA');
 const reportOvenMachineNo = ref('NA');
 const reportTimeLoading = ref('NA');
 const reportTemperature_TimeLoading = ref('NA');
-const reportDate_OvenInfo = ref('');
+const reportDate_OvenInfo = ref(null);
 const reportTimeUnloading = ref('NA');
 const reportTemperature_TimeUnloading = ref('NA');
 const reportShift_OvenInfo = ref('NA');
@@ -2469,9 +2466,9 @@ watchEffect(() => {
     reportCoatingModuleMinimum.value = Math.min(...data);
     reportCoatingModuleAverage.value = (data.reduce((sum, val) => sum + val, 0) / data.length).toFixed(2);
   } else {
-    reportCoatingModuleMaximum.value = 'NA';
-    reportCoatingModuleMinimum.value = 'NA';
-    reportCoatingModuleAverage.value = 'NA';
+    reportCoatingModuleMaximum.value = 0;
+    reportCoatingModuleMinimum.value = 0;
+    reportCoatingModuleAverage.value = 0;
   }
 });
 
@@ -3105,10 +3102,16 @@ const showReportData = async () => {
         //console.log("Filtered data: ", filterBySerial);
 
         const responseCoating = await axios.get(`/api/coating-data/`);
-        console.log('get responseCoatingData: ', responseCoating.data);
+        //console.log('get responseCoatingData: ', responseCoating.data);
+        const coating_filterBySerial = responseCoating.data.filter(column => column.serial == currentSerialSelected.value); // filter by serial
+        console.log("Filtered coating data: ", coating_filterBySerial);
+        const c = coating_filterBySerial[0];
 
         const responseHeatTreatment = await axios.get(`/api/heat-treatment-data/`);
-        console.log('get responseHeatTreatmentData: ',responseHeatTreatment.data);
+        //console.log('get responseHeatTreatmentData: ',responseHeatTreatment.data);
+        const heatTreatment_filterBySerial = responseHeatTreatment.data.filter(column => column.serial == currentSerialSelected.value); // filter by serial
+        console.log("Filtered heat treatment data: ", heatTreatment_filterBySerial);
+        const ht = heatTreatment_filterBySerial[0];
 
         reportModel.value = filterBySerial[0].model;
         reportPulseTracerMachineNo.value = filterBySerial[0].pulse_tracer_machine_number;
@@ -3309,6 +3312,82 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
+        //Coating & Heat Treatment update
+        //COATING ---
+        reportCoatingDate.value = c.date ?? null;
+        reportCoatingMachineNo.value = c.machine_no ?? 'NA';
+        reportCoatingSlurryLotNo.value = c.slurry_lot_no ?? 'NA';
+        reportCoatingLoaderOperator.value = c.loader_operator ?? 'NA';
+        reportCoatingMinTbContent.value = c.min_tb_content ?? 'NA';
+        reportCoatingSampleQuantity.value = c.sample_qty ?? 'NA';
+        reportCoatingTotalMagnetWeight.value = c.total_magnet_weight ?? 'NA';
+        reportCoatingUnloaderOperator.value = c.unloader_operator ?? 'NA';
+        reportCoatingModuleMaximum.value = c.maximum ?? 0;
+        reportCoatingModuleMinimum.value = c.minimum ?? 0;
+        reportCoatingModuleAverage.value = c.average ?? 0;
+        reportCoatingRemarks.value = c.remarks ?? 'NA';
+        const rawDataCoating = (c.coating_data && typeof c.coating_data === 'string')
+            ? JSON.parse(c.coating_data)
+            : {};
+
+        reportCoatingAmounts.value = Array(30).fill(null);
+        reportConcentrationValues.value = Array(30).fill(null);
+
+        for (let i = 0; i < 30; i++) {
+            const index = i + 1;
+            const mLabel = `M${((i % 5) + 1).toString().padStart(2, '0')}`;
+
+            const amountKey = `${index}_${mLabel}_Amount`;
+            const concentrationKey = `${index}_${mLabel}_Concentration`;
+
+            reportCoatingAmounts.value[i] = rawDataCoating[amountKey] ?? null;
+            reportConcentrationValues.value[i] = rawDataCoating[concentrationKey] ?? null;
+        }
+
+        // M06: starts at index 35
+        const M06_START_INDEX = 35;
+
+        for (let i = 0; i < 12; i++) {
+            const groupStart = (Math.floor(i / 2) * 5) + 1;
+            const groupEnd = groupStart + 4;
+            const key = `${groupStart}to${groupEnd}_M06_${i + 1}_Concentration`;
+
+            reportConcentrationValues.value[M06_START_INDEX + i] = rawDataCoating[key] ?? null;
+        }
+
+        //HEAT TREATMENT ---
+
+        reportHTFurnaceMachine.value = ht.furnace_machine ?? 'NA';
+        reportHTCycleNo.value = ht.cycle_no ?? 'NA';
+        reportHTBatchCycleNo.value = ht.batch_cycle_no ?? 'NA';
+        reportHTPatternNo.value = ht.pattern_no ?? 'NA';
+        reportHTDateStart.value = ht.date_start ?? null;
+        reportHTTimeStart.value = ht.time_start ?? null;
+        reportHTLoader.value = ht.loader ?? 'NA';
+        reportHTDateFinish.value = ht.date_finish ?? null;
+        reportHTTimeFinish.value = ht.time_finish ?? null;
+        reportHTUnloader.value = ht.unloader ?? 'NA';
+        reportHTCyclePattern.value = ht.cycle_pattern ?? 'NA';
+        reportHTCurrentPattern.value = ht.current_pattern ?? 'NA';
+        reportHTRemarks.value = ht.remarks ?? 'NA';
+        const rawDataHT = (ht.magnet_box_location && typeof ht.magnet_box_location === 'string')
+            ? JSON.parse(ht.magnet_box_location)
+            : {};
+
+        reportHT_MBLA.value = rawDataHT.box_a ?? 'NA';
+        reportHT_MBLB.value = rawDataHT.box_b ?? 'NA';
+        reportHT_MBLC.value = rawDataHT.box_c ?? 'NA';
+        reportHT_MBLD.value = rawDataHT.box_d ?? 'NA';
+        reportHT_MBLE.value = rawDataHT.box_e ?? 'NA';
+        reportHT_MBLF.value = rawDataHT.box_f ?? 'NA';
+        reportHT_MBLG.value = rawDataHT.box_g ?? 'NA';
+        reportHT_MBLH.value = rawDataHT.box_h ?? 'NA';
+        reportHT_MBLJ.value = rawDataHT.box_j ?? 'NA';
+        reportHT_MBLK.value = rawDataHT.box_k ?? 'NA';
+
+        //End of Coating & Heat Treatment update
+
+
         //console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
         await checkApprovalStates();
@@ -3459,10 +3538,15 @@ const saveReport = async () => {
         coatingData[`${i + 1}_${mLabel}_Concentration`] = reportConcentrationValues.value[i];
     }
 
-    // M-06 values (2 per group × 6 groups = 12)
+    const M06_START_INDEX = 35;
+
     for (let i = 0; i < 12; i++) {
-        coatingData[`M06_${i + 1}_Concentration`] = reportConcentrationValues.value[30 + i];
-    } 
+        const groupStart = (Math.floor(i / 2) * 5) + 1;
+        const groupEnd = groupStart + 4;
+        coatingData[`${groupStart}to${groupEnd}_M06_${i + 1}_Concentration`] = reportConcentrationValues.value[M06_START_INDEX + i];
+    }
+    //console.log('reportConcentrationValues:', reportConcentrationValues.value.length, reportConcentrationValues.value);
+
 
     const saveCoatingData = {
         "serial":currentSerialSelected.value,
@@ -3483,7 +3567,7 @@ const saveReport = async () => {
             ...structuredModules,   // M-01 to M-06 slurry data
         },
     }
-    console.log("Save coating data: ", saveCoatingData);
+    //console.log("Save coating data: ", saveCoatingData);
     await saveCoating_data(saveCoatingData, currentSerialSelected.value);
 
     const saveHeatTreatmentData = {
@@ -3523,7 +3607,7 @@ const saveReport = async () => {
 const saveCoating_data = async (coatingData, serial) => {
     try{
         const responseCoatingDataPost = await axios.patch(`/api/coating-data/${serial}`,coatingData);
-        console.log('API PATCH REQUEST COATING DATA: ',responseCoatingDataPost.data);
+        //console.log('API PATCH REQUEST COATING DATA: ',responseCoatingDataPost.data);
     }catch(error){
         console.error('Error has occured for responseCoatingDataPost: ',error);
     }
@@ -3532,7 +3616,7 @@ const saveCoating_data = async (coatingData, serial) => {
 const saveHeatTreatment_data = async (heatTreatmentData, serial) => {
     try{
         const responseHeatTreatmentDataPost = await axios.patch(`/api/heat-treatment-data/${serial}`,heatTreatmentData);
-        console.log('API PATCH REQUEST HEAT TREATMENT DATA: ',responseHeatTreatmentDataPost.data);
+        //console.log('API PATCH REQUEST HEAT TREATMENT DATA: ',responseHeatTreatmentDataPost.data);
     }catch(error){
         console.error('Error has occured for responseHeatTreatmentDataPost: ',error);
     }

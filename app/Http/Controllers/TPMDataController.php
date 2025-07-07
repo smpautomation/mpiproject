@@ -21,6 +21,7 @@ use App\Models\HeatTreatment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class TPMDataController extends Controller
 {
@@ -343,7 +344,7 @@ class TPMDataController extends Controller
                     ];
                     $coatingData = Coating::create($coatingDataInputs);
                 }catch(\Exception $e){
-
+                    Log::error('Failed to create Coating: ' . $e->getMessage());
                 }
             }
             $checkHeatTreatmentData = HeatTreatment::where('serial', $tpmData->serial_no)->exists();
@@ -354,7 +355,7 @@ class TPMDataController extends Controller
                     ];
                     $heatTreatmentData = HeatTreatment::create($heatTreatmentDataInputs);
                 }catch(\Exception $e){
-                    
+                    Log::error('Failed to create Coating: ' . $e->getMessage());
                 }
             }
 

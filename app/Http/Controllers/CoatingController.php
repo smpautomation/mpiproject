@@ -60,10 +60,10 @@ class CoatingController extends Controller
             'total_magnet_weight' => 'sometimes|nullable|string',
             'unloader_operator' => 'sometimes|nullable|string',
             'coating_data' => 'sometimes|nullable|array',
-            'maximum' => 'nullable|numeric',
-            'minimum' => 'nullable|numeric',
-            'average' => 'nullable|numeric',
-            'remarks' => 'nullable|string',
+            'maximum' => 'sometimes|nullable|numeric',
+            'minimum' => 'sometimes|nullable|numeric',
+            'average' => 'sometimes|nullable|numeric',
+            'remarks' => 'sometimes|nullable|string',
         ]);
 
         if (isset($validated['coating_data'])) {
