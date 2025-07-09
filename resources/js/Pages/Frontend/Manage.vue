@@ -2851,6 +2851,30 @@ const renderChart = () => {
                     },
                 },
             });
+            setTimeout(() => {
+                const canvas = myChartCanvas.value;
+                const imageData = canvas.toDataURL("image/png");
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+                fetch("/upload-chart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken || "",
+                    },
+                    body: JSON.stringify({
+                        image: imageData,
+                        filename: `chart_${serialNo.value}.png`
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Chart image saved at:", data.path);
+                    // Optional: store this filename in a hidden input or use it to trigger PDF render
+                })
+                .catch(err => console.error("Chart upload failed:", err));
+            }, 1000); // Give Chart.js time to fully render
         } catch (error) {
             console.error("Error initializing Chart.js:", error);
         }

@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\BackEndPdfController;
+use App\Http\Controllers\ChartUploadController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -117,5 +118,7 @@ Route::get('/generate-pdf', function () {
 Route::get('/reports/{serial}/pdf', [BackEndPdfController::class, 'generateAndMerge'])
     ->name('reports.pdf')
     ->where('serial', '[A-Za-z0-9\-\s#]+');
+
+Route::post('/upload-chart', [ChartUploadController::class, 'store']);
 
 require __DIR__.'/auth.php';
