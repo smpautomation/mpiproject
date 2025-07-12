@@ -173,7 +173,13 @@
     <div class="page-break"></div>
 
     <div>
-        GRAPH HERE
+        @if ($chartFilename)
+            <div style="text-align: center; margin-top: 20px; border: 1px solid #000; width: 480px; height: 360px; margin-left: auto; margin-right: auto;">
+                <img src="{{ public_path('charts/' . $chartFilename) }}"
+                    alt="Chart Image"
+                    style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+        @endif
     </div>
 
 

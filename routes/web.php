@@ -31,6 +31,7 @@ Route::get('/instructions', [FrontendController::class,'instructions'])->name('i
 
 Route::get('/generate-pdf', [PdfController::class, 'generate']);
 
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

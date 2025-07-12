@@ -4,33 +4,200 @@ namespace App\Http\Controllers;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use iio\libmergepdf\Merger;
+use App\Models\ReportData;
+use App\Models\Coating;
+use App\Models\HeatTreatment;
+use App\Models\TPMDataCategory;
+use App\Models\TPMData;
 
 class BackEndPdfController extends Controller
 {
 
+    public function generateAndMerge($serial)
+    {
+        $chartFilename = "chart_{$serial}.png";
+        $chartPath = public_path("charts/{$chartFilename}");
 
-public function generateAndMerge($serial){
+        // Optional: check if image exists
+        if (!file_exists($chartPath)) {
+            // Fallback or skip image — up to you
+            $chartFilename = null;
+        }
 
-    $data = [
-        'serial' => $serial,
-    ];
+        $reportData = ReportData::where('tpm_data_serial', $serial)->first();
+        if (!$reportData) {
+            return response()->json([
+                'status' => false,
+                'message' => "Report Data with serial: {$serial} not found",
+            ], 404);
+        }
+        // Prepare data for the PDF views
+        $magneticProperty = json_decode($reportData->magnetic_property_data, true);
+        $brBounds = ['lower' => null, 'upper' => null];
+        if (!empty($magneticProperty['brStandard']) && str_contains($magneticProperty['brStandard'], '~')) {
+            [$lower, $upper] = explode('~', $magneticProperty['brStandard']);
+            $brBounds['lower'] = trim($lower);
+            $brBounds['upper'] = trim($upper);
+        }
+        // Calculate BR variance (if values exist)
+        $brVariance = null;
+        $ihcVariance = null;
+        $ihkVariance = null;
+        if (
+            isset($magneticProperty['brMaximum'], $magneticProperty['brMinimum'], $magneticProperty['ihcMaximum'], $magneticProperty['ihcMinimum'], $magneticProperty['ihkMaximum'], $magneticProperty['ihkMinimum'])
+        ) {
+            $brVariance = $magneticProperty['brMaximum'] - $magneticProperty['brMinimum'];
+            $ihcVariance = $magneticProperty['ihcMaximum'] - $magneticProperty['ihcMinimum'];
+            $ihkVariance = $magneticProperty['ihkMaximum'] - $magneticProperty['ihkMinimum'];
+        }
 
-    $portrait = Pdf::loadView('pdf.report_page1_portrait', $data)
-        ->setPaper('a4', 'portrait')
-        ->output();
+        $coatingData = Coating::where('serial', $serial)->first();
+        if(!$coatingData) {
+            return response()->json([
+                'status' => false,
+                'message' => "Coating Data with serial: {$serial} not found",
+            ], 404);
+        }
 
-    $landscape = Pdf::loadView('pdf.report_page2_landscape', $data)
-        ->setPaper('a4', 'landscape')
-        ->output();
+        $HTData = HeatTreatment::where('serial', $serial)->first();
+        if (!$HTData) {
+            return response()->json([
+                'status' => false,
+                'message' => "Heat Treatment Data with serial: {$serial} not found",
+            ], 404);
+        }
 
-    $merger = new Merger();
-    $merger->addRaw($portrait);
-    $merger->addRaw($landscape);
-    $mergedPdf = $merger->merge();
+        $MBL = json_decode($HTData->magnet_box_location, true);
 
-    return response($mergedPdf,200)
-        ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'inline; filename="report.pdf"');
+        $preparedByDate = null;
+        $checkedByDate = null;
+        $approvedByDate = null;
 
+        if (!empty($reportData->prepared_by_date)) {
+            $preparedByDate = \Carbon\Carbon::parse($reportData->prepared_by_date)->format('Y-m-d');
+        }
+
+        if (!empty($reportData->checked_by_date)) {
+            $checkedByDate = \Carbon\Carbon::parse($reportData->checked_by_date)->format('Y-m-d');
+        }
+
+        if (!empty($reportData->approved_by_date)) {
+            $approvedByDate = \Carbon\Carbon::parse($reportData->approved_by_date)->format('Y-m-d');
+        }
+
+        $preparedFirstFontSize = $this->resolveFontSize($reportData->prepared_by_firstname ?? '');
+        $preparedLastFontSize  = $this->resolveFontSize($reportData->prepared_by_surname ?? '');
+        $checkedFirstFontSize = $this->resolveFontSize($reportData->checked_by_firstname ?? '');
+        $checkedLastFontSize  = $this->resolveFontSize($reportData->checked_by_surname ?? '');
+        $approvedFirstFontSize = $this->resolveFontSize($reportData->approved_by_firstname ?? '');
+        $approvedLastFontSize  = $this->resolveFontSize($reportData->approved_by_surname ?? '');
+
+        // === SORTED NOTE REASON LOGIC ===
+        $noteReasonRaw = json_decode($reportData->note_reason_reject ?? '[]', true);
+
+        // If it's just a plain string (like a line of text), fallback to array
+        if (!is_array($noteReasonRaw)) {
+            $noteReasonRaw = explode("\n", $reportData->note_reason_reject);
+            $noteReasonRaw = array_filter(array_map('trim', $noteReasonRaw));
+        }
+
+        // Define custom priority order (lower number = higher priority)
+        $priorityOrder = [
+            "- N.G Br-4PIa" => 1,
+            "- N.G iHc"     => 2,
+            "- N.G Hr95"    => 3,
+            "- N.G Hr98"    => 4,
+            // fallback/default is 99
+        ];
+
+        // Sort using priority
+        usort($noteReasonRaw, function ($a, $b) use ($priorityOrder) {
+            $aPriority = $priorityOrder[$a] ?? 99;
+            $bPriority = $priorityOrder[$b] ?? 99;
+            return $aPriority - $bPriority;
+        });
+
+        $coatingDetails = json_decode($coatingData->coating_data, true);
+        if (!$coatingDetails) {
+            return response()->json([
+                'status' => false,
+                'message' => "Coating Data for serial: {$serial} is invalid or missing",
+            ], 404);
+        }
+
+        $tpmCategories = TPMDataCategory::where('tpm_data_serial', $serial)->first();
+        $tpmData = TPMData::where('serial_no', $serial)->first();
+        if (!$tpmCategories || !$tpmData) {
+            return response()->json([
+                'status' => false,
+                'message' => "TPM Data for serial: {$serial} is invalid or missing",
+            ], 404);
+        }
+
+        $data = [
+            'serial' => $serial,
+            'chartFilename' => $chartFilename, // pass to Blade
+            'reportData' => $reportData, // pass report data to Blade
+            'magneticProperty' => $magneticProperty,
+            'brBounds' => $brBounds,
+            'brVariance' => $brVariance,
+            'ihcVariance' => $ihcVariance,
+            'ihkVariance' => $ihkVariance,
+            'coatingData' => $coatingData, // pass coating data to Blade
+            'heatTreatmentData' => $HTData, // pass heat treatment data to Blade
+            'preparedByDate' => $preparedByDate, // pass prepared by
+            'checkedByDate' => $checkedByDate, // pass checked by date
+            'approvedByDate' => $approvedByDate, // pass approved by date
+            'preparedFirstFontSize' => $preparedFirstFontSize, // pass font size for first name
+            'preparedLastFontSize' => $preparedLastFontSize, // pass font size for
+            'checkedFirstFontSize' => $checkedFirstFontSize, // pass font size for checked first name
+            'checkedLastFontSize' => $checkedLastFontSize, // pass font size for
+            'approvedFirstFontSize' => $approvedFirstFontSize, // pass font size for approved first name
+            'approvedLastFontSize' => $approvedLastFontSize, // pass font size for
+            'noteReasonsSorted' => $noteReasonRaw, // pass sorted note reasons
+            'coatingDetails' => $coatingDetails, // pass coating details
+            'tpmCat' => $tpmCategories, // pass TPM categories
+            'tpmData' => $tpmData, // pass TPM data
+            'magnetBoxLocation' => $MBL, // pass magnet box location
+        ];
+
+        $portrait = Pdf::loadView('pdf.report_page1_portrait', $data)
+            ->setPaper('a4', 'portrait')
+            ->output();
+
+        $landscape = Pdf::loadView('pdf.report_page2_landscape', $data)
+            ->setPaper('a4', 'landscape')
+            ->output();
+
+        $merger = new Merger();
+        $merger->addRaw($portrait);
+        $merger->addRaw($landscape);
+        $mergedPdf = $merger->merge();
+
+        return response($mergedPdf, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="report.pdf"');
+    }
+
+    
+    private function resolveFontSize(string $name): string
+    {
+        if (empty(trim($name))) return '14px';
+
+        $length = strlen(trim($name));
+
+        return match (true) {
+            $length <= 4  => '17px',
+            $length === 5 => '16px',
+            $length === 6 => '15px',
+            $length === 7 => '14px',
+            $length === 8 => '13px',
+            $length === 9 => '12px',
+            $length === 10 => '11px',
+            $length === 11 => '10px',
+            $length === 12 => '9px',
+            $length === 13 => '8px',
+            default       => '9px',
+        };
     }
 }

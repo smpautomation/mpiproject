@@ -272,6 +272,34 @@
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
+
+                            <!-- Time Start -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingTimeStart" class="mb-1 text-sm font-medium text-gray-700">
+                                    Time Start:
+                                </label>
+                                <input
+                                    v-model="reportCoatingTimeStart"
+                                    type="time"
+                                    name="coatingTimeStart"
+                                    id="coatingTimeStart"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <!-- Time Finish -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingTimeFinish" class="mb-1 text-sm font-medium text-gray-700">
+                                    Time Finish:
+                                </label>
+                                <input
+                                    v-model="reportCoatingTimeFinish"
+                                    type="time"
+                                    name="coatingTimeFinish"
+                                    id="coatingTimeFinish"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
                         </div>
 
                         <!-- Coating Row 2 -->
@@ -329,6 +357,21 @@
                                     type="text"
                                     name="coatingUnloaderOperator"
                                     id="coatingUnloaderOperator"
+                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
+
+                            <!-- Checker Operator -->
+                            <div class="flex flex-col w-[12rem]">
+                                <label for="coatingUnloaderOperator" class="mb-1 text-sm font-medium text-gray-700">
+                                    Checker Operator:
+                                </label>
+                                <input
+                                    v-model="reportCoatingCheckerOperator"
+                                    @input="reportCoatingCheckerOperator = reportCoatingCheckerOperator.toUpperCase()"
+                                    type="text"
+                                    name="coatingCheckerOperator"
+                                    id="coatingCheckerOperator"
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
@@ -449,7 +492,6 @@
                         </table>
 
 
-
                         <div class="flex flex-col mt-4 ml-20">
 
                             <div class="flex flex-row">
@@ -493,6 +535,7 @@
                                 </label>
                                 <input
                                     v-model="reportCoatingRemarks"
+                                    @input="reportCoatingRemarks = reportCoatingRemarks.toUpperCase()"
                                     type="text"
                                     name="coatingRemarks"
                                     id="coatingRemarks"
@@ -2281,6 +2324,9 @@ const reportCoatingMinTbContent = ref('NA');
 const reportCoatingSlurryLotNo = ref('NA');
 const reportCoatingSampleQuantity = ref('NA');
 const reportCoatingRemarks = ref('NA');
+const reportCoatingCheckerOperator = ref('NA');
+const reportCoatingTimeStart = ref(null);
+const reportCoatingTimeFinish = ref(null);
 const reportCoatingAmounts = ref([]);
 const reportConcentrationValues = ref([]);
 const reportCoatingModuleMaximum = ref(0);
@@ -2378,13 +2424,13 @@ const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
 
 const modules = reactive([
-  { name: 'M-01', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
-  { name: 'M-02', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
-  { name: 'M-03', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
-  { name: 'M-04', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
-  { name: 'M-05', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
-  { name: 'M-06', new: 'NA', homo: 'NA', time: 'NA', liters: 'NA' },
-])
+    { name: 'M-01', new: '', homo: '', time: '', liters: '' },
+    { name: 'M-02', new: '', homo: '', time: '', liters: '' },
+    { name: 'M-03', new: '', homo: '', time: '', liters: '' },
+    { name: 'M-04', new: '', homo: '', time: '', liters: '' },
+    { name: 'M-05', new: '', homo: '', time: '', liters: '' },
+    { name: 'M-06', new: '', homo: '', time: '', liters: '' },
+]);
 
 // Method to dynamically adjust font size based on string length
 const getFontSize = (name) => {
@@ -3151,24 +3197,16 @@ const showReportData = async () => {
         //console.log("With carmark value: ",isAutomotive.value);
 
         //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
-        if(inspectionOvenMachineNo.value == 0){
-            reportTimeLoading.value = 'NA';
-            reportTimeUnloading.value = 'NA';
-            reportTemperature_TimeLoading.value = 'NA';
-            reportTemperature_TimeUnloading.value = 'NA';
-            reportDate_OvenInfo.value = 'NA';
-            reportShift_OvenInfo.value = 'NA';
-            reportOperator_OvenInfo.value = 'NA';
-        }else{
-            reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
-            reportTimeLoading.value = filterBySerial[0].time_loading;
-            reportTimeUnloading.value = filterBySerial[0].time_unloading;
-            reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
-            reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
-            reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
-            reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
-            reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
-        }
+
+        reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
+        reportTimeLoading.value = filterBySerial[0].time_loading;
+        reportTimeUnloading.value = filterBySerial[0].time_unloading;
+        reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
+        reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
+        reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
+        reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
+        reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
+        
 
         reportStdDev.value = filterBySerial[0].std_dev;
         //console.log('reportStdDev:', reportStdDev.value);
@@ -3322,6 +3360,9 @@ const showReportData = async () => {
         reportCoatingSampleQuantity.value = c.sample_qty ?? 'NA';
         reportCoatingTotalMagnetWeight.value = c.total_magnet_weight ?? 'NA';
         reportCoatingUnloaderOperator.value = c.unloader_operator ?? 'NA';
+        reportCoatingCheckerOperator.value = c.checker_operator ?? 'NA';
+        reportCoatingTimeStart.value = c.time_start ?? null;
+        reportCoatingTimeFinish.value = c.time_finish ?? null;
         reportCoatingModuleMaximum.value = c.maximum ?? 0;
         reportCoatingModuleMinimum.value = c.minimum ?? 0;
         reportCoatingModuleAverage.value = c.average ?? 0;
@@ -3558,9 +3599,13 @@ const saveReport = async () => {
         "sample_qty":reportCoatingSampleQuantity.value,
         "total_magnet_weight":reportCoatingTotalMagnetWeight.value,
         "unloader_operator":reportCoatingUnloaderOperator.value,
+        "checker_operator":reportCoatingCheckerOperator.value,
+        "time_start":reportCoatingTimeStart.value,
+        "time_finish":reportCoatingTimeFinish.value,
         "maximum":reportCoatingModuleMaximum.value,
         "minimum":reportCoatingModuleMinimum.value,
         "average":reportCoatingModuleAverage.value,
+        "remarks":reportCoatingRemarks.value,
 
         "coating_data": {
             ...coatingData,         // structured key-value object
@@ -3581,10 +3626,10 @@ const saveReport = async () => {
         "loader": reportHTLoader.value,
         "date_finish": reportHTDateFinish.value,
         "time_finish": reportHTTimeFinish.value,
-
         "unloader": reportHTUnloader.value,
         "cycle_pattern": reportHTCyclePattern.value,
         "current_pattern": reportHTCurrentPattern.value,
+        "remarks": reportHTRemarks.value,
         "magnet_box_location":{
             "box_a": reportHT_MBLA.value,
             "box_b": reportHT_MBLB.value,

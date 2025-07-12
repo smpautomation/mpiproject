@@ -19,22 +19,14 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             padding: 30px;
         }
-        .header {
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        .header img {
-            max-width: 100px;     /* limits width */
-            height: 50px;         /* maintain aspect ratio */
+        img {
+            max-width: 100px;
+            height: 50px;
             margin-bottom: 15px;
         }
-        .header h1 {
+        h1 {
             color: #4a90e2;
             margin: 10px 0 0;
-        }
-        .content {
-            padding: 20px 0;
         }
         .attachments {
             margin-top: 20px;
@@ -69,55 +61,56 @@
             padding-top: 20px;
             border-top: 1px solid #eee;
         }
-        .footer img {
-            max-width: 50px;    /* smaller size for footer logo */
-            height: auto;
-            margin-top: 50px;
-        }
     </style>
 </head>
 <body>
-    <div class="email-container">
-        <div class="header">
-            <img src="{{ asset('photo/shinetsu.png') }}" alt="Company Logo">
-            <h1>Hello!, </h1>
-        </div>
+    <table class="email-container" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td align="center" style="border-bottom: 1px solid #eee; padding-bottom: 20px;">
+                <img src="{{ asset('photo/shinetsu_try.png') }}" alt="Company Logo">
+                <h1>Hello!</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px 0;">
+                @if(!empty($customMessage))
+                    <div style="margin-top: 20px;">
+                        {!! $customMessage !!}
+                    </div>
+                @endif
 
-        <div class="content">
-            @if(!empty($customMessage))
-                <div class="custom-message" style="margin-top: 20px;">
-                    {!! $customMessage !!}
+                <div class="attachments">
+                    <p>Please find the attached PDF file(s) for your reference.</p>
+                    <p>If you were expecting specific documents and cannot find them, please contact support.</p>
                 </div>
-            @endif
 
-            <div class="attachments">
-                <p>Please find the attached PDF file(s) for your reference.</p>
-                <p>If you were expecting specific documents and cannot find them, please contact support.</p>
-            </div>
+                <div class="contact">
+                    <h3>Contact Support</h3>
+                    <p><strong>Email:</strong> ae@smp.com.ph; misd@smp.com.ph</p>
+                    <p><strong>Phone:</strong> (049) 541 3190</p>
+                    <p><strong>Hours:</strong> Monday – Friday, 6:00 AM – 6:00 PM (GMT+8)</p>
+                </div>
+            </td>
+        </tr>
 
-            <div class="contact">
-                <h3>Contact Support</h3>
-                <p><strong>Email:</strong> ae@smp.com.ph; misd@smp.com.ph</p>
-                <p><strong>Phone:</strong> (049) 541 3190</p>
-                <p><strong>Hours:</strong> Monday – Friday, 6:00 AM – 6:00 PM (GMT+8)</p>
-            </div>
-        </div>
         @php
             $parts = explode(' ', $massPro);
             $actualFurnaceNo = $parts[0] ?? null;
             $actualMassPro = $parts[1] ?? null;
         @endphp
 
-        <div class="footer">
-            <p>This is an automated message. Please do not reply directly to this email.</p>
-            <p>&copy; 2025 Automation Engineering Department. All rights reserved.</p>
-            {{-- Department or System Footer Logo --}}
+        <tr>
+            <td class="footer">
+                <p>This is an automated message. Please do not reply directly to this email.</p>
+                <p>&copy; 2025 Automation Engineering Department. All rights reserved.</p>
 
-            {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
-            {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
-            {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
+                {{-- Optional logo --}}
+                {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
 
-        </div>
-    </div>
+                {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
+                {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

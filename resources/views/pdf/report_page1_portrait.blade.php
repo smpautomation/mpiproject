@@ -4,73 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Page 1</title>
-<style>
-    @page {
-        size: A4 portrait;
-        margin-top: 7mm;
-        margin-left: 15mm;
-        margin-right: 15mm;
-    }
+    <style>
+        @page {
+            size: A4 portrait;
+            margin-top: 7mm;
+            margin-left: 15mm;
+            margin-right: 15mm;
+        }
 
-    body { //reset
-        margin: 0;
-        padding: 0;
-    }
+        body { //reset
+            margin: 0;
+            padding: 0;
+        }
 
-    * {
-        box-sizing: border-box;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    .table-block {
-        display: table;
-        width: 100%;
-        border-spacing: 0;
-        border-collapse: collapse;
-        margin-top: 2px;
-        margin-left: 2px;
-        padding: 0;
-    }
+        .table-block {
+            display: table;
+            width: 100%;
+            border-spacing: 0;
+            border-collapse: collapse;
+            margin-top: 2px;
+            margin-left: 2px;
+            padding: 0;
+        }
 
-    .table-row {
-        display: table-row;
-    }
+        .table-row {
+            display: table-row;
+        }
 
-    .table-cell {
-        display: table-cell;
-        font-size: 10px;
-        padding: 0 2px;
-    }
+        .table-cell {
+            display: table-cell;
+            font-size: 10px;
+            padding: 0 2px;
+        }
 
-    .bold {
-        font-weight: bold;
-    }
+        .bold {
+            font-weight: bold;
+        }
 
-    .underline {
-        border-bottom: 1px solid black;
-        display: inline-block;
-        min-width: 80px;
-    }
+        .underline {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            min-width: 80px;
+        }
 
-    table.print-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: auto;
-        font-size: 8px;
-    }
+        table.print-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+            font-size: 8px;
+        }
 
-    table.print-table th,
-    table.print-table td {
-        border: 1px solid #000;
-        padding: 1px 2px;
-        text-align: center;
-    }
+        table.print-table th,
+        table.print-table td {
+            border: 1px solid #000;
+            padding: 1px 2px;
+            text-align: center;
+        }
 
-    table.print-table thead {
-        background-color: #f0f0f0;
-        font-weight: bold;
-    }
+        table.print-table thead {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
 
-</style>
+    </style>
 </head>
 <body>
     <div style="float:left; width:25%;">
@@ -115,38 +115,38 @@
         <div class="table-block">
             <div class="table-row">
                 <div class="table-cell">Coating Date:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->date }}</span></div>
                 <div class="table-cell">Coating Machine No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->machine_no }}</span></div>
                 <div class="table-cell">Slurry Lot No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->slurry_lot_no }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell">MIN. TB CONTENT:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->min_tb_content }}</span></div>
                 <div class="table-cell">Sample Quantity:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->sample_qty }}</span></div>
                 <div class="table-cell">Total Magnet Weight:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->total_magnet_weight }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell">Loader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->loader_operator }}</span></div>
                 <div class="table-cell">Unloader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->unloader_operator }}</span></div>
                 <div class="table-cell">Checker Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->checker_operator }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
                 <div class="table-cell"></div>
                 <div class="table-cell">Time Start:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_start }}</span></div>
                 <div class="table-cell">Time Finished:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_finish }}</span></div>
             </div>
 
             <div class="table-row">
@@ -169,101 +169,101 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>1</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['1_M01_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['1_M01_Concentration'] ?? null }}</td>
                                 <td>M-01</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>2</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['2_M02_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['2_M02_Concentration'] ?? null }}</td>
                                 <td>M-02</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>3</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['3_M03_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['3_M03_Concentration'] ?? null }}</td>
                                 <td>M-03</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>4</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['4_M04_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['4_M04_Concentration'] ?? null }}</td>
                                 <td>M-04</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>5</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['5_M05_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['5_M05_Concentration'] ?? null }}</td>
                                 <td>M-05</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['1to5_M06_1_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['1to5_M06_2_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>6</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['6_M01_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['6_M01_Concentration'] ?? null }}</td>
                                 <td>M-01</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>7</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['7_M02_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['7_M02_Concentration'] ?? null }}</td>
                                 <td>M-02</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>8</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['8_M03_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['8_M03_Concentration'] ?? null }}</td>
                                 <td>M-03</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>9</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['9_M04_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['9_M04_Concentration'] ?? null }}</td>
                                 <td>M-04</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>10</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['10_M05_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['10_M05_Concentration'] ?? null }}</td>
                                 <td>M-05</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['6to10_M06_3_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['6to10_M06_4_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                         </tbody>
@@ -284,101 +284,101 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>11</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['11_M01_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['11_M01_Concentration'] ?? null }}</td>
                                 <td>M-01</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>12</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['12_M02_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['12_M02_Concentration'] ?? null }}</td>
                                 <td>M-02</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>13</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['13_M03_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['13_M03_Concentration'] ?? null }}</td>
                                 <td>M-03</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>14</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['14_M04_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['14_M04_Concentration'] ?? null }}</td>
                                 <td>M-04</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>15</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['15_M05_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['15_M05_Concentration'] ?? null }}</td>
                                 <td>M-05</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['11to15_M06_5_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['11to15_M06_6_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>16</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['16_M01_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['16_M01_Concentration'] ?? null }}</td>
                                 <td>M-01</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>17</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['17_M02_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['17_M02_Concentration'] ?? null }}</td>
                                 <td>M-02</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>18</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['18_M03_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['18_M03_Concentration'] ?? null }}</td>
                                 <td>M-03</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>19</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['19_M04_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['19_M04_Concentration'] ?? null }}</td>
                                 <td>M-04</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>20</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['20_M05_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['20_M05_Concentration'] ?? null }}</td>
                                 <td>M-05</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['16to20_M06_7_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['16to20_M06_8_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                         </tbody>
@@ -398,101 +398,101 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>21</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['21_M01_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['21_M01_Concentration'] ?? null }}</td>
                                 <td>M-01</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>22</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['22_M02_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['22_M02_Concentration'] ?? null }}</td>
                                 <td>M-02</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>23</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['23_M03_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['23_M03_Concentration'] ?? null }}</td>
                                 <td>M-03</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>24</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['24_M04_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['24_M04_Concentration'] ?? null }}</td>
                                 <td>M-04</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>25</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['25_M05_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['25_M05_Concentration'] ?? null }}</td>
                                 <td>M-05</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['21to25_M06_9_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['21to25_M06_10_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>26</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['26_M01_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['26_M01_Concentration'] ?? null }}</td>
                                 <td>M-01</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>27</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['27_M02_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['27_M02_Concentration'] ?? null }}</td>
                                 <td>M-02</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>28</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['28_M03_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['28_M03_Concentration'] ?? null }}</td>
                                 <td>M-03</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>29</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['29_M04_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['29_M04_Concentration'] ?? null }}</td>
                                 <td>M-04</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
                                 <td>30</td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['30_M05_Amount'] ?? null }}</td>
+                                <td>{{ $coatingDetails['30_M05_Concentration'] ?? null }}</td>
                                 <td>M-05</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['26to30_M06_11_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                             <tr>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
                                 <td style="border: none;"></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['26to30_M06_12_Concentration'] ?? null }}</td>
                                 <td>M-06</td>
                             </tr>
                         </tbody>
@@ -517,45 +517,45 @@
                         <tbody>
                             <tr>
                                 <td>M-01</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['add_slurry_m-01_new'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-01_homo'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-01_time'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-01_liters'] }}</td>
                             </tr>
                             <tr>
                                 <td>M-02</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['add_slurry_m-02_new'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-02_homo'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-02_time'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-02_liters'] }}</td>
                             </tr>
                             <tr>
                                 <td>M-03</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['add_slurry_m-03_new'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-03_homo'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-03_time'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-03_liters'] }}</td>
                             </tr>
                             <tr>
                                 <td>M-04</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['add_slurry_m-04_new'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-04_homo'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-04_time'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-04_liters'] }}</td>
                             </tr>
                             <tr>
                                 <td>M-05</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['add_slurry_m-05_new'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-05_homo'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-05_time'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-05_liters'] }}</td>
                             </tr>
                             <tr>
                                 <td>M-06</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $coatingDetails['add_slurry_m-06_new'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-06_homo'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-06_time'] }}</td>
+                                <td>{{ $coatingDetails['add_slurry_m-06_liters'] }}</td>
                             </tr>
                             <tr>
                                 <td> - </td>
@@ -598,7 +598,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">NA</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->maximum }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -608,7 +608,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">NA</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->minimum }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -618,7 +618,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">AVERAGE:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">NA</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->average }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -630,7 +630,11 @@
             <tr>
                 <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
                 <td style="width: 100%;">
-                    <div style="border-bottom: 1px solid black; height: 9px;"></div>
+                    <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
+                        <span style="display: inline-block; margin-bottom: -1px;">
+                            {{ $coatingData->remarks }}
+                        </span>
+                    </div>
                     <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
                 </td>
             </tr>
@@ -645,38 +649,45 @@
         <div class="table-row">
 
             <!-- Column 1: Labels -->
-            <div class="table-cell" style="font-size:8px; vertical-align: top; width: 13%; padding: 0 1px 0 0;">
-                <div style="margin-bottom: 2px;">Furnace Machine:</div>
-                <div style="margin-bottom: 2px;">CYCLE No:</div>
-                <div style="margin-bottom: 2px;">BATCH CYCLE No:</div>
-                <div style="margin-bottom: 2px;">PATTERN No:</div>
-                <div style="margin-bottom: 2px;">DATE START:</div>
-                <div style="margin-bottom: 2px;">TIME START:</div>
-                <div style="margin-bottom: 2px;">LOADER:</div>
-                <div style="margin-bottom: 2px;">DATE FINISH:</div>
-                <div style="margin-bottom: 2px;">TIME FINISH:</div>
-                <div style="margin-bottom: 2px;">UNLOADER:</div>
-                <div style="margin-bottom: 2px;">Cycle Pattern:</div>
-                <div style="margin-bottom: 2px;">Current Pattern:</div>
+            <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
+
+                @php
+                    $rows = [
+                        ['Furnace Machine:', $heatTreatmentData->furnace_machine ?? null],
+                        ['CYCLE No:', $heatTreatmentData->cycle_no ?? null],
+                        ['BATCH CYCLE No:', $heatTreatmentData->batch_cycle_no ?? null],
+                        ['PATTERN No:', $heatTreatmentData->pattern_no ?? null],
+                        ['DATE START:', $heatTreatmentData->date_start ?? 'NA'],
+                        ['TIME START:', $heatTreatmentData->time_start ?? 'NA'],
+                        ['LOADER:', $heatTreatmentData->loader ?? null],
+                        ['DATE FINISH:', $heatTreatmentData->date_finish ?? 'NA'],
+                        ['TIME FINISH:', $heatTreatmentData->time_finish ?? 'NA'],
+                        ['UNLOADER:', $heatTreatmentData->unloader ?? null],
+                        ['Cycle Pattern:', $heatTreatmentData->cycle_pattern ?? null],
+                        ['Current Pattern:', $heatTreatmentData->current_pattern ?? null],
+                    ];
+                @endphp
+
+                @foreach($rows as [$label, $value])
+                    <div class="table-row" style="display: table-row; vertical-align: top;">
+                        <!-- Label -->
+                        <div class="table-cell" style="display: table-cell; width: 40%; padding-right: 2px; height: 12px; line-height: 12px; vertical-align: top;">
+                            {{ $label }}
+                        </div>
+                        <!-- Value -->
+                        <div class="table-cell" style="display: table-cell; width: 60%; height: 12px; line-height: 12px; vertical-align: top; border-bottom: 1px solid black;">
+                            {{ $value }}
+                        </div>
+                    </div>
+                @endforeach
+
             </div>
 
-            <!-- Column 2: Underlines -->
-            <div class="table-cell" style="font-size:8px; vertical-align: top; width: 12%; padding: 0; margin: 0;">
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-                <div style="margin-bottom: 2px;"><span class="underline">NA</span></div>
-            </div>
+            <!-- spacer -->
+            <div style="vertical-align: top; width: 25%;">&nbsp;</div>
 
             <!-- Column 3: Table -->
-            <div class="table-cell" style="vertical-align: top; width: 73%;">
+            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px;">
                  <table class="print-table">Add commentMore actions
                         <thead>
                             <tr>
@@ -699,145 +710,19 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td rowspan="10" style="margin: 0px; padding: 0px;">No. of Layer</td>
-                                <td>9.5</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td style="margin: 0px; padding: 0px;">No. of Layer</td>
+                                <td>{{ $tpmData->layer_no }}</td>
+                                <td>{{ $heatTreatmentData->box_a }}</td>
+                                <td>{{ $heatTreatmentData->box_b }}</td>
+                                <td>{{ $heatTreatmentData->box_c }}</td>
+                                <td>{{ $heatTreatmentData->box_d }}</td>
+                                <td>{{ $heatTreatmentData->box_e }}</td>
+                                <td>{{ $heatTreatmentData->box_f }}</td>
+                                <td>{{ $heatTreatmentData->box_g }}</td>
+                                <td>{{ $heatTreatmentData->box_h }}</td>
+                                <td>{{ $heatTreatmentData->box_j }}</td>
+                                <td>{{ $heatTreatmentData->box_k }}</td>
+                                <td>{{ $heatTreatmentData->box_l }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -848,7 +733,11 @@
         <tr>
             <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
             <td style="width: 100%;">
-                <div style="border-bottom: 1px solid black; height: 9px;"></div>
+                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
+                    <span style="display: inline-block; margin-bottom: -1px;">
+                        {{ $heatTreatmentData->remarks }}
+                    </span>
+                </div>
                 <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
             </td>
         </tr>
@@ -860,40 +749,40 @@
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell">Oven Machine No:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->oven_machine_no ?? 'NA' }}</span></div>
             <div class="table-cell">Date:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->date_oven_info ?? 'NA' }}</span></div>
             <div class="table-cell">Shift:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->shift_oven_info ?? 'NA' }}</span></div>
         </div>
 
         <div class="table-row">
             <div class="table-cell">Time Loading:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->time_loading ?? 'NA' }}</span></div>
             <div class="table-cell">Time Unloading:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->time_unloading ?? 'NA' }}</span></div>
             <div class="table-cell">Operator:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->operator_oven_info ?? 'NA' }}</span></div>
         </div>
 
         <div class="table-row">
             <div class="table-cell">Temperature:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->temp_time_loading ?? 'NA' }}</span></div>
             <div class="table-cell">Temperature:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->temp_time_unloading ?? 'NA' }}</span></div>
         </div>
     </div> <!-- End of Oven Heating Info -->
     <label class="bold" style="font-size: 12px; padding-left: 1px;">MAGNETIC PROPERTY INSPECTION INFORMATION</label>
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell">Pulse Tracer Machine No:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->pulse_tracer_machine_number ?? 'NA' }}</span></div>
             <div class="table-cell">Date:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->date ?? 'NA' }}</span></div>
             <div class="table-cell">Shift:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->shift ?? 'NA' }}</span></div>
             <div class="table-cell">Operator:</div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->operator ?? 'NA' }}</span></div>
         </div>
     </div>
     <div class="table-block">
@@ -913,7 +802,7 @@
                                 LENGTH (mm)
                             </td>
                             <td>
-                                NA
+                                {{ $reportData->length ?? 'NA' }}
                             </td>
                         </tr>
                         <tr>
@@ -921,7 +810,7 @@
                                 WIDTH (mm)
                             </td>
                             <td>
-                                NA
+                                {{ $reportData->width ?? 'NA' }}
                             </td>
                         </tr>
                         <tr>
@@ -929,7 +818,7 @@
                                 THICKNESS (mm)
                             </td>
                             <td>
-                                NA
+                                {{ $reportData->thickness ?? 'NA' }}
                             </td>
                         </tr>
                         <tr>
@@ -937,7 +826,7 @@
                                 MATERIAL GRADE
                             </td>
                             <td>
-                                NA
+                                {{ $reportData->material_grade ?? 'NA' }}
                             </td>
                         </tr>
                         <tr>
@@ -945,7 +834,7 @@
                                 MPI Sample Qty.
                             </td>
                             <td>
-                                NA
+                                {{ $reportData->mpi_sample_quantity ?? 'NA' }}
                             </td>
                         </tr>
                     </tbody>
@@ -980,31 +869,31 @@
                             <td>
                                 Br (G)
                             </td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
+                            <td>{{ $brBounds['lower'] ?? 'NA' }} ~ {{ $brBounds['upper'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['brAverage'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['brMaximum'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['brMinimum'] ?? 'NA' }}</td>
+                            <td>{{ $brVariance ?? 'NA' }}</td>
                         </tr>
                         <tr>
                             <td>
                                 iHc (Oe)
                             </td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
+                            <td>{{ $magneticProperty['ihcStandard'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihcAverage'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihcMaximum'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihcMinimum'] ?? 'NA' }}</td>
+                            <td>{{ $ihcVariance ?? 'NA' }}</td>
                         </tr>
                         <tr>
                             <td>
                                 iHk (Oe)
                             </td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
+                            <td>{{ $magneticProperty['ihkStandard'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihkAverage'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihkMaximum'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihkMinimum'] ?? 'NA' }}</td>
+                            <td>{{ $ihkVariance ?? 'NA' }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1018,8 +907,16 @@
                     <tr>
                         <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
                         <td style="width: 100%;">
-                            <div style="border-bottom: 1px solid black; height: 9px;"></div>
-                            <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
+                            <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
+                                <span style="display: inline-block; margin-bottom: -1px;">
+                                    {{ $reportData->remarks2 }}, {{ $reportData->remarks3 }}
+                                </span>
+                            </div>
+                            <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; color: #0066ff; line-height: 9px;">
+                                <span style="display: inline-block; margin-bottom: -1px;">
+                                    {{ $reportData->remarks }}
+                                </span>
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -1041,8 +938,18 @@
                 <tr>
 
                     <!-- Spacer -->
-                    <td style="width: 6%;"></td>
+                    <td style="width: 4%;"></td>
 
+                    @php
+                        $judgement = strtoupper(trim($reportData->smp_judgement));
+                        $stampPath = match ($judgement) {
+                            'REJECT' => public_path('photo/reject_stamp.png'),
+                            'HOLD'   => public_path('photo/hold_stamp.png'),
+                            '', null, 'NULL' => public_path('photo/template.png'),
+                            default   => public_path('photo/pass_stamp.png'),
+                        };
+                    @endphp
+                    
                     <td style="width: 18%; padding: 0;">
                         <table style="width: 100%; border: 1px solid black; text-align: center; border-collapse: collapse;">
                             <thead style="border-bottom: 1px solid black; font-size: 9px;">
@@ -1053,9 +960,9 @@
                             <tbody>
                                 <tr>
                                     <td style="height: 50px; vertical-align: middle; padding: 0;">
-                                        <img src="{{ public_path('photo/pass_stamp.png') }}"
+                                        <img src="{{ $stampPath }}"
                                             style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
-                                            alt="Pass Stamp">
+                                            alt="Stamp">
                                     </td>
                                 </tr>
                             </tbody>
@@ -1063,17 +970,121 @@
                     </td>
 
                     <!-- Spacer -->
-                    <td style="width: 8%;"></td>
+                    <td style="width: 2%;"></td>
 
-                    <td style="width: 18%;">
-                        <table style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
-                            <thead style="border-bottom: 1px solid black; font-size: 10px;"><tr><th>Prepared By</th></tr></thead>
+                    <td style="width: 18%; vertical-align: top;">
+                        <table style="border: 1px solid black; width: 120%; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 10px;">
+                                <tr>
+                                    <th style="padding: 2px;">Prepared By</th>
+                                </tr>
+                            </thead>
                             <tbody>
                                 <tr>
-                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
-                                        <img src="{{ public_path('photo/template.png') }}"
-                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
-                                            alt="Approver Stamp">
+                                    {{-- Add horizontal padding inside cell --}}
+                                    <td style="height: 50px; vertical-align: middle; padding: 0 5px; position: relative;">
+                                        @php
+                                            $hasPreparedName = !empty($reportData->prepared_by_firstname) || !empty($reportData->prepared_by_surname);
+                                        @endphp
+
+                                        @if ($hasPreparedName)
+                                            <div style="position: relative; width: 100%; height: 60px;">
+                                                {{-- Adjusted template position --}}
+                                                <img src="{{ public_path('photo/template.png') }}"
+                                                    style="position: absolute; top: -6px; left: 0; width: 100%; height: 70px;"
+                                                    alt="Stamp Overlay">
+
+                                                <div style="
+                                                    position: relative;
+                                                    font-weight: bold;
+                                                    color: #dc2626;
+                                                    font-size: 13px;
+                                                    line-height: 1.2;
+                                                    text-align: center;
+                                                ">
+                                                    @if (!empty($reportData->prepared_by_firstname))
+                                                        <div style="font-size: {{ $preparedFirstFontSize }}; margin-bottom: 2px;">
+                                                            {{ $reportData->prepared_by_firstname }}
+                                                        </div>
+                                                    @endif
+                                                    @if (!empty($reportData->prepared_by_date))
+                                                        <div style="margin: 4px 0;">{{ $preparedByDate }}</div>
+                                                    @endif
+                                                    @if (!empty($reportData->prepared_by_surname))
+                                                        <div style="font-size: {{ $preparedLastFontSize }};">
+                                                            {{ $reportData->prepared_by_surname }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @else
+                                            <img src="{{ public_path('photo/template.png') }}"
+                                                style="height: 60px; margin: -5px 3px;"
+                                                alt="Prepared By Stamp">
+                                        @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+
+
+
+
+
+                    <!-- Spacer -->
+                    <td style="width: 4%;"></td>
+
+                    <td style="width: 18%; vertical-align: top;">
+                        <table style="border: 1px solid black; width: 120%; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 10px;">
+                                <tr>
+                                    <th style="padding: 2px;">Checked By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    {{-- Add horizontal padding inside cell --}}
+                                    <td style="height: 50px; vertical-align: middle; padding: 0 5px; position: relative;">
+                                        @php
+                                            $hasCheckedName = !empty($reportData->checked_by_firstname) || !empty($reportData->checked_by_surname);
+                                        @endphp
+
+                                        @if ($hasCheckedName)
+                                            <div style="position: relative; width: 100%; height: 60px;">
+                                                {{-- Adjusted template position --}}
+                                                <img src="{{ public_path('photo/template.png') }}"
+                                                    style="position: absolute; top: -6px; left: 0; width: 100%; height: 70px;"
+                                                    alt="Stamp Overlay">
+
+                                                <div style="
+                                                    position: relative;
+                                                    font-weight: bold;
+                                                    color: #dc2626;
+                                                    font-size: 13px;
+                                                    line-height: 1.2;
+                                                    text-align: center;
+                                                ">
+                                                    @if (!empty($reportData->checked_by_firstname))
+                                                        <div style="font-size: {{ $checkedFirstFontSize }}; margin-bottom: 2px;">
+                                                            {{ $reportData->checked_by_firstname }}
+                                                        </div>
+                                                    @endif
+                                                    @if (!empty($reportData->checked_by_date))
+                                                        <div style="margin: 4px 0;">{{ $checkedByDate }}</div>
+                                                    @endif
+                                                    @if (!empty($reportData->checked_by_surname))
+                                                        <div style="font-size: {{ $checkedLastFontSize }};">
+                                                            {{ $reportData->checked_by_surname }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @else
+                                            <img src="{{ public_path('photo/template.png') }}"
+                                                style="height: 60px; margin: -5px 3px;"
+                                                alt="Checked By Stamp">
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -1083,33 +1094,56 @@
                     <!-- Spacer -->
                     <td style="width: 4%;"></td>
 
-                    <td style="width: 18%;">
-                        <table style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
-                            <thead style="border-bottom: 1px solid black; font-size: 10px;"><tr><th>Checked By</th></tr></thead>
-                            <tbody>
+                    <td style="width: 18%; vertical-align: top;">
+                        <table style="border: 1px solid black; width: 120%; text-align: center; border-collapse: collapse;">
+                            <thead style="border-bottom: 1px solid black; font-size: 10px;">
                                 <tr>
-                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
-                                        <img src="{{ public_path('photo/template.png') }}"
-                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
-                                            alt="Approver Stamp">
-                                    </td>
+                                    <th style="padding: 2px;">Approved By</th>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </td>
-
-                    <!-- Spacer -->
-                    <td style="width: 4%;"></td>
-
-                    <td style="width: 18%;">
-                        <table style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
-                            <thead style="border-bottom: 1px solid black; font-size: 10px;"><tr><th>Approved By</th></tr></thead>
+                            </thead>
                             <tbody>
                                 <tr>
-                                    <td style="height: 50px; vertical-align: middle; padding: 0;">
-                                        <img src="{{ public_path('photo/template.png') }}"
-                                            style="height: 60px; margin-top: -5px; margin-bottom: -5px;"
-                                            alt="Approver Stamp">
+                                    {{-- Add horizontal padding inside cell --}}
+                                    <td style="height: 50px; vertical-align: middle; padding: 0 5px; position: relative;">
+                                        @php
+                                            $hasApprovedName = !empty($reportData->approved_by_firstname) || !empty($reportData->approved_by_surname);
+                                        @endphp
+
+                                        @if ($hasApprovedName)
+                                            <div style="position: relative; width: 100%; height: 60px;">
+                                                {{-- Adjusted template position --}}
+                                                <img src="{{ public_path('photo/template.png') }}"
+                                                    style="position: absolute; top: -6px; left: 0; width: 100%; height: 70px;"
+                                                    alt="Stamp Overlay">
+
+                                                <div style="
+                                                    position: relative;
+                                                    font-weight: bold;
+                                                    color: #dc2626;
+                                                    font-size: 13px;
+                                                    line-height: 1.2;
+                                                    text-align: center;
+                                                ">
+                                                    @if (!empty($reportData->approved_by_firstname))
+                                                        <div style="font-size: {{ $approvedFirstFontSize }}; margin-bottom: 2px;">
+                                                            {{ $reportData->approved_by_firstname }}
+                                                        </div>
+                                                    @endif
+                                                    @if (!empty($reportData->approved_by_date))
+                                                        <div style="margin: 4px 0;">{{ $approvedByDate }}</div>
+                                                    @endif
+                                                    @if (!empty($reportData->approved_by_surname))
+                                                        <div style="font-size: {{ $approvedLastFontSize }};">
+                                                            {{ $reportData->approved_by_surname }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @else
+                                            <img src="{{ public_path('photo/template.png') }}"
+                                                style="height: 60px; margin: -5px 3px;"
+                                                alt="Checked By Stamp">
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -1122,14 +1156,25 @@
                 </tr>
             </table>
         </td>
-
-        <!-- Divider -->
-        <td style="width: 1px; background-color: black;"></td>
-
+        
         <!-- Right Section -->
         <td style="width: 35%; padding: 1px; border: 1px solid black; vertical-align: top;">
-            <p style="font-size:9px; margin: 0; padding: 0;">Note: (Reason of REJECT/HOLD)</p>
+            <div style="font-size:9px; font-weight: bold; padding-bottom: 2px; padding-left: 4px;">
+                Note: (Reason of REJECT/HOLD)
+            </div>
+
+            @if (!empty($noteReasonsSorted))
+                <div style="font-size: 9px; font-weight: bold; color: #dc2626; margin-top: 3px; padding-left: 4px;">
+                    @foreach ($noteReasonsSorted as $reason)
+                        <div>{{ $reason }}</div>
+                    @endforeach
+                </div>
+            @else
+                <span style="font-size: 9px; color: #999;">No rejection notes available.</span>
+            @endif
         </td>
+
+
     </tr>
 </table>
 
