@@ -2581,6 +2581,8 @@ const saveToTpmBoxes = async () => {
             showModal.value = false; // ✅ Replace the confirmation step
         }
 
+        await getTpmBoxes(currentSerialSelected.value); // re-fetch to refresh
+
     } catch (error) {
         console.error("❌ Failed to save TPM Box:", error);
     }
