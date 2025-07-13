@@ -9,9 +9,16 @@ use App\Models\Coating;
 use App\Models\HeatTreatment;
 use App\Models\TPMDataCategory;
 use App\Models\TPMData;
+use App\Models\TPMDataAggregateFunctions;
 
 class BackEndPdfController extends Controller
 {
+
+    public function apiGenerateAndSave($serial)
+    {
+        $this->generateAndMerge($serial); // already handles validation + save
+        return response()->json(['message' => 'PDF saved successfully']);
+    }
 
     public function generateAndMerge($serial)
     {
@@ -68,10 +75,20 @@ class BackEndPdfController extends Controller
         }
 
         $MBL = json_decode($HTData->magnet_box_location, true);
+        if (!$MBL) {
+            return response()->json([
+                'status' => false,
+                'message' => "Magnet Box Location for serial: {$serial} is invalid or missing",
+            ], 404);
+        }
 
         $preparedByDate = null;
         $checkedByDate = null;
         $approvedByDate = null;
+
+        if(!empty($reportData->created_at)){
+            $reportDate = \Carbon\Carbon::parse($reportData->created_at)->format('Y-m-d');
+        }
 
         if (!empty($reportData->prepared_by_date)) {
             $preparedByDate = \Carbon\Carbon::parse($reportData->prepared_by_date)->format('Y-m-d');
@@ -133,6 +150,27 @@ class BackEndPdfController extends Controller
                 'message' => "TPM Data for serial: {$serial} is invalid or missing",
             ], 404);
         }
+        $tpmDataAll = TPMData::with('remark')->where('serial_no', $serial)->get();
+        if ($tpmDataAll->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => "TPM Data for serial: {$serial} is invalid or missing",
+            ], 404);
+        }
+
+        $onlyFurnacePrefix = explode('-', $tpmData->sintering_furnace_no)[0] ?? null;
+        $onlyFurnacePostfix = explode('-', $tpmData->sintering_furnace_no)[1] ?? null;
+
+        $tpmDataAggregate = TPMDataAggregateFunctions::where('tpm_data_serial', $serial)->first();
+        if (!$tpmDataAggregate) {
+            return response()->json([
+                'status' => false,
+                'message' => "TPM Aggregate Data for serial: {$serial} is invalid or missing",
+            ], 404);
+        }
+        $aggregateMaximum = json_decode($tpmDataAggregate->maximum, true); // now an associative array
+        $aggregateMinimum = json_decode($tpmDataAggregate->minimum, true); // same
+        $aggregateAverage = json_decode($tpmDataAggregate->average, true); // same
 
         $data = [
             'serial' => $serial,
@@ -157,8 +195,15 @@ class BackEndPdfController extends Controller
             'noteReasonsSorted' => $noteReasonRaw, // pass sorted note reasons
             'coatingDetails' => $coatingDetails, // pass coating details
             'tpmCat' => $tpmCategories, // pass TPM categories
-            'tpmData' => $tpmData, // pass TPM data
+            'tpmData' => $tpmData, // pass single TPM data
+            'tpmDataAll' => $tpmDataAll, // pass all TPM data
             'magnetBoxLocation' => $MBL, // pass magnet box location
+            'reportDate' => $reportDate ?? null, // pass report date
+            'sinteringFurnaceNo' => $onlyFurnacePrefix, // pass only furnace prefix
+            'sinteringNo' => $onlyFurnacePostfix, // pass only furnace postfix
+            'tpmAggregateMax' => $aggregateMaximum, // pass TPM aggregate maximum
+            'tpmAggregateMin' => $aggregateMinimum, // pass TPM aggregate minimum
+            'tpmAggregateAvg' => $aggregateAverage, // pass TPM aggregate average
         ];
 
         $portrait = Pdf::loadView('pdf.report_page1_portrait', $data)
@@ -173,6 +218,11 @@ class BackEndPdfController extends Controller
         $merger->addRaw($portrait);
         $merger->addRaw($landscape);
         $mergedPdf = $merger->merge();
+
+        $massProd = $tpmCategories->massprod_name ?? 'unknown';
+        $rawFilename = "({$reportData->smp_judgement}) {$tpmCategories->actual_model} Lot No {$tpmCategories->jhcurve_lotno}";
+
+        $savedPath = $this->saveMergedPdf($massProd, $rawFilename, $mergedPdf);
 
         return response($mergedPdf, 200)
             ->header('Content-Type', 'application/pdf')
@@ -199,5 +249,23 @@ class BackEndPdfController extends Controller
             $length === 13 => '8px',
             default       => '9px',
         };
+    }
+
+    private function saveMergedPdf(string $massProd, string $rawFilename, string $pdfContent): string
+    {
+        $massProd = preg_replace('/[^A-Za-z0-9\-\s#]/', '_', $massProd);
+        $safeBaseName = preg_replace('/[^A-Za-z0-9\-\s\(\)#]/', '_', $rawFilename);
+        $safeBaseName = preg_replace('/[\/\s]+/', '_', $safeBaseName);
+
+        $fileName = $safeBaseName . '.pdf';
+        $destinationPath = public_path("files/{$massProd}");
+
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        file_put_contents("{$destinationPath}/{$fileName}", $pdfContent);
+
+        return "files/{$massProd}/{$fileName}";
     }
 }

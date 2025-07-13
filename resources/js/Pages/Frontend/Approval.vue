@@ -102,6 +102,7 @@
                         </table>
                     </div>
                     <div class="flex justify-center mb-10 space-y-6">
+                        <DotsLoader v-show="isLoadingApproval" class="z-10 mt-8"/>
                         <!-- Approve Button -->
                         <div v-if="!approveNotif && !blockedNotif">
                             <button
@@ -113,7 +114,7 @@
                         </div>
                         <!-- Confirmation Box -->
                         <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
-                            <p class="mb-4 text-lg font-semibold text-gray-800"><span class="font-extrabold text-blue-500">Important: </span>Upon clicking YES, please wait for all the window tabs to close automatically as the reports will undergo process of approval and finalization.</p>
+                            <p class="mb-4 text-lg font-semibold text-gray-800"><span class="font-extrabold text-blue-500">Warning: </span>Are you sure?</p>
                             <div class="flex justify-center gap-4">
                                 <button @click="confirmationApprove" class="px-5 py-2 text-white transition bg-green-500 rounded-md hover:bg-green-600">
                                     Yes
@@ -173,6 +174,7 @@ import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, toRaw, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { useAuth } from '@/Composables/useAuth.js'
+import DotsLoader from '@/Components/DotsLoader.vue';
 
 const { state } = useAuth();
 
@@ -240,6 +242,7 @@ const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
 const blockedNotif = ref(false);
 const reportNotificationMessage = ref('');
+const isLoadingApproval = ref(false);
 
 // UI end
 const ipAddress = ref('');
@@ -431,31 +434,11 @@ const datenow = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-let openedTabs = [];
-
-const closeAllTabs = () => {
-    console.log("Scheduling tab close in 4 second...");
-    setTimeout(() => {
-        openedTabs.forEach((tab, index) => {
-            if (tab && !tab.closed) {
-                tab.close();
-                console.log(`Closed tab #${index + 1}`);
-            } else {
-                console.warn(`Tab #${index + 1} was already closed or inaccessible`);
-            }
-        });
-        console.log("All tabs close attempted.");
-    }, 4000);
-};
-
 const confirmationApprove = async () => {
+    isLoadingApproval.value = true;
+    showApproveConfirmation.value = false;
     try {
         console.log("== Starting approval process ==");
-
-        let allPopupsOpened = true;
-        openedTabs = [];
 
         const dateNow = datenow();
         const reportData = {
@@ -464,90 +447,52 @@ const confirmationApprove = async () => {
             approved_by_date: dateNow,
         };
 
-        // 🔥 STEP 1: IMMEDIATELY PATCH all approvals BEFORE opening popups
-        console.log("Patching approvals immediately...");
         for (const serial of selectedRows.value) {
-            console.log(`Patching approval for serial: ${serial}`, reportData);
             await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
-            await axios.patch(`/api/reportdata/${serial}`, reportData);
+            //await axios.patch(`/api/reportdata/${serial}`, reportData);
         }
 
-        // 🔥 STEP 2: Open popups one-by-one
-        for (let index = 0; index < selectedRows.value.length; index++) {
-            const serial = selectedRows.value[index];
-
-            console.log(`Waiting 1s before opening tab for serial: ${serial}`);
-            await delay(3000);
-
-            const newTab = window.open(`/create_pdf?serialParam=${serial}`, '_blank');
-
-            if (newTab) {
-                console.log(`Opened tab for serial: ${serial}`);
-                openedTabs.push(newTab);
-
-                if (index === selectedRows.value.length - 1) {
-                    console.log("Last tab opened. Triggering closeAllTabs...");
-                    closeAllTabs();
-                }
-            } else {
-                console.error(`Blocked popup for serial: ${serial}`);
-                allPopupsOpened = false;
-                break;
+        for (const serial of selectedRows.value) {
+            try {
+                await axios.get(`/api/reports/${encodeURIComponent(serial)}/generate-and-save`);
+                console.log(`✅ PDF generated and saved for serial: ${serial}`);
+            } catch (pdfErr) {
+                console.error(`❌ PDF generation failed for serial ${serial}`, pdfErr);
+                throw pdfErr;
             }
         }
 
-        // 🔥 STEP 3: Finalize if all tabs succeeded
-        if (allPopupsOpened) {
-            console.log("All tabs opened successfully. Finalizing reports...");
-
-            for (const serial of selectedRows.value) {
-                console.log(`Finalizing serial ${serial}`);
-                await finalizeReport(serial);
-                console.log(`Serial ${serial} finalized.`);
-            }
-
-            showApprovedNotification("Approved Successfully");
-        } else {
-            // 🔥 STEP 4: Rollback if any popup failed
-            console.warn("One or more popups failed. Rolling back...");
-
-            const rollbackData = {
-                approved_by_firstname: '',
-                approved_by_surname: '',
-                approved_by_date: null,
-                is_finalized: 0,
-            };
-
-            for (const serial of selectedRows.value) {
-                console.warn(`Rolling back approval for serial: ${serial}`);
-                await axios.patch(`/api/reportdata/${serial}`, rollbackData);
-            }
-
-            showBlockedNotification(`
-                Some reports couldn't be approved due to your browser's pop-up blocker.
-                Please disable the blocker and try again.<br><br>
-
-                How to disable the pop-up blocker:<br><br>
-
-                - <strong>Chrome:</strong> Go to Settings > Privacy & Security > Site Settings > Pop-ups and redirects > Allow for this site.<br><br>
-                - <strong>Firefox:</strong> Go to Settings > Privacy & Security > Permissions > Uncheck "Block pop-up windows" or add this site to Exceptions.<br><br>
-                - <strong>Edge:</strong> Go to Settings > Cookies and Site Permissions > Pop-ups and redirects > Allow for this site.<br><br>
-                - <strong>Safari:</strong> Go to Preferences > Websites > Pop-up Windows > Select "Allow" for this site.
-            `);
+        for (const serial of selectedRows.value) {
+            await finalizeReport(serial);
         }
 
-        // 🔄 Final UI Reset
-        console.log("Refreshing UI state...");
-        await showReportData();
-
-        showApproveButton.value = true;
-        showApproveConfirmation.value = false;
-        console.log("== Approval process complete ==");
+        showApprovedNotification("Approved and PDF saved successfully.");
 
     } catch (error) {
         console.error("Error during approval:", error);
+
+        const rollbackData = {
+            approved_by_firstname: '',
+            approved_by_surname: '',
+            approved_by_date: null,
+            is_finalized: 0,
+        };
+
+        for (const serial of selectedRows.value) {
+            await axios.patch(`/api/reportdata/${serial}`, rollbackData);
+        }
+
+        showBlockedNotification(`
+            An error occurred while saving the PDF reports.<br>
+            Please try again later or contact support.
+        `);
+    } finally {
+        isLoadingApproval.value = false;
+        await showReportData();
+        showApproveButton.value = true;
     }
 };
+
 
 
 

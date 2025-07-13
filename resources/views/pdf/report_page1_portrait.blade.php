@@ -29,6 +29,7 @@
             margin-top: 2px;
             margin-left: 2px;
             padding: 0;
+            font-size: 8px;
         }
 
         .table-row {
@@ -37,7 +38,7 @@
 
         .table-cell {
             display: table-cell;
-            font-size: 10px;
+            font-size: 8px;
             padding: 0 2px;
         }
 
@@ -55,7 +56,7 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: auto;
-            font-size: 8px;
+            font-size: 7px;
         }
 
         table.print-table th,
@@ -82,26 +83,26 @@
         <img src="{{ public_path('photo/carmark_logo.png') }}" alt="Logo" style="display: block; width:80px; height:40px; padding: 0px; margin: 0px;" />
     </div>
 
-    <div style="clear:both;"></div> <!-- Break Line -->
+    <div style="clear:both; padding: 0px; margin: 0px;"></div> <!-- Break Line -->
 
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell" style="font-weight: bold;">Model: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold; font-size: 9px;">{{ $tpmCat->actual_model }}</span></div>
             <div class="table-cell" style="font-weight: bold;">Partial No: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->partial_number }}</span></div>
         </div>
         <div class="table-row">
             <div class="table-cell" style="font-weight: bold;">MATERIAL CODE: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->material_code }}</span></div>
             <div class="table-cell" style="font-weight: bold;">TOTAL QUANTITY: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center;">NA</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->total_quantity }}</span></div>
         </div>
     </div>
 
-    <div style="clear:both;"></div> <!-- Break Line -->
+    <div style="clear:both; padding: 0px; margin: 0px;"></div> <!-- Break Line -->
 
-    <div style="margin-bottom: 0px;">
+    <div style="margin-bottom: 0px; padding: 0px; margin: 0px;">
         <p style="white-space: nowrap; overflow: visible; background-color: #ccc; border: 1px solid black; text-align: center; font-weight: bold; font-size:12px;">
             GBDP MAGNETIC PROPERTY INSPECTION REPORT
         </p>
@@ -110,7 +111,7 @@
     <div style="clear:both; margin: 0px; padding: 0px;"></div> <!-- Break Line -->
 
     <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-        <label class="bold" style="font-size: 12px; padding-left: 1px;">COATING INFORMATION</label>
+        <label class="bold" style="font-size: 10px; padding-left: 1px;">COATING INFORMATION</label>
 
         <div class="table-block">
             <div class="table-row">
@@ -594,7 +595,7 @@
         <div style="display: table; margin: 0 auto; border-spacing: 10px; padding: 0px;">
             <div style="display: table-row;">
                 <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                    <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
+                    <table style="width: 100%; font-size: 7px; border-collapse: collapse; border: 1px solid black;">
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
@@ -626,7 +627,7 @@
             </div>
         </div>
 
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
             <tr>
                 <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
                 <td style="width: 100%;">
@@ -643,7 +644,7 @@
     </div>  <!-- End of border -->
 
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-    <label class="bold" style="font-size: 12px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
+    <label class="bold" style="font-size: 10px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
 
     <div class="table-block">
         <div class="table-row">
@@ -691,7 +692,7 @@
                  <table class="print-table">Add commentMore actions
                         <thead>
                             <tr>
-                                <th colspan="13">MAGNET BOX LOCATION</th>
+                                <th colspan="12">MAGNET BOX LOCATION</th>
                             </tr>
                             <tr>
                                 <th colspan="2">BOX No.</th>
@@ -703,7 +704,6 @@
                                 <th>F</th>
                                 <th>G</th>
                                 <th>H</th>
-                                <th>I</th>
                                 <th>J</th>
                                 <th>K</th>
                             </tr>
@@ -712,24 +712,23 @@
                             <tr>
                                 <td style="margin: 0px; padding: 0px;">No. of Layer</td>
                                 <td>{{ $tpmData->layer_no }}</td>
-                                <td>{{ $heatTreatmentData->box_a }}</td>
-                                <td>{{ $heatTreatmentData->box_b }}</td>
-                                <td>{{ $heatTreatmentData->box_c }}</td>
-                                <td>{{ $heatTreatmentData->box_d }}</td>
-                                <td>{{ $heatTreatmentData->box_e }}</td>
-                                <td>{{ $heatTreatmentData->box_f }}</td>
-                                <td>{{ $heatTreatmentData->box_g }}</td>
-                                <td>{{ $heatTreatmentData->box_h }}</td>
-                                <td>{{ $heatTreatmentData->box_j }}</td>
-                                <td>{{ $heatTreatmentData->box_k }}</td>
-                                <td>{{ $heatTreatmentData->box_l }}</td>
+                                <td>{{ $magnetBoxLocation['box_a']}}</td>
+                                <td>{{ $magnetBoxLocation['box_b'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_c'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_d'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_e'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_f'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_g'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_h'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_j'] }}</td>
+                                <td>{{ $magnetBoxLocation['box_k'] }}</td>
                             </tr>
                         </tbody>
                     </table>
             </div>
         </div>
     </div>
-    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
         <tr>
             <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
             <td style="width: 100%;">
@@ -745,7 +744,7 @@
 </div> <!-- END of Border -->
 
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-    <label class="bold" style="font-size: 12px; padding-left: 1px;">OVEN HEATING INFORMATION</label>
+    <label class="bold" style="font-size: 10px; padding-left: 1px;">OVEN HEATING INFORMATION</label>
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell">Oven Machine No:</div>
@@ -772,7 +771,7 @@
             <div class="table-cell"><span class="underline" style="text-align: center;">{{ $reportData->temp_time_unloading ?? 'NA' }}</span></div>
         </div>
     </div> <!-- End of Oven Heating Info -->
-    <label class="bold" style="font-size: 12px; padding-left: 1px;">MAGNETIC PROPERTY INSPECTION INFORMATION</label>
+    <label class="bold" style="font-size: 10px; padding-left: 1px;">MAGNETIC PROPERTY INSPECTION INFORMATION</label>
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell">Pulse Tracer Machine No:</div>
@@ -903,7 +902,7 @@
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell" style="width: 95%;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
                     <tr>
                         <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
                         <td style="width: 100%;">
@@ -928,7 +927,7 @@
     </div>
 </div>
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-    <label class="bold" style="font-size: 14px; padding-left: 1px;">SMP Judgment:</label>
+    <label class="bold" style="font-size: 11px; padding-left: 1px;">SMP Judgment:</label>
 </div>
 <table style="width: 100%; border-collapse: collapse;">
     <tr>
@@ -1177,6 +1176,21 @@
 
     </tr>
 </table>
-
+<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="width: 40%; font-size: 11px; padding: 2px;">
+                <strong>SEC / C - MARK Judgement:</strong>
+            </td>
+            <td style="width: 60%; font-size: 6px; padding: 2px; border-left: 1px solid black; vertical-align: top;">
+                Note: (Reason of REJECTED / Content of Condition Approved)
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 40px; border-top: 1px solid black;"></td>
+            <td style="height: 40px; border-left: 1px solid black;"></td>
+        </tr>
+    </table>
+</div>
 
 </body>

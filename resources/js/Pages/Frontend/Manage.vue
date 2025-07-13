@@ -1045,7 +1045,7 @@
     }
 
     const proceedToFinal = () => {
-        showProceed2_massprod.value = true;
+        showProceed3.value = true;
         showProceed2.value = false;
         showProceed2_confirmation.value = false;
         saveToTpmCategory();
@@ -1055,30 +1055,6 @@
         showProceed2_confirmation.value = false;
         showProceed2.value = true;
     }
-
-    const proceedNextToGraph_confirmation = () => {
-        showProceed2_massprod_confirmation.value = true;
-        showProceed2_massprod.value = false;
-    }
-
-    const proceedNextToGraph = () => {
-        currentBoxIndex.value = 0;
-        showProceed2_massprod_confirmation.value = false;
-        showProceed3.value = true;
-    }
-
-    const proceedNextToGraph_cancel = () => {
-        currentBoxIndex.value = massProd_letter.value.length - 1;
-        showProceed2_massprod_confirmation.value = false;
-        showProceed2_massprod.value = true;
-    }
-
-    const revert_boxLetter = () => {
-       if (currentBoxIndex.value > 0) {
-            currentBoxIndex.value--;
-        }
-    }
-
 
     const saveToTpmCategory = async () => {
         try{
@@ -1094,37 +1070,6 @@
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
     }
-
-    const saveToTpmBoxes = async () => {
-        try {
-            const responseTpmBoxes = await axios.patch(`/api/updateboxes/${serialNo.value}`, {
-                layer_no: currentLayerNo.value,
-                box_letter: massProd_letter.value[currentBoxIndex.value],
-                quantity: massProd_qty.value,
-                weight: massProd_WT.value,
-                coating: massProd_coating.value,
-                box_no: massProd_boxNo.value,
-                raw_mat_code: massProd_rawMatCode.value,
-            });
-            //console.log("TPM Boxes: ", responseTpmBoxes.data);
-
-            // Step 1: Reset fields after saving
-            massProd_qty.value = '';
-            massProd_WT.value = '';
-            massProd_boxNo.value = '';
-            massProd_coating.value = '';
-            massProd_rawMatCode.value = '';
-
-            // Step 2: Advance box letter or trigger final step
-            if (currentBoxIndex.value < massProd_letter.value.length - 1) {
-                currentBoxIndex.value++;
-            } else {
-                proceedNextToGraph_confirmation(); // Call next step function
-            }
-        } catch (error) {
-            console.error("Error fetching API Response SaveToTpmCategory:", error);
-        }
-    };
 
     const isLoadingForAddFurnaces = ref(false); // Initialize loading state
 

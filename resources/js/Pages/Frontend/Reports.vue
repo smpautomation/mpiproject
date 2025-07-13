@@ -566,6 +566,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTFurnaceMachine"
+                                    @input="reportHTFurnaceMachine = reportHTFurnaceMachine.toUpperCase()"
                                     type="text"
                                     name="ovenMachineNo"
                                     id="ovenMachineNo"
@@ -593,6 +594,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTBatchCycleNo"
+                                    @input="reportHTBatchCycleNo = reportHTBatchCycleNo.toUpperCase()"
                                     type="text"
                                     name="temperature_timeLoading"
                                     id="temperature_timeLoading"
@@ -606,6 +608,7 @@
                                 </label>
                                 <input
                                     v-model="reportHTLoader"
+                                    @input="reportHTLoader = reportHTLoader.toUpperCase()"
                                     type="text"
                                     name="ovenInfo_date"
                                     id="ovenInfo_date"
@@ -854,7 +857,7 @@
 
                             <div class="flex flex-row mt-10">
                             <!-- Coating Remarks -->
-                            <div class="flex flex-col w-[78rem]">
+                            <div class="flex flex-col w-[62rem]">
                                 <label for="reportCoatingRemarks" class="mb-1 text-sm font-medium text-gray-700">
                                     Remarks:
                                 </label>
@@ -867,10 +870,120 @@
                                     class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                                 />
                             </div>
+                            <button
+                                @click="showModal = true"
+                                class="px-4 py-1 ml-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
+                            >
+                                Fill Mass Production Control Sheet
+                            </button>
                             </div>
 
                     </div>
                 </div>
+
+                <Modal :show="showModal" @close="showModal = false">
+                    <div class="flex flex-col items-center justify-center bg-blue-300 p-10 rounded-lg w-full max-w-3xl mx-auto shadow-xl mb-0">
+                        <p class="mb-6 text-lg font-bold text-white text-center">Mass Production Control Sheet</p>
+
+                        <div class="flex flex-row justify-between w-full mb-4">
+                            <span class="text-white font-semibold text-xl">Box: <span class="underline text-yellow-200">{{ massProd_letter[currentBoxIndex] }}</span></span>
+                            <span class="text-white font-semibold">Current Layer: {{ currentLayerName }}</span>
+                        </div>
+
+                        <!-- Input Fields Group 1 -->
+                        <div class="flex flex-wrap gap-4 w-full mb-4">
+                            <div class="flex flex-col w-[30%]">
+                                <label class="text-sm font-semibold text-white mb-1">Quantity</label>
+                                <input type="number" v-model="massProd_qty"
+                                    placeholder="e.g. 1600"
+                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
+                            </div>
+
+                            <div class="flex flex-col w-[30%]">
+                                <label class="text-sm font-semibold text-white mb-1">Box No.</label>
+                                <input type="text" v-model="massProd_boxNo" @input="massProd_boxNo = massProd_boxNo.toUpperCase()"
+                                    placeholder="e.g. UBP8 5071"
+                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
+                            </div>
+
+                            <div class="flex flex-col w-[30%]">
+                                <label class="text-sm font-semibold text-white mb-1">WT</label>
+                                <input type="number" v-model="massProd_WT"
+                                    placeholder="e.g. 15.23"
+                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
+                            </div>
+                        </div>
+
+                        <!-- Input Fields Group 2 -->
+                        <div class="flex flex-wrap gap-4 w-full mb-6">
+                            <div class="flex flex-col w-[48%]">
+                                <label class="text-sm font-semibold text-white mb-1">Coating</label>
+                                <input type="number" v-model="massProd_coating"
+                                    placeholder="e.g. 4"
+                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
+                            </div>
+
+                            <div class="flex flex-col w-[48%]">
+                                <label class="text-sm font-semibold text-white mb-1">Raw Material Code</label>
+                                <input type="text" v-model="massProd_rawMatCode" @input="massProd_rawMatCode = massProd_rawMatCode.toUpperCase()"
+                                    placeholder="e.g. 0G0V755"
+                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
+                            </div>
+                        </div>
+
+                        <!-- TPM Boxes Preview Table -->
+                        <div class="w-full bg-white rounded-md shadow-md overflow-x-auto mb-6 select-none pointer-events-none">
+                            <table class="min-w-full text-sm text-left text-gray-800 table-fixed border border-gray-300">
+                                <thead class="bg-gray-100 text-xs uppercase font-semibold text-gray-600">
+                                    <tr>
+                                        <th class="px-4 py-2 w-12">Box</th>
+                                        <th class="px-4 py-2 w-20">Layer</th>
+                                        <th class="px-4 py-2 w-20">Qty</th>
+                                        <th class="px-4 py-2 w-20">WT</th>
+                                        <th class="px-4 py-2 w-32">Box No</th>
+                                        <th class="px-4 py-2 w-20">Coating</th>
+                                        <th class="px-4 py-2 w-32">Raw Mat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(box, index) in allBoxesData"
+                                        :key="box.id"
+                                        class="border-t border-gray-200 bg-white"
+                                    >
+                                        <td class="px-4 py-2">{{ box.box_letter }}</td>
+                                        <td class="px-4 py-2">{{ box.layer_no ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ box.quantity ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ box.weight ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ box.box_no ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ box.coating ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ box.raw_mat_code ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex flex-row justify-end w-full gap-4">
+                            <button
+                                @click="showModal = false"
+                                class="px-4 py-2 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-white transition">
+                                Close
+                            </button>
+                            <button
+                                @click="revert_boxLetter"
+                                class="px-4 py-2 font-semibold text-white bg-gray-600 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white transition">
+                                Redo Previous
+                            </button>
+                            <button
+                                @click="saveToTpmBoxes"
+                                class="px-4 py-2 font-semibold bg-white text-blue-600 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white transition">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </Modal>
+
 
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <!-- Oven Heating Information Section -->
@@ -1953,6 +2066,7 @@ import { ref, onMounted, nextTick, watch, computed, watchEffect, reactive } from
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
+import Modal from '@/Components/Modal.vue' // adjust path if needed
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js';
 
@@ -2422,6 +2536,73 @@ const getAlliHkiHcNG = ref('');
 const getAllBr4paiNG = ref('');
 const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
+
+const showModal = ref(false);
+
+const massProd_qty = ref('');
+const massProd_WT = ref('');
+const massProd_boxNo = ref('');
+const massProd_coating = ref('');
+const massProd_rawMatCode = ref('');
+const currentBoxIndex = ref(0);
+const allBoxesData = ref([]);
+
+const massProd_letter = ref(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']);
+
+const revert_boxLetter = () => {
+    if (currentBoxIndex.value > 0) {
+        currentBoxIndex.value--;
+    }
+};
+
+const saveToTpmBoxes = async () => {
+    try {
+        await axios.patch(`/api/updateboxes/${currentSerialSelected.value}`, {
+            layer_no: parseFloat(currentLayerName.value.replace(/[^0-9.]/g, '')),
+            box_letter: massProd_letter.value[currentBoxIndex.value],
+            quantity: massProd_qty.value,
+            weight: massProd_WT.value,
+            coating: massProd_coating.value,
+            box_no: massProd_boxNo.value,
+            raw_mat_code: massProd_rawMatCode.value,
+        });
+
+        // Reset inputs
+        massProd_qty.value = '';
+        massProd_WT.value = '';
+        massProd_boxNo.value = '';
+        massProd_coating.value = '';
+        massProd_rawMatCode.value = '';
+
+        // Step forward or close modal
+        if (currentBoxIndex.value < massProd_letter.value.length - 1) {
+            currentBoxIndex.value++;
+        } else {
+            showModal.value = false; // ✅ Replace the confirmation step
+        }
+
+    } catch (error) {
+        console.error("❌ Failed to save TPM Box:", error);
+    }
+};
+
+const getTpmBoxes = async (serial) => {
+    try {
+        const responseTPMBoxes = await axios.get(`/api/tpmboxes/${serial}`);
+        allBoxesData.value = responseTPMBoxes.data.data; // assign array directly
+        console.log('getTpmBoxes response:', responseTPMBoxes.data);
+    } catch (error) {
+        console.error("Failed to fetch TPM Boxes:", error);
+        isLoading.value = false;
+    }
+};
+
+watch(showModal, (newVal) => {
+    if (newVal && currentSerialSelected.value) {
+        getTpmBoxes(currentSerialSelected.value);
+    }
+});
+
 
 const modules = reactive([
     { name: 'M-01', new: '', homo: '', time: '', liters: '' },
@@ -3142,6 +3323,7 @@ const createReport = async (reportData, serial) => {
 const showReportData = async () => {
     try {
         isReportDataReady.value = false;
+        await getTpmBoxes(currentSerialSelected.value);
         const response = await axios.get(`/api/reportdata/`);
         //console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
@@ -3395,6 +3577,16 @@ const showReportData = async () => {
 
             reportConcentrationValues.value[M06_START_INDEX + i] = rawDataCoating[key] ?? null;
         }
+
+        modules.forEach((mod) => {
+            const key = mod.name.toLowerCase(); // e.g., "m-01" — KEEP dash
+            mod.new    = rawDataCoating[`add_slurry_${key}_new`]    ?? '';
+            mod.homo   = rawDataCoating[`add_slurry_${key}_homo`]   ?? '';
+            mod.time   = rawDataCoating[`add_slurry_${key}_time`]   ?? '';
+            mod.liters = rawDataCoating[`add_slurry_${key}_liters`] ?? '';
+        });
+
+        //gggggggggggggggggggggggggggggggg
 
         //HEAT TREATMENT ---
 
@@ -4044,15 +4236,10 @@ const addCarmark = async () => {
     }
 }
 
-const finalizeReport = async(serial) => {
+const finalizeReport = async (serial) => {
     await userFinalizedLogging(`has finalized report serial: ${serial}`);
-    Inertia.visit('/create_pdf', {
-        method: 'get',   // You can keep 'get' since we are not modifying any data
-        data: { serialParam: serial },   // Passing the serialParam here
-        preserveState: true,
-        preserveScroll: true,
-    });
-}
+    window.open(`/reports/${encodeURIComponent(serial)}/pdf`, '_blank');
+};
 
 const sec_additional_redirect = (sec_serial) => {
     try {

@@ -252,10 +252,12 @@ class TPMDataController extends Controller
             $checkTpmBoxes = TPMBoxes::where('tpm_data_serial', $tpmData->serial_no)->exists();
             if(!$checkTpmBoxes){
                 try{
-                    foreach (range('A', 'K') as $letter){
+                    $letters = ['A','B','C','D','E','F','G','H','J','K'];
+
+                    foreach ($letters as $letter) {
                         $tpmBoxesInputs = [
-                        'tpm_data_serial' => $tpmData->serial_no,
-                        'box_letter' => $letter
+                            'tpm_data_serial' => $tpmData->serial_no,
+                            'box_letter' => $letter
                         ];
                         $TPMBoxes = TPMBoxes::create($tpmBoxesInputs);
                     }

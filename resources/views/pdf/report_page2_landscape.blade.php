@@ -83,13 +83,12 @@
                 <!-- Group and Tracer -->
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr>
-                        <td style="font-weight: bold; font-size: 12px; width: 50%;"><i>Group:</i></td>
-                        <td style="font-weight: bold; font-size: 12px; width: 50%;"><i>Tracer:</i></td>
+                        <td style="font-size: 12px; width: 50%;"><i style="font-weight: bold;">Tracer: </i><span>{{ $reportData->pulse_tracer_machine_number }}</span></td>
                     </tr>
                 </table>
 
                 <!-- Date -->
-                <p style="margin: 0; font-weight: bold; padding-top: 5px; font-size: 12px;"><i>Date:</i></p>
+                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $reportDate }}</span></p>
             </td>
 
             <!-- Center: Property Data -->
@@ -107,64 +106,206 @@
     <table style="width: 100%; border-collapse: collapse;">
         <!-- Row 1 -->
         <tr>
-            <td style="font-weight: bold; font-size: 10px;"><i>Code:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Type Code:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Judge Code:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Press #:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Singering Furnace #:</i></td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Code: </i>{{ $tpmData->code_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Type Code: </i>{{ $tpmData->type }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Judge Code: </i>{{ $tpmData->order_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Press #: </i>{{ $tpmData->press_1 }} {{ $tpmData->press_2 }} {{ $tpmData->machine_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Singering Furnace #: </i>{{ $sinteringFurnaceNo }}</td>
         </tr>
 
         <!-- Row 2 -->
         <tr>
-            <td style="font-weight: bold; font-size: 10px;"><i>Sintering #:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Coating:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Pass #:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee:</i></td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee:</i></td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Sintering #: </i>{{ $sinteringNo }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Coating: </i>{{ $tpmData->furnace_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Pass #: </i>{{ $tpmData->pass_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee: </i>{{ $tpmCat->mias_emp }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee: </i>{{ $tpmCat->factor_emp }}</td>
         </tr>
     </table>
 
     <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
         <thead>
             <tr>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Zone:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Br:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>iHc:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>iHk:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>[BH]m:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Hr95:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Hr98:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>iHc-iHk:</i></th>
-                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center;"><i>Br-4&#960;Ia:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>bHc:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Squareness:</i></th>
-                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center;"><i>4&#960;Id:</i></th>
-                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center;"><i>4&#960;Is:</i></th>
-                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center;"><i>4&#960;Ia:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Temperature:</i></th>
-                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center;"><i>Data Status:</i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Zone:</i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Br:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>iHc:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>iHk:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>[BH]m:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Hr95:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Hr98:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>iHc-iHk:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center; white-space: nowrap;"><i>Br-4&#960;Ia:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>bHc:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Squareness:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center; white-space: nowrap;"><i>4&#960;Id:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center; white-space: nowrap;"><i>4&#960;Is:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-size: 9px; font-family: DejaVu Sans, sans-serif; text-align: center; white-space: nowrap;"><i>4&#960;Ia:</i></th>
+                <th style="width: 2.25%; font-weight: bold; font-size: 10px; text-align: center;"><i></i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Temperature:</i></th>
+                <th style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Data Status:</i></th>
             </tr>
         </thead>
         <tbody>
+            @php
+                function renderTPMCell($remark, $tdStyle) {
+                    $isError = $remark === '1';
+                    $text = $isError ? 'E' : ($remark === '0' ? '' : $remark);
+                    $color = $isError ? 'color: red;' : '';
+                    return "<td style=\"$tdStyle$color\">$text</td>";
+                }
+
+                $tdStyle = 'width: 6%; font-size: 10px; text-align: center; padding: 2px; white-space: nowrap;';
+                $tdStyleRem = 'width: 2%; font-size: 10px; text-align: center; padding: 2px; white-space: nowrap;';
+            @endphp
+
+            @foreach ($tpmDataAll as $item)
             <tr>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center;">test</td>
+                <td style="{{ $tdStyle }}">{{ $item->zone ?? '' }}</td>
+                <td style="{{ $tdStyle }}">{{ $item->Br ?? '' }}</td>
+                {!! renderTPMCell($item->remark->Br_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->iHc ?? '' }}</td>
+                {!! renderTPMCell($item->remark->iHc_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->iHk ?? '' }}</td>
+                {!! renderTPMCell($item->remark->iHk_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->BHMax ?? '' }}</td>
+                {!! renderTPMCell($item->remark->BHMax_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->iHr95 ?? '' }}</td>
+                {!! renderTPMCell($item->remark->iHr95_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->iHr98 ?? '' }}</td>
+                {!! renderTPMCell($item->remark->iHr98_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->iHkiHc ?? '' }}</td>
+                {!! renderTPMCell($item->remark->iHkiHc_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->Br4pai ?? '' }}</td>
+                {!! renderTPMCell($item->remark->Br4pai_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->bHc ?? '' }}</td>
+                {!! renderTPMCell($item->remark->bHc_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->Squareness ?? '' }}</td>
+                {!! renderTPMCell($item->remark->Squareness_remarks ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->{"4paiIa"} ?? '' }}</td>
+                {!! renderTPMCell($item->remark->{"4paiIa_remarks"} ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->{"4paiId"} ?? '' }}</td>
+                {!! renderTPMCell($item->remark->{"4paiId_remarks"} ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->{"4paiIs"} ?? '' }}</td>
+                {!! renderTPMCell($item->remark->{"4paiIs_remarks"} ?? '', $tdStyleRem) !!}
+
+                <td style="{{ $tdStyle }}">{{ $item->temperature ?? '' }}</td>
+                <td style="{{ $tdStyle }}">{{ $item->data_status ?? '' }}</td>
+            </tr>
+            @endforeach
+            <!-- Clean Spacer -->
+            <tr>
+                <td colspan="25" style="height: 10px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Average</i></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Br'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['bHc'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['iHc'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['iHk'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Hr95'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Hr98'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['BHMax'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4paila'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4paild'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4pails'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Br4pai'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['iHciHk'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Squareness'] }}</td>
+            </tr>
+            <tr>
+                <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Max</i></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Br'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['bHc'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHc'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHk'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Hr95'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Hr98'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['BHMax'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['4paila'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['4paild'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['4pails'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Br4pai'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHciHk'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Squareness'] }}</td>
+            </tr>
+            <tr>
+                <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Min</i></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Br'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['bHc'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['iHc'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['iHk'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Hr95'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Hr98'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['BHMax'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['4paila'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['4paild'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['4pails'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Br4pai'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['iHciHk'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Squareness'] }}</td>
             </tr>
         </tbody>
+
     </table>
 
     <!-- Thick Horizontal Line -->
@@ -172,15 +313,114 @@
 
     <div class="page-break"></div>
 
-    <div>
-        @if ($chartFilename)
-            <div style="text-align: center; margin-top: 20px; border: 1px solid #000; width: 480px; height: 360px; margin-left: auto; margin-right: auto;">
-                <img src="{{ public_path('charts/' . $chartFilename) }}"
-                    alt="Chart Image"
-                    style="width: 100%; height: 100%; object-fit: contain;">
-            </div>
-        @endif
-    </div>
+    <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+        <tr>
+            {{-- Chart Cell --}}
+            <td style="width: 480px; vertical-align: top;">
+                @if ($chartFilename)
+                    <div style="border: 1px solid #000; width: 480px; height: 360px; margin: 0 auto;">
+                        <img src="{{ public_path('charts/' . $chartFilename) }}"
+                            alt="Chart Image"
+                            style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                @endif
+            </td>
+
+            {{-- Side Content Cell --}}
+            <td style="width: 200px; vertical-align: top; padding-left: 12px;">
+                <div style="width: 100%; height: 340px; padding: 10px; font-size: 10px;">
+                    <p style="font-weight: bold; margin: 0 0 6px;">Note:</p>
+
+                    <p style="margin: 0 0 4px;">
+                        SMP Lot ( <span>{{ $tpmCat->massprod_name }}</span> Mass Production )
+                    </p>
+
+                    <p style="margin: 0 0 4px;">
+                        Furnace Cycle No.: {{ $sinteringFurnaceNo }}-{{ $sinteringNo }}
+                    </p>
+
+                    <p style="margin: 0 0 4px;">
+                        <span>{{ $tpmCat->actual_model }}</span> ( {{ $tpmData->code_no }} )
+                    </p>
+
+                    <p style="margin: 0 0 4px;">
+                        Lot # {{ $tpmCat->jhcurve_lotno }}
+                    </p>
+
+                    @if (!empty($noteReasonsSorted))
+                        <div style="margin-top: 8px;">
+                            <p style="margin: 0;">Remarks Encountered:</p>
+                            <p style="color: #c00; font-weight: bold; font-size: 9px; margin: 2px 0 0;">
+                                {{ implode(', ', array_map(fn($r) => preg_replace('/^\s*-\s*/', '', $r), $noteReasonsSorted)) }}
+                            </p>
+                        </div>
+                    @endif
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div style="height: 10px;"></div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
+        <thead>
+            <tr style="text-align: center; white-space: nowrap;">
+                <th style="border: 1px solid #000; padding: 1px;">Date</th>
+                <th style="border: 1px solid #000; padding: 1px; width: 50px;">Code No</th>
+                <th style="border: 1px solid #000; padding: 1px; width: 50px;">Order No</th>
+                <th style="border: 1px solid #000; padding: 1px; width: 40px;">Type</th>
+                <th colspan="3" style="border: 1px solid #000; padding: 1px; width: 60px;">LOT#</th>
+                <th style="border: 1px solid #000; padding: 1px;">Furnace#</th>
+                <th style="border: 1px solid #000; padding: 1px;">Coating#</th>
+                <th style="border: 1px solid #000; padding: 1px;">Zone</th>
+
+                @foreach (['Br','iHc','iHk','BHMax','Hr95','Hr98','iHkiHc','Br4pai','bHc','Squareness','4paiIa','4paiId','4paiIs'] as $metric)
+                    <th colspan="2" style="border: 1px solid #000; padding: 1px;">{{ $metric }}</th>
+                @endforeach
+                <th style="border: 1px solid #000; padding: 1px;">Tracer</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach ($tpmDataAll as $item)
+            <tr style="text-align: center; white-space: nowrap;">
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->date }}</td>
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->code_no }}</td>
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->order_no }}</td>
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->type }}</td>
+
+                {{-- LOT# columns --}}
+                <td style="border: 1px solid #000; padding: 0px;">{{ $item->press_1 }}</td>
+                <td style="border: 1px solid #000; padding: 0px;">{{ $item->press_2 }}</td>
+                <td style="border: 1px solid #000; padding: 0px;">{{ $item->machine_no }}</td>
+
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->sintering_furnace_no }}</td>
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->furnace_no }}</td>
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->zone }}</td>
+
+                {{-- Metrics + Remarks --}}
+                @php
+                    $metrics = [
+                        'Br', 'iHc', 'iHk', 'BHMax', 'iHr95', 'iHr98',
+                        'iHkiHc', 'Br4pai', 'bHc', 'Squareness',
+                        '4paiIa', '4paiId', '4paiIs'
+                    ];
+                @endphp
+
+                @foreach ($metrics as $metric)
+                    <td style="border: 1px solid #000; padding: 1px;">{{ $item->{$metric} }}</td>
+                    <td style="border: 1px solid #000; padding: 0px; width: 20px;
+                        {{ $item->remark->{$metric . '_remarks'} === '1' ? 'color: #c00; font-weight: bold;' : '' }}">
+                        {{
+                            $item->remark->{$metric . '_remarks'} === '1' ? 'E' :
+                            ($item->remark->{$metric . '_remarks'} === '0' ? '' : $item->remark->{$metric . '_remarks'})
+                        }}
+                    </td>
+                @endforeach
+                <td style="border: 1px solid #000; padding: 1px;">{{ $item->Tracer }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
 
 
 </body>
