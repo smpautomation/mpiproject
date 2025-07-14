@@ -79,7 +79,7 @@ const maxWidthClass = computed(() => {
         class="z-50 m-0 w-screen h-screen overflow-y-auto bg-transparent backdrop:bg-transparent"
         ref="dialog"
     >
-        <div class="fixed inset-0 z-50 overflow-y-auto px-4 py-52 sm:px-0" scroll-region>
+        <div class="fixed inset-0 z-50 overflow-y-auto px-4 py-20 sm:px-0" scroll-region>
             <Transition
                 enter-active-class="ease-out duration-300"
                 enter-from-class="opacity-0"

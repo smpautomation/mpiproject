@@ -1309,31 +1309,38 @@
 
     // Function to fetch furnace data
     const fetchFurnaces = async () => {
-    try {
-        const response = await axios.get("/api/furnacedata");
-        //console.log("API Response:", response.data.data["Furnace Data"]);
+        try {
+            const response = await axios.get("/api/furnacedata");
+            const extractedFurnaces = response.data.data["Furnace Data"] || response.data.furnaces || response.data.data || [];
 
-        // Extract furnace data dynamically
-        const extractedFurnaces = response.data.data["Furnace Data"] || response.data.furnaces || response.data.data || [];
+            if (!Array.isArray(extractedFurnaces)) {
+                console.error("Error: Fetched data is not an array.", extractedFurnaces);
+                return;
+            }
 
-        // Ensure data is an array
-        if (!Array.isArray(extractedFurnaces)) {
-        console.error("Error: Fetched data is not an array.", extractedFurnaces);
-        return;
+            // Filter for distinct furnace_name
+            const uniqueFurnaces = [];
+            const seenNames = new Set();
+
+            for (const furnace of extractedFurnaces) {
+                const name = furnace.furnace_name;
+                if (!seenNames.has(name)) {
+                    seenNames.add(name);
+                    uniqueFurnaces.push(furnace);
+                }
+            }
+
+            furnaceList.value = uniqueFurnaces;
+
+            if (furnaceList.value.length > 0) {
+                currentFurnaceName.value = furnaceList.value[0].furnace_name;
+            }
+
+        } catch (error) {
+            console.error("Error fetching furnace data:", error);
         }
-
-        // Update the reactive variable
-        furnaceList.value = extractedFurnaces;
-        //console.log("Furnace list: ", furnaceList.value);
-        // Set default selection to first furnace, if available
-        if (furnaceList.value.length > 0) {
-            currentFurnaceName.value = furnaceList.value[0].furnace_name;
-        }
-
-    } catch (error) {
-        console.error("Error fetching furnace data:", error);
-    }
     };
+
 
     const layerList = ref([]); // Stores fetched layers\
     const currentFurnaceNoForLayer = ref(null);
@@ -2776,6 +2783,9 @@ const renderChart = () => {
                                     weight: "bold", // Make it bold
                                 },
                             },
+                            ticks: {
+                                display: false // disables X-axis labels
+                            },
                         },
                         y: {
                             type: "linear",
@@ -2791,6 +2801,9 @@ const renderChart = () => {
                                     size: 14,  // Increase font size
                                     weight: "bold", // Make it bold
                                 },
+                            },
+                            ticks: {
+                                display: false // disables X-axis labels
                             },
                         },
                     },

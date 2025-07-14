@@ -111,7 +111,9 @@ class ReportDataController extends Controller
                 "shift_oven_info" => $request->input("shift_oven_info"),
                 "operator_oven_info" => $request->input("operator_oven_info"),
                 "withCarmark" => $request->input("withCarmark"),
-                "with_sec_additionals" => $request->input("with_sec_additionals")
+                "with_sec_additionals" => $request->input("with_sec_additionals"),
+                "coating_completed" => $request->input("coating_completed"),
+                "heat_treatment_completed" => $request->input("heat_treatment_completed"),
             ];
             $reportData = ReportData::create($reportDataInputs);
             DB::commit();

@@ -18,6 +18,8 @@
           <option value="PREPARED_PENDING">Prepared by Pending</option>
           <option value="CHECKED_PENDING">Checked by Pending</option>
           <option value="FINALIZED_PENDING">Finalize Pending</option>
+          <option value="COATING_PENDING">Coating Pending</option>
+          <option value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option>
         </select>
 
       </div>
@@ -263,8 +265,8 @@ const filteredData = computed(() => {
     const matchesQuery = !query || model.includes(query) || lot.includes(query);
 
     const report = item.report?.[0] || {};
-    //console.log('TPM',tpmData.value);
-    //console.log('[REPORT]:', report);
+    console.log('TPM',tpmData.value);
+    console.log('[REPORT]:', report);
 
     const isEmpty = (val) =>
       val === null ||
@@ -295,6 +297,10 @@ const filteredData = computed(() => {
                      !isEmpty(report.prepared_by_firstname) &&
                      !isEmpty(report.checked_by_firstname) &&
                      !isEmpty(report.approved_by_firstname);
+    } else if (status === 'COATING_PENDING') {
+        matchesStatus = report.coating_completed == false;
+    } else if (status === 'HEAT_TREATMENT_PENDING') {
+      matchesStatus = report.heat_treatment_completed == false;
     }
 
     return matchesQuery && matchesStatus;

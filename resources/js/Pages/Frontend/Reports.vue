@@ -543,6 +543,34 @@
                                 />
                             </div>
                             </div>
+                            <div
+                                :class="[
+                                    'flex items-center mt-4 space-x-2 rounded-md px-3 py-2 shadow-sm border',
+                                    coatingCompleted
+                                        ? 'bg-green-50 border-green-300'
+                                        : 'bg-gray-100 border-gray-300'
+                                ]"
+                            >
+                                <input
+                                    id="coatingCheckbox"
+                                    type="checkbox"
+                                    v-model="coatingCompleted"
+                                    class="w-5 h-5"
+                                    :class="coatingCompleted
+                                        ? 'text-green-600 focus:ring-green-500'
+                                        : 'text-gray-500 focus:ring-gray-400'"
+                                />
+
+                                <label for="coatingCheckbox" class="flex items-center text-sm font-semibold"
+                                    :class="coatingCompleted ? 'text-green-700' : 'text-gray-600'">
+                                    <svg v-if="coatingCompleted" class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 5.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l7-7a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>
+                                        {{ coatingCompleted ? 'Coating inspection completed' : '✓ Tick the box to finalize Coating' }}
+                                    </span>
+                                </label>
+                            </div>
                         </div>
 
 
@@ -878,11 +906,49 @@
                             </button>
                             </div>
 
+                            <div
+                                :class="[
+                                    'flex items-center mt-4 mx-10 space-x-2 rounded-md px-3 py-2 shadow-sm border',
+                                    heatTreatmentCompleted
+                                        ? 'bg-green-50 border-green-300'
+                                        : 'bg-gray-100 border-gray-300'
+                                ]"
+                            >
+                                <input
+                                    id="heatTreatmentCheckbox"
+                                    type="checkbox"
+                                    v-model="heatTreatmentCompleted"
+                                    class="w-5 h-5"
+                                    :class="heatTreatmentCompleted
+                                        ? 'text-green-600 focus:ring-green-500'
+                                        : 'text-gray-500 focus:ring-gray-400'"
+                                />
+
+                                <label
+                                    for="heatTreatmentCheckbox"
+                                    class="flex items-center text-sm font-semibold"
+                                    :class="heatTreatmentCompleted ? 'text-green-700' : 'text-gray-600'"
+                                >
+                                    <svg
+                                        v-if="heatTreatmentCompleted"
+                                        class="w-4 h-4 mr-1 text-green-600"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 5.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                    {{ heatTreatmentCompleted ? 'Heat Treatment completed' : '✓ Tick the box to finalize Heat Treatment' }}
+                                </label>
+                            </div>
                     </div>
                 </div>
 
                 <Modal :show="showModal" @close="showModal = false">
-                    <div class="flex flex-col items-center justify-center bg-blue-300 p-10 rounded-lg w-full max-w-3xl mx-auto shadow-xl mb-0">
+                    <div class="flex flex-col items-center justify-center bg-blue-300 p-5 rounded-lg w-full max-w-3xl mx-auto shadow-xl mb-0">
                         <p class="mb-6 text-lg font-bold text-white text-center">Mass Production Control Sheet</p>
 
                         <div class="flex flex-row justify-between w-full mb-4">
@@ -2021,13 +2087,8 @@
                         @click="finalizeReport(currentSerialSelected)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
-                        Finalize Report
+                        View PDF Report
                     </button>
-
-                    <button v-if="onTestServer" @click="finalizeReport(currentSerialSelected)" class="p-2 bg-white rounded-lg">
-                        Finalize Report BYPASS
-                    </button>
-
 
                     <button v-if="showExitButton && !isFromApproval && !isFromViewList" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
@@ -2041,6 +2102,11 @@
                         BACK TO VIEW LIST
                     </button>
 
+                </div>
+                <div>
+                    <button v-if="onTestServer" @click="finalizeReport(currentSerialSelected)" class="p-2 bg-blue-100 rounded-lg">
+                        View PDF Report BYPASS
+                    </button>
                 </div>
                 <div v-show="showNotif" class="flex flex-row items-center justify-center max-w-xs px-4 py-2 mx-auto mt-10 text-white bg-green-700 rounded-md shadow-lg">
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
@@ -2538,6 +2604,9 @@ const getAlliHr95NG = ref('');
 const getAlliHr98NG = ref('');
 
 const showModal = ref(false);
+
+const coatingCompleted = ref(false);
+const heatTreatmentCompleted = ref(false);
 
 const massProd_qty = ref('');
 const massProd_WT = ref('');
@@ -3379,6 +3448,10 @@ const showReportData = async () => {
 
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
+        coatingCompleted.value = filterBySerial[0].coating_completed == 1;
+        //console.log("Coating completed value: ",coatingCompleted.value);
+        heatTreatmentCompleted.value = filterBySerial[0].heat_treatment_completed == 1;
+        //console.log("Heat treatment completed value: ",heatTreatmentCompleted.value);
 
         //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
 
@@ -3588,8 +3661,6 @@ const showReportData = async () => {
             mod.liters = rawDataCoating[`add_slurry_${key}_liters`] ?? '';
         });
 
-        //gggggggggggggggggggggggggggggggg
-
         //HEAT TREATMENT ---
 
         reportHTFurnaceMachine.value = ht.furnace_machine ?? 'NA';
@@ -3645,6 +3716,14 @@ const saveReport = async () => {
     reportPartialNo.value = (reportPartialNo.value || '').toUpperCase();
     reportShift.value = (reportShift.value || '').toUpperCase();
     reportOperator.value = (reportOperator.value || '').toUpperCase();
+
+    if(coatingCompleted.value == true){
+        await userReportLogging(`has successfully marked coating completed | serial ${currentSerialSelected.value}`);
+    }
+
+    if(heatTreatmentCompleted.value == true){
+        await userReportLogging(`has successfully marked heat treatment completed | serial ${currentSerialSelected.value}`);
+    }
 
     const saveReportData = {
         "oven_machine_no": reportOvenMachineNo.value,
@@ -3753,6 +3832,8 @@ const saveReport = async () => {
             "JD5_iHcMax": reportROB_JD5_iHcMax.value,
             "result": reportROB_remarks.value,
         }),
+        "coating_completed": coatingCompleted.value ? 1 : 0,
+        "heat_treatment_completed": heatTreatmentCompleted.value ? 1 : 0,
     }
     //console.log("Save report data: ", saveReportData);
     const coatingData = {};

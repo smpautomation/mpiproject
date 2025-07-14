@@ -116,38 +116,38 @@
         <div class="table-block">
             <div class="table-row">
                 <div class="table-cell">Coating Date:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->date }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->date ?? 'NA' }}</span></div>
                 <div class="table-cell">Coating Machine No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->machine_no }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->machine_no ?? 'NA' }}</span></div>
                 <div class="table-cell">Slurry Lot No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->slurry_lot_no }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->slurry_lot_no ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell">MIN. TB CONTENT:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->min_tb_content }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->min_tb_content ?? 'NA' }}</span></div>
                 <div class="table-cell">Sample Quantity:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->sample_qty }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->sample_qty ?? 'NA' }}</span></div>
                 <div class="table-cell">Total Magnet Weight:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->total_magnet_weight }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->total_magnet_weight ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell">Loader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->loader_operator }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->loader_operator ?? 'NA' }}</span></div>
                 <div class="table-cell">Unloader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->unloader_operator }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->unloader_operator ?? 'NA' }}</span></div>
                 <div class="table-cell">Checker Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->checker_operator }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->checker_operator ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
                 <div class="table-cell"></div>
                 <div class="table-cell">Time Start:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_start }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_start ?? 'NA' }}</span></div>
                 <div class="table-cell">Time Finished:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_finish }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_finish ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">

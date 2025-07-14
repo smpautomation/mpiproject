@@ -437,31 +437,36 @@ const datenow = () => {
 const confirmationApprove = async () => {
     isLoadingApproval.value = true;
     showApproveConfirmation.value = false;
+
     try {
         console.log("== Starting approval process ==");
-
         const dateNow = datenow();
+
         const reportData = {
             approved_by_firstname: state.user.firstName,
             approved_by_surname: state.user.surname,
             approved_by_date: dateNow,
         };
 
+        // 1. Stamp approval
         for (const serial of selectedRows.value) {
             await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
-            //await axios.patch(`/api/reportdata/${serial}`, reportData);
+            await axios.patch(`/api/reportdata/${serial}`, reportData);
         }
 
+        // 2. Generate + save PDFs
         for (const serial of selectedRows.value) {
             try {
                 await axios.get(`/api/reports/${encodeURIComponent(serial)}/generate-and-save`);
                 console.log(`✅ PDF generated and saved for serial: ${serial}`);
             } catch (pdfErr) {
                 console.error(`❌ PDF generation failed for serial ${serial}`, pdfErr);
-                throw pdfErr;
+                await rollbackApproval(); // ⬅ safe undo
+                throw pdfErr; // bubble up to outer catch
             }
         }
 
+        // 3. Finalize report
         for (const serial of selectedRows.value) {
             await finalizeReport(serial);
         }
@@ -470,25 +475,14 @@ const confirmationApprove = async () => {
 
     } catch (error) {
         console.error("Error during approval:", error);
-
-        const rollbackData = {
-            approved_by_firstname: '',
-            approved_by_surname: '',
-            approved_by_date: null,
-            is_finalized: 0,
-        };
-
-        for (const serial of selectedRows.value) {
-            await axios.patch(`/api/reportdata/${serial}`, rollbackData);
-        }
-
+        await rollbackApproval(); // failsafe backup
         showBlockedNotification(`
             An error occurred while saving the PDF reports.<br>
             Please try again later or contact support.
         `);
     } finally {
         isLoadingApproval.value = false;
-        await showReportData();
+        await showReportData(); // refresh
         showApproveButton.value = true;
     }
 };

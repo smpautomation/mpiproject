@@ -108,6 +108,7 @@
                 {{-- <img src="{{ asset('photo/AE.png') }}" alt="Department Logo"> --}}
 
                 {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
+                {{ app(\App\Services\TxtExportService::class)->exportData2($actualFurnaceNo, $actualMassPro) }}
                 {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
             </td>
         </tr>

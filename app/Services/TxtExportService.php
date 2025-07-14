@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\TPMData; //Before: App\Models\TpmData
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class TxtExportService
 {
@@ -93,7 +94,7 @@ class TxtExportService
             ->prepend($header);
 
         // Step 7: Save file
-        $directory = public_path("files/{$furnace_no} {$massPro}");
+        $directory = public_path(path: "files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
@@ -104,10 +105,103 @@ class TxtExportService
     }
 
 
-    public function exportData2(string $furnace_no)
+    public function exportData2(string $furnace_no, string $massPro)
     {
+        try{
+            $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
+                ->orderBy('date', 'desc')
+                ->value('date');
 
+            $tpmData = TpmData::with(['category', 'boxes'])
+                ->where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
+                ->where('date', $dateToGet)
+                ->get();
+
+            if ($tpmData->isEmpty()) {
+                return 'No data found.';
+            }
+
+            $layers = range(1, 10);
+            rsort($layers); // 10 to 1
+
+            $outputRows = [];
+
+            foreach ($tpmData as $tpm) {
+                $layerKey = $tpm->layer_no;
+                $serial = $tpm->serial;
+
+                $category = $tpm->category;
+                $modelCode = $tpm->code_no ?? '';
+                $rawMaterialCode = $category->raw_material_code ?? '';
+                $totalQty = $tpm->boxes->sum('quantity');
+
+                $coating = \App\Models\Coating::where('serial', $serial)->first();
+                $ht = \App\Models\HeatTreatment::where('serial', $serial)->first();
+                $reportData = \App\Models\ReportData::where('tpm_data_serial', $serial)->first();
+
+                $outputRows[] = [
+                    $layerKey === 10 ? 'T' : $layerKey,
+                    $modelCode,
+                    $rawMaterialCode,
+                    $totalQty,
+                    $coating?->date ?? '',
+                    $coating?->machine_no ?? '',
+                    $coating?->min_tb_content ?? '',
+                    $coating?->total_magnet_weight ?? '',
+                    $coating?->maximum ?? '',
+                    $coating?->minimum ?? '',
+                    $coating?->average ?? '',
+                    $ht?->furnace_machine ?? '',
+                    $ht?->cycle_no ?? '',
+                    $ht?->batch_cycle_no ?? '',
+                    $ht?->pattern_no ?? '',
+                    $ht?->date_start ?? '',
+                    $ht?->date_finish ?? '',
+                    $reportData?->length ?? '',
+                    $reportData?->width ?? '',
+                    $reportData?->thickness ?? '',
+                    $reportData?->material_grade ?? '',
+                ];
+            }
+
+            $header = [
+                'LAYER', 'MODEL_CODE', 'RAW_MATERIAL_CODE', 'TOTAL_QUANTITY',
+                'COATING_DATE', 'COATING_MACHINE_NO', 'MIN_TB_CONTENT', 'TOTAL_MAGNET_WEIGHT',
+                'COATING_MAX', 'COATING_MIN', 'COATING_AVE',
+                'FURNACE_MACHINE_NO', 'CYCLE_NO', 'BATCH_CYCLE_NO', 'PATTERN',
+                'DATE_START', 'DATE_FINISH',
+                'LENGTH', 'WIDTH', 'THICKNESS', 'MATERIAL GRADE'
+            ];
+
+            $lines = collect($outputRows)
+                ->map(fn($row) => implode(',', array_map([$this, 'convertToString'], $row)))
+                ->prepend(implode(',', $header));
+
+            $directory = public_path("files/{$furnace_no} {$massPro}");
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            $filePath = "{$directory}/Data2.txt";
+            File::put($filePath, implode("\n", $lines->toArray()));
+
+            return "Exported successfully to: {$filePath}";
+
+        } catch (\Throwable $e) {
+        Log::error('ExportData2 Failed', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'status' => false,
+            'error' => 'Export failed',
+            'details' => $e->getMessage()
+        ], 500);
     }
+    }
+
+    
     public function exportData3(string $furnace_no, string $massPro)
     {
         $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
@@ -238,8 +332,6 @@ class TxtExportService
         File::put($filePath, implode("\n", $lines));
 
         return "Exported successfully to: {$filePath}";
-
-
 
     }
 

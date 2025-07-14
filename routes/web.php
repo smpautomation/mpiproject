@@ -108,8 +108,9 @@ Route::post('/upload-pdf', function (Request $request) {
     ]);
 });
 
-Route::get('/export-data1/{furnace_no}', [ExportController::class, 'exportData1'])->name('exportData1');
-Route::get('/export-data3/{furnace_no}', [ExportController::class, 'exportData3'])->name('exportData3');
+//Route::get('/export-data1/{furnace_no}', [ExportController::class, 'exportData1'])->name('exportData1');
+//Route::get('/export-data2/{furnace_no}', [ExportController::class, 'exportData2'])->name('exportData2');
+//Route::get('/export-data3/{furnace_no}', [ExportController::class, 'exportData3'])->name('exportData3');
 Route::view('/test-export', 'test');
 
 Route::get('/generate-pdf', function () {
@@ -121,5 +122,9 @@ Route::get('/reports/{serial}/pdf', [BackEndPdfController::class, 'generateAndMe
     ->where('serial', '[A-Za-z0-9\-\s#]+');
 
 Route::post('/upload-chart', [ChartUploadController::class, 'store']);
+
+Route::get('/debug-export', function () {
+    return app(\App\Services\TxtExportService::class)->exportData2('K40', '541ST');
+}); 
 
 require __DIR__.'/auth.php';
