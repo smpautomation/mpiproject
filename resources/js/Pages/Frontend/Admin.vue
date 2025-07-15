@@ -65,6 +65,8 @@
                                     <option value="Checking Approver">Checking Approver</option>
                                     <option value="Preparation Approver">Preparation Approver</option>
                                     <option value="Proxy Approver">Proxy Approver</option>
+                                    <option value="Coating">Coating</option>
+                                    <option value="Heat Treatment">Heat Treatment</option>
                                     <!-- hidden for now
 
                                     <option value="Hybrid Approver">Hybrid Approver</option>

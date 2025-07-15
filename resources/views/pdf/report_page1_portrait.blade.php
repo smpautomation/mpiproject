@@ -1166,6 +1166,73 @@
                             </tr>
                         @endif
 
+                        @if ($flags['showBHData'])
+                            @php
+                                $bh = $modelData['bh'] ?? [];
+                                $samples = $bh['sample'] ?? [];
+                                $results = $bh['result'] ?? [];
+                                $sampleCount = count($samples);
+
+                                // Dynamic column count logic
+                                $colCount = match (true) {
+                                    $sampleCount <= 3 => 3,
+                                    $sampleCount === 4 => 4,
+                                    default => 5,
+                                };
+
+                                $rowCount = ceil($sampleCount / $colCount);
+                            @endphp
+
+                            <tr>
+                                <th colspan="2" style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    BH Data @ {{ $bh['temp'] ?? 'NA' }} °C
+                                </th>
+                                <th colspan="3" style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    Samples
+                                </th>
+                                <th style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    Result
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align: center; border: 1px solid #000;">
+                                    {{ $bh['data'] ?? 'NA' }} kOe
+                                </td>
+                                <td style="text-align: center; font-family: DejaVu Sans, sans-serif; border: 1px solid #000;">
+                                    ≥ {{ $bh['dataStandard'] ?? 'NA' }} kOe
+                                </td>
+                                <td colspan="3" style="padding: 0; border: 1px solid #000;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $result = $results[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border: 1px solid #ccc; text-align: center; font-size: 9px;">
+                                                        @if ($sample)
+                                                            <div style="background-color: #f9f9f9; white-space: nowrap;">
+                                                                {{ $sample }}
+                                                            </div>
+                                                            <div style="border-top: 1px solid #ccc;">
+                                                                {{ $result }} kOe
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                                <td style="text-align: center; border: 1px solid #000;">
+                                    {{ $bh['remarks'] ?? 'NA' }}
+                                </td>
+                            </tr>
+                        @endif
+
 
 
                     </tbody>

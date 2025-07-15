@@ -417,43 +417,43 @@
                             <td :class="{ 'leading-loose': adjustStyling }" class="border border-black px-[3.04px] py-[3.04px] text-xs whitespace-nowrap">{{ printiHc_cpk_info_remarks }}</td>
                         </tr>
                         <tr v-if="showBHData && noteReasonForReject.includes('- N.G iHc')" class="text-center bg-gray-200">
-                        <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">BH Data @ {{ printBH_temp }} °C</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" colspan="2" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">BH Data @ {{ printBH_temp }} °C</th>
 
-                        <th :class="{ 'leading-loose': adjustStyling }" colspan="3" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">
-                            Samples
-                        </th>
+                            <th :class="{ 'leading-loose': adjustStyling }" colspan="3" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">
+                                Samples
+                            </th>
 
-                        <th :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">Result</th>
+                            <th :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs bg-gray-200 border border-black whitespace-nowrap">Result</th>
                         </tr>
 
                         <tr v-if="showBHData && noteReasonForReject.includes('- N.G iHc')" class="text-center">
-                        <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">
-                            {{ printBH_data }} <span class="align-baseline"> kOe</span>
-                        </td>
-                        <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">
-                            &#8805; {{ printBH_dataStandard }} (kOe)
-                        </td>
-                        <td colspan="3" class="px-0 py-0 text-xs border border-black whitespace-nowrap">
-                            <table class="w-full border-collapse table-fixed">
-                                <tr v-for="rowIndex in Math.ceil(printBH_sample.length / 3)" :key="'row-' + rowIndex">
-                                <td
-                                    v-for="colIndex in 3"
-                                    :key="'col-' + colIndex"
-                                    class="border border-gray-400 align-top px-[2.5px] font-extrabold py-[2.5px] text-center text-[9px] w-1/3"
-                                >
-                                    <template v-if="printBH_sample[(rowIndex - 1) * 3 + (colIndex - 1)]">
-                                    <div class="bg-gray-100">
-                                        {{ printBH_sample[(rowIndex - 1) * 3 + (colIndex - 1)] }}
-                                    </div>
-                                    <div class="text-gray-700 border-t border-gray-300">
-                                        {{ printBH_result[(rowIndex - 1) * 3 + (colIndex - 1)] }} kOe
-                                    </div>
-                                    </template>
-                                </td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">{{ printBH_remarks }}</td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">
+                                {{ printBH_data }} <span class="align-baseline"> kOe</span>
+                            </td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">
+                                &#8805; {{ printBH_dataStandard }} (kOe)
+                            </td>
+                            <td colspan="3" class="px-0 py-0 text-xs border border-black whitespace-nowrap">
+                                <table class="w-full border-collapse table-fixed">
+                                    <tr v-for="rowIndex in Math.ceil(printBH_sample.length / 3)" :key="'row-' + rowIndex">
+                                    <td
+                                        v-for="colIndex in 3"
+                                        :key="'col-' + colIndex"
+                                        class="border border-gray-400 align-top px-[2.5px] font-extrabold py-[2.5px] text-center text-[9px] w-1/3"
+                                    >
+                                        <template v-if="printBH_sample[(rowIndex - 1) * 3 + (colIndex - 1)]">
+                                        <div class="bg-gray-100">
+                                            {{ printBH_sample[(rowIndex - 1) * 3 + (colIndex - 1)] }}
+                                        </div>
+                                        <div class="text-gray-700 border-t border-gray-300">
+                                            {{ printBH_result[(rowIndex - 1) * 3 + (colIndex - 1)] }} kOe
+                                        </div>
+                                        </template>
+                                    </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td :class="{ 'leading-loose': adjustStyling }" class="px-2 py-1 text-xs border border-black whitespace-nowrap">{{ printBH_remarks }}</td>
                         </tr>
                     </tbody>
                 </table>
