@@ -10,6 +10,12 @@ use App\Models\HeatTreatment;
 use App\Models\TPMDataCategory;
 use App\Models\TPMData;
 use App\Models\TPMDataAggregateFunctions;
+use App\Models\VtModel;
+use App\Models\CpkIhcModel;
+use App\Models\GxModel;
+use App\Models\TtmncModel;
+use App\Models\BhModel;
+use App\Models\RobModel;
 
 class BackEndPdfController extends Controller
 {
@@ -172,6 +178,66 @@ class BackEndPdfController extends Controller
         $aggregateMinimum = json_decode($tpmDataAggregate->minimum, true); // same
         $aggregateAverage = json_decode($tpmDataAggregate->average, true); // same
 
+        $noteReasonRaw = json_decode($reportData->note_reason_reject ?? '[]', true);
+        //dd($noteReasonRaw);
+        // fallback if it’s malformed (just a string with newlines instead of valid JSON)
+        if (!is_array($noteReasonRaw)) {
+            $noteReasonRaw = explode("\n", $reportData->note_reason_reject);
+            $noteReasonRaw = array_filter(array_map('trim', $noteReasonRaw));
+        }
+
+        $d1x1x1     = json_decode($reportData->data_1x1x1_info ?? '[]', true);
+        $dVT        = json_decode($reportData->data_VT_info ?? '[]', true);
+        $diHc_cpk   = json_decode($reportData->data_iHc_cpk_info ?? '[]', true);
+        $dGX        = json_decode($reportData->data_GX_info ?? '[]', true);
+        $dBH        = json_decode($reportData->data_bh_info ?? '[]', true);
+        $dROB       = json_decode($reportData->data_ROB_info ?? '[]', true);
+
+        $model = $tpmCategories->actual_model ?? '';
+        $noteReasons = $noteReasonRaw;
+
+        $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_GX      = GxModel::pluck('model_name')->toArray();
+        $MODELS_1X1X1_NO_CORNER = TtmncModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_BH      = BhModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_ROB     = RobModel::pluck('model_name')->toArray();
+
+        $showROB         = in_array($model, $MODELS_SHOW_ROB);
+        $hasNGihc        = in_array('- N.G iHc', $noteReasons);
+
+        $showCpkFrom_iHc = $hasNGihc && in_array($model, $MODELS_SHOW_CPK);
+        $showGX          = $hasNGihc && in_array($model, $MODELS_SHOW_GX);
+        $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
+
+        $showVTData         = false; // default to false
+        $showVTData_default = false; // default to false
+
+        // VT Logic
+        if ($hasNGihc && in_array($model, $MODELS_SHOW_VT_DATA)) {
+            if (!empty($dVT['sample_qty']) && $dVT['sample_qty'] > 0) {
+                $showVTData = true;
+            } else {
+                $showVTData_default = true;
+            }
+        }
+
+        // 1x1x1 Data Conditions
+        $show1x1x1Data_withoutCorner = false;
+        $show1x1x1Data_Corner        = false;
+        $isTTM_model                 = str_contains($model, 'TTM');
+
+        if ($isTTM_model && $hasNGihc) {
+            $show1x1x1Data_withoutCorner = true;
+            $show1x1x1Data_Corner = true;
+
+            if (in_array($model, $MODELS_1X1X1_NO_CORNER)) {
+                $show1x1x1Data_Corner = false;
+            }
+        }
+        //dd($show1x1x1Data_Corner);
+
+
         $data = [
             'serial' => $serial,
             'chartFilename' => $chartFilename, // pass to Blade
@@ -204,6 +270,25 @@ class BackEndPdfController extends Controller
             'tpmAggregateMax' => $aggregateMaximum, // pass TPM aggregate maximum
             'tpmAggregateMin' => $aggregateMinimum, // pass TPM aggregate minimum
             'tpmAggregateAvg' => $aggregateAverage, // pass TPM aggregate average
+            'flags' => [
+                'showROB' => $showROB,
+                'showVTData' => $showVTData,
+                'showVTData_default' => $showVTData_default,
+                'showCpkFrom_iHc' => $showCpkFrom_iHc,
+                'showGX' => $showGX,
+                'showBHData' => $showBHData,
+                'show1x1x1Data_withoutCorner' => $show1x1x1Data_withoutCorner,
+                'show1x1x1Data_Corner' => $show1x1x1Data_Corner,
+                'isTTM_model' => $isTTM_model,
+            ],
+            'modelData' => [
+                'gx' => $dGX,
+                'vt' => $dVT,
+                'ihc_cpk' => $diHc_cpk,
+                'bh' => $dBH,
+                'rob' => $dROB,
+                'd1x1x1' => $d1x1x1,
+            ],
         ];
 
         $portrait = Pdf::loadView('pdf.report_page1_portrait', $data)
@@ -229,7 +314,7 @@ class BackEndPdfController extends Controller
             ->header('Content-Disposition', 'inline; filename="report.pdf"');
     }
 
-    
+
     private function resolveFontSize(string $name): string
     {
         if (empty(trim($name))) return '14px';

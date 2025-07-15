@@ -2894,7 +2894,7 @@ watch(
 
 //FOR GX - models
 watch(
-  [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement, showGX],
+  [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement, showGX, reportGX_iHcAverage, reportGX_iHcMaximum],
   () => {
     //console.log('Watch triggered for GX iHc evaluation');
     //console.log('showGX:', showGX.value);
@@ -3151,11 +3151,12 @@ const checkSpecialJudgement = async () => {
         showBHData_default.value = true;
     }
 
-    if (model.includes("TTM") || MODELS_1X1X1_NO_CORNER.value.includes(model)) {
+    if (model.includes("TTM")) {
         show1x1x1Data_withoutCorner.value = true;
+        show1x1x1Data_Corner.value = true;
 
-        if (model.includes("TTM") && !["TTM0A58D", "TTM0C16D"].includes(model)) {
-            show1x1x1Data_Corner.value = true;
+        if (model.includes("TTM") && MODELS_1X1X1_NO_CORNER.value.includes(model)) {
+            show1x1x1Data_Corner.value = false;
         }
     }
 
@@ -3463,7 +3464,7 @@ const showReportData = async () => {
         reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
         reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
         reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
-        
+
 
         reportStdDev.value = filterBySerial[0].std_dev;
         //console.log('reportStdDev:', reportStdDev.value);

@@ -711,7 +711,7 @@
                         <tbody>
                             <tr>
                                 <td style="margin: 0px; padding: 0px;">No. of Layer</td>
-                                <td>{{ $tpmData->layer_no }}</td>
+                                <td>{{ $tpmData->layer_no == 10 ? '9.5' : $tpmData->layer_no }}</td>
                                 <td>{{ $magnetBoxLocation['box_a']}}</td>
                                 <td>{{ $magnetBoxLocation['box_b'] }}</td>
                                 <td>{{ $magnetBoxLocation['box_c'] }}</td>
@@ -840,60 +840,334 @@
                 </table>
             </div>
             <div class="table-cell">
-                <table class="print-table">
+                @php
+                    $showGX = $flags['showGX'] ?? false;
+                    $noteReasons = $noteReasonsSorted ?? [];
+                    $hasNGihc = in_array('- N.G iHc', $noteReasons);
+                    $gx = $modelData['gx'] ?? [];
+                @endphp
+                @php
+                    $showROB = $flags['showROB'] ?? false;
+                    $actualDataColspan = $showROB ? 5 : 4;
+                    $tableColspan = 2 + $actualDataColspan; // 2 fixed cols (Items + Standard)
+                @endphp
+
+                <table class="print-table" style="width: 100%; border-collapse: collapse;" border="1" cellpadding="3">
                     <thead>
                         <tr>
-                            <th colspan="6">
-                                MAGNETIC PROPERTY TABLE
-                            </th>
+                            <th colspan="{{ $tableColspan }}" style="text-align: center;">MAGNETIC PROPERTY TABLE</th>
                         </tr>
                         <tr>
-                            <th rowspan="2">
-                                ITEMS
-                            </th>
-                            <th rowspan="2">
-                                STANDARD
-                            </th>
-                            <th colspan="4">ACTUAL DATA</th>
+                            <th rowspan="2" style="text-align: center;">ITEMS</th>
+                            <th rowspan="2" style="text-align: center;">STANDARD</th>
+                            <th colspan="{{ $actualDataColspan }}" style="text-align: center;">ACTUAL DATA</th>
                         </tr>
                         <tr>
-                            <th>AVERAGE</th>
-                            <th>MAXIMUM</th>
-                            <th>MINIMUM</th>
-                            <th>Variance<br>(max-min)</th>
+                            <th style="text-align: center;">AVERAGE</th>
+                            <th style="text-align: center;">MAXIMUM</th>
+                            <th style="text-align: center;">MINIMUM</th>
+                            <th style="text-align: center;">Variance<br>(max - min)</th>
+                            @if($showROB)
+                                <th style="text-align: center;"></th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
+                        {{-- Br (G) --}}
                         <tr>
-                            <td>
-                                Br (G)
-                            </td>
+                            <td>Br (G)</td>
                             <td>{{ $brBounds['lower'] ?? 'NA' }} ~ {{ $brBounds['upper'] ?? 'NA' }}</td>
                             <td>{{ $magneticProperty['brAverage'] ?? 'NA' }}</td>
                             <td>{{ $magneticProperty['brMaximum'] ?? 'NA' }}</td>
                             <td>{{ $magneticProperty['brMinimum'] ?? 'NA' }}</td>
                             <td>{{ $brVariance ?? 'NA' }}</td>
+                            @if($showROB)
+                                <td style="text-align: center;"></td>
+                            @endif
                         </tr>
+
+                        {{-- iHc GM --}}
                         <tr>
+                            <td rowspan="{{ ($hasNGihc && $showGX) ? 2 : 1 }}">iHc (Oe)</td>
                             <td>
-                                iHc (Oe)
+                                @if($showGX && $hasNGihc)
+                                    GM
+                                @endif
+                                {{ $magneticProperty['ihcStandard'] ?? 'NA' }}
                             </td>
-                            <td>{{ $magneticProperty['ihcStandard'] ?? 'NA' }}</td>
                             <td>{{ $magneticProperty['ihcAverage'] ?? 'NA' }}</td>
                             <td>{{ $magneticProperty['ihcMaximum'] ?? 'NA' }}</td>
                             <td>{{ $magneticProperty['ihcMinimum'] ?? 'NA' }}</td>
                             <td>{{ $ihcVariance ?? 'NA' }}</td>
+                            @if($showROB)
+                                <td style="text-align: center;"></td>
+                            @endif
                         </tr>
+
+                        {{-- iHc GX --}}
+                        @if($showGX && $hasNGihc)
                         <tr>
-                            <td>
-                                iHk (Oe)
-                            </td>
-                            <td>{{ $magneticProperty['ihkStandard'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['ihkAverage'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['ihkMaximum'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['ihkMinimum'] ?? 'NA' }}</td>
-                            <td>{{ $ihkVariance ?? 'NA' }}</td>
+                            <td>GX {{ $gx['iHcStandard'] ?? '-' }}</td>
+                            <td>{{ $gx['iHcAverage'] ?? '-' }}</td>
+                            <td>{{ $gx['iHcMaximum'] ?? '-' }}</td>
+                            <td>{{ $gx['iHcMinimum'] ?? '-' }}</td>
+                            <td>{{ $gx['iHcVariance'] ?? '-' }}</td>
                         </tr>
+                        @endif
+
+                        {{-- iHk GM --}}
+                        <tr>
+                            <td rowspan="{{ ($hasNGihc && $showGX) ? 2 : 1 }}">iHk (Oe)</td>
+                            <td>
+                                @if($showGX && $hasNGihc)
+                                    GM
+                                @endif
+                                {{ $magneticProperty['iHkStandard'] ?? 'NA' }}
+                            </td>
+                            <td>{{ $magneticProperty['iHkAverage'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['iHkMaximum'] ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['iHkMinimum'] ?? 'NA' }}</td>
+                            <td>{{ $ihkVariance ?? 'NA' }}</td>
+                            @if($showROB)
+                                <td style="text-align: center;"></td>
+                            @endif
+                        </tr>
+
+                        {{-- iHk GX --}}
+                        @if($showGX && $hasNGihc)
+                        <tr>
+                            <td>GX -</td>
+                            <td>{{ $gx['ihkAverage'] ?? '-' }}</td>
+                            <td>{{ $gx['ihkMaximum'] ?? '-' }}</td>
+                            <td>{{ $gx['ihkMinimum'] ?? '-' }}</td>
+                            <td>{{ $gx['ihkVariance'] ?? '-' }}</td>
+                        </tr>
+                        @endif
+
+
+                        @php
+                            $showROB = $flags['showROB'] ?? false;
+                            $rob = $modelData['rob'] ?? [];
+                        @endphp
+
+                        @if($showROB)
+                            {{-- ROB Table Header Extension --}}
+                            <tr>
+                                <th colspan="7" style="text-align: center; background-color: #f0f0f0;">BH Tracer Measurement</th>
+                            </tr>
+                            <tr>
+                                <th rowspan="2" style="border: 1px solid black; background-color: #f0f0f0;">ITEMS</th>
+                                <th rowspan="2" style="border: 1px solid black; background-color: #f0f0f0;">SPECS</th>
+                                <th style="text-align: center; border: 1px solid black; background-color: #f0f0f0;">Br Min</th>
+                                <th style="text-align: center; border: 1px solid black; background-color: #f0f0f0;">Br Max</th>
+                                <th style="text-align: center; border: 1px solid black; background-color: #f0f0f0;">iHc Min</th>
+                                <th style="text-align: center; border: 1px solid black; background-color: #f0f0f0;">iHc Max</th>
+                                <th rowspan="2" style="border: 1px solid black; background-color: #f0f0f0;">RESULT</th>
+                            </tr>
+                            <tr>
+                                <th colspan="4" style="text-align: center; background-color: #f0f0f0;">ACTUAL DATA</th>
+                            </tr>
+
+                            {{-- Br @ RT --}}
+                            <tr>
+                                <th style="background-color: #f0f0f0;">Br @ RT</th>
+                                <td>{{ $rob['brRTStandard'] ?? 'NA' }} kg</td>
+                                <td>{{ $rob['brRT_brMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['brRT_brMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['brRT_iHcMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['brRT_iHcMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                            </tr>
+
+                            {{-- Br @ VT --}}
+                            <tr>
+                                <th style="background-color: #f0f0f0;">Br @ VT (180°C)</th>
+                                <td>{{ $rob['brVTStandard'] ?? 'NA' }} kg</td>
+                                <td>{{ $rob['brVT_brMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['brVT_brMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['brVT_iHcMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['brVT_iHcMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                            </tr>
+
+                            {{-- HD5 --}}
+                            <tr>
+                                <th style="background-color: #f0f0f0;">HD5 (180°C)</th>
+                                <td>{{ $rob['hd5Standard'] ?? 'NA' }} kOe</td>
+                                <td>{{ $rob['HD5_brMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['HD5_brMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['HD5_iHcMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['HD5_iHcMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                            </tr>
+
+                            {{-- JD5 --}}
+                            <tr>
+                                <th style="background-color: #f0f0f0;">JD5 (180°C)</th>
+                                <td>{{ $rob['jd5Standard'] ?? 'NA' }} kG</td>
+                                <td>{{ $rob['JD5_brMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['JD5_brMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['JD5_iHcMin'] ?? 'NA' }}</td>
+                                <td>{{ $rob['JD5_iHcMax'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                            </tr>
+                        @endif
+
+                        @php
+                            $isTTM_model = $flags['isTTM_model'] ?? false;
+                        @endphp
+
+                        @if ($isTTM_model ?? false)
+                            <tr>
+                                <th rowspan="2" style="border: 1px solid #000; background-color: #f0f0f0;">Computation of Cpk from Br</th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">STD DEV</th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">Cp</th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0; font-family: DejaVu Sans, sans-serif;">Cpk ≥ 1.00</th>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0;">Remarks</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #000;">{{ $reportData->std_dev ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $reportData->cp ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $reportData->cpk ?? 'NA' }}</td>
+                                <td colspan="2" style="border: 1px solid #000;">{{ $reportData->br_cpk_remarks ?? 'NA' }}</td>
+                            </tr>
+                        @endif
+
+                        @if ($flags['show1x1x1Data_withoutCorner'])
+                            <tr style="background-color: #f0f0f0;">
+                                <td colspan="2" style="border: 1px solid #000;">Data of 1x1x1 mm samples</td>
+                                <td style="border: 1px solid #000;">AVERAGE</td>
+                                <td style="border: 1px solid #000;">MAXIMUM</td>
+                                <td style="border: 1px solid #000;">MINIMUM</td>
+                                <td style="border: 1px solid #000; font-family: DejaVu Sans, sans-serif;">Cpk ≥ 1.33</td>
+                                <td style="border: 1px solid #000;">Remarks</td>
+                            </tr>
+                        @endif
+
+                        @php
+                            $d1x1x1 = $modelData['d1x1x1'] ?? [];
+                        @endphp
+
+                        @if ($flags['show1x1x1Data_Corner'])
+                            <tr>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">Corner</th>
+                                <td style="border: 1px solid #000; font-family: DejaVu Sans, sans-serif;">≥ {{ $d1x1x1['corner'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['corner_average'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['corner_maximum'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['corner_minimum'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['corner_cpk'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['corner_remarks'] ?? 'NA' }}</td>
+                            </tr>
+                        @endif
+
+                        @if ($flags['show1x1x1Data_withoutCorner'])
+                            <tr>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">Surface</th>
+                                <td style="border: 1px solid #000; font-family: DejaVu Sans, sans-serif;">≥ {{ $d1x1x1['surface'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['surface_average'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['surface_maximum'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['surface_minimum'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['surface_cpk'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['surface_remarks'] ?? 'NA' }}</td>
+                            </tr>
+
+                            <tr>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">Core</th>
+                                <td style="border: 1px solid #000; font-family: DejaVu Sans, sans-serif;">≥ {{ $d1x1x1['core'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['core_average'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['core_maximum'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['core_minimum'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['core_cpk'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000;">{{ $d1x1x1['core_remarks'] ?? 'NA' }}</td>
+                            </tr>
+                        @endif
+
+
+                        @if ($flags['showVTData'])
+                            @php
+                                $vt = $modelData['vt'] ?? [];
+                                $samples = $vt['sample'] ?? [];
+                                $remarks = $vt['sample_remarks'] ?? [];
+                                $results = $vt['iHcResult'] ?? [];
+
+                                $sampleCount = count($samples);
+
+                                // Determine column count
+                                $colCount = match (true) {
+                                    $sampleCount <= 3 => 3,
+                                    $sampleCount === 4 => 4,
+                                    default => 5,
+                                };
+
+                                $rowCount = ceil($sampleCount / $colCount);
+                            @endphp
+
+                            <tr>
+                                <th colspan="2" style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">VT Data</th>
+                                <th colspan="3" style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">Samples</th>
+                                <th style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">Remarks</th>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align: center; border: 1px solid #000;">{{ $vt['temp'] ?? 'NA' }} °C</td>
+                                <td style="text-align: center; border: 1px solid #000; font-family: DejaVu Sans, sans-serif;">
+                                    iHc (kOe) ≥ {{ $vt['iHc'] ?? 'NA' }}
+                                </td>
+                                <td colspan="3" style="padding: 0; border: 1px solid #000;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $remark = $remarks[$index] ?? null;
+                                                        $result = $results[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border: 1px solid #ccc; text-align: center; font-size: 9px; width: 33.3%;">
+                                                        @if ($sample)
+                                                            <div style="background-color: #f9f9f9; white-space: nowrap;">
+                                                                {{ $sample }} ({{ $remark }})
+                                                            </div>
+                                                            <div style="border-top: 1px solid #ccc;">
+                                                                {{ $result }} kOe
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                                <td style="text-align: center; border: 1px solid #000;">
+                                    {{ $vt['remarks'] ?? 'NA' }}
+                                </td>
+                            </tr>
+                        @endif
+
+                        @if ($flags['showCpkFrom_iHc'])
+                            @php
+                                $ihcCpk = $modelData['ihc_cpk'] ?? [];
+                            @endphp
+
+                            <tr>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0;"></th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">STD DEV</th>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0; font-family: DejaVu Sans, sans-serif;">
+                                    Cpk ≥ 1.33
+                                </th>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0;">Remarks</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0;">Computation of Cpk from iHc</th>
+                                <td style="border: 1px solid #000; text-align: center;">{{ $ihcCpk['std_dev'] ?? 'NA' }}</td>
+                                <td colspan="2" style="border: 1px solid #000; text-align: center;">{{ $ihcCpk['cpk'] ?? 'NA' }}</td>
+                                <td colspan="2" style="border: 1px solid #000; text-align: center;">{{ $ihcCpk['remarks'] ?? 'NA' }}</td>
+                            </tr>
+                        @endif
+
+
+
                     </tbody>
                 </table>
             </div>
@@ -948,7 +1222,7 @@
                             default   => public_path('photo/pass_stamp.png'),
                         };
                     @endphp
-                    
+
                     <td style="width: 18%; padding: 0;">
                         <table style="width: 100%; border: 1px solid black; text-align: center; border-collapse: collapse;">
                             <thead style="border-bottom: 1px solid black; font-size: 9px;">
@@ -1155,7 +1429,7 @@
                 </tr>
             </table>
         </td>
-        
+
         <!-- Right Section -->
         <td style="width: 35%; padding: 1px; border: 1px solid black; vertical-align: top;">
             <div style="font-size:9px; font-weight: bold; padding-bottom: 2px; padding-left: 4px;">
@@ -1194,3 +1468,4 @@
 </div>
 
 </body>
+</html>
