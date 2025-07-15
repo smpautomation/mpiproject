@@ -249,22 +249,24 @@ class TPMDataController extends Controller
                 }
             }
 
-            $checkTpmBoxes = TPMBoxes::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkTpmBoxes){
-                try{
-                    $letters = ['A','B','C','D','E','F','G','H','J','K'];
+            try {
+                $checkTpmBoxes = TPMBoxes::where('tpm_data_serial', $tpmData->serial_no)
+                    ->pluck('box_letter')
+                    ->toArray();
 
-                    foreach ($letters as $letter) {
-                        $tpmBoxesInputs = [
+                $expectedBoxes = ['A','B','C','D','E','F','G','H','J','K'];
+                $missingBoxes = array_diff($expectedBoxes, $checkTpmBoxes);
+
+                if (!empty($missingBoxes)) {
+                    foreach ($missingBoxes as $letter) {
+                        $TPMBoxes = TPMBoxes::create([
                             'tpm_data_serial' => $tpmData->serial_no,
                             'box_letter' => $letter
-                        ];
-                        $TPMBoxes = TPMBoxes::create($tpmBoxesInputs);
+                        ]);
                     }
-
-                }catch(\Exception $e){
-
                 }
+            } catch (\Exception $e) {
+                Log::error('Failed to create TPM Boxes: ' . $e->getMessage());
             }
 
 
