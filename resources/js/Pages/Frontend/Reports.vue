@@ -226,153 +226,200 @@
                                     type="date"
                                     name="coatingDate"
                                     id="coatingDate"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Coating Machine No -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingMachineNo" class="mb-1 text-sm font-medium text-gray-700">
-                                    Coating Machine No:
-                                </label>
+                                <label for="coatingMachineNo" class="mb-1 text-sm font-medium text-gray-700">Coating Machine No:</label>
                                 <input
                                     v-model="reportCoatingMachineNo"
                                     type="text"
                                     name="coatingMachineNo"
                                     id="coatingMachineNo"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Slurry Lot No -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingSlurryLotNo" class="mb-1 text-sm font-medium text-gray-700">
-                                    Slurry Lot No:
-                                </label>
+                                <label for="coatingSlurryLotNo" class="mb-1 text-sm font-medium text-gray-700">Slurry Lot No:</label>
                                 <input
                                     v-model="reportCoatingSlurryLotNo"
                                     type="text"
                                     name="coatingSlurryLotNo"
                                     id="coatingSlurryLotNo"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Loader Operator -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingLoaderOperator" class="mb-1 text-sm font-medium text-gray-700">
-                                    Loader Operator:
-                                </label>
+                                <label for="coatingLoaderOperator" class="mb-1 text-sm font-medium text-gray-700">Loader Operator:</label>
                                 <input
                                     v-model="reportCoatingLoaderOperator"
                                     @input="reportCoatingLoaderOperator = reportCoatingLoaderOperator.toUpperCase()"
                                     type="text"
                                     name="coatingLoaderOperator"
                                     id="coatingLoaderOperator"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Time Start -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTimeStart" class="mb-1 text-sm font-medium text-gray-700">
-                                    Time Start:
-                                </label>
+                                <label for="coatingTimeStart" class="mb-1 text-sm font-medium text-gray-700">Time Start:</label>
                                 <input
                                     v-model="reportCoatingTimeStart"
                                     type="time"
                                     name="coatingTimeStart"
                                     id="coatingTimeStart"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Time Finish -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTimeFinish" class="mb-1 text-sm font-medium text-gray-700">
-                                    Time Finish:
-                                </label>
+                                <label for="coatingTimeFinish" class="mb-1 text-sm font-medium text-gray-700">Time Finish:</label>
                                 <input
                                     v-model="reportCoatingTimeFinish"
                                     type="time"
                                     name="coatingTimeFinish"
                                     id="coatingTimeFinish"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
+
                         </div>
 
                         <!-- Coating Row 2 -->
                         <div class="flex flex-row gap-4 mt-4 justify-evenly">
                             <!-- MIN. TB CONTENT -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingMinTbContent" class="mb-1 text-sm font-medium text-gray-700">
-                                    MIN. TB CONTENT (µg/mm²):
-                                </label>
+                                <label for="coatingMinTbContent" class="mb-1 text-sm font-medium text-gray-700">MIN. TB CONTENT (µg/mm²):</label>
                                 <input
                                     v-model="reportCoatingMinTbContent"
                                     type="text"
                                     name="coatingMinTbContent"
                                     id="coatingMinTbContent"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Sample Quantity -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingSampleQuantity" class="mb-1 text-sm font-medium text-gray-700">
-                                    Sample Quantity (pcs):
-                                </label>
+                                <label for="coatingSampleQuantity" class="mb-1 text-sm font-medium text-gray-700">Sample Quantity (pcs):</label>
                                 <input
                                     v-model="reportCoatingSampleQuantity"
                                     type="text"
                                     name="coatingSampleQuantity"
                                     id="coatingSampleQuantity"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Total Magnet Weight -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTotalMagnetWeight" class="mb-1 text-sm font-medium text-gray-700">
-                                    Total Magnet Weight:
-                                </label>
+                                <label for="coatingTotalMagnetWeight" class="mb-1 text-sm font-medium text-gray-700">Total Magnet Weight:</label>
                                 <input
                                     v-model="reportCoatingTotalMagnetWeight"
                                     type="text"
                                     name="coatingTotalMagnetWeight"
                                     id="coatingTotalMagnetWeight"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Unloader Operator -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingUnloaderOperator" class="mb-1 text-sm font-medium text-gray-700">
-                                    Unloader Operator:
-                                </label>
+                                <label for="coatingUnloaderOperator" class="mb-1 text-sm font-medium text-gray-700">Unloader Operator:</label>
                                 <input
                                     v-model="reportCoatingUnloaderOperator"
                                     @input="reportCoatingUnloaderOperator = reportCoatingUnloaderOperator.toUpperCase()"
                                     type="text"
                                     name="coatingUnloaderOperator"
                                     id="coatingUnloaderOperator"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
                             <!-- Checker Operator -->
                             <div class="flex flex-col w-[12rem]">
-                                <label for="coatingUnloaderOperator" class="mb-1 text-sm font-medium text-gray-700">
-                                    Checker Operator:
-                                </label>
+                                <label for="coatingCheckerOperator" class="mb-1 text-sm font-medium text-gray-700">Checker Operator:</label>
                                 <input
                                     v-model="reportCoatingCheckerOperator"
                                     @input="reportCoatingCheckerOperator = reportCoatingCheckerOperator.toUpperCase()"
                                     type="text"
                                     name="coatingCheckerOperator"
                                     id="coatingCheckerOperator"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (coatingAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
                         </div>
@@ -395,13 +442,25 @@
                                             v-model="reportCoatingAmounts[(group - 1) * 5 + (j - 1)]"
                                             type="number"
                                             placeholder="Amt"
-                                            class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded mb-[2px] focus:ring-blue-400 focus:ring-1"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-full h-6 px-1 text-[0.65rem] border rounded mb-[2px]',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'text-gray-800 bg-white border-gray-300 focus:ring-blue-400 focus:ring-1'
+                                                    : 'text-gray-400 bg-gray-100 border-gray-300 cursor-not-allowed'
+                                            ]"
                                         />
                                         <input
                                             v-model="reportConcentrationValues[(group - 1) * 5 + (j - 1)]"
                                             type="number"
                                             placeholder="Conc."
-                                            class="w-full h-6 px-1 text-[0.65rem] border border-gray-300 rounded focus:ring-blue-400 focus:ring-1"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-full h-6 px-1 text-[0.65rem] border rounded',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'text-gray-800 bg-white border-gray-300 focus:ring-blue-400 focus:ring-1'
+                                                    : 'text-gray-400 bg-gray-100 border-gray-300 cursor-not-allowed'
+                                            ]"
                                         />
                                     </div>
                                 </template>
@@ -416,7 +475,13 @@
                                             v-model="reportConcentrationValues[35 + (group - 1) * 2 + (k - 1)]"
                                             type="number"
                                             placeholder="M-06"
-                                            class="w-full h-6 px-1 text-[0.65rem] border border-yellow-400 rounded mb-1 bg-yellow-50 focus:ring-yellow-500 focus:ring-1"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-full h-6 px-1 text-[0.65rem] border rounded mb-1',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'border-yellow-400 bg-yellow-50 focus:ring-yellow-500 focus:ring-1 text-gray-800'
+                                                    : 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            ]"
                                         />
                                     </template>
                                 </div>
@@ -445,47 +510,59 @@
                                     <td class="px-2 border-2 border-white">{{ module.name }}</td>
 
                                     <td class="px-2 border-2 border-white">
-                                    <input
-                                        v-model="module.new"
-                                        type="text"
-                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
-                                    />
+                                        <input
+                                            v-model="module.new"
+                                            type="text"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                            ]"
+                                        />
                                     </td>
 
                                     <td class="px-2 border-2 border-white">
-                                    <input
-                                        v-model="module.homo"
-                                        type="text"
-                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
-                                    />
+                                        <input
+                                            v-model="module.homo"
+                                            type="text"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                            ]"
+                                        />
                                     </td>
 
                                     <td class="px-2 border-2 border-white">
-                                    <input
-                                        v-model="module.time"
-                                        type="text"
-                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
-                                    />
+                                        <input
+                                            v-model="module.time"
+                                            type="text"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                            ]"
+                                        />
                                     </td>
 
                                     <td class="px-2 border-2 border-white">
-                                    <input
-                                        v-model="module.liters"
-                                        type="text"
-                                        class="w-[4rem] h-[2rem] text-sm border border-gray-300 rounded-md bg-white text-gray-800
-                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
-                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-                                        transition duration-200 ease-in-out"
-                                    />
+                                        <input
+                                            v-model="module.liters"
+                                            type="text"
+                                            :disabled="!(coatingAccess || automationAcess)"
+                                            :class="[
+                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
+                                                (coatingAccess || automationAcess)
+                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                            ]"
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
@@ -539,7 +616,13 @@
                                     type="text"
                                     name="coatingRemarks"
                                     id="coatingRemarks"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm rounded-md h-9 transition duration-200 ease-in-out border',
+                                        (coatingAccess || automationAcess)
+                                            ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
                             </div>
@@ -555,10 +638,16 @@
                                     id="coatingCheckbox"
                                     type="checkbox"
                                     v-model="coatingCompleted"
-                                    class="w-5 h-5"
-                                    :class="coatingCompleted
-                                        ? 'text-green-600 focus:ring-green-500'
-                                        : 'text-gray-500 focus:ring-gray-400'"
+                                    :disabled="!(coatingAccess || automationAcess)"
+                                    class="w-5 h-5 transition duration-200 ease-in-out border rounded"
+                                    :class="[
+                                        coatingCompleted
+                                            ? 'text-green-600 focus:ring-green-500'
+                                            : 'text-gray-500 focus:ring-gray-400',
+                                        !(coatingAccess || automationAcess)
+                                            ? 'bg-gray-100 cursor-not-allowed'
+                                            : ''
+                                    ]"
                                 />
 
                                 <label for="coatingCheckbox" class="flex items-center text-sm font-semibold"
@@ -598,10 +687,17 @@
                                     type="text"
                                     name="ovenMachineNo"
                                     id="ovenMachineNo"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- CYCLE No -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="timeLoading" class="mb-1 text-sm font-medium text-gray-700">
                                     CYCLE No:
@@ -612,10 +708,17 @@
                                     type="text"
                                     name="timeLoading"
                                     id="timeLoading"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- BATCH CYCLE No -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="temperature_timeLoading" class="mb-1 text-sm font-medium text-gray-700">
                                     BATCH CYCLE No:
@@ -626,10 +729,17 @@
                                     type="text"
                                     name="temperature_timeLoading"
                                     id="temperature_timeLoading"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- LOADER -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_date" class="mb-1 text-sm font-medium text-gray-700">
                                     LOADER:
@@ -640,10 +750,17 @@
                                     type="text"
                                     name="ovenInfo_date"
                                     id="ovenInfo_date"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- DATE START -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
                                     DATE START:
@@ -653,10 +770,17 @@
                                     type="date"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- TIME START -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
                                     TIME START:
@@ -666,14 +790,22 @@
                                     type="time"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
+
                         </div>
 
                         <!-- Row 2 -->
                         <div class="flex flex-row gap-4 mt-4 justify-evenly">
 
+                            <!-- PATTERN No -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
                                     PATTERN No:
@@ -684,10 +816,17 @@
                                     type="text"
                                     name="ovenInfo_shift"
                                     id="ovenInfo_shift"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- Cycle Pattern -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
                                     Cycle Pattern:
@@ -698,10 +837,17 @@
                                     type="text"
                                     name="ovenInfo_operator"
                                     id="ovenInfo_operator"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- Current Pattern -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
                                     Current Pattern:
@@ -712,10 +858,17 @@
                                     type="text"
                                     name="ovenInfo_operator"
                                     id="ovenInfo_operator"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- UNLOADER -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
                                     UNLOADER:
@@ -726,10 +879,17 @@
                                     type="text"
                                     name="ovenInfo_operator"
                                     id="ovenInfo_operator"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- DATE FINISH -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
                                     DATE FINISH:
@@ -739,10 +899,17 @@
                                     type="date"
                                     name="timeUnloading"
                                     id="timeUnloading"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
 
+                            <!-- TIME FINISH -->
                             <div class="flex flex-col w-[12rem]">
                                 <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
                                     TIME FINISH:
@@ -752,9 +919,16 @@
                                     type="time"
                                     name="temperature_TimeUnloading"
                                     id="temperature_TimeUnloading"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
+
                         </div>
 
                             <table class="mt-[1.1rem] border-collapse table-auto border-4 border-white">
@@ -779,104 +953,174 @@
                                 <tbody>
                                     <tr>
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ currentLayerName }}</td>
+                                        <!-- MBL A to K -->
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLA"
                                                 @input="reportHT_MBLA = reportHT_MBLA.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLA"
+                                                id="reportHT_MBLA"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLB"
                                                 @input="reportHT_MBLB = reportHT_MBLB.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLB"
+                                                id="reportHT_MBLB"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLC"
                                                 @input="reportHT_MBLC = reportHT_MBLC.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLC"
+                                                id="reportHT_MBLC"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLD"
                                                 @input="reportHT_MBLD = reportHT_MBLD.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLD"
+                                                id="reportHT_MBLD"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLE"
                                                 @input="reportHT_MBLE = reportHT_MBLE.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLE"
+                                                id="reportHT_MBLE"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLF"
                                                 @input="reportHT_MBLF = reportHT_MBLF.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLF"
+                                                id="reportHT_MBLF"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLG"
                                                 @input="reportHT_MBLG = reportHT_MBLG.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLG"
+                                                id="reportHT_MBLG"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLH"
                                                 @input="reportHT_MBLH = reportHT_MBLH.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLH"
+                                                id="reportHT_MBLH"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLJ"
                                                 @input="reportHT_MBLJ = reportHT_MBLJ.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLJ"
+                                                id="reportHT_MBLJ"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
+
                                         <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
                                             <input
                                                 v-model="reportHT_MBLK"
                                                 @input="reportHT_MBLK = reportHT_MBLK.toUpperCase()"
                                                 type="text"
-                                                name="ovenInfo_operator"
-                                                id="ovenInfo_operator"
-                                                class="w-[100px] text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                                name="reportHT_MBLK"
+                                                id="reportHT_MBLK"
+                                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                                :class="[
+                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                                    (heatTreatmentAccess || automationAcess)
+                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                                ]"
                                             />
                                         </td>
                                     </tr>
@@ -884,18 +1128,24 @@
                             </table>
 
                             <div class="flex flex-row mt-10">
-                            <!-- Coating Remarks -->
+                            <!-- Heat Treatment Remarks -->
                             <div class="flex flex-col w-[62rem]">
-                                <label for="reportCoatingRemarks" class="mb-1 text-sm font-medium text-gray-700">
+                                <label for="reportHeatTreatmentRemarks" class="mb-1 text-sm font-medium text-gray-700">
                                     Remarks:
                                 </label>
                                 <input
                                     v-model="reportHTRemarks"
                                     @input="reportHTRemarks = reportHTRemarks.toUpperCase()"
                                     type="text"
-                                    name="coatingRemarks"
-                                    id="coatingRemarks"
-                                    class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                    name="reportHeatTreatmentRemarks"
+                                    id="reportHeatTreatmentRemarks"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    :class="[
+                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
+                                        (heatTreatmentAccess || automationAcess)
+                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
+                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    ]"
                                 />
                             </div>
                             <button
@@ -918,10 +1168,16 @@
                                     id="heatTreatmentCheckbox"
                                     type="checkbox"
                                     v-model="heatTreatmentCompleted"
-                                    class="w-5 h-5"
-                                    :class="heatTreatmentCompleted
-                                        ? 'text-green-600 focus:ring-green-500'
-                                        : 'text-gray-500 focus:ring-gray-400'"
+                                    :disabled="!(heatTreatmentAccess || automationAcess)"
+                                    class="w-5 h-5 rounded border-gray-300 transition duration-150 ease-in-out"
+                                    :class="[
+                                        heatTreatmentCompleted
+                                            ? 'text-green-600 focus:ring-green-500'
+                                            : 'text-gray-500 focus:ring-gray-400',
+                                        !(heatTreatmentAccess || automationAcess)
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : ''
+                                    ]"
                                 />
 
                                 <label
@@ -2167,6 +2423,21 @@ const checkAuthentication = async () => {
         greetingsWindowFirstName.value = state.user.firstName;
         greetingsWindowLastName.value = state.user.surname;
 
+        if(state.user.access_type === 'Coating') {
+            coatingAccess.value = true;
+        } else if(state.user.access_type === 'Heat Treatment') {
+            heatTreatmentAccess.value = true;
+        } else {
+            coatingAccess.value = false;
+            heatTreatmentAccess.value = false;
+        }
+
+        if(state.user.access_type === 'Automation') {
+            automationAcess.value = true;
+        } else {
+            automationAcess.value = false;
+        }
+
         return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
@@ -2239,8 +2510,13 @@ const reportStatusReminder = ref(false);
 const report_isFinalized = ref(false);
 const report_isEmailed = ref(false);
 
+const automationAcess = ref(false);
+
 const greetingsWindowFirstName = ref('');
 const greetingsWindowLastName = ref('');
+
+const coatingAccess = ref(false);
+const heatTreatmentAccess = ref(false);
 
 const showNotif = ref(false);
 const showNotif2 = ref(false);
