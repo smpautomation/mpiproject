@@ -1150,7 +1150,13 @@
                             </div>
                             <button
                                 @click="showModal = true"
-                                class="px-4 py-1 ml-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
+                                :disabled="!(heatTreatmentAccess || automationAcess)"
+                                :class="[
+                                    'px-4 py-1 ml-2 rounded-lg transition-all duration-200',
+                                    heatTreatmentAccess || automationAcess
+                                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                ]"
                             >
                                 Fill Mass Production Control Sheet
                             </button>
