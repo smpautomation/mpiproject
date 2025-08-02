@@ -146,7 +146,7 @@
                             <span
                                 class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center bg-contain relative top-[2px]"
                                 :style="{
-                                backgroundImage: 'url(/photo/gotoreport.png)'
+                                    backgroundImage: 'url(/photo/gotoreport.png)'
                                 }"
                             ></span>
                         </button>

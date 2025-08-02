@@ -15,8 +15,15 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-Route::get('/', [FrontendController::class,'index'])->name('homePage');
+Route::get('/mpi-online-system', [FrontendController::class,'index'])->name('homePage');
+Route::get('/', function(){
+    return redirect('/mpi-online-system');
+});
 Route::get('/view', [FrontendController::class,'viewList'])->name('viewList');
+Route::get('/massprod', [FrontendController::class,'massprod'])->name('massprod');
+Route::get('/control_sheet', [FrontendController::class,'controlSheet'])->name('control_sheet');
+Route::get('/htgraph', [FrontendController::class,'htgraph'])->name('htgraph');
+Route::get('/smpdata', [FrontendController::class,'smpData'])->name('smpdata');
 Route::get('/manage', [FrontendController::class,'manage'])->name('manage');
 Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspection');
 Route::get('/reports', [FrontendController::class,'reports'])->name('reports');

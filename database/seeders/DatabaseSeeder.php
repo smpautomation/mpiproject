@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
+    /*
     public function run(): void
     {
         // User::factory()->create([
@@ -29,11 +30,18 @@ class DatabaseSeeder extends Seeder
             TPMDataRemark::factory()->create([
                 'tpm_data_id' => $tpmData->id,
             ]);
-    
+
             TPMDataAggregateFunctions::factory()->create([
                 'tpm_data_id' => $tpmData->id,
             ]);
         });
         InspectionData::factory(50)->create();
+    }*/
+
+    public function run(): void
+    {
+        $this->call([
+            MassProductionSeeder::class,
+        ]);
     }
 }

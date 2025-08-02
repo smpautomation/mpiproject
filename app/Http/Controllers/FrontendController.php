@@ -9,8 +9,25 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class FrontendController extends Controller
 {
+
     public function index(){
         return Inertia::render('Frontend/Home');
+    }
+
+    public function massprod(){
+        return Inertia::render('Frontend/Mass_Prod');
+    }
+
+    public function controlSheet(){
+        return Inertia::render('Frontend/Control_Sheet');
+    }
+
+    public function htgraph(){
+        return Inertia::render('Frontend/HT_Graph');
+    }
+
+    public function smpData(){
+        return Inertia::render('Frontend/SMP_Data');
     }
 
     public function viewList(){

@@ -4302,7 +4302,7 @@ if(ipAddress.value === '127.0.0.1'){
 const viewPropertyData = (serial) => {
   //console.log('Navigating to manage with serial:', serial);
   Inertia.visit('/manage', {
-    method: 'get',   // You can keep 'get' since we are not modifying any data
+    method: 'get',
     data: { manageSerialParam: serial },   // Passing the serialParam here
     preserveState: true,
     preserveScroll: true,

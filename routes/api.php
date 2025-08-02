@@ -25,6 +25,7 @@ use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
+use App\Http\Controllers\MassProductionController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -207,5 +208,7 @@ Route::apiResource('rob-models',RobModelController::class);
 
 Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
+
+Route::apiResource('mass-production',MassProductionController::class);
 
 Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 'apiGenerateAndSave']);

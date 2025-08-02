@@ -35,13 +35,13 @@ axios.interceptors.response.use(
       error.response &&
       error.response.status === 401 &&
       !alreadyRedirecting &&
-      window.location.pathname !== '/' // avoid loop if already on home
+      window.location.pathname !== '/mpi-online-system' // avoid loop if already on home
     ) {
       alreadyRedirecting = true;
       console.warn('Session expired. Redirecting to login.');
       localStorage.removeItem('access_token');
       import('@inertiajs/inertia').then(({ Inertia }) => {
-        Inertia.visit('/');
+        Inertia.visit('/mpi-online-system');
       });
     }
 

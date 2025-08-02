@@ -112,6 +112,7 @@ const logUserLogout = async () => {
 // Define the navigation lists here
 const navItems = [
   { label: 'Home', route: 'homePage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation', 'Final Approver', 'Proxy Approver', 'Coating', 'Heat Treatment'] },
+  { label: 'Mass Production', route: 'massprod', access: ['Automation'] },
   { label: 'Manage', route: 'manage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Report', route: 'reports', access: ['Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation', 'Coating', 'Heat Treatment'] },
   { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
