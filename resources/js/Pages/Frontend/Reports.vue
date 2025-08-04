@@ -1275,7 +1275,7 @@
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(box, index) in allBoxesData"
+                                        v-for="(box) in allBoxesData"
                                         :key="box.id"
                                         class="border-t border-gray-200 bg-white"
                                     >
@@ -2493,7 +2493,7 @@ const timeOfDay = computed(() => {
   return 'Evening';
 });
 
-//Debug mode --
+
 const onTestServer = ref(false);
 
 const page = usePage();

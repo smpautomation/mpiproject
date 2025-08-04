@@ -3,7 +3,7 @@
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
             <div>
                 <div>
-                    <p><span>123RD</span> Mass Production</p>
+                    <p><span>{{ redirectedMassPro }}</span> Mass Production</p>
                 </div>
                 <table id="controlSheetTable" class="table-auto border border-gray-300 border-collapse ">
                     <thead>
@@ -73,19 +73,19 @@
                                 :rowspan="controlSheet_dataMatrix[layer].length"
                                 :class="[borderColor, cellPaddings]"
                               >
-                                {{ getLayerTotalWt(layer) }}
+                                {{  }}
                               </td>
                               <td
                                 :rowspan="controlSheet_dataMatrix[layer].length"
                                 :class="[borderColor, cellPaddings]"
                               >
-                                {{ getLayerTotalQty(layer) }}
+                                {{ }}
                               </td>
                               <td
                                 :rowspan="controlSheet_dataMatrix[layer].length"
                                 :class="[borderColor, cellPaddings]"
                               >
-                                {{ getLayerMpiQty(layer) }}
+                                {{ }}
                               </td>
                             </template>
                           </tr>
@@ -117,12 +117,12 @@
                         <label :class="[ht_info_fontsize]">Current Pattern:&nbsp;</label>
                     </div>
                     <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.batchCycleNo ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.machineNo ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.cycleNo ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.patternNo ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.cyclePattern ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.currentPattern ?? '' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.batchCycleNo ?? 'NA' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.machineNo ?? 'NA' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.cycleNo ?? 'NA' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.patternNo ?? 'NA' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.cyclePattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.cyclePattern ?? 'NA' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.currentPattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.currentPattern ?? 'NA' }}</span>
                     </div>
                     <div class="flex flex-col text-end gap-[1px] pt-[1px]">
                         <label :class="[ht_info_fontsize]">DATE START:&nbsp;</label>
@@ -131,9 +131,9 @@
 
                     </div>
                     <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateStart ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeStart ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.loader ?? '' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateStart ?? null }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeStart ?? null }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.loader ?? 'NA' }}</span>
                     </div>
                     <div class="flex flex-col text-end gap-[1px] pt-[1px]">
                             <label :class="[ht_info_fontsize]">DATE FINISHED:&nbsp;</label>
@@ -141,9 +141,9 @@
                             <label :class="[ht_info_fontsize]">UNLOADER:&nbsp;</label>
                     </div>
                     <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateFinished ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeFinished ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.unloader ?? '' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateFinished ?? null }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeFinished ?? null }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.unloader ?? 'NA' }}</span>
                     </div>
                     <div class="flex flex-col text-end gap-[1px] pt-[1px]">
                             <label :class="[ht_info_fontsize]">BOX CONDITION:&nbsp;</label>
@@ -161,7 +161,7 @@
                         <label :class="[ht_info_fontsize]" class="font-bold">REMARKS:&nbsp;</label>
                     </div>
                     <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.remarks1 ?? '' }}</span>
+                        <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks1 ?? '' }}</span>
                         <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks2 ?? '' }}</span>
                         <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks3 ?? '' }}</span>
                     </div>
@@ -172,7 +172,6 @@
                         Download Excel
                     </button>
                 </div>
-
             </div>
         </div>
     </Frontend>
@@ -219,10 +218,19 @@ const checkAuthentication = async () => {
     }
 };
 
+const massProd_list = ref([]);
+const selectedMassPro = ref();
+const redirectedMassPro = ref();
+const controlSheet_props = defineProps({
+    massProd: String
+});
+redirectedMassPro.value = controlSheet_props.massProd;
+console.log(redirectedMassPro.value);
+
 const tableProperties = {
     borderColor: 'border border-gray-400',
-    headerPaddings: 'px-4 py-2',
-    cellPaddings: 'px-2 py-2',
+    headerPaddings: 'px-3 py-1',
+    cellPaddings: 'px-1 py-1',
     headerFontSize: 'text-[14px]',
     cellFontSize: 'text-[9px]',
 }
@@ -231,7 +239,7 @@ const heatTreatmentInformationProperties = {
    fontSize: 'text-[10px]',
    inputBoxSize: 'px-0 py-0',
    underlineEffect: 'inline-block border-b border-black w-24 text-start',
-   underlineEffect2: 'inline-block border-b border-black w-37 text-start'
+   underlineEffect2: 'inline-block border-b border-black w-80 text-start'
 }
 
 const borderColor = ref(tableProperties.borderColor);
@@ -255,32 +263,32 @@ const controlSheet_rowTitles = ref([
   'HT (PCS):',
   'LT (PCS):',
   'COATING:',
-  'WT (KG)',
+  'WT (KG):',
   'BOX No.:',
   'Magnet prepared by:',
   'Box prepared by:',
 ]);
 
 const controlSheet_ht_info_values = ref({
-    batchCycleNo: 'test',
-    machineNo: 'test',
-    cycleNo: 'test',
-    patternNo: 'test',
-    cyclePattern: 'test',
-    currentPattern: 'test',
-    dateStart: 'test',
-    timeStart: 'test',
-    loader: 'test',
-    dateFinished: 'test',
-    timeFinished: 'test',
-    unloader: 'test',
-    boxCondition: 'test',
-    boxCover: 'test',
-    boxArrangement: 'test',
-    encodedBy: 'test',
-    remarks1: 'test',
-    remarks2: 'test',
-    remarks3: 'test'
+    batchCycleNo: 'NA',
+    machineNo: 'NA',
+    cycleNo: 'NA',
+    patternNo: 'NA',
+    cyclePattern: 'NA',
+    currentPattern: 'NA',
+    dateStart: 'NA',
+    timeStart: 'NA',
+    loader: 'NA',
+    dateFinished: 'NA',
+    timeFinished: 'NA',
+    unloader: 'NA',
+    boxCondition: 'NA',
+    boxCover: 'NA',
+    boxArrangement: 'NA',
+    encodedBy: 'NA',
+    remarks1: 'NA',
+    remarks2: 'NA',
+    remarks3: 'NA'
 });
 
 const controlSheet_dataMatrix = ref({});
@@ -294,7 +302,7 @@ for (const layer of controlSheet_layers.value) {
     return { rowTitle, data };
   });
 }
-console.log(controlSheet_dataMatrix.value);
+//console.log(controlSheet_dataMatrix.value);
 
 function setDataMatrixValue(layer, rowTitle, letter, value) {
   const layerRows = controlSheet_dataMatrix.value[layer];
@@ -306,31 +314,111 @@ function setDataMatrixValue(layer, rowTitle, letter, value) {
   }
 }
 
-for (const layer of controlSheet_layers.value) {
-  for (const rowTitle of controlSheet_rowTitles.value) {
-    for (const col of controlSheet_headerLetters.value) {
-      setDataMatrixValue(layer, rowTitle, col, 'test');
+const getMassProdData = async (massprod) => {
+    const response = await axios.get('/api/mass-production');
+    massProd_list.value = response.data;
+
+    // Filter based on mass_prod column
+    selectedMassPro.value = massProd_list.value.filter(item => item.mass_prod === massprod);
+    console.log('Filtered Data: ', selectedMassPro.value);
+
+    const mp = selectedMassPro.value[0];
+    const htVal = controlSheet_ht_info_values.value;
+
+    //heat treatment values
+    htVal.batchCycleNo = mp.batch_cycle_no ?? 'NA';
+    htVal.machineNo = mp.machine_no ?? 'NA';
+    htVal.cycleNo = mp.cycle_no ?? 'NA';
+    htVal.patternNo = mp.pattern_no ?? 'NA';
+    htVal.cyclePattern = mp.cycle_pattern ?? 'NA';
+    htVal.currentPattern = mp.current_pattern ?? 'NA';
+    htVal.dateStart = mp.date_start ?? 'NA';
+    htVal.timeStart = mp.time_start ?? 'NA';
+    htVal.loader = mp.loader ?? 'NA';
+    htVal.dateFinished = mp.date_finished ?? 'NA';
+    htVal.timeFinished = mp.time_finished ?? 'NA';
+    htVal.unloader = mp.unloader ?? 'NA';
+    htVal.boxCondition = mp.box_condition ?? 'NA';
+    htVal.boxCover = mp.box_cover ?? 'NA';
+    htVal.boxArrangement = mp.box_arrangement ?? 'NA';
+    htVal.encodedBy = mp.encoded_by ?? 'NA';
+    htVal.remarks1 = mp.remarks1 ?? 'NA';
+    htVal.remarks2 = mp.remarks2 ?? 'NA';
+    htVal.remarks3 = mp.remarks3 ?? 'NA';
+
+    for (const layer of controlSheet_layers.value) {
+        const fieldName = `layer_${layer.replace('.', '_')}`;
+        const rawLayer = mp[fieldName];
+        if (!rawLayer) continue;
+
+        const parsedLayer = JSON.parse(rawLayer);
+
+        for (let rowIndex = 0; rowIndex < controlSheet_rowTitles.value.length; rowIndex++) {
+            const rowTitle = controlSheet_rowTitles.value[rowIndex];
+            const rowData = parsedLayer[rowIndex]?.data ?? {};
+
+            for (const letter of controlSheet_headerLetters.value) {
+                const value = rowData[letter] ?? '';
+                setDataMatrixValue(layer, rowTitle, letter, value);
+            }
+        }
     }
-  }
 }
 
 
 
 // GETTING TOTALS
 
-function getLayerTotalWt(layer) {
-  return '';
-}
+const totalQty = computed(() => getTotalQty());
+const totalWt = computed(() => getTotalWt());
 
-function getLayerTotalQty(layer) {
-  return '';
-}
+const getTotalQty = () => {
+  let total = 0;
+  for (const layer of controlSheet_layers.value) {
+    const rows = controlSheet_dataMatrix.value[layer];
+    if (!rows) continue;
 
-function getLayerMpiQty(layer) {
-  return '';
+    const qtyRow = rows.find(r => r.rowTitle === 'QTY (PCS):');
+    if (!qtyRow) continue;
+
+    for (const val of Object.values(qtyRow.data)) {
+      const num = parseFloat(val);
+      if (!isNaN(num)) {
+        total += num;
+      }
+    }
+  }
+  return total;
+};
+
+const getTotalWt = () => {
+  let total = 0;
+  for (const layer of controlSheet_layers.value) {
+    const rows = controlSheet_dataMatrix.value[layer];
+    if (!rows) continue;
+
+    const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
+    if (!wtRow) continue;
+
+    for (const val of Object.values(wtRow.data)) {
+      const num = parseFloat(val);
+      if (!isNaN(num)) {
+        total += num;
+      }
+    }
+  }
+  return total;
+};
+
+const getTotalMpiQty = (qty) => {
+
 }
 
 // GETTING TOTALS END
 
+onMounted(async()=>{
+    const massPro = redirectedMassPro.value;
+    getMassProdData(massPro);
+});
 
 </script>

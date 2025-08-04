@@ -4,7 +4,7 @@
             <button @click="showModalCreate = true" class="px-4 py-2 mb-5 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
                 Create New
             </button>
-            
+
             <div class="max-w-7xl mx-auto bg-white border border-gray-200 shadow-xl rounded-2xl p-16 md:p-14 space-y-6">
                 <!-- Search Bar -->
                 <div class="mb-4 flex items-center justify-between">
@@ -31,24 +31,24 @@
                             :key="item.id"
                             class="hover:bg-gray-50 transition duration-150 text-center"
                         >
-                        <td class="px-6 py-4 text-gray-900 font-medium">{{ item.date }}</td>
-                        <td class="px-6 py-4 text-gray-900 font-medium">{{ item.name }}</td>
+                        <td class="px-6 py-4 text-gray-900 font-medium">{{ new Date(item.created_at).toLocaleDateString() }}</td>
+                        <td class="px-6 py-4 text-gray-900 font-medium">{{ item.mass_prod }}</td>
                             <td class="px-6 py-4 text-gray-900 font-medium">{{ item.furnace }}</td>
                             <td class="px-6 py-4 flex justify-center items-center gap-3 flex-wrap">
                             <button
-                                @click="viewControlSheet(massProd_name)"
+                                @click="viewControlSheet(item.mass_prod)"
                                 class="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                             >
                                 Control Sheet
                             </button>
                             <button
-                                @click="viewHTGraph(massProd_name)"
+                                @click="viewHTGraph(item.mass_prod)"
                                 class="px-4 py-2 bg-green-600 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                             >
                                 Heat Treatment Graph
                             </button>
                             <button
-                                @click="viewSMPData(massProd_name)"
+                                @click="viewSMPData(item.mass_prod)"
                                 class="px-4 py-2 bg-purple-600 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                             >
                                 SMP Data
@@ -85,12 +85,12 @@
                 </div>
             </div>
 
-            
+
             <Modal :show="showModalCreate" @close="showModalCreate = false">
                 <div class="relative flex flex-col items-center justify-center bg-white p-6 rounded-xl w-full max-w-3xl mx-auto shadow-2xl">
-                    
+
                     <!-- Exit Button -->
-                    <button 
+                    <button
                     @click="showModalCreate = false"
                     class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition duration-150"
                     aria-label="Close modal"
@@ -194,25 +194,22 @@ const showModalCreate = ref(false);
 const massProd_name = ref('');
 const massProd_furnace = ref('');
 
-const massProd_list = ref([
-  { id: 1, date: '2025-05-22', name: '541ST', furnace: 'K-40' },
-  { id: 2, date: '2025-06-22', name: '542ND', furnace: 'K-41' },
-  { id: 3, date: '2025-07-22', name: '543RD', furnace: 'K-42' },
-  { id: 4, date: '2025-08-22', name: '544TH', furnace: 'K-43' },
-  { id: 5, date: '2025-09-22', name: '545TH', furnace: 'K-44' },
-  { id: 6, date: '2025-10-22', name: '546TH', furnace: 'K-45' },
-  { id: 7, date: '2025-11-22', name: '547TH', furnace: 'K-46' },
-  { id: 8, date: '2025-12-22', name: '548TH', furnace: 'K-47' },
-  // ... or load dynamically from an API
-])
+const massProd_list = ref([]);
 
-const searchQuery = ref('')
-const currentPage = ref(1)
-const itemsPerPage = 5
+const searchQuery = ref('');
+const currentPage = ref(1);
+const itemsPerPage = 5;
+
+const getMassProdData = async() => {
+    const responseMassProd = await axios.get('/api/mass-production');
+    massProd_list.value = responseMassProd.data;
+    console.log(massProd_list.value);
+}
+
 
 const filteredItems = computed(() => {
   return massProd_list.value.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    item.mass_prod.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
 
@@ -260,5 +257,9 @@ const viewSMPData = (massprod) => {
         preserveScroll: true,
     });
 }
+
+onMounted(async () => {
+    getMassProdData();
+});
 
 </script>

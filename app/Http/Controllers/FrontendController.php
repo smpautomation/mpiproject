@@ -18,8 +18,13 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Mass_Prod');
     }
 
-    public function controlSheet(){
-        return Inertia::render('Frontend/Control_Sheet');
+    public function controlSheet(Request $request){
+
+        $massProd = $request->get('massProd');
+
+        return Inertia::render('Frontend/Control_Sheet',[
+            'massProd' => $massProd,
+        ]);
     }
 
     public function htgraph(){
