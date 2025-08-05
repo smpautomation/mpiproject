@@ -27,8 +27,13 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function htgraph(){
-        return Inertia::render('Frontend/HT_Graph');
+    public function htgraph(Request $request){
+
+        $massProd = $request->get('massProd');
+
+        return Inertia::render('Frontend/HT_Graph',[
+            'massProd' => $massProd,
+        ]);
     }
 
     public function smpData(){

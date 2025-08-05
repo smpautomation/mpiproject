@@ -106,74 +106,74 @@
                     </tbody>
                 </table>
                 <div class="p-2 border border-gray-400">
-                  <p class="font-bold">Heat Treatment Information</p>
-                  <div class="flex flex-row">
-                    <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                        <label :class="[ht_info_fontsize]">BATCH CYCLE No:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">MACHINE No:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">CYCLE No:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">PATTERN No:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">Cycle Pattern:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">Current Pattern:&nbsp;</label>
-                    </div>
-                    <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.batchCycleNo ?? 'NA' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.machineNo ?? 'NA' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.cycleNo ?? 'NA' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.patternNo ?? 'NA' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.cyclePattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.cyclePattern ?? 'NA' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.currentPattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.currentPattern ?? 'NA' }}</span>
-                    </div>
-                    <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                        <label :class="[ht_info_fontsize]">DATE START:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">TIME START:&nbsp;</label>
-                        <label :class="[ht_info_fontsize]">LOADER:&nbsp;</label>
+                    <p class="font-bold">Heat Treatment Information</p>
+                    <div class="flex flex-row">
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]">BATCH CYCLE No:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">MACHINE No:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">CYCLE No:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">PATTERN No:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">Cycle Pattern:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">Current Pattern:&nbsp;</label>
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.batchCycleNo || 'NA' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.machineNo || 'NA' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.cycleNo || 'NA' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.patternNo || 'NA' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.cyclePattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.cyclePattern?.trim() || 'NA' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.currentPattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.currentPattern?.trim() || 'NA' }}</span>
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]">DATE START:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">TIME START:&nbsp;</label>
+                            <label :class="[ht_info_fontsize]">LOADER:&nbsp;</label>
 
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateStart ?? null }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeStart ?? null }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.loader || 'NA' }}</span>
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                                <label :class="[ht_info_fontsize]">DATE FINISHED:&nbsp;</label>
+                                <label :class="[ht_info_fontsize]">TIME FINISHED:&nbsp;</label>
+                                <label :class="[ht_info_fontsize]">UNLOADER:&nbsp;</label>
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateFinished ?? null }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeFinished ?? null }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.unloader || 'NA' }}</span>
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                                <label :class="[ht_info_fontsize]">BOX CONDITION:&nbsp;</label>
+                                <label :class="[ht_info_fontsize]">BOX COVER:&nbsp;</label>
+                                <label :class="[ht_info_fontsize]">BOX ARRANGEMENT:&nbsp;</label>
+                                <label :class="[ht_info_fontsize]">ENCODED BY:&nbsp;</label>
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxCondition || '' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxCover || '' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxArrangement || '' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.encodedBy || '' }}</span>
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]" class="font-bold">REMARKS:&nbsp;</label>
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks1 || '' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks2 || '' }}</span>
+                            <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks3 || '' }}</span>
+                        </div>
                     </div>
-                    <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateStart ?? null }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeStart ?? null }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.loader ?? 'NA' }}</span>
                     </div>
-                    <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                            <label :class="[ht_info_fontsize]">DATE FINISHED:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">TIME FINISHED:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">UNLOADER:&nbsp;</label>
+                    <div class="flex flex-row justify-end mt-3">
+                        <button @click="exportToExcel" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow transition duration-200">
+                            Download Excel
+                        </button>
                     </div>
-                    <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateFinished ?? null }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeFinished ?? null }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.unloader ?? 'NA' }}</span>
-                    </div>
-                    <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                            <label :class="[ht_info_fontsize]">BOX CONDITION:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">BOX COVER:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">BOX ARRANGEMENT:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">ENCODED BY:&nbsp;</label>
-                    </div>
-                    <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxCondition ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxCover ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxArrangement ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.encodedBy ?? '' }}</span>
-                    </div>
-                    <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                        <label :class="[ht_info_fontsize]" class="font-bold">REMARKS:&nbsp;</label>
-                    </div>
-                    <div class="flex flex-col pr-4">
-                        <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks1 ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks2 ?? '' }}</span>
-                        <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks3 ?? '' }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex flex-row justify-end mt-3">
-                    <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow transition duration-200">
-                        Download Excel
-                    </button>
                 </div>
             </div>
-        </div>
     </Frontend>
 </template>
 
@@ -183,6 +183,8 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js'
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const { state } = useAuth();
 
@@ -326,25 +328,25 @@ const getMassProdData = async (massprod) => {
     const htVal = controlSheet_ht_info_values.value;
 
     //heat treatment values
-    htVal.batchCycleNo = mp.batch_cycle_no ?? 'NA';
-    htVal.machineNo = mp.machine_no ?? 'NA';
-    htVal.cycleNo = mp.cycle_no ?? 'NA';
-    htVal.patternNo = mp.pattern_no ?? 'NA';
-    htVal.cyclePattern = mp.cycle_pattern ?? 'NA';
-    htVal.currentPattern = mp.current_pattern ?? 'NA';
-    htVal.dateStart = mp.date_start ?? 'NA';
-    htVal.timeStart = mp.time_start ?? 'NA';
-    htVal.loader = mp.loader ?? 'NA';
-    htVal.dateFinished = mp.date_finished ?? 'NA';
-    htVal.timeFinished = mp.time_finished ?? 'NA';
-    htVal.unloader = mp.unloader ?? 'NA';
-    htVal.boxCondition = mp.box_condition ?? 'NA';
-    htVal.boxCover = mp.box_cover ?? 'NA';
-    htVal.boxArrangement = mp.box_arrangement ?? 'NA';
-    htVal.encodedBy = mp.encoded_by ?? 'NA';
-    htVal.remarks1 = mp.remarks1 ?? 'NA';
-    htVal.remarks2 = mp.remarks2 ?? 'NA';
-    htVal.remarks3 = mp.remarks3 ?? 'NA';
+    htVal.batchCycleNo = mp.batch_cycle_no || 'NA';
+    htVal.machineNo = mp.machine_no || 'NA';
+    htVal.cycleNo = mp.cycle_no || 'NA';
+    htVal.patternNo = mp.pattern_no || 'NA';
+    htVal.cyclePattern = mp.cycle_pattern || 'NA';
+    htVal.currentPattern = mp.current_pattern || 'NA';
+    htVal.dateStart = mp.date_start || 'NA';
+    htVal.timeStart = mp.time_start || 'NA';
+    htVal.loader = mp.loader || 'NA';
+    htVal.dateFinished = mp.date_finished || 'NA';
+    htVal.timeFinished = mp.time_finished || 'NA';
+    htVal.unloader = mp.unloader || 'NA';
+    htVal.boxCondition = mp.box_condition || 'NA';
+    htVal.boxCover = mp.box_cover || 'NA';
+    htVal.boxArrangement = mp.box_arrangement || 'NA';
+    htVal.encodedBy = mp.encoded_by || 'NA';
+    htVal.remarks1 = mp.remarks1 || 'NA';
+    htVal.remarks2 = mp.remarks2 || '';
+    htVal.remarks3 = mp.remarks3 || '';
 
     for (const layer of controlSheet_layers.value) {
         const fieldName = `layer_${layer.replace('.', '_')}`;
@@ -371,6 +373,7 @@ const getMassProdData = async (massprod) => {
 
 const totalQty = computed(() => getTotalQty());
 const totalWt = computed(() => getTotalWt());
+const totalMpiQty = computed(() => getTotalMpiQty());
 
 const getTotalQty = () => {
   let total = 0;
@@ -405,41 +408,56 @@ const getTotalQtyForLayer = (layer) => {
 };
 
 const getTotalWt = () => {
-  let total = 0;
-  for (const layer of controlSheet_layers.value) {
-    const rows = controlSheet_dataMatrix.value[layer];
-    if (!rows) continue;
+    let total = 0;
+    for (const layer of controlSheet_layers.value) {
+        const rows = controlSheet_dataMatrix.value[layer];
+        if (!rows) continue;
 
-    const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
-    if (!wtRow) continue;
+        const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
+        if (!wtRow) continue;
 
-    for (const val of Object.values(wtRow.data)) {
-      const num = parseFloat(val);
-      if (!isNaN(num)) {
-        total += num;
-      }
+        for (const val of Object.values(wtRow.data)) {
+        const num = parseFloat(val);
+        if (!isNaN(num)) {
+            total += num;
+        }
+        }
     }
-  }
-  return Math.round(total * 100) / 100;
+    return Math.round(total * 100) / 100;
 };
 
 const getTotalWtForLayer = (layer) => {
-  const rows = controlSheet_dataMatrix.value[layer];
-  if (!rows) return 0;
+    const rows = controlSheet_dataMatrix.value[layer];
+    if (!rows) return 0;
 
-  const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
-  if (!wtRow) return 0;
+    const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
+    if (!wtRow) return 0;
 
-  const total = Object.values(wtRow.data).reduce((sum, val) => {
-    const num = parseFloat(val);
-    return !isNaN(num) ? sum + num : sum;
-  }, 0);
+    const total = Object.values(wtRow.data).reduce((sum, val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) ? sum + num : sum;
+    }, 0);
 
-  return Math.round(total * 100) / 100;
+    return Math.round(total * 100) / 100;
 };
 
 const getTotalMpiQty = (qty) => {
+    let total = 0;
+    for (const layer of controlSheet_layers.value) {
+        const rows = controlSheet_dataMatrix.value[layer];
+        if (!rows) continue;
 
+        const qtyRow = rows.find(r => r.rowTitle === 'QTY (PCS):');
+        if (!qtyRow) continue;
+
+        for (const val of Object.values(qtyRow.data)) {
+        const num = parseFloat(val);
+        if (!isNaN(num)) {
+            total += num;
+        }
+        }
+    }
+    return total;
 }
 
 // GETTING TOTALS END
@@ -448,5 +466,101 @@ onMounted(async()=>{
     const massPro = redirectedMassPro.value;
     getMassProdData(massPro);
 });
+
+const exportToExcel = () => {
+  const sheetData = []
+
+  // 1. Header
+  sheetData.push([
+    'LAYER',
+    'ROW TITLE',
+    ...controlSheet_headerLetters.value,
+    'TOTAL WT(KG)',
+    'TOTAL QTY(PCS)',
+    'MPI SAMPLE QTY'
+  ])
+
+  // 2. Body rows by layer
+  for (const layer of controlSheet_layers.value) {
+    const rows = controlSheet_dataMatrix.value[layer];
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      const row = rows[rowIndex];
+      const rowData = [];
+
+      rowData.push(rowIndex === 0 ? layer : '');
+      rowData.push(row.rowTitle);
+
+      for (const letter of controlSheet_headerLetters.value) {
+        rowData.push(row.data[letter] ?? '')
+      }
+
+      if (rowIndex === 0) {
+        rowData.push(
+          getTotalWtForLayer(layer),
+          getTotalQtyForLayer(layer),
+          '' // MPI SAMPLE QTY placeholder
+        )
+      } else {
+        rowData.push('', '', '');
+      }
+
+      sheetData.push(rowData);
+    }
+  }
+
+  // 3. Grand total row
+  sheetData.push([
+    '', '', '', '', '', '', '', '', '', '', '', '',
+    'GRAND TOTAL',
+    totalWt.value,
+    totalQty.value,
+    ''
+  ]);
+
+  // 4. Create worksheet and workbook
+  const ws = XLSX.utils.aoa_to_sheet(sheetData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'MASS PRO');
+
+  const htWs = generateHeatTreatmentInfoSheet();
+  XLSX.utils.book_append_sheet(wb, htWs, 'Heat Treatment Info');
+
+  // 5. Download
+  XLSX.writeFile(wb, `${redirectedMassPro.value}_MASS_PRODUCTION.xlsx`);
+}
+
+const generateHeatTreatmentInfoSheet = () => {
+  const info = controlSheet_ht_info_values.value
+
+  const rows = [
+    ['BATCH CYCLE No.', info.batchCycleNo],
+    ['MACHINE No.', info.machineNo],
+    ['CYCLE No.', info.cycleNo],
+    ['PATTERN No.', info.patternNo],
+    ['Cycle Pattern', info.cyclePattern],
+    ['Current Pattern', info.currentPattern],
+
+    ['DATE START', info.dateStart],
+    ['TIME START', info.timeStart],
+    ['LOADER', info.loader],
+
+    ['DATE FINISHED', info.dateFinished],
+    ['TIME FINISHED', info.timeFinished],
+    ['UNLOADER', info.unloader],
+
+    ['BOX CONDITION', info.boxCondition],
+    ['BOX COVER', info.boxCover],
+    ['BOX ARRANGEMENT', info.boxArrangement],
+    ['ENCODED BY', info.encodedBy],
+
+    ['REMARKS 1', info.remarks1],
+    ['REMARKS 2', info.remarks2],
+    ['REMARKS 3', info.remarks3],
+  ]
+
+  return XLSX.utils.aoa_to_sheet(rows)
+}
+
 
 </script>

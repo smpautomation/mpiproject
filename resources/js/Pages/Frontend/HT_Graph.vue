@@ -1,7 +1,7 @@
 <template>
   <Frontend>
     <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 space-y-6 bg-gray-100">
-      <h1 class="text-2xl font-semibold text-gray-800"><span>123RD</span> Mass Production Heat Treatment Graphs</h1>
+      <h1 class="text-2xl font-semibold text-gray-800"><span>{{ redirectedMassPro }}</span> Mass Production Heat Treatment Graphs</h1>
 
       <div class="flex w-full max-w-6xl gap-6">
         <!-- Standard Graph Panel -->
@@ -10,8 +10,15 @@
           <div
             class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
           >
-          <!-- <img :src="" /> -->
-            No image uploaded
+          <img
+                v-if="standardGraphUrl"
+                :src="standardGraphUrl"
+                class="w-full h-full object-contain"
+                alt="Standard Graph"
+                @error="standardGraphMissing = true"
+                v-show="!standardGraphMissing"
+            />
+                <p v-if="standardGraphMissing">No image uploaded</p>
           </div>
           <button
             class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
@@ -23,12 +30,19 @@
 
         <!-- Actual Graph Panel -->
         <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
-          <h2 class="text-lg font-medium text-gray-700 mb-4">Actual Graph</h2>
-          <div
-            class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
-          >
-          <!-- <img :src="" /> -->
-            No image uploaded
+            <h2 class="text-lg font-medium text-gray-700 mb-4">Actual Graph</h2>
+            <div
+                class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
+            >
+            <img
+                v-if="actualGraphUrl"
+                :src="actualGraphUrl"
+                class="w-full h-full object-contain"
+                alt="Standard Graph"
+                @error="actualGraphMissing = true"
+                v-show="!actualGraphMissing"
+            />
+                <p v-if="actualGraphMissing">No image uploaded</p>
           </div>
           <button
             class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
@@ -82,5 +96,34 @@ const checkAuthentication = async () => {
         return false; // Indicate not authenticated
     }
 };
+const redirectedMassPro = ref();
+const ht_props = defineProps({
+    massProd: String,
+});
+redirectedMassPro.value = ht_props.massProd;
+
+const standardGraphMissing = ref(false)
+const actualGraphMissing = ref(false)
+const basePath = `/htgraphs/` + redirectedMassPro.value
+
+const standardGraphUrl = computed(() =>
+  `${basePath}/standard/graph.png`
+)
+
+const actualGraphUrl = computed(() =>
+  `${basePath}/actual/graph.png`
+)
+
+const downloadImage = (type) => {
+    const url = type === 'standard' ? standardGraphUrl.value : actualGraphUrl.value
+    if (!url) return alert('No image to download.')
+
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${redirectedMassPro.value}_${type}_graph.png`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
 
 </script>
