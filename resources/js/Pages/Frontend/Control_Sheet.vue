@@ -71,15 +71,15 @@
                             <template v-if="rowIndex === 0">
                               <td
                                 :rowspan="controlSheet_dataMatrix[layer].length"
-                                :class="[borderColor, cellPaddings]"
+                                :class="[borderColor, cellPaddings, 'text-center']"
                               >
-                                {{  }}
+                                {{ getTotalWtForLayer(layer) }}
                               </td>
                               <td
                                 :rowspan="controlSheet_dataMatrix[layer].length"
-                                :class="[borderColor, cellPaddings]"
+                                :class="[borderColor, cellPaddings, 'text-center']"
                               >
-                                {{ }}
+                                {{ getTotalQtyForLayer(layer) }}
                               </td>
                               <td
                                 :rowspan="controlSheet_dataMatrix[layer].length"
@@ -94,10 +94,10 @@
                           <td v-for="n in 11" :key="n"></td>
                           <th colspan="2" :class="[borderColor]">GRAND TOTAL</th>
                           <th :class="[borderColor]">
-
+                            {{ totalWt }}
                           </th>
                           <th :class="[borderColor]">
-
+                            {{ totalQty }}
                           </th>
                           <th :class="[borderColor]">
 
@@ -391,6 +391,19 @@ const getTotalQty = () => {
   return total;
 };
 
+const getTotalQtyForLayer = (layer) => {
+  const rows = controlSheet_dataMatrix.value[layer];
+  if (!rows) return 0;
+
+  const qtyRow = rows.find(r => r.rowTitle === 'QTY (PCS):');
+  if (!qtyRow) return 0;
+
+  return Object.values(qtyRow.data).reduce((sum, val) => {
+    const num = parseFloat(val);
+    return !isNaN(num) ? sum + num : sum;
+  }, 0);
+};
+
 const getTotalWt = () => {
   let total = 0;
   for (const layer of controlSheet_layers.value) {
@@ -407,7 +420,22 @@ const getTotalWt = () => {
       }
     }
   }
-  return total;
+  return Math.round(total * 100) / 100;
+};
+
+const getTotalWtForLayer = (layer) => {
+  const rows = controlSheet_dataMatrix.value[layer];
+  if (!rows) return 0;
+
+  const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
+  if (!wtRow) return 0;
+
+  const total = Object.values(wtRow.data).reduce((sum, val) => {
+    const num = parseFloat(val);
+    return !isNaN(num) ? sum + num : sum;
+  }, 0);
+
+  return Math.round(total * 100) / 100;
 };
 
 const getTotalMpiQty = (qty) => {
