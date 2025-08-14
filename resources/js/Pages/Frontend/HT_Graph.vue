@@ -1,59 +1,96 @@
 <template>
-  <Frontend>
-    <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 space-y-6 bg-gray-100">
-      <h1 class="text-2xl font-semibold text-gray-800"><span>{{ redirectedMassPro }}</span> Mass Production Heat Treatment Graphs</h1>
+    <Frontend>
+        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 space-y-6 bg-gray-100">
+            <h1 class="text-2xl font-semibold text-gray-800"><span>{{ redirectedMassPro }}</span> Mass Production Heat Treatment Graphs</h1>
+            <div class="flex flex-col w-full max-w-6xl gap-6">
+                <div class="w-full bg-white border border-gray-300 rounded shadow-sm p-4">
+                    <h2 class="text-lg font-medium text-gray-700 mb-4">Cycle Graph</h2>
+                    <div
+                        class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
+                    >
+                        <img
+                            v-if="cycleGraphUrl"
+                            :src="cycleGraphUrl"
+                            class="w-full h-full object-contain"
+                            alt="Cycle Graph"
+                            @error="cycleGraphMissing = true"
+                            v-show="!cycleGraphMissing"
+                        />
+                        <p v-if="cycleGraphMissing">No image uploaded</p>
+                    </div>
+                    <button
+                        class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
+                        @click="downloadImage('cycle')"
+                    >
+                        Download Image
+                    </button>
+                </div>
 
-      <div class="flex w-full max-w-6xl gap-6">
-        <!-- Standard Graph Panel -->
-        <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
-          <h2 class="text-lg font-medium text-gray-700 mb-4">Standard Graph</h2>
-          <div
-            class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
-          >
-          <img
-                v-if="standardGraphUrl"
-                :src="standardGraphUrl"
-                class="w-full h-full object-contain"
-                alt="Standard Graph"
-                @error="standardGraphMissing = true"
-                v-show="!standardGraphMissing"
-            />
-                <p v-if="standardGraphMissing">No image uploaded</p>
-          </div>
-          <button
-            class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
-            @click="downloadImage('standard')"
-          >
-            Download Image
-          </button>
-        </div>
+                <!-- Two Panels Side-by-Side -->
+                <div class="flex w-full gap-6">
+                    <!-- Standard Graph Panel -->
+                    <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
+                        <h2 class="text-lg font-medium text-gray-700 mb-4">Standard Graph</h2>
+                        <div
+                            class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
+                        >
+                            <img
+                                v-if="standardGraphUrl"
+                                :src="standardGraphUrl"
+                                class="w-full h-full object-contain"
+                                alt="Standard Graph"
+                                @error="standardGraphMissing = true"
+                                v-show="!standardGraphMissing"
+                            />
+                            <p v-if="standardGraphMissing">No image uploaded</p>
+                        </div>
+                        <button
+                            class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
+                            @click="downloadImage('standard')"
+                        >
+                            Download Image
+                        </button>
+                    </div>
 
-        <!-- Actual Graph Panel -->
-        <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
-            <h2 class="text-lg font-medium text-gray-700 mb-4">Actual Graph</h2>
-            <div
-                class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
-            >
-            <img
-                v-if="actualGraphUrl"
-                :src="actualGraphUrl"
-                class="w-full h-full object-contain"
-                alt="Standard Graph"
-                @error="actualGraphMissing = true"
-                v-show="!actualGraphMissing"
-            />
-                <p v-if="actualGraphMissing">No image uploaded</p>
-          </div>
-          <button
-            class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
-            @click="downloadImage('actual')"
-          >
-            Download Image
-          </button>
+                    <!-- Actual Graph Panel -->
+                    <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
+                        <h2 class="text-lg font-medium text-gray-700 mb-4">Actual Graph</h2>
+                        <div
+                            class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
+                        >
+                            <img
+                                v-if="actualGraphUrl"
+                                :src="actualGraphUrl"
+                                class="w-full h-full object-contain"
+                                alt="Actual Graph"
+                                @error="actualGraphMissing = true"
+                                v-show="!actualGraphMissing"
+                            />
+                            <p v-if="actualGraphMissing">No image uploaded</p>
+                        </div>
+                        <button
+                            class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
+                            @click="downloadImage('actual')"
+                        >
+                            Download Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-start mt-8">
+                <button
+                    @click="Inertia.visit('/massprod')"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-black transition duration-150 ease-in-out shadow-sm"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Mass Production Lists
+                </button>
+            </div>
         </div>
-      </div>
-    </div>
-  </Frontend>
+    </Frontend>
 </template>
 
 <script setup>
@@ -102,28 +139,51 @@ const ht_props = defineProps({
 });
 redirectedMassPro.value = ht_props.massProd;
 
-const standardGraphMissing = ref(false)
-const actualGraphMissing = ref(false)
-const basePath = `/htgraphs/` + redirectedMassPro.value
-
+const standardGraphMissing = ref(false);
+const actualGraphMissing = ref(false);
+const cycleGraphMissing = ref(false);
+const basePath = `/htgraphs/` + redirectedMassPro.value;
 const standardGraphUrl = computed(() =>
-  `${basePath}/standard/graph.png`
-)
+  `${basePath}/standard/graph.png?ts=${Date.now()}`  //Note: The addition of ?ts=${Date.now()} is to prevent browser cache so that it will always show the current image.
+);
 
 const actualGraphUrl = computed(() =>
-  `${basePath}/actual/graph.png`
-)
+  `${basePath}/actual/graph.png?ts=${Date.now()}`
+);
+
+const cycleGraphUrl = computed(() =>
+  `${basePath}/cycle/graph.png?ts=${Date.now()}`
+);
 
 const downloadImage = (type) => {
-    const url = type === 'standard' ? standardGraphUrl.value : actualGraphUrl.value
-    if (!url) return alert('No image to download.')
+    let url;
 
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${redirectedMassPro.value}_${type}_graph.png`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-}
+    switch (type) {
+        case 'standard':
+            url = standardGraphUrl.value;
+            break;
+        case 'actual':
+            url = actualGraphUrl.value;
+            break;
+        case 'cycle':
+            url = cycleGraphUrl.value;
+            break;
+        default:
+            alert('Invalid image type.');
+            return;
+    }
+
+    if (!url) {
+        alert('No image to download.');
+        return;
+    }
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${redirectedMassPro.value}_${type}_graph.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 
 </script>

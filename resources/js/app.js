@@ -6,9 +6,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createApp, h } from 'vue';
 import axios from 'axios';
-
-// Import VueApexCharts
-import VueApexCharts from 'vue3-apexcharts';
+import ToastPlugin from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 // Set CSRF and credentials for all axios calls
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -71,7 +70,7 @@ createInertiaApp({
     return createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(ZiggyVue)
-      .use(VueApexCharts) // <-- Register VueApexCharts here
+      .use(ToastPlugin)
       .mount(el);
   },
   progress: {

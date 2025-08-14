@@ -1,7 +1,30 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
-            <div>
+            <div
+                v-if="errMsg"
+                class="warning-box-anim"
+                style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.75rem 1rem;
+                    background-color: #fff3cd;
+                    border: 1px solid #ffeeba;
+                    border-radius: 4px;
+                    color: #856404;"
+                >
+                <img src="/photo/warning.png" alt="Warning" style="height: 20px; width: 20px;">
+                <span>{{ errMsg }}</span>
+            </div>
+            <button
+                v-if="errMsg"
+                @click="Inertia.visit('/massprod')"
+                class="mt-2 px-4 py-2 bg-red-100 text-red-800 border border-red-300 rounded hover:bg-red-200 transition duration-200 ease-out"
+                >
+                ← Return
+            </button>
+            <div v-if="!errMsg">
                 <div>
                     <p><span>{{ redirectedMassPro }}</span> Mass Production</p>
                 </div>
@@ -168,8 +191,27 @@
                     </div>
                     </div>
                     <div class="flex flex-row justify-end mt-3">
-                        <button @click="exportToExcel" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow transition duration-200">
+                        <button
+                            @click="exportToExcel"
+                            class="flex items-center gap-2 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-2 px-4 rounded shadow-sm hover:shadow-md transition duration-150 ease-in-out"
+                        >
+                            <img
+                                src="/photo/download.png"
+                                alt="Download"
+                                style="height: 20px; width: 20px; filter: brightness(0) invert(1);"
+                            >
                             Download Excel
+                        </button>
+                    </div>
+                    <div class="flex justify-start mt-4">
+                        <button
+                            @click="Inertia.visit('/massprod')"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-black transition duration-150 ease-in-out shadow-sm"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Back to Mass Production Lists
                         </button>
                     </div>
                 </div>
@@ -185,7 +227,8 @@ import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js'
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-
+import { useToast } from 'vue-toast-notification';
+const toast = useToast();
 const { state } = useAuth();
 
 // Function to check authentication
@@ -221,8 +264,8 @@ const checkAuthentication = async () => {
 };
 
 const massProd_list = ref([]);
-const selectedMassPro = ref();
 const redirectedMassPro = ref();
+const errMsg = ref();
 const controlSheet_props = defineProps({
     massProd: String
 });
@@ -316,54 +359,64 @@ function setDataMatrixValue(layer, rowTitle, letter, value) {
   }
 }
 
+
 const getMassProdData = async (massprod) => {
-    const response = await axios.get('/api/mass-production');
-    massProd_list.value = response.data;
+    try{
+        const response = await axios.get(`api/mass-production/by-mass-prod/${massprod}`);
+        massProd_list.value = response.data;
+        console.log('filtered through backend massprod_list: ', massProd_list.value);
+        const mp = massProd_list.value;
+        const htVal = controlSheet_ht_info_values.value;
 
-    // Filter based on mass_prod column
-    selectedMassPro.value = massProd_list.value.filter(item => item.mass_prod === massprod);
-    console.log('Filtered Data: ', selectedMassPro.value);
+        //heat treatment values
+        htVal.batchCycleNo = mp.batch_cycle_no || 'NA';
+        htVal.machineNo = mp.machine_no || 'NA';
+        htVal.cycleNo = mp.cycle_no || 'NA';
+        htVal.patternNo = mp.pattern_no || 'NA';
+        htVal.cyclePattern = mp.cycle_pattern || 'NA';
+        htVal.currentPattern = mp.current_pattern || 'NA';
+        htVal.dateStart = mp.date_start || 'NA';
+        htVal.timeStart = mp.time_start || 'NA';
+        htVal.loader = mp.loader || 'NA';
+        htVal.dateFinished = mp.date_finished || 'NA';
+        htVal.timeFinished = mp.time_finished || 'NA';
+        htVal.unloader = mp.unloader || 'NA';
+        htVal.boxCondition = mp.box_condition || 'NA';
+        htVal.boxCover = mp.box_cover || 'NA';
+        htVal.boxArrangement = mp.box_arrangement || 'NA';
+        htVal.encodedBy = mp.encoded_by || 'NA';
+        htVal.remarks1 = mp.remarks1 || 'NA';
+        htVal.remarks2 = mp.remarks2 || '';
+        htVal.remarks3 = mp.remarks3 || '';
 
-    const mp = selectedMassPro.value[0];
-    const htVal = controlSheet_ht_info_values.value;
+        for (const layer of controlSheet_layers.value) {
+            const fieldName = `layer_${layer.replace('.', '_')}`;
+            const rawLayer = mp[fieldName];
+            if (!rawLayer) continue;
 
-    //heat treatment values
-    htVal.batchCycleNo = mp.batch_cycle_no || 'NA';
-    htVal.machineNo = mp.machine_no || 'NA';
-    htVal.cycleNo = mp.cycle_no || 'NA';
-    htVal.patternNo = mp.pattern_no || 'NA';
-    htVal.cyclePattern = mp.cycle_pattern || 'NA';
-    htVal.currentPattern = mp.current_pattern || 'NA';
-    htVal.dateStart = mp.date_start || 'NA';
-    htVal.timeStart = mp.time_start || 'NA';
-    htVal.loader = mp.loader || 'NA';
-    htVal.dateFinished = mp.date_finished || 'NA';
-    htVal.timeFinished = mp.time_finished || 'NA';
-    htVal.unloader = mp.unloader || 'NA';
-    htVal.boxCondition = mp.box_condition || 'NA';
-    htVal.boxCover = mp.box_cover || 'NA';
-    htVal.boxArrangement = mp.box_arrangement || 'NA';
-    htVal.encodedBy = mp.encoded_by || 'NA';
-    htVal.remarks1 = mp.remarks1 || 'NA';
-    htVal.remarks2 = mp.remarks2 || '';
-    htVal.remarks3 = mp.remarks3 || '';
+            const parsedLayer = JSON.parse(rawLayer);
 
-    for (const layer of controlSheet_layers.value) {
-        const fieldName = `layer_${layer.replace('.', '_')}`;
-        const rawLayer = mp[fieldName];
-        if (!rawLayer) continue;
+            for (let rowIndex = 0; rowIndex < controlSheet_rowTitles.value.length; rowIndex++) {
+                const rowTitle = controlSheet_rowTitles.value[rowIndex];
+                const rowData = parsedLayer[rowIndex]?.data ?? {};
 
-        const parsedLayer = JSON.parse(rawLayer);
-
-        for (let rowIndex = 0; rowIndex < controlSheet_rowTitles.value.length; rowIndex++) {
-            const rowTitle = controlSheet_rowTitles.value[rowIndex];
-            const rowData = parsedLayer[rowIndex]?.data ?? {};
-
-            for (const letter of controlSheet_headerLetters.value) {
-                const value = rowData[letter] ?? '';
-                setDataMatrixValue(layer, rowTitle, letter, value);
+                for (const letter of controlSheet_headerLetters.value) {
+                    const value = rowData[letter] ?? '';
+                    setDataMatrixValue(layer, rowTitle, letter, value);
+                }
             }
         }
+    }catch(error){
+        if(error.response && error.response.status === 404){
+            errMsg.value = 'Record not found for this Mass Production name.';
+            toast.warning('Record not found for this Mass Production name.');
+            console.error('Record not found for this Mass Production name.');
+        }else{
+            errMsg.value = 'An unexpected error occured. Please try again.';
+            toast.error('An unexpected error occured. Please try again.');
+            console.error('An unexpected error occured. Please try again.');
+        }
+        massProd_list.value = null;
     }
 }
 
@@ -564,3 +617,21 @@ const generateHeatTreatmentInfoSheet = () => {
 
 
 </script>
+
+<style scoped>
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.warning-box-anim {
+  animation: fadeSlideIn 0.4s ease-out forwards;
+}
+
+</style>

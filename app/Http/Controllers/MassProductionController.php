@@ -130,4 +130,16 @@ class MassProductionController extends Controller
 
         return response()->json(['message' => 'Deleted'], 204);
     }
+
+    public function getByMassProd($massprod)
+    {
+        $record = MassProduction::where('mass_prod', $massprod)->first();
+        if(!$record){
+            return response()->json([
+                'message' => "Mass Production record not found.",
+            ], 404);
+        }
+
+        return response()->json($record);
+    }
 }

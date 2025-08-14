@@ -24,6 +24,7 @@ Route::get('/massprod', [FrontendController::class,'massprod'])->name('massprod'
 Route::get('/control_sheet', [FrontendController::class,'controlSheet'])->name('control_sheet');
 Route::get('/htgraph', [FrontendController::class,'htgraph'])->name('htgraph');
 Route::get('/smpdata', [FrontendController::class,'smpData'])->name('smpdata');
+Route::get('/heat_treatment', [FrontendController::class, 'heatTreatment'])->name('heat_treatment');
 Route::get('/manage', [FrontendController::class,'manage'])->name('manage');
 Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspection');
 Route::get('/reports', [FrontendController::class,'reports'])->name('reports');
@@ -132,6 +133,6 @@ Route::post('/upload-chart', [ChartUploadController::class, 'store']);
 
 Route::get('/debug-export', function () {
     return app(\App\Services\TxtExportService::class)->exportData2('K40', '541ST');
-}); 
+});
 
 require __DIR__.'/auth.php';

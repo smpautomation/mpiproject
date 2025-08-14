@@ -210,5 +210,7 @@ Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
 
 Route::apiResource('mass-production',MassProductionController::class);
+Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
+    //->where('massprod', '[A-Za-z0-9\-]+');
 
 Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 'apiGenerateAndSave']);

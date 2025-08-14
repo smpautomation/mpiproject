@@ -40,6 +40,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/SMP_Data');
     }
 
+    public function heatTreatment(Request $request){
+        return Inertia::render('Frontend/Heat_Treatment');
+    }
+
     public function viewList(){
         return Inertia::render('Frontend/ViewList');
     }
