@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class MassProductionController extends Controller
 {
-     public function index()
+    public function index()
     {
-        return MassProduction::all();
+        return MassProduction::orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)
@@ -141,5 +141,61 @@ class MassProductionController extends Controller
         }
 
         return response()->json($record);
+    }
+
+    public function updateByMassProd(Request $request, $massprod)
+    {
+        // Find the record by mass_prod
+        $production = MassProduction::where('mass_prod', $massprod)->first();
+
+        if (!$production) {
+            return response()->json([
+                'message' => "Mass Production record not found.",
+            ], 404);
+        }
+
+        // Validate incoming data
+        $validated = $request->validate([
+            'furnace' => 'nullable|string',
+            'batch_cycle_no' => 'nullable|string',
+            'machine_no' => 'nullable|string',
+            'cycle_no' => 'nullable|string',
+            'pattern_no' => 'nullable|integer',
+            'cycle_pattern' => 'nullable|string',
+            'current_pattern' => 'nullable|string',
+            'date_start' => 'nullable|date',
+            'time_start' => 'nullable',
+            'date_finished' => 'nullable|date',
+            'time_finished' => 'nullable',
+            'loader' => 'nullable|string',
+            'unloader' => 'nullable|string',
+            'box_condition' => 'nullable|string',
+            'box_cover' => 'nullable|string',
+            'box_arrangement' => 'nullable|string',
+            'encoded_by' => 'nullable|string',
+            'remarks1' => 'nullable|string',
+            'remarks2' => 'nullable|string',
+            'remarks3' => 'nullable|string',
+            'layer_1' => 'nullable|json',
+            'layer_2' => 'nullable|json',
+            'layer_3' => 'nullable|json',
+            'layer_4' => 'nullable|json',
+            'layer_5' => 'nullable|json',
+            'layer_6' => 'nullable|json',
+            'layer_7' => 'nullable|json',
+            'layer_8' => 'nullable|json',
+            'layer_9' => 'nullable|json',
+            'layer_9.5' => 'nullable|json',
+            'grand_total_weight' => 'nullable|numeric',
+            'grand_total_quantity' => 'nullable|integer',
+        ]);
+
+        // Update the record
+        $production->update($validated);
+
+        return response()->json([
+            'message' => 'Mass Production updated successfully.',
+            'data' => $production,
+        ]);
     }
 }

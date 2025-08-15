@@ -124,13 +124,32 @@
                         />
                     </div>
                     </div>
-
-                    <button
-                    @click="submitForm"
-                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-md shadow-sm transition duration-200"
-                    >
-                    Submit
-                    </button>
+                    <div v-if="!showConfirmation">
+                        <button
+                        @click="submitForm"
+                        class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-md shadow-sm transition duration-200"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                    <div v-else class="flex flex-col justify-center items-center gap-4">
+                        <p class="font-semibold">Are you sure?</p>
+                        <div class="flex gap-4">
+                            <button
+                                @click="showConfirmation = false;"
+                                class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold text-sm rounded-md shadow-sm transition duration-200"
+                            >
+                                No
+                            </button>
+                            <button
+                                @click="saveToDatabase"
+                                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-md shadow-sm transition duration-200"
+                            >
+                                Yes
+                            </button>
+                        </div>
+                    </div>
+                    <DotsLoader v-if="loadingState" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50" />
                 </div>
             </Modal>
 
@@ -149,6 +168,8 @@ import DotsLoader from '@/Components/DotsLoader.vue';
 import Modal from '@/Components/Modal.vue' // adjust path if needed
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js';
+import { useToast } from 'vue-toast-notification';
+const toast = useToast();
 
 const { state } = useAuth();
 
@@ -178,9 +199,6 @@ const checkAuthentication = async () => {
         console.warn("Name: ", state.user.firstName + " " + state.user.surname);
         console.warn("Access: ", state.user.access_type);
 
-        greetingsWindowFirstName.value = state.user.firstName;
-        greetingsWindowLastName.value = state.user.surname;
-
         return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
@@ -190,6 +208,8 @@ const checkAuthentication = async () => {
 };
 
 const showModalCreate = ref(false);
+const showConfirmation = ref(false);
+const loadingState = ref(false);
 
 const massProd_name = ref('');
 const massProd_furnace = ref('');
@@ -258,7 +278,44 @@ const viewSMPData = (massprod) => {
     });
 }
 
+const submitForm = async () => {
+    if (!massProd_name.value || !massProd_furnace.value) {
+        toast.error('Please fill out all fields.');
+        showModalCreate.value = false; // Keep the modal open
+        massProd_name.value = '';
+        massProd_furnace.value = '';
+        return;
+    }
+    showConfirmation.value = true;
+};
+
+const saveToDatabase = async () => {
+    loadingState.value = true // start loading
+    try {
+        const response = await axios.post('/api/mass-production', {
+            mass_prod: massProd_name.value,
+            furnace: massProd_furnace.value
+        });
+
+        if (response.status >= 200 && response.status < 300) {
+            toast.success('Mass Production created successfully!');
+            showModalCreate.value = false;
+            massProd_name.value = '';
+            massProd_furnace.value = '';
+            getMassProdData();
+        } else {
+            toast.error('Failed to create Mass Production.');
+        }
+    } catch (error) {
+        console.error('Error creating Mass Production:', error);
+        toast.error('An error occurred while creating Mass Production.');
+    } finally {
+        loadingState.value = false // stop loading
+    }
+};
+
 onMounted(async () => {
+    await checkAuthentication();
     getMassProdData();
 });
 

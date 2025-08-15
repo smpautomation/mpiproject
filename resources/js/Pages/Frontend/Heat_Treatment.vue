@@ -1,8 +1,13 @@
 <template>
     <Frontend>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
-            <div class="flex flex-col items-start mb-5">
+            <div class="flex flex-row items-start mb-5 gap-10">
                 <p class="text-gray-400">Fill all the required fields (<span class="text-red-500"> * </span>)</p>
+                <div v-if="state.user && state.user.access_type == 'Automation'" class="space-x-2">
+                    <p>Dev Controls:</p>
+                    <button @click="bypassValidation = true" class="bg-gray-200 rounded-lg p-1" :class="[bypassValidation ? 'bg-yellow-400' : '']">ByPass Validation</button>
+                    <button @click="bypassValidation = false" class="bg-gray-300 rounded-lg p-1"> x </button>
+                </div>
             </div>
             <div class="flex flex-row justify-center gap-0">
                 <div class="max-w-4xl mx-auto bg-white border border-gray-200 shadow-xl rounded-2xl px-2 py-7 md:px-12 space-y-4">
@@ -156,7 +161,7 @@
                 </div>
             </div>
             <div class="flex flex-row mt-12">
-                <div class="max-w-4xl mx-auto bg-white border border-gray-200 shadow-xl rounded-2xl px-2 py-7 md:px-20 space-y-4">
+                <div class="max-w-4xl mx-auto bg-white border border-gray-200 shadow-xl rounded-2xl px-2 py-7 md:px-10 space-y-4">
                     <h2 class="text-md font-bold text-gray-800 border-b pb-1">Heat Treatment Information</h2>
                     <div class="flex flex-row space-x-5">
                         <div class="flex flex-col">
@@ -165,8 +170,8 @@
                                 <input v-model="mpcs.selectedMassProd" type="text" disabled class="cursor-not-allowed bg-gray-100 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Machine No<span class="text-red-500"> *</span></label>
-                                <input v-model="hti.machineNo" type="text" @input="hti.machineNo = hti.machineNo.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Machine No</label>
+                                <input v-model="initialFurnaceData" type="text" class="cursor-not-allowed bg-gray-100 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 mb-1">Cycle No<span class="text-red-500"> *</span></label>
@@ -231,15 +236,31 @@
                                 <input v-model="hti.encodedBy" type="text" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
                             </div>
                         </div>
+                        <div class="flex flex-col">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Remarks1</label>
+                                <input v-model="hti.remarks1" type="text" @input="hti.remarks1 = hti.remarks1.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Remarks2</label>
+                                <input v-model="hti.remarks2" type="text" @input="hti.remarks2 = hti.remarks2.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Remarks3</label>
+                                <input v-model="hti.remarks3" type="text" @input="hti.remarks3 = hti.remarks3.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="max-w-4xl mx-auto bg-white border border-gray-300 shadow-xl rounded-2xl px-6 py-8 md:px-16 space-y-6 ml-5">
-                    <h2 class="text-md font-bold text-gray-800 border-b pb-1">Heat Treatment Graph Upload</h2>
+                    <h2 class="text-md font-bold text-gray-800 border-b pb-1">Heat Treatment Graph Upload <span class="text-xs text-gray-300">(PNG, JPG and JPEG)</span></h2>
                     <div class="flex flex-col space-y-8 border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
                     <div class="flex flex-col space-y-2 border-b border-gray-200 pb-4">
-                        <label for="cycleGraph" class="text-sm font-semibold text-gray-800">Cycle Graph</label>
+                        <label for="cycleGraph" class="text-sm font-semibold text-gray-800">Cycle Graph<span class="text-red-500"> *</span></label>
                         <input
                         id="cycleGraph"
+                        @change="handleCycleGraphUpload"
+                        accept=".png, .jpg, .jpeg"
                         type="file"
                         class="block w-full text-gray-700 text-sm
                                 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
@@ -250,9 +271,11 @@
                     </div>
 
                     <div class="flex flex-col space-y-2 border-b border-gray-200 pb-4">
-                        <label for="standardGraph" class="text-sm font-semibold text-gray-800">Standard Graph</label>
+                        <label for="standardGraph" class="text-sm font-semibold text-gray-800">Standard Graph<span class="text-red-500"> *</span></label>
                         <input
                         id="standardGraph"
+                        @change="handleStandardGraphUpload"
+                        accept=".png, .jpg, .jpeg"
                         type="file"
                         class="block w-full text-gray-700 text-sm
                                 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
@@ -263,9 +286,11 @@
                     </div>
 
                     <div class="flex flex-col space-y-2">
-                        <label for="actualGraph" class="text-sm font-semibold text-gray-800">Actual Graph</label>
+                        <label for="actualGraph" class="text-sm font-semibold text-gray-800">Actual Graph<span class="text-red-500"> *</span></label>
                         <input
                         id="actualGraph"
+                        @change="handleActualGraphUpload"
+                        accept=".png, .jpg, .jpeg"
                         type="file"
                         class="block w-full text-gray-700 text-sm
                                 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
@@ -290,7 +315,7 @@
                 "
                 >
                     <div class="w-full max-w-xs mt-14">
-                        <button @click="showModalCreate = true" class="finalize-btn w-full">
+                        <button @click="finalize" class="finalize-btn w-full">
                         <span class="text">FINALIZE</span>
                         <span class="shine"></span>
                         </button>
@@ -476,7 +501,7 @@
                             </div>
                             <div class="flex flex-col ml-5 gap-1">
                                 <span>{{ mpcs.selectedMassProd || 'NA' }}</span>
-                                <span>{{ hti.machineNo || 'NA' }}</span>
+                                <span>{{ initialFurnaceData || 'NA' }}</span>
                                 <span>{{ hti.cycleNo || 'NA' }}</span>
                                 <span>{{ hti.patternNo || 'NA' }}</span>
                                 <span>{{ hti.cyclePattern || 'NA' }}</span>
@@ -516,18 +541,24 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mb-2">
+                        <p>Cycle Graph File selected: <span class="font-semibold">{{ cycleGraphFile || 'NA'}}</span></p>
+                        <p>Standard Graph File selected: <span class="font-semibold">{{ standardGraphFile || 'NA' }}</span></p>
+                        <p>Actual Graph File selected: <span class="font-semibold">{{ actualGraphFile || 'NA' }}</span></p>
+                    </div>
                     <div class="flex space-x-3">
                         <button
+                            @click="cancelProceed"
                             class="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
                         >
                             Cancel
                         </button>
                         <button
+                            @click="saveToDatabase"
                             class="flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                         >
                             Proceed
                             <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
-
                         </button>
                     </div>
                 </div>
@@ -543,6 +574,8 @@ import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
 import Modal from '@/Components/Modal.vue'
 import { useAuth } from '@/Composables/useAuth.js'
+import { useToast } from 'vue-toast-notification';
+const toast = useToast();
 
 const { state } = useAuth();
 
@@ -578,7 +611,14 @@ const checkAuthentication = async () => {
     }
 };
 
+//BYPASS VALIDATION
+const bypassValidation = ref(false);
+//BYPASS VALIDATION
+const cycleGraphFile = ref(null);
+const standardGraphFile = ref(null);
+const actualGraphFile = ref(null);
 const showModalCreate = ref(false);
+const initialFurnaceData = ref();
 const massProd_name = ref(['523RD', '425TH']);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K','L'];
@@ -616,6 +656,24 @@ watch(
 );
 */
 
+const getMassProdData = async () => {
+    if (!mpcs.selectedMassProd){
+        initialFurnaceData.value = null; // Reset if no mass production selected
+        return; // skip if empty
+    }
+    try {
+        const response = await axios.get(`/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`);
+        console.log('Mass Production Data:', response.data);
+        const massProdData = response.data;
+        initialFurnaceData.value = massProdData.furnace;
+        console.log('Initial Furnace Data:', initialFurnaceData.value);
+    } catch (error) {
+        initialFurnaceData.value = null; // Reset if no mass production selected
+        console.error('Error fetching mass production data:', error);
+        toast.error('Failed to load mass production data.');
+    }
+}
+
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
 
 const mpcs = reactive({
@@ -634,6 +692,11 @@ const mpcs = reactive({
     boxPreparedBy: ''
 });
 
+// Watch for changes to selectedMassProd
+watch(() => mpcs.selectedMassProd, async (newVal, oldVal) => {
+    await getMassProdData();
+});
+
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
 
 /* debugging massProdControlSheetTest -> mpcs
@@ -649,7 +712,6 @@ watch(
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
 const hti = reactive({
-    machineNo: '',
     cycleNo: '',
     patternNo: '',
     cyclePattern: '',
@@ -663,7 +725,10 @@ const hti = reactive({
     boxCondition: '',
     boxCover: '',
     boxArrangement: '',
-    encodedBy: ''
+    encodedBy: '',
+    remarks1: '',
+    remarks2: '',
+    remarks3: ''
 });
 
 
@@ -691,15 +756,143 @@ const clearAll = () => {
     });
 
     mpcs.selectedBoxEndList = 'K';
+    initialFurnaceData.value = null;
 }
 
-const cancel = () => {
+const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+const handleCycleGraphUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file){
+        return;
+    }
+    if(!allowedTypes.includes(file.type)) {
+        toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
+        event.target.value = ''; // Clear the input if the file type is not allowed
+    }
+    cycleGraphFile.value = file.name;
+    console.log('Cycle Graph File selected:', cycleGraphFile.value);
+}
 
+const handleStandardGraphUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file){
+        return;
+    }
+    if(!allowedTypes.includes(file.type)) {
+        toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
+        event.target.value = ''; // Clear the input if the file type is not allowed
+    }
+    standardGraphFile.value = file.name;
+    console.log('Standard Graph File selected:', standardGraphFile.value);
+}
+
+const handleActualGraphUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file){
+        return;
+    }
+    if(!allowedTypes.includes(file.type)) {
+        toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
+        event.target.value = ''; // Clear the input if the file type is not allowed
+    }
+    actualGraphFile.value = file.name;
+    console.log('Actual Graph File selected:', actualGraphFile.value);
+}
+
+
+const cancelProceed = () => {
+    showModalCreate.value = false;
 }
 
 const finalize = () => {
+    // Validate required fields
+    if ((bypassValidation.value == false) && (!mpcs.selectedMassProd || !mpcs.selectedLayer || !mpcs.selectedBoxEndList ||
+        !mpcs.model || !mpcs.coatingMCNo || !mpcs.lotNo || mpcs.qty <= 0 || mpcs.qty_lastBox <= 0 ||
+        !mpcs.coating || !mpcs.magnetPreparedBy ||
+        !hti.machineNo || !hti.cycleNo || !hti.patternNo ||
+        !hti.cyclePattern || !hti.currentPattern || !hti.dateStart ||
+        !hti.timeStart || !hti.loader || !hti.dateFinish || !hti.timeFinish ||
+        !hti.unloader || !hti.boxCondition || !hti.boxCover ||
+        !hti.boxArrangement || !hti.encodedBy)) {
+        toast.error('Please fill in all required fields.');
+        return;
+    }
 
+    // new per-box check
+    for (const box of visibleBoxes.value) {
+        if ((bypassValidation.value == false) && (!boxNoValues.value[box] || !weightValues.value[box] || weightValues.value[box] <= 0)) {
+            toast.error(`Please fill in box number and weight for box ${box}.`);
+            return;
+        }
+    }
+
+    if((bypassValidation.value == false) && (!cycleGraphFile.value || !standardGraphFile.value || !actualGraphFile.value)) {
+        toast.error('Please upload all required graph files.');
+        return;
+    }
+
+    showModalCreate.value = true;
 }
+
+const saveToDatabase = async () => {
+   const layerKey = computed(() => `layer_${mpcs.selectedLayer}`);
+    const dataPayload = {
+        mass_prod: mpcs.selectedMassProd,
+        furnace: initialFurnaceData.value,
+        batch_cycle_no: mpcs.selectedMassProd,
+        machine_no: initialFurnaceData.value,
+        cycle_no: hti.cycleNo,
+        pattern_no: hti.patternNo,
+        cycle_pattern: hti.cyclePattern,
+        current_pattern: hti.currentPattern,
+        date_start: hti.dateStart,
+        time_start: hti.timeStart,
+        loader: hti.loader,
+        date_finish: hti.dateFinish,
+        time_finish: hti.timeFinish,
+        unloader: hti.unloader,
+        box_condition: hti.boxCondition,
+        box_cover: hti.boxCover,
+        box_arrangement: hti.boxArrangement,
+        encoded_by: hti.encodedBy,
+        remarks1: hti.remarks1,
+        remarks2: hti.remarks2,
+        remarks3: hti.remarks3,
+        [layerKey.value]: JSON.stringify({
+            model: mpcs.model,
+            coating_mc_no: mpcs.coatingMCNo,
+            lot_no: mpcs.lotNo,
+            qty: mpcs.qty,
+            qty_lastBox: mpcs.qty_lastBox,
+            ht: mpcs.ht,
+            lt: mpcs.lt,
+            coating: mpcs.coating,
+            boxes: boxNoValues.value,
+            weights: weightValues.value,
+            magnet_prepared_by: mpcs.magnetPreparedBy,
+            box_prepared_by: mpcs.boxPreparedBy
+        }),
+    }
+    console.log('Data Payload:', dataPayload);
+
+    try{
+        const response = await axios.patch(`/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`, dataPayload);
+        console.log('Data saved successfully:', response.data);
+        toast.success('Data saved successfully!');
+        showModalCreate.value = false;
+        clearAll(); // Clear all fields after successful save
+    }catch (error) {
+        console.error('Error saving data:', error);
+        toast.error('Failed to save data. Please try again.');
+    }
+}
+
+onMounted(async () => {
+    const isAuthenticated = await checkAuthentication();
+    if (!isAuthenticated) {
+        return; // Stop execution if not authenticated
+    }
+});
 
 </script>
 
