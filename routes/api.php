@@ -213,5 +213,6 @@ Route::apiResource('mass-production',MassProductionController::class);
 Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
 Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'updateByMassProd']);
+Route::post('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'uploadGraphs']);
 
 Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 'apiGenerateAndSave']);

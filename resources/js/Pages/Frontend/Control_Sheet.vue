@@ -20,7 +20,7 @@
             <button
                 v-if="errMsg"
                 @click="Inertia.visit('/massprod')"
-                class="mt-2 px-4 py-2 bg-red-100 text-red-800 border border-red-300 rounded hover:bg-red-200 transition duration-200 ease-out"
+                class="px-4 py-2 mt-2 text-red-800 transition duration-200 ease-out bg-red-100 border border-red-300 rounded hover:bg-red-200"
                 >
                 ← Return
             </button>
@@ -28,7 +28,7 @@
                 <div>
                     <p><span>{{ redirectedMassPro }}</span> Mass Production</p>
                 </div>
-                <table id="controlSheetTable" class="table-auto border border-gray-300 border-collapse ">
+                <table id="controlSheetTable" class="border border-collapse border-gray-300 table-auto ">
                     <thead>
                         <tr :class="[headerFontSize]">
                           <th colspan="2" rowspan="2" :class="[borderColor, headerPaddings]">
@@ -193,7 +193,7 @@
                     <div class="flex flex-row justify-end mt-3">
                         <button
                             @click="exportToExcel"
-                            class="flex items-center gap-2 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-2 px-4 rounded shadow-sm hover:shadow-md transition duration-150 ease-in-out"
+                            class="flex items-center gap-2 px-4 py-2 font-semibold text-white transition duration-150 ease-in-out bg-green-600 rounded shadow-sm hover:bg-green-700 active:bg-green-800 hover:shadow-md"
                         >
                             <img
                                 src="/photo/download.png"
@@ -206,7 +206,7 @@
                     <div class="flex justify-start mt-4">
                         <button
                             @click="Inertia.visit('/massprod')"
-                            class="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-black transition duration-150 ease-in-out shadow-sm"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />

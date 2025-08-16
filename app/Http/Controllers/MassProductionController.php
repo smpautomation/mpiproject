@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MassProduction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MassProductionController extends Controller
 {
@@ -198,4 +199,29 @@ class MassProductionController extends Controller
             'data' => $production,
         ]);
     }
+
+    public function uploadGraphs(Request $request, $massprod)
+    {
+        $baseDir = public_path("htgraphs/{$massprod}");
+
+        $folders = ['standard', 'cycle', 'actual'];
+        foreach ($folders as $folder) {
+            $path = "{$baseDir}/{$folder}";
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true); // recursive creation
+            }
+        }
+
+        if ($request->hasFile('standard_graph')) {
+            $request->file('standard_graph')->move("{$baseDir}/standard", 'graph.png');
+        }
+        if ($request->hasFile('cycle_graph')) {
+            $request->file('cycle_graph')->move("{$baseDir}/cycle", 'graph.png');
+        }
+        if ($request->hasFile('actual_graph')) {
+            $request->file('actual_graph')->move("{$baseDir}/actual", 'graph.png');
+        }
+
+        return response()->json(['message' => 'Graphs uploaded successfully.']);
+}
 }
