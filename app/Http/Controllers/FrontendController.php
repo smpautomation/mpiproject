@@ -48,6 +48,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/ViewList');
     }
 
+    public function coating(){
+        return Inertia::render('Frontend/Coating');
+    }
+
     public function emailForm(){
         return Inertia::render('Frontend/Email');
     }

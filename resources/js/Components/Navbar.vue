@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm dark:bg-gray-900 dark:border-gray-700">
-      <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-2 max-w-screen-xl px-4 py-3 mx-auto md:px-6">
+      <div class="flex flex-wrap items-center justify-center max-w-screen-xl px-4 py-3 mx-auto gap-x-10 gap-y-2 md:px-6">
 
         <!-- Navigation -->
         <div class="hidden md:flex md:items-center md:w-auto" id="navbar-default">
@@ -115,6 +115,7 @@ const navItems = [
   { label: 'Home', route: 'homePage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Automation', 'Final Approver', 'Proxy Approver', 'Coating', 'Heat Treatment'] },
   { label: 'Mass Production', route: 'massprod', access: ['Automation'] },
   { label: 'Heat Treatment', route: 'heat_treatment', access: ['Automation'] },
+  { label: 'Coating', route: 'coating', access: ['Automation'] },
   { label: 'Manage', route: 'manage', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },
   { label: 'Report', route: 'reports', access: ['Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation', 'Coating', 'Heat Treatment'] },
   { label: 'Inspection', route: 'inspection', access: ['Basic User', 'Preparation Approver', 'Checking Approver', 'Hybrid Approver', 'Bypass Approver', 'Proxy Approver', 'Automation'] },

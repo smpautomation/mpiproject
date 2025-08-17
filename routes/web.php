@@ -36,6 +36,7 @@ Route::get('/sec_additional', [FrontendController::class,'sec_additional'])->nam
 Route::get('/email_form', [FrontendController::class,'emailForm'])->name('email');
 Route::get('/mias_factor', [FrontendController::class,'mias_factor'])->name('mias_factor');
 Route::get('/instructions', [FrontendController::class,'instructions'])->name('instructions');
+Route::get('/coating', [FrontendController::class,'coating'])->name('coating');
 
 Route::get('/generate-pdf', [PdfController::class, 'generate']);
 

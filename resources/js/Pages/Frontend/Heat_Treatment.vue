@@ -7,6 +7,8 @@
                     <p>Dev Controls:</p>
                     <button @click="bypassValidation = true" class="p-1 bg-gray-200 rounded-lg" :class="[bypassValidation ? 'bg-yellow-400' : '']">ByPass Validation</button>
                     <button @click="bypassValidation = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
+                    <button @click="overwriteHeatTreatment = true" class="p-1 bg-gray-200 rounded-lg" :class="[overwriteHeatTreatment ? 'bg-yellow-400' : '']">Allow Overwrite</button>
+                    <button @click="overwriteHeatTreatment = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
                 </div>
             </div>
             <div class="flex flex-row justify-center gap-0">
@@ -277,6 +279,14 @@
                         <p class="text-sm text-gray-600 whitespace-nowrap">
                             Heat Treatment Information data and graph already exists for this Mass Production.
                         </p>
+
+                        <button
+                            v-if="overwriteHeatTreatment"
+                            @click="heatTreatmentInformationDetected = false"
+                            class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
+                        >
+                            <span>OVERWRITE</span>
+                        </button>
                     </div>
                 </div>
                 <div v-if="!heatTreatmentInformationDetected" class="max-w-2xl px-2 py-8 mx-auto space-y-6 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8">
@@ -567,9 +577,9 @@
                         </div>
                     </div>
                     <div v-if="!heatTreatmentInformationDetected" class="mb-2">
-                        <p>Cycle Graph File selected: <span class="font-semibold">{{ cycleGraphFile.name || 'NA'}}</span></p>
-                        <p>Standard Graph File selected: <span class="font-semibold">{{ standardGraphFile.name || 'NA' }}</span></p>
-                        <p>Actual Graph File selected: <span class="font-semibold">{{ actualGraphFile.name || 'NA' }}</span></p>
+                        <p>Cycle Graph File selected: <span class="font-semibold">{{ cycleGraphFile && cycleGraphFile.name || 'NA'}}</span></p>
+                        <p>Standard Graph File selected: <span class="font-semibold">{{ standardGraphFile && standardGraphFile.name || 'NA' }}</span></p>
+                        <p>Actual Graph File selected: <span class="font-semibold">{{ actualGraphFile && actualGraphFile.name || 'NA' }}</span></p>
                     </div>
                     <div class="flex mt-4 space-x-3">
                         <button
@@ -663,9 +673,10 @@ function useSessionStorage(key, state) {
   )
 }
 
-//BYPASS VALIDATION
+//Dev Controls ----------------- Allow Commands
 const bypassValidation = ref(false);
-//BYPASS VALIDATION
+const overwriteHeatTreatment = ref(false);
+//Dev Controls ----------------- Allow Commands
 
 const heatTreatmentInformationDetected = ref(false);
 
