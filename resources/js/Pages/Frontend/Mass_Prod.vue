@@ -133,7 +133,7 @@
                         </button>
                     </div>
                     <div v-else class="flex flex-col justify-center items-center gap-4">
-                        <p class="font-semibold">Are you sure?</p>
+                        <p class="font-semibold">Are you <span class="text-red-600">sure</span> that input is correct?</p>
                         <div class="flex gap-4">
                             <button
                                 @click="showConfirmation = false;"

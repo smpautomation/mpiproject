@@ -172,7 +172,7 @@
             <div class="flex flex-row mt-12">
                 <div v-if="!heatTreatmentInformationDetected" class="max-w-5xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8">
                     <div>
-                        <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2>
+                        <h2 class="pb-1 font-bold text-gray-800 border-b text-md mb-4">Heat Treatment Information</h2>
                         <div class="flex flex-row space-x-3">
                             <div class="flex flex-col">
                                 <div>
@@ -289,7 +289,7 @@
                         </button>
                     </div>
                 </div>
-                <div v-if="!heatTreatmentInformationDetected" class="max-w-2xl px-2 py-8 mx-auto space-y-6 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8">
+                <div v-if="!heatTreatmentInformationDetected" class="max-w-2xl px-2 py-8 mx-auto space-y-8 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Heat Treatment Graph Upload <span class="text-xs text-gray-300">(PNG, JPG and JPEG)</span></h2>
                     <div class="flex flex-col p-6 space-y-8 bg-white border border-gray-300 rounded-lg shadow-sm">
                     <div class="flex flex-col pb-4 space-y-2 border-b border-gray-200">
@@ -297,17 +297,6 @@
                         <input
                         id="cycleGraph"
                         @change="handleCycleGraphUpload"
-                        accept=".png, .jpg, .jpeg"
-                        type="file"
-                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                        />
-                    </div>
-
-                    <div class="flex flex-col pb-4 space-y-2 border-b border-gray-200">
-                        <label for="standardGraph" class="text-sm font-semibold text-gray-800">Standard Graph<span class="text-red-500"> *</span></label>
-                        <input
-                        id="standardGraph"
-                        @change="handleStandardGraphUpload"
                         accept=".png, .jpg, .jpeg"
                         type="file"
                         class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
@@ -393,7 +382,7 @@
                     <p class="mb-6 text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
 
                     <div class="px-5 overflow-auto">
-                        <table class="min-w-full text-sm border border-collapse border-gray-200">
+                        <table class="min-w-full border border-collapse border-gray-200 text-xs">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-2 py-1 text-left border border-gray-300"></th>
@@ -576,11 +565,25 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="!heatTreatmentInformationDetected" class="mb-2">
-                        <p>Cycle Graph File selected: <span class="font-semibold">{{ cycleGraphFile && cycleGraphFile.name || 'NA'}}</span></p>
-                        <p>Standard Graph File selected: <span class="font-semibold">{{ standardGraphFile && standardGraphFile.name || 'NA' }}</span></p>
-                        <p>Actual Graph File selected: <span class="font-semibold">{{ actualGraphFile && actualGraphFile.name || 'NA' }}</span></p>
+                    <div v-if="!heatTreatmentInformationDetected"
+                        class="flex flex-row justify-center items-center gap-6 mb-2 whitespace-nowrap">
+
+                    <div class="text-center text-xs flex flex-col items-center">
+                        <p>Cycle Graph File selected:</p>
+                        <span class="font-semibold">{{ cycleGraphFile && cycleGraphFile.name || 'NA' }}</span>
+                        <img :src="cycleGraphPreview" alt="Cycle Graph Preview"
+                            class="w-32 h-32 object-contain rounded-lg shadow" />
                     </div>
+
+                    <div class="text-center text-xs flex flex-col items-center">
+                        <p>Actual Graph File selected:</p>
+                        <span class="font-semibold">{{ actualGraphFile && actualGraphFile.name || 'NA' }}</span>
+                        <img :src="actualGraphPreview" alt="Actual Graph Preview"
+                            class="w-32 h-32 object-contain rounded-lg shadow" />
+                    </div>
+
+                    </div>
+
                     <div class="flex mt-4 space-x-3">
                         <button
                             @click="cancelProceed"
@@ -681,8 +684,9 @@ const overwriteHeatTreatment = ref(false);
 const heatTreatmentInformationDetected = ref(false);
 
 const cycleGraphFile = ref(null);
-const standardGraphFile = ref(null);
+const cycleGraphPreview = ref(null);
 const actualGraphFile = ref(null);
+const actualGraphPreview = ref(null);
 const showModalCreate = ref(false);
 const initialFurnaceData = ref();
 const massProd_names = ref([]);
@@ -881,22 +885,12 @@ const handleCycleGraphUpload = (event) => {
     if(!allowedTypes.includes(file.type)) {
         toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
         event.target.value = ''; // Clear the input if the file type is not allowed
-    }
-    cycleGraphFile.value = file;
-    console.log('Cycle Graph File selected:', cycleGraphFile.value);
-}
-
-const handleStandardGraphUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file){
+        cycleGraphPreview.value = null; // Reset preview if invalid file
         return;
     }
-    if(!allowedTypes.includes(file.type)) {
-        toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
-        event.target.value = ''; // Clear the input if the file type is not allowed
-    }
-    standardGraphFile.value = file;
-    console.log('Standard Graph File selected:', standardGraphFile.value);
+    cycleGraphFile.value = file;
+    cycleGraphPreview.value = URL.createObjectURL(file); // Create a preview URL
+    console.log('Cycle Graph File selected:', cycleGraphFile.value);
 }
 
 const handleActualGraphUpload = (event) => {
@@ -907,8 +901,11 @@ const handleActualGraphUpload = (event) => {
     if(!allowedTypes.includes(file.type)) {
         toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
         event.target.value = ''; // Clear the input if the file type is not allowed
+        actualGraphPreview.value = null; // Reset preview if invalid file
+        return;
     }
     actualGraphFile.value = file;
+    actualGraphPreview.value = URL.createObjectURL(file); // Create a preview URL
     console.log('Actual Graph File selected:', actualGraphFile.value);
 }
 
@@ -945,7 +942,7 @@ const finalize = () => {
         }
         if (!heatTreatmentInformationDetected.value) {
             if (
-                !cycleGraphFile.value || !standardGraphFile.value || !actualGraphFile.value
+                !cycleGraphFile.value || !actualGraphFile.value
             ) {
                 toast.error("Please upload all required graph files.");
                 return;
@@ -1045,9 +1042,6 @@ const uploadGraphs = async () => {
 
     const formData = new FormData();
 
-    if (standardGraphFile.value) {
-        formData.append('standard_graph', standardGraphFile.value);
-    }
     if (cycleGraphFile.value) {
         formData.append('cycle_graph', cycleGraphFile.value);
     }

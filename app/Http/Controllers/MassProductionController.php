@@ -204,7 +204,7 @@ class MassProductionController extends Controller
     {
         $baseDir = public_path("htgraphs/{$massprod}");
 
-        $folders = ['standard', 'cycle', 'actual'];
+        $folders = ['cycle', 'actual'];
         foreach ($folders as $folder) {
             $path = "{$baseDir}/{$folder}";
             if (!file_exists($path)) {
@@ -212,9 +212,6 @@ class MassProductionController extends Controller
             }
         }
 
-        if ($request->hasFile('standard_graph')) {
-            $request->file('standard_graph')->move("{$baseDir}/standard", 'graph.png');
-        }
         if ($request->hasFile('cycle_graph')) {
             $request->file('cycle_graph')->move("{$baseDir}/cycle", 'graph.png');
         }
