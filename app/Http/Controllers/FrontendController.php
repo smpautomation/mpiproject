@@ -56,6 +56,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Email');
     }
 
+    public function heatTreatmentGraphPatterns(){
+        return Inertia::render('Frontend/HTGraph_Patterns');
+    }
+
     public function manage(Request $request) {
         // Capture the manageSerialParam query parameter from the URL
         $manageSerialParam = $request->query('manageSerialParam'); // Use $request->query() to get the value

@@ -335,7 +335,7 @@
                 <div class="w-full">
                     <button
                         @click="finalize"
-                        class="w-full py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                        class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
                     >
                         FINALIZE
                     </button>
@@ -345,7 +345,15 @@
                 <div class="w-full mt-4 space-y-4">
                     <!-- Cancel Button -->
                     <button
-                        class="w-full py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-50"
+                        @click="Inertia.visit('htgraph_patterns')"
+                        class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50"
+                    >
+                        GRAPH PATTERNS
+                    </button>
+
+                    <!-- Cancel Button -->
+                    <button
+                        class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-50"
                     >
                         CANCEL
                     </button>
@@ -353,7 +361,7 @@
                     <!-- Clear All Button -->
                     <button
                         @click="clearAll()"
-                        class="w-full py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
+                        class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
                     >
                         CLEAR ALL
                     </button>
