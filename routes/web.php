@@ -23,7 +23,7 @@ Route::get('/view', [FrontendController::class,'viewList'])->name('viewList');
 Route::get('/massprod', [FrontendController::class,'massprod'])->name('massprod');
 Route::get('/control_sheet', [FrontendController::class,'controlSheet'])->name('control_sheet');
 Route::get('/htgraph', [FrontendController::class,'htgraph'])->name('htgraph');
-Route::get('/htgraph_patterns', [FrontendController::class,'heatTreatmentGraphPatterns'])->name('htgraph_patterns');
+Route::get('/ht_graph_patterns', [FrontendController::class,'heatTreatmentGraphPatterns'])->name('htgraph_patterns');
 Route::get('/smpdata', [FrontendController::class,'smpData'])->name('smpdata');
 Route::get('/heat_treatment', [FrontendController::class, 'heatTreatment'])->name('heat_treatment');
 Route::get('/manage', [FrontendController::class,'manage'])->name('manage');

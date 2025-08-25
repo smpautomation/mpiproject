@@ -172,7 +172,7 @@
             <div class="flex flex-row mt-12">
                 <div v-if="!heatTreatmentInformationDetected" class="max-w-5xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8">
                     <div>
-                        <h2 class="pb-1 font-bold text-gray-800 border-b text-md mb-4">Heat Treatment Information</h2>
+                        <h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2>
                         <div class="flex flex-row space-x-3">
                             <div class="flex flex-col">
                                 <div>
@@ -345,7 +345,7 @@
                 <div class="w-full mt-4 space-y-4">
                     <!-- Cancel Button -->
                     <button
-                        @click="Inertia.visit('htgraph_patterns')"
+                        @click="Inertia.visit('ht_graph_patterns')"
                         class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50"
                     >
                         GRAPH PATTERNS
@@ -390,7 +390,7 @@
                     <p class="mb-6 text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
 
                     <div class="px-5 overflow-auto">
-                        <table class="min-w-full border border-collapse border-gray-200 text-xs">
+                        <table class="min-w-full text-xs border border-collapse border-gray-200">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-2 py-1 text-left border border-gray-300"></th>
@@ -574,20 +574,20 @@
                         </div>
                     </div>
                     <div v-if="!heatTreatmentInformationDetected"
-                        class="flex flex-row justify-center items-center gap-6 mb-2 whitespace-nowrap">
+                        class="flex flex-row items-center justify-center gap-6 mb-2 whitespace-nowrap">
 
-                    <div class="text-center text-xs flex flex-col items-center">
+                    <div class="flex flex-col items-center text-xs text-center">
                         <p>Cycle Graph File selected:</p>
                         <span class="font-semibold">{{ cycleGraphFile && cycleGraphFile.name || 'NA' }}</span>
                         <img :src="cycleGraphPreview" alt="Cycle Graph Preview"
-                            class="w-32 h-32 object-contain rounded-lg shadow" />
+                            class="object-contain w-32 h-32 rounded-lg shadow" />
                     </div>
 
-                    <div class="text-center text-xs flex flex-col items-center">
+                    <div class="flex flex-col items-center text-xs text-center">
                         <p>Actual Graph File selected:</p>
                         <span class="font-semibold">{{ actualGraphFile && actualGraphFile.name || 'NA' }}</span>
                         <img :src="actualGraphPreview" alt="Actual Graph Preview"
-                            class="w-32 h-32 object-contain rounded-lg shadow" />
+                            class="object-contain w-32 h-32 rounded-lg shadow" />
                     </div>
 
                     </div>

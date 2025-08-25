@@ -220,5 +220,5 @@ class MassProductionController extends Controller
         }
 
         return response()->json(['message' => 'Graphs uploaded successfully.']);
-}
+    }
 }

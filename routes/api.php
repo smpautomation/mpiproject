@@ -25,6 +25,7 @@ use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
+use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
@@ -204,6 +205,7 @@ Route::apiResource('gx-models',GxModelController::class);
 Route::apiResource('ttmnc-models',TtmncModelController::class);
 Route::apiResource('bh-models',BhModelController::class);
 Route::apiResource('rob-models',RobModelController::class);
+Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
 
 
 Route::apiResource('coating-data',CoatingController::class);
@@ -216,3 +218,7 @@ Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController
 Route::post('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'uploadGraphs']);
 
 Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 'apiGenerateAndSave']);
+
+Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
+Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
+Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);
