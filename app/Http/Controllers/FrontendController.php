@@ -56,6 +56,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Email');
     }
 
+    public function furnace(){
+        return Inertia::render('Frontend/Furnace');
+    }
+
     public function heatTreatmentGraphPatterns(){
         return Inertia::render('Frontend/HTGraph_Patterns');
     }

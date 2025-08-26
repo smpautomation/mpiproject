@@ -189,7 +189,11 @@
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.patternNo" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <select v-model="hti.patternNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option v-for="item in graph_patterns" :key="item" :value="item">
+                                            {{ item }}
+                                        </option>
+                                    </select>
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Cycle Pattern<span class="text-red-500"> *</span></label>
@@ -699,6 +703,7 @@ const showModalCreate = ref(false);
 const initialFurnaceData = ref();
 const massProd_names = ref([]);
 const model_names = ref([]);
+const graph_patterns = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K','L'];
 const boxesEndList = ref(['B','C','D','E','F','G','H','J','K','L']);
@@ -784,6 +789,18 @@ const getModelLists = async () => {
     }catch(error){
         console.error('Error fetching model names', error);
         toast.error('Failed to get the model names.');
+    }
+}
+
+const getGraphPatterns = async () => {
+    try{
+        const response = await axios.get('/api/ht-graph-patterns/');
+        const patternsList = response.data;
+        graph_patterns.value = patternsList.map(item => item.pattern_no);
+        console.log('Graph Patterns: ',graph_patterns.value);
+    }catch(error){
+        console.error('Error fetching model names', error);
+        toast.error('Failed to get graph patterns.');
     }
 }
 
@@ -1057,6 +1074,9 @@ const uploadGraphs = async () => {
         formData.append('actual_graph', actualGraphFile.value);
     }
 
+    // 🔑 Pass patternNo so backend fetches standard graph
+    formData.append('pattern_no', hti.patternNo);
+
     try {
         const response = await axios.post(
             `/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`,
@@ -1072,6 +1092,7 @@ const uploadGraphs = async () => {
         toast.error('Failed to upload graphs. Please try again.');
     }
 };
+
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
@@ -1093,8 +1114,9 @@ onMounted(async () => {
     if (!isAuthenticated) {
         return; // Stop execution if not authenticated
     }
-    getMassProdLists();
-    getModelLists();
+    await getMassProdLists();
+    await getModelLists();
+    await getGraphPatterns();
 });
 
 </script>

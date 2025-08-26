@@ -78,15 +78,15 @@
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">(value)</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage !== null ? coatingAverage.toFixed(2) : '-' }}</div>
                         </div>
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
-                            <div class="text-sm font-semibold text-gray-800">(value)</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
                         </div>
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
-                            <div class="text-sm font-semibold text-gray-800">(value)</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -413,6 +413,28 @@ const coatingsTable = ref(
 
 //coatingsTable[4].coating = 'Red'; // sets No. 5
 
+const coatingValues = computed(() =>
+  coatingsTable.value
+    .map(row => row.coating)          // take raw value
+    .filter(val => val !== null && val !== '' && !isNaN(val)) // keep only valid numbers
+    .map(Number)                      // convert to number
+);
+
+const coatingMaximum = computed(() =>
+  coatingValues.value.length ? Math.max(...coatingValues.value) : null
+);
+
+const coatingMinimum = computed(() =>
+  coatingValues.value.length ? Math.min(...coatingValues.value) : null
+);
+
+const coatingAverage = computed(() =>
+  coatingValues.value.length
+    ? coatingValues.value.reduce((sum, val) => sum + val, 0) / coatingValues.value.length
+    : null
+);
+
+
 // Modules
 const modules = ["M-01", "M-02", "M-03", "M-04", "M-05", "M-06", "M-06"];
 // Ranges
@@ -498,8 +520,24 @@ const clearAll = () => {
 const saveToDatabase = async() => {
 
     const coatingDataPayload = {
-
-    }
+        mass_prod: coatingInfo.selectedMassProd,
+        layer: coatingInfo.selectedLayer,
+        date: coatingInfo.coatingDate,
+        coating_machine_no: coatingInfo.coatingMachineNo,
+        slurry_lot_no: coatingInfo.slurryLotNo,
+        sample_qty: coatingInfo.sampleQuantity,
+        min_tb_content: coatingInfo.minTbContent,
+        total_magnet_weight: coatingInfo.totalMagnetWeight,
+        loader_operator: coatingInfo.loaderOperator,
+        unloader_operator: coatingInfo.unloaderOperator,
+        checker_operator: coatingInfo.checkerOperator,
+        time_start: coatingInfo.timeStart,
+        time_finished: coatingInfo.timeFinished,
+        average: coatingAverage.value,
+        maximum: coatingMaximum.value,
+        minimum: coatingMinimum.value,
+        remarks: coatingInfo.remarks,
+    };
 
     try{
         const response = await axios.post('');

@@ -203,22 +203,40 @@ class MassProductionController extends Controller
     public function uploadGraphs(Request $request, $massprod)
     {
         $baseDir = public_path("htgraphs/{$massprod}");
+        $folders = ['cycle', 'actual', 'standard'];
 
-        $folders = ['cycle', 'actual'];
+        // Ensure folders exist
         foreach ($folders as $folder) {
             $path = "{$baseDir}/{$folder}";
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true); // recursive creation
+            if (!file_exists($path)) mkdir($path, 0777, true);
+        }
+
+        // Handle cycle and actual graphs
+        foreach (['cycle_graph' => 'cycle', 'actual_graph' => 'actual'] as $inputName => $folder) {
+            if ($request->hasFile($inputName)) {
+                $file = $request->file($inputName);
+                if ($file->isValid()) {
+                    $file->move("{$baseDir}/{$folder}", 'graph.png');
+                }
             }
         }
 
-        if ($request->hasFile('cycle_graph')) {
-            $request->file('cycle_graph')->move("{$baseDir}/cycle", 'graph.png');
-        }
-        if ($request->hasFile('actual_graph')) {
-            $request->file('actual_graph')->move("{$baseDir}/actual", 'graph.png');
+        // Handle standard graph from pattern_no
+        if ($request->has('pattern_no')) {
+            $patternNo = $request->input('pattern_no');
+            $pattern = \App\Models\HtGraphPatterns::where('pattern_no', $patternNo)->first();
+
+            if ($pattern) {
+                $sourceDir = public_path("htgraph_patterns");
+                $files = glob("{$sourceDir}/pattern_{$patternNo}.{png,jpg,jpeg}", GLOB_BRACE);
+
+                if (count($files)) {
+                    copy($files[0], "{$baseDir}/standard/graph.png"); // copy to standard folder
+                }
+            }
         }
 
         return response()->json(['message' => 'Graphs uploaded successfully.']);
     }
+
 }

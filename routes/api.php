@@ -205,8 +205,9 @@ Route::apiResource('gx-models',GxModelController::class);
 Route::apiResource('ttmnc-models',TtmncModelController::class);
 Route::apiResource('bh-models',BhModelController::class);
 Route::apiResource('rob-models',RobModelController::class);
-Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
 
+Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
+Route::apiResource('furnace-data', FurnaceDataController::class);
 
 Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);

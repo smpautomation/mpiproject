@@ -1,161 +1,221 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
-            <button @click="showModalCreate = true" class="px-4 py-2 mb-5 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                Create New
+        <div class="flex flex-col items-center justify-start min-h-screen px-6 py-10 bg-gray-100">
+        <!-- Top Action Bar -->
+        <div class="flex items-center justify-between w-full mb-6 max-w-7xl">
+            <h1 class="text-2xl font-bold text-gray-800">Mass Production Records</h1>
+            <button
+                @click="showModalCreate = true"
+                class="px-5 py-2 font-semibold text-white transition-all bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+                + Create New
             </button>
+        </div>
 
-            <div class="p-16 mx-auto space-y-6 bg-white border border-gray-200 shadow-xl max-w-7xl rounded-2xl md:p-14">
-                <!-- Search Bar -->
-                <div class="flex items-center justify-between mb-4">
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="Search Mass Prod..."
-                        class="w-64 px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
-                <div class="overflow-x-auto bg-white border border-gray-200 shadow-lg">
-                    <table class="min-w-full text-sm text-left divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+        <!-- Card -->
+        <div class="w-full p-8 space-y-6 bg-white border border-gray-200 shadow-xl max-w-7xl rounded-2xl">
+
+            <!-- Search -->
+            <div class="flex items-center justify-between">
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="🔍 Search Mass Prod..."
+                    class="px-4 py-2 text-sm border border-gray-300 rounded-lg shadow-sm w-72 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto border border-gray-200 rounded-lg shadow">
+                <table class="min-w-full text-sm divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-4 font-bold tracking-wide text-center text-gray-700 uppercase">Date</th>
-                            <th class="px-6 py-4 font-bold tracking-wide text-center text-gray-700 uppercase">Mass Prod</th>
-                            <th class="px-6 py-4 font-bold tracking-wide text-center text-gray-700 uppercase">Furnace</th>
-                            <th class="px-6 py-4 font-bold tracking-wide text-center text-gray-700 uppercase">Action (View)</th>
+                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Date</th>
+                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Mass Prod</th>
+                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Furnace</th>
+                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Actions</th>
                         </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                        <tr
-                            v-for="item in paginatedItems"
-                            :key="item.id"
-                            class="text-center transition duration-150 hover:bg-gray-50"
-                        >
-                        <td class="px-6 py-4 font-medium text-gray-900">{{ new Date(item.created_at).toLocaleDateString() }}</td>
-                        <td class="px-6 py-4 font-medium text-gray-900">{{ item.mass_prod }}</td>
-                            <td class="px-6 py-4 font-medium text-gray-900">{{ item.furnace }}</td>
-                            <td class="flex flex-wrap items-center justify-center gap-3 px-6 py-4">
-                            <button
-                                @click="viewControlSheet(item.mass_prod)"
-                                class="px-4 py-2 text-xs font-semibold text-white transition bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                Control Sheet
-                            </button>
-                            <button
-                                @click="viewHTGraph(item.mass_prod)"
-                                class="px-4 py-2 text-xs font-semibold text-white transition bg-green-600 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                            >
-                                Heat Treatment Graph
-                            </button>
-                            <button
-                                @click="viewSMPData(item.mass_prod)"
-                                class="px-4 py-2 text-xs font-semibold text-white transition bg-purple-600 rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            >
-                                SMP Data
-                            </button>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr v-for="item in paginatedItems" :key="item.id" class="transition duration-150 hover:bg-gray-50">
+                            <td class="px-6 py-4 text-center text-gray-800">{{ new Date(item.created_at).toLocaleDateString() }}</td>
+                            <td class="px-6 py-4 font-semibold text-center text-gray-900">{{ item.mass_prod }}</td>
+                            <td class="px-6 py-4 text-center text-gray-800">{{ item.furnace }}</td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    <button
+                                        @click="viewControlSheet(item.mass_prod)"
+                                        class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        Control Sheet
+                                    </button>
+                                    <button
+                                        @click="viewHTGraph(item.mass_prod)"
+                                        class="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                                    >
+                                        HT Graph
+                                    </button>
+                                    <button
+                                        @click="viewSMPData(item.mass_prod)"
+                                        class="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-500"
+                                    >
+                                        SMP Data
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         <tr v-if="paginatedItems.length === 0">
-                            <td colspan="2" class="px-6 py-4 text-center text-gray-500">No results found.</td>
+                            <td colspan="4" class="px-6 py-6 text-center text-gray-500">No results found.</td>
                         </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Pagination Controls -->
-                <div class="flex items-center justify-between mt-4 text-sm">
-                    <div class="text-gray-600">
-                        Showing {{ startIndex + 1 }}–{{ Math.min(endIndex, filteredItems.length) }} of {{ filteredItems.length }}
-                    </div>
-                    <div class="space-x-2">
-                        <button
-                        @click="prevPage"
-                        :disabled="currentPage === 1"
-                        class="px-3 py-1 text-gray-800 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-                        >
-                        Previous
-                        </button>
-                        <button
-                        @click="nextPage"
-                        :disabled="endIndex >= filteredItems.length"
-                        class="px-3 py-1 text-gray-800 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-                        >
-                        Next
-                        </button>
-                    </div>
-                </div>
+                    </tbody>
+                </table>
             </div>
 
-
-            <Modal :show="showModalCreate" @close="showModalCreate = false">
-                <div class="relative flex flex-col items-center justify-center w-full max-w-3xl p-6 mx-auto bg-white shadow-2xl rounded-xl">
-
-                    <!-- Exit Button -->
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-4 text-sm">
+                <div class="text-gray-600">
+                    Showing {{ startIndex + 1 }}–{{ Math.min(endIndex, filteredItems.length) }} of {{ filteredItems.length }}
+                </div>
+                <div class="flex gap-2">
                     <button
-                    @click="showModalCreate = false"
-                    class="absolute text-gray-400 transition duration-150 top-4 right-4 hover:text-gray-600"
-                    aria-label="Close modal"
+                        @click="prevPage"
+                        :disabled="currentPage === 1"
+                        class="px-3 py-1 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
                     >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                        Previous
                     </button>
+                    <button
+                        @click="nextPage"
+                        :disabled="endIndex >= filteredItems.length"
+                        class="px-3 py-1 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                    <p class="mb-6 text-lg font-bold text-gray-800">Please fill out all the fields</p>
+        <!-- Modal -->
+        <Modal :show="showModalCreate" @close="showModalCreate = false">
+            <div class="relative flex flex-col w-full max-w-2xl p-8 mx-auto bg-white shadow-2xl rounded-2xl">
 
-                    <div class="flex flex-col w-full gap-6 mb-8 md:flex-row">
-                    <div class="flex flex-col w-full">
-                        <label class="mb-1 text-sm font-semibold text-gray-700">Mass Production Name</label>
+                <!-- Exit -->
+                <button
+                    @click="showModalCreate = false"
+                    class="absolute p-2 text-gray-400 transition rounded-full top-4 right-4 hover:bg-gray-100 hover:text-gray-600"
+                >
+                    ✕
+                </button>
+
+                <!-- Header -->
+                <div class="flex flex-col mb-6 text-center">
+                    <h2 class="text-2xl font-bold text-gray-900">Create New Mass Production</h2>
+                    <p class="mt-2 text-sm text-gray-500">
+                        Fill out the form below to register a new mass production record.
+                        Ensure accuracy, as these records will be used for tracking furnaces, control sheets, and HT graphs.
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <div class="flex flex-col w-full gap-6 mb-8">
+                    <!-- Mass Prod Name -->
+                    <div>
+                        <label class="block mb-1 text-sm font-semibold text-gray-700">Mass Production Name</label>
                         <input
-                        type="text"
-                        v-model="massProd_name"
-                        @input="massProd_name = massProd_name.toUpperCase()"
-                        placeholder="ex. 541ST"
-                        class="w-full px-4 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 uppercase transition border border-gray-300 rounded-md shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            type="text"
+                            v-model="massProd_name"
+                            @input="massProd_name = massProd_name.toUpperCase()"
+                            placeholder="ex. 541ST"
+                            class="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
+                        <p class="mt-1 text-xs text-gray-400">Unique identifier for the mass production batch.</p>
                     </div>
-                    <div class="flex flex-col w-full">
-                        <label class="mb-1 text-sm font-semibold text-gray-700">Furnace No</label>
-                        <input
-                        type="text"
-                        v-model="massProd_furnace"
-                        @input="massProd_furnace = massProd_furnace.toUpperCase()"
-                        placeholder="ex. K-40"
-                        class="w-full px-4 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 uppercase transition border border-gray-300 rounded-md shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
-                    </div>
-                    </div>
-                    <div v-if="!showConfirmation">
-                        <button
-                        @click="submitForm"
-                        class="px-6 py-2 text-sm font-semibold text-white transition duration-200 bg-blue-600 rounded-md shadow-sm hover:bg-blue-700"
-                        >
-                            Submit
-                        </button>
-                    </div>
-                    <div v-else class="flex flex-col items-center justify-center gap-4">
-                        <p class="font-semibold">Are you <span class="text-red-600">sure</span> that input is correct?</p>
-                        <div class="flex gap-4">
-                            <button
-                                @click="showConfirmation = false"
-                                class="px-6 py-2 text-sm font-semibold text-white transition duration-200 bg-gray-600 rounded-md shadow-sm hover:bg-gray-700"
+
+                    <!-- Furnace No -->
+                    <div>
+                        <label class="block mb-1 text-sm font-semibold text-gray-700">Furnace No</label>
+
+                        <div v-if="furnace_lists.length > 0">
+                            <select
+                            v-model="massProd_furnace"
+                            class="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             >
-                                No
+                            <option disabled value="">Select a furnace...</option>
+                            <option
+                                v-for="furnace in furnace_lists"
+                                :key="furnace.id ?? furnace"
+                                :value="furnace.furnace_no ?? furnace"
+                            >
+                                {{ furnace.furnace_no ?? furnace }}
+                            </option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-400">Choose from available furnaces (e.g., K-40, K-42).</p>
+                        </div>
+
+                        <div v-else class="flex flex-col w-full gap-2 px-4 py-3 text-sm text-red-600 border border-red-300 rounded-lg shadow-sm bg-red-50">
+                            <span class="font-medium">⚠ No furnaces available.</span>
+                            <p class="text-gray-600">
+                            You can add furnaces by going to
+                            <span class="font-semibold text-blue-600">Others → Furnace</span> in the navigation bar.
+                            </p>
+                            <div class="flex gap-3 mt-2">
+                            <button
+                                @click="getFurnaceLists"
+                                class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-red-500 rounded-md hover:bg-red-600"
+                            >
+                                Retry
                             </button>
                             <button
-                                @click="saveToDatabase"
-                                class="px-6 py-2 text-sm font-semibold text-white transition duration-200 bg-green-600 rounded-md shadow-sm hover:bg-green-700"
+                                @click="Inertia.visit('/furnace')"
+                                class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-blue-500 rounded-md hover:bg-blue-600"
                             >
-                                Yes
+                                Go to Furnace Page
                             </button>
+                            </div>
                         </div>
                     </div>
-                    <DotsLoader v-if="loadingState" class="absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75" />
                 </div>
-            </Modal>
+
+                <!-- Confirmation -->
+                <div v-if="!showConfirmation" class="flex justify-end">
+                <button
+                    @click="submitForm"
+                    :disabled="!massProd_furnace || furnace_lists.length === 0"
+                    class="px-6 py-3 text-sm font-semibold text-white transition bg-blue-600 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                    Submit
+                </button>
+                </div>
 
 
+                <div v-else class="flex flex-col items-center gap-6">
+                    <p class="text-base font-medium text-gray-800">Confirm your input before saving.</p>
+                    <div class="flex gap-4">
+                        <button
+                            @click="showConfirmation = false"
+                            class="px-6 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            @click="saveToDatabase"
+                            class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg shadow hover:bg-green-700"
+                        >
+                            Confirm & Save
+                        </button>
+                    </div>
+                </div>
 
-        </div>
+                <!-- Loading Overlay -->
+                <DotsLoader
+                    v-if="loadingState"
+                    class="absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-70 rounded-2xl"
+                />
+            </div>
+        </Modal>
+
+    </div>
+
     </Frontend>
 </template>
 
@@ -212,9 +272,10 @@ const showConfirmation = ref(false);
 const loadingState = ref(false);
 
 const massProd_name = ref('');
-const massProd_furnace = ref('');
+const massProd_furnace = ref();
 
 const massProd_list = ref([]);
+const furnace_lists = ref([]);
 
 const searchQuery = ref('');
 const currentPage = ref(1);
@@ -223,9 +284,20 @@ const itemsPerPage = 5;
 const getMassProdData = async() => {
     const responseMassProd = await axios.get('/api/mass-production');
     massProd_list.value = responseMassProd.data;
-    console.log(massProd_list.value);
+    //console.log(massProd_list.value);
 }
 
+const getFurnaceLists = async() => {
+    try{
+        const response = await axios.get('/api/furnace-data/');
+        const furnaceData = response.data;
+        furnace_lists.value = furnaceData.map(item => item.furnace_name);
+        console.log("Furnace Lists: ", furnace_lists.value);
+    }catch(error){
+        console.error('Failed to fetch furnace data lists: ',error);
+        toast.error('Furnace Data List error.');
+    }
+}
 
 const filteredItems = computed(() => {
   return massProd_list.value.filter((item) =>
@@ -314,9 +386,12 @@ const saveToDatabase = async () => {
     }
 };
 
+
+
 onMounted(async () => {
     await checkAuthentication();
-    getMassProdData();
+    await getMassProdData();
+    await getFurnaceLists();
 });
 
 </script>
