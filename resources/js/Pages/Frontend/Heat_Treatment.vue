@@ -1,16 +1,15 @@
 <template>
     <Frontend>
-        <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
-            <div class="flex flex-row items-start gap-10 mb-5">
-                <p class="text-gray-400">Fill all the required fields (<span class="text-red-500"> * </span>)</p>
-                <div v-if="state.user && state.user.access_type == 'Automation'" class="space-x-2">
-                    <p>Dev Controls:</p>
-                    <button @click="bypassValidation = true" class="p-1 bg-gray-200 rounded-lg" :class="[bypassValidation ? 'bg-yellow-400' : '']">ByPass Validation</button>
-                    <button @click="bypassValidation = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
-                    <button @click="overwriteHeatTreatment = true" class="p-1 bg-gray-200 rounded-lg" :class="[overwriteHeatTreatment ? 'bg-yellow-400' : '']">Allow Overwrite</button>
-                    <button @click="overwriteHeatTreatment = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
-                </div>
+        <div class="flex flex-row items-start gap-10 p-5 text-green-600 bg-black">
+            <div v-if="state.user && state.user.access_type == 'Automation'" class="space-x-2">
+                <p>Dev Controls:</p>
+                <button @click="bypassValidation = true" class="p-1 bg-gray-200 rounded-lg" :class="[bypassValidation ? 'bg-yellow-400' : '']">ByPass Validation</button>
+                <button @click="bypassValidation = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
+                <button @click="overwriteHeatTreatment = true" class="p-1 bg-gray-200 rounded-lg" :class="[overwriteHeatTreatment ? 'bg-yellow-400' : '']">Allow Overwrite</button>
+                <button @click="overwriteHeatTreatment = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
             </div>
+        </div>
+        <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
             <div class="flex flex-row justify-center gap-0">
                 <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
@@ -24,7 +23,7 @@
                                 class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="item in massProd_names" :key="item" :value="item">
-                                {{ item }}
+                                    {{ item }}
                                 </option>
                             </select>
                         </div>
