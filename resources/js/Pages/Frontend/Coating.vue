@@ -515,7 +515,20 @@
                     </div>
 
                     <div>
-
+                        <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Average:</label>
+                                <span class="text-gray-800">{{ coatingAverage ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Maximum:</label>
+                                <span class="text-gray-800">{{ coatingMaximum ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Minimum:</label>
+                                <span class="text-gray-800">{{ coatingMinimum ?? '-' }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
