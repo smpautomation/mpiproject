@@ -23,7 +23,7 @@
                                     </thead>
                                     <tbody class="bg-white">
                                         <tr
-                                            v-for="(item, rowIndex) in coatingsTable.slice(colIndex * 10, (colIndex + 1) * 10)"
+                                            v-for="(item) in coatingsTable.slice(colIndex * 10, (colIndex + 1) * 10)"
                                             :key="item.no"
                                             class="hover:bg-gray-50"
                                         >
@@ -142,15 +142,15 @@
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT (μg/mm²)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.minTbContent" @input="coatingInfo.minTbContent = coatingInfo.minTbContent.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity (pcs)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.sampleQuantity" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.totalMagnetWeight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
@@ -219,7 +219,7 @@
                         </thead>
                         <tbody class="bg-white">
                             <tr
-                                v-for="(row, index) in additionalSlurry"
+                                v-for="(row) in additionalSlurry"
                                 :key="row.module"
                                 class="hover:bg-gray-50"
                             >
@@ -515,7 +515,22 @@
                     </div>
 
                     <div>
-
+                        <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Average:</label>
+                                <span class="text-gray-800">
+                                    {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Maximum:</label>
+                                <span class="text-gray-800">{{ coatingMaximum ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Minimum:</label>
+                                <span class="text-gray-800">{{ coatingMinimum ?? '-' }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -557,6 +572,21 @@
                         </div>
                     </div>
 
+                    <div class="flex mt-4 space-x-3">
+                        <button
+                            @click="showModalFinalize = false"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            @click="saveToDatabase"
+                            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        >
+                            Proceed
+                            <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
+                        </button>
+                    </div>
 
                 </div>
             </Modal>
@@ -842,16 +872,16 @@ const saveToDatabase = async() => {
         mass_prod: coatingInfo.selectedMassProd,
         layer: coatingInfo.selectedLayer,
         date: coatingInfo.coatingDate,
-        coating_machine_no: coatingInfo.coatingMachineNo,
+        machine_no: coatingInfo.coatingMachineNo,
         slurry_lot_no: coatingInfo.slurryLotNo,
-        sample_qty: coatingInfo.sampleQuantity,
+        sample_qty: coatingInfo.sampleQuantity.toString(),
         min_tb_content: coatingInfo.minTbContent,
-        total_magnet_weight: coatingInfo.totalMagnetWeight,
+        total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
         loader_operator: coatingInfo.loaderOperator,
         unloader_operator: coatingInfo.unloaderOperator,
         checker_operator: coatingInfo.checkerOperator,
         time_start: coatingInfo.timeStart,
-        time_finished: coatingInfo.timeFinished,
+        time_finish: coatingInfo.timeFinished,
         average: coatingAverage.value,
         maximum: coatingMaximum.value,
         minimum: coatingMinimum.value,
