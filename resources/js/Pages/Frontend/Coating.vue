@@ -23,7 +23,7 @@
                                     </thead>
                                     <tbody class="bg-white">
                                         <tr
-                                            v-for="(item, rowIndex) in coatingsTable.slice(colIndex * 10, (colIndex + 1) * 10)"
+                                            v-for="(item) in coatingsTable.slice(colIndex * 10, (colIndex + 1) * 10)"
                                             :key="item.no"
                                             class="hover:bg-gray-50"
                                         >
@@ -142,15 +142,15 @@
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT (μg/mm²)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.minTbContent" @input="coatingInfo.minTbContent = coatingInfo.minTbContent.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity (pcs)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.sampleQuantity" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.totalMagnetWeight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
@@ -219,7 +219,7 @@
                         </thead>
                         <tbody class="bg-white">
                             <tr
-                                v-for="(row, index) in additionalSlurry"
+                                v-for="(row) in additionalSlurry"
                                 :key="row.module"
                                 class="hover:bg-gray-50"
                             >
@@ -365,10 +365,10 @@
                             <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                    <th class="px-1 border border-gray-300">Lot No.</th>
-                                    <th class="px-1 border border-gray-300">No.</th>
-                                    <th class="px-1 border border-gray-300">Coating</th>
-                                    <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                        <th class="px-1 border border-gray-300">Lot No.</th>
+                                        <th class="px-1 border border-gray-300">No.</th>
+                                        <th class="px-1 border border-gray-300">Coating</th>
+                                        <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -379,7 +379,7 @@
                                         <td class="px-1 border border-gray-300">{{ rowIndex + 10 }}</td>
                                         <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 9] ?? '-' }}</td>
                                         <td class="px-1 border border-gray-300">
-                                        {{ concentrationData[Math.floor((rowIndex + 9) / 5)][(rowIndex + 9) % 5] ?? '-' }}
+                                            {{ concentrationData[Math.floor((rowIndex + 9) / 5)][(rowIndex + 9) % 5] ?? '-' }}
                                         </td>
                                         <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 9) % 5] }}</td>
                                     </tr>
@@ -518,7 +518,9 @@
                         <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
                             <div class="flex items-center gap-1">
                                 <label class="font-medium text-gray-600">Average:</label>
-                                <span class="text-gray-800">{{ coatingAverage ?? '-' }}</span>
+                                <span class="text-gray-800">
+                                    {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
+                                </span>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="font-medium text-gray-600">Maximum:</label>
@@ -570,6 +572,21 @@
                         </div>
                     </div>
 
+                    <div class="flex mt-4 space-x-3">
+                        <button
+                            @click="showModalFinalize = false"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            @click="saveToDatabase"
+                            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        >
+                            Proceed
+                            <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
+                        </button>
+                    </div>
 
                 </div>
             </Modal>
@@ -658,7 +675,7 @@ const bypassValidation = ref(false);
 const showModalFinalize = ref(false);
 //Toggle Control
 
-const massProd_names = ref(['523RD','135TH']);
+const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const lotNo = ref();
 
@@ -682,6 +699,7 @@ const coatingInfo = reactive({
     timeFinished: '',
     remarks: ''
 });
+
 
 const additionalSlurry = ref([
     { module: "M-01", new: null, homo: null, time: null, liters: null },
@@ -770,7 +788,7 @@ const finalize = async () => {
             !coatingInfo.checkerOperator ||
             !coatingInfo.timeStart ||
             !coatingInfo.timeFinished ||
-            !coatingInfo.remarks
+            !coatingInfo.remarks || !lotNo.value
         ) {
             //console.log('Coating Table: ', coatingValues.value);
             toast.error("Please fill in all required Coating Info fields.");
@@ -855,16 +873,16 @@ const saveToDatabase = async() => {
         mass_prod: coatingInfo.selectedMassProd,
         layer: coatingInfo.selectedLayer,
         date: coatingInfo.coatingDate,
-        coating_machine_no: coatingInfo.coatingMachineNo,
+        machine_no: coatingInfo.coatingMachineNo,
         slurry_lot_no: coatingInfo.slurryLotNo,
-        sample_qty: coatingInfo.sampleQuantity,
+        sample_qty: coatingInfo.sampleQuantity.toString(),
         min_tb_content: coatingInfo.minTbContent,
-        total_magnet_weight: coatingInfo.totalMagnetWeight,
+        total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
         loader_operator: coatingInfo.loaderOperator,
         unloader_operator: coatingInfo.unloaderOperator,
         checker_operator: coatingInfo.checkerOperator,
         time_start: coatingInfo.timeStart,
-        time_finished: coatingInfo.timeFinished,
+        time_finish: coatingInfo.timeFinished,
         average: coatingAverage.value,
         maximum: coatingMaximum.value,
         minimum: coatingMinimum.value,
@@ -879,20 +897,74 @@ const saveToDatabase = async() => {
 
     console.log('Coating Data Payload: ', coatingDataPayload);
 
+    const exists = await checkExisting(
+        coatingInfo.selectedMassProd,
+        coatingInfo.selectedLayer
+    );
+
+    if (exists) {
+        toast.error("Record already exists for this Mass Prod and Layer.");
+        return;
+    }
+
     try{
         const response = await axios.post('/api/coating-data/', coatingDataPayload);
         console.log('Saved Successfully: ', response.data);
         toast.success('Saved Successfully');
     }catch(error){
         toast.error('Failed to save to database. ',error);
+    }finally{
+        clearAll();
+        showModalFinalize.value = false;
     }
 }
+
+const checkExisting = async(massprod, layer) => {
+    try {
+        const response = await axios.get('/api/coating-data/check', {
+            params: { mass_prod: massprod, layer }
+        });
+        return response.data.exists; // true = already exists
+    } catch (error) {
+        console.error("Check failed:", error);
+        toast.error("Failed to check existing record.");
+        return false;
+    }
+}
+
+// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+
+const getMassProdLists = async () => {
+    try{
+        const response = await axios.get('/api/mass-production/');
+        const massProdList = response.data;
+        massProd_names.value = massProdList.map(item => item.mass_prod);
+        //console.log("List of mass prods: ",massProd_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
+// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+
+
+// APPLYING Browser Session ----------------- APPLYING Browser Session
+
+useSessionStorage("coatingInfo", coatingInfo);
+useSessionStorage("concentrationData", concentrationData);
+useSessionStorage("coatingsTable", coatingsTable);
+useSessionStorage("additionalSlurry", additionalSlurry);
+useSessionStorage("lotNo", lotNo);
+
+// APPLYING Browser Session ----------------- APPLYING Browser Session
 
 onMounted(async () => {
     const isAuthenticated = await checkAuthentication();
     if (!isAuthenticated) {
         return;
     }
+    await getMassProdLists();
 });
 
 </script>

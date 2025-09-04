@@ -128,22 +128,23 @@ const logUserLogout = async () => {
 
 // Nav items with children
 const navItems = [
-  { label: 'Home', route: 'homePage', access: ['Basic User','Automation','Final Approver','Proxy Approver','Coating','Heat Treatment'] },
-  { label: 'Mass Production', route: 'massprod', access: ['Automation'] },
-  { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
-      { label: 'Heat Treatment', route: 'heat_treatment' },
-      { label: 'Coating', route: 'coating' },
-      { label: 'MPI', route: 'manage' }
-    ]
-  },
-  { label: 'Others', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
-      { label: 'Inspection', route: 'inspection' },
-      { label: 'View List', route: 'viewList' },
-      { label: 'Approval', route: 'approval' },
-      { label: 'Furnace', route: 'furnace' }
-    ]
-  },
-  { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver'] }
+    { label: 'Home', route: 'homePage', access: ['Basic User','Automation','Final Approver','Proxy Approver','Coating','Heat Treatment'] },
+    { label: 'Mass Production', route: 'massprod', access: ['Automation'] },
+    { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+        { label: 'Heat Treatment', route: 'heat_treatment' },
+        { label: 'Coating', route: 'coating' },
+        { label: 'MPI', route: 'manage' }
+        ]
+    },
+    { label: 'Others', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+        { label: 'Inspection', route: 'inspection' },
+        { label: 'View List', route: 'viewList' },
+        { label: 'Approval', route: 'approval' },
+        { label: 'Furnace', route: 'furnace' },
+        { label: '1st & 2nd GBDP', route: 'second_gbdp_models' }
+        ]
+    },
+    { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver'] }
 ];
 
 // Safe filtering

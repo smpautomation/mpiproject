@@ -27,6 +27,7 @@ use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
+use App\Http\Controllers\SecondGBDPModelsController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -208,6 +209,7 @@ Route::apiResource('rob-models',RobModelController::class);
 
 Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
 Route::apiResource('furnace-data', FurnaceDataController::class);
+Route::apiResource('second-gbdp-models', SecondGBDPModelsController::class);
 
 Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
@@ -223,3 +225,4 @@ Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
 Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);
+Route::get('/coating-data/check', [CoatingController::class, 'checkExisting']);

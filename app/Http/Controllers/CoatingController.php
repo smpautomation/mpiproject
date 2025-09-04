@@ -16,8 +16,9 @@ class CoatingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'serial' => 'required|integer',
             'date' => 'nullable|date',
+            'mass_prod' => 'nullable|string',
+            'layer' => 'nullable|integer',
             'machine_no' => 'nullable|string',
             'slurry_lot_no' => 'nullable|string',
             'loader_operator' => 'nullable|string',
@@ -53,8 +54,9 @@ class CoatingController extends Controller
         $coating = Coating::where('serial', $serial)->firstOrFail();
 
         $validated = $request->validate([
-            'serial' => 'sometimes|integer',
             'date' => 'sometimes|nullable|date',
+            'mass_prod' => 'sometimes|string',
+            'layer' => 'sometimes|integer',
             'machine_no' => 'sometimes|nullable|string',
             'slurry_lot_no' => 'sometimes|nullable|string',
             'loader_operator' => 'sometimes|nullable|string',
@@ -88,5 +90,19 @@ class CoatingController extends Controller
         $coating->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function checkExisting(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|integer',
+        ]);
+
+        $exists = Coating::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 }

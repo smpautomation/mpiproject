@@ -64,6 +64,21 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/HTGraph_Patterns');
     }
 
+    public function second_gbdp_models(){
+        return Inertia::render('Frontend/Second_GBDP_Models');
+    }
+
+    public function second_heat_treatment(Request $request){
+
+        $massProd = $request->get('massProd');
+        $layer = $request->get('layer');
+
+        return Inertia::render('Frontend/Second_Heat_Treatment',[
+            'massProd' => $massProd,
+            'layer' => $layer,
+        ]);
+    }
+
     public function manage(Request $request) {
         // Capture the manageSerialParam query parameter from the URL
         $manageSerialParam = $request->query('manageSerialParam'); // Use $request->query() to get the value
