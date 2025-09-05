@@ -8,100 +8,200 @@
             </div>
         </div>
         <div class="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gray-100">
-            <div class="flex flex-row gap-10 items">
-                <div class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Data (Unit: µ/mm²)</h2>
-                    <div class="flex flex-row gap-5 whitespace-nowrap">
-                        <div class="flex flex-row gap-4">
-                            <div v-for="(slice, colIndex) in Math.ceil(coatingsTable.length / 10)" :key="colIndex" class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-gray-200 rounded-lg">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-2 py-1 text-left border-r border-gray-300">No.</th>
-                                            <th class="px-2 py-1 text-left">Coating</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white">
-                                        <tr
-                                            v-for="(item) in coatingsTable.slice(colIndex * 10, (colIndex + 1) * 10)"
-                                            :key="item.no"
-                                            class="hover:bg-gray-50"
-                                        >
-                                        <td class="px-3 py-1 border-b border-r border-gray-200">{{ item.no }}</td>
-                                        <td class="px-3 py-1 border-b border-gray-200">
-                                            <input
-                                                type="number"
-                                                v-model="item.coating"
-                                                class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+            <div v-if="!coatingInfo.selectedMassProd" class="mb-6">
+                <div class="flex items-center space-x-3 p-4 bg-gradient-to-r from-cyan-50 to-teal-50 border border-cyan-200 rounded-lg">
+                <!-- Info Icon -->
+                <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+
+                <!-- Message -->
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-800">
+                        Please select a Mass Production Name to begin.
+                    </p>
+                    <p class="text-xs text-gray-600 mt-1">
+                        Choose from the dropdown above to view layer status information.
+                    </p>
+                </div>
+                </div>
+            </div>
+            <div v-else class="mb-6">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-3">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <h3 class="text-white font-semibold text-sm">
+                            Layer Status Preview ( {{ coatingInfo.selectedMassProd }} Mass Production )
+                        </h3>
+                    </div>
+                    </div>
+
+                    <!-- Content with Layer Boxes -->
+                    <div class="px-6 py-5">
+
+                    <!-- Title and Legend -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-gray-800 font-medium text-sm">
+                            Processing Layers (1 - 9.5)
+                        </span>
+                        <div class="flex items-center space-x-3 text-xs">
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                <span class="text-gray-600">Complete</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                <span class="text-gray-600">Pending</span>
                             </div>
                         </div>
+                    </div>
 
+                    <!-- Single Row of Layer Boxes -->
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <div
+                        v-for="layer in layers"
+                        :key="layer"
+                        class="relative group"
+                        >
+                        <!-- Layer Box -->
+                        <div
+                            class="h-14 w-14 flex flex-col items-center justify-center rounded-lg border-2 transition-all duration-200 hover:scale-105"
+                            :class="completedLayers.includes(layer)
+                            ? 'bg-emerald-50 border-emerald-400 shadow-sm'
+                            : 'bg-gray-50 border-gray-300 hover:border-gray-400'"
+                        >
+                            <!-- Status Icon -->
+                            <div class="mb-0.5">
+                            <svg
+                                v-if="completedLayers.includes(layer)"
+                                class="w-3 h-3 text-emerald-600"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            <div
+                                v-else
+                                class="w-3 h-3 rounded-full border-2 border-gray-400"
+                            ></div>
+                            </div>
 
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
-                            <thead class="text-center bg-gray-100">
-                                <tr>
-                                <th colspan="8" class="text-center border-b border-gray-300">
-                                    Concentration Amount
-                                </th>
-                                </tr>
-                                <tr>
-                                <th class="px-2 py-1 border-r border-gray-300"></th>
-                                <th v-for="module in modules" :key="module" class="px-2 py-1 border-r border-gray-300">
-                                    {{ module }}
-                                </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white">
-                                <tr v-for="(range, rowIndex) in ranges" :key="range" class="hover:bg-gray-50">
-                                <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
-                                <td
-                                    v-for="(module, colIndex) in modules"
-                                    :key="colIndex"
-                                    class="px-2 py-1 border-b border-r border-gray-200"
-                                >
-                                    <input
-                                    type="number"
-                                    v-model="concentrationData[rowIndex][colIndex]"
-                                    class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </td>
-                                </tr>
-                            </tbody>
-                            </table>
+                            <!-- Layer Number -->
+                            <span
+                            class="text-xs font-semibold"
+                            :class="completedLayers.includes(layer)
+                                ? 'text-emerald-700'
+                                : 'text-gray-500'"
+                            >
+                            {{ layer }}
+                            </span>
                         </div>
+
+                        <!-- Simple Hover Tooltip -->
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                            <div class="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                            Layer {{ layer }}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Status Text -->
+                    <p class="text-xs text-gray-500 text-center mt-4">
+                        Current layer status for selected mass production
+                    </p>
+
                     </div>
                 </div>
             </div>
-            <!-- DIV BELOW (BOTTOM PART) -->
-            <div class="flex flex-row gap-20 mt-10">
-                <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
-                    <!-- Stats: Average / Max / Min -->
-                    <div class="flex flex-row gap-20">
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage !== null ? coatingAverage.toFixed(2) : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Maximum</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Minimum</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
-                        </div>
+            <div v-if="activate2ndGBDP" class="p-4 mt-6 bg-gradient-to-r from-cyan-50 to-teal-50 border border-cyan-200 rounded-lg shadow-sm">
+                <div class="flex items-start space-x-3">
+                    <!-- Info Icon -->
+                    <div class="flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    </div>
+
+                    <!-- Message Content -->
+                    <div class="flex-1">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-1">
+                        Model Detected: {{ fetchedModelValue }} (1st & 2nd GBDP Format)
+                    </h4>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        The selected layer in the current mass production contains model that follows the <span class="font-semibold text-cyan-600">1st and 2nd GBDP format</span>.
+                    </p>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div class="flex-shrink-0">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200">
+                            Active
+                        </span>
                     </div>
                 </div>
             </div>
-            <!-- DIV BELOW (BOTTOM PART) -->
             <div class="flex flex-row gap-10 mt-10">
+                <div v-if="activate2ndGBDP" class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md mb-10">1st GBDP Coating Information</h2>
+                    <!-- Group: Selection -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Coating Date<span class="text-red-500"> *</span></label>
+                            <input v-model="coatingInfo_1stgbdp.coatingDate" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Coating Machine No<span class="text-red-500"> *</span></label>
+                            <input v-model="coatingInfo_1stgbdp.coatingMachineNo" @input="coatingInfo_1stgbdp.coatingMachineNo = coatingInfo_1stgbdp.coatingMachineNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Slurry Lot No<span class="text-red-500"> *</span></label>
+                            <input v-model="coatingInfo_1stgbdp.slurryLotNo" @input="coatingInfo_1stgbdp.slurryLotNo = coatingInfo_1stgbdp.slurryLotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                    <!-- Group: Selection -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT (μg/mm²)<span class="text-red-500"> *</span></label>
+                            <input v-model="coatingInfo_1stgbdp.minTbContent" @input="coatingInfo_1stgbdp.minTbContent = coatingInfo_1stgbdp.minTbContent.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
+                            <input v-model="lotNo_1stGBDP" @input="lotNo_1stGBDP = lotNo_1stGBDP.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
+                            <input v-model="coatingInfo_1stgbdp.totalMagnetWeight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                    <!-- Group: Selection -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
+                        <!-- Remarks Input -->
+                        <div class="flex flex-col">
+                            <label class="block mb-2 text-xs font-semibold text-gray-700">
+                            Remarks <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                            v-model="coatingInfo_1stgbdp.remarks"
+                            @input="coatingInfo_1stgbdp.remarks = coatingInfo_1stgbdp.remarks.toUpperCase()"
+                            type="text"
+                            class="w-[36rem] text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
+                            placeholder="Enter remarks here..."
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Information</h2>
+                    <h2 v-if="!activate2ndGBDP" class="pb-1 font-bold text-gray-800 border-b text-md">Coating Information</h2>
+                    <h2 v-else class="pb-1 font-bold text-gray-800 border-b text-md">2nd GBDP Coating Information</h2>
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div class="relative">
@@ -117,7 +217,7 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
-                            <select v-model="coatingInfo.selectedLayer" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <select v-model="coatingInfo.selectedLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
                                 <option v-for="items in layers" :key="items" :value="items">
                                     {{ items }}
                                 </option>
@@ -145,9 +245,13 @@
                             <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT (μg/mm²)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.minTbContent" @input="coatingInfo.minTbContent = coatingInfo.minTbContent.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
-                        <div>
+                        <div v-if="!activate2ndGBDP">
                             <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity (pcs)<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.sampleQuantity" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div v-else>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
+                            <input v-model="lotNo" @input="lotNo = lotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
@@ -155,7 +259,7 @@
                         </div>
                     </div>
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div v-if="!activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Loader Operator<span class="text-red-500"> *</span></label>
                             <input v-model="coatingInfo.loaderOperator" @input="coatingInfo.loaderOperator = coatingInfo.loaderOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
@@ -170,7 +274,7 @@
                         </div>
                     </div>
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div v-if="!activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
                             <input v-model="lotNo" @input="lotNo = lotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
@@ -201,7 +305,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
+
+                <div v-if="!activate2ndGBDP" class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
                         Additional Slurry
                     </h2>
@@ -260,12 +365,191 @@
                     </div>
                 </div>
             </div>
+            <div v-if="activate2ndGBDP" class="flex flex-row gap-10 mt-10 items">
+                <div class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
+                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">1st GBDPCoating Data (Unit: µ/mm²)</h2>
+                    <div class="flex flex-row gap-5 whitespace-nowrap">
+                        <div class="flex flex-row gap-4">
+                            <div v-for="(slice, colIndex) in Math.ceil(coatingsTable_1stgbdp.length / 10)" :key="colIndex" class="overflow-x-auto">
+                                <table class="min-w-full text-sm border border-gray-200 rounded-lg">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-2 py-1 text-left border-r border-gray-300">No.</th>
+                                            <th class="px-2 py-1 text-left">Coating</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr
+                                            v-for="(item) in coatingsTable_1stgbdp.slice(colIndex * 10, (colIndex + 1) * 10)"
+                                            :key="item.no"
+                                            class="hover:bg-gray-50"
+                                        >
+                                        <td class="px-3 py-1 border-b border-r border-gray-200">{{ item.no }}</td>
+                                        <td class="px-3 py-1 border-b border-gray-200">
+                                            <input
+                                                type="number"
+                                                v-model="item.coating"
+                                                class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
+                            <thead class="text-center bg-gray-100">
+                                <tr>
+                                <th colspan="8" class="text-center border-b border-gray-300">
+                                    Concentration Amount
+                                </th>
+                                </tr>
+                                <tr>
+                                <th class="px-2 py-1 border-r border-gray-300"></th>
+                                <th v-for="module in modules" :key="module" class="px-2 py-1 border-r border-gray-300">
+                                    {{ module }}
+                                </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr v-for="(range, rowIndex) in visibleRanges" :key="range" class="hover:bg-gray-50">
+                                <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
+                                <td
+                                    v-for="(module, colIndex) in modules"
+                                    :key="colIndex"
+                                    class="px-2 py-1 border-b border-r border-gray-200"
+                                >
+                                    <input
+                                    type="number"
+                                    v-model="visibleConcentrationData[rowIndex][colIndex]"
+                                    class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row gap-10 mt-10 items">
+                <div class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
+                    <h2 v-if="!activate2ndGBDP" class="pb-1 font-bold text-gray-800 border-b text-md">Coating Data (Unit: µ/mm²)</h2>
+                    <h2 v-else class="pb-1 font-bold text-gray-800 border-b text-md">2nd GBDP Coating Data (Unit: µ/mm²)</h2>
+                    <div class="flex flex-row gap-5 whitespace-nowrap">
+                        <div class="flex flex-row gap-4">
+                            <div v-for="(slice, colIndex) in Math.ceil(visibleCoatings.length / 10)" :key="colIndex" class="overflow-x-auto">
+                                <table class="min-w-full text-sm border border-gray-200 rounded-lg">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-2 py-1 text-left border-r border-gray-300">No.</th>
+                                            <th class="px-2 py-1 text-left">Coating</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr
+                                            v-for="(item) in visibleCoatings.slice(colIndex * 10, (colIndex + 1) * 10)"
+                                            :key="item.no"
+                                            class="hover:bg-gray-50"
+                                        >
+                                        <td class="px-3 py-1 border-b border-r border-gray-200">{{ item.no }}</td>
+                                        <td class="px-3 py-1 border-b border-gray-200">
+                                            <input
+                                                type="number"
+                                                v-model="item.coating"
+                                                class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
+                            <thead class="text-center bg-gray-100">
+                                <tr>
+                                <th colspan="8" class="text-center border-b border-gray-300">
+                                    Concentration Amount
+                                </th>
+                                </tr>
+                                <tr>
+                                <th class="px-2 py-1 border-r border-gray-300"></th>
+                                <th v-for="module in modules" :key="module" class="px-2 py-1 border-r border-gray-300">
+                                    {{ module }}
+                                </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr v-for="(range, rowIndex) in visibleRanges" :key="range" class="hover:bg-gray-50">
+                                <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
+                                <td
+                                    v-for="(module, colIndex) in modules"
+                                    :key="colIndex"
+                                    class="px-2 py-1 border-b border-r border-gray-200"
+                                >
+                                    <input
+                                    type="number"
+                                    v-model="visibleConcentrationData[rowIndex][colIndex]"
+                                    class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- DIV BELOW (BOTTOM PART) -->
+            <div class="flex flex-row gap-14 mt-10">
+                <div v-if="activate2ndGBDP" class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
+                    <p class="text-center font-semibold">1ST GBDP</p>
+                    <!-- Stats: Average / Max / Min -->
+                    <div class="flex flex-row gap-20">
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp !== null ? coatingAverage_1stgbdp.toFixed(2) : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Maximum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum_1stgbdp !== null ? coatingMaximum_1stgbdp : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Minimum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_1stgbdp !== null ? coatingMinimum_1stgbdp : '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
+                    <p v-if="activate2ndGBDP" class="text-center font-semibold">2ND GBDP</p>
+                    <!-- Stats: Average / Max / Min -->
+                    <div class="flex flex-row gap-20">
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage !== null ? coatingAverage.toFixed(2) : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Maximum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Minimum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- DIV BELOW (BOTTOM PART) -->
             <!-- LAST BOTTOM DIV -->
             <div class="flex flex-row gap-20 mt-10">
-                <div class="bg-gradient-to-br from-black via-gray-900 to-gray-800 border border-blue-600 shadow-[0_10px_25px_rgba(99,102,241,0.4),0_4px_6px_rgba(0,0,0,0.4)] rounded-3xl px-6 py-6 flex items-center gap-16 ring-1 ring-indigo-400 backdrop-blur-md whitespace-nowrap">
+                <div class="bg-gradient-to-br from-black via-gray-900 to-gray-800 border border-cyan-600 shadow-[0_10px_25px_rgba(99,102,241,0.4),0_4px_6px_rgba(0,0,0,0.4)] rounded-3xl px-6 py-6 flex items-center gap-16 ring-1 ring-teal-400 backdrop-blur-md whitespace-nowrap">
                     <!-- Glowing Spinning Cogwheel -->
                     <div class="relative flex-shrink-0 w-12 h-12">
-                        <div class="absolute inset-0 bg-blue-400 rounded-full opacity-100 blur-xl animate-pulse"></div>
+                        <div class="absolute inset-0 bg-cyan-400 rounded-full opacity-100 blur-xl animate-pulse"></div>
                         <img
                             src="photo/cogwheel.png"
                             alt="Settings"
@@ -278,10 +562,18 @@
                     <div class="flex w-full gap-10">
                         <!-- Finalize -->
                         <button
+                            v-if="!activate2ndGBDP"
                             @click="finalize"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
                         >
                             FINALIZE
+                        </button>
+                        <button
+                            v-else
+                            @click="finalize_1st2ndGbdp"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                        >
+                            SUBMIT
                         </button>
 
                         <!-- Cancel -->
@@ -301,6 +593,101 @@
                     </div>
                 </div>
             </div>
+            <Modal :show="showModalSubmit" @close="showModalSubmit = false">
+                <!-- Just the modal CONTENT - no wrapper -->
+                <div class="bg-white rounded-lg shadow-2xl w-108 mx-auto overflow-hidden">
+
+                <!-- Animated Header with Gradient -->
+                <div class="relative bg-gradient-to-br from-teal-600 via-cyan-600 to-teal-700 px-6 py-6">
+                    <!-- Background Pattern -->
+                    <div class="absolute inset-0 opacity-10">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="1"/>
+                        </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                    </div>
+
+                    <!-- Icon and Close Button -->
+                    <div class="relative flex items-center justify-between">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white border-opacity-30">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
+                    <button
+                        @click="showModalSubmit = false"
+                        class="text-white hover:text-gray-200 transition-colors p-1 rounded-lg hover:bg-white hover:bg-opacity-20"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="px-6 py-6">
+
+                    <!-- Title and Message -->
+                    <div class="text-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">
+                        Confirm Action
+                    </h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Are you sure you want to proceed? This action will save 1st and 2nd GBDP coating data to the database.
+                    </p>
+                    </div>
+
+                    <!-- Warning Card -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="text-xs text-amber-800 font-medium">
+                        This action cannot be undone once confirmed.
+                        </p>
+                    </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-3">
+
+                    <!-- Cancel Button -->
+                    <button
+                        @click="showModalSubmit = false"
+                        class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+                    >
+                        Cancel
+                    </button>
+
+                    <!-- Confirm Button -->
+                    <button
+                        @click="saveToDatabase_1st2ndgbdp()"
+                        class="group flex-1 px-4 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-medium text-sm rounded-lg shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-teal-300 transition-all relative overflow-hidden"
+                    >
+                        <!-- Button shine effect -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+
+                        <span class="relative flex items-center justify-center space-x-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Confirm</span>
+                        </span>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Bottom accent line -->
+                <div class="h-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-500"></div>
+                </div>
+            </Modal>
             <Modal :show="showModalFinalize" @close="showModalFinalize = false">
                 <div
                     class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
@@ -403,7 +790,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div>
+                        <div v-if="!activate2ndGBDP">
                             <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
                                 <thead class="bg-gray-100">
                                     <tr>
@@ -487,7 +874,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div>
+                        <div v-if="!activate2ndGBDP">
                             <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
                                 <thead class="bg-gray-100">
                                     <tr>
@@ -533,7 +920,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div v-if="!activate2ndGBDP">
                         <div class="flex flex-row mt-5 text-xs whitespace-nowrap">
                             <div class="flex flex-col items-end gap-1 font-semibold">
                                 <label>Coating Date: </label>
@@ -568,6 +955,28 @@
                                 <span>{{ coatingInfo.totalMagnetWeight || 'NA' }}</span>
                                 <span>{{ coatingInfo.checkerOperator || 'NA' }}</span>
                                 <span>{{ coatingInfo.timeFinished || 'NA' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="flex flex-row mt-5 text-xs whitespace-nowrap">
+                            <div class="flex flex-col items-end gap-1 font-semibold">
+                                <label>Coating Date: </label>
+                                <label>MIN TB CONTENT: </label>
+                                <label>Coating Machine No: </label>
+                            </div>
+                            <div class="flex flex-col gap-1 ml-5">
+                                <span>{{ coatingInfo.coatingDate || 'NA' }}</span>
+                                <span>{{ coatingInfo.minTbContent || 'NA' }}</span>
+                                <span>{{ coatingInfo.coatingMachineNo || 'NA' }}</span>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200">
+                                <label>Slurry Lot No: </label>
+                                <label>Total Magnet Weight: </label>
+                            </div>
+                            <div class="flex flex-col gap-1 ml-5">
+                                <span>{{ coatingInfo.slurryLotNo || 'NA' }}</span>
+                                <span>{{ coatingInfo.totalMagnetWeight || 'NA' }}</span>
                             </div>
                         </div>
                     </div>
@@ -673,11 +1082,16 @@ const bypassValidation = ref(false);
 
 //Toggle Control
 const showModalFinalize = ref(false);
+const showModalSubmit = ref(false);
 //Toggle Control
 
 const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const completedLayers = ref(['1','2']);
 const lotNo = ref();
+const lotNo_1stGBDP = ref();
+const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const fetchedModelValue = ref();
 
 // General Variables --------- General Variables
 
@@ -700,6 +1114,16 @@ const coatingInfo = reactive({
     remarks: ''
 });
 
+const coatingInfo_1stgbdp = reactive({
+    selectedMassProd: '',
+    coatingDate: '',
+    coatingMachineNo: '',
+    slurryLotNo: '',
+    minTbContent: '',
+    totalMagnetWeight: '',
+    remarks: ''
+});
+
 
 const additionalSlurry = ref([
     { module: "M-01", new: null, homo: null, time: null, liters: null },
@@ -719,11 +1143,30 @@ const coatingsTable = ref(
     }))
 );
 
+const coatingsTable_1stgbdp = ref(
+    Array.from({ length: 20 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }))
+);
+
 //coatingsTable[4].coating = 'Red'; // sets No. 5
+const visibleCoatings = computed(() =>
+  activate2ndGBDP.value
+    ? coatingsTable.value.slice(0, 20)
+    : coatingsTable.value
+)
 
 // For calculations (clean numbers only)
 const coatingValues = computed(() =>
   coatingsTable.value
+    .map(row => row.coating)
+    .filter(val => val !== null && val !== '' && !isNaN(val))
+    .map(Number)
+);
+
+const coatingValues_1stgbdp = computed(() =>
+  coatingsTable_1stgbdp.value
     .map(row => row.coating)
     .filter(val => val !== null && val !== '' && !isNaN(val))
     .map(Number)
@@ -740,6 +1183,20 @@ const coatingMinimum = computed(() =>
 const coatingAverage = computed(() =>
   coatingValues.value.length
     ? coatingValues.value.reduce((sum, val) => sum + val, 0) / coatingValues.value.length
+    : null
+);
+
+const coatingMaximum_1stgbdp = computed(() =>
+  coatingValues_1stgbdp.value.length ? Math.max(...coatingValues_1stgbdp.value) : null
+);
+
+const coatingMinimum_1stgbdp = computed(() =>
+  coatingValues_1stgbdp.value.length ? Math.min(...coatingValues_1stgbdp.value) : null
+);
+
+const coatingAverage_1stgbdp = computed(() =>
+  coatingValues_1stgbdp.value.length
+    ? coatingValues_1stgbdp.value.reduce((sum, val) => sum + val, 0) / coatingValues_1stgbdp.value.length
     : null
 );
 
@@ -765,12 +1222,23 @@ const ranges = ["1-5", "6-10", "11-15", "16-20", "21-25", "26-30", "31-35"];
 const concentrationData = ref(
   ranges.map(() => modules.map(() => null)) // 7x8 grid of nulls
 );
-
 // Example: set some values
 //concentrationAmount.value[0]['M-01'] = 10;   // first row, M-01 column
 //concentrationAmount.value[3]['M-04'] = 7;    // fourth row, M-04 column
 
-// Coating Information Variables --------- Coating Information Variables
+const visibleRanges = computed(() =>
+  activate2ndGBDP.value
+    ? ranges.slice(0, 4)            // 1–20 only
+    : ranges                        // 1–35
+)
+
+const visibleConcentrationData = computed(() =>
+  activate2ndGBDP.value
+    ? concentrationData.value.slice(0, 4) // align with ranges
+    : concentrationData.value
+)
+
+// Coating Information Variables --------- Coating Information Variables END
 
 const finalize = async () => {
     if(!bypassValidation.value){
@@ -804,32 +1272,64 @@ const finalize = async () => {
     //console.log("Coating Info: ", coatingInfo);
 };
 
+const finalize_1st2ndGbdp = async() => {
+    if(!bypassValidation.value){
+        if (
+            !coatingInfo_1stgbdp.coatingDate ||
+            !coatingInfo_1stgbdp.coatingMachineNo ||
+            !coatingInfo_1stgbdp.slurryLotNo ||
+            !coatingInfo_1stgbdp.minTbContent ||
+            !coatingInfo_1stgbdp.totalMagnetWeight ||
+            !coatingInfo_1stgbdp.remarks || !lotNo_1stGBDP.value ||
+            !coatingInfo.selectedLayer || !coatingInfo.selectedMassProd ||
+            !coatingInfo.coatingDate || !coatingInfo.coatingMachineNo ||
+            !coatingInfo.slurryLotNo || !coatingInfo.minTbContent ||
+            !coatingInfo.totalMagnetWeight || !coatingInfo.remarks || !lotNo.value
+        ) {
+            //console.log('Coating Table: ', coatingValues.value);
+            toast.error("Please fill in all required Coating Info fields.");
+            return;
+        }
+    }
+
+    showModalSubmit.value = true;
+
+    //console.log("Concentration Data: ", concentrationData.value);
+    //console.log("Coatings Data: ", coatingsTable.value);
+    //console.log("Additional Slurry Data: ", additionalSlurry.value);
+    //console.log("Coating Info: ", coatingInfo);
+}
+
 const clearAll = () => {
-    // Reset coatingInfo
-    Object.assign(coatingInfo, {
-        selectedMassProd: '',
-        selectedLayer: '1',
-        coatingDate: '',
-        coatingMachineNo: '',
-        slurryLotNo: '',
-        minTbContent: '',
+    const reset = {
         sampleQuantity: '',
-        totalMagnetWeight: '',
         loaderOperator: '',
         unloaderOperator: '',
         checkerOperator: '',
         timeStart: '',
         timeFinished: '',
-        remarks: ''
-    });
+    }
+
+    if (!activate2ndGBDP.value) {
+        reset.selectedMassProd = ''
+        reset.selectedLayer = '1'
+        reset.coatingDate = '',
+        reset.coatingMachineNo = '',
+        reset.slurryLotNo = '',
+        reset.minTbContent = '',
+        reset.totalMagnetWeight = '',
+        reset.remarks = ''
+    }
+
+    // Reset coatingInfo
+    Object.assign(coatingInfo, reset)
 
     // Reset arrays
-     // Keep the shape intact
-    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null))
     coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
         no: i + 1,
         coating: null
-    }));
+    }))
     additionalSlurry.value = [
         { module: "M-01", new: null, homo: null, time: null, liters: null },
         { module: "M-02", new: null, homo: null, time: null, liters: null },
@@ -837,10 +1337,13 @@ const clearAll = () => {
         { module: "M-04", new: null, homo: null, time: null, liters: null },
         { module: "M-05", new: null, homo: null, time: null, liters: null },
         { module: "M-06", new: null, homo: null, time: null, liters: null },
-    ];
+    ]
 
-    toast.success("All fields cleared.");
-};
+    lotNo.value = '';
+
+    toast.success("All fields cleared.")
+}
+
 
 const saveToDatabase = async() => {
 
@@ -919,6 +1422,14 @@ const saveToDatabase = async() => {
     }
 }
 
+const saveToDatabase_1st2ndgbdp = async() => {
+    try{
+        console.log('Clicked Submit!!!!!!!');
+    }catch(error){
+        toast.error('Failed to save to database. ',error);
+    }
+}
+
 const checkExisting = async(massprod, layer) => {
     try {
         const response = await axios.get('/api/coating-data/check', {
@@ -945,6 +1456,44 @@ const getMassProdLists = async () => {
         toast.error('Failed to get the mass prod lists api error');
     }
 }
+
+// Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
+
+const fetchLayerModel = async(massProd, layerNumber) => {
+    try {
+        const response = await axios.get(
+        `/api/mass-productions/${massProd}/layer/${layerNumber}/model`
+        )
+        console.log("Fetched Model: ", response.data.model);
+        fetchedModelValue.value = response.data.model
+        console.log("Activation: ", activate2ndGBDP.value);
+    } catch (error) {
+        fetchedModelValue.value = null;
+        console.error(error.response?.data || error.message)
+    }
+}
+
+watch(
+    () => [coatingInfo.selectedMassProd, coatingInfo.selectedLayer],
+    ([mp, layer]) => {
+        if (mp && layer) {
+        fetchLayerModel(mp, layer)
+        }
+    }
+)
+
+const activate2ndGBDP = computed(() => {
+    const model = fetchedModelValue.value;
+    console.log("Recomputing GBDP check for model:", model);
+    if (!model) return false;
+    return firstSecondGBDP_models.value.includes(model.trim());
+});
+
+watch(activate2ndGBDP, (newVal) => {
+    if (newVal) {
+        clearAll()
+    }
+})
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 

@@ -37,18 +37,12 @@
                             without manual input.
                             </p>
                             <button
+                                @click="autoFetch"
                                 class="px-5 py-2 text-sm font-semibold tracking-wide text-white transition-all duration-300 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400"
                             >
                             Auto Fetch
                             </button>
-                            <select
-                                v-model="selectedMassProd_fetch"
-                                class="w-[10rem] ml-6 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option v-for="item in massProd_names" :key="item" :value="item">
-                                    {{ item }}
-                                </option>
-                            </select>
+                            <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="Enter Mass Production name..." class="ml-5 w-[12rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         </div>
                     </div>
@@ -67,14 +61,26 @@
                         </div>
 
                         <!-- Body -->
-                        <div>
-                        <label class="block mb-1 text-xs font-semibold text-gray-700">
-                            Selected Mass Prod
-                        </label>
-                        <span class="px-2 py-1 text-sm font-semibold text-teal-700 border border-teal-200 rounded-md shadow-sm bg-teal-50">
-                            {{ selectedMassProd }}
-                        </span>
+                        <div class="flex flex-row space-x-10">
+                            <div>
+                                <label class="block mb-1 text-xs font-semibold text-gray-700">
+                                    Selected Mass Prod
+                                </label>
+                                <span class="px-2 py-1 text-sm font-semibold text-teal-700 border border-teal-200 rounded-md shadow-sm bg-teal-50">
+                                    {{ selectedMassProd }}
+                                </span>
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-xs font-semibold text-gray-700">
+                                    Selected Layer
+                                </label>
+                                <span class="px-2 py-1 text-sm font-semibold text-teal-700 border border-teal-200 rounded-md shadow-sm bg-teal-50">
+                                    {{ selectedLayer }}
+                                </span>
+                            </div>
                         </div>
+
+
                     </div>
                 </div>
 
@@ -92,9 +98,7 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Furnace Machine <span class="text-red-500">*</span></label>
-                                <select v-model="gbdp_1st.furnaceNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option v-for="item in furnace_lists" :key="item" :value="item">{{ item }}</option>
-                                </select>
+                                <input v-model="gbdp_1st.furnaceNo" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Batch Cycle No</label>
@@ -121,9 +125,7 @@
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No <span class="text-red-500">*</span></label>
-                                <select v-model="gbdp_1st.patternNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option v-for="item in graph_patterns" :key="item" :value="item">{{ item }}</option>
-                                </select>
+                                <input v-model="gbdp_1st.patternNo" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Date Finish <span class="text-red-500">*</span></label>
@@ -149,9 +151,7 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Furnace Machine <span class="text-red-500">*</span></label>
-                                <select v-model="gbdp_2nd.furnaceNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option v-for="item in furnace_lists" :key="item" :value="item">{{ item }}</option>
-                                </select>
+                                <input v-model="gbdp_2nd.furnaceNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Batch Cycle No</label>
@@ -159,40 +159,38 @@
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Date Start <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.dateStart" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.dateStart" type="date" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Time Start <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.timeStart" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.timeStart" type="time" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Cycle Pattern <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.cyclePattern" type="text" @input="gbdp_2nd.cyclePattern = gbdp_2nd.cyclePattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.cyclePattern" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                         </div>
                         <!-- Right Column -->
                         <div class="space-y-3">
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Cycle No <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.cycleNo" type="text" @input="gbdp_2nd.cycleNo = gbdp_2nd.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.cycleNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No <span class="text-red-500">*</span></label>
-                                <select v-model="gbdp_2nd.patternNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option v-for="item in graph_patterns" :key="item" :value="item">{{ item }}</option>
-                                </select>
+                                <input v-model="gbdp_2nd.patternNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Date Finish <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.dateFinish" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.dateFinish" type="date" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Time Finish <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.timeFinish" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.timeFinish" type="time" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Current Pattern <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_2nd.currentPattern" type="text" @input="gbdp_2nd.currentPattern = gbdp_2nd.currentPattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_2nd.currentPattern" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed" />
                             </div>
                         </div>
                     </div>
@@ -214,7 +212,7 @@
                     <!-- Cancel -->
                     <button
                         @click="Inertia.visit('heat_treatment'), clearAll()"
-                        class="px-4 py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-700 hover:from-purple-700 hover:to-white hover:text-black hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-fuchsia-400 focus:ring-opacity-50"
+                        class="px-4 py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-slate-500 to-slate-700 hover:from-slate-700 hover:to-white hover:text-black hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-slate-400 focus:ring-opacity-50"
                     >
                         CANCEL
                     </button>
@@ -222,13 +220,12 @@
                     <!-- Clear All -->
                     <button
                         @click="clearAll()"
-                        class="px-4 py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-slate-500 to-slate-700 hover:from-slate-700 hover:to-white hover:text-black hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-slate-400 focus:ring-opacity-50"
+                        class="px-4 py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-700 hover:from-purple-700 hover:to-white hover:text-black hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-fuchsia-400 focus:ring-opacity-50"
                     >
                         CLEAR ALL
                     </button>
                 </div>
             </div>
-
         </div>
     </Frontend>
 </template>
@@ -314,10 +311,12 @@ const heatTreatmentInformationDetected = ref(false);
 const showModalCreate = ref(false);
 const selectedMassProd_fetch = ref();
 const selectedMassProd = ref();
+const fetchedMassProdData = ref(null);
 const selectedLayer = ref();
 const graph_patterns = ref([]);
 const furnace_lists = ref([]);
 const massProd_names = ref([]);
+const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
 
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
@@ -346,7 +345,7 @@ const gbdp_2nd = reactive({
     timeFinish: '',
 });
 
-// HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
+// HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! END
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
@@ -386,11 +385,82 @@ const getMassProdLists = async () => {
     }
 }
 
+const getCurrentMassProdData = async () => {
+    try{
+        const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+        const massProdData = response.data;
+        if (!massProdData) {
+            toast.error(`No data found for Mass Production: ${selectedMassProd.value}`);
+            return;
+        }
+        gbdp_2nd.furnaceNo = massProdData.machine_no;
+        gbdp_2nd.batchCycleNo = massProdData.mass_prod;
+        gbdp_2nd.cycleNo = massProdData.cycle_no;
+        gbdp_2nd.patternNo = massProdData.pattern_no;
+        gbdp_2nd.cyclePattern = massProdData.cycle_pattern;
+        gbdp_2nd.currentPattern = massProdData.current_pattern;
+        gbdp_2nd.dateStart = massProdData.date_start;
+        gbdp_2nd.timeStart = massProdData.time_start;
+        gbdp_2nd.dateFinish = massProdData.date_finished;
+        gbdp_2nd.timeFinish = massProdData.time_finished;
+
+        toast.success(`Data fetched successfully for ${selectedMassProd.value} Mass Production`);
+    }catch(error){
+        console.error('Error fetching current mass prod data',error);
+        toast.error('Failed to get current mass prod data api error');
+    }
+}
+
 const props = defineProps(['massProd', 'layer']);
 selectedMassProd.value = props.massProd;
 selectedLayer.value = props.layer;
 
-// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+// Trigger Based Fetching below ----- Trigger Based Fetching below ----- Trigger Based Fetching below
+
+const autoFetch = async () => {
+    if(!selectedMassProd_fetch.value){
+        toast.error("Please enter Mass Production name to fetch data.");
+        return;
+    }
+    try{
+        const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd_fetch.value}`);
+        const massProdData = response.data;
+        if (!massProdData) {
+            toast.error(`No data found for Mass Production: ${selectedMassProd_fetch.value}`);
+            return;
+        }
+        gbdp_1st.furnaceNo = massProdData.machine_no;
+        gbdp_1st.batchCycleNo = massProdData.mass_prod;
+        gbdp_1st.cycleNo = massProdData.cycle_no;
+        gbdp_1st.patternNo = massProdData.pattern_no;
+        gbdp_1st.cyclePattern = massProdData.cycle_pattern;
+        gbdp_1st.currentPattern = massProdData.current_pattern;
+        gbdp_1st.dateStart = massProdData.date_start;
+        gbdp_1st.timeStart = massProdData.time_start;
+        gbdp_1st.dateFinish = massProdData.date_finished;
+        gbdp_1st.timeFinish = massProdData.time_finished;
+
+
+        toast.success(`Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`);
+        console.log('Fetched Mass Production Data: ', fetchedMassProdData.value);
+    }catch(error){
+        console.error("Error fetching mass prod data:", error);
+
+        if (error.response) {
+            if (error.response.status === 404) {
+                toast.error(`Mass Production "${selectedMassProd_fetch.value}" does not exists.`);
+            } else {
+                toast.error(`Server error (${error.response.status}): Unable to fetch data.`);
+            }
+        } else if (error.request) {
+            toast.error("No response from server. Please check your connection.");
+        } else {
+            toast.error("Unexpected error occurred while fetching data.");
+        }
+    }
+}
+
+// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 
 const clearAll = () => {
 
@@ -466,6 +536,7 @@ onMounted(async () => {
     await getMassProdLists();
     await getFurnaceLists();
     await getGraphPatterns();
+    await getCurrentMassProdData();
 });
 
 </script>

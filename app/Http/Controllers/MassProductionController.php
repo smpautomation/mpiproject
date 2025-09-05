@@ -239,4 +239,46 @@ class MassProductionController extends Controller
         return response()->json(['message' => 'Graphs uploaded successfully.']);
     }
 
+    public function getLayerModel($massprod, $layerNumber)
+    {
+        $record = MassProduction::where('mass_prod', $massprod)->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => "Mass Production record not found.",
+            ], 404);
+        }
+
+        // Normalize layer number (e.g., 9.5 → layer_9_5)
+        $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
+
+        if (!isset($record->$layerColumn)) {
+            return response()->json([
+                'message' => "Layer {$layerNumber} not found for this Mass Production.",
+            ], 404);
+        }
+
+        $layerData = json_decode($record->$layerColumn, true);
+
+        if (empty($layerData) || !is_array($layerData)) {
+            return response()->json([
+                'message' => "No valid data in Layer {$layerNumber}.",
+            ], 404);
+        }
+
+        // Search for row with "MODEL:"
+        foreach ($layerData as $row) {
+            if (isset($row['rowTitle']) && $row['rowTitle'] === 'MODEL:') {
+                return response()->json([
+                    'model' => $row['data']['A'] ?? null,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => "MODEL row not found in Layer {$layerNumber}.",
+        ], 404);
+    }
+
+
 }

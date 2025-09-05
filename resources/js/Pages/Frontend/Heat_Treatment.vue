@@ -169,192 +169,200 @@
                 </div>
             </div>
             <div class="flex flex-row mt-12">
-                <div v-if="activate2ndGBDP" class="px-2 mx-auto space-y-4 border border-red-400 shadow-xl max-w-8xl bg-gray-50 rounded-2xl py-7 md:px-8">
-                    <div class="flex flex-col items-center space-y-3 text-center px-52">
+                <div v-if="!heatTreatmentInformationDetected" class="max-w-5xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8">
+                    <div>
+                        <h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2>
+                        <div class="flex flex-row space-x-3">
+                            <div class="flex flex-col">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Batch Cycle No</label>
+                                    <input v-model="mpcs.selectedMassProd" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Machine No</label>
+                                    <input v-model="initialFurnaceData" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Cycle No<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.cycleNo" type="text" @input="hti.cycleNo = hti.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No<span class="text-red-500"> *</span></label>
+                                    <select v-model="hti.patternNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option v-for="item in graph_patterns" :key="item" :value="item">
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Cycle Pattern<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.cyclePattern" type="text" @input="hti.cyclePattern = hti.cyclePattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Current Pattern<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.currentPattern" type="text" @input="hti.currentPattern = hti.currentPattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Date Start<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.dateStart" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.timeStart" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Loader<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.loader" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Date Finish<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.dateFinish" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Finish<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.timeFinish" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Unloader<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.unloader" type="text" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Box Condition<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.boxCondition" type="text" @input="hti.boxCondition = hti.boxCondition.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Box Cover<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.boxCover" type="text" @input="hti.boxCover = hti.boxCover.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Box Arrangement<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.boxArrangement" type="text" @input="hti.boxArrangement = hti.boxArrangement.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Encoded By<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.encodedBy" type="text" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col w-[40rem]">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Remarks1</label>
+                                    <input v-model="hti.remarks1" type="text" @input="hti.remarks1 = hti.remarks1.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Remarks2</label>
+                                    <input v-model="hti.remarks2" type="text" @input="hti.remarks2 = hti.remarks2.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Remarks3</label>
+                                    <input v-model="hti.remarks3" type="text" @input="hti.remarks3 = hti.remarks3.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    v-else
+                    class="px-2 mx-auto space-y-4 shadow-xl max-w-8xl bg-gray-50 rounded-2xl py-7 md:px-8 whitespace-nowrap"
+                    :class="activate2ndGBDP ? 'border border-red-600' : 'border border-yellow-400'"
+                    >
+                    <div class="flex flex-col items-center space-y-3 text-center"
+                    :class="activate2ndGBDP ? 'px-72' : 'px-96'"
+                    >
                         <!-- Icon -->
-                        <div class="flex items-center justify-center w-12 h-12 bg-yellow-100 border border-red-300 rounded-full">
-                            ⚠️
+                        <div
+                        class="flex items-center justify-center w-12 h-12 border rounded-full"
+                        :class="activate2ndGBDP
+                            ? 'bg-red-100 border-red-300'
+                            : 'bg-yellow-100 border-yellow-300'"
+                        >
+                        ⚠️
                         </div>
 
                         <!-- Title -->
                         <h2 class="text-lg font-semibold text-gray-800">
-                            Heat Treatment Information
+                        Heat Treatment Information
                         </h2>
 
                         <!-- Message -->
                         <p class="text-sm text-gray-600 whitespace-nowrap">
-                            The selected model is designed for the 1st and 2nd GBDP format. Please click the orange button labeled 'Apply 1st and 2nd GBDP' in the control panel
+                        Heat Treatment Information data and graph already exists for this Mass Production.
                         </p>
 
-                        <p class="text-lg font-semibold text-gray-600 whitespace-nowrap">
-                            Status: <span class="p-1 text-yellow-800 bg-yellow-200 rounded-lg">Pending</span>
+                        <!-- Extra note if activate2ndGBDP -->
+                        <div v-if="activate2ndGBDP" class="space-y-2">
+                        <p class="text-sm font-medium text-red-700">
+                            The selected model is subjected to 1st and 2nd GBDP format.
+                            Please click the orange button called
+                            <span class="font-bold text-orange-600">APPLY 1ST 2ND GBDP</span>.
                         </p>
+                        <!-- Status preview -->
+                        <div>
+                        <p class="text-sm font-semibold text-gray-800 mb-2">Status Preview:</p>
+                            <div class="flex flex-wrap gap-2 justify-center">
+                                <div
+                                v-for="layer in layers"
+                                :key="layer"
+                                class="w-12 h-12 flex items-center justify-center rounded-lg text-xs font-bold"
+                                :class="completedLayers.includes(layer)
+                                    ? 'bg-green-500 text-white shadow-md'
+                                    : 'bg-gray-300 text-gray-700'"
+                                >
+                                {{ layer }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Explanation -->
+                        <div class="flex justify-center">
+                            <p class="mt-3 text-xs text-gray-500 text-center">
+                            Each box represents a process layer (1 – 9.5).
+                            <span class="text-green-600 font-semibold">Green</span> indicates the layer is complete,
+                            while <span class="text-gray-600 font-semibold">gray</span> indicates it is pending.
+                            </p>
+                        </div>
 
-                        <!--
-                        <p>
-                            Status: <span class="p-1 font-semibold text-green-800 bg-green-200 rounded-lg">Completed</span>
-                        </p>
-                        -->
+                        </div>
 
+                        <!-- Button -->
                         <button
-                            v-if="overwriteHeatTreatment"
-                            @click="heatTreatmentInformationDetected = false"
-                            class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
+                        v-if="overwriteHeatTreatment"
+                        @click="heatTreatmentInformationDetected = false"
+                        class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
                         >
-                            <span>OVERWRITE</span>
+                        <span>OVERWRITE</span>
                         </button>
                     </div>
                 </div>
-                <template v-else-if="!heatTreatmentInformationDetected">
-                    <div class="max-w-5xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8">
-                        <div>
-                            <h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2>
-                            <div class="flex flex-row space-x-3">
-                                <div class="flex flex-col">
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Batch Cycle No</label>
-                                        <input v-model="mpcs.selectedMassProd" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Machine No</label>
-                                        <input v-model="initialFurnaceData" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Cycle No<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.cycleNo" type="text" @input="hti.cycleNo = hti.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No<span class="text-red-500"> *</span></label>
-                                        <select v-model="hti.patternNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                            <option v-for="item in graph_patterns" :key="item" :value="item">
-                                                {{ item }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Cycle Pattern<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.cyclePattern" type="text" @input="hti.cyclePattern = hti.cyclePattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Current Pattern<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.currentPattern" type="text" @input="hti.currentPattern = hti.currentPattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                </div>
-                                <div class="flex flex-col">
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Date Start<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.dateStart" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.timeStart" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Loader<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.loader" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                </div>
-                                <div class="flex flex-col">
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Date Finish<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.dateFinish" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Time Finish<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.timeFinish" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Unloader<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.unloader" type="text" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                </div>
-                                <div class="flex flex-col">
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Box Condition<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.boxCondition" type="text" @input="hti.boxCondition = hti.boxCondition.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Box Cover<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.boxCover" type="text" @input="hti.boxCover = hti.boxCover.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Box Arrangement<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.boxArrangement" type="text" @input="hti.boxArrangement = hti.boxArrangement.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Encoded By<span class="text-red-500"> *</span></label>
-                                        <input v-model="hti.encodedBy" type="text" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                </div>
-                                <div class="flex flex-col w-[40rem]">
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Remarks1</label>
-                                        <input v-model="hti.remarks1" type="text" @input="hti.remarks1 = hti.remarks1.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Remarks2</label>
-                                        <input v-model="hti.remarks2" type="text" @input="hti.remarks2 = hti.remarks2.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                    <div>
-                                        <label class="block mb-1 text-xs font-medium text-gray-700">Remarks3</label>
-                                        <input v-model="hti.remarks3" type="text" @input="hti.remarks3 = hti.remarks3.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div v-if="!heatTreatmentInformationDetected" class="max-w-2xl px-2 py-8 mx-auto space-y-8 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8">
+                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Heat Treatment Graph Upload <span class="text-xs text-gray-300">(PNG, JPG and JPEG)</span></h2>
+                    <div class="flex flex-col p-6 space-y-8 bg-white border border-gray-300 rounded-lg shadow-sm">
+                    <div class="flex flex-col pb-4 space-y-2 border-b border-gray-200">
+                        <label for="cycleGraph" class="text-sm font-semibold text-gray-800">Cycle Graph<span class="text-red-500"> *</span></label>
+                        <input
+                        id="cycleGraph"
+                        @change="handleCycleGraphUpload"
+                        accept=".png, .jpg, .jpeg"
+                        type="file"
+                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        />
                     </div>
-                    <div class="max-w-2xl px-2 py-8 mx-auto space-y-8 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8">
-                        <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Heat Treatment Graph Upload <span class="text-xs text-gray-300">(PNG, JPG and JPEG)</span></h2>
-                        <div class="flex flex-col p-6 space-y-8 bg-white border border-gray-300 rounded-lg shadow-sm">
-                            <div class="flex flex-col pb-4 space-y-2 border-b border-gray-200">
-                                <label for="cycleGraph" class="text-sm font-semibold text-gray-800">Cycle Graph<span class="text-red-500"> *</span></label>
-                                <input
-                                    id="cycleGraph"
-                                    @change="handleCycleGraphUpload"
-                                    accept=".png, .jpg, .jpeg"
-                                    type="file"
-                                    class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                                />
-                            </div>
 
-                            <div class="flex flex-col space-y-2">
-                                <label for="actualGraph" class="text-sm font-semibold text-gray-800">Actual Graph<span class="text-red-500"> *</span></label>
-                                <input
-                                id="actualGraph"
-                                @change="handleActualGraphUpload"
-                                accept=".png, .jpg, .jpeg"
-                                type="file"
-                                class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                                />
-                            </div>
-                        </div>
+                    <div class="flex flex-col space-y-2">
+                        <label for="actualGraph" class="text-sm font-semibold text-gray-800">Actual Graph<span class="text-red-500"> *</span></label>
+                        <input
+                        id="actualGraph"
+                        @change="handleActualGraphUpload"
+                        accept=".png, .jpg, .jpeg"
+                        type="file"
+                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        />
                     </div>
-                </template>
-                <div v-else class="px-2 mx-auto space-y-4 border border-yellow-400 shadow-xl max-w-8xl bg-gray-50 rounded-2xl py-7 md:px-8">
-                    <div class="flex flex-col items-center space-y-3 text-center px-96">
-                        <!-- Icon -->
-                        <div class="flex items-center justify-center w-12 h-12 bg-yellow-100 border border-yellow-300 rounded-full">
-                            ⚠️
-                        </div>
-
-                        <!-- Title -->
-                        <h2 class="text-lg font-semibold text-gray-800">
-                            Heat Treatment Information
-                        </h2>
-
-                        <!-- Message -->
-                        <p class="text-sm text-gray-600 whitespace-nowrap">
-                            Heat Treatment Information data and graph already exists for this Mass Production.
-                        </p>
-
-                        <button
-                            v-if="overwriteHeatTreatment"
-                            @click="heatTreatmentInformationDetected = false"
-                            class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
-                        >
-                            <span>OVERWRITE</span>
-                        </button>
-                    </div>
+                </div>
                 </div>
                 <div
                     class="w-72 mx-auto bg-gradient-to-br from-black via-gray-900 to-gray-800 border border-blue-600 shadow-[0_10px_25px_rgba(99,102,241,0.4),0_4px_6px_rgba(0,0,0,0.4)] rounded-3xl px-6 py-10 space-y-10 flex flex-col items-center ring-1 ring-indigo-400 backdrop-blur-md"
@@ -393,7 +401,7 @@
                         <!-- Apply 2nd GBDP -->
                         <button
                             @click="second_heat_treatment()"
-                            :disabled="!activate2ndGBDP"
+                            :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected)"
                             class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-500 disabled:hover:to-orange-600"
                         >
                             APPLY 1ST 2ND GBDP
@@ -758,6 +766,7 @@ const model_names = ref([]);
 const graph_patterns = ref([]);
 const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const completedLayers = ref(['1','2']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K','L'];
 const boxesEndList = ref(['B','C','D','E','F','G','H','J','K','L']);
 const visibleBoxes = computed(() => {
@@ -886,7 +895,8 @@ const getMassProdData = async () => { //Function for getting the current selecet
         if(heatTreatmentInformationDetected.value){
             toast.warning('Existing Data has been detected for Heat Treatment Information and Graph');
         }
-        //console.log("Heat treatment info detected:", heatTreatmentInformationDetected.value);
+        console.log("Heat treatment info detected:", heatTreatmentInformationDetected.value);
+        console.log("Activate 2nd GBDP:", activate2ndGBDP.value);
     } catch (error) {
         initialFurnaceData.value = null; // Reset if no mass production selected
         console.error('Error fetching mass production data:', error);
