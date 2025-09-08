@@ -9,7 +9,7 @@
         </div>
         <div class="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gray-100">
             <div v-if="!coatingInfo.selectedMassProd" class="mb-6">
-                <div class="flex items-center space-x-3 p-4 bg-gradient-to-r from-cyan-50 to-teal-50 border border-cyan-200 rounded-lg">
+                <div class="flex items-center p-4 space-x-3 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
                 <!-- Info Icon -->
                 <div class="flex-shrink-0">
                     <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
@@ -22,22 +22,22 @@
                     <p class="text-sm font-medium text-gray-800">
                         Please select a Mass Production Name to begin.
                     </p>
-                    <p class="text-xs text-gray-600 mt-1">
+                    <p class="mt-1 text-xs text-gray-600">
                         Choose from the dropdown above to view layer status information.
                     </p>
                 </div>
                 </div>
             </div>
             <div v-else class="mb-6">
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm">
 
                     <!-- Header -->
-                    <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-3">
+                    <div class="px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600">
                     <div class="flex items-center space-x-2">
                         <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
                         </svg>
-                        <h3 class="text-white font-semibold text-sm">
+                        <h3 class="text-sm font-semibold text-white">
                             Layer Status Preview ( {{ coatingInfo.selectedMassProd }} Mass Production )
                         </h3>
                     </div>
@@ -48,12 +48,12 @@
 
                     <!-- Title and Legend -->
                     <div class="flex items-center justify-between mb-4">
-                        <span class="text-gray-800 font-medium text-sm">
+                        <span class="text-sm font-medium text-gray-800">
                             Processing Layers (1 - 9.5)
                         </span>
                         <div class="flex items-center space-x-3 text-xs">
                             <div class="flex items-center space-x-1">
-                                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
                                 <span class="text-gray-600">Complete</span>
                             </div>
                             <div class="flex items-center space-x-1">
@@ -64,7 +64,7 @@
                     </div>
 
                     <!-- Single Row of Layer Boxes -->
-                    <div class="flex flex-wrap gap-2 justify-center">
+                    <div class="flex flex-wrap justify-center gap-2">
                         <div
                         v-for="layer in layers"
                         :key="layer"
@@ -72,7 +72,7 @@
                         >
                         <!-- Layer Box -->
                         <div
-                            class="h-14 w-14 flex flex-col items-center justify-center rounded-lg border-2 transition-all duration-200 hover:scale-105"
+                            class="flex flex-col items-center justify-center transition-all duration-200 border-2 rounded-lg h-14 w-14 hover:scale-105"
                             :class="completedLayers.includes(layer)
                             ? 'bg-emerald-50 border-emerald-400 shadow-sm'
                             : 'bg-gray-50 border-gray-300 hover:border-gray-400'"
@@ -89,7 +89,7 @@
                             </svg>
                             <div
                                 v-else
-                                class="w-3 h-3 rounded-full border-2 border-gray-400"
+                                class="w-3 h-3 border-2 border-gray-400 rounded-full"
                             ></div>
                             </div>
 
@@ -105,8 +105,8 @@
                         </div>
 
                         <!-- Simple Hover Tooltip -->
-                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                            <div class="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                        <div class="absolute z-10 mb-2 transition-opacity duration-200 transform -translate-x-1/2 opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100">
+                            <div class="px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
                             Layer {{ layer }}
                             </div>
                         </div>
@@ -114,14 +114,14 @@
                     </div>
 
                     <!-- Simple Status Text -->
-                    <p class="text-xs text-gray-500 text-center mt-4">
+                    <p class="mt-4 text-xs text-center text-gray-500">
                         Current layer status for selected mass production
                     </p>
 
                     </div>
                 </div>
             </div>
-            <div v-if="activate2ndGBDP" class="p-4 mt-6 bg-gradient-to-r from-cyan-50 to-teal-50 border border-cyan-200 rounded-lg shadow-sm">
+            <div v-if="activate2ndGBDP" class="p-4 mt-6 border rounded-lg shadow-sm bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
                 <div class="flex items-start space-x-3">
                     <!-- Info Icon -->
                     <div class="flex-shrink-0 mt-0.5">
@@ -132,10 +132,10 @@
 
                     <!-- Message Content -->
                     <div class="flex-1">
-                    <h4 class="text-sm font-semibold text-gray-800 mb-1">
+                    <h4 class="mb-1 text-sm font-semibold text-gray-800">
                         Model Detected: {{ fetchedModelValue }} (1st & 2nd GBDP Format)
                     </h4>
-                    <p class="text-sm text-gray-700 leading-relaxed">
+                    <p class="text-sm leading-relaxed text-gray-700">
                         The selected layer in the current mass production contains model that follows the <span class="font-semibold text-cyan-600">1st and 2nd GBDP format</span>.
                     </p>
                     </div>
@@ -150,7 +150,7 @@
             </div>
             <div class="flex flex-row gap-10 mt-10">
                 <div v-if="activate2ndGBDP" class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md mb-10">1st GBDP Coating Information</h2>
+                    <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">1st GBDP Coating Information</h2>
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
@@ -505,9 +505,9 @@
                 </div>
             </div>
             <!-- DIV BELOW (BOTTOM PART) -->
-            <div class="flex flex-row gap-14 mt-10">
+            <div class="flex flex-row mt-10 gap-14">
                 <div v-if="activate2ndGBDP" class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
-                    <p class="text-center font-semibold">1ST GBDP</p>
+                    <p class="font-semibold text-center">1ST GBDP</p>
                     <!-- Stats: Average / Max / Min -->
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
@@ -525,7 +525,7 @@
                     </div>
                 </div>
                 <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
-                    <p v-if="activate2ndGBDP" class="text-center font-semibold">2ND GBDP</p>
+                    <p v-if="activate2ndGBDP" class="font-semibold text-center">2ND GBDP</p>
                     <!-- Stats: Average / Max / Min -->
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
@@ -549,7 +549,7 @@
                 <div class="bg-gradient-to-br from-black via-gray-900 to-gray-800 border border-cyan-600 shadow-[0_10px_25px_rgba(99,102,241,0.4),0_4px_6px_rgba(0,0,0,0.4)] rounded-3xl px-6 py-6 flex items-center gap-16 ring-1 ring-teal-400 backdrop-blur-md whitespace-nowrap">
                     <!-- Glowing Spinning Cogwheel -->
                     <div class="relative flex-shrink-0 w-12 h-12">
-                        <div class="absolute inset-0 bg-cyan-400 rounded-full opacity-100 blur-xl animate-pulse"></div>
+                        <div class="absolute inset-0 rounded-full opacity-100 bg-cyan-400 blur-xl animate-pulse"></div>
                         <img
                             src="photo/cogwheel.png"
                             alt="Settings"
@@ -594,34 +594,36 @@
                 </div>
             </div>
             <Modal :show="showModalSubmit" @close="showModalSubmit = false">
-                <!-- Just the modal CONTENT - no wrapper -->
-                <div class="bg-white rounded-lg shadow-2xl w-108 mx-auto overflow-hidden">
+                <!-- Modal Content - goes directly in the slot -->
+                <div class="relative">
 
-                <!-- Animated Header with Gradient -->
-                <div class="relative bg-gradient-to-br from-teal-600 via-cyan-600 to-teal-700 px-6 py-6">
-                    <!-- Background Pattern -->
+                <!-- Header with Gradient -->
+                <div class="relative px-6 py-6 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
+                    <!-- Geometric Pattern Background -->
                     <div class="absolute inset-0 opacity-10">
-                    <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="1"/>
+                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                            <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5"/>
                         </pattern>
                         </defs>
-                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        <rect width="100%" height="100%" fill="url(#hexagon)" />
                     </svg>
                     </div>
 
-                    <!-- Icon and Close Button -->
+                    <!-- Header Content -->
                     <div class="relative flex items-center justify-between">
-                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white border-opacity-30">
+                    <!-- Create Icon -->
+                    <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40">
                         <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
                     </div>
 
+                    <!-- Close Button -->
                     <button
                         @click="showModalSubmit = false"
-                        class="text-white hover:text-gray-200 transition-colors p-1 rounded-lg hover:bg-white hover:bg-opacity-20"
+                        class="p-2 text-white transition-all duration-200 rounded-lg hover:text-gray-200 hover:bg-white hover:bg-opacity-20 hover:scale-110"
                     >
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -633,25 +635,41 @@
                 <!-- Main Content -->
                 <div class="px-6 py-6">
 
-                    <!-- Title and Message -->
-                    <div class="text-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">
-                        Confirm Action
+                    <!-- Title -->
+                    <div class="mb-6 text-center">
+                    <h3 class="flex items-center justify-center mb-2 space-x-2 text-xl font-bold text-gray-900">
+                        <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Confirm Submission</span>
                     </h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Are you sure you want to proceed? This action will save 1st and 2nd GBDP coating data to the database.
+                    <p class="text-sm leading-relaxed text-gray-600">
+                        Are you sure? Please ensure all inputs are correct before proceeding.
                     </p>
                     </div>
 
-                    <!-- Warning Card -->
-                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    <!-- Validation Checklist -->
+                    <div class="p-4 mb-6 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
+                    <h4 class="flex items-center mb-3 space-x-2 text-sm font-semibold text-gray-800">
+                        <svg class="w-4 h-4 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd" />
                         </svg>
-                        <p class="text-xs text-amber-800 font-medium">
-                        This action cannot be undone once confirmed.
-                        </p>
+                        <span>Validation Summary</span>
+                    </h4>
+
+                    <div class="space-y-2 text-xs text-gray-700">
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                        <span>All required fields completed</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>
+                        <span>Data validation passed</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                        <span>Ready for database insertion</span>
+                        </div>
                     </div>
                     </div>
 
@@ -661,31 +679,33 @@
                     <!-- Cancel Button -->
                     <button
                         @click="showModalSubmit = false"
-                        class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 transform hover:scale-[0.98] active:scale-95 flex items-center justify-center space-x-2"
                     >
-                        Cancel
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Cancel</span>
                     </button>
 
-                    <!-- Confirm Button -->
+                    <!-- Confirm Button with Animation -->
                     <button
-                        @click="saveToDatabase_1st2ndgbdp()"
-                        class="group flex-1 px-4 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-medium text-sm rounded-lg shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-teal-300 transition-all relative overflow-hidden"
+                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
                     >
-                        <!-- Button shine effect -->
-                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                        <!-- Shine effect -->
+                        <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
 
-                        <span class="relative flex items-center justify-center space-x-1">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <span class="relative flex items-center justify-center space-x-2">
+                        <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
-                        <span>Confirm</span>
+                        <span>Submit Now</span>
                         </span>
                     </button>
                     </div>
                 </div>
 
                 <!-- Bottom accent line -->
-                <div class="h-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-500"></div>
+                <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
                 </div>
             </Modal>
             <Modal :show="showModalFinalize" @close="showModalFinalize = false">
@@ -1173,25 +1193,25 @@ const coatingValues_1stgbdp = computed(() =>
 );
 
 const coatingMaximum = computed(() =>
-  coatingValues.value.length ? Math.max(...coatingValues.value) : null
+    coatingValues.value.length ? Math.max(...coatingValues.value) : null
 );
 
 const coatingMinimum = computed(() =>
-  coatingValues.value.length ? Math.min(...coatingValues.value) : null
+    coatingValues.value.length ? Math.min(...coatingValues.value) : null
 );
 
 const coatingAverage = computed(() =>
-  coatingValues.value.length
+    coatingValues.value.length
     ? coatingValues.value.reduce((sum, val) => sum + val, 0) / coatingValues.value.length
     : null
 );
 
 const coatingMaximum_1stgbdp = computed(() =>
-  coatingValues_1stgbdp.value.length ? Math.max(...coatingValues_1stgbdp.value) : null
+    coatingValues_1stgbdp.value.length ? Math.max(...coatingValues_1stgbdp.value) : null
 );
 
 const coatingMinimum_1stgbdp = computed(() =>
-  coatingValues_1stgbdp.value.length ? Math.min(...coatingValues_1stgbdp.value) : null
+    coatingValues_1stgbdp.value.length ? Math.min(...coatingValues_1stgbdp.value) : null
 );
 
 const coatingAverage_1stgbdp = computed(() =>
@@ -1301,35 +1321,31 @@ const finalize_1st2ndGbdp = async() => {
 }
 
 const clearAll = () => {
-    const reset = {
+    // Reset coatingInfo
+    Object.assign(coatingInfo, {
+        selectedMassProd: '',
+        selectedLayer: '1',
+        coatingDate: '',
+        coatingMachineNo: '',
+        slurryLotNo: '',
+        minTbContent: '',
         sampleQuantity: '',
+        totalMagnetWeight: '',
         loaderOperator: '',
         unloaderOperator: '',
         checkerOperator: '',
         timeStart: '',
         timeFinished: '',
-    }
-
-    if (!activate2ndGBDP.value) {
-        reset.selectedMassProd = ''
-        reset.selectedLayer = '1'
-        reset.coatingDate = '',
-        reset.coatingMachineNo = '',
-        reset.slurryLotNo = '',
-        reset.minTbContent = '',
-        reset.totalMagnetWeight = '',
-        reset.remarks = ''
-    }
-
-    // Reset coatingInfo
-    Object.assign(coatingInfo, reset)
+        remarks: ''
+    });
 
     // Reset arrays
-    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null))
+     // Keep the shape intact
+    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null));
     coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
         no: i + 1,
         coating: null
-    }))
+    }));
     additionalSlurry.value = [
         { module: "M-01", new: null, homo: null, time: null, liters: null },
         { module: "M-02", new: null, homo: null, time: null, liters: null },
@@ -1337,12 +1353,46 @@ const clearAll = () => {
         { module: "M-04", new: null, homo: null, time: null, liters: null },
         { module: "M-05", new: null, homo: null, time: null, liters: null },
         { module: "M-06", new: null, homo: null, time: null, liters: null },
-    ]
+    ];
 
-    lotNo.value = '';
+    toast.success("All fields cleared.");
+};
 
-    toast.success("All fields cleared.")
-}
+const clearAllTransition = () => {
+    // Reset coatingInfo
+    Object.assign(coatingInfo, {
+        coatingDate: '',
+        coatingMachineNo: '',
+        slurryLotNo: '',
+        minTbContent: '',
+        sampleQuantity: '',
+        totalMagnetWeight: '',
+        loaderOperator: '',
+        unloaderOperator: '',
+        checkerOperator: '',
+        timeStart: '',
+        timeFinished: '',
+        remarks: ''
+    });
+
+    // Reset arrays
+     // Keep the shape intact
+    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+    additionalSlurry.value = [
+        { module: "M-01", new: null, homo: null, time: null, liters: null },
+        { module: "M-02", new: null, homo: null, time: null, liters: null },
+        { module: "M-03", new: null, homo: null, time: null, liters: null },
+        { module: "M-04", new: null, homo: null, time: null, liters: null },
+        { module: "M-05", new: null, homo: null, time: null, liters: null },
+        { module: "M-06", new: null, homo: null, time: null, liters: null },
+    ];
+
+    toast.success("All fields cleared.");
+};
 
 
 const saveToDatabase = async() => {
@@ -1491,9 +1541,9 @@ const activate2ndGBDP = computed(() => {
 
 watch(activate2ndGBDP, (newVal) => {
     if (newVal) {
-        clearAll()
+        clearAllTransition();
     }
-})
+});
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 

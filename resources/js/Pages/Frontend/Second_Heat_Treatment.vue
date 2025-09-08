@@ -6,7 +6,7 @@
                     <div class="px-8 py-6 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-2xl">
                         <!-- Header -->
                         <h2 class="pb-3 mb-5 text-xl font-semibold tracking-wide text-gray-800 border-b border-gray-200">
-                        Options
+                            Options
                         </h2>
 
                         <!-- Body -->
@@ -40,9 +40,10 @@
                                 @click="autoFetch"
                                 class="px-5 py-2 text-sm font-semibold tracking-wide text-white transition-all duration-300 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400"
                             >
-                            Auto Fetch
+                                Auto Fetch
                             </button>
                             <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="Enter Mass Production name..." class="ml-5 w-[12rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="selectedLayer_fetch" type="number" placeholder="Enter Layer number..." class="ml-5 w-[9rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         </div>
                     </div>
@@ -59,7 +60,6 @@
                         <!-- Left-aligned accent bar under the title -->
                         <div class="mt-1 h-1 w-40 rounded-full bg-gradient-to-r from-teal-500 to-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]"></div>
                         </div>
-
                         <!-- Body -->
                         <div class="flex flex-row space-x-10">
                             <div>
@@ -79,8 +79,6 @@
                                 </span>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
 
@@ -226,6 +224,122 @@
                     </button>
                 </div>
             </div>
+            <Modal :show="showModalCreate" @close="showModalCreate = false">
+                <!-- Modal Content - goes directly in the slot -->
+                <div class="relative">
+
+                <!-- Header with Gradient -->
+                <div class="relative px-6 py-6 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
+                    <!-- Geometric Pattern Background -->
+                    <div class="absolute inset-0 opacity-10">
+                    <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                            <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                        </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#hexagon)" />
+                    </svg>
+                    </div>
+
+                    <!-- Header Content -->
+                    <div class="relative flex items-center justify-between">
+                    <!-- Create Icon -->
+                    <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
+                    <!-- Close Button -->
+                    <button
+                        @click="showModalCreate = false"
+                        class="p-2 text-white transition-all duration-200 rounded-lg hover:text-gray-200 hover:bg-white hover:bg-opacity-20 hover:scale-110"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="px-6 py-6">
+
+                    <!-- Title -->
+                    <div class="mb-6 text-center">
+                    <h3 class="flex items-center justify-center mb-2 space-x-2 text-xl font-bold text-gray-900">
+                        <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Confirm Submission</span>
+                    </h3>
+                    <p class="text-sm leading-relaxed text-gray-600">
+                        Are you sure? Please ensure all inputs are correct before proceeding.
+                    </p>
+                    </div>
+
+                    <!-- Validation Checklist -->
+                    <div class="p-4 mb-6 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
+                    <h4 class="flex items-center mb-3 space-x-2 text-sm font-semibold text-gray-800">
+                        <svg class="w-4 h-4 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Validation Summary</span>
+                    </h4>
+
+                    <div class="space-y-2 text-xs text-gray-700">
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                        <span>All required fields completed</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>
+                        <span>Data validation passed</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                        <span>Ready for database insertion</span>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-3">
+
+                    <!-- Cancel Button -->
+                    <button
+                        @click="showModalCreate = false"
+                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 transform hover:scale-[0.98] active:scale-95 flex items-center justify-center space-x-2"
+                    >
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Cancel</span>
+                    </button>
+
+                    <!-- Confirm Button with Animation -->
+                    <button
+                        @click="saveToDatabase()"
+                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
+                    >
+                        <!-- Shine effect -->
+                        <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+
+                        <span class="relative flex items-center justify-center space-x-2">
+                        <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Submit Now</span>
+                        </span>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Bottom accent line -->
+                <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
+                </div>
+            </Modal>
         </div>
     </Frontend>
 </template>
@@ -309,6 +423,7 @@ const overwriteHeatTreatment = ref(false);
 const heatTreatmentInformationDetected = ref(false);
 
 const showModalCreate = ref(false);
+const selectedLayer_fetch = ref();
 const selectedMassProd_fetch = ref();
 const selectedMassProd = ref();
 const fetchedMassProdData = ref(null);
@@ -422,6 +537,10 @@ const autoFetch = async () => {
         toast.error("Please enter Mass Production name to fetch data.");
         return;
     }
+    if(!selectedLayer_fetch.value){
+        toast.error("Please enter layer number to fetch data.");
+        return;
+    }
     try{
         const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd_fetch.value}`);
         const massProdData = response.data;
@@ -468,13 +587,6 @@ const clearAll = () => {
         gbdp_1st[key] = typeof gbdp_1st[key] === 'number' ? 0 : '';
     });
 
-    Object.keys(gbdp_2nd).forEach(key => {
-        gbdp_2nd[key] = typeof gbdp_2nd[key] === 'number' ? 0 : '';
-    });
-
-    selectedLayer.value = null;
-    selectedMassProd.value = null;
-
 }
 
 const cancelProceed = () => {
@@ -503,14 +615,40 @@ const saveToDatabase = async () => {
 
     // Base payload
     const dataPayload = {
-
+        mass_prod: selectedMassProd.value,
+        layer: selectedLayer.value,
+        gbdp_1st: {
+            batch_cycle_no: gbdp_1st.batchCycleNo,
+            furnace_machine: gbdp_1st.furnaceNo,
+            cycle_no: gbdp_1st.cycleNo,
+            pattern_no: gbdp_1st.patternNo,
+            cycle_pattern: gbdp_1st.cyclePattern,
+            current_pattern: gbdp_1st.currentPattern,
+            date_start: gbdp_1st.dateStart,
+            time_start: gbdp_1st.timeStart,
+            date_finished: gbdp_1st.dateFinish,
+            time_finished: gbdp_1st.timeFinish,
+            layer: selectedLayer_fetch.value
+        },
+        gbdp_2nd: {
+            batch_cycle_no: selectedMassProd.value,
+            furnace_machine: gbdp_2nd.furnaceNo,
+            cycle_no: gbdp_2nd.cycleNo,
+            pattern_no: gbdp_2nd.patternNo,
+            cycle_pattern: gbdp_2nd.cyclePattern,
+            current_pattern: gbdp_2nd.currentPattern,
+            date_start: gbdp_2nd.dateStart,
+            time_start: gbdp_2nd.timeStart,
+            date_finished: gbdp_2nd.dateFinish,
+            time_finished: gbdp_2nd.timeFinish,
+            layer: selectedLayer.value
+        }
     };
 
     console.log('Data Payload:', dataPayload);
 
     try {
-        const response = await axios.patch(`/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`, dataPayload);
-        await uploadGraphs();
+        const response = await axios.post(`/api/second_heat_treatment`, dataPayload);
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
         showModalCreate.value = false;

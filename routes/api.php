@@ -27,10 +27,13 @@ use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
+use App\Http\Controllers\SecondGBDPController;
 use App\Http\Controllers\SecondGBDPModelsController;
+use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
+use App\Models\MassProduction;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -215,6 +218,9 @@ Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
 
 Route::apiResource('mass-production',MassProductionController::class);
+
+Route::apiResource('second_heat_treatment',GbdpSecondHeatTreatmentController::class);
+
 Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
 Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'updateByMassProd']);

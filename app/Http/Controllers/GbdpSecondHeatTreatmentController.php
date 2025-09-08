@@ -7,59 +7,68 @@ use Illuminate\Http\Request;
 
 class GbdpSecondHeatTreatmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return GbdpSecondHeatTreatment::all()->map(function ($item) {
+            $item->gbdp_1st = json_decode($item->gbdp_1st, true);
+            $item->gbdp_2nd = json_decode($item->gbdp_2nd, true);
+            return $item;
+        });
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod' => 'required|string|max:255',
+            'layer'     => 'nullable|numeric',
+            'gbdp_1st'  => 'nullable|array',
+            'gbdp_2nd'  => 'nullable|array',
+        ]);
+
+        $validated['gbdp_1st'] = json_encode($validated['gbdp_1st'] ?? []);
+        $validated['gbdp_2nd'] = json_encode($validated['gbdp_2nd'] ?? []);
+
+        return GbdpSecondHeatTreatment::create($validated);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(GbdpSecondHeatTreatment $gbdpSecondHeatTreatment)
+    public function show($id)
     {
-        //
+        $item = GbdpSecondHeatTreatment::findOrFail($id);
+        $item->gbdp_1st = json_decode($item->gbdp_1st, true);
+        $item->gbdp_2nd = json_decode($item->gbdp_2nd, true);
+
+        return $item;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(GbdpSecondHeatTreatment $gbdpSecondHeatTreatment)
+    public function update(Request $request, $id)
     {
-        //
+        $item = GbdpSecondHeatTreatment::findOrFail($id);
+
+        $validated = $request->validate([
+            'mass_prod' => 'sometimes|required|string|max:255',
+            'layer'     => 'nullable|numeric',
+            'gbdp_1st'  => 'nullable|array',
+            'gbdp_2nd'  => 'nullable|array',
+        ]);
+
+        if (isset($validated['gbdp_1st'])) {
+            $validated['gbdp_1st'] = json_encode($validated['gbdp_1st']);
+        }
+
+        if (isset($validated['gbdp_2nd'])) {
+            $validated['gbdp_2nd'] = json_encode($validated['gbdp_2nd']);
+        }
+
+        $item->update($validated);
+
+        return $item;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, GbdpSecondHeatTreatment $gbdpSecondHeatTreatment)
+    public function destroy($id)
     {
-        //
-    }
+        $item = GbdpSecondHeatTreatment::findOrFail($id);
+        $item->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(GbdpSecondHeatTreatment $gbdpSecondHeatTreatment)
-    {
-        //
+        return response()->json(['message' => 'Deleted'], 204);
     }
 }
