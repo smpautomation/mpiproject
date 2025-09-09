@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coating;
+use App\Models\CoatingPending;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -105,4 +106,49 @@ class CoatingController extends Controller
 
         return response()->json(['exists' => $exists]);
     }
+
+    public function checkPending(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        $pending = CoatingPending::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->exists();
+
+        return response()->json(['pending' => $pending]);
+    }
+
+    public function addPending(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        // Avoid duplicates
+        $pending = CoatingPending::firstOrCreate([
+            'mass_prod' => $validated['mass_prod'],
+            'layer'     => $validated['layer'],
+        ]);
+
+        return response()->json($pending, 201);
+    }
+
+    public function removePending(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        CoatingPending::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->delete();
+
+        return response()->json(['message' => 'Pending cleared'], 200);
+    }
+
 }

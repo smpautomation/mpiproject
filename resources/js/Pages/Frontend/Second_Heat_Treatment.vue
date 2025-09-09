@@ -559,9 +559,8 @@ const autoFetch = async () => {
         gbdp_1st.dateFinish = massProdData.date_finished;
         gbdp_1st.timeFinish = massProdData.time_finished;
 
-
         toast.success(`Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`);
-        console.log('Fetched Mass Production Data: ', fetchedMassProdData.value);
+        //console.log('Fetched Mass Production Data: ', fetchedMassProdData.value);
     }catch(error){
         console.error("Error fetching mass prod data:", error);
 

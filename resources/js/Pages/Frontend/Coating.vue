@@ -148,6 +148,52 @@
                     </div>
                 </div>
             </div>
+            <div v-if="activate2ndGBDP" class="w-full max-w-4xl mt-12">
+                <div class="px-8 py-6 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-2xl">
+                    <!-- Header -->
+                    <h2 class="pb-3 mb-5 text-xl font-semibold tracking-wide text-gray-800 border-b border-gray-200">
+                        Options
+                    </h2>
+
+                    <!-- Body -->
+                    <div class="flex items-center space-x-4">
+                    <!-- Icon -->
+                    <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-full shadow-inner">
+                        <svg
+                            class="w-6 h-6 text-teal-600"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                            />
+                        </svg>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1">
+                        <p class="mb-4 text-sm leading-relaxed text-gray-600">
+                        This button allows data to be fetched automatically for
+                        <span class="font-semibold text-gray-800">1st GBDP</span>. Use this
+                        option when you want the system <br></br> to retrieve relevant information
+                        without manual input.
+                        </p>
+                        <button
+                            @click="autoFetch"
+                            class="px-5 py-2 text-sm font-semibold tracking-wide text-white transition-all duration-300 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400"
+                        >
+                            Auto Fetch
+                        </button>
+                        <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="Enter Mass Production name..." class="ml-5 w-[12rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input v-model="selectedLayer_fetch" type="number" placeholder="Enter Layer number..." class="ml-5 w-[9rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    </div>
+                </div>
+            </div>
             <div class="flex flex-row gap-10 mt-10">
                 <div v-if="activate2ndGBDP" class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">1st GBDP Coating Information</h2>
@@ -585,7 +631,16 @@
 
                         <!-- Clear All -->
                         <button
+                            v-if="!activate2ndGBDP"
                             @click="clearAll()"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
+                        >
+                            CLEAR ALL
+                        </button>
+                        <!-- Clear All -->
+                        <button
+                            v-else
+                            @click="clearAllTransition()"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
                         >
                             CLEAR ALL
@@ -1112,6 +1167,8 @@ const lotNo = ref();
 const lotNo_1stGBDP = ref();
 const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
 const fetchedModelValue = ref();
+const selectedMassProd_fetch = ref();
+const selectedLayer_fetch = ref();
 
 // General Variables --------- General Variables
 
@@ -1542,8 +1599,48 @@ const activate2ndGBDP = computed(() => {
 watch(activate2ndGBDP, (newVal) => {
     if (newVal) {
         clearAllTransition();
+        toast.success('1st and 2nd GBDP format enabled');
     }
 });
+
+const autoFetch = async () => {
+    if(!selectedMassProd_fetch.value){
+        toast.error("Please enter Mass Production name to fetch data.");
+        return;
+    }
+    if(!selectedLayer_fetch.value){
+        toast.error("Please enter layer number to fetch data.");
+        return;
+    }
+    try{
+        const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd_fetch.value}`);
+        const massProdData = response.data;
+        if (!massProdData) {
+            toast.error(`No data found for Mass Production: ${selectedMassProd_fetch.value}`);
+            return;
+        }
+
+        //go back here
+
+
+        toast.success(`Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`);
+        console.log('Fetched Mass Production Data: ', fetchedMassProdData.value);
+    }catch(error){
+        console.error("Error fetching mass prod data:", error);
+
+        if (error.response) {
+            if (error.response.status === 404) {
+                toast.error(`Mass Production "${selectedMassProd_fetch.value}" does not exists.`);
+            } else {
+                toast.error(`Server error (${error.response.status}): Unable to fetch data.`);
+            }
+        } else if (error.request) {
+            toast.error("No response from server. Please check your connection.");
+        } else {
+            toast.error("Unexpected error occurred while fetching data.");
+        }
+    }
+}
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 

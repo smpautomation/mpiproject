@@ -303,12 +303,12 @@
                         </p>
                         <!-- Status preview -->
                         <div>
-                        <p class="text-sm font-semibold text-gray-800 mb-2">Status Preview:</p>
-                            <div class="flex flex-wrap gap-2 justify-center">
+                        <p class="mb-2 text-sm font-semibold text-gray-800">Status Preview:</p>
+                            <div class="flex flex-wrap justify-center gap-2">
                                 <div
                                 v-for="layer in layers"
                                 :key="layer"
-                                class="w-12 h-12 flex items-center justify-center rounded-lg text-xs font-bold"
+                                class="flex items-center justify-center w-12 h-12 text-xs font-bold rounded-lg"
                                 :class="completedLayers.includes(layer)
                                     ? 'bg-green-500 text-white shadow-md'
                                     : 'bg-gray-300 text-gray-700'"
@@ -319,10 +319,10 @@
                         </div>
                         <!-- Explanation -->
                         <div class="flex justify-center">
-                            <p class="mt-3 text-xs text-gray-500 text-center">
+                            <p class="mt-3 text-xs text-center text-gray-500">
                             Each box represents a process layer (1 – 9.5).
-                            <span class="text-green-600 font-semibold">Green</span> indicates the layer is complete,
-                            while <span class="text-gray-600 font-semibold">gray</span> indicates it is pending.
+                            <span class="font-semibold text-green-600">Green</span> indicates the layer is complete,
+                            while <span class="font-semibold text-gray-600">gray</span> indicates it is pending.
                             </p>
                         </div>
 
