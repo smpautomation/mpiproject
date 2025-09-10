@@ -230,10 +230,14 @@ Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 
 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
+
 Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);
+
 Route::get('/coating-data/check', [CoatingController::class, 'checkExisting']);
 Route::get('/coating-pending-add',[CoatingController::class, 'addPending']);
 Route::get('/coating-pending-check',[CoatingController::class, 'checkPending']);
+
+Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
 Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     [MassProductionController::class, 'getLayerModel']);

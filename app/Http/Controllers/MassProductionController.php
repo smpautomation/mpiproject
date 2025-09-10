@@ -280,5 +280,4 @@ class MassProductionController extends Controller
         ], 404);
     }
 
-
 }

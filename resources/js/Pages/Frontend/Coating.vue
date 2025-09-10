@@ -459,7 +459,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
-                                <tr v-for="(range, rowIndex) in visibleRanges" :key="range" class="hover:bg-gray-50">
+                                <tr v-for="(range, rowIndex) in visibleRanges_1stGBDP" :key="range" class="hover:bg-gray-50">
                                 <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
                                 <td
                                     v-for="(module, colIndex) in modules"
@@ -468,7 +468,7 @@
                                 >
                                     <input
                                     type="number"
-                                    v-model="visibleConcentrationData[rowIndex][colIndex]"
+                                    v-model="visibleConcentrationData_1stGBDP[rowIndex][colIndex]"
                                     class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </td>
@@ -480,9 +480,8 @@
                 </div>
             </div>
             <div class="flex flex-row gap-10 mt-10 items">
-                <div class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
-                    <h2 v-if="!activate2ndGBDP" class="pb-1 font-bold text-gray-800 border-b text-md">Coating Data (Unit: µ/mm²)</h2>
-                    <h2 v-else class="pb-1 font-bold text-gray-800 border-b text-md">2nd GBDP Coating Data (Unit: µ/mm²)</h2>
+                <div v-if="!activate2ndGBDP" class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
+                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Data (Unit: µ/mm²)</h2>
                     <div class="flex flex-row gap-5 whitespace-nowrap">
                         <div class="flex flex-row gap-4">
                             <div v-for="(slice, colIndex) in Math.ceil(visibleCoatings.length / 10)" :key="colIndex" class="overflow-x-auto">
@@ -549,6 +548,75 @@
                         </div>
                     </div>
                 </div>
+
+                <div v-else class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
+                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">2nd GBDP Coating Data (Unit: µ/mm²)</h2>
+                    <div class="flex flex-row gap-5 whitespace-nowrap">
+                        <div class="flex flex-row gap-4">
+                            <div v-for="(slice, colIndex) in Math.ceil(visibleCoatings_2ndGBDP.length / 10)" :key="colIndex" class="overflow-x-auto">
+                                <table class="min-w-full text-sm border border-gray-200 rounded-lg">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-2 py-1 text-left border-r border-gray-300">No.</th>
+                                            <th class="px-2 py-1 text-left">Coating</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr
+                                            v-for="(item) in visibleCoatings_2ndGBDP.slice(colIndex * 10, (colIndex + 1) * 10)"
+                                            :key="item.no"
+                                            class="hover:bg-gray-50"
+                                        >
+                                        <td class="px-3 py-1 border-b border-r border-gray-200">{{ item.no }}</td>
+                                        <td class="px-3 py-1 border-b border-gray-200">
+                                            <input
+                                                type="number"
+                                                v-model="item.coating"
+                                                class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
+                            <thead class="text-center bg-gray-100">
+                                <tr>
+                                <th colspan="8" class="text-center border-b border-gray-300">
+                                    Concentration Amount
+                                </th>
+                                </tr>
+                                <tr>
+                                <th class="px-2 py-1 border-r border-gray-300"></th>
+                                <th v-for="module in modules" :key="module" class="px-2 py-1 border-r border-gray-300">
+                                    {{ module }}
+                                </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr v-for="(range, rowIndex) in visibleRanges_2ndGBDP" :key="range" class="hover:bg-gray-50">
+                                <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
+                                <td
+                                    v-for="(module, colIndex) in modules"
+                                    :key="colIndex"
+                                    class="px-2 py-1 border-b border-r border-gray-200"
+                                >
+                                    <input
+                                    type="number"
+                                    v-model="visibleConcentrationData_2ndGBDP[rowIndex][colIndex]"
+                                    class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- DIV BELOW (BOTTOM PART) -->
             <div class="flex flex-row mt-10 gap-14">
@@ -558,7 +626,7 @@
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp !== null ? coatingAverage_1stgbdp.toFixed(2) : '-' }}</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp != null ? Number(coatingAverage_1stgbdp).toFixed(2) : '-' }}</div>
                         </div>
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
@@ -576,15 +644,15 @@
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage !== null ? coatingAverage.toFixed(2) : '-' }}</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
                         </div>
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum_2ndgbdp !== null ? coatingMaximum_2ndgbdp : '-' }}</div>
                         </div>
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_2ndgbdp !== null ? coatingMinimum_2ndgbdp : '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -744,6 +812,7 @@
 
                     <!-- Confirm Button with Animation -->
                     <button
+                        @click="saveToDatabase_1st2ndgbdp()"
                         class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
                     >
                         <!-- Shine effect -->
@@ -1169,6 +1238,7 @@ const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
 const fetchedModelValue = ref();
 const selectedMassProd_fetch = ref();
 const selectedLayer_fetch = ref();
+const fetchedCoatingData = ref([]);
 
 // General Variables --------- General Variables
 
@@ -1227,12 +1297,22 @@ const coatingsTable_1stgbdp = ref(
     }))
 );
 
+const coatingsTable_2ndgbdp = ref(
+    Array.from({ length: 20 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }))
+);
+
 //coatingsTable[4].coating = 'Red'; // sets No. 5
-const visibleCoatings = computed(() =>
-  activate2ndGBDP.value
-    ? coatingsTable.value.slice(0, 20)
-    : coatingsTable.value
-)
+// Computed for full table (respects activate2ndGBDP if needed)
+const visibleCoatings = computed(() => coatingsTable.value);
+
+// Computed for 1stGBDP table (always 1–20)
+const visibleCoatings_1stGBDP = computed(() => coatingsTable_1stgbdp.value);
+// Computed for 1stGBDP table (always 1–20)
+const visibleCoatings_2ndGBDP = computed(() => coatingsTable_2ndgbdp.value);
+
 
 // For calculations (clean numbers only)
 const coatingValues = computed(() =>
@@ -1244,6 +1324,13 @@ const coatingValues = computed(() =>
 
 const coatingValues_1stgbdp = computed(() =>
   coatingsTable_1stgbdp.value
+    .map(row => row.coating)
+    .filter(val => val !== null && val !== '' && !isNaN(val))
+    .map(Number)
+);
+
+const coatingValues_2ndgbdp = computed(() =>
+  coatingsTable_2ndgbdp.value
     .map(row => row.coating)
     .filter(val => val !== null && val !== '' && !isNaN(val))
     .map(Number)
@@ -1277,6 +1364,20 @@ const coatingAverage_1stgbdp = computed(() =>
     : null
 );
 
+const coatingMaximum_2ndgbdp = computed(() =>
+    coatingValues_2ndgbdp.value.length ? Math.max(...coatingValues_2ndgbdp.value) : null
+);
+
+const coatingMinimum_2ndgbdp = computed(() =>
+    coatingValues_2ndgbdp.value.length ? Math.min(...coatingValues_2ndgbdp.value) : null
+);
+
+const coatingAverage_2ndgbdp = computed(() =>
+  coatingValues_2ndgbdp.value.length
+    ? coatingValues_2ndgbdp.value.reduce((sum, val) => sum + val, 0) / coatingValues_2ndgbdp.value.length
+    : null
+);
+
 // For display (keeps index alignment with your inputs)
 const displayCoatings = computed(() =>
   coatingsTable.value.map(row => row.coating ?? '')
@@ -1295,25 +1396,33 @@ const hasRows31to35 = computed(() => {
 const modules = ["M-01", "M-02", "M-03", "M-04", "M-05", "M-06", "M-06"];
 // Ranges
 const ranges = ["1-5", "6-10", "11-15", "16-20", "21-25", "26-30", "31-35"];
+const ranges_1stgbdp = ["1-5", "6-10", "11-15", "16-20"];
+const ranges_2ndgbdp = ["1-5", "6-10", "11-15", "16-20"];
 // Reactive table data
 const concentrationData = ref(
   ranges.map(() => modules.map(() => null)) // 7x8 grid of nulls
+);
+
+// 1stGBDP reactive table
+const concentrationData_1stGBDP = ref(
+  ranges_1stgbdp.map(() => modules.map(() => null))
+);
+const concentrationData_2ndGBDP = ref(
+  ranges_2ndgbdp.map(() => modules.map(() => null))
 );
 // Example: set some values
 //concentrationAmount.value[0]['M-01'] = 10;   // first row, M-01 column
 //concentrationAmount.value[3]['M-04'] = 7;    // fourth row, M-04 column
 
-const visibleRanges = computed(() =>
-  activate2ndGBDP.value
-    ? ranges.slice(0, 4)            // 1–20 only
-    : ranges                        // 1–35
-)
+// Full version (all ranges 1–35)
+const visibleRanges = computed(() => ranges);
+const visibleConcentrationData = computed(() => concentrationData.value);
 
-const visibleConcentrationData = computed(() =>
-  activate2ndGBDP.value
-    ? concentrationData.value.slice(0, 4) // align with ranges
-    : concentrationData.value
-)
+// 1stGBDP version (limited to 1–20)
+const visibleRanges_1stGBDP = computed(() => ranges_1stgbdp);
+const visibleConcentrationData_1stGBDP = computed(() => concentrationData_1stGBDP.value);
+const visibleRanges_2ndGBDP = computed(() => ranges_2ndgbdp);
+const visibleConcentrationData_2ndGBDP = computed(() => concentrationData_2ndGBDP.value);
 
 // Coating Information Variables --------- Coating Information Variables END
 
@@ -1422,6 +1531,15 @@ const clearAllTransition = () => {
         coatingMachineNo: '',
         slurryLotNo: '',
         minTbContent: '',
+        totalMagnetWeight: '',
+        remarks: ''
+    });
+
+    Object.assign(coatingInfo_1stgbdp, {
+        coatingDate: '',
+        coatingMachineNo: '',
+        slurryLotNo: '',
+        minTbContent: '',
         sampleQuantity: '',
         totalMagnetWeight: '',
         loaderOperator: '',
@@ -1439,6 +1557,17 @@ const clearAllTransition = () => {
         no: i + 1,
         coating: null
     }));
+
+    coatingsTable_1stgbdp.value = Array.from({ length: 20 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+
+    coatingsTable_2ndgbdp.value = Array.from({ length: 20 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+
     additionalSlurry.value = [
         { module: "M-01", new: null, homo: null, time: null, liters: null },
         { module: "M-02", new: null, homo: null, time: null, liters: null },
@@ -1447,6 +1576,9 @@ const clearAllTransition = () => {
         { module: "M-05", new: null, homo: null, time: null, liters: null },
         { module: "M-06", new: null, homo: null, time: null, liters: null },
     ];
+
+    lotNo.value = null;
+    lotNo_1stGBDP.value = null;
 
     toast.success("All fields cleared.");
 };
@@ -1532,8 +1664,11 @@ const saveToDatabase = async() => {
 const saveToDatabase_1st2ndgbdp = async() => {
     try{
         console.log('Clicked Submit!!!!!!!');
+        toast.success('1st and 2nd GBDP Data Saved Successfully');
     }catch(error){
         toast.error('Failed to save to database. ',error);
+    }finally{
+        showModalSubmit.value = false;
     }
 }
 
@@ -1596,12 +1731,12 @@ const activate2ndGBDP = computed(() => {
     return firstSecondGBDP_models.value.includes(model.trim());
 });
 
-watch(activate2ndGBDP, (newVal) => {
+/*watch(activate2ndGBDP, (newVal) => {
     if (newVal) {
         clearAllTransition();
         toast.success('1st and 2nd GBDP format enabled');
     }
-});
+}); */
 
 const autoFetch = async () => {
     if(!selectedMassProd_fetch.value){
@@ -1613,18 +1748,61 @@ const autoFetch = async () => {
         return;
     }
     try{
-        const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd_fetch.value}`);
-        const massProdData = response.data;
-        if (!massProdData) {
-            toast.error(`No data found for Mass Production: ${selectedMassProd_fetch.value}`);
+        const response = await axios.get(`/api/coating/get-data`, {
+            params: {
+                mass_prod: selectedMassProd_fetch.value,
+                layer: selectedLayer_fetch.value
+            }
+        });
+        const coatingData = response.data;
+        if (!coatingData) {
+            toast.error(`No coating data found for Mass Production: ${selectedMassProd_fetch.value}, Layer ${selectedLayer_fetch.value}`);
             return;
         }
+        fetchedCoatingData.value = coatingData;
 
-        //go back here
+        //Fetched data allocation --- Fetched data allocation
+        const cd = fetchedCoatingData.value;
+        const cdJson = JSON.parse(cd.coating_data);
+        const coatingAmounts = cdJson['Coating Amount Data'] ?? [];
+        const concentrationData = cdJson['Concentration Data']
 
+        coatingInfo_1stgbdp.selectedMassProd = selectedMassProd_fetch.value;
+        coatingInfo_1stgbdp.coatingDate = cd.date;
+        coatingInfo_1stgbdp.coatingMachineNo = cd.machine_no;
+        coatingInfo_1stgbdp.slurryLotNo = cd.slurry_lot_no;
+        coatingInfo_1stgbdp.minTbContent = cd.min_tb_content;
+        coatingInfo_1stgbdp.totalMagnetWeight = cd.total_magnet_weight;
+        coatingInfo_1stgbdp.remarks = cd.remarks;
+
+        lotNo_1stGBDP.value = cdJson['Lot no'] ?? null;
+
+        coatingAverage_1stgbdp.value = cd.average;
+        coatingMaximum_1stgbdp.value = cd.maximum;
+        coatingMinimum_1stgbdp.value = cd.minimum;
+
+        // Fill the table
+        coatingsTable_1stgbdp.value = coatingsTable_1stgbdp.value.map((row, index) => {
+            const fetched = coatingAmounts[index]?.coating;
+            return {
+                ...row,
+                coating: fetched !== undefined ? fetched : null
+            };
+        });
+
+        // 1stGBDP grid allocation (1–20 only)
+        concentrationData_1stGBDP.value = ranges_1stgbdp.map(rangeLabel => {
+            const rangeData = concentrationData.find(r => r.range === rangeLabel);
+            return modules.map(moduleName => {
+                const mod = rangeData?.modules.find(m => m.module === moduleName);
+                return mod?.value ?? null;
+            });
+        });
+
+        //Fetched data allocation --- Fetched data allocation END
 
         toast.success(`Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`);
-        console.log('Fetched Mass Production Data: ', fetchedMassProdData.value);
+        console.log('Fetched Mass Production Data: ', fetchedCoatingData.value);
     }catch(error){
         console.error("Error fetching mass prod data:", error);
 
@@ -1646,8 +1824,9 @@ const autoFetch = async () => {
 
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
-
+useSessionStorage("activate2ndGBDP", activate2ndGBDP);
 useSessionStorage("coatingInfo", coatingInfo);
+useSessionStorage("coatingInfo_1stgbdp", coatingInfo_1stgbdp);
 useSessionStorage("concentrationData", concentrationData);
 useSessionStorage("coatingsTable", coatingsTable);
 useSessionStorage("additionalSlurry", additionalSlurry);

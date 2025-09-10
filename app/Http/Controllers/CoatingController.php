@@ -151,4 +151,25 @@ class CoatingController extends Controller
         return response()->json(['message' => 'Pending cleared'], 200);
     }
 
+    public function getCoatingData(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        $coating = Coating::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->first();
+
+        if (!$coating) {
+            return response()->json([
+                'message' => 'Coating record not found.'
+            ], 404);
+        }
+
+        return response()->json($coating);
+    }
+
+
 }
