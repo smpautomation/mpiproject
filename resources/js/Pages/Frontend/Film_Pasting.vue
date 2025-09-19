@@ -19,7 +19,7 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Machine No<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.machine_no" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.machine_no" @input="filmPastingInfo.machine_no = filmPastingInfo.machine_no.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight<span class="text-red-500"> *</span></label>
@@ -30,22 +30,22 @@
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Loader Operator<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.loader_operator" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.loader_operator" @input="filmPastingInfo.loader_operator = filmPastingInfo.loader_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Unloader Operator<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.unloader_operator" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.unloader_operator" @input="filmPastingInfo.unloader_operator = filmPastingInfo.unloader_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Checker Operator<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.checker_operator" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.checker_operator" @input="filmPastingInfo.checker_operator = filmPastingInfo.checker_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Film Coating Amount, Time Start, Time Finished -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Coating Amount<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.film_coating_amount" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.film_coating_amount" @input="filmPastingInfo.film_coating_amount = filmPastingInfo.film_coating_amount.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
@@ -58,7 +58,7 @@
                     </div>
                     <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">Remarks<span class="text-red-500"> *</span></label>
-                        <input v-model="filmPastingInfo.remarks" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input v-model="filmPastingInfo.remarks" @input="filmPastingInfo.remarks = filmPastingInfo.remarks.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
                 <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
