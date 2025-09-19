@@ -60,6 +60,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Furnace');
     }
 
+    public function filmPasting(){
+        return Inertia::render('Frontend/Film_Pasting');
+    }
+
     public function heatTreatmentGraphPatterns(){
         return Inertia::render('Frontend/HTGraph_Patterns');
     }
