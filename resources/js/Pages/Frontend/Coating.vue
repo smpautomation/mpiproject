@@ -713,6 +713,14 @@
                         >
                             CLEAR ALL
                         </button>
+
+                        <!-- Film Pasting -->
+                        <button
+                            @click="Inertia.visit('/film_pasting')"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50"
+                        >
+                            FILM PASTING FORMAT
+                        </button>
                     </div>
                 </div>
             </div>
@@ -726,9 +734,9 @@
                     <div class="absolute inset-0 opacity-10">
                     <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
-                            <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5"/>
-                        </pattern>
+                            <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                                <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                            </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill="url(#hexagon)" />
                     </svg>

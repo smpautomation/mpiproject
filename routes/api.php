@@ -25,6 +25,7 @@ use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
+use App\Http\Controllers\FilmPastingDataController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
 use App\Http\Controllers\SecondGBDPController;
@@ -220,6 +221,8 @@ Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
 Route::apiResource('mass-production',MassProductionController::class);
 
 Route::apiResource('second_heat_treatment',GbdpSecondHeatTreatmentController::class);
+
+Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 
 
 

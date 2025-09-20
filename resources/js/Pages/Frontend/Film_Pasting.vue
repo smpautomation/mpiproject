@@ -11,6 +11,28 @@
             <div class="flex flex-row gap-10 mt-10">
                 <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">Film Pasting Information</h2>
+                    <!-- Group: Mass Prod, Layer -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div class="relative">
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
+                            <select
+                                v-model="filmPastingInfo.selected_mass_prod"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            >
+                                <option v-for="items in massProdLists" :key="items" :value="items">
+                                    {{ items }}
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
+                            <select v-model="filmPastingInfo.selected_layer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
+                                <option v-for="items in layers" :key="items" :value="items">
+                                    {{ items }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <!-- Group: Film Pasting Date, Machine No, Total Magnet Weight -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
@@ -297,7 +319,7 @@
 
                     <!-- Confirm Button with Animation -->
                     <button
-                        @click="saveToDatabase_1st2ndgbdp()"
+                        @click="confirm()"
                         class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
                     >
                         <!-- Shine effect -->
@@ -401,6 +423,8 @@ const showModalSubmit = ref();
 
 // Toggle variable ---------- Toggle Variable END
 
+
+const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const massProdLists = ref([]);
 
 const filmPastingInfo = reactive({
@@ -490,8 +514,32 @@ const submit = async () => {
 }
 
 const confirm = async () => {
-    const response = await axios.get('/api/');
+    try{
+        const payload = {
+            mass_prod: filmPastingInfo.selected_mass_prod,
+            layer: filmPastingInfo.selected_layer,
+            date: filmPastingInfo.film_pasting_date,
+            machine_no: filmPastingInfo.machine_no,
+            total_magnet_weight: filmPastingInfo.total_magnet_weight,
+            loader_operator: filmPastingInfo.loader_operator,
+            checker_operator: filmPastingInfo.checker_operator,
+            film_coating_amount: filmPastingInfo.film_coating_amount,
+            time_start: filmPastingInfo.time_start,
+            time_finished: filmPastingInfo.time_finished,
+            remarks: filmPastingInfo.remarks,
+            film_type: filmPastingInfo.film_type,
+            film_class: filmPastingInfo.film_class,
+            h_line_parameters: filmPastingInfo.h_line_parameters,
+            t_line_parameters: filmPastingInfo.t_line_parameters,
+            setter_sand: filmPastingInfo.is_setter_sand,
+        };
 
+        const response = await axios.post('/api/film-pasting-data', payload);
+        console.log(response.data);
+
+    }catch(error){
+        toast.error('Failed to get film pasting data')
+    }
 };
 
 
@@ -540,7 +588,15 @@ const saveToDatabase = async() => {
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
 const getMassProdLists = async () => {
-
+    try{
+        const response = await axios.get('/api/mass-production/');
+        const massProdList = response.data;
+        massProdLists.value = massProdList.map(item => item.mass_prod);
+        //console.log("List of mass prods: ",massProd_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
 }
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
@@ -558,7 +614,11 @@ const getMassProdLists = async () => {
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
 onMounted(async () => {
-
+    const isAuthenticated = await checkAuthentication();
+    if (!isAuthenticated) {
+        return;
+    }
+    await getMassProdLists();
 });
 
 </script>
