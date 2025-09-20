@@ -239,5 +239,7 @@ Route::get('/coating-pending-check',[CoatingController::class, 'checkPending']);
 
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
+
+
 Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     [MassProductionController::class, 'getLayerModel']);

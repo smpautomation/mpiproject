@@ -12,7 +12,7 @@ class FilmPastingDataController extends Controller
      */
     public function index()
     {
-        //
+        return FilmPastingData::all();
     }
 
     /**
@@ -20,7 +20,28 @@ class FilmPastingDataController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod' => 'nullable|string',
+            'layer' => 'nullable|numeric',
+            'date' => 'nullable|date',
+            'machine_no' => 'nullable|string',
+            'total_magnet_weight' => 'nullable|numeric',
+            'loader_operator' => 'nullable|string',
+            'checker_operator' => 'nullable|string',
+            'film_coating_amount' => 'nullable|string',
+            'time_start' => 'nullable|date_format:H:i',
+            'time_finished' => 'nullable|date_format:H:i',
+            'remarks' => 'nullable|string',
+            'film_type' => 'nullable|string',
+            'film_class' => 'nullable|string',
+            'h_line_parameters' => 'nullable|array',
+            't_line_parameters' => 'nullable|array',
+            'setter_sand' => 'boolean',
+        ]);
+
+        $filmPastingData = FilmPastingData::create($validated);
+
+        return response()->json($filmPastingData, 201);
     }
 
     /**
@@ -28,7 +49,7 @@ class FilmPastingDataController extends Controller
      */
     public function show(FilmPastingData $filmPastingData)
     {
-        //
+        return $filmPastingData;
     }
 
     /**
@@ -36,7 +57,28 @@ class FilmPastingDataController extends Controller
      */
     public function update(Request $request, FilmPastingData $filmPastingData)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod' => 'nullable|string',
+            'layer' => 'nullable|numeric',
+            'date' => 'nullable|date',
+            'machine_no' => 'nullable|string',
+            'total_magnet_weight' => 'nullable|numeric',
+            'loader_operator' => 'nullable|string',
+            'checker_operator' => 'nullable|string',
+            'film_coating_amount' => 'nullable|string',
+            'time_start' => 'nullable|date_format:H:i',
+            'time_finished' => 'nullable|date_format:H:i',
+            'remarks' => 'nullable|string',
+            'film_type' => 'nullable|string',
+            'film_class' => 'nullable|string',
+            'h_line_parameters' => 'nullable|array',
+            't_line_parameters' => 'nullable|array',
+            'setter_sand' => 'boolean',
+        ]);
+
+        $filmPastingData->update($validated);
+
+        return response()->json($filmPastingData);
     }
 
     /**
@@ -44,6 +86,8 @@ class FilmPastingDataController extends Controller
      */
     public function destroy(FilmPastingData $filmPastingData)
     {
-        //
+        $filmPastingData->delete();
+
+        return response()->json(null, 204);
     }
 }

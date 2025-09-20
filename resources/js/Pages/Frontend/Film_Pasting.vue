@@ -67,11 +67,11 @@
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Type (Tb or Dy)<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.film_type" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.film_type" @input="filmPastingInfo.film_type = filmPastingInfo.film_type.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Class<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.film_class" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.film_class" @input="filmPastingInfo.film_class = filmPastingInfo.film_class.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting<span class="text-red-500"> *</span></label>
-                            <input  v-model="filmPastingInfo.h_line_parameters['dryer_temp_setting']" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input  v-model="filmPastingInfo.h_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.h_line_parameters['dryer_temp_setting'] = filmPastingInfo.h_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.t_line_parameters['dryer_temp_setting']" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.t_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.t_line_parameters['dryer_temp_setting'] = filmPastingInfo.t_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                 </div>
@@ -490,6 +490,7 @@ const submit = async () => {
 }
 
 const confirm = async () => {
+    const response = await axios.get('/api/');
 
 };
 
@@ -549,7 +550,9 @@ const getMassProdLists = async () => {
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
 
+
 // APPLYING Browser Session ----------------- APPLYING Browser Session
+
 
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
