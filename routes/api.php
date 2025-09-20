@@ -221,6 +221,8 @@ Route::apiResource('mass-production',MassProductionController::class);
 
 Route::apiResource('second_heat_treatment',GbdpSecondHeatTreatmentController::class);
 
+
+
 Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
 Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'updateByMassProd']);
@@ -238,8 +240,6 @@ Route::get('/coating-pending-add',[CoatingController::class, 'addPending']);
 Route::get('/coating-pending-check',[CoatingController::class, 'checkPending']);
 
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
-
-
 
 Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     [MassProductionController::class, 'getLayerModel']);
