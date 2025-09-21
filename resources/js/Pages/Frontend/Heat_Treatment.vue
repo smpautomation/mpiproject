@@ -940,6 +940,17 @@ const getGraphPatterns = async () => {
     }
 }
 
+const getCompletedLayers = async () => {
+    try {
+        const response = await axios.get(`/api/second-heat-treatment-data/${mpcs.selectedMassProd}/layers`);
+        completedLayers.value = response.data.layers.map(String);
+        console.log(completedLayers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch layers');
+    }
+};
+
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
 const clearAll = () => {

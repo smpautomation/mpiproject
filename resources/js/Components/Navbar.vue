@@ -133,6 +133,7 @@ const navItems = [
     { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
         { label: 'Heat Treatment', route: 'heat_treatment' },
         { label: 'Coating', route: 'coating' },
+        { label: 'Film Pasting', route: 'film_pasting' },
         { label: 'MPI', route: 'manage' }
         ]
     },

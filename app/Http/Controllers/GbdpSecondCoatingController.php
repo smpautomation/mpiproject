@@ -12,15 +12,7 @@ class GbdpSecondCoatingController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json(GbdpSecondCoating::all(), 200);
     }
 
     /**
@@ -28,7 +20,18 @@ class GbdpSecondCoatingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod' => 'nullable|string',
+            'layer' => 'nullable|numeric',
+            'coating_info_1stgbdp' => 'required|array',
+            'coating_info_2ndgbdp' => 'required|array',
+            'coating_data_1stgbdp' => 'required|array',
+            'coating_data_2ndgbdp' => 'required|array',
+        ]);
+
+        $coating = GbdpSecondCoating::create($validated);
+
+        return response()->json($coating, 201);
     }
 
     /**
@@ -36,15 +39,7 @@ class GbdpSecondCoatingController extends Controller
      */
     public function show(GbdpSecondCoating $gbdpSecondCoating)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(GbdpSecondCoating $gbdpSecondCoating)
-    {
-        //
+        return response()->json($gbdpSecondCoating, 200);
     }
 
     /**
@@ -52,7 +47,18 @@ class GbdpSecondCoatingController extends Controller
      */
     public function update(Request $request, GbdpSecondCoating $gbdpSecondCoating)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod' => 'nullable|string',
+            'layer' => 'nullable|numeric',
+            'coating_info_1stgbdp' => 'nullable|array',
+            'coating_info_2ndgbdp' => 'nullable|array',
+            'coating_data_1stgbdp' => 'nullable|array',
+            'coating_data_2ndgbdp' => 'nullable|array',
+        ]);
+
+        $gbdpSecondCoating->update($validated);
+
+        return response()->json($gbdpSecondCoating, 200);
     }
 
     /**
@@ -60,6 +66,19 @@ class GbdpSecondCoatingController extends Controller
      */
     public function destroy(GbdpSecondCoating $gbdpSecondCoating)
     {
-        //
+        $gbdpSecondCoating->delete();
+
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Custom: Get all layers for a given mass_prod.
+     */
+    public function getLayersByMassProd($massProd)
+    {
+        $layers = GbdpSecondCoating::where('mass_prod', $massProd)
+            ->pluck('layer');
+
+        return response()->json(['layers' => $layers], 200);
     }
 }

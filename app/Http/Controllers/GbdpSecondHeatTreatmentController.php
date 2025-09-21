@@ -71,4 +71,12 @@ class GbdpSecondHeatTreatmentController extends Controller
 
         return response()->json(['message' => 'Deleted'], 204);
     }
+
+    public function getLayersByMassProd($massProd)
+    {
+        $layers = GbdpSecondHeatTreatment::where('mass_prod', $massProd)
+            ->pluck('layer');
+
+        return response()->json(['layers' => $layers], 200);
+    }
 }

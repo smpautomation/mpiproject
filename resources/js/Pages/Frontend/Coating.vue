@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div v-else class="mb-6">
-                <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div v-if="!activate2ndGBDP" class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm">
 
                     <!-- Header -->
                     <div class="px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600">
@@ -97,6 +97,97 @@
                             <span
                             class="text-xs font-semibold"
                             :class="completedLayers.includes(layer)
+                                ? 'text-emerald-700'
+                                : 'text-gray-500'"
+                            >
+                            {{ layer }}
+                            </span>
+                        </div>
+
+                        <!-- Simple Hover Tooltip -->
+                        <div class="absolute z-10 mb-2 transition-opacity duration-200 transform -translate-x-1/2 opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100">
+                            <div class="px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+                            Layer {{ layer }}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Status Text -->
+                    <p class="mt-4 text-xs text-center text-gray-500">
+                        Current layer status for selected mass production
+                    </p>
+
+                    </div>
+                </div>
+                <div v-else class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm">
+
+                    <!-- Header -->
+                    <div class="px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <h3 class="text-sm font-semibold text-white">
+                            Layer Status Preview ( {{ coatingInfo.selectedMassProd }} Mass Production )
+                        </h3>
+                    </div>
+                    </div>
+
+                    <!-- Content with Layer Boxes -->
+                    <div class="px-6 py-5">
+
+                    <!-- Title and Legend -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-gray-800">
+                            Processing Layers (1 - 9.5)
+                        </span>
+                        <div class="flex items-center space-x-3 text-xs">
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                <span class="text-gray-600">Complete</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                <span class="text-gray-600">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Single Row of Layer Boxes -->
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <div
+                        v-for="layer in layers"
+                        :key="layer"
+                        class="relative group"
+                        >
+                        <!-- Layer Box -->
+                        <div
+                            class="flex flex-col items-center justify-center transition-all duration-200 border-2 rounded-lg h-14 w-14 hover:scale-105"
+                            :class="completedLayers_1st_2nd_gbdp.includes(layer)
+                            ? 'bg-emerald-50 border-emerald-400 shadow-sm'
+                            : 'bg-gray-50 border-gray-300 hover:border-gray-400'"
+                        >
+                            <!-- Status Icon -->
+                            <div class="mb-0.5">
+                            <svg
+                                v-if="completedLayers_1st_2nd_gbdp.includes(layer)"
+                                class="w-3 h-3 text-emerald-600"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            <div
+                                v-else
+                                class="w-3 h-3 border-2 border-gray-400 rounded-full"
+                            ></div>
+                            </div>
+
+                            <!-- Layer Number -->
+                            <span
+                            class="text-xs font-semibold"
+                            :class="completedLayers_1st_2nd_gbdp.includes(layer)
                                 ? 'text-emerald-700'
                                 : 'text-gray-500'"
                             >
@@ -1239,7 +1330,8 @@ const showModalSubmit = ref(false);
 
 const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
-const completedLayers = ref(['1','2']);
+const completedLayers = ref([]);
+const completedLayers_1st_2nd_gbdp = ref([]);
 const lotNo = ref();
 const lotNo_1stGBDP = ref();
 const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
@@ -1252,7 +1344,7 @@ const fetchedCoatingData = ref([]);
 
 // Coating Information Variables --------- Coating Information Variables
 
-const coatingInfo = reactive({
+const coatingInfo = reactive({ // <--- this is the 2nd GBDP
     selectedMassProd: '',
     selectedLayer: '1',
     coatingDate: '',
@@ -1670,13 +1762,88 @@ const saveToDatabase = async() => {
 }
 
 const saveToDatabase_1st2ndgbdp = async() => {
+
+    // Flatten coatingsTable
+    const coatingAmountData_1stgbdp = coatingsTable_1stgbdp.value.map(row => ({
+        no: row.no,
+        coating: row.coating
+    }));
+
+    // Flatten concentrationData
+    const concentrationAmountData_1stgbdp = ranges_1stgbdp.map((range, i) => ({
+        range,
+        modules: modules.map((module, j) => ({
+            module,
+            value: concentrationData_1stGBDP.value[i][j]
+        }))
+    }));
+
+    // Flatten coatingsTable
+    const coatingAmountData_2ndgbdp = coatingsTable_2ndgbdp.value.map(row => ({
+        no: row.no,
+        coating: row.coating
+    }));
+
+    // Flatten concentrationData
+    const concentrationAmountData_2ndgbdp = ranges_2ndgbdp.map((range, i) => ({
+        range,
+        modules: modules.map((module, j) => ({
+            module,
+            value: concentrationData_2ndGBDP.value[i][j]
+        }))
+    }));
+
     try{
-        console.log('Clicked Submit!!!!!!!');
+        const payload = {
+            mass_prod: coatingInfo.selectedMassProd,
+            layer: coatingInfo.selectedLayer,
+            coating_info_1stgbdp: {
+                mass_prod: selectedMassProd_fetch.value,
+                layer: selectedLayer_fetch.value,
+                date: coatingInfo_1stgbdp.coatingDate,
+                machine_no: coatingInfo_1stgbdp.coatingMachineNo,
+                slurry_lot_no: coatingInfo_1stgbdp.slurryLotNo,
+                min_tb_content: coatingInfo_1stgbdp.minTbContent,
+                total_magnet_weight: coatingInfo_1stgbdp.totalMagnetWeight.toString(),
+                average: coatingAverage_1stgbdp.value,
+                maximum: coatingMaximum_1stgbdp.value,
+                minimum: coatingMinimum_1stgbdp.value,
+                remarks: coatingInfo_1stgbdp.remarks,
+            },
+            coating_info_2ndgbdp: {
+                mass_prod: coatingInfo.selectedMassProd,
+                layer: coatingInfo.layer,
+                date: coatingInfo.coatingDate,
+                machine_no: coatingInfo.coatingMachineNo,
+                slurry_lot_no: coatingInfo.slurryLotNo,
+                min_tb_content: coatingInfo.minTbContent,
+                total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
+                average: coatingAverage_2ndgbdp.value,
+                maximum: coatingMaximum_2ndgbdp.value,
+                minimum: coatingMinimum_2ndgbdp.value,
+                remarks: coatingInfo.remarks,
+            },
+            coating_data_1stgbdp: {
+                "Coating Amount Data": coatingAmountData_1stgbdp,
+                "Concentration Data": concentrationAmountData_1stgbdp,
+                "Lot no": lotNo_1stGBDP.value
+            },
+            coating_data_2ndgbdp: {
+                "Coating Amount Data": coatingAmountData_2ndgbdp,
+                "Concentration Data": concentrationAmountData_2ndgbdp,
+                "Lot no": lotNo.value
+            }
+        }
+
+        const response = await axios.post(`/api/gbdp-second-coating`, payload);
         toast.success('1st and 2nd GBDP Data Saved Successfully');
+        console.log(response.data);
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
         showModalSubmit.value = false;
+        await getCompletedLayers();
+        await getCompletedLayers_1st_2nd_gbdp();
     }
 }
 
@@ -1706,6 +1873,28 @@ const getMassProdLists = async () => {
         toast.error('Failed to get the mass prod lists api error');
     }
 }
+
+const getCompletedLayers = async () => {
+    try {
+        const response = await axios.get(`/api/coating-data/${coatingInfo.selectedMassProd}/layers`);
+        completedLayers.value = response.data.layers.map(String);
+        console.log(completedLayers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch layers');
+    }
+};
+
+const getCompletedLayers_1st_2nd_gbdp = async () => {
+    try {
+        const response = await axios.get(`/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`);
+        completedLayers_1st_2nd_gbdp.value = response.data.layers.map(String);
+        console.log(completedLayers_1st_2nd_gbdp.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch layers');
+    }
+};
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
 
@@ -1745,6 +1934,27 @@ const activate2ndGBDP = computed(() => {
         toast.success('1st and 2nd GBDP format enabled');
     }
 }); */
+
+// Watch zone -------- Watch Zone
+
+watch(
+  [() => coatingInfo.selectedMassProd, () => activate2ndGBDP.value],
+  async ([newMassProd, newActivate2ndGBDP]) => {
+    if (!newMassProd) {
+      completedLayers.value = [];
+      completedLayers_1st_2nd_gbdp.value = [];
+      return;
+    }
+
+    if (newActivate2ndGBDP) {
+      await getCompletedLayers_1st_2nd_gbdp();
+    } else {
+      await getCompletedLayers();
+    }
+  }
+);
+
+// Watch zone -------- Watch Zone END
 
 const autoFetch = async () => {
     if(!selectedMassProd_fetch.value){

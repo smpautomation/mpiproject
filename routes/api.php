@@ -26,6 +26,7 @@ use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
 use App\Http\Controllers\FilmPastingDataController;
+use App\Http\Controllers\GbdpSecondCoatingController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
 use App\Http\Controllers\SecondGBDPController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
+use App\Models\GbdpSecondCoating;
 use App\Models\MassProduction;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -222,9 +224,14 @@ Route::apiResource('mass-production',MassProductionController::class);
 
 Route::apiResource('second_heat_treatment',GbdpSecondHeatTreatmentController::class);
 
+Route::apiResource('gbdp-second-coating', GbdpSecondCoatingController::class);
+
 Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 
-
+Route::get('/film-pasting-data/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
+Route::get('/coating-data/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
+Route::get('/second-coating-data/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
+Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
 
 Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');

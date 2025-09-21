@@ -90,4 +90,16 @@ class FilmPastingDataController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function getLayersByMassProd($massProd)
+    {
+        // Fetch only the 'layer' column where mass_prod matches
+        $layers = FilmPastingData::where('mass_prod', $massProd)
+            ->pluck('layer'); // pluck returns only the values of the given column
+
+        return response()->json([
+            'mass_prod' => $massProd,
+            'layers' => $layers,
+        ]);
+    }
 }

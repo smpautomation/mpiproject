@@ -8,6 +8,119 @@
             </div>
         </div>
         <div class="flex flex-col items-center justify-center min-h-screen px-4 py-4 bg-gray-100">
+            <div v-if="!filmPastingInfo.selected_mass_prod" class="mb-6">
+                <div class="flex items-center p-4 space-x-3 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
+                <!-- Info Icon -->
+                <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+
+                <!-- Message -->
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-800">
+                        Please select a Mass Production Name to begin.
+                    </p>
+                    <p class="mt-1 text-xs text-gray-600">
+                        Choose from the dropdown above to view layer status information.
+                    </p>
+                </div>
+                </div>
+            </div>
+            <div v-else class="mb-6">
+                <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm">
+
+                    <!-- Header -->
+                    <div class="px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <h3 class="text-sm font-semibold text-white">
+                            Layer Status Preview ( {{ filmPastingInfo.selected_mass_prod }} Mass Production )
+                        </h3>
+                    </div>
+                    </div>
+
+                    <!-- Content with Layer Boxes -->
+                    <div class="px-6 py-5">
+
+                    <!-- Title and Legend -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-gray-800">
+                            Processing Layers (1 - 9.5)
+                        </span>
+                        <div class="flex items-center space-x-3 text-xs">
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                <span class="text-gray-600">Complete</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                <span class="text-gray-600">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Single Row of Layer Boxes -->
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <div
+                        v-for="layer in layers"
+                        :key="layer"
+                        class="relative group"
+                        >
+                        <!-- Layer Box -->
+                        <div
+                            class="flex flex-col items-center justify-center transition-all duration-200 border-2 rounded-lg h-14 w-14 hover:scale-105"
+                            :class="completedLayers.includes(layer)
+                            ? 'bg-emerald-50 border-emerald-400 shadow-sm'
+                            : 'bg-gray-50 border-gray-300 hover:border-gray-400'"
+                        >
+                            <!-- Status Icon -->
+                            <div class="mb-0.5">
+                            <svg
+                                v-if="completedLayers.includes(layer)"
+                                class="w-3 h-3 text-emerald-600"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            <div
+                                v-else
+                                class="w-3 h-3 border-2 border-gray-400 rounded-full"
+                            ></div>
+                            </div>
+
+                            <!-- Layer Number -->
+                            <span
+                            class="text-xs font-semibold"
+                            :class="completedLayers.includes(layer)
+                                ? 'text-emerald-700'
+                                : 'text-gray-500'"
+                            >
+                            {{ layer }}
+                            </span>
+                        </div>
+
+                        <!-- Simple Hover Tooltip -->
+                        <div class="absolute z-10 mb-2 transition-opacity duration-200 transform -translate-x-1/2 opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100">
+                            <div class="px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+                            Layer {{ layer }}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Status Text -->
+                    <p class="mt-4 text-xs text-center text-gray-500">
+                        Current layer status for selected mass production
+                    </p>
+
+                    </div>
+                </div>
+            </div>
             <div class="flex flex-row gap-10 mt-10">
                 <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">Film Pasting Information</h2>
@@ -319,7 +432,7 @@
 
                     <!-- Confirm Button with Animation -->
                     <button
-                        @click="confirm()"
+                        @click="saveToDatabase()"
                         class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
                     >
                         <!-- Shine effect -->
@@ -413,7 +526,6 @@ function useSessionStorage(key, state) {
         { deep: true }
     )
 }
-
 // General Variables --------- General Variables
 
 // Toggle variable ---------- Toggle Variable
@@ -425,6 +537,7 @@ const showModalSubmit = ref();
 
 
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const completedLayers = ref([]);
 const massProdLists = ref([]);
 
 const filmPastingInfo = reactive({
@@ -462,6 +575,7 @@ const filmPastingInfo = reactive({
 });
 
 // General Variables --------- General Variables END
+
 
 const submit = async () => {
     if(!bypassValidation.value){
@@ -513,7 +627,7 @@ const submit = async () => {
     showModalSubmit.value = true;
 }
 
-const confirm = async () => {
+const saveToDatabase = async () => {
     try{
         const payload = {
             mass_prod: filmPastingInfo.selected_mass_prod,
@@ -539,6 +653,9 @@ const confirm = async () => {
 
     }catch(error){
         toast.error('Failed to get film pasting data')
+    }finally{
+        showModalSubmit.value = false;
+        await getCompletedLayers();
     }
 };
 
@@ -580,11 +697,6 @@ const clearAll = () => {
 };
 
 
-const saveToDatabase = async() => {
-
-}
-
-
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
 const getMassProdLists = async () => {
@@ -599,17 +711,43 @@ const getMassProdLists = async () => {
     }
 }
 
+const getCompletedLayers = async () => {
+    try {
+        const response = await axios.get(`/api/film-pasting-data/${filmPastingInfo.selected_mass_prod}/layers`);
+        completedLayers.value = response.data.layers.map(String);
+        console.log(completedLayers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch layers');
+    }
+};
+
+// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
+
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
 
+// Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger END
 
 
-// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+// Watch zone -------- Watch Zone
 
+watch(
+    () => filmPastingInfo.selected_mass_prod,
+    async (newValue) => {
+        if (newValue) {
+            await getCompletedLayers();
+        } else {
+            completedLayers.value = []; // reset if cleared
+        }
+    }
+);
+
+// Watch zone -------- Watch Zone END
 
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
-
+useSessionStorage("filmPastingInfo", filmPastingInfo);
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
