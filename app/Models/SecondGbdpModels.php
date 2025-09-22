@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Second_Gbdp_Models extends Model
+class SecondGbdpModels extends Model
 {
     protected $table = "second__gbdp__models";
     protected $guarded = [];

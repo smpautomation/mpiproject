@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Second_Gbdp_Models;
+use App\Models\SecondGbdpModels;
 use Illuminate\Http\Request;
 
 class SecondGBDPModelsController extends Controller
 {
     public function index()
     {
-        return Second_Gbdp_Models::all();
+        return SecondGbdpModels::all();
     }
 
     public function store(Request $request)
@@ -18,17 +18,17 @@ class SecondGBDPModelsController extends Controller
             'model_name' => 'nullable|string|max:255',
         ]);
 
-        return Second_Gbdp_Models::create($validated);
+        return SecondGbdpModels::create($validated);
     }
 
     public function show($id)
     {
-        return Second_Gbdp_Models::findOrFail($id);
+        return SecondGbdpModels::findOrFail($id);
     }
 
     public function update(Request $request, $id)
     {
-        $secondGBDP = Second_Gbdp_Models::findOrFail($id);
+        $secondGBDP = SecondGbdpModels::findOrFail($id);
 
         $validated = $request->validate([
             'model_name' => 'nullable|string|max:255',
@@ -41,7 +41,7 @@ class SecondGBDPModelsController extends Controller
 
     public function destroy($id)
     {
-        $secondGBDP = Second_Gbdp_Models::findOrFail($id);
+        $secondGBDP = SecondGbdpModels::findOrFail($id);
         $secondGBDP->delete();
 
         return response()->json(['message' => 'Deleted'], 204);
