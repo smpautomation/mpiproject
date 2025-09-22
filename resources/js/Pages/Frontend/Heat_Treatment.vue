@@ -951,7 +951,24 @@ const getCompletedLayers = async () => {
     }
 };
 
+watch(
+    [() => mpcs.selectedMassProd, () => activate2ndGBDP.value],
+    async ([newMassProd, isSecondGBDP]) => {
+        if (!newMassProd) {
+            completedLayers.value = [];
+            return;
+        }
+
+        if (isSecondGBDP) {
+            await getCompletedLayers(); // only called if activate2ndGBDP is true
+        } else {
+            completedLayers.value = []; // or call another function if needed
+        }
+    }
+);
+
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+
 
 const clearAll = () => {
     // Reset all hti fields
