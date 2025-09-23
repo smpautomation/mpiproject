@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SecondGbdpModels;
 use Illuminate\Http\Request;
 
-class SecondGBDPModelsController extends Controller
+class SecondGbdpModelsController extends Controller
 {
     public function index()
     {
