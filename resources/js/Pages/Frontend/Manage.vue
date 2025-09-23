@@ -10,110 +10,6 @@
         <!-- Overlay -->
         <div class="absolute inset-0 z-0 bg-black bg-opacity-50"></div>
             <div v-show="showStartManageDiv" class="z-10">
-                <div v-show="showCreateExistingFurnaceBtn" class="animate-fade-in-down flex flex-col items-center justify-start p-5 h-[450px] w-[1000px] rounded-xl shadow-lg bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
-                    <div class="flex flex-row items-center justify-between w-full mb-10">
-                        <div class="flex flex-row items-center space-x-4">
-                            <span
-                                class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
-                                style="
-                                    background-image: url('/photo/manage_logo.png');
-                                    background-size: 80%;
-                                "
-                            ></span>
-                            <p class="text-2xl font-bold text-blue-900">MANAGE</p>
-                        </div>
-                        <div class="flex flex-row items-center space-x-4 whitespace-nowrap">
-                            <button @click="$inertia.visit('/instructions')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[200px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">Special Instructions</button>
-                            <button @click="$inertia.visit('/mias_factor')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[200px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">Mias - Factor Emp</button>
-                            <button @click="$inertia.visit('/email_form')" class="group relative cursor-pointer flex flex-col justify-center items-center shadow-xl text-white font-extrabold bg-blue-800/10 backdrop-blur-lg border border-white/10 w-[180px] h-[50px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner">
-                                Send Email to SEC
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex flex-row">
-                        <!-- Quick Add Furnace -->
-                        <div
-                            @click="addNewFurnaceBtn"
-                            :class="{ 'opacity-50 pointer-events-none': isLoadingForAddFurnaces }"
-                            class="group relative cursor-pointer flex flex-col mr-20 justify-center items-center shadow-xl bg-white/10 backdrop-blur-lg border border-white/10 w-[400px] h-[230px] rounded-xl transform transition duration-300 ease-in-out hover:scale-105 active:scale-95 active:shadow-inner"
-                        >
-                            <span
-                            class="w-40 h-40 transition duration-300 bg-center bg-no-repeat bg-cover"
-                            :style="{
-                                backgroundImage: 'url(\'/photo/furnace_logo.png\')',
-                                backgroundSize: '100%'
-                            }"
-                            ></span>
-                            <p class="mt-2 text-lg font-bold text-blue-900 transition group-hover:text-blue-700">
-                            {{ isLoadingForAddFurnaces ? "On going..." : "Quick Add Furnace" }}
-                            </p>
-                        </div>
-
-                        <!-- Existing Furnaces -->
-                        <div
-                            @click="existingFurnaceBtn"
-                            :class="{
-                                'opacity-50 pointer-events-none': isLoadingForAddFurnaces,
-                                'cursor-pointer hover:scale-105 active:scale-95 active:shadow-inner': !isLoadingForAddFurnaces
-                            }"
-                            class="group relative flex flex-col justify-center items-center shadow-xl bg-white/20 backdrop-blur-lg border border-white/30 w-[400px] h-[230px] rounded-xl transform transition duration-300 ease-in-out"
-                        >
-                            <span
-                                class="w-[200px] h-[170px] bg-center bg-no-repeat bg-cover transition duration-300"
-                                :style="{
-                                    backgroundImage: 'url(\'/photo/existing_furnaces_logo.png\')',
-                                    backgroundSize: '100%'
-                                }"
-                            ></span>
-                            <p class="text-lg font-bold text-blue-900 transition group-hover:text-blue-700">
-                                Existing Furnaces
-                            </p>
-                        </div>
-                    </div>
-                    <p v-if="isLoadingForAddFurnaces" class="mt-10 text-xl text-center text-white animate-pulse">Creating... Please wait.</p>
-                    <p v-show="showFurnaceCreatedNotif" class="mt-10 text-lg text-center text-white animate-pulse">A new furnace with a name <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">{{ showFurnaceName }}</span> has been added successfully</p>
-                    <p v-show="showNoFurnaceDetectedNotif" class="mt-10 text-lg text-center text-white animate-pulse">No furnace detected in the system. Create one by clicking <span class="px-2 py-1 text-xl font-extrabold text-orange-100 bg-orange-600 rounded-lg">Quick Add Furnace</span> first.</p>
-                </div>
-                <div v-show="showSelectFurnace" class="flex flex-col w-[1000px] h-[450px] items-center p-5 justify-start align-middle shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
-                    <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
-                        <span
-                            class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
-                            :style="{
-                            backgroundImage: 'url(\'/photo/manage_logo.png\')',
-                            backgroundSize: '80%'
-                            }"
-                        ></span>
-                        <p class="text-2xl font-bold text-blue-900">MANAGE</p>
-                    </div>
-                    <div class="flex flex-row items-center justify-center align-baseline">
-                        <p class="text-xl font-extrabold text-white">Select a furnace:</p>
-                        <select
-                        v-model="currentFurnaceName"
-                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                        <option v-for="furnace in furnaceList" :key="furnace.id" :value="furnace.furnace_name">
-                            {{ furnace.furnace_name }}
-                        </option>
-                        </select>
-                    </div>
-                    <div class="flex flex-row items-center justify-center m-2 space-x-16">
-                        <button @click="existingBackBtn" class="px-4 py-2 font-bold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
-                            Back
-                        </button>
-                        <button
-                        @click="existingProceedBtn"
-                        class="flex items-baseline gap-2 px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                        >
-                        Proceed
-                            <span
-                                class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center bg-contain relative top-[2px]"
-                                :style="{
-                                backgroundImage: 'url(/photo/gotoreport.png)'
-                                }"
-                            ></span>
-                        </button>
-                    </div>
-                </div>
                 <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
                     <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
                         <span
@@ -129,8 +25,8 @@
                     <div class="flex flex-row items-center justify-center text-white align-baseline">
                         <p>Select a layer:</p>
                         <select
-                        v-model="currentLayerName"
-                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            v-model="currentLayerName"
+                            class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option v-for="layer in layerList" :key="layer.id" :value="layer.layer_name">
                                 {{ layer.layer_name }}
@@ -929,8 +825,6 @@
     //UI VISIBILITY variables...
     const mias_factorCsvError = ref(false);
 
-    const showFurnaceCreatedNotif = ref(false);
-    const showNoFurnaceDetectedNotif = ref(false);
     const showGraphAndTables = ref(false);
     const showLoadingForGraphAndTables = ref(false);
     const showUploadData = ref(true)
@@ -942,17 +836,14 @@
     const showProceed2_massprod = ref(false);
     const csvUpload = ref(false);
     const showAddNewDataLayer = ref(false);
-    const showAddNewLayer = ref(false);
+    const showAddNewLayer = ref(true);
     const showStartManageDiv = ref(true);
-    const showAddNewFurnace = ref(true);
-    const showSelectFurnace = ref(false);
     const showCreateExistingFurnaceBtn = ref(true);
-    const currentFurnaceName = ref('');
+    const currentFurnaceName = ref('Current Furnace Name');
     const currentFurnaceNo = ref(null);
     const toggleManageForm = ref(false);
     const currentLayerName = ref('');
     const currentLayerNo = ref(null);
-    const showFurnaceName = ref('');
     const showProceedToCsvUpload_confirmation = ref(false);
     const showSaveToDatabase_confirmation = ref(false);
     const showNoFileSelectedError = ref(false);
@@ -1070,69 +961,6 @@
             console.error("Error fetching API Response SaveToTpmCategory:", error);
         }
     }
-
-    const isLoadingForAddFurnaces = ref(false); // Initialize loading state
-
-    const addNewFurnaceBtn = async () => {
-        isLoadingForAddFurnaces.value = true; // Start loading
-
-        try {
-            // Fetch existing furnace data
-            const response = await axios.get('/api/furnacedata');
-            //console.log("API Response:", response.data.data["Furnace Data"]); // Debugging: Check the response structure
-
-            // Extract the correct array from the API response
-            const existingFurnaces = response.data.data["Furnace Data"] || []; // Adjust this if needed
-            //console.log("Extracted Furnaces:", existingFurnaces); // Debugging: Check if it's an array
-
-            // Ensure existingFurnaces is an array
-            if (!Array.isArray(existingFurnaces)) {
-                console.error("Error: Fetched data is not an array, received:", existingFurnaces);
-                return; // Stop execution if data is not an array
-            }
-
-            // Process existing furnace names and extract numbers
-            const furnaceNumbers = existingFurnaces
-                .map(item => item.furnace_name)
-                .filter(name => name && /^New Furnace \d+$/.test(name)) // Ensure it matches "New Furnace X"
-                .map(name => {
-                    const match = name.match(/\d+$/);
-                    return match ? parseInt(match[0], 10) : 1;
-                });
-
-            // Determine the next furnace number
-            const nextFurnaceNumber = furnaceNumbers.length > 0
-                ? Math.max(...furnaceNumbers) + 1
-                : 1;
-
-            const newFurnaceName = `New Furnace ${nextFurnaceNumber}`;
-
-            // Prepare the new furnace data
-            const newFurnaceData = {
-                furnace_name: newFurnaceName,
-                description: "Enter description here"
-            };
-
-            //console.log("Saving Furnace:", newFurnaceData); // Debugging log before sending
-
-            await saveNewFurnace(newFurnaceData);
-
-            //alert(`${newFurnaceName} has been added`);
-            showFurnaceName.value = newFurnaceName;
-        } catch (error) {
-            console.error("Error fetching furnace data:", error);
-        } finally {
-            isLoadingForAddFurnaces.value = false; // Stop loading
-            //console.log("Loading state reset.");
-
-            showFurnaceCreatedNotif.value = true;
-
-            // Hide the notification after 5 seconds
-            setTimeout(() => {
-                showFurnaceCreatedNotif.value = false;
-            }, 5000); // 5000 milliseconds = 5 seconds
-        }
-    };
 
     const mias_factorData = async (factor, mias) => {
         const response = await axios.get('/api/mias-factor');
@@ -1305,41 +1133,7 @@
     };
 
 
-    const furnaceList = ref([]); // Stores all fetched furnaces
-
-    // Function to fetch furnace data
-    const fetchFurnaces = async () => {
-        try {
-            const response = await axios.get("/api/furnacedata");
-            const extractedFurnaces = response.data.data["Furnace Data"] || response.data.furnaces || response.data.data || [];
-
-            if (!Array.isArray(extractedFurnaces)) {
-                console.error("Error: Fetched data is not an array.", extractedFurnaces);
-                return;
-            }
-
-            // Filter for distinct furnace_name
-            const uniqueFurnaces = [];
-            const seenNames = new Set();
-
-            for (const furnace of extractedFurnaces) {
-                const name = furnace.furnace_name;
-                if (!seenNames.has(name)) {
-                    seenNames.add(name);
-                    uniqueFurnaces.push(furnace);
-                }
-            }
-
-            furnaceList.value = uniqueFurnaces;
-
-            if (furnaceList.value.length > 0) {
-                currentFurnaceName.value = furnaceList.value[0].furnace_name;
-            }
-
-        } catch (error) {
-            console.error("Error fetching furnace data:", error);
-        }
-    };
+    const furnaceList = ref(['Furnace','Lists']); // Stores all fetched furnaces
 
 
     const layerList = ref([]); // Stores fetched layers\
@@ -1450,40 +1244,6 @@
             showAddNewDataLayer.value = true;
             saveNewLayer();
         }
-    }
-
-    const existingFurnaceBtn = async () => {
-        try{
-            const response = await axios.get('/api/furnacedata');
-            const existingFurnaces = response.data.data["Furnace Data"] || [];
-            //console.log("Existing furnaces: ", existingFurnaces.length);
-            if(existingFurnaces.length === 0){
-                showNoFurnaceDetectedNotif.value = true;
-                setTimeout(() => {
-                    showNoFurnaceDetectedNotif.value = false;
-                }, 5000);
-            }else{
-                showSelectFurnace.value = true;
-                showCreateExistingFurnaceBtn.value = false;
-            }
-        }catch(error){
-            console.error('Error fetching furnaces:', error);
-        }
-    }
-
-    const existingProceedBtn = () => {
-        if(currentFurnaceName.value === ''){
-            alert('Please select a furnace');
-        }else{
-            showAddNewLayer.value = true;
-            showSelectFurnace.value = false;
-            fetchLayers();
-        }
-    }
-
-    const existingBackBtn = () => {
-        showCreateExistingFurnaceBtn.value = true;
-        showSelectFurnace.value = false;
     }
 
     const proceedLayerBackBtn = () => {
@@ -1597,74 +1357,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     //Serial Generation end
 
-    //New Furnace , New Layers
-
-    const saveNewFurnace = async (newFurnace) => {
-        try {
-            //console.log("Attempting to save new furnace:", JSON.stringify(newFurnace, null, 2));
-
-            // First, check if the furnace already exists
-            const checkResponse = await axios.get('/api/furnacedata');
-            const existingFurnaces = checkResponse.data.data["Furnace Data"] || [];
-
-            // Check if the furnace already exists
-            if (existingFurnaces.some(f => f.furnace_name === newFurnace.furnace_name)) {
-                alert("Furnace name already exists! Try a different name.");
-                return;
-            }
-
-            // Send the new furnace data
-            const response = await axios.post('/api/furnacedata', newFurnace);
-            //console.log("Furnace created successfully:", response.data);
-
-            // Extract furnace_id from response (assuming API returns the created furnace object)
-            const newFurnaceNo = response.data.data.furnace_id; // Adjust based on API response
-            console.log("Get furnace no: ", newFurnaceNo);
-            // Now, create default layers under this furnace
-            await createDefaultLayers(newFurnaceNo);
-
-            // Refresh the furnace list
-            fetchFurnaces();
-            fetchLayers();
-
-        } catch (error) {
-            console.error("Error sending data to API:", error);
-            if (error.response) {
-                console.error("Server responded with:", error.response.status, error.response.data);
-            } else if (error.request) {
-                console.error("No response received from API. Request details:", error.request);
-            } else {
-                console.error("Error setting up request:", error.message);
-            }
-        }
-    };
-
-    const createDefaultLayers = async (furnaceNo) => {
-        // Define the exact order of layers you want to create
-        const layerNos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 9.5];
-
-        for (const num of layerNos) {
-            const layerData = {
-                layer_no: num,
-                layer_name: `Layer ${num}`,
-                furnace_id: furnaceNo,
-                description: "Enter description here"
-            };
-
-            try {
-                //console.log(`Creating Layer ${num}...`);
-                const response = await axios.post('/api/layerdata', layerData);
-                //console.log(`Layer ${num} created:`, response.data.data["Layer Name"]);
-            } catch (error) {
-                console.error(`Failed to create Layer ${num}:`, error.message);
-                if (error.response) {
-                    console.error("Server responded with:", error.response.status, error.response.data);
-                } else if (error.request) {
-                    console.error("No response received from API. Request details:", error.request);
-                }
-            }
-        }
-    };
 
     const saveNewLayer = async () => {
         try {
@@ -2864,7 +2556,7 @@ const renderChart = () => {
             //console.log('serialParam is provided, skipping fetchSerial.');
         } else {
             // If serialParam does not have a value, proceed with fetchSerial
-            fetchFurnaces();
+            //fetchFurnaces();
         }
 
         await checkAuthentication();

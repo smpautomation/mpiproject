@@ -137,12 +137,15 @@ const navItems = [
         { label: 'MPI', route: 'manage' }
         ]
     },
-    { label: 'Others', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+    { label: 'Options', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
         { label: 'Inspection', route: 'inspection' },
         { label: 'View List', route: 'viewList' },
         { label: 'Approval', route: 'approval' },
         { label: 'Furnace', route: 'furnace' },
-        { label: '1st & 2nd GBDP', route: 'second_gbdp_models' }
+        { label: '1st & 2nd GBDP', route: 'second_gbdp_models' },
+        { label: 'Special Instructions', route: 'instructions' },
+        { label: 'Send Email', route: 'email' },
+        { label: 'Mias Factor Emp', route: 'mias_factor' }
         ]
     },
     { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver'] }
