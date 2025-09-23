@@ -30,7 +30,7 @@ use App\Http\Controllers\GbdpSecondCoatingController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
 use App\Http\Controllers\SecondGBDPController;
-use App\Http\Controllers\SecondGBDPModelsController;
+use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
@@ -215,7 +215,7 @@ Route::apiResource('rob-models',RobModelController::class);
 
 Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
 Route::apiResource('furnace-data', FurnaceDataController::class);
-Route::apiResource('second-gbdp-models', SecondGBDPModelsController::class);
+Route::apiResource('second-gbdp-models', SecondGbdpModelsController::class);
 
 Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
