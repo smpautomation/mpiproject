@@ -9,507 +9,274 @@
         }">
         <!-- Overlay -->
         <div class="absolute inset-0 z-0 bg-black bg-opacity-50"></div>
-            <div v-show="showStartManageDiv" class="z-10">
-                <div v-show="showAddNewLayer" class="flex flex-col items-center justify-start p-5 space-y-4 w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
-                    <div class="flex flex-row items-center self-start justify-start mb-10 space-x-4">
-                        <span
-                            class="w-16 h-16 transition duration-300 bg-center bg-no-repeat bg-cover"
-                            :style="{
-                            backgroundImage: 'url(\'/photo/manage_logo.png\')',
-                            backgroundSize: '80%'
-                            }"
-                        ></span>
-                        <p class="text-2xl font-bold text-blue-900">MANAGE</p>
-                    </div>
-                    <p class="text-lg font-extrabold text-white ">You have selected <span class="text-xl animate-pulse">{{ currentFurnaceName }}</span></p>
-                    <div class="flex flex-row items-center justify-center text-white align-baseline">
-                        <p>Select a layer:</p>
+            <div v-if="toggleManageForm" class="max-w-5xl p-8 mx-auto mb-8 bg-white/95 backdrop-blur-sm border border-teal-200/50 rounded-xl shadow-2xl">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-10">
+                    <div class="relative">
+                        <label class="block mb-2 text-sm font-medium text-gray-700">Mass Prod. Name <span class="text-red-500">*</span></label>
                         <select
-                            v-model="currentLayerName"
-                            class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            v-model="selectedMassProd"
+                            class="w-full px-4 py-3 text-sm font-medium text-gray-800 bg-white border border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400"
                         >
-                            <option v-for="layer in layerList" :key="layer.id" :value="layer.layer_name">
-                                {{ layer.layer_name }}
+                            <option v-for="item in massProd_names" :key="item" :value="item">
+                                {{ item }}
                             </option>
                         </select>
                     </div>
-                    <div class="flex flex-row items-center justify-center m-2 space-x-16">
-                        <button @click="proceedLayerBackBtn" class="px-4 py-2 font-bold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
-                            Back
-                        </button>
-                        <button @click="proceedLayerBtn" class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                            Proceed
-                            <span
-                                class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center bg-contain relative top-[2px]"
-                                :style="{
-                                    backgroundImage: 'url(/photo/gotoreport.png)'
-                                }"
-                            ></span>
-                        </button>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
+                        <select v-model="currentLayerNo" class="w-full px-4 py-3 text-sm font-medium text-gray-800 bg-white border border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400">
+                            <option v-for="item in layers" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                        </select>
                     </div>
                 </div>
-            </div>
-            <div v-show="showAddNewDataLayer" v-if="!toggleManageForm" class="z-10 flex flex-col items-center justify-center py-4 space-y-4  w-[1000px] h-[450px] shadow-xl rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg">
-                <div class="flex flex-col items-center justify-center space-x-4 text-lg font-extrabold text-white align-middle">
-                    <p>Currently selected: </p>
-                    <p>{{ currentFurnaceName }} on {{ currentLayerName }}</p>
-                </div>
-                <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showManageForm">
-                    Begin Process
-                </button>
-                <button class="px-4 py-2 font-bold text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" @click="showAddNewDataLayer_cancel">
-                    Cancel
-                </button>
-            </div>
-            <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
-                <p v-if="showUploadTPMFiles" class="mb-4 text-xl font-semibold text-white">Please select and upload TPM files:</p>
-                <div v-if="showGraphAndTables" class="mt-[100px]">
-
-                </div>
+                <p v-if="showUploadTPMFiles" class="mb-6 text-xl font-semibold text-gray-800">Please select and upload TPM files:</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
-                    <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 mr-10 rounded-lg shadow-lg bg-gray-50">
-                        <!-- File Input Section -->
-                        <div class="flex flex-col items-center w-full space-y-4">
-                            <!-- File Input Label -->
-                            <label for="file-upload" class="text-lg font-medium text-gray-600">Select a file to upload:</label>
+                    <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-12 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold text-lg">Upload TPM Files</h3>
+                                <p class="text-cyan-100 text-sm">Select your .tpm files for processing</p>
+                            </div>
+                            </div>
+                        </div>
 
-                            <!-- File Upload Input -->
+                        <!-- Content -->
+                        <div class="p-6">
+
+                            <!-- Drag & Drop Zone -->
+                            <div class="relative">
                             <input
                                 id="file-upload"
                                 type="file"
                                 accept=".tpm"
                                 multiple
-                                class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 @change="storeFileList"
                             />
 
-                            <div>
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-teal-400 hover:bg-teal-50 transition-all duration-200 group">
+                                <!-- Upload Icon -->
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                </svg>
+                                </div>
 
-                            <button
-                                class="px-4 py-2 mr-24 font-semibold text-white bg-red-700 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                @click="clearFileUpload"
-                            >
-                                Clear
-                            </button>
+                                <!-- Upload Text -->
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                                    Drop files here or click to browse
+                                </h4>
+                                <p class="text-sm text-gray-600 mb-4">
+                                    Select multiple .tpm files for upload
+                                </p>
 
-                            <!-- Submit Button -->
-                            <input
-                                type="submit"
-                                id="submitRawdata"
-                                class="px-4 py-2 font-semibold text-white transition duration-200 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                @click="saveToDatabase_showConfirm"
-                            />
-                            <!-- Button to Redo Upload -->
-
+                                <!-- File Type Badge -->
+                                <div class="inline-flex items-center px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd" />
+                                </svg>
+                                    Only .TPM files
+                                </div>
+                            </div>
                             </div>
 
-                            <!-- Optional Instruction Text -->
-                            <p class="mt-2 text-sm text-gray-500">Only .tpm files are allowed</p>
+                            <!-- Selected Files Preview (if any files selected) -->
+                            <!-- You can add this section to show selected files -->
+
+                            <!-- Action Button -->
+                            <div class="mt-6 flex justify-center">
+                            <button
+                                @click="clearFileUpload"
+                                class="group px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-300"
+                            >
+                                <span class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 transition-transform group-hover:rotate-12" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 3a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Clear Files</span>
+                                </span>
+                            </button>
+                            </div>
+
+                            <!-- Help Text -->
+                            <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-start space-x-2">
+                                <svg class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <div>
+                                <p class="text-sm text-gray-700 font-medium mb-1">Upload Instructions:</p>
+                                <ul class="text-xs text-gray-600 space-y-1">
+                                    <li>• Multiple file selection supported</li>
+                                    <li>• Only .tpm file format accepted</li>
+                                    <li>• Drag and drop or click to select</li>
+                                </ul>
+                                </div>
+                            </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div
-                        v-show="showNoFileSelectedError"
-                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
-                        >
-                        <svg
-                            class="w-5 h-5 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                        <span>No file selected. Please upload a file.</span>
-                    </div>
+                    <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-12 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden ml-10">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-cyan-600 to-teal-600 px-6 py-4">
+                            <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd" />
+                                </svg>
+                                </div>
+                                <div>
+                                <h3 class="text-white font-semibold text-lg">Selected Files</h3>
+                                <p class="text-cyan-100 text-sm">Preview of uploaded files</p>
+                                </div>
+                            </div>
 
-                    <div v-show="showUploadTPMFiles" class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mb-12 rounded-lg shadow-lg bg-gray-50">
-                        <div v-if="fileLists.length > 0" class="w-[380px] h-[200px] overflow-auto">
-                            <p><span class="text-lg font-extrabold">Files:</span> ( You have selected {{ fileLists.length }} files. ) </p>
-                            <div
+                            <!-- File Count Badge -->
+                            <div v-if="fileLists.length > 0" class="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                                <span class="text-white text-sm font-semibold">{{ fileLists.length }} files</span>
+                            </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div class="p-6">
+
+                            <!-- Files List -->
+                            <div v-if="fileLists.length > 0" class="h-48 overflow-auto">
+                            <div class="space-y-3">
+                                <div
                                 v-for="(fileList, index) in fileLists"
                                 :key="index"
-                                class="p-2 m-2 text-white bg-blue-400 rounded-3xl"
-                            >
-                                {{ fileList }}
+                                class="group flex items-center justify-between p-3 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-lg hover:from-teal-100 hover:to-cyan-100 transition-all duration-200"
+                                >
+                                <!-- File Icon and Name -->
+                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                    </svg>
+                                    </div>
+
+                                    <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        {{ fileList }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">.tpm file</p>
+                                    </div>
+                                </div>
+
+                                <!-- File Status -->
+                                <div class="flex items-center space-x-2 flex-shrink-0">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-xs text-green-700 font-medium">Ready</span>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div v-else class="h-48 flex flex-col items-center justify-center text-center">
+                            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+                                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4zm14 4.5H2V14a2 2 0 002 2h12a2 2 0 002-2V7.5zM5 9a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+
+                            <h4 class="text-lg font-semibold text-gray-900 mb-2">No Files Selected</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                                Upload some .tpm files to see them listed here for processing.
+                            </p>
+
+                            <!-- Animated Indicator -->
+                            <div class="mt-4 flex space-x-1">
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                            </div>
+                            </div>
+
+                            <!-- Summary Footer (when files exist) -->
+                            <div v-if="fileLists.length > 0" class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">Total files selected:</span>
+                                <span class="font-semibold text-gray-900">{{ fileLists.length }} files</span>
+                            </div>
                             </div>
                         </div>
-
-                        <!-- This div shows when there are no files -->
-                        <div v-else class="flex flex-row justify-center items-center w-[400px] h-[195px]">
-                            <span class="text-2xl animate-pulse">No files selected</span>
-                        </div>
-                    </div>
-
-                    <div
-                        v-show="showSaveToDatabase_confirmation"
-                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
-                        >
-                        <div class="mb-6">
-                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure you want to upload all these files?</p>
-                        </div>
-                        <div class="flex space-x-6">
-                            <button
-                            @click="saveToDatabase"
-                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-                            >
-                            YES
-                            </button>
-                            <button
-                            @click="saveToDatabase_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
-                            >
-                            NO
-                            </button>
-                        </div>
                     </div>
 
                 </div>
                 <div>
-                    <div v-show="showProceed1" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold text-white animate-pulse">TPM DATA UPLOADED SUCCESSFULLY!</p>
-                        <p class="mt-5 text-white">Please Type the Model Name before proceeding: </p>
-                        <input
-                            type="text"
-                            v-model="jhCurveActualModel"
-                            @input="jhCurveActualModel = jhCurveActualModel.toUpperCase()"
-                            class="px-4 py-2 mt-4 mb-10 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="E.G. TIC0755G"
-                        />
-                        <button
-                            class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="proceedToCsvUpload_showConfirm"
-                            >
-                                Proceed to Upload CSV
-                        </button>
-                    </div>
-                    <div
-                        v-show="showNoModelError"
-                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
-                        >
-                        <svg
-                            class="w-5 h-5 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                        <span>Please type the model name first.</span>
-                    </div>
-                    <div
-                        v-show="showProceedToCsvUpload_confirmation"
-                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
-                        >
-                        <div class="mb-6">
-                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure this model name is correct?</p>
-                        </div>
-                        <div class="flex space-x-6">
-                            <button
-                            @click="proceedToCsvUpload"
-                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-                            >
-                            YES
-                            </button>
-                            <button
-                            @click="proceedToCsvUpload_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
-                            >
-                            NO
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <DotsLoader v-show="showLoadingForProceed1"/>
-                </div>
-                <div>
-                    <div v-show="csvUpload">
+                    <div class="flex flex-col items-center justify-center max-w-lg p-8 mx-auto mb-12 bg-white border border-teal-200 rounded-xl shadow-xl">
                         <!-- Upload Section Title -->
-                        <p class="mb-4 text-xl font-semibold text-center text-white">
-                            Upload Property Data CSV file:
-                        </p>
+                        <div class="flex items-center mb-6">
+                            <div class="p-3 mr-3 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full">
+                                <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800">
+                                Upload Property Data CSV
+                            </h3>
+                        </div>
+
                         <!-- File Input Section -->
                         <div class="flex flex-col items-center w-full space-y-4">
-                        <!-- File Input Label -->
-                        <label for="csv-file-upload" class="text-lg font-medium text-white">Select a file to upload:</label>
-                        <!-- File Upload Input -->
-                        <input
-                            id="csv-file-upload"
-                            type="file"
-                            accept=".csv"
-                            class="block w-full px-4 py-3 text-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            @change="csv_handleFileSelect"
-                        />
+                            <!-- File Input Label -->
+                            <label for="csv-file-upload" class="text-sm font-medium text-teal-700">Select a CSV file to upload:</label>
 
-                        <div>
+                            <!-- File Upload Input with Custom Styling -->
+                            <div class="relative w-full">
+                                <input
+                                    id="csv-file-upload"
+                                    type="file"
+                                    accept=".csv"
+                                    class="block w-full px-4 py-3 text-gray-700 bg-teal-50 border-2 border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-500 file:text-white file:cursor-pointer hover:file:bg-teal-600"
+                                    @change="csv_handleFileSelect"
+                                />
+                            </div>
+
                             <!-- Clear Button -->
-                            <button
-                            class="px-4 py-2 mr-4 font-semibold text-white bg-red-700 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-                            @click="csv_clearFile"
-                            >
-                            Clear
-                            </button>
+                            <div>
+                                <button
+                                    class="px-6 py-2 font-medium text-gray-600 bg-gray-100 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200"
+                                    @click="csv_clearFile"
+                                >
+                                    Clear File
+                                </button>
+                            </div>
 
-                            <!-- Submit Button -->
-                            <button
-                            class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            @click="csvUpload_showConfirm"
-                            >
-                            Submit
-                            </button>
-                        </div>
-                        <p class="mt-2 text-sm text-white">Only .csv files are allowed</p>
+                            <!-- Help Text -->
+                            <p class="mt-2 text-xs text-center text-gray-500">Only CSV files are supported</p>
                         </div>
                     </div>
-                    <div
-                        v-show="showNoCsvFileSelectedError"
-                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
-                        >
-                        <svg
-                            class="w-5 h-5 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                        <span>No CSV file selected.</span>
-                    </div>
-                    <div
-                        v-show="showCsvUpload_confirmation"
-                        class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
-                        >
-                        <div class="mb-6">
-                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure this CSV file is correct?</p>
-                        </div>
-                        <div class="flex space-x-6">
-                            <button
-                            @click="csv_submitFile"
-                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-                            >
-                            YES
-                            </button>
-                            <button
-                            @click="csvUpload_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
-                            >
-                            NO
-                            </button>
-                        </div>
+                </div>
+                <div>
+                    <div class="flex justify-center">
+                        <button @click="proceedToGraphConfirmation()" class="px-8 py-3 font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-md hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200">
+                            <span class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                Generate Graph
+                            </span>
+                        </button>
                     </div>
                 </div>
                 <DotsLoader v-show="showCsvLoading" />
                 <p v-if="mias_factorCsvError" class="font-extrabold text-red-500 font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
-                <div>
-                    <div v-show="showProceed2" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold text-white animate-pulse">UPLOADING CSV DATA SUCCESSFULLY COMPLETED!</p>
-                        <p class="mt-5 text-white">Please fill in the details before proceeding</p>
-                        <div class="flex flex-row">
-                            <div class="flex flex-col items-start justify-start">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Mass Production Name:</label>
-                                <input
-                                    type="text"
-                                    v-model="jhCurveMassProdName"
-                                    @input="jhCurveMassProdName = jhCurveMassProdName.toUpperCase()"
-                                    placeholder="e.g. K40 541st"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Lot No.:</label>
-                                <input
-                                    type="text"
-                                    v-model="jhCurveLotNo"
-                                    @input="jhCurveLotNo = jhCurveLotNo.toUpperCase()"
-                                    placeholder="e.g. 100/101-1"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                        <button
-                            class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="proceedToFinal_showConfirm"
-                            >
-                                Submit
-                        </button>
-                    </div>
-
-                    <div
-                    v-show="showProceed2_confirmation"
-                    class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
-                    >
-                        <div class="mb-6">
-                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure all information is correct?</p>
-                        </div>
-                        <div class="flex space-x-6">
-                            <button
-                            @click="proceedToFinal"
-                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-                            >
-                            YES
-                            </button>
-                            <button
-                            @click="proceedToFinal_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
-                            >
-                            NO
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
-                        v-show="showIncompleteInformationError"
-                        class="flex items-center px-4 py-2 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
-                        >
-                        <svg
-                            class="w-5 h-5 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                        <span>All fields are required.</span>
-                    </div>
-                </div>
-                <div>
-                    <div v-show="showProceed2_massprod" class="flex flex-col items-center justify-center">
-                        <p class="mb-8 text-lg font-extrabold text-white animate-pulse">Please fill in the details for <span class="text-xl text-green-200">Mass Production Control Sheet</span> before proceeding</p>
-                        <div class="flex flex-row">
-                            <span class="px-2 my-2 text-lg font-extrabold text-white rounded-lg bg-gradient-to-br from-cyan-300/30 to-green-800/10 backdrop-blur-lg">Box: <span class="text-cyan-300">{{ massProd_letter[currentBoxIndex] }}</span></span>
-                            <span class="my-2 text-lg font-extrabold text-white ml-[200px]">
-                                Current Layer: {{ displayLayerNo }}
-                            </span>
-
-                        </div>
-                        <div class="flex flex-row">
-                            <div class="flex flex-col items-start justify-start">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Quantity:</label>
-                                <input
-                                    type="number"
-                                    v-model="massProd_qty"
-                                    placeholder="e.g. 1600"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Box no.:</label>
-                                <input
-                                    type="text"
-                                    v-model="massProd_boxNo"
-                                    @input="massProd_boxNo = massProd_boxNo.toUpperCase()"
-                                    placeholder="e.g. UBP8 5071"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">WT:</label>
-                                <input
-                                    type="number"
-                                    v-model="massProd_WT"
-                                    placeholder="e.g. 15.23"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                        <div class="flex flex-row">
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Coating:</label>
-                                <input
-                                    type="number"
-                                    v-model="massProd_coating"
-                                    placeholder="e.g. 4"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start ml-5">
-                                <label class="mt-5 mb-1 text-sm font-extrabold text-white">Raw Material Code:</label>
-                                <input
-                                    type="text"
-                                    v-model="massProd_rawMatCode"
-                                    @input="massProd_rawMatCode = massProd_rawMatCode.toUpperCase()"
-                                    placeholder="e.g. 0G0V755"
-                                    class="px-4 py-2 mt-1 text-base font-semibold text-gray-700 placeholder-gray-400 uppercase bg-white border border-gray-300 rounded-lg shadow-sm placeholder-opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                        <div class="flex flex-row">
-                            <button
-                                class="px-4 py-2 mt-10 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-300 active:scale-95"
-                                @click="revert_boxLetter"
-                                >
-                                    Redo Previous
-                            </button>
-                            <button
-                                class="px-4 py-2 mt-10 ml-5 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                                @click="saveToTpmBoxes"
-                                >
-                                    Next
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
-                    v-show="showProceed2_massprod_confirmation"
-                    class="flex flex-col items-center justify-center max-w-md p-8 mx-auto mt-10 bg-white border border-gray-200 shadow-xl rounded-xl"
-                    >
-                        <div class="mb-6">
-                            <p class="text-lg font-semibold text-center text-gray-800">Are you sure all information is correct?</p>
-                        </div>
-                        <div class="flex space-x-6">
-                            <button
-                            @click="proceedNextToGraph"
-                            class="px-6 py-2 font-bold text-white transition duration-200 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-                            >
-                            YES
-                            </button>
-                            <button
-                            @click="proceedNextToGraph_cancel"
-                            class="px-6 py-2 font-bold text-gray-700 transition duration-200 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300"
-                            >
-                            NO
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div v-show="showProceed3" class="flex flex-col items-center justify-center">
-                        <p class="text-lg font-extrabold text-white animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
-                        <button
-                            class="px-4 py-2 mt-4 text-base font-semibold text-white transition-all duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                            @click="showAllData"
-                            >
-                                Proceed ( Show Data )
-                        </button>
-                    </div>
-                </div>
-               <!-- Loading Indicator -->
-                <DotsLoader v-if="layerTableRowLoading" />
             </div>
             <DotsLoader v-show="showLoadingForGraphAndTables" class="z-10"/>
             <div v-show="showGraphAndTables" class="z-10 flex flex-col">
@@ -525,7 +292,7 @@
                         <div class="flex flex-col items-start space-y-2">
                             <p>
                                 SMP Lot (
-                                <span>{{ jhCurveMassProdName }}</span>
+                                <span>{{ selectedMassProd }}</span>
                                 Mass Production )
                             </p>
                             <p>
@@ -755,26 +522,144 @@
                     </div>
                 </div>
             </div>
+            <Modal :show="showGraphProceedConfirmation" @close="showGraphProceedConfirmation = false">
+                <!-- Modal Content - goes directly in the slot -->
+                <div class="relative">
+
+                <!-- Header with Gradient -->
+                <div class="relative px-6 py-6 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
+                    <!-- Geometric Pattern Background -->
+                    <div class="absolute inset-0 opacity-10">
+                    <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                            <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                        </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#hexagon)" />
+                    </svg>
+                    </div>
+
+                    <!-- Header Content -->
+                    <div class="relative flex items-center justify-between">
+                    <!-- Create Icon -->
+                    <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
+                    <!-- Close Button -->
+                    <button
+                        @click="showGraphProceedConfirmation = false"
+                        class="p-2 text-white transition-all duration-200 rounded-lg hover:text-gray-200 hover:bg-white hover:bg-opacity-20 hover:scale-110"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="px-6 py-6">
+
+                    <!-- Title -->
+                    <div class="mb-6 text-center">
+                    <h3 class="flex items-center justify-center mb-2 space-x-2 text-xl font-bold text-gray-900">
+                        <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Confirm Submission</span>
+                    </h3>
+                    <p class="text-sm leading-relaxed text-gray-600">
+                        Are you sure? Please ensure all inputs are correct before proceeding.
+                    </p>
+                    </div>
+
+                    <!-- Validation Checklist -->
+                    <div class="p-4 mb-6 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
+                    <h4 class="flex items-center mb-3 space-x-2 text-sm font-semibold text-gray-800">
+                        <svg class="w-4 h-4 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Validation Summary</span>
+                    </h4>
+
+                    <div class="space-y-2 text-xs text-gray-700">
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                        <span>All required fields completed</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>
+                        <span>Data validation passed</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                        <span>Ready for database insertion</span>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-3">
+
+                    <!-- Cancel Button -->
+                    <button
+                        @click="showGraphProceedConfirmation = false"
+                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 transform hover:scale-[0.98] active:scale-95 flex items-center justify-center space-x-2"
+                    >
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Cancel</span>
+                    </button>
+
+                    <!-- Confirm Button with Animation -->
+                    <button
+                        @click="finalizeGraph()"
+                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
+                    >
+                        <!-- Shine effect -->
+                        <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+
+                        <span class="relative flex items-center justify-center space-x-2">
+                        <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Submit Now</span>
+                        </span>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Bottom accent line -->
+                <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
+                </div>
+            </Modal>
         </div>
     </Frontend>
-  </template>
+</template>
 
-  <script setup>
+<script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
     import { ref, computed, onMounted, nextTick } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     import { Inertia } from '@inertiajs/inertia';
     import Papa from 'papaparse';
     import axios from 'axios';
+    import Modal from '@/Components/Modal.vue';
     import DotsLoader from '@/Components/DotsLoader.vue';
-    import { useAuth } from '@/Composables/useAuth.js'
+    import { useAuth } from '@/Composables/useAuth.js';
+    import { useToast } from 'vue-toast-notification';
+    const toast = useToast();
 
     const { state } = useAuth();
 
     // Function to check authentication
     const checkAuthentication = async () => {
         try {
-
             const start = Date.now();
             const timeout = 500; // 5 seconds
 
@@ -822,12 +707,19 @@
         }
     }
 
+    //New Variables
+    const selectedMassProd = ref();
+    const massProd_names = ref([]);
+    const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+    const showModalSubmit = ref(false);
+
     //UI VISIBILITY variables...
     const mias_factorCsvError = ref(false);
+    const showGraphProceedConfirmation = ref(false);
 
     const showGraphAndTables = ref(false);
     const showLoadingForGraphAndTables = ref(false);
-    const showUploadData = ref(true)
+    const showUploadData = ref(true);
     const showUploadTPMFiles = ref(true);
     const showLoadingForProceed1 = ref(false);
     const showProceed1 = ref(false);
@@ -836,13 +728,9 @@
     const showProceed2_massprod = ref(false);
     const csvUpload = ref(false);
     const showAddNewDataLayer = ref(false);
-    const showAddNewLayer = ref(true);
-    const showStartManageDiv = ref(true);
-    const showCreateExistingFurnaceBtn = ref(true);
-    const currentFurnaceName = ref('Current Furnace Name');
+    const currentFurnaceName = ref();
     const currentFurnaceNo = ref(null);
-    const toggleManageForm = ref(false);
-    const currentLayerName = ref('');
+    const toggleManageForm = ref(true);
     const currentLayerNo = ref(null);
     const showProceedToCsvUpload_confirmation = ref(false);
     const showSaveToDatabase_confirmation = ref(false);
@@ -869,165 +757,126 @@
     const propData_miasEmp = ref("");
     const propData_factorEmp = ref("");
 
-    const displayLayerNo = computed(() => {
-        return currentLayerNo.value === 10 ? 9.5 : currentLayerNo.value
-    });
-
-    const showManageForm = () => {
-        toggleManageForm.value = !toggleManageForm.value;
-    }
-
-    const showAddNewDataLayer_cancel = () => {
-        showStartManageDiv.value = true;
-        showAddNewDataLayer.value = false;
-    }
-
-    const proceedToCsvUpload_showConfirm = () => {
-        if(jhCurveActualModel.value == null || jhCurveActualModel.value == ''){
-            //alert('Please type the Model Name first.');
-            showNoModelError.value = true;
-            showSerialNo.value = false;
-            showProceed1.value = false;
-            setTimeout(() => {
-                showNoModelError.value = false;
-                showSerialNo.value = true;
-                showProceed1.value = true;
-            }, 2000);
+    const proceedToGraphConfirmation = () => {
+        if(!selectedMassProd.value){
+            toast.error('Please select a Mass Production.');
+            return;
+        }else if(!currentLayerNo.value){
+            toast.error('Please select layer');
+        }else if(!fileData.value || fileData.value.length === 0){
+            toast.error('No .tmp file(s) detected.');
+            return;
+        }else if(!csv_selectedFile.value){
+            toast.error('No CSV file detected');
             return;
         }else{
-            showProceedToCsvUpload_confirmation.value = true;
-            showSerialNo.value = false;
-            showProceed1.value = false;
+            showGraphProceedConfirmation.value = true;
         }
     }
 
-    const proceedToCsvUpload_cancel = () => {
-        showProceedToCsvUpload_confirmation.value = false;
-        showProceed1.value = true;
-    }
+    // Data fetching zone ------ Data fetching zone
 
-    const proceedToCsvUpload = async () => {
-        showProceedToCsvUpload_confirmation.value = false;
-        showLoadingForProceed1.value = true;
-        setTimeout(() => {
-            csvUpload.value = true;
-            showProceed1.value = false;
-            showLoadingForProceed1.value = false;
-        }, 500); // Delay just enough to let Vue catch up
-
-    }
-
-    const proceedToFinal_showConfirm = () => {
-        if(jhCurveMassProdName.value == null || jhCurveMassProdName.value == ""||
-            jhCurveLotNo.value == null || jhCurveLotNo.value == ""){
-
-            showIncompleteInformationError.value = true;
-            showProceed2.value = false;
-
-            setTimeout(() => {
-                showIncompleteInformationError.value = false;
-                showProceed2.value = true;
-            }, 2000);
-            return;
-        }else{
-            showProceed2_confirmation.value = true;
-            showProceed2.value = false;
-        }
-    }
-
-    const proceedToFinal = () => {
-        showProceed3.value = true;
-        showProceed2.value = false;
-        showProceed2_confirmation.value = false;
-        saveToTpmCategory();
-    }
-
-    const proceedToFinal_cancel = () => {
-        showProceed2_confirmation.value = false;
-        showProceed2.value = true;
-    }
-
-    const saveToTpmCategory = async () => {
+    const getMassProdLists = async () => {
         try{
-            const responsePatchCategory = await axios.patch(`/api/updatecategory/${serialNo.value}`,{
-                    actual_model: jhCurveActualModel.value,
-                    factor_emp: propData_factorEmp.value,
-                    jhcurve_lotno: jhCurveLotNo.value,
-                    mias_emp: propData_miasEmp.value,
-                    massprod_name: jhCurveMassProdName.value,
-                });
-                //console.log("API PATCHED category: ",responsePatchCategory);
+            const response = await axios.get('/api/mass-production/');
+            const massProdList = response.data;
+            massProd_names.value = massProdList.map(item => item.mass_prod);
+            //console.log("List of mass prods: ",massProd_names.value);
         }catch(error){
-            console.error("Error fetching API Response SaveToTpmCategory:", error);
+            console.error('Error fetching mass prod lists',error);
+            toast.error('Failed to get the mass prod lists api error');
         }
     }
+
+    const getControlSheetData = async () => {
+        try{
+
+        }catch(error){
+
+        }
+    }
+
+    // Data fetching zone ------ Data fetching zone END
 
     const mias_factorData = async (factor, mias) => {
+        //console.log("🔄 Starting mias_factorData with:", { factor, mias });
+
+        // Step 1: Fetch data
         const response = await axios.get('/api/mias-factor');
         const miasFactorData = response.data.data;
-        //console.log("MIAS Factor Data:", miasFactorData);
+        //console.log("📥 API Response Data:", miasFactorData);
 
+        // Helper function with logging
         const findByEmpOrMiasNo = (searchValue) => {
-            return (
-                miasFactorData.find(item => item.employee_no === searchValue) ||
-                miasFactorData.find(item => item.mias_no === searchValue)
-            );
+            //console.log(`🔍 Searching for: ${searchValue}`);
+            const empMatch = miasFactorData.find(item => item.employee_no === searchValue);
+            if (empMatch) {
+                //console.log(`✅ Found match in employee_no:`, empMatch);
+                return empMatch;
+            }
+            const miasMatch = miasFactorData.find(item => item.mias_no === searchValue);
+            if (miasMatch) {
+                //console.log(`✅ Found match in mias_no:`, miasMatch);
+                return miasMatch;
+            }
+            //console.log(`❌ No match found for: ${searchValue}`);
+            return null;
         };
 
+        // Step 2: Factor check
+        //console.log("⚡ Checking factor:", factor);
         const factorMatch = findByEmpOrMiasNo(factor);
         if (factorMatch) {
             propData_factorEmp.value = factorMatch.employee_name;
+            //console.log("➡️ Assigned factor employee:", propData_factorEmp.value);
         } else {
             mias_factorCsvError.value = true;
-            throw new Error(`Factor ID "${factor}" not found in either employee_no or mias_no fields.`);
+            //console.error(`❌ Factor ID "${factor}" not found in either employee_no or mias_no fields.`);
+            throw new Error(`Factor ID "${factor}" not found.`);
         }
 
+        // Step 3: MIAS check
+        console.log("⚡ Checking mias:", mias);
         const miasMatch = findByEmpOrMiasNo(mias);
         if (miasMatch) {
             propData_miasEmp.value = miasMatch.employee_name;
+            //console.log("➡️ Assigned mias employee:", propData_miasEmp.value);
         } else {
             mias_factorCsvError.value = true;
-            throw new Error(`MIAS ID "${mias}" not found in either employee_no or mias_no fields.`);
+            //console.error(`❌ MIAS ID "${mias}" not found in either employee_no or mias_no fields.`);
+            throw new Error(`MIAS ID "${mias}" not found.`);
         }
+
+        //console.log("✅ Completed mias_factorData successfully.");
     };
 
-    const csv_selectedFile = ref(null)
-    const csv_parsedData = ref([])
+    const csv_selectedFile = ref(null);
+    const csv_parsedData = ref([]);
     const csv_tempWithDataStat = ref([]);
 
     const csv_handleFileSelect = (event) => {
-        csv_selectedFile.value = event.target.files[0]
+        csv_selectedFile.value = event.target.files[0];
     }
 
-    const csvUpload_showConfirm = () => {
-        if (!csv_selectedFile.value) {
-            //alert('Please select a CSV file first.')
-            showSerialNo.value = false;
-            csvUpload.value = false;
-            showNoCsvFileSelectedError.value = true;
-            setTimeout(() => {
-                //showCsv.value = false;
-                showSerialNo.value = true;
-                csvUpload.value = true;
-                showNoCsvFileSelectedError.value = false;
-            }, 2000);
-            return;
-        }else{
-            showCsvUpload_confirmation.value = true;
-            showSerialNo.value = false;
-            csvUpload.value = false;
-        }
-    }
+    //const finalizeDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const csvUpload_cancel = () => {
-        showCsvUpload_confirmation.value = false;
-        csvUpload.value = true;
-        csv_clearFile();
-    }
+    const finalizeGraph = async () => {
+        toast.success('Generating graph...');
+
+        // Step 1: Save to database
+        await saveToDatabase();
+
+        // Step 2: Submit file after DB save completes
+        await csv_submitFile();
+
+        // Step 3: Wait 1.5 seconds before showing all data
+        //await finalizeDelay(1500);
+
+        // Step 4: Finally show all data
+        await showAllData();
+    };
 
     const csv_submitFile = async () => {
-        csvUpload.value = false;
-        showCsvUpload_confirmation.value = false;
         showCsvLoading.value = true;
 
         const parsedData = await new Promise((resolve, reject) => {
@@ -1048,8 +897,8 @@
             mias_no: row["Factor Employee"],
         }));
 
-        //console.log('CSV Parsed Data:', csv_parsedData.value);
-        //console.log('Temp with Data class:', csv_tempWithDataStat.value);
+        console.log('CSV Parsed Data:', csv_parsedData.value);
+        console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
         function cleanInteger(str) {
             if (typeof str !== 'string') return null;
@@ -1077,7 +926,7 @@
             //console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
             if (factor && mias) {
-                //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
+                console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                 await mias_factorData(factor, mias);
             } else {
                 console.warn('Invalid or missing factor/mias:', row);
@@ -1128,128 +977,11 @@
             console.error("Something went wrong in mergeTempToTPM:", error);
         } finally{
             showCsvLoading.value = false;
-            showProceed2.value = true;
+            showGraphProceedConfirmation.value = false;
         }
     };
 
-
-    const furnaceList = ref(['Furnace','Lists']); // Stores all fetched furnaces
-
-
-    const layerList = ref([]); // Stores fetched layers\
-    const currentFurnaceNoForLayer = ref(null);
-
-    // Function to fetch layer data
-    const fetchLayers = async () => {
-        try {
-            //console.log("Fetching layer data from /api/layerdata...");
-
-            const response = await axios.get("/api/layerdata");
-            //console.log("API Response:", response.data.data["Layer Data"]);
-
-            // Extract layer data safely
-            const extractedLayers = response.data.data["Layer Data"] || response.data?.layers || response.data?.data || [];
-
-            //console.log("Extracted Layers:", extractedLayers);
-
-            // Ensure extractedLayers is an array
-            if (!Array.isArray(extractedLayers)) {
-                console.error("Error: Fetched data is not an array.", extractedLayers);
-                return;
-            }
-
-            currentFurnaceNoForLayer.value = await getFurnaceNoByName(currentFurnaceName.value);
-            currentFurnaceNo.value = currentFurnaceNoForLayer.value;
-            //console.log("Current furnace no for layer : ", currentFurnaceNoForLayer.value);
-            // 🔍 **Filter the data
-            const filteredLayers = extractedLayers.filter(layer => layer.furnace_id === currentFurnaceNoForLayer.value);
-
-            //console.log("Filtered Layers:", filteredLayers);
-
-            // Update the reactive layer list
-            layerList.value = filteredLayers;
-
-            // Set default selection to first layer, if available
-            if (layerList.value.length > 0) {
-                currentLayerName.value = layerList.value[0].layer_name;
-            } else {
-                console.warn("No matching layers found.");
-            }
-        } catch (error) {
-            console.error("Error fetching layer data:", error);
-
-            if (error.response) {
-                console.error("Server responded with:", error.response.status, error.response.data);
-            } else if (error.request) {
-                console.error("No response received from API. Request details:", error.request);
-            } else {
-                console.error("Error setting up request:", error.message);
-            }
-        }
-    };
-
-    const getFurnaceNoByName = async (furnaceName) => {
-        try {
-            //console.log("Fetching furnace_id for furnace:", furnaceName);
-
-            // Fetch all furnaces from the API
-            const response = await axios.get('/api/furnacedata');
-            const furnaces = response.data.data["Furnace Data"] || [];
-
-            // Find the furnace with the matching name
-            const foundFurnace = furnaces.find(f => f.furnace_name === furnaceName);
-
-            if (foundFurnace) {
-                //console.log("Furnace found:", foundFurnace);
-                return foundFurnace.furnace_id; // Return the furnace_no
-            } else {
-                console.warn("Furnace not found:", furnaceName);
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching furnace_no:", error);
-            return null;
-        }
-    };
-
-    const getLayerNoByName = async (layerName) => {
-        try {
-            //console.log("Fetching layer_no for layer:", layerName);
-
-            // Fetch all layers from the API
-            const response = await axios.get('/api/layerdata');
-            const layers = response.data.data["Layer Data"] || [];
-
-            // Find the layer with the matching name
-            const foundLayer = layers.find(f => f.layer_name === layerName);
-
-            if (foundLayer) {
-                //console.log("Layer found:", foundLayer.layer_no);
-                return foundLayer.layer_no; // Return the layer_no
-            } else {
-                console.warn("Layer not found:", layerName);
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching layer_no:", error);
-            return null;
-        }
-    };
-
-    const proceedLayerBtn = () => {
-        if(currentLayerName.value === ''){
-            alert('Please select a layer');
-        }else{
-            showStartManageDiv.value = false;
-            showAddNewDataLayer.value = true;
-            saveNewLayer();
-        }
-    }
-
-    const proceedLayerBackBtn = () => {
-        showAddNewLayer.value = false;
-        showSelectFurnace.value = true;
-    }
+    const layerList = ref([]); // Stores fetched layers
 
     //UI VISIBILITY variables end ...
 
@@ -1291,9 +1023,9 @@
 
     //UI Dynamic Color adjustments end
 
-//Serial Generation
+    //Serial Generation
 
-const serialNo = ref(null);  // Reactive variable to hold the generated serial number
+    const serialNo = ref('');  // Reactive variable to hold the generated serial number
     const generateSerialNumber = async () => {
         try {
             // Step 1: Fetch the data from the API
@@ -1338,17 +1070,17 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     // Generate the first serial number
                     serialNo.value = `${year}${month}${firstSerialNumber}`;
 
-                    //console.log('Generated First Serial Number:', serialNo.value);
-                    //alert(`Generated First Serial Number: ${serialNo.value}`);
+                    console.log('Generated First Serial Number:', serialNo.value);
+                    alert(`Generated First Serial Number: ${serialNo.value}`);
                 }
             } else {
                 // Handle case where there's no data
-                //console.log('No data available in tpmData');
+                console.log('No data available in tpmData');
                 const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
                 const firstSerialNumber = '000001';
                 serialNo.value = `${year}${month}${firstSerialNumber}`;
-                //alert(`Generated First Serial Number: ${serialNo.value}`);
+                alert(`Generated First Serial Number: ${serialNo.value}`);
             }
         } catch (error) {
             console.error('Error generating serial number:', error);
@@ -1356,17 +1088,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
     };
 
     //Serial Generation end
-
-
-    const saveNewLayer = async () => {
-        try {
-            currentLayerNo.value = await getLayerNoByName(currentLayerName.value);
-            //console.log("Current layer no from save new layer: ", currentLayerNo.value);
-            //alert('New Layer Added');
-        } catch (error) {
-            console.error('Error fetching layer number:', error);
-        }
-    };
 
     //New Furnace , New Layers end
 
@@ -1543,30 +1264,30 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     // Reject Remarks variables
 
-        /*rejectOKNG.value = "No data available";
-        rejectInstruction.value = "No data available";
-        rejectiHcRemarks.value = "No data available";
-        rejectLotRemarks.value = "No data available";*/
+    /*rejectOKNG.value = "No data available";
+    rejectInstruction.value = "No data available";
+    rejectiHcRemarks.value = "No data available";
+    rejectLotRemarks.value = "No data available";*/
 
-        const ok = "Status OK";
-        const reject = "REJECT, N.G";
-        const hold = "HOLD, N.G";
-        const within = "within internal specs";
+    const ok = "Status OK";
+    const reject = "REJECT, N.G";
+    const hold = "HOLD, N.G";
+    const within = "within internal specs";
 
-        const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
-        const noRejIns = "No reject instructions";
+    const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
+    const noRejIns = "No reject instructions";
 
-        const lotReject = "THIS LOT IS REJECT";
-        const lotPass = "THIS LOT IS PASS";
-        const lotHold = "THIS LOT IS HOLD";
+    const lotReject = "THIS LOT IS REJECT";
+    const lotPass = "THIS LOT IS PASS";
+    const lotHold = "THIS LOT IS HOLD";
 
-        const iHcOK = "iHc variance OK";
-        const iHcNG = "Process right side with iHc variance more than 1500 Oe";
+    const iHcOK = "iHc variance OK";
+    const iHcNG = "Process right side with iHc variance more than 1500 Oe";
 
-        const rejectOKNG = ref([]);
-        const rejectInstruction = ref(null);
-        const rejectLotRemarks = ref([]);
-        const rejectiHcRemarks = ref(null);
+    const rejectOKNG = ref([]);
+    const rejectInstruction = ref(null);
+    const rejectLotRemarks = ref([]);
+    const rejectiHcRemarks = ref(null);
 
         // Reject remarks variables end
 
@@ -1608,38 +1329,9 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         //console.log('Files stored:', fileData.value);
     };
 
-    const saveToDatabase_showConfirm = () => {
-        if (!fileData.value || fileData.value.length === 0) {
-            console.error("No file selected! fileData is empty or null.");
-
-            showNoFileSelectedError.value = true;
-            showUploadTPMFiles.value = false;
-            showSerialNo.value = false;
-
-            setTimeout(() => {
-                showNoFileSelectedError.value = false;
-                showUploadTPMFiles.value = true;
-                showSerialNo.value = true;
-            }, 2000);
-
-            return; // Exit the function if fileData is null or empty
-        } else {
-            showSaveToDatabase_confirmation.value = true;
-            showUploadTPMFiles.value = false;
-            showSerialNo.value = false;
-        }
-    }
-
-    const saveToDatabase_cancel = () => {
-        showSaveToDatabase_confirmation.value = false;
-        showUploadTPMFiles.value = true;
-        showSerialNo.value = true;
-        clearFileUpload();
-    }
-
     const saveToDatabase = async () => {
         await generateSerialNumber();
-        showUploadData.value = false;
+        //showUploadData.value = false;
         // Sort the files alphabetically by their name
         fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
         //console.log('Sorted Files:', fileData.value);
@@ -1737,7 +1429,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                 const layerData = {
                     "date": formattedDate,
                     "serial_no": serialNo.value,
-                    "furnace_id": currentFurnaceNo.value,
+                    "mass_prod": selectedMassProd.value,
                     "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
@@ -1793,7 +1485,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
                     "iHr95_remarks": saveIHr95Remarks.value,
                     "iHr98_remarks": saveIHr98Remarks.value,
                 };
-                //console.log("Layer Data:", layerData);
+                console.log("Layer Data:", layerData);
 
                 await sendLayerData(layerData); // Send the parsed data to the server
                 resolve();
@@ -1816,7 +1508,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         }catch(e){
             console.error("One or more files failed to upload." , e);
         }finally{
-            showUploadData.value = false;
             layerTableRowLoading.value = false;
             showSaveToDatabase_confirmation.value = false;
         }
@@ -1843,18 +1534,18 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     // Method to clear the file upload
     const clearFileUpload = () => {
-    fileData.value = null; // Reset the file data
-    fileLists.value = [];
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = ''; // Clear the input field
-    //console.log('File upload cleared');
+        fileData.value = null; // Reset the file data
+        fileLists.value = [];
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.value = ''; // Clear the input field
+        //console.log('File upload cleared');
     };
 
     // Function to send raw data via API
     const sendLayerData = async (layerData) => {
         try {
             const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
-            //console.log('API Response sendlayerdata:', response.data);
+            console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         }
@@ -1904,27 +1595,6 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
     // Variables for aggregate end
 
-    const massProd_boxNo = ref("");
-    const massProd_WT = ref();
-    const massProd_coating = ref();
-    const massProd_rawMatCode = ref("");
-    const massProd_letter = ref(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']);
-    const currentBoxIndex = ref(0);
-    const massProd_qty = ref();
-
-    const autoRenameFurnace = async () => {
-        try {
-            const furnaceShortName = jhCurveFurnaceName.value.split('-')[0];
-            const responseRenameFurnace = await axios.patch(`/api/furnacedata/${currentFurnaceNo.value}`, {
-                furnace_name: furnaceShortName,
-            });
-
-            console.log('responseRenameFurnace-data patch request result: ', responseRenameFurnace);
-        } catch (error) {
-            console.error('responseRenameFurnace-data patch request failed: ', error);
-        }
-    }
-
     // Function to fetch data from the API
     const showAllData = async () => {
         showLoadingForGraphAndTables.value = true;
@@ -1951,10 +1621,10 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
 
             const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
             jhCurveActualModel.value = tpm_category_actualmodel[0];
-            const tpm_category_factorEmp = tpmData.value.map(item => item.category?.factor_emp ?? null);
-            propData_factorEmp.value = tpm_category_factorEmp[0];
-            const tpm_category_miasEmp = tpmData.value.map(item => item.category?.mias_emp ?? null);
-            propData_miasEmp.value = tpm_category_miasEmp[0];
+            //const tpm_category_factorEmp = tpmData.value.map(item => item.category?.factor_emp ?? null);
+            //propData_factorEmp.value = tpm_category_factorEmp[0];
+            //const tpm_category_miasEmp = tpmData.value.map(item => item.category?.mias_emp ?? null);
+            //propData_miasEmp.value = tpm_category_miasEmp[0];
             const tpm_category_jhCurveLotno = tpmData.value.map(item => item.category?.jhcurve_lotno ?? null);
             jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
             const tpm_category_massProdName = tpmData.value.map(item => item.category?.massprod_name ?? null);
@@ -2293,7 +1963,7 @@ const serialNo = ref(null);  // Reactive variable to hold the generated serial n
         } finally {
             showProceed3.value = false;
             toggleManageForm.value = false;
-            await autoRenameFurnace();
+            //await autoRenameFurnace();
             await userManageLogging('created '+ serialNo.value +' data successfully | Model : ' + jhCurveActualModel.value);
         }
         await fetchDataCreateGraph();
@@ -2342,7 +2012,7 @@ const fetchDataCreateGraph = async () => {
         //console.log("dataReady ", dataReady.value);
         // Ensure DOM updates before rendering
         nextTick(() => {
-            //console.log("myChartCanvas reference:", myChartCanvas.value); // Debug the canvas ref
+            //console.log("myChartCanvas reference:", myChartCanvas.value);
             if (myChartCanvas.value) {
                 renderChart();  // Proceed to render the chart if the canvas is available
             } else {
@@ -2560,6 +2230,7 @@ const renderChart = () => {
         }
 
         await checkAuthentication();
+        await getMassProdLists();
 
     });
 

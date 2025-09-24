@@ -14,7 +14,6 @@ use App\Models\TPMDataRemark;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\StandardData;
-use App\Models\TPMBoxes;
 use App\Models\TPMDataCategory;
 use App\Models\Coating;
 use App\Models\HeatTreatment;
@@ -36,7 +35,7 @@ class TPMDataController extends Controller
                             ->limit(100)
                             ->pluck('serial_no');
                 $tpmData = TPMData::whereIn('serial_no', $latestSerials)
-                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace_id', 'layer_no')
+                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'mass_prod', 'layer_no')
                             ->orderByDesc('created_at')
                             ->get()
                             ->groupBy('serial_no');
@@ -187,8 +186,8 @@ class TPMDataController extends Controller
                 'HRO' => $request->input('HRO', null),
                 'x' => $request->input('x', null),
                 'y' => $request->input('y', null),
-                'furnace_id' => $request->input('furnace_id', null),
-                'layer_no' => $request->input('layer_no', null),
+                'mass_prod' => $request->input('mass_prod', null), // renamed + nullable string
+                'layer_no' => $request->input('layer_no', null), // now nullable in DB
                 'temperature' => $request->input('temperature', null),
                 'data_status' => $request->input('data_status', null)
             ];
@@ -233,7 +232,7 @@ class TPMDataController extends Controller
                     ];
                     $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
                 }catch(\Exception $e){
-
+                    Log::error('Failed to create TPMDataAggregateFunctions: ' . $e->getMessage());
                 }
             }
 
@@ -248,27 +247,6 @@ class TPMDataController extends Controller
 
                 }
             }
-
-            try {
-                $checkTpmBoxes = TPMBoxes::where('tpm_data_serial', $tpmData->serial_no)
-                    ->pluck('box_letter')
-                    ->toArray();
-
-                $expectedBoxes = ['A','B','C','D','E','F','G','H','J','K'];
-                $missingBoxes = array_diff($expectedBoxes, $checkTpmBoxes);
-
-                if (!empty($missingBoxes)) {
-                    foreach ($missingBoxes as $letter) {
-                        $TPMBoxes = TPMBoxes::create([
-                            'tpm_data_serial' => $tpmData->serial_no,
-                            'box_letter' => $letter
-                        ]);
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::error('Failed to create TPM Boxes: ' . $e->getMessage());
-            }
-
 
             $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
             if(!$checkReportData){
@@ -340,28 +318,6 @@ class TPMDataController extends Controller
 
                 }
             }
-            $checkCoatingData = Coating::where('serial', $tpmData->serial_no)->exists();
-            if(!$checkCoatingData){
-                try{
-                    $coatingDataInputs = [
-                        'serial' => $tpmData->serial_no,
-                    ];
-                    $coatingData = Coating::create($coatingDataInputs);
-                }catch(\Exception $e){
-                    Log::error('Failed to create Coating: ' . $e->getMessage());
-                }
-            }
-            $checkHeatTreatmentData = HeatTreatment::where('serial', $tpmData->serial_no)->exists();
-            if(!$checkHeatTreatmentData){
-                try{
-                    $heatTreatmentDataInputs = [
-                        'serial' => $tpmData->serial_no,
-                    ];
-                    $heatTreatmentData = HeatTreatment::create($heatTreatmentDataInputs);
-                }catch(\Exception $e){
-                    Log::error('Failed to create Coating: ' . $e->getMessage());
-                }
-            }
 
             DB::commit();
             return response()->json([
@@ -372,15 +328,12 @@ class TPMDataController extends Controller
                         $remark,
                         $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
                         $checkTpmDataCategory ?? $tpmDataCategory,
-                        $checkTpmBoxes ?? $TPMBoxes,
                         $checkReportData ?? $reportData,
                         $checkStandardData ?? $standardData,
                         $checkDataInstructions ?? $dataInstructions,
                         $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
                         $checkMieGxDataInstructions ?? $mieGxDataInstructions,
-                        $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate,
-                        $checkCoatingData ?? $coatingData,
-                        $checkHeatTreatmentData ?? $heatTreatmentData
+                        $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
                     ]
             ], 201);
         }catch(\Exception $e){
@@ -393,8 +346,8 @@ class TPMDataController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
+
     //     DB::beginTransaction();
     //     try {
     //         $tpmData = TPMData::find($serial_no);
@@ -555,57 +508,6 @@ class TPMDataController extends Controller
         }
     }
 
-    public function updateBoxes(Request $request, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $boxes = TPMBoxes::where('tpm_data_serial',$id)
-                                ->where('box_letter', $request->input('box_letter'))
-                                ->first();
-            $boxesFields = $request->all();
-            $boxes->update($boxesFields);
-
-            DB::commit();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Boxes updated successfully',
-                'data' => $boxes
-            ], 200);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Error updating Boxes',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-    public function showBoxes($id){
-        try{
-            $boxes = TPMBoxes::where('tpm_data_serial',$id)
-                                ->get();
-            if($boxes->isEmpty()){
-                return response()->json([
-                    'status' => false,
-                    'message' => 'No boxes found for this serial number.'
-                ], 404);
-            }else{
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Boxes found successfully',
-                    'data' => $boxes
-                ], 200);
-            }
-        }catch(\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => 'Error retrieving boxes',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
     public function destroy($serial_no)
     {
         try {
