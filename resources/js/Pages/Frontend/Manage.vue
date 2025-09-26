@@ -644,7 +644,7 @@
 
 <script setup>
     import Frontend from '@/Layouts/FrontendLayout.vue';
-    import { ref, computed, onMounted, nextTick } from 'vue';
+    import { ref, computed, onMounted, nextTick, watch } from 'vue';
     import { Chart, registerables } from 'chart.js'; // Import all required components
     import { Inertia } from '@inertiajs/inertia';
     import Papa from 'papaparse';
@@ -712,6 +712,7 @@
     const massProd_names = ref([]);
     const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
     const showModalSubmit = ref(false);
+    const controlSheet_layerdata = ref();
 
     //UI VISIBILITY variables...
     const mias_factorCsvError = ref(false);
@@ -777,24 +778,48 @@
     // Data fetching zone ------ Data fetching zone
 
     const getMassProdLists = async () => {
-        try{
+        try {
             const response = await axios.get('/api/mass-production/');
             const massProdList = response.data;
+
+            // Save the mass_prod names
             massProd_names.value = massProdList.map(item => item.mass_prod);
-            //console.log("List of mass prods: ",massProd_names.value);
-        }catch(error){
-            console.error('Error fetching mass prod lists',error);
+
+            // Dynamically get the correct layer column
+            const columnKey = currentLayerNo.value === '9.5' ? 'layer_9_5' : `layer_${currentLayerNo.value}`;
+            const layerData = massProdList.map(item => item[columnKey]);
+
+            console.log(`Data for ${columnKey}:`, layerData);
+        } catch (error) {
+            console.error('Error fetching mass prod lists', error);
+            toast.error('Failed to get the mass prod lists api error');
+        }
+    };
+
+    const fetchControlSheetData = async () => {
+        try {
+            const response = await axios.get('/api/mass-production/');
+            const massProdList = response.data;
+
+            // Dynamically get the correct layer column
+            const columnKey = currentLayerNo.value === '9.5' ? 'layer_9_5' : `layer_${currentLayerNo.value}`;
+            controlSheet_layerdata.value = massProdList.map(item => item[columnKey]);
+
+            console.log(`Data for ${columnKey}:`, controlSheet_layerdata.value);
+        } catch (error) {
+            console.error('Error fetching mass prod lists', error);
             toast.error('Failed to get the mass prod lists api error');
         }
     }
 
-    const getControlSheetData = async () => {
-        try{
-
-        }catch(error){
-
+    // Watcher
+    watch([selectedMassProd, currentLayerNo], async ([newProd, newLayer], [oldProd, oldLayer]) => {
+        if (newProd && newLayer) {
+            console.log(`Watcher triggered → MassProd: ${newProd}, Layer: ${newLayer}`);
+            await fetchControlSheetData();
         }
-    }
+    });
+
 
     // Data fetching zone ------ Data fetching zone END
 
