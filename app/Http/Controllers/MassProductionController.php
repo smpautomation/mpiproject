@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\MassProduction;
+use App\Models\GbdpSecondCoating;
+use App\Models\GbdpSecondHeatTreatment;
+use App\Models\Coating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -278,6 +281,127 @@ class MassProductionController extends Controller
         return response()->json([
             'message' => "MODEL row not found in Layer {$layerNumber}.",
         ], 404);
+    }
+
+    public function getLayerLotno($massprod, $layerNumber)
+    {
+        $record = MassProduction::where('mass_prod', $massprod)->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => "Mass Production record not found.",
+            ], 404);
+        }
+
+        // Normalize layer number (e.g., 9.5 → layer_9_5)
+        $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
+
+        if (!isset($record->$layerColumn)) {
+            return response()->json([
+                'message' => "Layer {$layerNumber} not found for this Mass Production.",
+            ], 404);
+        }
+
+        $layerData = json_decode($record->$layerColumn, true);
+
+        if (empty($layerData) || !is_array($layerData)) {
+            return response()->json([
+                'message' => "No valid data in Layer {$layerNumber}.",
+            ], 404);
+        }
+
+        // Search for row with "MODEL:"
+        foreach ($layerData as $row) {
+            if (isset($row['rowTitle']) && $row['rowTitle'] === 'LT. No.:') {
+                return response()->json([
+                    'lotno' => $row['data']['A'] ?? null,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => "LOTNO row not found in Layer {$layerNumber}.",
+        ], 404);
+    }
+
+    public function getAllHTCompletedLayers($massprod)
+    {
+        $record = MassProduction::where('mass_prod', $massprod)->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => "Mass Production record not found.",
+            ], 404);
+        }
+
+        // Define all possible layer columns
+        $layers = [
+            'layer_1'   => '1',
+            'layer_2'   => '2',
+            'layer_3'   => '3',
+            'layer_4'   => '4',
+            'layer_5'   => '5',
+            'layer_6'   => '6',
+            'layer_7'   => '7',
+            'layer_8'   => '8',
+            'layer_9'   => '9',
+            'layer_9_5' => '9.5',
+        ];
+
+        $completed = [];
+
+        foreach ($layers as $column => $label) {
+            $value = $record->$column;
+
+            if (!empty($value) && $value !== 'null') {
+                $decoded = json_decode($value, true);
+                if (!empty($decoded)) {
+                    $completed[] = $label;
+                }
+            }
+        }
+
+        return response()->json([
+            'completed_layers' => $completed,
+        ]);
+    }
+
+    public function getAllCoatingCompleteLayers($massprod)
+    {
+        // Get layers from gbdp_second_coatings
+        $secondLayers = GbdpSecondCoating::where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->pluck('layer');
+
+        // Get layers from coatings
+        $coatingLayers = Coating::where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->pluck('layer');
+
+        // Merge, remove duplicates, sort, reindex
+        $layers = $secondLayers
+            ->merge($coatingLayers)
+            ->unique()
+            ->sort()
+            ->values();
+
+        return response()->json([
+            'completed_layers' => $layers
+        ]);
+    }
+
+    public function getAllSecondHTCompletedLayers($massprod)
+    {
+        // Fetch layers from gbdp_second_heat_treatments table only
+        $gbdpLayers = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->filter() // remove nulls
+            ->map(fn($layer) => (string)$layer) // cast to string
+            ->toArray();
+
+        return response()->json([
+            '2nd_gbdp_layers' => $gbdpLayers,
+        ]);
     }
 
 }

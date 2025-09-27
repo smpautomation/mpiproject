@@ -25,7 +25,7 @@
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                         <select v-model="currentLayerNo" class="w-full px-4 py-3 text-sm font-medium text-gray-800 bg-white border border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400">
-                            <option v-for="item in layers" :key="item" :value="item">
+                            <option v-for="item in available_layers" :key="item" :value="item">
                                 {{ item }}
                             </option>
                         </select>
@@ -711,6 +711,7 @@
     const selectedMassProd = ref();
     const massProd_names = ref([]);
     const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+    const available_layers = ref([]);
     const showModalSubmit = ref(false);
     const controlSheet_layerdata = ref();
 
@@ -785,38 +786,75 @@
             // Save the mass_prod names
             massProd_names.value = massProdList.map(item => item.mass_prod);
 
-            // Dynamically get the correct layer column
-            const columnKey = currentLayerNo.value === '9.5' ? 'layer_9_5' : `layer_${currentLayerNo.value}`;
-            const layerData = massProdList.map(item => item[columnKey]);
-
-            console.log(`Data for ${columnKey}:`, layerData);
         } catch (error) {
             console.error('Error fetching mass prod lists', error);
             toast.error('Failed to get the mass prod lists api error');
         }
     };
 
-    const fetchControlSheetData = async () => {
+    const fetchAvailableLayers = async () => {
         try {
-            const response = await axios.get('/api/mass-production/');
-            const massProdList = response.data;
-
-            // Dynamically get the correct layer column
-            const columnKey = currentLayerNo.value === '9.5' ? 'layer_9_5' : `layer_${currentLayerNo.value}`;
-            controlSheet_layerdata.value = massProdList.map(item => item[columnKey]);
-
-            console.log(`Data for ${columnKey}:`, controlSheet_layerdata.value);
+            const response = await axios.get(
+                `/api/mass-productions/${selectedMassProd.value}/coating-completed-layers`
+            );
+            available_layers.value = response.data.completed_layers;
+            console.log("Available Layers: ", available_layers.value);
         } catch (error) {
-            console.error('Error fetching mass prod lists', error);
-            toast.error('Failed to get the mass prod lists api error');
+            console.error(error);
+            toast.error('Failed to fetch available layers from Heat Treatment');
         }
-    }
+    };
+
+    const fetchLayerModelAndLotno = async () => {
+        if (!selectedMassProd.value || !currentLayerNo.value) {
+            console.warn("MassProd or Layer not selected yet.");
+            return;
+        }
+
+        let model = null;
+        let lotno = null;
+
+        try {
+            const responseModel = await axios.get(
+                `/api/mass-productions/${selectedMassProd.value}/layer/${currentLayerNo.value}/model`
+            );
+            model = responseModel.data.model;
+            jhCurveActualModel.value = model;
+            console.log("Model:", jhCurveActualModel.value);
+        } catch (error) {
+            console.error("Error fetching layer model:", error);
+            toast.error('Failed to fetch model data for this layer.');
+        }
+
+        try {
+            const responseLotno = await axios.get(
+                `/api/mass-productions/${selectedMassProd.value}/layer/${currentLayerNo.value}/lotno`
+            );
+            lotno = responseLotno.data.lotno;
+            jhCurveLotNo.value = lotno;
+            console.log("Lot No:", jhCurveLotNo.value);
+        } catch (error) {
+            console.error("Error fetching layer lotno:", error);
+            toast.error('Failed to fetch lotno data for this layer.');
+        }
+
+        return { model, lotno };
+    };
+
 
     // Watcher
-    watch([selectedMassProd, currentLayerNo], async ([newProd, newLayer], [oldProd, oldLayer]) => {
+    watch([selectedMassProd, currentLayerNo], async ([newProd, newLayer]) => {
         if (newProd && newLayer) {
             console.log(`Watcher triggered → MassProd: ${newProd}, Layer: ${newLayer}`);
-            await fetchControlSheetData();
+
+            const { model, lotno } = await fetchLayerModelAndLotno();
+            console.log("Fetched values:", { model, lotno });
+        }
+    });
+
+    watch(selectedMassProd, async (newVal, oldVal) => {
+        if (newVal) {
+            await fetchAvailableLayers();
         }
     });
 
@@ -1643,17 +1681,6 @@
             tpmRemarks.value = response.data.remark || [];
             getAggregateID.value = response.data[0][0].id || [];
             //console.log("Aggregate ID: ", getAggregateID.value);
-
-            const tpm_category_actualmodel = tpmData.value.map(item => item.category?.actual_model ?? null);
-            jhCurveActualModel.value = tpm_category_actualmodel[0];
-            //const tpm_category_factorEmp = tpmData.value.map(item => item.category?.factor_emp ?? null);
-            //propData_factorEmp.value = tpm_category_factorEmp[0];
-            //const tpm_category_miasEmp = tpmData.value.map(item => item.category?.mias_emp ?? null);
-            //propData_miasEmp.value = tpm_category_miasEmp[0];
-            const tpm_category_jhCurveLotno = tpmData.value.map(item => item.category?.jhcurve_lotno ?? null);
-            jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
-            const tpm_category_massProdName = tpmData.value.map(item => item.category?.massprod_name ?? null);
-            jhCurveMassProdName.value = tpm_category_massProdName[0];
 
             // Combine the arrays
             combinedData.value = tpmData.value;

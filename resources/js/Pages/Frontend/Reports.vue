@@ -4,20 +4,6 @@
             YOU ARE ON TEST SERVER
         </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-        <div v-if="!isFromApproval && !isFromViewList">
-            <div v-if="serialList.length == 0"> <!-- default div -->
-                <div class="flex flex-col items-center justify-center mt-10 align-baseline">
-                    <div
-                        class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
-                        :style="{
-                            backgroundImage: 'url(\'/photo/no_data.png\')',
-                            backgroundSize: '80%'
-                        }"
-                    ></div>
-                    <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
-                </div>
-            </div>
-        </div>
         <div v-if="showNotif2 && isFromApproval" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
             <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
         </div>

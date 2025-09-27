@@ -390,9 +390,15 @@
                     <div class="w-full">
                         <button
                             @click="finalize"
-                            class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            :disabled="isExisting"
+                            :class="[
+                            'w-full py-2 text-sm font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                            isExisting
+                                ? 'bg-red-600 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
+                                : 'bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-white focus:ring-indigo-400 text-white'
+                            ]"
                         >
-                            FINALIZE
+                            {{ isExisting ? 'DUPLICATE DETECTED' : 'FINALIZE' }}
                         </button>
                     </div>
 
@@ -401,7 +407,7 @@
                         <!-- Apply 2nd GBDP -->
                         <button
                             @click="second_heat_treatment()"
-                            :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected)"
+                            :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected) || isExisting_2ndGBDP"
                             class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-500 disabled:hover:to-orange-600"
                         >
                             APPLY 1ST 2ND GBDP
@@ -766,6 +772,10 @@ const model_names = ref([]);
 const graph_patterns = ref([]);
 const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const existingLayers = ref([]);
+const existingLayers_2ndGBDP = ref([]);
+const isExisting = ref(false);
+const isExisting_2ndGBDP = ref(false);
 const completedLayers = ref(['1','2']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K','L'];
 const boxesEndList = ref(['B','C','D','E','F','G','H','J','K','L']);
@@ -940,6 +950,47 @@ const getGraphPatterns = async () => {
     }
 }
 
+const fetchExistingLayers = async () => {
+    if (!mpcs.selectedMassProd) {
+        console.warn("Mass Production not selected yet.");
+        return;
+    }
+
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${mpcs.selectedMassProd}/completed-layers`
+        );
+        existingLayers.value = response.data.completed_layers;
+        console.log("Existing Layers for heat treatment:", existingLayers.value);
+
+        const response2 = await axios.get(
+            `/api/mass-productions/${mpcs.selectedMassProd}/second-ht-completed-layers`
+        );
+        existingLayers_2ndGBDP.value = response2.data['2nd_gbdp_layers'];
+        console.log("Existing Layers for heat treatment 2ND GBDP:", existingLayers_2ndGBDP.value);
+
+        // Initial check after fetching
+        if (mpcs.selectedLayer) {
+            isExisting.value = existingLayers.value.includes(mpcs.selectedLayer);
+        }
+
+        if (mpcs.selectedLayer) {
+            isExisting_2ndGBDP.value = existingLayers_2ndGBDP.value.includes(mpcs.selectedLayer);
+        }
+
+        if (isExisting.value){
+            toast.warning('Selected layer already contains existing data.');
+        }
+
+        if (isExisting_2ndGBDP.value){
+            toast.warning('Selected layer already contains existing 1st and 2nd gbdp data.');
+        }
+    } catch (error) {
+        console.error("Error fetching existing layers:", error);
+        toast.error('Failed to fetch existing layers.');
+    }
+};
+
 const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/second-heat-treatment-data/${mpcs.selectedMassProd}/layers`);
@@ -950,6 +1001,21 @@ const getCompletedLayers = async () => {
         toast.error('Failed to fetch layers');
     }
 };
+
+// Watch for changes in selectedLayer
+watch(
+    [() => mpcs.selectedMassProd, () => mpcs.selectedLayer],
+    async ([newMassProd, newLayer]) => {
+        if (!newMassProd || !newLayer) {
+            isExisting.value = false;
+            return;
+        }
+
+        await fetchExistingLayers(); // fetch backend data
+        isExisting.value = existingLayers.value.includes(newLayer);
+        console.log(`MassProd: ${newMassProd}, Selected Layer: ${newLayer}, Exists? ${isExisting.value}`);
+    }
+);
 
 watch(
     [() => mpcs.selectedMassProd, () => activate2ndGBDP.value],
@@ -1169,7 +1235,7 @@ const uploadGraphs = async () => {
         formData.append('actual_graph', actualGraphFile.value);
     }
 
-    // 🔑 Pass patternNo so backend fetches standard graph
+    // Pass patternNo so backend fetches standard graph
     formData.append('pattern_no', hti.patternNo);
 
     try {

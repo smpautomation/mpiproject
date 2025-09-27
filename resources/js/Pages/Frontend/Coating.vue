@@ -355,7 +355,7 @@
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                             <select v-model="coatingInfo.selectedLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                                <option v-for="items in layers" :key="items" :value="items">
+                                <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
                                 </option>
                             </select>
@@ -768,10 +768,14 @@
                         <!-- Finalize -->
                         <button
                             v-if="!activate2ndGBDP"
+                            :disabled="isExists"
                             @click="finalize"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
+                            :class="isExists
+                                ? 'bg-red-600 hover:bg-red-700 focus:ring-red-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'"
                         >
-                            FINALIZE
+                            {{ isExists ? 'DUPLICATE DETECTED' : 'FINALIZE' }}
                         </button>
                         <button
                             v-else
@@ -1330,6 +1334,9 @@ const showModalSubmit = ref(false);
 
 const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const isExists = ref(false);
+const isExists_2ndGBDP = ref(false);
+const available_layers = ref([]);
 const completedLayers = ref([]);
 const completedLayers_1st_2nd_gbdp = ref([]);
 const lotNo = ref();
@@ -1346,7 +1353,7 @@ const fetchedCoatingData = ref([]);
 
 const coatingInfo = reactive({ // <--- this is the 2nd GBDP
     selectedMassProd: '',
-    selectedLayer: '1',
+    selectedLayer: null,
     coatingDate: '',
     coatingMachineNo: '',
     slurryLotNo: '',
@@ -1590,7 +1597,7 @@ const clearAll = () => {
     // Reset coatingInfo
     Object.assign(coatingInfo, {
         selectedMassProd: '',
-        selectedLayer: '1',
+        selectedLayer: null,
         coatingDate: '',
         coatingMachineNo: '',
         slurryLotNo: '',
@@ -1652,7 +1659,8 @@ const clearAllTransition = () => {
 
     // Reset arrays
      // Keep the shape intact
-    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    concentrationData_1stGBDP.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    concentrationData_2ndGBDP.value = Array.from({ length: 7 }, () => Array(7).fill(null));
     coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
         no: i + 1,
         coating: null
@@ -1898,6 +1906,60 @@ const getCompletedLayers_1st_2nd_gbdp = async () => {
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
 
+const fetchExistingLayers = async () => {
+    if (!coatingInfo.selectedMassProd) {
+        console.warn("Mass Production not selected yet.");
+        return;
+    }
+
+    try {
+        // 1st Coating
+        const response1 = await axios.get(
+            `/api/coating-data/${coatingInfo.selectedMassProd}/layers`
+        );
+        existingLayers.value = response1.data.completed_layers;
+        console.log("Existing Layers for Coating:", existingLayers.value);
+
+        // 2nd Coating
+        const response2 = await axios.get(
+            `/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`
+        );
+        existingLayers_2ndGBDP.value = response2.data.layers;
+        console.log("Existing Layers for 2nd Coating:", existingLayers_2ndGBDP.value);
+
+        // Initial check after fetching
+        if (coatingInfo.selectedLayer) {
+            isExists.value = existingLayers.value.includes(coatingInfo.selectedLayer);
+            isExists_2ndGBDP.value = existingLayers_2ndGBDP.value.includes(coatingInfo.selectedLayer);
+        }
+
+        if (isExists.value) {
+            toast.warning('Selected layer already contains existing coating data.');
+        }
+
+        if (isExists_2ndGBDP.value) {
+            toast.warning('Selected layer already contains existing 1st and 2nd GBDP coating data.');
+        }
+
+    } catch (error) {
+        console.error("Error fetching existing layers:", error);
+        toast.error('Failed to fetch existing layers.');
+    }
+};
+
+const fetchAvailableLayers = async () => {
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${coatingInfo.selectedMassProd}/completed-layers`
+        );
+        available_layers.value = response.data.completed_layers;
+        console.log("Available Layers: ", available_layers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch available layers from Heat Treatment');
+    }
+};
+
 const fetchLayerModel = async(massProd, layerNumber) => {
     try {
         const response = await axios.get(
@@ -1920,6 +1982,26 @@ watch(
         }
     }
 )
+
+watch(
+    [() => coatingInfo.selectedMassProd, () => coatingInfo.selectedLayer],
+    async ([newMassProd, newLayer]) => {
+        if (!newMassProd || !newLayer) {
+        // Reset the flags if either is missing
+        isExists.value = false;
+        isExists_2ndGBDP.value = false;
+        return;
+        }
+
+        // Fetch existing layers whenever either value changes
+        await fetchExistingLayers();
+
+        console.log(
+        `Selected MassProd: ${newMassProd}, Selected Layer: ${newLayer}, ` +
+        `isExists: ${isExists.value}, isExists_2ndGBDP: ${isExists_2ndGBDP.value}`
+        );
+    }
+);
 
 const activate2ndGBDP = computed(() => {
     const model = fetchedModelValue.value;
@@ -1950,6 +2032,7 @@ watch(
       await getCompletedLayers_1st_2nd_gbdp();
     } else {
       await getCompletedLayers();
+      await fetchAvailableLayers();
     }
   }
 );

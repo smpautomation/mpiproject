@@ -140,7 +140,7 @@
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                             <select v-model="filmPastingInfo.selected_layer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                                <option v-for="items in layers" :key="items" :value="items">
+                                <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
                                 </option>
                             </select>
@@ -537,12 +537,13 @@ const showModalSubmit = ref();
 
 
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const available_layers = ref([]);
 const completedLayers = ref([]);
 const massProdLists = ref([]);
 
 const filmPastingInfo = reactive({
     selected_mass_prod: '',
-    selected_layer: 1,
+    selected_layer: null,
     film_pasting_date: '',
     machine_no: '',
     total_magnet_weight: 0,
@@ -663,7 +664,7 @@ const saveToDatabase = async () => {
 const clearAll = () => {
     Object.assign(filmPastingInfo,{
         selected_mass_prod: '',
-        selected_layer: 1,
+        selected_layer: null,
         film_pasting_date: '',
         machine_no: '',
         total_magnet_weight: 0,
@@ -715,7 +716,7 @@ const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/film-pasting-data/${filmPastingInfo.selected_mass_prod}/layers`);
         completedLayers.value = response.data.layers.map(String);
-        console.log(completedLayers.value);
+        console.log("Completed Layers: ",completedLayers.value);
     } catch (error) {
         console.error(error);
         toast.error('Failed to fetch layers');
@@ -725,6 +726,20 @@ const getCompletedLayers = async () => {
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
+
+const fetchAvailableLayers = async () => {
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${filmPastingInfo.selected_mass_prod}/completed-layers`
+        );
+        available_layers.value = response.data.completed_layers;
+        console.log("Available Layers: ", available_layers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch available layers from Heat Treatment');
+    }
+};
+
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger END
 
@@ -736,6 +751,7 @@ watch(
     async (newValue) => {
         if (newValue) {
             await getCompletedLayers();
+            await fetchAvailableLayers();
         } else {
             completedLayers.value = []; // reset if cleared
         }

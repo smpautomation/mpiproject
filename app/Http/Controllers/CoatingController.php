@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coating;
 use App\Models\CoatingPending;
+use App\Models\GbdpSecondCoating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -173,13 +174,15 @@ class CoatingController extends Controller
 
     public function getLayersByMassProd($massProd)
     {
-        // Fetch only the 'layer' column where mass_prod matches
+        // Fetch all layer values for this mass_prod
         $layers = Coating::where('mass_prod', $massProd)
-            ->pluck('layer'); // pluck returns only the values of the given column
+            ->pluck('layer')  // get only the "layer" column
+            ->filter()         // remove nulls
+            ->map(fn($layer) => (string)$layer) // cast to string if needed
+            ->toArray();
 
         return response()->json([
-            'mass_prod' => $massProd,
-            'layers' => $layers,
+            'completed_layers' => $layers,
         ]);
     }
 

@@ -134,7 +134,8 @@ const navItems = [
         { label: 'Heat Treatment', route: 'heat_treatment' },
         { label: 'Coating', route: 'coating' },
         { label: 'Film Pasting', route: 'film_pasting' },
-        { label: 'MPI', route: 'manage' }
+        { label: 'JH Curve', route: 'manage' },
+        { label: 'MPI Report', route: 'reports' }
         ]
     },
     { label: 'Options', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [

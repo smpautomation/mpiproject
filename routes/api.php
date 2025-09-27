@@ -253,3 +253,21 @@ Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
 Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     [MassProductionController::class, 'getLayerModel']);
+
+Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
+[MassProductionController::class, 'getLayerLotno']);
+
+Route::get(
+    '/mass-productions/{massprod}/completed-layers',
+    [MassProductionController::class, 'getAllHTCompletedLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/coating-completed-layers',
+    [MassProductionController::class, 'getAllCoatingCompleteLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/second-ht-completed-layers',
+    [MassProductionController::class, 'getAllSecondHTCompletedLayers']
+);
