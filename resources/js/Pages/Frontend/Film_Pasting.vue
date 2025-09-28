@@ -314,9 +314,15 @@
                         <!-- Finalize -->
                         <button
                             @click="submit()"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
-                        >
-                            SUBMIT
+                            :disabled="isExists"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                isExists
+                                ? 'bg-red-600 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'
+                            ]"
+                            >
+                            {{ isExists ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
                         </button>
 
                         <!-- Cancel -->
@@ -537,6 +543,8 @@ const showModalSubmit = ref();
 
 
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const isExists = ref(false);
+const existingLayers = ref([]);
 const available_layers = ref([]);
 const completedLayers = ref([]);
 const massProdLists = ref([]);
@@ -657,6 +665,7 @@ const saveToDatabase = async () => {
     }finally{
         showModalSubmit.value = false;
         await getCompletedLayers();
+        clearAll();
     }
 };
 
@@ -740,6 +749,35 @@ const fetchAvailableLayers = async () => {
     }
 };
 
+const fetchExistingLayers = async () => {
+    if (!filmPastingInfo.selected_mass_prod && !filmPastingInfo.selected_layer) {
+        console.warn("Mass Production and layer not selected yet.");
+        return;
+    }
+
+    try {
+        // 1st Coating
+        const response1 = await axios.get(
+            `/api/mass-productions/${filmPastingInfo.selected_mass_prod}/filmpasting-completed-layers`
+        );
+        existingLayers.value = response1.data.film_pasting_layers;
+        console.log("Existing Layers for Coating:", existingLayers.value);
+
+        // Initial check after fetching
+        if (filmPastingInfo.selected_layer) {
+            isExists.value = existingLayers.value.includes(filmPastingInfo.selected_layer);
+        }
+
+        if (isExists.value) {
+            toast.warning('Selected layer already contains existing coating data.');
+        }
+
+    } catch (error) {
+        console.error("Error fetching existing layers:", error);
+        toast.error('Failed to fetch existing layers.');
+    }
+};
+
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger END
 
@@ -756,6 +794,13 @@ watch(
             completedLayers.value = []; // reset if cleared
         }
     }
+);
+
+watch(
+  () => [filmPastingInfo.selected_mass_prod, filmPastingInfo.selected_layer],
+  async () => {
+    await fetchExistingLayers();
+  }
 );
 
 // Watch zone -------- Watch Zone END

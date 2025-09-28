@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MassProduction;
 use App\Models\GbdpSecondCoating;
 use App\Models\GbdpSecondHeatTreatment;
+use App\Models\FilmPastingData;
 use App\Models\Coating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -371,16 +372,25 @@ class MassProductionController extends Controller
         // Get layers from gbdp_second_coatings
         $secondLayers = GbdpSecondCoating::where('mass_prod', $massprod)
             ->whereNotNull('layer')
-            ->pluck('layer');
+            ->pluck('layer')
+            ->map(fn($layer) => (string) $layer);
 
         // Get layers from coatings
         $coatingLayers = Coating::where('mass_prod', $massprod)
             ->whereNotNull('layer')
-            ->pluck('layer');
+            ->pluck('layer')
+            ->map(fn($layer) => (string) $layer);
+
+        // Get layers from film_pasting_data
+        $filmLayers = FilmPastingData::where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->pluck('layer')
+            ->map(fn($layer) => (string) $layer);
 
         // Merge, remove duplicates, sort, reindex
         $layers = $secondLayers
             ->merge($coatingLayers)
+            ->merge($filmLayers)
             ->unique()
             ->sort()
             ->values();
@@ -401,6 +411,20 @@ class MassProductionController extends Controller
 
         return response()->json([
             '2nd_gbdp_layers' => $gbdpLayers,
+        ]);
+    }
+
+    public function getAllFilmPastingCompletedLayers($massprod)
+    {
+        // Fetch layers from gbdp_second_heat_treatments table only
+        $filmPastingLayers = FilmPastingData::where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->filter() // remove nulls
+            ->map(fn($layer) => (string)$layer) // cast to string
+            ->toArray();
+
+        return response()->json([
+            'film_pasting_layers' => $filmPastingLayers,
         ]);
     }
 

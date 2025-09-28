@@ -268,6 +268,11 @@ Route::get(
 );
 
 Route::get(
+    '/mass-productions/{massprod}/filmpasting-completed-layers',
+    [MassProductionController::class, 'getAllFilmPastingCompletedLayers']
+);
+
+Route::get(
     '/mass-productions/{massprod}/second-ht-completed-layers',
     [MassProductionController::class, 'getAllSecondHTCompletedLayers']
 );

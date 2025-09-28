@@ -2876,6 +2876,9 @@ const showModal = ref(false);
 const coatingCompleted = ref(false);
 const heatTreatmentCompleted = ref(false);
 
+const selectedMassProd = ref();
+const selectedLayer = ref();
+
 const massProd_qty = ref('');
 const massProd_WT = ref('');
 const massProd_boxNo = ref('');
@@ -3451,9 +3454,13 @@ const fetchAllData = async () => {
         if (!serial) throw new Error("No serial selected.");
 
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
-
+        let TPM_Data = responseTpm.data.data[0];
+        selectedMassProd.value = TPM_Data.mass_prod;
+        selectedLayer.value = TPM_Data.layer_no;
+        console.log("Mass Prod number: ", selectedMassProd.value, " Layer no: ", selectedLayer.value);
         // Unwrap nested array if exists
         let rawData = responseTpm.data?.[0];
+
         if (Array.isArray(rawData)) {
             rawData = rawData[0];
         }
@@ -3467,6 +3474,8 @@ const fetchAllData = async () => {
         tpmData.value = rawData;
         tpmDataQuantity.value = modelData.length;
         //console.log('TPM TOTAL -> ',tpmDataQuantity.value);
+        const responseControlSheet = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+        console.log("Response Control Sheet: ", responseControlSheet.data);
         getTpmModel.value = modelData;
 
         fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");

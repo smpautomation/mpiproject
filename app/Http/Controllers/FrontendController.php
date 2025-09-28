@@ -36,8 +36,13 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function smpData(){
-        return Inertia::render('Frontend/SMP_Data');
+    public function smpData(Request $request){
+
+        $massProd = $request->get('massProd');
+
+        return Inertia::render('Frontend/SMP_Data',[
+            'massProd' => $massProd,
+        ]);
     }
 
     public function heatTreatment(Request $request){

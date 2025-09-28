@@ -780,9 +780,15 @@
                         <button
                             v-else
                             @click="finalize_1st2ndGbdp"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50',
+                                isExists_2ndGBDP
+                                    ? 'bg-red-600 text-white cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                            ]"
+                            :disabled="isExists_2ndGBDP"
                         >
-                            SUBMIT
+                            {{ isExists_2ndGBDP ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
                         </button>
 
                         <!-- Cancel -->
@@ -1336,6 +1342,8 @@ const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const isExists = ref(false);
 const isExists_2ndGBDP = ref(false);
+const existingLayers = ref([]);
+const existingLayers_2ndGBDP = ref([]);
 const available_layers = ref([]);
 const completedLayers = ref([]);
 const completedLayers_1st_2nd_gbdp = ref([]);
@@ -1849,6 +1857,7 @@ const saveToDatabase_1st2ndgbdp = async() => {
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
+        clearAllTransition();
         showModalSubmit.value = false;
         await getCompletedLayers();
         await getCompletedLayers_1st_2nd_gbdp();
@@ -1885,7 +1894,7 @@ const getMassProdLists = async () => {
 const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/coating-data/${coatingInfo.selectedMassProd}/layers`);
-        completedLayers.value = response.data.layers.map(String);
+        completedLayers.value = response.data.completed_layers.map(String);
         console.log(completedLayers.value);
     } catch (error) {
         console.error(error);
@@ -1896,7 +1905,7 @@ const getCompletedLayers = async () => {
 const getCompletedLayers_1st_2nd_gbdp = async () => {
     try {
         const response = await axios.get(`/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`);
-        completedLayers_1st_2nd_gbdp.value = response.data.layers.map(String);
+        completedLayers_1st_2nd_gbdp.value = response.data.completed_layers.map(String);
         console.log(completedLayers_1st_2nd_gbdp.value);
     } catch (error) {
         console.error(error);
@@ -1924,7 +1933,7 @@ const fetchExistingLayers = async () => {
         const response2 = await axios.get(
             `/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`
         );
-        existingLayers_2ndGBDP.value = response2.data.layers;
+        existingLayers_2ndGBDP.value = response2.data.completed_layers;
         console.log("Existing Layers for 2nd Coating:", existingLayers_2ndGBDP.value);
 
         // Initial check after fetching

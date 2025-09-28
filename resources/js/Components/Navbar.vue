@@ -146,7 +146,8 @@ const navItems = [
         { label: '1st & 2nd GBDP', route: 'second_gbdp_models' },
         { label: 'Special Instructions', route: 'instructions' },
         { label: 'Send Email', route: 'email' },
-        { label: 'Mias Factor Emp', route: 'mias_factor' }
+        { label: 'Mias Factor Emp', route: 'mias_factor' },
+        { label: 'HT Graph Patterns', route: 'htgraph_patterns' }
         ]
     },
     { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver'] }

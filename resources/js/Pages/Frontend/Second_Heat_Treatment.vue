@@ -33,7 +33,7 @@
                             <p class="mb-4 text-sm leading-relaxed text-gray-600">
                             This button allows data to be fetched automatically for
                             <span class="font-semibold text-gray-800">1st GBDP</span>. Use this
-                            option when you want the system <br></br> to retrieve relevant information
+                            option when you want the system <br> to retrieve relevant information
                             without manual input.
                             </p>
                             <button
