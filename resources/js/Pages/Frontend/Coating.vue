@@ -732,7 +732,7 @@
                 <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
                     <p v-if="activate2ndGBDP" class="font-semibold text-center">2ND GBDP</p>
                     <!-- Stats: Average / Max / Min -->
-                    <div class="flex flex-row gap-20">
+                    <div v-if="activate2ndGBDP" class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Average</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
@@ -744,6 +744,20 @@
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_2ndgbdp !== null ? coatingMinimum_2ndgbdp : '-' }}</div>
+                        </div>
+                    </div>
+                    <div v-else class="flex flex-row gap-20">
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Maximum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Minimum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -1349,7 +1363,7 @@ const completedLayers = ref([]);
 const completedLayers_1st_2nd_gbdp = ref([]);
 const lotNo = ref();
 const lotNo_1stGBDP = ref();
-const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const firstSecondGBDP_models = ref([]);
 const fetchedModelValue = ref();
 const selectedMassProd_fetch = ref();
 const selectedLayer_fetch = ref();
@@ -1636,6 +1650,9 @@ const clearAll = () => {
         { module: "M-06", new: null, homo: null, time: null, liters: null },
     ];
 
+    lotNo.value = null;
+    lotNo_1stGBDP.value = null;
+
     toast.success("All fields cleared.");
 };
 
@@ -1913,6 +1930,20 @@ const getCompletedLayers_1st_2nd_gbdp = async () => {
     }
 };
 
+const get1st2ndGBDPModels = async () => {
+    try {
+        const response = await axios.get(`/api/second-gbdp-models`);
+        const models = response.data;
+
+        // Extract only the model_name
+        const modelNames = models.map(model => model.model_name);
+        firstSecondGBDP_models.value = modelNames;
+        //console.log("1st & 2nd GBDP model names: ", modelNames);
+    } catch (error) {
+        console.error('Failed to get 1st & 2nd GBDP Models: ', error);
+    }
+}
+
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
 
 const fetchExistingLayers = async () => {
@@ -2150,6 +2181,7 @@ onMounted(async () => {
         return;
     }
     await getMassProdLists();
+    await get1st2ndGBDPModels();
 });
 
 </script>

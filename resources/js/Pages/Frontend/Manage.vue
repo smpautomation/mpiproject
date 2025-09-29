@@ -1385,6 +1385,35 @@
 
     // set of new variables for the 2nd save end
 
+    const normalizeLayerNo = (val) => String(val).trim().replace(/\./g, '_');
+
+    const updateMassProductionTable = async () => {
+        try {
+            if (!selectedMassProd.value) {
+            console.warn('No mass production selected.');
+            return;
+            }
+
+            const normalized = normalizeLayerNo(currentLayerNo.value);
+            const layerToUpdate = `layer_${normalized}_serial`;
+            console.log('Column to update: ', layerToUpdate);
+
+            const payload = {
+            mass_prod: selectedMassProd.value, // your validator expects this
+            [layerToUpdate]: serialNo.value,
+            };
+
+            const response = await axios.patch(
+            `/api/mass-production/${selectedMassProd.value}`,
+            payload
+            );
+
+            console.log('Update Response For Mass Production: ', response.data);
+        } catch (error) {
+            console.error('Failed to update massproduction table.', error);
+        }
+    };
+
     // Store the file list when the input changes
     const storeFileList = (event) => {
         fileData.value = Array.from(event.target.files);
@@ -2016,6 +2045,7 @@
             showProceed3.value = false;
             toggleManageForm.value = false;
             //await autoRenameFurnace();
+            await updateMassProductionTable();
             await userManageLogging('created '+ serialNo.value +' data successfully | Model : ' + jhCurveActualModel.value);
         }
         await fetchDataCreateGraph();
@@ -2267,14 +2297,13 @@ const renderChart = () => {
         // Log the value to check if it's being passed correctly
         //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
         if (props.manageSerialParam) {
-            showStartManageDiv.value = false;
             // If serialParam has a value, do not fetch serial
             serialNo.value = props.manageSerialParam;
-            toggleManageForm.value = true;
+            toggleManageForm.value = false;
             showGraphAndTables.value = true;
             showUploadData.value = false;
             //console.log("Showdiv graphs ",showGraphAndTables.value);
-            showAllData();
+            await showAllData();
             //console.log('serialParam is provided, skipping fetchSerial.');
         } else {
             // If serialParam does not have a value, proceed with fetchSerial

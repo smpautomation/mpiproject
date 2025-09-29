@@ -20,7 +20,7 @@ class CoatingController extends Controller
         $validated = $request->validate([
             'date' => 'nullable|date',
             'mass_prod' => 'nullable|string',
-            'layer' => 'nullable|integer',
+            'layer' => 'nullable|string',
             'machine_no' => 'nullable|string',
             'slurry_lot_no' => 'nullable|string',
             'loader_operator' => 'nullable|string',
@@ -58,7 +58,7 @@ class CoatingController extends Controller
         $validated = $request->validate([
             'date' => 'sometimes|nullable|date',
             'mass_prod' => 'sometimes|string',
-            'layer' => 'sometimes|integer',
+            'layer' => 'sometimes|string',
             'machine_no' => 'sometimes|nullable|string',
             'slurry_lot_no' => 'sometimes|nullable|string',
             'loader_operator' => 'sometimes|nullable|string',
@@ -98,7 +98,7 @@ class CoatingController extends Controller
     {
         $request->validate([
             'mass_prod' => 'required|string',
-            'layer'     => 'required|integer',
+            'layer'     => 'required|string',
         ]);
 
         $exists = Coating::where('mass_prod', $request->mass_prod)
@@ -112,7 +112,7 @@ class CoatingController extends Controller
     {
         $request->validate([
             'mass_prod' => 'required|string',
-            'layer'     => 'required|numeric',
+            'layer'     => 'required|string',
         ]);
 
         $pending = CoatingPending::where('mass_prod', $request->mass_prod)

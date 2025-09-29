@@ -50,7 +50,7 @@ class MassProductionController extends Controller
             'layer_7' => 'nullable|json',
             'layer_8' => 'nullable|json',
             'layer_9' => 'nullable|json',
-            'layer_9.5' => 'nullable|json',
+            'layer_9_5' => 'nullable|json',
             'grand_total_weight' => 'nullable|numeric',
             'grand_total_quantity' => 'nullable|integer',
             'layer_1_serial' => 'nullable|integer',
@@ -62,7 +62,7 @@ class MassProductionController extends Controller
             'layer_7_serial' => 'nullable|integer',
             'layer_8_serial' => 'nullable|integer',
             'layer_9_serial' => 'nullable|integer',
-            'layer_9.5_serial' => 'nullable|integer',
+            'layer_9_5_serial' => 'nullable|integer',
         ]);
 
         return MassProduction::create($validated);
@@ -73,12 +73,14 @@ class MassProductionController extends Controller
         return MassProduction::findOrFail($id);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $massProd)
     {
-        $production = MassProduction::findOrFail($id);
+        // Find the record by mass_prod column
+        $production = MassProduction::where('mass_prod', $massProd)->firstOrFail();
 
+        // Validate only fields that may be sent in the payload
         $validated = $request->validate([
-            'mass_prod' => 'required|string|unique:mass_productions,mass_prod,' . $id,
+            'mass_prod' => 'required|string|unique:mass_productions,mass_prod,' . $production->id,
             'furnace' => 'nullable|string',
             'batch_cycle_no' => 'nullable|string',
             'machine_no' => 'nullable|string',
@@ -108,7 +110,7 @@ class MassProductionController extends Controller
             'layer_7' => 'nullable|json',
             'layer_8' => 'nullable|json',
             'layer_9' => 'nullable|json',
-            'layer_9.5' => 'nullable|json',
+            'layer_9_5' => 'nullable|json',
             'grand_total_weight' => 'nullable|numeric',
             'grand_total_quantity' => 'nullable|integer',
             'layer_1_serial' => 'nullable|integer',
@@ -120,9 +122,10 @@ class MassProductionController extends Controller
             'layer_7_serial' => 'nullable|integer',
             'layer_8_serial' => 'nullable|integer',
             'layer_9_serial' => 'nullable|integer',
-            'layer_9.5_serial' => 'nullable|integer',
+            'layer_9_5_serial' => 'nullable|integer',
         ]);
 
+        // Update only the fields sent in the payload
         $production->update($validated);
 
         return $production;
@@ -190,7 +193,7 @@ class MassProductionController extends Controller
             'layer_7' => 'nullable|json',
             'layer_8' => 'nullable|json',
             'layer_9' => 'nullable|json',
-            'layer_9.5' => 'nullable|json',
+            'layer_9_5' => 'nullable|json',
             'grand_total_weight' => 'nullable|numeric',
             'grand_total_quantity' => 'nullable|integer',
         ]);
@@ -426,6 +429,39 @@ class MassProductionController extends Controller
         return response()->json([
             'film_pasting_layers' => $filmPastingLayers,
         ]);
+    }
+
+    public function getLayerDataBySerial($massprod, $serial)
+    {
+
+        $production = MassProduction::where('mass_prod', $massprod)->firstOrFail();
+
+        $layers = [
+            'layer_1_serial'   => 'layer_1',
+            'layer_2_serial'   => 'layer_2',
+            'layer_3_serial'   => 'layer_3',
+            'layer_4_serial'   => 'layer_4',
+            'layer_5_serial'   => 'layer_5',
+            'layer_6_serial'   => 'layer_6',
+            'layer_7_serial'   => 'layer_7',
+            'layer_8_serial'   => 'layer_8',
+            'layer_9_serial'   => 'layer_9',
+            'layer_9_5_serial' => 'layer_9_5',
+        ];
+
+        foreach ($layers as $serialColumn => $layerColumn) {
+            if ($production->$serialColumn == $serial) {
+                return response()->json([
+                    'serial_column' => $serialColumn,
+                    'layer_column'  => $layerColumn,
+                    'layer_data'    => $production->$layerColumn ? json_decode($production->$layerColumn, true) : null,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => "No layer data found for serial: {$serial}"
+        ], 404);
     }
 
 }

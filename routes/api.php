@@ -233,7 +233,7 @@ Route::get('/coating-data/{massProd}/layers', [CoatingController::class, 'getLay
 Route::get('/second-coating-data/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
 
-Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
+Route::get('/mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
 Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'updateByMassProd']);
 Route::post('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'uploadGraphs']);
@@ -275,4 +275,9 @@ Route::get(
 Route::get(
     '/mass-productions/{massprod}/second-ht-completed-layers',
     [MassProductionController::class, 'getAllSecondHTCompletedLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/layer-by-serial/{serial}',
+    [MassProductionController::class, 'getLayerDataBySerial']
 );

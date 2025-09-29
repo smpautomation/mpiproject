@@ -431,7 +431,7 @@ const selectedLayer = ref();
 const graph_patterns = ref([]);
 const furnace_lists = ref([]);
 const massProd_names = ref([]);
-const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const firstSecondGBDP_models = ref([]);
 
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
@@ -497,6 +497,20 @@ const getMassProdLists = async () => {
     }catch(error){
         console.error('Error fetching mass prod lists',error);
         toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
+const get1st2ndGBDPModels = async () => {
+    try {
+        const response = await axios.get(`/api/second-gbdp-models`);
+        const models = response.data;
+
+        // Extract only the model_name
+        const modelNames = models.map(model => model.model_name);
+        firstSecondGBDP_models.value = modelNames;
+        //console.log("1st & 2nd GBDP model names: ", modelNames);
+    } catch (error) {
+        console.error('Failed to get 1st & 2nd GBDP Models: ', error);
     }
 }
 
@@ -674,6 +688,7 @@ onMounted(async () => {
     await getFurnaceLists();
     await getGraphPatterns();
     await getCurrentMassProdData();
+    await get1st2ndGBDPModels();
 });
 
 </script>

@@ -770,7 +770,7 @@ const initialFurnaceData = ref();
 const massProd_names = ref([]);
 const model_names = ref([]);
 const graph_patterns = ref([]);
-const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const firstSecondGBDP_models = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const existingLayers = ref([]);
 const existingLayers_2ndGBDP = ref([]);
@@ -911,6 +911,20 @@ const getMassProdData = async () => { //Function for getting the current selecet
         initialFurnaceData.value = null; // Reset if no mass production selected
         console.error('Error fetching mass production data:', error);
         toast.error('Failed to load mass production data.');
+    }
+}
+
+const get1st2ndGBDPModels = async () => {
+    try {
+        const response = await axios.get(`/api/second-gbdp-models`);
+        const models = response.data;
+
+        // Extract only the model_name
+        const modelNames = models.map(model => model.model_name);
+        firstSecondGBDP_models.value = modelNames;
+        //console.log("1st & 2nd GBDP model names: ", modelNames);
+    } catch (error) {
+        console.error('Failed to get 1st & 2nd GBDP Models: ', error);
     }
 }
 
@@ -1134,7 +1148,6 @@ const finalize = () => {
                 return;
             }
         }
-
     }
 
     // new per-box check
@@ -1148,7 +1161,7 @@ const finalize = () => {
 }
 
 const saveToDatabase = async () => {
-    const layerKey = `layer_${mpcs.selectedLayer.replace('.', '_')}`;
+    const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5' : `layer_${mpcs.selectedLayer}`;
     const visibleBoxesData = visibleBoxes.value; // e.g., ['A','B','C']
 
     // QTY (PCS) with last box logic
@@ -1160,6 +1173,9 @@ const saveToDatabase = async () => {
             qtyData[box] = mpcs.qty; // all others
         }
     });
+
+    // Calculate total quantity
+    const totalQty = Object.values(qtyData).reduce((sum, val) => sum + Number(val || 0), 0);
 
     // Construct layer payload
     const layerPayload = [
@@ -1174,6 +1190,7 @@ const saveToDatabase = async () => {
         { rowTitle: 'BOX No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, boxNoValues.value[box] || ''])) },
         { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.magnetPreparedBy])) },
         { rowTitle: 'Box prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.boxPreparedBy])) },
+        { rowTitle: 'TOTAL QTY', data: Object.fromEntries(visibleBoxesData.map(box => [box, totalQty])) }
     ];
 
     // Base payload
@@ -1286,6 +1303,7 @@ onMounted(async () => {
     await getMassProdLists();
     await getModelLists();
     await getGraphPatterns();
+    await get1st2ndGBDPModels();
 });
 
 </script>
