@@ -669,8 +669,26 @@ const saveToDatabase = async () => {
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
+    } finally {
+        await updateFormatType();
     }
 };
+
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = selectedLayer.value === '9.5' ? 'layer_9_5_format_type' : `layer_${selectedLayer.value}_format_type`;
+
+    const dataPayload = {
+        mass_prod: selectedMassProd.value,
+        [layerKey]: '1st and 2nd Gbdp',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${selectedMassProd.value}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+    }
+}
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 

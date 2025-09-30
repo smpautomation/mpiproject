@@ -659,16 +659,33 @@ const saveToDatabase = async () => {
 
         const response = await axios.post('/api/film-pasting-data', payload);
         console.log(response.data);
+        toast.success('Data successfully saved.')
 
     }catch(error){
         toast.error('Failed to get film pasting data')
     }finally{
         showModalSubmit.value = false;
         await getCompletedLayers();
+        await updateFormatType();
         clearAll();
     }
 };
 
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = filmPastingInfo.selected_layer === '9.5' ? 'layer_9_5_format_type' : `layer_${filmPastingInfo.selected_layer}_format_type`;
+
+    const dataPayload = {
+        mass_prod: filmPastingInfo.selected_mass_prod,
+        [layerKey]: 'Film Pasting',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${filmPastingInfo.selected_mass_prod}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+    }
+}
 
 const clearAll = () => {
     Object.assign(filmPastingInfo,{

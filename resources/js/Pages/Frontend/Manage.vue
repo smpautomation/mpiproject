@@ -1404,7 +1404,7 @@
             };
 
             const response = await axios.patch(
-            `/api/mass-production/${selectedMassProd.value}`,
+                `/api/mass-production/${selectedMassProd.value}`,
             payload
             );
 

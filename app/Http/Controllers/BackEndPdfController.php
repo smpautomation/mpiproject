@@ -6,7 +6,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use iio\libmergepdf\Merger;
 use App\Models\ReportData;
 use App\Models\Coating;
-use App\Models\HeatTreatment;
+use App\Models\MassProduction;
+use App\Models\GbdpSecondCoating;
+use App\Models\GbdpSecondHeatTreatment;
+use App\Models\FilmPastingData;
 use App\Models\TPMDataCategory;
 use App\Models\TPMData;
 use App\Models\TPMDataAggregateFunctions;
@@ -64,30 +67,6 @@ class BackEndPdfController extends Controller
             $ihkVariance = $magneticProperty['ihkMaximum'] - $magneticProperty['ihkMinimum'];
         }
 
-        $coatingData = Coating::where('serial', $serial)->first();
-        if(!$coatingData) {
-            return response()->json([
-                'status' => false,
-                'message' => "Coating Data with serial: {$serial} not found",
-            ], 404);
-        }
-
-        $HTData = HeatTreatment::where('serial', $serial)->first();
-        if (!$HTData) {
-            return response()->json([
-                'status' => false,
-                'message' => "Heat Treatment Data with serial: {$serial} not found",
-            ], 404);
-        }
-
-        $MBL = json_decode($HTData->magnet_box_location, true);
-        if (!$MBL) {
-            return response()->json([
-                'status' => false,
-                'message' => "Magnet Box Location for serial: {$serial} is invalid or missing",
-            ], 404);
-        }
-
         $preparedByDate = null;
         $checkedByDate = null;
         $approvedByDate = null;
@@ -140,14 +119,6 @@ class BackEndPdfController extends Controller
             return $aPriority - $bPriority;
         });
 
-        $coatingDetails = json_decode($coatingData->coating_data, true);
-        if (!$coatingDetails) {
-            return response()->json([
-                'status' => false,
-                'message' => "Coating Data for serial: {$serial} is invalid or missing",
-            ], 404);
-        }
-
         $tpmCategories = TPMDataCategory::where('tpm_data_serial', $serial)->first();
         $tpmData = TPMData::where('serial_no', $serial)->first();
         if (!$tpmCategories || !$tpmData) {
@@ -161,6 +132,30 @@ class BackEndPdfController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => "TPM Data for serial: {$serial} is invalid or missing",
+            ], 404);
+        }
+
+        $massprod = $tpmData->mass_prod;
+        $layer = $tpmData->layer_no;
+
+        $massProdData = MassProduction::where('mass_prod', $massprod)->first();
+        if (!$massProdData) {
+            return response()->json([
+                'status' => false,
+                'message' => "MassProduction record not found for mass_prod: {$massprod}"
+            ], 404);
+        }
+
+        // Build column name dynamically
+        $column = 'layer_' . str_replace('.', '_', $layer) . '_format_type';
+
+        // Fetch the value safely
+        $gbdp_report_format_type = $massProdData->$column ?? null;
+
+        if (!$gbdp_report_format_type) {
+            return response()->json([
+                'status' => false,
+                'message' => "No format type found for layer: {$layer}"
             ], 404);
         }
 
@@ -239,6 +234,8 @@ class BackEndPdfController extends Controller
 
 
         $data = [
+            'massProd' => $massprod,
+            'layer' => $layer,
             'serial' => $serial,
             'chartFilename' => $chartFilename, // pass to Blade
             'reportData' => $reportData, // pass report data to Blade
@@ -247,8 +244,8 @@ class BackEndPdfController extends Controller
             'brVariance' => $brVariance,
             'ihcVariance' => $ihcVariance,
             'ihkVariance' => $ihkVariance,
-            'coatingData' => $coatingData, // pass coating data to Blade
-            'heatTreatmentData' => $HTData, // pass heat treatment data to Blade
+            //'coatingData' => $coatingData, // pass coating data to Blade
+            //'heatTreatmentData' => $HTData, // pass heat treatment data to Blade
             'preparedByDate' => $preparedByDate, // pass prepared by
             'checkedByDate' => $checkedByDate, // pass checked by date
             'approvedByDate' => $approvedByDate, // pass approved by date
@@ -259,11 +256,11 @@ class BackEndPdfController extends Controller
             'approvedFirstFontSize' => $approvedFirstFontSize, // pass font size for approved first name
             'approvedLastFontSize' => $approvedLastFontSize, // pass font size for
             'noteReasonsSorted' => $noteReasonRaw, // pass sorted note reasons
-            'coatingDetails' => $coatingDetails, // pass coating details
+            //'coatingDetails' => $coatingDetails, // pass coating details
             'tpmCat' => $tpmCategories, // pass TPM categories
             'tpmData' => $tpmData, // pass single TPM data
             'tpmDataAll' => $tpmDataAll, // pass all TPM data
-            'magnetBoxLocation' => $MBL, // pass magnet box location
+            //'magnetBoxLocation' => $MBL, // pass magnet box location
             'reportDate' => $reportDate ?? null, // pass report date
             'sinteringFurnaceNo' => $onlyFurnacePrefix, // pass only furnace prefix
             'sinteringNo' => $onlyFurnacePostfix, // pass only furnace postfix

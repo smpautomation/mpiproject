@@ -63,6 +63,17 @@ class MassProductionController extends Controller
             'layer_8_serial' => 'nullable|integer',
             'layer_9_serial' => 'nullable|integer',
             'layer_9_5_serial' => 'nullable|integer',
+            'mpi_sample_qty' => 'nullable|integer',
+            'layer_1_format_type' => 'nullable|string',
+            'layer_2_format_type' => 'nullable|string',
+            'layer_3_format_type' => 'nullable|string',
+            'layer_4_format_type' => 'nullable|string',
+            'layer_5_format_type' => 'nullable|string',
+            'layer_6_format_type' => 'nullable|string',
+            'layer_7_format_type' => 'nullable|string',
+            'layer_8_format_type' => 'nullable|string',
+            'layer_9_format_type' => 'nullable|string',
+            'layer_9_5_format_type' => 'nullable|string',
         ]);
 
         return MassProduction::create($validated);
@@ -123,6 +134,17 @@ class MassProductionController extends Controller
             'layer_8_serial' => 'nullable|integer',
             'layer_9_serial' => 'nullable|integer',
             'layer_9_5_serial' => 'nullable|integer',
+            'mpi_sample_qty' => 'nullable|integer',
+            'layer_1_format_type' => 'nullable|string',
+            'layer_2_format_type' => 'nullable|string',
+            'layer_3_format_type' => 'nullable|string',
+            'layer_4_format_type' => 'nullable|string',
+            'layer_5_format_type' => 'nullable|string',
+            'layer_6_format_type' => 'nullable|string',
+            'layer_7_format_type' => 'nullable|string',
+            'layer_8_format_type' => 'nullable|string',
+            'layer_9_format_type' => 'nullable|string',
+            'layer_9_5_format_type' => 'nullable|string',
         ]);
 
         // Update only the fields sent in the payload
@@ -196,6 +218,27 @@ class MassProductionController extends Controller
             'layer_9_5' => 'nullable|json',
             'grand_total_weight' => 'nullable|numeric',
             'grand_total_quantity' => 'nullable|integer',
+            'layer_1_serial' => 'nullable|integer',
+            'layer_2_serial' => 'nullable|integer',
+            'layer_3_serial' => 'nullable|integer',
+            'layer_4_serial' => 'nullable|integer',
+            'layer_5_serial' => 'nullable|integer',
+            'layer_6_serial' => 'nullable|integer',
+            'layer_7_serial' => 'nullable|integer',
+            'layer_8_serial' => 'nullable|integer',
+            'layer_9_serial' => 'nullable|integer',
+            'layer_9_5_serial' => 'nullable|integer',
+            'mpi_sample_qty' => 'nullable|integer',
+            'layer_1_format_type' => 'nullable|string',
+            'layer_2_format_type' => 'nullable|string',
+            'layer_3_format_type' => 'nullable|string',
+            'layer_4_format_type' => 'nullable|string',
+            'layer_5_format_type' => 'nullable|string',
+            'layer_6_format_type' => 'nullable|string',
+            'layer_7_format_type' => 'nullable|string',
+            'layer_8_format_type' => 'nullable|string',
+            'layer_9_format_type' => 'nullable|string',
+            'layer_9_5_format_type' => 'nullable|string',
         ]);
 
         // Update the record
@@ -330,8 +373,8 @@ class MassProductionController extends Controller
 
     public function getAllHTCompletedLayers($massprod)
     {
+        // Fetch MassProduction record
         $record = MassProduction::where('mass_prod', $massprod)->first();
-
         if (!$record) {
             return response()->json([
                 'message' => "Mass Production record not found.",
@@ -354,9 +397,9 @@ class MassProductionController extends Controller
 
         $completed = [];
 
+        // Check MassProduction layers
         foreach ($layers as $column => $label) {
             $value = $record->$column;
-
             if (!empty($value) && $value !== 'null') {
                 $decoded = json_decode($value, true);
                 if (!empty($decoded)) {
@@ -365,10 +408,20 @@ class MassProductionController extends Controller
             }
         }
 
+        // Fetch GbdpSecondHeatTreatment layers for this mass production
+        $gbdpLayers = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
+                        ->pluck('layer')
+                        ->toArray();
+
+        // Merge, remove duplicates, and sort numerically
+        $allCompletedLayers = array_unique(array_merge($completed, $gbdpLayers));
+        sort($allCompletedLayers, SORT_NUMERIC); // numeric ascending
+
         return response()->json([
-            'completed_layers' => $completed,
+            'completed_layers' => $allCompletedLayers,
         ]);
     }
+
 
     public function getAllCoatingCompleteLayers($massprod)
     {

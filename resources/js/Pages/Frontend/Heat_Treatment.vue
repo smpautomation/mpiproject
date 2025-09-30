@@ -10,6 +10,18 @@
             </div>
         </div>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
+            <div class="p-4 mb-4 text-sm rounded-lg bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 flex items-center justify-between">
+                <div>
+                    <strong>Note:</strong> For 1st & 2nd GBDP formats, select <span class="font-semibold">Mass Prod</span>, <span class="font-semibold">Layer</span>, and <span class="font-semibold">Model</span>, then click the
+                    <span class="bg-orange-500 text-white px-2 py-0.5 rounded">Apply 1st & 2nd GBDP</span> button in the <span class="font-semibold">Control Panel</span>. If button is disabled, the model is not yet registered.
+                </div>
+                <button
+                    class="ml-4 text-blue-600 hover:underline font-semibold"
+                    @click.prevent="$inertia.visit('/second_gbdp_models')"
+                >
+                    Register Here
+                </button>
+            </div>
             <div class="flex flex-row justify-center gap-0">
                 <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
@@ -1233,12 +1245,30 @@ const saveToDatabase = async () => {
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
         showModalCreate.value = false;
-        clearAll(); // Clear all fields after successful save
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
+    } finally {
+        await updateFormatType();
+        clearAll(); // Clear all fields after successful save
     }
 };
+
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5_format_type' : `layer_${mpcs.selectedLayer}_format_type`;
+
+    const dataPayload = {
+        mass_prod: mpcs.selectedMassProd,
+        [layerKey]: 'Normal',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedMassProd}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+    }
+}
 
 const uploadGraphs = async () => {
     if (!mpcs.selectedMassProd) return;

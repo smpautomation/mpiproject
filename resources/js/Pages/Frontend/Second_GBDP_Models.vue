@@ -29,7 +29,7 @@
                 @click="showModalCreate = true"
                 class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1 transition"
                 >
-                + Create New Furnace
+                + Create New Model
                 </button>
 
                 <input

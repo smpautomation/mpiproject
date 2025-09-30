@@ -285,6 +285,11 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="isModelMissing" class="p-4 mb-4 border-l-4 border-red-500 bg-red-50 text-red-800 rounded-md shadow-sm">
+                <strong class="font-semibold">Warning:</strong> Control Sheet for this layer has not been completed. Please ensure the model exists before proceeding.
+            </div>
+
             <div class="flex flex-row gap-10 mt-10">
                 <div v-if="activate2ndGBDP" class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">1st GBDP Coating Information</h2>
@@ -1350,12 +1355,13 @@ const bypassValidation = ref(false);
 //Toggle Control
 const showModalFinalize = ref(false);
 const showModalSubmit = ref(false);
+const isExists = ref(false);
+const isExists_2ndGBDP = ref(false);
+const isModelMissing = ref(false);
 //Toggle Control
 
 const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
-const isExists = ref(false);
-const isExists_2ndGBDP = ref(false);
 const existingLayers = ref([]);
 const existingLayers_2ndGBDP = ref([]);
 const available_layers = ref([]);
@@ -2000,19 +2006,24 @@ const fetchAvailableLayers = async () => {
     }
 };
 
-const fetchLayerModel = async(massProd, layerNumber) => {
+const fetchLayerModel = async (massProd, layerNumber) => {
     try {
         const response = await axios.get(
-        `/api/mass-productions/${massProd}/layer/${layerNumber}/model`
-        )
+            `/api/mass-productions/${massProd}/layer/${layerNumber}/model`
+        );
         console.log("Fetched Model: ", response.data.model);
-        fetchedModelValue.value = response.data.model
+        fetchedModelValue.value = response.data.model;
         console.log("Activation: ", activate2ndGBDP.value);
+        isModelMissing.value = false; // reset in case it was true before
     } catch (error) {
         fetchedModelValue.value = null;
-        console.error(error.response?.data || error.message)
+        console.error(error.response?.data || error.message);
+
+        if (error.response?.status === 404) {
+            isModelMissing.value = true;
+        }
     }
-}
+};
 
 watch(
     () => [coatingInfo.selectedMassProd, coatingInfo.selectedLayer],
