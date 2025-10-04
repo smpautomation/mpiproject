@@ -93,7 +93,7 @@
 
             <!-- Center: Property Data -->
             <td style="width: 33.33%; text-align: center; vertical-align: top;">
-                <h1 style="margin: 0; font-size: 24px;"><i>Property Data</i></h1>
+                <h1 style="margin: 0; font-size: 24px;"><i>Property Data SEC</i></h1>
             </td>
 
             <!-- Right Side: Optional future use or keep empty -->

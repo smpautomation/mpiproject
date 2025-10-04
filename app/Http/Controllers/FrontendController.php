@@ -102,6 +102,18 @@ class FrontendController extends Controller
         ]);
     }
 
+    public function sec_additional(Request $request) {
+        $serial = $request->input('sec_serialParam');
+        $massProd = $request->input('sec_massProd');
+        $layer = $request->input('sec_layer');
+
+        return Inertia::render('Frontend/SEC_Additional', [
+            'sec_serialParam' => $serial,
+            'sec_massProd' => $massProd,
+            'sec_layer' => $layer
+        ]);
+    }
+
     public function reports(Request $request)
     {
         // Capture the serialParam from the GET request
@@ -175,14 +187,6 @@ class FrontendController extends Controller
 
     public function data_ins(){
         return Inertia::render('Frontend/Data_INS');
-    }
-
-    public function sec_additional(Request $request) {
-        $serial = $request->input('sec_serialParam');
-
-        return Inertia::render('Frontend/SEC_Additional', [
-            'sec_serialParam' => $serial
-        ]);
     }
 
     public function generatePdf(Request $request){

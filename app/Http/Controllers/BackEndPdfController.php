@@ -13,6 +13,9 @@ use App\Models\FilmPastingData;
 use App\Models\TPMDataCategory;
 use App\Models\TPMData;
 use App\Models\TPMDataAggregateFunctions;
+use App\Models\NormalSecAdditionals;
+use App\Models\NSAAggregateFunctions;
+use App\Models\NSACategory;
 use App\Models\VtModel;
 use App\Models\CpkIhcModel;
 use App\Models\GxModel;
@@ -134,6 +137,7 @@ class BackEndPdfController extends Controller
                 'message' => "TPM Data for serial: {$serial} is invalid or missing",
             ], 404);
         }
+        //dd($tpmDataAll);
 
         $massprod = $tpmData->mass_prod;
         $layer = $tpmData->layer_no;
@@ -297,6 +301,19 @@ class BackEndPdfController extends Controller
         }
         //dd($show1x1x1Data_Corner);
 
+        //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals
+        $nsaData = NormalSecAdditionals::where('serial_no', $serial)->first();
+        $nsaDataAll = NormalSecAdditionals::where('serial_no', $serial)->get();
+        $nsaAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial)->first();
+
+        $nsaAggregateMaximum = $nsaAggregateFunctions->maximum;
+        $nsaAggregateMinimum = $nsaAggregateFunctions->minimum;
+        $nsaAggregateAverage = $nsaAggregateFunctions->average;
+        //$nsaCategory = NSACategory::where('')
+
+        dd($nsaAggregateAverage);
+
+        //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals End
 
         $data = [
             'massProd' => $massprod,
@@ -395,7 +412,7 @@ class BackEndPdfController extends Controller
             ->output();
 
         // Landscape stays the same
-        $landscape = Pdf::loadView('pdf.report_page2_landscape', $data)
+        $landscape = Pdf::loadView('pdf.report_page2_sec_additional_landscape', $data)
             ->setPaper('a4', 'landscape')
             ->output();
 

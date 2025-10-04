@@ -294,7 +294,7 @@
                         <div class="flex flex-col items-start space-y-2">
                             <p>
                                 SMP Lot (
-                                <span>{{ jhCurveMassProdName }}</span>
+                                <span>{{ currentMassProdSelected }}</span>
                                 Mass Production )
                             </p>
                             <p>
@@ -527,6 +527,8 @@ const rowCell = ref([]);
 //General variables
 const mias_factorCsvError = ref(false);
 const currentSerialSelected = ref('');
+const currentMassProdSelected = ref('');
+const currentLayerSelected = ref('');
 const dataReady = ref(false); // Flag to track if data is ready
 const myChartCanvas = ref(null); // Ref for the canvas
 
@@ -562,10 +564,52 @@ const mias_factorData = async (factor, mias) => {
 // Define the prop that will receive the serialParam
 const props = defineProps({
     sec_serialParam: String,  // Expecting the serialParam to be a string
+    sec_massProd: String,
+    sec_layer: String
 });
 
 currentSerialSelected.value = props.sec_serialParam;
-//console.log('Serial Param check: ',props.sec_serialParam);
+currentLayerSelected.value = props.sec_layer;
+currentMassProdSelected.value = props.sec_massProd;
+//console.log('Serial Param check: ',currentSerialSelected.value);
+//console.log('Mass Prod Param check: ',currentMassProdSelected.value);
+//console.log('Layer Param check: ',currentLayerSelected.value);
+
+const fetchLayerModelAndLotno = async () => {
+        if (!currentMassProdSelected.value || !currentLayerSelected.value) {
+            console.warn("MassProd or Layer not selected yet.");
+            return;
+        }
+
+        let model = null;
+        let lotno = null;
+
+        try {
+            const responseModel = await axios.get(
+                `/api/mass-productions/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/model`
+            );
+            model = responseModel.data.model;
+            jhCurveActualModel.value = model;
+            console.log("Model:", jhCurveActualModel.value);
+        } catch (error) {
+            console.error("Error fetching layer model:", error);
+            toast.error('Failed to fetch model data for this layer.');
+        }
+
+        try {
+            const responseLotno = await axios.get(
+                `/api/mass-productions/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/lotno`
+            );
+            lotno = responseLotno.data.lotno;
+            jhCurveLotNo.value = lotno;
+            console.log("Lot No:", jhCurveLotNo.value);
+        } catch (error) {
+            console.error("Error fetching layer lotno:", error);
+            toast.error('Failed to fetch lotno data for this layer.');
+        }
+
+        return { model, lotno };
+    };
 
 // Store the file list when the input changes
 const storeFileList = (event) => {
@@ -646,8 +690,8 @@ const storeFileList = (event) => {
 
     const additional_remarks = ref("");
 
- //tpmdata category in database
- const jhCurveModel = ref("");
+    //tpmdata category in database
+    const jhCurveModel = ref("");
     const jhCurveMassProdName = ref("");
     const jhCurveActualModel = ref("");
     const jhCurveFurnaceName = ref("");
@@ -656,7 +700,7 @@ const storeFileList = (event) => {
     const propData_miasEmp = ref("");
     const propData_factorEmp = ref("");
 
-const csv_selectedFile = ref(null)
+    const csv_selectedFile = ref(null)
     const csv_parsedData = ref([])
     const csv_tempWithDataStat = ref([]);
 
@@ -690,9 +734,13 @@ const csv_selectedFile = ref(null)
             }));
 
             for (const row of csv_tempWithDataStat.value) {
-                // Defensive cleanup
-                const factor = row.employee_no?.toString().trim();
-                const mias = row.mias_no?.toString().trim();
+                // Defensive cleanup with leading zero strip
+                const factor = row.employee_no
+                    ? row.employee_no.toString().trim().replace(/^0+/, '') || '0'
+                    : null;
+                const mias = row.mias_no
+                    ? row.mias_no.toString().trim().replace(/^0+/, '') || '0'
+                    : null;
 
                 // Skip rows that are completely empty
                 if (!factor && !mias && !row.temp && !row.status) {
@@ -711,7 +759,6 @@ const csv_selectedFile = ref(null)
                     return;
                 }
             }
-
             await mergeTempToTPM();
 
         } catch (err) {
@@ -759,6 +806,7 @@ const csv_selectedFile = ref(null)
         } catch (error) {
            // console.log("Merge failed: ", error);
         } finally {
+            await fetchLayerModelAndLotno();
             await saveToNsaCategory();
             showCsvLoading.value = false;
             showProceed3.value = true;
@@ -1200,7 +1248,7 @@ const checkTPMCategory = async () => {
 
         const tpm_category_actualmodel = tpmCatData.value.map(item => item.category?.actual_model ?? null);
         //console.log('tpm_category_actualmodel:', tpm_category_actualmodel);
-        jhCurveActualModel.value = tpm_category_actualmodel[0];
+        //jhCurveActualModel.value = tpm_category_actualmodel[0];
         //console.log('jhCurveActualModel:', jhCurveActualModel.value);
 
         const tpm_category_factorEmp = tpmCatData.value.map(item => item.category?.factor_emp ?? null);
@@ -1215,18 +1263,18 @@ const checkTPMCategory = async () => {
 
         const tpm_category_jhCurveLotno = tpmCatData.value.map(item => item.category?.jhcurve_lotno ?? null);
         //console.log('tpm_category_jhCurveLotno:', tpm_category_jhCurveLotno);
-        jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
+        //jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
         //console.log('jhCurveLotNo:', jhCurveLotNo.value);
 
         const tpm_category_massProdName = tpmCatData.value.map(item => item.category?.massprod_name ?? null);
         //console.log('tpm_category_massProdName:', tpm_category_massProdName);
-        jhCurveMassProdName.value = tpm_category_massProdName[0];
+        //jhCurveMassProdName.value = tpm_category_massProdName[0];
         //console.log('jhCurveMassProdName:', jhCurveMassProdName.value);
 
         const responsePatchCategory = await axios.patch(`/api/nsaupdatecategory/${currentSerialSelected.value}`,{
             actual_model: jhCurveActualModel.value,
             jhcurve_lotno: jhCurveLotNo.value,
-            massprod_name: jhCurveMassProdName.value,
+            massprod_name: currentMassProdSelected.value,
         });
         //console.log("API PATCHED category: ",responsePatchCategory);
     }catch(error){
@@ -1243,17 +1291,17 @@ const saveToNsaCategory = async () => {
 
         const tpm_category_actualmodel = tpmCatData.value.map(item => item.category?.actual_model ?? null);
         //console.log('tpm_category_actualmodel:', tpm_category_actualmodel);
-        jhCurveActualModel.value = tpm_category_actualmodel[0];
+        //jhCurveActualModel.value = tpm_category_actualmodel[0];
         //console.log('jhCurveActualModel:', jhCurveActualModel.value);
 
         const tpm_category_jhCurveLotno = tpmCatData.value.map(item => item.category?.jhcurve_lotno ?? null);
         //console.log('tpm_category_jhCurveLotno:', tpm_category_jhCurveLotno);
-        jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
+        //jhCurveLotNo.value = tpm_category_jhCurveLotno[0];
         //console.log('jhCurveLotNo:', jhCurveLotNo.value);
 
         const tpm_category_massProdName = tpmCatData.value.map(item => item.category?.massprod_name ?? null);
         //console.log('tpm_category_massProdName:', tpm_category_massProdName);
-        jhCurveMassProdName.value = tpm_category_massProdName[0];
+        //jhCurveMassProdName.value = tpm_category_massProdName[0];
         //console.log('jhCurveMassProdName:', jhCurveMassProdName.value);
 
         const responsePatchCategory = await axios.patch(`/api/nsaupdatecategory/${currentSerialSelected.value}`,{
@@ -1261,9 +1309,9 @@ const saveToNsaCategory = async () => {
                 factor_emp: nsa_FactorEmp.value,
                 actual_model: jhCurveActualModel.value,
                 jhcurve_lotno: jhCurveLotNo.value,
-                massprod_name: jhCurveMassProdName.value,
+                massprod_name: currentMassProdSelected.value,
             });
-            //console.log("API PATCHED category: ",responsePatchCategory);
+            console.log("API PATCHED category: ",responsePatchCategory);
 
         const responsePatchNSAData = await axios.patch(`/api/nsadataupdatemiasfactor/`, {
             serial_no: currentSerialSelected.value,
@@ -1306,7 +1354,7 @@ const showAllData = async () => {
             //const nsaRemarks = response.data.data["remarks"] || [];
             //console.log('showAllData nsa remarks: ',nsaRemarks);
 
-            checkTPMCategory();
+            await checkTPMCategory();
 
             // Combine the arrays
             combinedData.value = nsaData.value;
@@ -1703,7 +1751,7 @@ const fetchDataCreateGraph = async () => {
         //console.log("dataReady ", dataReady.value);
         // Ensure DOM updates before rendering
         nextTick(() => {
-            //console.log("myChartCanvas reference:", myChartCanvas.value); // Debug the canvas ref
+            //console.log("myChartCanvas reference:", myChartCanvas.value);
             if (myChartCanvas.value) {
                 renderChart();  // Proceed to render the chart if the canvas is available
             } else {
@@ -1971,7 +2019,7 @@ const deleteNullOnNsaCategory = async () => {
 };
 
 onMounted(async() => {
-    await testNSA();
+    //await testNSA();
     await autoDeleteNullData();
     await checkAuthentication();
 });
