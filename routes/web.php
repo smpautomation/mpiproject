@@ -136,6 +136,7 @@ Route::get('/reports/{serial}/pdf', [BackEndPdfController::class, 'generateAndMe
     ->where('serial', '[A-Za-z0-9\-\s#]+');
 
 Route::post('/upload-chart', [ChartUploadController::class, 'store']);
+Route::post('/upload-chart-sec', [ChartUploadController::class, 'storeSecondary']);
 
 Route::get('/debug-export', function () {
     return app(\App\Services\TxtExportService::class)->exportData2('K40', '541ST');

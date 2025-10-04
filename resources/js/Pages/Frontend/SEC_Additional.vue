@@ -1823,8 +1823,9 @@ const renderChart = () => {
         const x_offset = 2000;
         const y_offset = 1700;
 
+        //Previous offset
         //const x_offset = 2000;
-        //const y_offset = 4000;
+        //const y_offset = 1700;
 
         const chartDatasets = datasets.value.map((dataset, index) => {
             return {
@@ -1885,6 +1886,11 @@ const renderChart = () => {
                                     weight: "bold", // Make it bold
                                 },
                             },
+                            ticks: {
+                                stepSize: 2000, // adjust this value
+                                display: false // disables X-axis labels
+
+                            },
                         },
                         y: {
                             type: "linear",
@@ -1901,10 +1907,38 @@ const renderChart = () => {
                                     weight: "bold", // Make it bold
                                 },
                             },
+                            ticks: {
+                                stepSize: 2000, // adjust this value
+                                display: false // disables X-axis labels
+                            },
                         },
                     },
                 },
             });
+            setTimeout(() => {
+                const canvas = myChartCanvas.value;
+                const imageData = canvas.toDataURL("image/png");
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+                fetch("/upload-chart-sec", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken || "",
+                    },
+                    body: JSON.stringify({
+                        image: imageData,
+                        filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Chart image saved at:", data.path);
+                    // Optional: store this filename in a hidden input or use it to trigger PDF render
+                })
+                .catch(err => console.error("Chart upload failed:", err));
+            }, 1000); // Give Chart.js time to fully render
         } catch (error) {
             console.error("Error initializing Chart.js:", error);
         }

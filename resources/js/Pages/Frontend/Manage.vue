@@ -2240,6 +2240,7 @@ const renderChart = () => {
                                 },
                             },
                             ticks: {
+                                stepSize: 2000, // adjust this value
                                 display: false // disables X-axis labels
                             },
                         },
@@ -2259,6 +2260,7 @@ const renderChart = () => {
                                 },
                             },
                             ticks: {
+                                stepSize: 2000, // adjust this value
                                 display: false // disables X-axis labels
                             },
                         },

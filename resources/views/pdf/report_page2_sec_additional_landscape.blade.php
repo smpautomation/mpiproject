@@ -76,6 +76,7 @@
     </style>
 </head>
 <body>
+    @foreach($nsaGroups as $setNo => $rows)
     <table width="100%" style="border-collapse: collapse;">
         <tr>
             <!-- Left Side: Group and Tracer side-by-side, then Date -->
@@ -83,17 +84,17 @@
                 <!-- Group and Tracer -->
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr>
-                        <td style="font-size: 12px; width: 50%;"><i style="font-weight: bold;">Tracer: </i><span>{{ $reportData->pulse_tracer_machine_number }}</span></td>
+                        <td style="font-size: 12px; width: 50%;"><i style="font-weight: bold;">Tracer: </i><span>{{ $nsaData->Tracer }}</span></td>
                     </tr>
                 </table>
 
                 <!-- Date -->
-                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $reportDate }}</span></p>
+                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $nsaData->date }}</span></p>
             </td>
 
             <!-- Center: Property Data -->
             <td style="width: 33.33%; text-align: center; vertical-align: top;">
-                <h1 style="margin: 0; font-size: 24px;"><i>Property Data SEC</i></h1>
+                <h1 style="margin: 0; font-size: 24px;"><i>Property Data Set - {{ $setNo }}</i></h1>
             </td>
 
             <!-- Right Side: Optional future use or keep empty -->
@@ -106,20 +107,20 @@
     <table style="width: 100%; border-collapse: collapse;">
         <!-- Row 1 -->
         <tr>
-            <td style="font-weight: bold; font-size: 10px;"><i>Code: </i>{{ $tpmData->code_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Type Code: </i>{{ $tpmData->type }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Judge Code: </i>{{ $tpmData->order_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Press #: </i>{{ $tpmData->press_1 }} {{ $tpmData->press_2 }} {{ $tpmData->machine_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Singering Furnace #: </i>{{ $sinteringFurnaceNo }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Code: </i>{{ $nsaData->code_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Type Code: </i>{{ $nsaData->type }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Judge Code: </i>{{ $nsaData->order_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Press #: </i>{{ $nsaData->press_1 }} {{ $nsaData->press_2 }} {{ $nsaData->machine_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Singering Furnace #: </i>{{ $nsa_sinteringFurnaceNo }}</td>
         </tr>
 
         <!-- Row 2 -->
         <tr>
-            <td style="font-weight: bold; font-size: 10px;"><i>Sintering #: </i>{{ $sinteringNo }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Coating: </i>{{ $tpmData->furnace_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Pass #: </i>{{ $tpmData->pass_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee: </i>{{ $miasEmp }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee: </i>{{ $factorEmp }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Sintering #: </i>{{ $nsa_sinteringNo }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Coating: </i>{{ $nsaData->furnace_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Pass #: </i>{{ $nsaData->pass_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee: </i>{{ $nsa_mias }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee: </i>{{ $nsa_factor }}</td>
         </tr>
     </table>
 
@@ -159,58 +160,51 @@
         </thead>
         <tbody>
             @php
-                function renderTPMCell($remark, $tdStyle) {
-                    $isError = $remark === '1';
-                    $text = $isError ? 'E' : ($remark === '0' ? '' : $remark);
-                    $color = $isError ? 'color: red;' : '';
-                    return "<td style=\"$tdStyle$color\">$text</td>";
-                }
-
                 $tdStyle = 'width: 6%; font-size: 10px; text-align: center; padding: 2px; white-space: nowrap;';
                 $tdStyleRem = 'width: 2%; font-size: 10px; text-align: center; padding: 2px; white-space: nowrap;';
             @endphp
 
-            @foreach ($tpmDataAll as $item)
+            @foreach ($rows as $item)
             <tr>
                 <td style="{{ $tdStyle }}">{{ $item->zone ?? '' }}</td>
                 <td style="{{ $tdStyle }}">{{ $item->Br ?? '' }}</td>
-                {!! renderTPMCell($item->remark->Br_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->Br_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHc ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHc_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHc_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHk ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHk_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHk_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->BHMax ?? '' }}</td>
-                {!! renderTPMCell($item->remark->BHMax_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->BHMax_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHr95 ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHr95_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHr95_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHr98 ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHr98_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHr98_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHkiHc ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHkiHc_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHkiHc_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->Br4pai ?? '' }}</td>
-                {!! renderTPMCell($item->remark->Br4pai_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->Br4pai_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->bHc ?? '' }}</td>
-                {!! renderTPMCell($item->remark->bHc_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->bHc_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->Squareness ?? '' }}</td>
-                {!! renderTPMCell($item->remark->Squareness_remarks ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->Squareness_remarks ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->{"4paiIa"} ?? '' }}</td>
-                {!! renderTPMCell($item->remark->{"4paiIa_remarks"} ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->{"4paiIa_remarks"} ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->{"4paiId"} ?? '' }}</td>
-                {!! renderTPMCell($item->remark->{"4paiId_remarks"} ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->{"4paiId_remarks"} ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->{"4paiIs"} ?? '' }}</td>
-                {!! renderTPMCell($item->remark->{"4paiIs_remarks"} ?? '', $tdStyleRem) !!}
+                <td style="{{ $tdStyleRem }}">{{ $item->remark->{"4paiIs_remarks"} ?? '' }}</td>
 
                 <td style="{{ $tdStyle }}">{{ $item->temperature ?? '' }}</td>
                 <td style="{{ $tdStyle }}">{{ $item->data_status ?? '' }}</td>
@@ -222,87 +216,87 @@
             </tr>
             <tr>
                 <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Average</i></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Br'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['Br'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['bHc'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['iHc'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['iHc'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['iHk'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['iHk'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['BHMax'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Hr95'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['Hr95'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Hr98'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['Hr98'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['BHMax'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['iHciHk'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4paila'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['Br4pai'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4paild'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['bHc'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4pails'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['Squareness'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Br4pai'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['4paild'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['iHciHk'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['4pails'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['Squareness'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['average']['4paila'] }}</td>
             </tr>
             <tr>
                 <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Max</i></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Br'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['bHc'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHc'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHk'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Hr95'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Hr98'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['BHMax'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['4paila'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['4paild'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['4pails'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Br4pai'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHciHk'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Squareness'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['Br'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['iHc'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['iHk'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['BHMax'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['Hr95'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['Hr98'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['iHciHk'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['Br4pai'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['bHc'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['Squareness'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['4paild'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['4pails'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['max']['4paila'] }}</td>
             </tr>
             <tr>
                 <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Min</i></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Br'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['bHc'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['iHc'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['iHk'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Hr95'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Hr98'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['BHMax'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['4paila'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['4paild'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['4pails'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Br4pai'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['iHciHk'] }}</td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
-                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMin['Squareness'] }}</td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['Br'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['iHc'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['iHk'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['BHMax'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['Hr95'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['Hr98'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['iHciHk'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['Br4pai'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['bHc'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['Squareness'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['4paild'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['4pails'] }}</td>
+                <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
+                <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $nsaAggregates[$setNo]['min']['4paila'] }}</td>
             </tr>
         </tbody>
 
@@ -311,7 +305,27 @@
     <!-- Thick Horizontal Line -->
     <div style="height: 1px; border-bottom: 3px solid black; margin-top: 5px; margin-bottom: 5px;"></div>
 
-    <div class="page-break"></div>
+    @php
+        // Get total rows in current set
+        $currentCount = $rows->count();
+
+        // Get previous set's row count if exists
+        $prevSetNo = $setNo - 1;
+        $prevCount = isset($nsaGroups[$prevSetNo]) ? $nsaGroups[$prevSetNo]->count() : 0;
+
+        // Sum rows of current + previous set
+        $twoSetTotal = $currentCount + $prevCount;
+    @endphp
+
+    @if($loop->iteration % 2 === 0)
+        @if($twoSetTotal <= 20)
+            <div class="page-break"></div>
+        @else
+            <div class="page-break"></div> <!-- Break instantly for large sets -->
+        @endif
+    @endif
+
+    @endforeach
 
     <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
         <tr>

@@ -303,15 +303,42 @@ class BackEndPdfController extends Controller
 
         //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals
         $nsaData = NormalSecAdditionals::where('serial_no', $serial)->first();
-        $nsaDataAll = NormalSecAdditionals::where('serial_no', $serial)->get();
-        $nsaAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial)->first();
 
-        $nsaAggregateMaximum = $nsaAggregateFunctions->maximum;
-        $nsaAggregateMinimum = $nsaAggregateFunctions->minimum;
-        $nsaAggregateAverage = $nsaAggregateFunctions->average;
-        //$nsaCategory = NSACategory::where('')
+        // group rows by set_no (ordered)
+        $nsaGroups = NormalSecAdditionals::where('serial_no', $serial)
+            ->orderBy('set_no')
+            ->get()
+            ->groupBy('set_no'); // collection keyed by set_no
 
-        dd($nsaAggregateAverage);
+        $nsaAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial)
+            ->get()
+            ->keyBy('nsa_set'); // now keyed by set number
+
+        // Directly assign aggregates from DB, no computation
+        $nsaAggregates = [];
+
+        foreach ($nsaGroups as $setNo => $rows) {
+            if (isset($nsaAggregateFunctions[$setNo])) {
+                $func = $nsaAggregateFunctions[$setNo];
+                $nsaAggregates[$setNo]['average'] = json_decode($func->average, true) ?? [];
+                $nsaAggregates[$setNo]['max']     = json_decode($func->maximum, true) ?? [];
+                $nsaAggregates[$setNo]['min']     = json_decode($func->minimum, true) ?? [];
+            } else {
+                $nsaAggregates[$setNo]['average'] = [];
+                $nsaAggregates[$setNo]['max']     = [];
+                $nsaAggregates[$setNo]['min']     = [];
+            }
+        }
+
+        $nsaCategory = NSACategory::where('nsa_serial', $serial)->first();
+
+        $nsa_onlyFurnacePrefix  = isset($nsaData->sintering_furnace_no) ? explode('-', $nsaData->sintering_furnace_no)[0] ?? null : null;
+        $nsa_onlyFurnacePostfix = isset($nsaData->sintering_furnace_no) ? explode('-', $nsaData->sintering_furnace_no)[1] ?? null : null;
+
+        // how many sets we have
+        $nsaSetCount = $nsaGroups->count();
+
+        //dd($nsaAggregateMaximum);
 
         //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals End
 
@@ -389,6 +416,15 @@ class BackEndPdfController extends Controller
                 'rob' => $dROB,
                 'd1x1x1' => $d1x1x1,
             ],
+            'nsaData'       => $nsaData,
+            'nsaGroups'     => $nsaGroups,
+            'nsaAggregates' => $nsaAggregates,
+            'nsaSetCount'   => $nsaSetCount,
+            'nsaCategory'   => $nsaCategory,
+            'nsa_sinteringFurnaceNo' => $nsa_onlyFurnacePrefix, // pass only furnace prefix
+            'nsa_sinteringNo' => $nsa_onlyFurnacePostfix, // pass only furnace postfix
+            'nsa_mias' => $nsaCategory->mias_emp ?? null,
+            'nsa_factor' => $nsaCategory->factor_emp ?? null,
         ];
 
         // Decide which portrait view to use
@@ -412,13 +448,24 @@ class BackEndPdfController extends Controller
             ->output();
 
         // Landscape stays the same
-        $landscape = Pdf::loadView('pdf.report_page2_sec_additional_landscape', $data)
+        $landscape = Pdf::loadView('pdf.report_page2_landscape', $data)
             ->setPaper('a4', 'landscape')
             ->output();
 
         $merger = new Merger();
         $merger->addRaw($portrait);
         $merger->addRaw($landscape);
+
+
+        // Conditionally add secondary landscape page if NSA data exists
+        if ($nsaData) {
+            $secLandscape = Pdf::loadView('pdf.report_page2_sec_additional_landscape', $data)
+                ->setPaper('a4', 'landscape')
+                ->output();
+            $merger->addRaw($secLandscape);
+        }
+
+
         $mergedPdf = $merger->merge();
 
         $massProd = $tpmCategories->massprod_name ?? 'unknown';
