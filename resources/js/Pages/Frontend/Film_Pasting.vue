@@ -645,6 +645,7 @@ const saveToDatabase = async () => {
             machine_no: filmPastingInfo.machine_no,
             total_magnet_weight: filmPastingInfo.total_magnet_weight,
             loader_operator: filmPastingInfo.loader_operator,
+            unloader_operator: filmPastingInfo.unloader_operator,
             checker_operator: filmPastingInfo.checker_operator,
             film_coating_amount: filmPastingInfo.film_coating_amount,
             time_start: filmPastingInfo.time_start,

@@ -111,49 +111,37 @@
     <div style="clear:both; margin: 0px; padding: 0px;"></div> <!-- Break Line -->
 
     <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-        <label class="bold" style="font-size: 10px; padding-left: 1px;">COATING INFORMATION</label>
+        <label class="bold" style="font-size: 10px; padding-left: 1px;">FILM PASTING INFORMATION</label>
 
         <div class="table-block">
             <div class="table-row">
-                <div class="table-cell">Coating Date:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->date ?? 'NA' }}</span></div>
-                <div class="table-cell">Coating Machine No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->machine_no ?? 'NA' }}</span></div>
-                <div class="table-cell">Slurry Lot No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->slurry_lot_no ?? 'NA' }}</span></div>
-            </div>
-
-            <div class="table-row">
-                <div class="table-cell">MIN. TB CONTENT:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->min_tb_content ?? 'NA' }}</span></div>
-                <div class="table-cell">Sample Quantity:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->sample_qty ?? 'NA' }}</span></div>
+                <div class="table-cell">Film Pasting Date:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->date ?? 'NA' }}</span></div>
+                <div class="table-cell">Machine No:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->machine_no ?? 'NA' }}</span></div>
                 <div class="table-cell">Total Magnet Weight:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->total_magnet_weight ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->total_magnet_weight ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell">Loader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->loader_operator ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->loader_operator ?? 'NA' }}</span></div>
                 <div class="table-cell">Unloader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->unloader_operator ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->unloader_operator ?? 'NA' }}</span></div>
                 <div class="table-cell">Checker Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->checker_operator ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->checker_operator ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
-                <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
-                <div class="table-cell"></div>
+                <div class="table-cell">Film Coating amount:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->film_coating_amount ?? 'NA' }}</span></div>
                 <div class="table-cell">Time Start:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_start ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->time_start ?? 'NA' }}</span></div>
                 <div class="table-cell">Time Finished:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_finish ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $filmPastingData->time_finished ?? 'NA' }}</span></div>
             </div>
 
-            <div class="table-row">
-                <p class="table-cell" style="font-size:7px;">UNIT    :    (µ g/mm2)</p>
-            </div>
-        </div> <!-- End of Coating Info -->
+        </div> <!-- End of FilmPasting Info -->
 
         @php
             $lotNo = $coatingDataValues['Lot no'] ?? null;
@@ -199,148 +187,149 @@
             $table3Rows = array_slice($rows, 28, 14);
         @endphp
 
-        <div class="table-block">
+        <div class="table-block" style="width:50%; margin-top: 7px; margin-bottom: 3px;">
             <div class="table-row">
+                <!-- Left side labels -->
+                <div class="table-cell" style="width: 25%;">
+                    <div style="margin-bottom: 3px;">Film type (Tb or Dy):</div>
+                    <div>Film Class:</div>
+                </div>
+
+                <!-- Right side data (three stacked boxes) -->
                 <div class="table-cell">
-                    <!-- 1st table -->
-                    <table class="print-table" style="margin-top:1px;">
-                        <thead>
-                            <tr>
-                                <th>Lot No.</th>
-                                <th>No.</th>
-                                <th>Coating</th>
-                                <th colspan="2">Concentration</th>
-                            </tr>
-                        </thead>
+                    <table class="print-table" style="margin-top:1px; width:50%;">
                         <tbody>
-                            @foreach ($table1Rows as $row)
-                                <tr>
-                                    <td>{{ $row['lot'] }}</td>
-                                    <td>{{ $row['no'] }}</td>
-                                    <td>{{ $row['coating'] }}</td>
-                                    <td>{{ $row['concentration'] }}</td>
-                                    <td>{{ $row['module'] }}</td>
-                                </tr>
-                            @endforeach
+                            <tr>
+                                <td>{{ $filmPastingData->film_type }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingData->film_class }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="table-cell">
-                    <!-- 2nd table -->
-                    <table class="print-table" style="margin-top:1px;">
-                        <thead>
-                            <tr>
-                                <th>Lot No.</th>
-                                <th>No.</th>
-                                <th>Coating</th>
-                                <th colspan="2">Concentration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($table2Rows as $row)
-                                <tr>
-                                    <td>{{ $row['lot'] }}</td>
-                                    <td>{{ $row['no'] }}</td>
-                                    <td>{{ $row['coating'] }}</td>
-                                    <td>{{ $row['concentration'] }}</td>
-                                    <td>{{ $row['module'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="table-cell">
-                    <!-- 3rd table -->
-                    <table class="print-table" style="margin-top:1px;">
-                        <thead>
-                            <tr>
-                                <th>Lot No.</th>
-                                <th>No.</th>
-                                <th>Coating</th>
-                                <th colspan="2">Concentration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($table3Rows as $row)
-                                <tr>
-                                    <td>{{ $row['lot'] }}</td>
-                                    <td>{{ $row['no'] }}</td>
-                                    <td>{{ $row['coating'] }}</td>
-                                    <td>{{ $row['concentration'] }}</td>
-                                    <td>{{ $row['module'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div> <!-- END of 3rd table -->
-
-                <div class="table-cell">
-                    <!-- 4rd table -->
-                    <table class="print-table" style="margin-top:1px;">
-                        <thead>
-                            <tr>
-                                <th rowspan="2">MODULE</th>
-                                <th colspan="3">ADDITIONAL SLURRY</th>
-                                <th rowspan="2">LITERS</th>
-                            </tr>
-                            <tr>
-                                <th>NEW</th>
-                                <th>HOMO</th>
-                                <th>TIME</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($additionalSlurry as $slurry)
-                                <tr>
-                                    <td>{{ $slurry['module'] }}</td>
-                                    <td>{{ $slurry['new'] }}</td>
-                                    <td>{{ $slurry['homo'] }}</td>
-                                    <td>{{ $slurry['time'] }}</td>
-                                    <td>{{ $slurry['liters'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div> <!-- End of 4th table -->
             </div>
         </div>
 
-        <div style="display: table; margin: 0 auto; border-spacing: 10px; padding: 0px;">
-            <div style="display: table-row;">
-                <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                    <table style="width: 100%; font-size: 7px; border-collapse: collapse; border: 1px solid black;">
+        <div class="table-block" style="margin-top:6px;">
+            <!-- Section title (full width) -->
+            <!-- Content row -->
+            <div class="table-row">
+                <!-- Left side labels -->
+                <div class="table-cell">
+                    <div style="margin-bottom:3px;">
+                        <label class="bold" style="font-size:8px; text-decoration:underline;">
+                            H-LINE PARAMETERS
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Sprayer Water amount:</div>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Film paste Lot no.</div>
+                    <br><br>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Film machine Humidity %</div>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Film machine temperature</div>
+                    <div style="margin-left: 10px;">Dryer Temp setting</div>
+                </div>
+
+                <!-- Right side data (three stacked boxes) -->
+                <div class="table-cell">
+                    <br>
+                    <table class="print-table" style="margin-top:1px; width:80%;">
                         <tbody>
                             <tr>
-                                <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->maximum }}</td>
+                                <td>{{ $filmPastingHLine['sprayer_water_amount'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingHLine['film_paste_lot_no_1'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingHLine['film_paste_lot_no_2'] }}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td>{{ $filmPastingHLine['film_machine_humidity'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingHLine['film_machine_temperature'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingHLine['dryer_temp_setting'] }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                    <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
+
+                <!-- Left side labels -->
+                <div class="table-cell">
+                    <div style="margin-bottom:3px;">
+                        <label class="bold" style="font-size:8px; text-decoration:underline;">
+                            T-LINE PARAMETERS
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Sprayer Water amount:</div>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Film paste Lot no.</div>
+                    <br><br>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Film machine Humidity %</div>
+                    <div style="margin-bottom: 2px; margin-left: 10px;">Film machine temperature</div>
+                    <div style="margin-left: 10px;">Dryer Temp setting</div>
+                </div>
+
+                <!-- Right side data (three stacked boxes) -->
+                <div class="table-cell">
+                    <br>
+                    <table class="print-table" style="margin-top:1px; width:80%;">
                         <tbody>
                             <tr>
-                                <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->minimum  }}</td>
+                                <td>{{ $filmPastingTLine['sprayer_water_amount'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingTLine['film_paste_lot_no_1'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingTLine['film_paste_lot_no_2'] }}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td>{{ $filmPastingTLine['film_machine_humidity'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingTLine['film_machine_temperature'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $filmPastingTLine['dryer_temp_setting'] }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                    <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
-                        <tbody>
-                            <tr>
-                                <td style="border: 1px solid black; padding: 2px 4px;">AVERAGE:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->average }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <!-- Left side labels -->
+                <div class="table-cell">
+                    <div style="margin-bottom:6px;">
+                        <label class="bold" style="font-size:8px; text-decoration:underline;">
+                            Setter sand Application per layer
+                        </label>
+                    </div>
+
+                    {{-- With setter sand --}}
+                    <div style="font-size:8px; margin-bottom:2px; margin-left: 10px;">
+                        <span style="display:inline-block; width:8px; height:8px; border:1px solid black; vertical-align:middle; text-align:center; line-height:5px; font-family: DejaVu Sans, sans-serif;">
+                            @if($filmPastingData->setter_sand == 1) ✓ @endif
+                        </span>
+                        <span style="padding-left:3px;">With setter sand</span>
+                    </div>
+
+                    {{-- Without setter sand --}}
+                    <div style="font-size:8px; margin-left: 10px;">
+                        <span style="display:inline-block; width:8px; height:8px; border:1px solid black; vertical-align:middle; text-align:center; line-height:5px; font-family: DejaVu Sans, sans-serif;">
+                            @if($filmPastingData->setter_sand == 0) ✓ @endif
+                        </span>
+                        <span style="padding-left:3px;">Without setter sand</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <br>
 
         <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
             <tr>
@@ -348,7 +337,7 @@
                 <td style="width: 100%;">
                     <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
                         <span style="display: inline-block; margin-bottom: -1px;">
-                            {{ $coatingData->remarks }}
+                            {{ $filmPastingData->remarks }}
                         </span>
                     </div>
                     <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
@@ -403,7 +392,7 @@
             <div style="vertical-align: top; width: 25%;">&nbsp;</div>
 
             <!-- Column 3: Table -->
-            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px;">
+            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px; white-space: nowrap;">
                  <table class="print-table">Add commentMore actions
                         <thead>
                             <tr>

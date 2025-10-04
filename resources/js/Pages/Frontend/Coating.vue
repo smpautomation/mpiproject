@@ -1871,7 +1871,7 @@ const saveToDatabase_1st2ndgbdp = async() => {
                 "Coating Amount Data": coatingAmountData_2ndgbdp,
                 "Concentration Data": concentrationAmountData_2ndgbdp,
                 "Lot no": lotNo.value
-            }
+            },
         }
 
         const response = await axios.post(`/api/gbdp-second-coating`, payload);

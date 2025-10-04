@@ -91,10 +91,14 @@ class FrontendController extends Controller
     public function manage(Request $request) {
         // Capture the manageSerialParam query parameter from the URL
         $manageSerialParam = $request->query('manageSerialParam'); // Use $request->query() to get the value
+        $manageMassProd = $request->query('manageMassProd');
+        $manageLayer = $request->query('manageLayer');
 
         // Return the Inertia response and pass the manageSerialParam to the Manage.vue component
         return Inertia::render('Frontend/Manage', [
             'manageSerialParam' => $manageSerialParam,  // Pass manageSerialParam as a prop to the Vue component
+            'manageMassProd' => $manageMassProd,
+            'manageLayer' => $manageLayer
         ]);
     }
 

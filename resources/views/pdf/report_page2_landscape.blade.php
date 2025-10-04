@@ -118,8 +118,8 @@
             <td style="font-weight: bold; font-size: 10px;"><i>Sintering #: </i>{{ $sinteringNo }}</td>
             <td style="font-weight: bold; font-size: 10px;"><i>Coating: </i>{{ $tpmData->furnace_no }}</td>
             <td style="font-weight: bold; font-size: 10px;"><i>Pass #: </i>{{ $tpmData->pass_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee: </i>{{ $tpmCat->mias_emp }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee: </i>{{ $tpmCat->factor_emp }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee: </i>{{ $miasEmp }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee: </i>{{ $factorEmp }}</td>
         </tr>
     </table>
 

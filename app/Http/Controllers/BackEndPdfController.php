@@ -147,10 +147,12 @@ class BackEndPdfController extends Controller
         }
 
         // Build column name dynamically
-        $column = 'layer_' . str_replace('.', '_', $layer) . '_format_type';
-
+        $columnLayerData = 'layer_' . str_replace('.', '_', $layer);
+        $columnLayerFormat = 'layer_' . str_replace('.', '_', $layer) . '_format_type';
+        //dd($columnLayerFormat);
         // Fetch the value safely
-        $gbdp_report_format_type = $massProdData->$column ?? null;
+        $gbdp_report_format_type = $massProdData->$columnLayerFormat ?? null;
+        $control_sheet_data = $massProdData->$columnLayerData ?? null;
 
         if (!$gbdp_report_format_type) {
             return response()->json([
@@ -158,6 +160,69 @@ class BackEndPdfController extends Controller
                 'message' => "No format type found for layer: {$layer}"
             ], 404);
         }
+
+        // Decode JSON string
+        $controlSheetArray = json_decode($control_sheet_data, true);
+        if (!$controlSheetArray) {
+            return response()->json([
+                'status' => false,
+                'message' => "Control sheet data is invalid"
+            ], 404);
+        }
+
+        // Map rowTitles to clean variable names
+        $cs = [];
+        foreach ($controlSheetArray as $row) {
+            $title = strtolower($row['rowTitle']);            // lowercase
+            $title = preg_replace('/[^a-z0-9]+/', '_', $title); // replace non-alphanumeric with _
+            $title = trim($title, '_');                        // remove trailing/leading underscores
+            $cs[$title] = $row['data'];
+        }
+
+        // Create variables dynamically
+        foreach ($cs as $key => $value) {
+            ${"cs_{$key}"} = $value;
+        }
+
+        //Coating data --------------- Coating data --------------- Coating data --------------- Coating data
+        $coatingData = Coating::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+
+        $coatingDataJson = $coatingData->coating_data ?? null;
+        $coatingDataValues = json_decode($coatingDataJson, true);
+
+        //Coating data --------------- Coating data --------------- Coating data --------------- Coating data End
+
+        //Film Pasting --------------- Film Pasting --------------- Film Pasting --------------- Film Pasting
+
+        $filmPastingData = FilmPastingData::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+        $filmPastingHLineValues = $filmPastingData->h_line_parameters ?? null;
+        $filmPastingTLineValues = $filmPastingData->t_line_parameters ?? null;
+
+        //Film Pasting --------------- Film Pasting --------------- Film Pasting --------------- Film Pasting End
+
+        //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp
+
+        $secondGbdpCoatingData = GbdpSecondCoating::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+        /*$secondGbdpHTData = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+        if (!$secondGbdpHTData) {
+            return response()->json([
+                'status' => false,
+                'message' => "Second GBDP Heat Treatment record not found for mass_prod: {$massprod} or layer: {$layer}"
+            ], 404);
+        }*/
+
+        //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp End
 
         $onlyFurnacePrefix = explode('-', $tpmData->sintering_furnace_no)[0] ?? null;
         $onlyFurnacePostfix = explode('-', $tpmData->sintering_furnace_no)[1] ?? null;
@@ -244,8 +309,27 @@ class BackEndPdfController extends Controller
             'brVariance' => $brVariance,
             'ihcVariance' => $ihcVariance,
             'ihkVariance' => $ihkVariance,
-            //'coatingData' => $coatingData, // pass coating data to Blade
-            //'heatTreatmentData' => $HTData, // pass heat treatment data to Blade
+            'coatingData' => $coatingData ?? null, // pass coating data to Blade
+            'coatingDataValues' => $coatingDataValues ?? null,
+            'secondGbdp2ndCoatingData' => $secondGbdpCoatingData['coating_data_2ndgbdp'] ?? null,
+            'secondGbdp2ndCoatingInfo' => $secondGbdpCoatingData['coating_info_2ndgbdp'] ?? null,
+            'secondGbdpCoatingData' => $secondGbdpCoatingData ?? null,
+            'heatTreatmentData' => $massProdData, // pass heat treatment data to Blade
+            'filmPastingData' => $filmPastingData ?? null,
+            'filmPastingHLine' => $filmPastingHLineValues ?? null,
+            'filmPastingTLine' => $filmPastingTLineValues ?? null,
+            'controlModel' => $cs_model,
+            'controlCoatingMCNo' => $cs_coating_m_c_no,
+            'controlLotNo' => $cs_lt_no,
+            'controlQty' => $cs_qty_pcs,
+            'controlHt' => $cs_ht_pcs,
+            'controlLt' => $cs_lt_pcs,
+            'controlCoating' => $cs_coating,
+            'controlWeight' => $cs_wt_kg,
+            'controlBoxNo' => $cs_box_no,
+            'controlMagnetPreparedBy' => $cs_magnet_prepared_by,
+            'controlBoxPreparedBy' => $cs_box_prepared_by,
+            'controlTotalQty' => $cs_total_qty,
             'preparedByDate' => $preparedByDate, // pass prepared by
             'checkedByDate' => $checkedByDate, // pass checked by date
             'approvedByDate' => $approvedByDate, // pass approved by date
@@ -260,6 +344,8 @@ class BackEndPdfController extends Controller
             'tpmCat' => $tpmCategories, // pass TPM categories
             'tpmData' => $tpmData, // pass single TPM data
             'tpmDataAll' => $tpmDataAll, // pass all TPM data
+            'miasEmp' => $massProdData->mias_emp,
+            'factorEmp' => $massProdData->factor_emp,
             //'magnetBoxLocation' => $MBL, // pass magnet box location
             'reportDate' => $reportDate ?? null, // pass report date
             'sinteringFurnaceNo' => $onlyFurnacePrefix, // pass only furnace prefix
@@ -288,10 +374,27 @@ class BackEndPdfController extends Controller
             ],
         ];
 
-        $portrait = Pdf::loadView('pdf.report_page1_portrait', $data)
+        // Decide which portrait view to use
+        switch ($gbdp_report_format_type) {
+            case 'Normal':
+                $portraitView = 'pdf.report_page1_portrait';
+                break;
+            case 'Film Pasting':
+                $portraitView = 'pdf.report_page1_filmpasting_portrait';
+                break;
+            case '1st and 2nd Gbdp':
+                $portraitView = 'pdf.report_page1_second_gbdp_portrait';
+                break;
+            default:
+                throw new \Exception("Unknown report format type: {$gbdp_report_format_type}");
+        }
+
+        // Generate portrait
+        $portrait = Pdf::loadView($portraitView, $data)
             ->setPaper('a4', 'portrait')
             ->output();
 
+        // Landscape stays the same
         $landscape = Pdf::loadView('pdf.report_page2_landscape', $data)
             ->setPaper('a4', 'landscape')
             ->output();

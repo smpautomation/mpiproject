@@ -58,7 +58,7 @@
                     </div>
 
                     <!-- Group: Basic Info -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Model<span class="text-red-500"> *</span></label>
                             <select v-model="mpcs.selectedModel" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
@@ -227,6 +227,10 @@
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Loader<span class="text-red-500"> *</span></label>
                                     <input v-model="hti.loader" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Partial No.<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.partialNo" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
@@ -868,6 +872,7 @@ const hti = reactive({
     currentPattern: '',
     dateStart: '',
     timeStart: '',
+    partialNo: 0,
     loader: '',
     dateFinish: '',
     timeFinish: '',
@@ -1223,6 +1228,7 @@ const saveToDatabase = async () => {
             current_pattern: hti.currentPattern,
             date_start: hti.dateStart,
             time_start: hti.timeStart,
+            partial_no: hti.partialNo,
             loader: hti.loader,
             date_finished: hti.dateFinish,
             time_finished: hti.timeFinish,

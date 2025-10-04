@@ -1208,7 +1208,7 @@
                     <button v-if="(!approvedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Proxy Approver' || state.user.access_type === 'Automation')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
-                    <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
+                    <button @click="viewPropertyData(currentSerialSelected, selectedMassProd, selectedLayer)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
                         View Property Data
                     </button>
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
@@ -2989,11 +2989,11 @@ if(ipAddress.value === '127.0.0.1'){
 //console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
 
-const viewPropertyData = (serial) => {
+const viewPropertyData = (serial, massprod, layer) => {
   //console.log('Navigating to manage with serial:', serial);
   Inertia.visit('/manage', {
     method: 'get',
-    data: { manageSerialParam: serial },   // Passing the serialParam here
+    data: { manageSerialParam: serial, manageMassProd: massprod, manageLayer: layer },   // Passing the serialParam here
     preserveState: true,
     preserveScroll: true,
   });

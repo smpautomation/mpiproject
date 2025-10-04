@@ -116,38 +116,27 @@
         <div class="table-block">
             <div class="table-row">
                 <div class="table-cell">Coating Date:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->date ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['date'] ?? 'NA' }}</span></div>
                 <div class="table-cell">Coating Machine No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->machine_no ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['machine_no'] ?? 'NA' }}</span></div>
                 <div class="table-cell">Slurry Lot No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->slurry_lot_no ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['slurry_lot_no'] ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell">MIN. TB CONTENT:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->min_tb_content ?? 'NA' }}</span></div>
-                <div class="table-cell">Sample Quantity:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->sample_qty ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['min_tb_content'] ?? 'NA' }}</span></div>
                 <div class="table-cell">Total Magnet Weight:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->total_magnet_weight ?? 'NA' }}</span></div>
-            </div>
-
-            <div class="table-row">
-                <div class="table-cell">Loader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->loader_operator ?? 'NA' }}</span></div>
-                <div class="table-cell">Unloader Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->unloader_operator ?? 'NA' }}</span></div>
-                <div class="table-cell">Checker Operator:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->checker_operator ?? 'NA' }}</span></div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['total_magnet_weight'] ?? 'NA' }}</span></div>
             </div>
 
             <div class="table-row">
                 <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
                 <div class="table-cell"></div>
-                <div class="table-cell">Time Start:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_start ?? 'NA' }}</span></div>
-                <div class="table-cell">Time Finished:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->time_finish ?? 'NA' }}</span></div>
+                <div class="table-cell"></div>
+                <div class="table-cell"><br></div>
+                <div class="table-cell"></div>
+                <div class="table-cell"><br></div>
             </div>
 
             <div class="table-row">
@@ -156,10 +145,10 @@
         </div> <!-- End of Coating Info -->
 
         @php
-            $lotNo = $coatingDataValues['Lot no'] ?? null;
-            $concentrationData = $coatingDataValues['Concentration Data'] ?? [];
-            $coatingAmountData = collect($coatingDataValues['Coating Amount Data'] ?? [])->keyBy('no');
-            $additionalSlurry = $coatingDataValues['Additional Slurry Data'] ?? [];
+            $lotNo = $secondGbdp2ndCoatingData['Lot no'] ?? null;
+            $concentrationData = $secondGbdp2ndCoatingData['Concentration Data'] ?? [];
+            $coatingAmountData = collect($secondGbdp2ndCoatingData['Coating Amount Data'] ?? [])->keyBy('no');
+            //$additionalSlurry = $secondGbdp2ndCoatingData['Additional Slurry Data'] ?? [];
 
             $rows = [];
             $currentNo = 1;
@@ -263,13 +252,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($table3Rows as $row)
+                            @foreach ($table2Rows as $row)
                                 <tr>
-                                    <td>{{ $row['lot'] }}</td>
-                                    <td>{{ $row['no'] }}</td>
-                                    <td>{{ $row['coating'] }}</td>
-                                    <td>{{ $row['concentration'] }}</td>
-                                    <td>{{ $row['module'] }}</td>
+                                    <td><br></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -292,15 +281,41 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($additionalSlurry as $slurry)
-                                <tr>
-                                    <td>{{ $slurry['module'] }}</td>
-                                    <td>{{ $slurry['new'] }}</td>
-                                    <td>{{ $slurry['homo'] }}</td>
-                                    <td>{{ $slurry['time'] }}</td>
-                                    <td>{{ $slurry['liters'] }}</td>
-                                </tr>
-                            @endforeach
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div> <!-- End of 4th table -->
@@ -314,7 +329,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->maximum }}</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['maximum'] }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -324,7 +339,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->minimum  }}</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['minimum']  }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -334,7 +349,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">AVERAGE:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->average }}</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['average'] }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -348,7 +363,7 @@
                 <td style="width: 100%;">
                     <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
                         <span style="display: inline-block; margin-bottom: -1px;">
-                            {{ $coatingData->remarks }}
+                            {{ $secondGbdp2ndCoatingInfo['remarks'] }}
                         </span>
                     </div>
                     <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
@@ -444,7 +459,6 @@
                                      <td>{{ $controlLotNo['L'] ?? null }}</td>
                                 @endif
                             </tr>
-                        </tbody>
                     </table>
             </div>
         </div>

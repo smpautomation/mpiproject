@@ -841,12 +841,22 @@
         return { model, lotno };
     };
 
+    const fetchMiasFactor = async () => {
+        try{
+            const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+            const massProd = response.data;
+            propData_factorEmp.value = massProd.factor_emp;
+            propData_miasEmp.value = massProd.mias_emp;
+        }catch(error){
+            console.log('Failed to get Mias & Factor Employee');
+        }
+    }
+
 
     // Watcher
     watch([selectedMassProd, currentLayerNo], async ([newProd, newLayer]) => {
         if (newProd && newLayer) {
             console.log(`Watcher triggered → MassProd: ${newProd}, Layer: ${newLayer}`);
-
             const { model, lotno } = await fetchLayerModelAndLotno();
             console.log("Fetched values:", { model, lotno });
         }
@@ -1399,8 +1409,10 @@
             console.log('Column to update: ', layerToUpdate);
 
             const payload = {
-            mass_prod: selectedMassProd.value, // your validator expects this
-            [layerToUpdate]: serialNo.value,
+                mass_prod: selectedMassProd.value, // your validator expects this
+                mias_emp: propData_miasEmp.value,
+                factor_emp: propData_factorEmp.value,
+                [layerToUpdate]: serialNo.value,
             };
 
             const response = await axios.patch(
@@ -2288,6 +2300,8 @@ const renderChart = () => {
    // Define props that Inertia will pass to the component
     const props = defineProps({
         manageSerialParam: String,  // Expecting the serialParam to be a string
+        manageMassProd: String,
+        manageLayer: String
     });
 
     //console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
@@ -2296,13 +2310,16 @@ const renderChart = () => {
     onMounted(async () => {
         // Log the value to check if it's being passed correctly
         //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
-        if (props.manageSerialParam) {
+        if (props.manageSerialParam && props.manageMassProd && props.manageLayer) {
             // If serialParam has a value, do not fetch serial
             serialNo.value = props.manageSerialParam;
+            selectedMassProd.value = props.manageMassProd;
+            currentLayerNo.value = props.manageLayer;
             toggleManageForm.value = false;
             showGraphAndTables.value = true;
             showUploadData.value = false;
             //console.log("Showdiv graphs ",showGraphAndTables.value);
+            await fetchMiasFactor();
             await showAllData();
             //console.log('serialParam is provided, skipping fetchSerial.');
         } else {
