@@ -4,6 +4,20 @@
             YOU ARE ON TEST SERVER
         </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
+        <div v-if="!isFromApproval && !isFromViewList">
+            <div v-if="serialList.length == 0"> <!-- default div -->
+                <div class="flex flex-col items-center justify-center mt-10 align-baseline">
+                    <div
+                        class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
+                        :style="{
+                            backgroundImage: 'url(\'/photo/no_data.png\')',
+                            backgroundSize: '80%'
+                        }"
+                    ></div>
+                    <p class="text-xl text-center animate-pulse"> (No data available yet) <br> Please ensure that the data is created in the Manage section of the website before proceeding.</p>
+                </div>
+            </div>
+        </div>
         <div v-if="showNotif2 && isFromApproval" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
             <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
         </div>
@@ -2241,7 +2255,7 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-
+    console.log('Entered Special Judgement function');
     const responseGetVTData = await axios.get('/api/vt-models');
     const fetchAllVT = responseGetVTData.data;
     MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
@@ -2274,35 +2288,61 @@ const checkSpecialJudgement = async () => {
     if (!hasNGihc) return;
 
     // === Logic Blocks ===
+    console.log('--- Logic Evaluation Start ---');
+    console.log('Model:', model);
+    console.log('VT Sample Qty:', reportVT_samplesQty.value);
+    console.log('BH Sample Qty:', reportBH_sampleQty.value);
 
-    if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) { //reportBH_sampleQty
+    // VT Data
+    if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) {
         showVTData.value = true;
         showVTData_default.value = false;
-    }else if(MODELS_SHOW_VT_DATA.value.includes(model)){
+        console.log('[VT] Showing VT Data (sample qty > 0)');
+    } else if (MODELS_SHOW_VT_DATA.value.includes(model)) {
         showVTData.value = false;
         showVTData_default.value = true;
+        console.log('[VT] Showing default VT layout (sample qty = 0)');
     }
 
+    // BH Data
     if (MODELS_SHOW_BH.value.includes(model) && reportBH_sampleQty.value > 0) {
         showBHData.value = true;
         showBHData_default.value = false;
-    }else if(MODELS_SHOW_BH.value.includes(model)){
+        console.log('[BH] Showing BH Data (sample qty > 0)');
+    } else if (MODELS_SHOW_BH.value.includes(model)) {
         showBHData.value = false;
         showBHData_default.value = true;
+        console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
+    // 1x1x1 Data (TTM)
     if (model.includes("TTM")) {
         show1x1x1Data_withoutCorner.value = true;
         show1x1x1Data_Corner.value = true;
+        console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
 
-        if (model.includes("TTM") && MODELS_1X1X1_NO_CORNER.value.includes(model)) {
+        if (MODELS_1X1X1_NO_CORNER.value.includes(model)) {
             show1x1x1Data_Corner.value = false;
+            console.log('[TTM] Corner data disabled for this model');
         }
     }
 
-    if (MODELS_SHOW_CPK.value.includes(model))  showCpkFrom_iHc.value = true;
-    if (MODELS_SHOW_GX.value.includes(model))   showGX.value = true;
-    if (MODELS_SHOW_ROB.value.includes(model))  showROB.value = true;
+    // Flags
+    if (MODELS_SHOW_CPK.value.includes(model)) {
+        showCpkFrom_iHc.value = true;
+        console.log('[CPK] CPK enabled');
+    }
+    if (MODELS_SHOW_GX.value.includes(model)) {
+        showGX.value = true;
+        console.log('[GX] GX enabled');
+    }
+    if (MODELS_SHOW_ROB.value.includes(model)) {
+        showROB.value = true;
+        console.log('[ROB] ROB enabled');
+    }
+
+    console.log('--- Logic Evaluation End ---');
+
 };
 
 const autoCheckRemarks = () => {
@@ -2321,7 +2361,7 @@ const getControlSheetData = async () => {
     try{
         const response = await axios.get(`/api/mass-productions/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
         const controlSheet = response.data.layer_data;
-        reportTotalQuantity.value = controlSheet[11].data.A;
+        reportTotalQuantity.value = controlSheet[12].data.A;
         console.log('reportTotalQuantity: ', reportTotalQuantity.value);
 
     }catch(error){
@@ -2743,7 +2783,7 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
-        //console.log('Entering Evalation for Reject reasons...');
+        console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();

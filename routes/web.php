@@ -139,7 +139,9 @@ Route::post('/upload-chart', [ChartUploadController::class, 'store']);
 Route::post('/upload-chart-sec', [ChartUploadController::class, 'storeSecondary']);
 
 Route::get('/debug-export', function () {
-    return app(\App\Services\TxtExportService::class)->exportData2('K40', '541ST');
+    return app(\App\Services\TxtExportService::class)->exportData3('K40', '567th');
 });
+
+
 
 require __DIR__.'/auth.php';

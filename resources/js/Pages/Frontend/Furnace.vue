@@ -263,6 +263,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Furnace',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 // General Variables ---------------------------------- General Variables
 
 //Toggles
@@ -305,6 +319,7 @@ const saveToDatabase = async () => {
         });
         console.log('Saved To Database: ', response.data);
         toast.success('Saved Successfully');
+        await userManageLogging('created Furnace: '+ furnaceNo.value +' Encoded by: ' + encodedBy.value + ' successfully.');
     } catch (error) {
         console.error("Failed to save to database", error);
         toast.error('Data not saved successfully');
@@ -342,6 +357,7 @@ const deleteFurnace = async () => {
     try {
         await axios.delete(`/api/furnace-data/${deleteTargetId.value}`);
         toast.success("Furnace deleted successfully.");
+        await userManageLogging('deleted a Furnace with ID of ' + deleteTargetId.value + ' successfully.');
         // Option 1: refresh list from API
         await getFurnaceLists();
         // Option 2: or filter locally:

@@ -388,6 +388,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Heat Treatment',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
   // Load existing session value
@@ -665,6 +679,7 @@ const saveToDatabase = async () => {
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
         showModalCreate.value = false;
+        await userManageLogging('created 2nd Gbdp HT Data for Mass Prod: '+ selectedMassProd.value +' Layer: ' + selectedLayer.value + ' successfully.');
         clearAll(); // Clear all fields after successful save
     } catch (error) {
         console.error('Error saving data:', error);

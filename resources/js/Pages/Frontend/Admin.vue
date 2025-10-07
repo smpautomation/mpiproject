@@ -187,7 +187,7 @@
                         :key="log.id"
                         class="p-3 bg-gray-600 rounded-lg shadow-sm"
                     >
-                        <span class="text-sm">
+                        <span class="text-xs">
                         <span class="mr-2 text-orange-600">[{{ log.section }}]</span>
                         <span class="mr-2 text-gray-200">[{{ formatDate(log.created_at) }}]</span>
                         <span class="mr-2 text-green-400">{{ log.user }}</span>

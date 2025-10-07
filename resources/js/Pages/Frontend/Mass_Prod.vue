@@ -156,7 +156,7 @@
                             <span class="font-medium">⚠ No furnaces available.</span>
                             <p class="text-gray-600">
                             You can add furnaces by going to
-                            <span class="font-semibold text-blue-600">Others → Furnace</span> in the navigation bar.
+                            <span class="font-semibold text-blue-600">Options → Furnace</span> in the navigation bar.
                             </p>
                             <div class="flex gap-3 mt-2">
                             <button
@@ -267,6 +267,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Mass Production',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 const showModalCreate = ref(false);
 const showConfirmation = ref(false);
 const loadingState = ref(false);
@@ -372,8 +386,6 @@ const saveToDatabase = async () => {
         if (response.status >= 200 && response.status < 300) {
             toast.success('Mass Production created successfully!');
             showModalCreate.value = false;
-            massProd_name.value = '';
-            massProd_furnace.value = '';
             getMassProdData();
         } else {
             toast.error('Failed to create Mass Production.');
@@ -383,6 +395,9 @@ const saveToDatabase = async () => {
         toast.error('An error occurred while creating Mass Production.');
     } finally {
         loadingState.value = false // stop loading
+        await userManageLogging('created '+ massProd_name.value +' Mass Production | Furnace : ' + massProd_furnace.value);
+        massProd_name.value = '';
+        massProd_furnace.value = '';
     }
 };
 

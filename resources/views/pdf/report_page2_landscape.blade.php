@@ -159,62 +159,46 @@
         </thead>
         <tbody>
             @php
-                function renderTPMCell($remark, $tdStyle) {
-                    $isError = $remark === '1';
-                    $text = $isError ? 'E' : ($remark === '0' ? '' : $remark);
-                    $color = $isError ? 'color: red;' : '';
-                    return "<td style=\"$tdStyle$color\">$text</td>";
-                }
-
                 $tdStyle = 'width: 6%; font-size: 10px; text-align: center; padding: 2px; white-space: nowrap;';
                 $tdStyleRem = 'width: 2%; font-size: 10px; text-align: center; padding: 2px; white-space: nowrap;';
+
+                $metrics = [
+                    'Br','iHc','iHk','BHMax','iHr95','iHr98',
+                    'iHkiHc','Br4pai','bHc','Squareness',
+                    '4paiIa','4paiId','4paiIs'
+                ];
+
+                $totalItems = count($tpmDataAll);
             @endphp
 
-            @foreach ($tpmDataAll as $item)
-            <tr>
-                <td style="{{ $tdStyle }}">{{ $item->zone ?? '' }}</td>
-                <td style="{{ $tdStyle }}">{{ $item->Br ?? '' }}</td>
-                {!! renderTPMCell($item->remark->Br_remarks ?? '', $tdStyleRem) !!}
+            @foreach ($tpmDataAll as $index => $item)
+                <tr>
+                    <td style="{{ $tdStyle }}">{{ $item->zone ?? '' }}</td>
 
-                <td style="{{ $tdStyle }}">{{ $item->iHc ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHc_remarks ?? '', $tdStyleRem) !!}
+                    @foreach ($metrics as $metric)
+                        @php
+                            $value = $item->{$metric} ?? '';
+                            $remark = $item->remark->{$metric . '_remarks'} ?? '';
+                            $isError = $remark === '1';
+                        @endphp
 
-                <td style="{{ $tdStyle }}">{{ $item->iHk ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHk_remarks ?? '', $tdStyleRem) !!}
+                        {{-- value --}}
+                        <td style="{{ $tdStyle }}">{{ $value }}</td>
 
-                <td style="{{ $tdStyle }}">{{ $item->BHMax ?? '' }}</td>
-                {!! renderTPMCell($item->remark->BHMax_remarks ?? '', $tdStyleRem) !!}
+                        {{-- remark --}}
+                        <td style="{{ $tdStyleRem }}{{ $isError ? ' color: #c00; font-weight: bold;' : '' }}">
+                            @if ($isError)
+                                E
+                            @elseif ($remark !== '' && $remark !== '0')
+                                {{ $remark }}
+                            @endif
+                        </td>
+                    @endforeach
 
-                <td style="{{ $tdStyle }}">{{ $item->iHr95 ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHr95_remarks ?? '', $tdStyleRem) !!}
+                    <td style="{{ $tdStyle }}">{{ $item->temperature ?? '' }}</td>
+                    <td style="{{ $tdStyle }}">{{ $item->data_status ?? '' }}</td>
+                </tr>
 
-                <td style="{{ $tdStyle }}">{{ $item->iHr98 ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHr98_remarks ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->iHkiHc ?? '' }}</td>
-                {!! renderTPMCell($item->remark->iHkiHc_remarks ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->Br4pai ?? '' }}</td>
-                {!! renderTPMCell($item->remark->Br4pai_remarks ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->bHc ?? '' }}</td>
-                {!! renderTPMCell($item->remark->bHc_remarks ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->Squareness ?? '' }}</td>
-                {!! renderTPMCell($item->remark->Squareness_remarks ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->{"4paiIa"} ?? '' }}</td>
-                {!! renderTPMCell($item->remark->{"4paiIa_remarks"} ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->{"4paiId"} ?? '' }}</td>
-                {!! renderTPMCell($item->remark->{"4paiId_remarks"} ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->{"4paiIs"} ?? '' }}</td>
-                {!! renderTPMCell($item->remark->{"4paiIs_remarks"} ?? '', $tdStyleRem) !!}
-
-                <td style="{{ $tdStyle }}">{{ $item->temperature ?? '' }}</td>
-                <td style="{{ $tdStyle }}">{{ $item->data_status ?? '' }}</td>
-            </tr>
             @endforeach
             <!-- Clean Spacer -->
             <tr>

@@ -71,6 +71,10 @@
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating M/C No.<span class="text-red-500"> *</span></label>
                             <input v-model="mpcs.coatingMCNo" type="text" @input="mpcs.coatingMCNo = mpcs.coatingMCNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Raw Material Code<span class="text-red-500"> *</span></label>
+                            <input v-model="mpcs.rawMaterialCode" type="text" @input="mpcs.rawMaterialCode = mpcs.rawMaterialCode.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
                     </div>
 
                     <!-- Group: Lot + Qty -->
@@ -743,6 +747,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Heat Treatment',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
   // Load existing session value
@@ -836,6 +854,7 @@ const mpcs = reactive({
     selectedBoxEndList: 'K',
     selectedModel: '',
     coatingMCNo: '',
+    rawMaterialCode: '',
     lotNo: '',
     qty: 0,
     qty_lastBox: 0,
@@ -1136,7 +1155,7 @@ const finalize = () => {
         // validate MPCS fields
         if (
             !mpcs.selectedMassProd || !mpcs.selectedLayer || !mpcs.selectedBoxEndList ||
-            !mpcs.selectedModel || !mpcs.coatingMCNo || !mpcs.lotNo ||
+            !mpcs.selectedModel || !mpcs.coatingMCNo || !mpcs.lotNo || !mpcs.rawMaterialCode ||
             mpcs.qty <= 0 || mpcs.qty_lastBox <= 0 ||
             !mpcs.coating || !mpcs.magnetPreparedBy
         ) {
@@ -1207,6 +1226,7 @@ const saveToDatabase = async () => {
         { rowTitle: 'BOX No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, boxNoValues.value[box] || ''])) },
         { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.magnetPreparedBy])) },
         { rowTitle: 'Box prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.boxPreparedBy])) },
+        { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.rawMaterialCode])) },
         { rowTitle: 'TOTAL QTY', data: Object.fromEntries(visibleBoxesData.map(box => [box, totalQty])) }
     ];
 
@@ -1250,6 +1270,11 @@ const saveToDatabase = async () => {
         await uploadGraphs();
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
+        if(!heatTreatmentInformationDetected.value){
+            await userManageLogging('created ' + mpcs.selectedMassProd +' Heat Treatment Info successfully | Control Sheet Layer: ' + mpcs.selectedLayer);
+        }else{
+            await userManageLogging('created '+ mpcs.selectedMassProd +' Control Sheet Layer: ' + mpcs.selectedLayer + ' successfully.');
+        }
         showModalCreate.value = false;
     } catch (error) {
         console.error('Error saving data:', error);

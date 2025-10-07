@@ -130,7 +130,10 @@ class BackEndPdfController extends Controller
                 'message' => "TPM Data for serial: {$serial} is invalid or missing",
             ], 404);
         }
-        $tpmDataAll = TPMData::with('remark')->where('serial_no', $serial)->get();
+        $tpmDataAll = TPMData::with('remark')
+            ->where('serial_no', $serial)
+            ->orderBy('zone', 'asc') // ensure zone order is consistent
+            ->get();
         if ($tpmDataAll->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -316,8 +319,15 @@ class BackEndPdfController extends Controller
 
         // Directly assign aggregates from DB, no computation
         $nsaAggregates = [];
+        // --- NSA chart filenames setup ---
+        $nsaChartFilenames = [];
 
         foreach ($nsaGroups as $setNo => $rows) {
+            $chartFile = "chart_{$serial}_set{$setNo}.png";
+            $chartPath = public_path("sec_charts/{$chartFile}");
+
+            $nsaChartFilenames[$setNo] = file_exists($chartPath) ? $chartFile : null;
+
             if (isset($nsaAggregateFunctions[$setNo])) {
                 $func = $nsaAggregateFunctions[$setNo];
                 $nsaAggregates[$setNo]['average'] = json_decode($func->average, true) ?? [];
@@ -337,7 +347,7 @@ class BackEndPdfController extends Controller
 
         // how many sets we have
         $nsaSetCount = $nsaGroups->count();
-
+        //dd($nsaChartFilenames);
         //dd($nsaAggregateMaximum);
 
         //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals End
@@ -347,6 +357,7 @@ class BackEndPdfController extends Controller
             'layer' => $layer,
             'serial' => $serial,
             'chartFilename' => $chartFilename, // pass to Blade
+            'nsaChartFilenames' => $nsaChartFilenames, // per-NSA-set charts
             'reportData' => $reportData, // pass report data to Blade
             'magneticProperty' => $magneticProperty,
             'brBounds' => $brBounds,
@@ -468,10 +479,12 @@ class BackEndPdfController extends Controller
 
         $mergedPdf = $merger->merge();
 
-        $massProd = $tpmCategories->massprod_name ?? 'unknown';
-        $rawFilename = "({$reportData->smp_judgement}) {$tpmCategories->actual_model} Lot No {$tpmCategories->jhcurve_lotno}";
+        $massProd = $massprod ?? 'unknown';
+        $furnace = str_replace('-', '', $massProdData->furnace);
+        $rawFilename = "({$reportData->smp_judgement}) {$cs_model['A']} Lot No {$cs_lt_no['A']}";
+        //dd($rawFilename);
 
-        $savedPath = $this->saveMergedPdf($massProd, $rawFilename, $mergedPdf);
+        $savedPath = $this->saveMergedPdf($massprod, $rawFilename, $mergedPdf, $furnace);
 
         return response($mergedPdf, 200)
             ->header('Content-Type', 'application/pdf')
@@ -500,14 +513,15 @@ class BackEndPdfController extends Controller
         };
     }
 
-    private function saveMergedPdf(string $massProd, string $rawFilename, string $pdfContent): string
+    private function saveMergedPdf(string $massProd, string $rawFilename, string $pdfContent, string $furnace): string
     {
         $massProd = preg_replace('/[^A-Za-z0-9\-\s#]/', '_', $massProd);
         $safeBaseName = preg_replace('/[^A-Za-z0-9\-\s\(\)#]/', '_', $rawFilename);
         $safeBaseName = preg_replace('/[\/\s]+/', '_', $safeBaseName);
 
         $fileName = $safeBaseName . '.pdf';
-        $destinationPath = public_path("files/{$massProd}");
+        $destinationPath = public_path("files/{$furnace} {$massProd}");
+        //dd($destinationPath);
 
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);

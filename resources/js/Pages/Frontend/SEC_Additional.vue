@@ -7,7 +7,12 @@
         <!-- Overlay -->
         <div class="absolute inset-0 z-0 bg-black bg-opacity-30"></div>
             <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
-                <p v-show="showSerialNo" class="flex flex-col mb-10 font-extrabold text-white">Serial: {{ currentSerialSelected }}</p>
+                <div class="flex flex-row">
+                    <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Serial: {{ currentSerialSelected }}</p>
+                    <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Mass Prod: {{ currentMassProdSelected }}</p>
+                    <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Layer: {{ currentLayerSelected }}</p>
+                </div>
+
                 <div v-if="showGraphAndTables" class="mt-[100px]">
 
                 </div>

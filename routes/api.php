@@ -32,6 +32,7 @@ use App\Http\Controllers\MassProductionController;
 use App\Http\Controllers\SecondGBDPController;
 use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
+use App\Http\Controllers\SmpDataController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -228,6 +229,8 @@ Route::apiResource('gbdp-second-coating', GbdpSecondCoatingController::class);
 
 Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 
+Route::apiResource('smp-data',SmpDataController::class);
+
 Route::get('/film-pasting-data/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
 Route::get('/coating-data/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-coating-data/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
@@ -281,3 +284,10 @@ Route::get(
     '/mass-productions/{massprod}/layer-by-serial/{serial}',
     [MassProductionController::class, 'getLayerDataBySerial']
 );
+
+Route::get(
+    '/mass-productions/{massprod}/layer-by-layerno/{layer}',
+    [MassProductionController::class, 'getLayerDataByLayerNo']
+);
+
+Route::get('/mass-productions/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);

@@ -374,7 +374,7 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating Machine No<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.coatingMachineNo" @input="coatingInfo.coatingMachineNo = coatingInfo.coatingMachineNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.coatingMachineNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Slurry Lot No<span class="text-red-500"> *</span></label>
@@ -393,11 +393,11 @@
                         </div>
                         <div v-else>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
-                            <input v-model="lotNo" @input="lotNo = lotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="lotNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.totalMagnetWeight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.totalMagnetWeight" type="number" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Selection -->
@@ -419,7 +419,7 @@
                     <div v-if="!activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
-                            <input v-model="lotNo" @input="lotNo = lotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="lotNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
@@ -721,16 +721,16 @@
                     <!-- Stats: Average / Max / Min -->
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp != null ? Number(coatingAverage_1stgbdp).toFixed(2) : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum_1stgbdp !== null ? coatingMaximum_1stgbdp : '-' }}</div>
                         </div>
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_1stgbdp !== null ? coatingMinimum_1stgbdp : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp != null ? Number(coatingAverage_1stgbdp).toFixed(2) : '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -739,10 +739,6 @@
                     <!-- Stats: Average / Max / Min -->
                     <div v-if="activate2ndGBDP" class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum_2ndgbdp !== null ? coatingMaximum_2ndgbdp : '-' }}</div>
                         </div>
@@ -750,12 +746,12 @@
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_2ndgbdp !== null ? coatingMinimum_2ndgbdp : '-' }}</div>
                         </div>
-                    </div>
-                    <div v-else class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
                         </div>
+                    </div>
+                    <div v-else class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
@@ -763,6 +759,10 @@
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -1176,18 +1176,18 @@
                     <div>
                         <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
                             <div class="flex items-center gap-1">
-                                <label class="font-medium text-gray-600">Average:</label>
-                                <span class="text-gray-800">
-                                    {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
-                                </span>
-                            </div>
-                            <div class="flex items-center gap-1">
                                 <label class="font-medium text-gray-600">Maximum:</label>
                                 <span class="text-gray-800">{{ coatingMaximum ?? '-' }}</span>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="font-medium text-gray-600">Minimum:</label>
                                 <span class="text-gray-800">{{ coatingMinimum ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Average:</label>
+                                <span class="text-gray-800">
+                                    {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -1318,6 +1318,21 @@ const checkAuthentication = async () => {
         return false; // Indicate not authenticated
     }
 };
+
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Coating',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
@@ -1792,6 +1807,7 @@ const saveToDatabase = async() => {
         const response = await axios.post('/api/coating-data/', coatingDataPayload);
         console.log('Saved Successfully: ', response.data);
         toast.success('Saved Successfully');
+        await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
@@ -1877,6 +1893,7 @@ const saveToDatabase_1st2ndgbdp = async() => {
         const response = await axios.post(`/api/gbdp-second-coating`, payload);
         toast.success('1st and 2nd GBDP Data Saved Successfully');
         console.log(response.data);
+        await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
@@ -1911,6 +1928,25 @@ const getMassProdLists = async () => {
     }catch(error){
         console.error('Error fetching mass prod lists',error);
         toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
+const getSelectedMassProdData = async () => {
+    try{
+        const response = await axios.get(`/api/mass-productions/${coatingInfo.selectedMassProd}/layer-by-layerno/${coatingInfo.selectedLayer}`);
+        const massProdLayerData = response.data.layer_data;
+        console.log('Mass Prod layer data: ', massProdLayerData);
+        coatingInfo.coatingMachineNo = massProdLayerData[1].data['A'];
+        lotNo.value = massProdLayerData[2].data['A'];
+        const data = massProdLayerData[7]?.data || {};
+        const total = Object.values(data)
+        .filter(v => typeof v === 'number' && !isNaN(v))
+        .reduce((sum, v) => sum + v, 0);
+
+        coatingInfo.totalMagnetWeight = total.toFixed(2); // round to 2 decimals if needed
+        console.log('success response getSelectedMassProdData: ', coatingInfo.totalMagnetWeight);
+    }catch(error){
+        console.error('Failed to getSelectedMassProdData: ',error)
     }
 }
 
@@ -2046,6 +2082,7 @@ watch(
 
         // Fetch existing layers whenever either value changes
         await fetchExistingLayers();
+        await getSelectedMassProdData();
 
         console.log(
         `Selected MassProd: ${newMassProd}, Selected Layer: ${newLayer}, ` +

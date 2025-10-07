@@ -77,6 +77,9 @@
 </head>
 <body>
     @foreach($nsaGroups as $setNo => $rows)
+    @php
+        $currentNSA = $rows->first(); // pick first record for that set
+    @endphp
     <table width="100%" style="border-collapse: collapse;">
         <tr>
             <!-- Left Side: Group and Tracer side-by-side, then Date -->
@@ -84,12 +87,12 @@
                 <!-- Group and Tracer -->
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr>
-                        <td style="font-size: 12px; width: 50%;"><i style="font-weight: bold;">Tracer: </i><span>{{ $nsaData->Tracer }}</span></td>
+                        <td style="font-size: 12px; width: 50%;"><i style="font-weight: bold;">Tracer: </i><span>{{ $currentNSA->Tracer }}</span></td>
                     </tr>
                 </table>
 
                 <!-- Date -->
-                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $nsaData->date }}</span></p>
+                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $currentNSA->date }}</span></p>
             </td>
 
             <!-- Center: Property Data -->
@@ -107,18 +110,34 @@
     <table style="width: 100%; border-collapse: collapse;">
         <!-- Row 1 -->
         <tr>
-            <td style="font-weight: bold; font-size: 10px;"><i>Code: </i>{{ $nsaData->code_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Type Code: </i>{{ $nsaData->type }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Judge Code: </i>{{ $nsaData->order_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Press #: </i>{{ $nsaData->press_1 }} {{ $nsaData->press_2 }} {{ $nsaData->machine_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Singering Furnace #: </i>{{ $nsa_sinteringFurnaceNo }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Code: </i>{{ $currentNSA->code_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Type Code: </i>{{ $currentNSA->type }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Judge Code: </i>{{ $currentNSA->order_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Press #: </i>{{ $currentNSA->press_1 }} {{ $currentNSA->press_2 }} {{ $currentNSA->machine_no }}</td>
+            @php
+                $furnacePrefix = $currentNSA->sintering_furnace_no
+                    ? explode('-', $currentNSA->sintering_furnace_no)[0]
+                    : '';
+            @endphp
+
+            <td style="font-weight: bold; font-size: 10px;">
+                <i>Sintering Furnace #:</i> {{ $furnacePrefix }}
+            </td>
         </tr>
 
         <!-- Row 2 -->
         <tr>
-            <td style="font-weight: bold; font-size: 10px;"><i>Sintering #: </i>{{ $nsa_sinteringNo }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Coating: </i>{{ $nsaData->furnace_no }}</td>
-            <td style="font-weight: bold; font-size: 10px;"><i>Pass #: </i>{{ $nsaData->pass_no }}</td>
+            @php
+                $furnacePostfix = $currentNSA->sintering_furnace_no
+                    ? explode('-', $currentNSA->sintering_furnace_no)[1]
+                    : '';
+            @endphp
+
+            <td style="font-weight: bold; font-size: 10px;">
+                <i>Sintering #: </i> {{ $furnacePostfix }}
+            </td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Coating: </i>{{ $currentNSA->furnace_no }}</td>
+            <td style="font-weight: bold; font-size: 10px;"><i>Pass #: </i>{{ $currentNSA->pass_no }}</td>
             <td style="font-weight: bold; font-size: 10px;"><i>Mias. Employee: </i>{{ $nsa_mias }}</td>
             <td style="font-weight: bold; font-size: 10px;"><i>Factor Employee: </i>{{ $nsa_factor }}</td>
         </tr>
@@ -317,8 +336,10 @@
         $twoSetTotal = $currentCount + $prevCount;
     @endphp
 
-    @if($loop->iteration % 2 === 0)
-        @if($twoSetTotal <= 20)
+    @if ($loop->last)
+        <div class="page-break"></div>
+    @elseif ($loop->iteration % 2 === 0)
+        @if ($twoSetTotal <= 20)
             <div class="page-break"></div>
         @else
             <div class="page-break"></div> <!-- Break instantly for large sets -->
@@ -327,13 +348,22 @@
 
     @endforeach
 
+    @foreach($nsaGroups as $setNo => $rows)
+
+    @php
+        $currentNSA = $rows->first(); // pick first record for that set
+    @endphp
+
     <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
         <tr>
             {{-- Chart Cell --}}
             <td style="width: 480px; vertical-align: top;">
-                @if ($chartFilename)
+                @php
+                    $chartFile = $nsaChartFilenames[$setNo] ?? null;
+                @endphp
+                @if ($chartFile)
                     <div style="border: 1px solid #000; width: 480px; height: 360px; margin: 0 auto;">
-                        <img src="{{ public_path('charts/' . $chartFilename) }}"
+                        <img src="{{ public_path('sec_charts/' . $chartFile) }}"
                             alt="Chart Image"
                             style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
@@ -362,13 +392,17 @@
                     </p>
 
                     @if (!empty($noteReasonsSorted))
-                        <div style="margin-top: 8px;">
+                        <div style="margin-top: 8px; margin-bottom: 10px;">
                             <p style="margin: 0;">Remarks Encountered:</p>
                             <p style="color: #c00; font-weight: bold; font-size: 9px; margin: 2px 0 0;">
                                 {{ implode(', ', array_map(fn($r) => preg_replace('/^\s*-\s*/', '', $r), $noteReasonsSorted)) }}
                             </p>
                         </div>
                     @endif
+
+                    <p style="margin: 0 0 4px; color: rgb(65, 61, 252); font-size: 14px;">
+                        {{ $currentNSA->set_name }}
+                    </p>
                 </div>
             </td>
         </tr>
@@ -394,7 +428,7 @@
         </thead>
 
         <tbody>
-            @foreach ($tpmDataAll as $item)
+            @foreach ($rows as $item)
             <tr style="text-align: center; white-space: nowrap;">
                 <td style="border: 1px solid #000; padding: 1px;">{{ $item->date }}</td>
                 <td style="border: 1px solid #000; padding: 1px;">{{ $item->code_no }}</td>
@@ -434,6 +468,8 @@
             @endforeach
         </tbody>
     </table>
+
+    @endforeach
 
 
 

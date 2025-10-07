@@ -129,8 +129,8 @@ const logUserLogout = async () => {
 // Nav items with children
 const navItems = [
     { label: 'Home', route: 'homePage', access: ['Basic User','Automation','Final Approver','Proxy Approver','Coating','Heat Treatment'] },
-    { label: 'Mass Production', route: 'massprod', access: ['Automation'] },
-    { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+    { label: 'Mass Production', route: 'massprod', access: ['Automation','Final Approver','Coating','Heat Treatment'] },
+    { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'], children: [
         { label: 'Heat Treatment', route: 'heat_treatment' },
         { label: 'Coating', route: 'coating' },
         { label: 'Film Pasting', route: 'film_pasting' },
@@ -138,7 +138,7 @@ const navItems = [
         { label: 'MPI Report', route: 'reports' }
         ]
     },
-    { label: 'Options', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+    { label: 'Options', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'], children: [
         { label: 'Inspection', route: 'inspection' },
         { label: 'View List', route: 'viewList' },
         { label: 'Approval', route: 'approval' },

@@ -1144,7 +1144,7 @@
                     serialNo.value = `${year}${month}${firstSerialNumber}`;
 
                     console.log('Generated First Serial Number:', serialNo.value);
-                    alert(`Generated First Serial Number: ${serialNo.value}`);
+                    //alert(`Generated First Serial Number: ${serialNo.value}`);
                 }
             } else {
                 // Handle case where there's no data
@@ -1699,6 +1699,22 @@
 
     // Variables for aggregate end
 
+    const saveToTpmCategory = async () => {
+        try{
+
+            const responsePatchCategory = await axios.patch(`/api/updatecategory/${serialNo.value}`,{
+                    actual_model: jhCurveActualModel.value,
+                    jhcurve_lotno: jhCurveLotNo.value,
+                    massprod_name: selectedMassProd.value,
+                });
+                console.log("API PATCHED category: ",responsePatchCategory);
+
+
+        }catch(error){
+            console.error("Error fetching API Response saveToNsaCategory:", error);
+        }
+    }
+
     // Function to fetch data from the API
     const showAllData = async () => {
         showLoadingForGraphAndTables.value = true;
@@ -2058,6 +2074,7 @@
             toggleManageForm.value = false;
             //await autoRenameFurnace();
             await updateMassProductionTable();
+            await saveToTpmCategory();
             await userManageLogging('created '+ serialNo.value +' data successfully | Model : ' + jhCurveActualModel.value);
         }
         await fetchDataCreateGraph();
@@ -2113,12 +2130,12 @@ const fetchDataCreateGraph = async () => {
                 console.error("Canvas element is not available.");
             }
         });
-        layerTableRowLoading.value = false;
     } catch (err) {
         error.value = err;
         console.error("Error fetching data:", err);
     } finally {
         showGraphAndTables.value = true;
+        layerTableRowLoading.value = false;
         showLoadingForGraphAndTables.value = false;
     }
 };
