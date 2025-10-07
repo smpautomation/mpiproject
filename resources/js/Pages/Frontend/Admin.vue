@@ -114,11 +114,12 @@
                     <div class="p-4 mt-4 overflow-y-auto text-xs text-gray-300 bg-gray-700 border border-gray-600 rounded-lg max-h-40">
                     <strong class="block mb-2 text-sm text-yellow-300">Role Instructions</strong>
                     <ul class="space-y-1 leading-tight list-disc list-inside">
-                        <li><strong>Basic User (default)</strong> → Manage, Inspection, and View List (Cannot stamp)</li>
+                        <li><strong>Basic User (default)</strong> → Home (Cannot stamp)</li>
+                        <!--
                         <li><strong>Preparation Approver</strong> → All except Approval/Admin (Prepared By Stamping only)</li>
                         <li><strong>Checking Approver</strong> → All except Approval/Admin (Checked By Stamping only)</li>
                         <li><strong>Proxy Approver</strong> → Access to ALL (Approved By Stamp only)</li>
-                        <!-- hidden for now
+                         hidden for now
 
                         <li><strong>Hybrid Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)</li>
                         <li><strong>Bypass Approver</strong> → All except Admin (All stamps: Prepared, Checked, Approved)</li>
