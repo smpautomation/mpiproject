@@ -119,7 +119,9 @@ class FrontendController extends Controller
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
         $filterStatus = $request->get('filterStatus');
+        $filterStatus_checked = $request->get('filterStatus_checked');
         $fromApproval = $request->get('fromApproval');
+        $fromApproval_checked = $request->get('fromApproval_checked');
         $fromViewList = $request->get('fromViewList');
 
         // Get the real client IP address
@@ -138,8 +140,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Reports', [
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
             'filterStatus' => $filterStatus,
+            'filterStatus_checked' => $filterStatus_checked,
             'ipAddress' => $ipAddress,  // Pass ipAddress as a prop to the Reports.vue component
             'fromApproval' => filter_var($request->fromApproval, FILTER_VALIDATE_BOOLEAN),
+            'fromApproval_checked' => filter_var($request->fromApproval_checked, FILTER_VALIDATE_BOOLEAN),
             'fromViewList' => filter_var($request->fromViewList, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
@@ -171,6 +175,10 @@ class FrontendController extends Controller
             'filterStatus' => $filterStatus,
             'fromReports' => filter_var($request->fromReports, FILTER_VALIDATE_BOOLEAN),
         ]);
+    }
+
+    public function approval_checked(Request $request){
+        return Inertia::render('Frontend/Approval_Checked');
     }
 
     public function admin(){

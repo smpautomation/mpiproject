@@ -4,7 +4,7 @@
             YOU ARE ON TEST SERVER
         </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-        <div v-if="!isFromApproval && !isFromViewList">
+        <div v-if="!isFromApproval && !isFromViewList && !isFromApproval_checked">
             <div v-if="serialList.length == 0"> <!-- default div -->
                 <div class="flex flex-col items-center justify-center mt-10 align-baseline">
                     <div
@@ -1240,12 +1240,16 @@
                         View PDF Report
                     </button>
 
-                    <button v-if="showExitButton && !isFromApproval && !isFromViewList" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="showExitButton && !isFromApproval && !isFromViewList && !isFromApproval_checked" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
 
                     <button v-if="isFromApproval && !isFromViewList" @click="backToApprovalFunction" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK TO APPROVAL
+                    </button>
+
+                    <button v-if="isFromApproval_checked && !isFromViewList" @click="backToApprovalFunction_checked" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                        BACK TO APPROVAL (Checked)
                     </button>
 
                     <button v-if="isFromViewList && !isFromApproval" @click="$inertia.visit('/view')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
@@ -1397,6 +1401,7 @@ function toggleSwitch() {
 const showReportLoading = ref(false);
 
 const isFromApproval = ref(false);
+const isFromApproval_checked = ref(false);
 const backToApproval = ref(false);
 const isFromViewList = ref(false);
 
@@ -1586,6 +1591,7 @@ const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
 const filterStatus = ref('');
+const filterStatus_checked = ref('');
 const currentUserData = ref([]);
 const loggedUserData = ref([]);
 const currentUserApproverStage = ref('');
@@ -3012,16 +3018,20 @@ const fetchSerial = async () => {
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
   filterStatus: String,
+  filterStatus_checked: String,
   ipAddress: String,
   fromApproval: [Boolean, String],
   fromViewList: [Boolean, String],
+  fromApproval_checked: [Boolean, String],
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
+isFromApproval_checked.value = props.fromApproval_checked === true || props.fromApproval_checked === 'true';
 isFromViewList.value = props.fromViewList === true || props.fromViewList === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
 filterStatus.value = props.filterStatus;
+filterStatus_checked.value = props.filterStatus_checked;
 
 if(ipAddress.value === '127.0.0.1'){
     onTestServer.value = true;
@@ -3370,12 +3380,22 @@ const backToApprovalFunction = () => {
     });
 };
 
+const backToApprovalFunction_checked = () => {
+    //console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/approval_checked', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { filterStatus_checked: filterStatus_checked.value, fromReports: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
-    if (props.serialParam && props.fromApproval || props.fromViewList) {
+    if (props.serialParam && props.fromApproval|| props.serialParam && props.fromApproval_checked || props.fromViewList) {
         await checkAuthentication();
         await checkApprovalStates();
         currentSerialSelected.value = props.serialParam;

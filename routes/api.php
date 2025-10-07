@@ -254,6 +254,8 @@ Route::get('/coating-pending-check',[CoatingController::class, 'checkPending']);
 
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
+Route::get('/approve-list-checked', [ReportDataController::class, 'getViewList']);
+
 Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     [MassProductionController::class, 'getLayerModel']);
 
