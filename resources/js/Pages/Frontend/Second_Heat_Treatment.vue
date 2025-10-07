@@ -33,7 +33,7 @@
                             <p class="mb-4 text-sm leading-relaxed text-gray-600">
                             This button allows data to be fetched automatically for
                             <span class="font-semibold text-gray-800">1st GBDP</span>. Use this
-                            option when you want the system <br></br> to retrieve relevant information
+                            option when you want the system <br> to retrieve relevant information
                             without manual input.
                             </p>
                             <button
@@ -388,6 +388,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Heat Treatment',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
   // Load existing session value
@@ -431,7 +445,7 @@ const selectedLayer = ref();
 const graph_patterns = ref([]);
 const furnace_lists = ref([]);
 const massProd_names = ref([]);
-const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const firstSecondGBDP_models = ref([]);
 
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
@@ -497,6 +511,20 @@ const getMassProdLists = async () => {
     }catch(error){
         console.error('Error fetching mass prod lists',error);
         toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
+const get1st2ndGBDPModels = async () => {
+    try {
+        const response = await axios.get(`/api/second-gbdp-models`);
+        const models = response.data;
+
+        // Extract only the model_name
+        const modelNames = models.map(model => model.model_name);
+        firstSecondGBDP_models.value = modelNames;
+        //console.log("1st & 2nd GBDP model names: ", modelNames);
+    } catch (error) {
+        console.error('Failed to get 1st & 2nd GBDP Models: ', error);
     }
 }
 
@@ -651,12 +679,31 @@ const saveToDatabase = async () => {
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
         showModalCreate.value = false;
+        await userManageLogging('created 2nd Gbdp HT Data for Mass Prod: '+ selectedMassProd.value +' Layer: ' + selectedLayer.value + ' successfully.');
         clearAll(); // Clear all fields after successful save
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
+    } finally {
+        await updateFormatType();
     }
 };
+
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = selectedLayer.value === '9.5' ? 'layer_9_5_format_type' : `layer_${selectedLayer.value}_format_type`;
+
+    const dataPayload = {
+        mass_prod: selectedMassProd.value,
+        [layerKey]: '1st and 2nd Gbdp',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${selectedMassProd.value}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+    }
+}
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
@@ -674,6 +721,7 @@ onMounted(async () => {
     await getFurnaceLists();
     await getGraphPatterns();
     await getCurrentMassProdData();
+    await get1st2ndGBDPModels();
 });
 
 </script>

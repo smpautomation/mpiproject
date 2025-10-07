@@ -140,7 +140,7 @@
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                             <select v-model="filmPastingInfo.selected_layer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                                <option v-for="items in layers" :key="items" :value="items">
+                                <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
                                 </option>
                             </select>
@@ -314,9 +314,15 @@
                         <!-- Finalize -->
                         <button
                             @click="submit()"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
-                        >
-                            SUBMIT
+                            :disabled="isExists"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                isExists
+                                ? 'bg-red-600 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'
+                            ]"
+                            >
+                            {{ isExists ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
                         </button>
 
                         <!-- Cancel -->
@@ -537,12 +543,15 @@ const showModalSubmit = ref();
 
 
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const isExists = ref(false);
+const existingLayers = ref([]);
+const available_layers = ref([]);
 const completedLayers = ref([]);
 const massProdLists = ref([]);
 
 const filmPastingInfo = reactive({
     selected_mass_prod: '',
-    selected_layer: 1,
+    selected_layer: null,
     film_pasting_date: '',
     machine_no: '',
     total_magnet_weight: 0,
@@ -636,6 +645,7 @@ const saveToDatabase = async () => {
             machine_no: filmPastingInfo.machine_no,
             total_magnet_weight: filmPastingInfo.total_magnet_weight,
             loader_operator: filmPastingInfo.loader_operator,
+            unloader_operator: filmPastingInfo.unloader_operator,
             checker_operator: filmPastingInfo.checker_operator,
             film_coating_amount: filmPastingInfo.film_coating_amount,
             time_start: filmPastingInfo.time_start,
@@ -650,20 +660,38 @@ const saveToDatabase = async () => {
 
         const response = await axios.post('/api/film-pasting-data', payload);
         console.log(response.data);
+        toast.success('Data successfully saved.')
 
     }catch(error){
         toast.error('Failed to get film pasting data')
     }finally{
         showModalSubmit.value = false;
         await getCompletedLayers();
+        await updateFormatType();
+        clearAll();
     }
 };
 
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = filmPastingInfo.selected_layer === '9.5' ? 'layer_9_5_format_type' : `layer_${filmPastingInfo.selected_layer}_format_type`;
+
+    const dataPayload = {
+        mass_prod: filmPastingInfo.selected_mass_prod,
+        [layerKey]: 'Film Pasting',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${filmPastingInfo.selected_mass_prod}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+    }
+}
 
 const clearAll = () => {
     Object.assign(filmPastingInfo,{
         selected_mass_prod: '',
-        selected_layer: 1,
+        selected_layer: null,
         film_pasting_date: '',
         machine_no: '',
         total_magnet_weight: 0,
@@ -715,7 +743,7 @@ const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/film-pasting-data/${filmPastingInfo.selected_mass_prod}/layers`);
         completedLayers.value = response.data.layers.map(String);
-        console.log(completedLayers.value);
+        console.log("Completed Layers: ",completedLayers.value);
     } catch (error) {
         console.error(error);
         toast.error('Failed to fetch layers');
@@ -725,6 +753,49 @@ const getCompletedLayers = async () => {
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
+
+const fetchAvailableLayers = async () => {
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${filmPastingInfo.selected_mass_prod}/completed-layers`
+        );
+        available_layers.value = response.data.completed_layers;
+        console.log("Available Layers: ", available_layers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch available layers from Heat Treatment');
+    }
+};
+
+const fetchExistingLayers = async () => {
+    if (!filmPastingInfo.selected_mass_prod && !filmPastingInfo.selected_layer) {
+        console.warn("Mass Production and layer not selected yet.");
+        return;
+    }
+
+    try {
+        // 1st Coating
+        const response1 = await axios.get(
+            `/api/mass-productions/${filmPastingInfo.selected_mass_prod}/filmpasting-completed-layers`
+        );
+        existingLayers.value = response1.data.film_pasting_layers;
+        console.log("Existing Layers for Coating:", existingLayers.value);
+
+        // Initial check after fetching
+        if (filmPastingInfo.selected_layer) {
+            isExists.value = existingLayers.value.includes(filmPastingInfo.selected_layer);
+        }
+
+        if (isExists.value) {
+            toast.warning('Selected layer already contains existing coating data.');
+        }
+
+    } catch (error) {
+        console.error("Error fetching existing layers:", error);
+        toast.error('Failed to fetch existing layers.');
+    }
+};
+
 
 // Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger END
 
@@ -736,10 +807,18 @@ watch(
     async (newValue) => {
         if (newValue) {
             await getCompletedLayers();
+            await fetchAvailableLayers();
         } else {
             completedLayers.value = []; // reset if cleared
         }
     }
+);
+
+watch(
+  () => [filmPastingInfo.selected_mass_prod, filmPastingInfo.selected_layer],
+  async () => {
+    await fetchExistingLayers();
+  }
 );
 
 // Watch zone -------- Watch Zone END

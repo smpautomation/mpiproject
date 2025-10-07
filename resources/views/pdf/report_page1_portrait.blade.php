@@ -88,15 +88,15 @@
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell" style="font-weight: bold;">Model: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold; font-size: 9px;">{{ $tpmCat->actual_model }}</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold; font-size: 9px;">{{ $controlModel['A'] }}</span></div>
             <div class="table-cell" style="font-weight: bold;">Partial No: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->partial_number }}</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $heatTreatmentData->partial_no }}</span></div>
         </div>
         <div class="table-row">
             <div class="table-cell" style="font-weight: bold;">MATERIAL CODE: </div>
             <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->material_code }}</span></div>
             <div class="table-cell" style="font-weight: bold;">TOTAL QUANTITY: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->total_quantity }}</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $controlTotalQty['A'] }}</span></div>
         </div>
     </div>
 
@@ -155,6 +155,50 @@
             </div>
         </div> <!-- End of Coating Info -->
 
+        @php
+            $lotNo = $coatingDataValues['Lot no'] ?? null;
+            $concentrationData = $coatingDataValues['Concentration Data'] ?? [];
+            $coatingAmountData = collect($coatingDataValues['Coating Amount Data'] ?? [])->keyBy('no');
+            $additionalSlurry = $coatingDataValues['Additional Slurry Data'] ?? [];
+
+            $rows = [];
+            $currentNo = 1;
+
+            foreach ($concentrationData as $range) {
+                // each "range" has modules (M-01 to M-05, then M-06)
+                $normalModules = array_filter($range['modules'], fn($m) => $m['module'] !== 'M-06');
+                $m6Modules     = array_filter($range['modules'], fn($m) => $m['module'] === 'M-06');
+
+                foreach ($normalModules as $module) {
+                    // normal row with Lot/No/Coating
+                    $rows[] = [
+                        'lot' => $lotNo,
+                        'no' => $currentNo,
+                        'coating' => $coatingAmountData[$currentNo]['coating'] ?? null,
+                        'concentration' => $module['value'],
+                        'module' => $module['module'],
+                    ];
+                    $currentNo++;
+                }
+
+                foreach ($m6Modules as $module) {
+                    // special row for M-06 (blank Lot/No/Coating)
+                    $rows[] = [
+                        'lot' => null,
+                        'no' => null,
+                        'coating' => null,
+                        'concentration' => $module['value'],
+                        'module' => 'M-06',
+                    ];
+                }
+            }
+
+            // now slice by 10 “No.” groups
+            $table1Rows = array_slice($rows, 0, 14); // first 10 No + M6 blanks
+            $table2Rows = array_slice($rows, 14, 14);
+            $table3Rows = array_slice($rows, 28, 14);
+        @endphp
+
         <div class="table-block">
             <div class="table-row">
                 <div class="table-cell">
@@ -169,107 +213,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>1</td>
-                                <td>{{ $coatingDetails['1_M01_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['1_M01_Concentration'] ?? null }}</td>
-                                <td>M-01</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>2</td>
-                                <td>{{ $coatingDetails['2_M02_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['2_M02_Concentration'] ?? null }}</td>
-                                <td>M-02</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>3</td>
-                                <td>{{ $coatingDetails['3_M03_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['3_M03_Concentration'] ?? null }}</td>
-                                <td>M-03</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>4</td>
-                                <td>{{ $coatingDetails['4_M04_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['4_M04_Concentration'] ?? null }}</td>
-                                <td>M-04</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>5</td>
-                                <td>{{ $coatingDetails['5_M05_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['5_M05_Concentration'] ?? null }}</td>
-                                <td>M-05</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['1to5_M06_1_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['1to5_M06_2_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>6</td>
-                                <td>{{ $coatingDetails['6_M01_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['6_M01_Concentration'] ?? null }}</td>
-                                <td>M-01</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>7</td>
-                                <td>{{ $coatingDetails['7_M02_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['7_M02_Concentration'] ?? null }}</td>
-                                <td>M-02</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>8</td>
-                                <td>{{ $coatingDetails['8_M03_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['8_M03_Concentration'] ?? null }}</td>
-                                <td>M-03</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>9</td>
-                                <td>{{ $coatingDetails['9_M04_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['9_M04_Concentration'] ?? null }}</td>
-                                <td>M-04</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>10</td>
-                                <td>{{ $coatingDetails['10_M05_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['10_M05_Concentration'] ?? null }}</td>
-                                <td>M-05</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['6to10_M06_3_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['6to10_M06_4_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
+                            @foreach ($table1Rows as $row)
+                                <tr>
+                                    <td>{{ $row['lot'] }}</td>
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['coating'] }}</td>
+                                    <td>{{ $row['concentration'] }}</td>
+                                    <td>{{ $row['module'] }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
-
                 </div>
 
                 <div class="table-cell">
@@ -284,104 +238,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>11</td>
-                                <td>{{ $coatingDetails['11_M01_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['11_M01_Concentration'] ?? null }}</td>
-                                <td>M-01</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>12</td>
-                                <td>{{ $coatingDetails['12_M02_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['12_M02_Concentration'] ?? null }}</td>
-                                <td>M-02</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>13</td>
-                                <td>{{ $coatingDetails['13_M03_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['13_M03_Concentration'] ?? null }}</td>
-                                <td>M-03</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>14</td>
-                                <td>{{ $coatingDetails['14_M04_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['14_M04_Concentration'] ?? null }}</td>
-                                <td>M-04</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>15</td>
-                                <td>{{ $coatingDetails['15_M05_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['15_M05_Concentration'] ?? null }}</td>
-                                <td>M-05</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['11to15_M06_5_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['11to15_M06_6_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>16</td>
-                                <td>{{ $coatingDetails['16_M01_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['16_M01_Concentration'] ?? null }}</td>
-                                <td>M-01</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>17</td>
-                                <td>{{ $coatingDetails['17_M02_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['17_M02_Concentration'] ?? null }}</td>
-                                <td>M-02</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>18</td>
-                                <td>{{ $coatingDetails['18_M03_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['18_M03_Concentration'] ?? null }}</td>
-                                <td>M-03</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>19</td>
-                                <td>{{ $coatingDetails['19_M04_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['19_M04_Concentration'] ?? null }}</td>
-                                <td>M-04</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>20</td>
-                                <td>{{ $coatingDetails['20_M05_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['20_M05_Concentration'] ?? null }}</td>
-                                <td>M-05</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['16to20_M06_7_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['16to20_M06_8_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
+                            @foreach ($table2Rows as $row)
+                                <tr>
+                                    <td>{{ $row['lot'] }}</td>
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['coating'] }}</td>
+                                    <td>{{ $row['concentration'] }}</td>
+                                    <td>{{ $row['module'] }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -398,104 +263,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>21</td>
-                                <td>{{ $coatingDetails['21_M01_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['21_M01_Concentration'] ?? null }}</td>
-                                <td>M-01</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>22</td>
-                                <td>{{ $coatingDetails['22_M02_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['22_M02_Concentration'] ?? null }}</td>
-                                <td>M-02</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>23</td>
-                                <td>{{ $coatingDetails['23_M03_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['23_M03_Concentration'] ?? null }}</td>
-                                <td>M-03</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>24</td>
-                                <td>{{ $coatingDetails['24_M04_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['24_M04_Concentration'] ?? null }}</td>
-                                <td>M-04</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>25</td>
-                                <td>{{ $coatingDetails['25_M05_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['25_M05_Concentration'] ?? null }}</td>
-                                <td>M-05</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['21to25_M06_9_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['21to25_M06_10_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>26</td>
-                                <td>{{ $coatingDetails['26_M01_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['26_M01_Concentration'] ?? null }}</td>
-                                <td>M-01</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>27</td>
-                                <td>{{ $coatingDetails['27_M02_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['27_M02_Concentration'] ?? null }}</td>
-                                <td>M-02</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>28</td>
-                                <td>{{ $coatingDetails['28_M03_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['28_M03_Concentration'] ?? null }}</td>
-                                <td>M-03</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>29</td>
-                                <td>{{ $coatingDetails['29_M04_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['29_M04_Concentration'] ?? null }}</td>
-                                <td>M-04</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $tpmCat->jhcurve_lotno }}</td>
-                                <td>30</td>
-                                <td>{{ $coatingDetails['30_M05_Amount'] ?? null }}</td>
-                                <td>{{ $coatingDetails['30_M05_Concentration'] ?? null }}</td>
-                                <td>M-05</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['26to30_M06_11_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
-                            <tr>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td style="border: none;"></td>
-                                <td>{{ $coatingDetails['26to30_M06_12_Concentration'] ?? null }}</td>
-                                <td>M-06</td>
-                            </tr>
+                            @foreach ($table3Rows as $row)
+                                <tr>
+                                    <td>{{ $row['lot'] }}</td>
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['coating'] }}</td>
+                                    <td>{{ $row['concentration'] }}</td>
+                                    <td>{{ $row['module'] }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div> <!-- END of 3rd table -->
@@ -516,76 +292,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>M-01</td>
-                                <td>{{ $coatingDetails['add_slurry_m-01_new'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-01_homo'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-01_time'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-01_liters'] }}</td>
-                            </tr>
-                            <tr>
-                                <td>M-02</td>
-                                <td>{{ $coatingDetails['add_slurry_m-02_new'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-02_homo'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-02_time'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-02_liters'] }}</td>
-                            </tr>
-                            <tr>
-                                <td>M-03</td>
-                                <td>{{ $coatingDetails['add_slurry_m-03_new'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-03_homo'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-03_time'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-03_liters'] }}</td>
-                            </tr>
-                            <tr>
-                                <td>M-04</td>
-                                <td>{{ $coatingDetails['add_slurry_m-04_new'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-04_homo'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-04_time'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-04_liters'] }}</td>
-                            </tr>
-                            <tr>
-                                <td>M-05</td>
-                                <td>{{ $coatingDetails['add_slurry_m-05_new'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-05_homo'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-05_time'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-05_liters'] }}</td>
-                            </tr>
-                            <tr>
-                                <td>M-06</td>
-                                <td>{{ $coatingDetails['add_slurry_m-06_new'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-06_homo'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-06_time'] }}</td>
-                                <td>{{ $coatingDetails['add_slurry_m-06_liters'] }}</td>
-                            </tr>
-                            <tr>
-                                <td> - </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> - </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> - </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> - </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            @foreach ($additionalSlurry as $slurry)
+                                <tr>
+                                    <td>{{ $slurry['module'] }}</td>
+                                    <td>{{ $slurry['new'] }}</td>
+                                    <td>{{ $slurry['homo'] }}</td>
+                                    <td>{{ $slurry['time'] }}</td>
+                                    <td>{{ $slurry['liters'] }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div> <!-- End of 4th table -->
@@ -609,7 +324,7 @@
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
-                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->minimum }}</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $coatingData->minimum  }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -654,15 +369,15 @@
 
                 @php
                     $rows = [
-                        ['Furnace Machine:', $heatTreatmentData->furnace_machine ?? null],
+                        ['Furnace Machine:', $heatTreatmentData->machine_no ?? null],
                         ['CYCLE No:', $heatTreatmentData->cycle_no ?? null],
                         ['BATCH CYCLE No:', $heatTreatmentData->batch_cycle_no ?? null],
                         ['PATTERN No:', $heatTreatmentData->pattern_no ?? null],
                         ['DATE START:', $heatTreatmentData->date_start ?? 'NA'],
                         ['TIME START:', $heatTreatmentData->time_start ?? 'NA'],
                         ['LOADER:', $heatTreatmentData->loader ?? null],
-                        ['DATE FINISH:', $heatTreatmentData->date_finish ?? 'NA'],
-                        ['TIME FINISH:', $heatTreatmentData->time_finish ?? 'NA'],
+                        ['DATE FINISH:', $heatTreatmentData->date_finished ?? 'NA'],
+                        ['TIME FINISH:', $heatTreatmentData->time_finished ?? 'NA'],
                         ['UNLOADER:', $heatTreatmentData->unloader ?? null],
                         ['Cycle Pattern:', $heatTreatmentData->cycle_pattern ?? null],
                         ['Current Pattern:', $heatTreatmentData->current_pattern ?? null],
@@ -692,7 +407,7 @@
                  <table class="print-table">Add commentMore actions
                         <thead>
                             <tr>
-                                <th colspan="12">MAGNET BOX LOCATION</th>
+                                <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
                             </tr>
                             <tr>
                                 <th colspan="2">BOX No.</th>
@@ -706,22 +421,28 @@
                                 <th>H</th>
                                 <th>J</th>
                                 <th>K</th>
+                                @if (isset($controlLotNo['L']) && $controlLotNo['L'])
+                                    <th>L</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td style="margin: 0px; padding: 0px;">No. of Layer</td>
-                                <td>{{ $tpmData->layer_no == 10 ? '9.5' : $tpmData->layer_no }}</td>
-                                <td>{{ $magnetBoxLocation['box_a']}}</td>
-                                <td>{{ $magnetBoxLocation['box_b'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_c'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_d'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_e'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_f'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_g'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_h'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_j'] }}</td>
-                                <td>{{ $magnetBoxLocation['box_k'] }}</td>
+                                <td>{{ $layer }}</td>
+                                <td>{{ $controlLotNo['A'] ?? null }}</td>
+                                <td>{{ $controlLotNo['B'] ?? null }}</td>
+                                <td>{{ $controlLotNo['C'] ?? null }}</td>
+                                <td>{{ $controlLotNo['D'] ?? null }}</td>
+                                <td>{{ $controlLotNo['E'] ?? null }}</td>
+                                <td>{{ $controlLotNo['F'] ?? null }}</td>
+                                <td>{{ $controlLotNo['G'] ?? null }}</td>
+                                <td>{{ $controlLotNo['H'] ?? null }}</td>
+                                <td>{{ $controlLotNo['J'] ?? null }}</td>
+                                <td>{{ $controlLotNo['K'] ?? null }}</td>
+                                @if (isset($controlLotNo['L']) && $controlLotNo['L'])
+                                     <td>{{ $controlLotNo['L'] ?? null }}</td>
+                                @endif
                             </tr>
                         </tbody>
                     </table>
@@ -732,12 +453,20 @@
         <tr>
             <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
             <td style="width: 100%;">
-                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
+                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
                     <span style="display: inline-block; margin-bottom: -1px;">
-                        {{ $heatTreatmentData->remarks }}
+                        {{ $heatTreatmentData->mass_prod }} MASS PRODUCTION
                     </span>
                 </div>
-                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
+                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
+                    <span style="display: inline-block; margin-bottom: -1px;">
+                        {{ implode(' / ', array_filter([
+                            $heatTreatmentData->remarks1,
+                            $heatTreatmentData->remarks2,
+                            $heatTreatmentData->remarks3
+                        ])) }}
+                    </span>
+                </div>
             </td>
         </tr>
     </table>

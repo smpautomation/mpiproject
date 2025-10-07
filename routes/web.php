@@ -42,6 +42,7 @@ Route::get('/furnace', [FrontendController::class,'furnace'])->name('furnace');
 Route::get('/second_gbdp_models', [FrontendController::class,'second_gbdp_models'])->name('second_gbdp_models');
 Route::get('/second_heat_treatment', [FrontendController::class,'second_heat_treatment'])->name('second_heat_treatment');
 Route::get('/film_pasting', [FrontendController::class,'filmPasting'])->name('film_pasting');
+Route::get('/approval_checked', [FrontendController::class,'approval_checked'])->name('approval_checked');
 
 Route::get('/generate-pdf', [PdfController::class, 'generate']);
 
@@ -136,9 +137,12 @@ Route::get('/reports/{serial}/pdf', [BackEndPdfController::class, 'generateAndMe
     ->where('serial', '[A-Za-z0-9\-\s#]+');
 
 Route::post('/upload-chart', [ChartUploadController::class, 'store']);
+Route::post('/upload-chart-sec', [ChartUploadController::class, 'storeSecondary']);
 
 Route::get('/debug-export', function () {
-    return app(\App\Services\TxtExportService::class)->exportData2('K40', '541ST');
+    return app(\App\Services\TxtExportService::class)->exportData3('K40', '567th');
 });
+
+
 
 require __DIR__.'/auth.php';

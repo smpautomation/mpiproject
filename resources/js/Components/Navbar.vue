@@ -129,23 +129,28 @@ const logUserLogout = async () => {
 // Nav items with children
 const navItems = [
     { label: 'Home', route: 'homePage', access: ['Basic User','Automation','Final Approver','Proxy Approver','Coating','Heat Treatment'] },
-    { label: 'Mass Production', route: 'massprod', access: ['Automation'] },
-    { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+    { label: 'Mass Production', route: 'massprod', access: ['Automation','Final Approver','Coating','Heat Treatment'] },
+    { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'], children: [
         { label: 'Heat Treatment', route: 'heat_treatment' },
         { label: 'Coating', route: 'coating' },
         { label: 'Film Pasting', route: 'film_pasting' },
-        { label: 'MPI', route: 'manage' }
+        { label: 'JH Curve', route: 'manage' },
+        { label: 'MPI Report', route: 'reports' }
         ]
     },
-    { label: 'Others', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver'], children: [
+    { label: 'Options', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'], children: [
         { label: 'Inspection', route: 'inspection' },
         { label: 'View List', route: 'viewList' },
         { label: 'Approval', route: 'approval' },
         { label: 'Furnace', route: 'furnace' },
-        { label: '1st & 2nd GBDP', route: 'second_gbdp_models' }
+        { label: '1st & 2nd GBDP', route: 'second_gbdp_models' },
+        { label: 'Special Instructions', route: 'instructions' },
+        { label: 'Send Email', route: 'email' },
+        { label: 'Mias Factor Emp', route: 'mias_factor' },
+        { label: 'HT Graph Patterns', route: 'htgraph_patterns' }
         ]
     },
-    { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver'] }
+    { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver','Coating','Heat Treatment','Checking Approver','Preparation Approver'] }
 ];
 
 // Safe filtering

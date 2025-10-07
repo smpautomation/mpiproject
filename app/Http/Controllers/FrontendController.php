@@ -36,8 +36,13 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function smpData(){
-        return Inertia::render('Frontend/SMP_Data');
+    public function smpData(Request $request){
+
+        $massProd = $request->get('massProd');
+
+        return Inertia::render('Frontend/SMP_Data',[
+            'massProd' => $massProd,
+        ]);
     }
 
     public function heatTreatment(Request $request){
@@ -86,10 +91,26 @@ class FrontendController extends Controller
     public function manage(Request $request) {
         // Capture the manageSerialParam query parameter from the URL
         $manageSerialParam = $request->query('manageSerialParam'); // Use $request->query() to get the value
+        $manageMassProd = $request->query('manageMassProd');
+        $manageLayer = $request->query('manageLayer');
 
         // Return the Inertia response and pass the manageSerialParam to the Manage.vue component
         return Inertia::render('Frontend/Manage', [
             'manageSerialParam' => $manageSerialParam,  // Pass manageSerialParam as a prop to the Vue component
+            'manageMassProd' => $manageMassProd,
+            'manageLayer' => $manageLayer
+        ]);
+    }
+
+    public function sec_additional(Request $request) {
+        $serial = $request->input('sec_serialParam');
+        $massProd = $request->input('sec_massProd');
+        $layer = $request->input('sec_layer');
+
+        return Inertia::render('Frontend/SEC_Additional', [
+            'sec_serialParam' => $serial,
+            'sec_massProd' => $massProd,
+            'sec_layer' => $layer
         ]);
     }
 
@@ -98,7 +119,9 @@ class FrontendController extends Controller
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
         $filterStatus = $request->get('filterStatus');
+        $filterStatus_checked = $request->get('filterStatus_checked');
         $fromApproval = $request->get('fromApproval');
+        $fromApproval_checked = $request->get('fromApproval_checked');
         $fromViewList = $request->get('fromViewList');
 
         // Get the real client IP address
@@ -117,8 +140,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Reports', [
             'serialParam' => $serial,  // Pass serialParam as a prop to the Reports.vue component
             'filterStatus' => $filterStatus,
+            'filterStatus_checked' => $filterStatus_checked,
             'ipAddress' => $ipAddress,  // Pass ipAddress as a prop to the Reports.vue component
             'fromApproval' => filter_var($request->fromApproval, FILTER_VALIDATE_BOOLEAN),
+            'fromApproval_checked' => filter_var($request->fromApproval_checked, FILTER_VALIDATE_BOOLEAN),
             'fromViewList' => filter_var($request->fromViewList, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
@@ -152,6 +177,10 @@ class FrontendController extends Controller
         ]);
     }
 
+    public function approval_checked(Request $request){
+        return Inertia::render('Frontend/Approval_Checked');
+    }
+
     public function admin(){
         return Inertia::render('Frontend/Admin');
     }
@@ -166,14 +195,6 @@ class FrontendController extends Controller
 
     public function data_ins(){
         return Inertia::render('Frontend/Data_INS');
-    }
-
-    public function sec_additional(Request $request) {
-        $serial = $request->input('sec_serialParam');
-
-        return Inertia::render('Frontend/SEC_Additional', [
-            'sec_serialParam' => $serial
-        ]);
     }
 
     public function generatePdf(Request $request){

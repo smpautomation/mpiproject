@@ -32,6 +32,7 @@ use App\Http\Controllers\MassProductionController;
 use App\Http\Controllers\SecondGBDPController;
 use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
+use App\Http\Controllers\SmpDataController;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -47,7 +48,7 @@ Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
 Route::post('/tpmdata', [TPMDataController::class, 'store']);
 Route::patch('/tpmdataupdate/{id}', [TPMDataController::class, 'updateTpmData']);
 Route::patch('/tpmremarksupdate/{id}', [TPMDataController::class, 'updateRemarks']);
-Route::patch('/tpmaggregateupdate/{id}', [TPMDataController::class, 'updateAggregateFunctions']);
+Route::patch('/tpmaggregateupdate/{id}', action: [TPMDataController::class, 'updateAggregateFunctions']);
 Route::patch('/updatecategory/{id}', [TPMDataController::class, 'updateCategory']);
 Route::patch('/updateboxes/{id}', [TPMDataController::class, 'updateBoxes']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
@@ -228,12 +229,14 @@ Route::apiResource('gbdp-second-coating', GbdpSecondCoatingController::class);
 
 Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 
+Route::apiResource('smp-data',SmpDataController::class);
+
 Route::get('/film-pasting-data/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
 Route::get('/coating-data/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-coating-data/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
 
-Route::get('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
+Route::get('/mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
 Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'updateByMassProd']);
 Route::post('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'uploadGraphs']);
@@ -251,5 +254,42 @@ Route::get('/coating-pending-check',[CoatingController::class, 'checkPending']);
 
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
+Route::get('/approve-list-checked', [ReportDataController::class, 'getViewList']);
+
 Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     [MassProductionController::class, 'getLayerModel']);
+
+Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
+[MassProductionController::class, 'getLayerLotno']);
+
+Route::get(
+    '/mass-productions/{massprod}/completed-layers',
+    [MassProductionController::class, 'getAllHTCompletedLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/coating-completed-layers',
+    [MassProductionController::class, 'getAllCoatingCompleteLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/filmpasting-completed-layers',
+    [MassProductionController::class, 'getAllFilmPastingCompletedLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/second-ht-completed-layers',
+    [MassProductionController::class, 'getAllSecondHTCompletedLayers']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/layer-by-serial/{serial}',
+    [MassProductionController::class, 'getLayerDataBySerial']
+);
+
+Route::get(
+    '/mass-productions/{massprod}/layer-by-layerno/{layer}',
+    [MassProductionController::class, 'getLayerDataByLayerNo']
+);
+
+Route::get('/mass-productions/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);

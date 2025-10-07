@@ -285,6 +285,11 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="isModelMissing" class="p-4 mb-4 border-l-4 border-red-500 bg-red-50 text-red-800 rounded-md shadow-sm">
+                <strong class="font-semibold">Warning:</strong> Control Sheet for this layer has not been completed. Please ensure the model exists before proceeding.
+            </div>
+
             <div class="flex flex-row gap-10 mt-10">
                 <div v-if="activate2ndGBDP" class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">1st GBDP Coating Information</h2>
@@ -355,7 +360,7 @@
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                             <select v-model="coatingInfo.selectedLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                                <option v-for="items in layers" :key="items" :value="items">
+                                <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
                                 </option>
                             </select>
@@ -369,7 +374,7 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating Machine No<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.coatingMachineNo" @input="coatingInfo.coatingMachineNo = coatingInfo.coatingMachineNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.coatingMachineNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Slurry Lot No<span class="text-red-500"> *</span></label>
@@ -388,11 +393,11 @@
                         </div>
                         <div v-else>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
-                            <input v-model="lotNo" @input="lotNo = lotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="lotNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.totalMagnetWeight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.totalMagnetWeight" type="number" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Selection -->
@@ -414,7 +419,7 @@
                     <div v-if="!activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
-                            <input v-model="lotNo" @input="lotNo = lotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="lotNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
@@ -716,10 +721,6 @@
                     <!-- Stats: Average / Max / Min -->
                     <div class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp != null ? Number(coatingAverage_1stgbdp).toFixed(2) : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum_1stgbdp !== null ? coatingMaximum_1stgbdp : '-' }}</div>
                         </div>
@@ -727,16 +728,16 @@
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_1stgbdp !== null ? coatingMinimum_1stgbdp : '-' }}</div>
                         </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_1stgbdp != null ? Number(coatingAverage_1stgbdp).toFixed(2) : '-' }}</div>
+                        </div>
                     </div>
                 </div>
                 <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
                     <p v-if="activate2ndGBDP" class="font-semibold text-center">2ND GBDP</p>
                     <!-- Stats: Average / Max / Min -->
-                    <div class="flex flex-row gap-20">
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
-                        </div>
+                    <div v-if="activate2ndGBDP" class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum_2ndgbdp !== null ? coatingMaximum_2ndgbdp : '-' }}</div>
@@ -744,6 +745,24 @@
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum_2ndgbdp !== null ? coatingMinimum_2ndgbdp : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
+                        </div>
+                    </div>
+                    <div v-else class="flex flex-row gap-20">
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Maximum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Minimum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -768,17 +787,27 @@
                         <!-- Finalize -->
                         <button
                             v-if="!activate2ndGBDP"
+                            :disabled="isExists"
                             @click="finalize"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
+                            :class="isExists
+                                ? 'bg-red-600 hover:bg-red-700 focus:ring-red-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'"
                         >
-                            FINALIZE
+                            {{ isExists ? 'DUPLICATE DETECTED' : 'FINALIZE' }}
                         </button>
                         <button
                             v-else
                             @click="finalize_1st2ndGbdp"
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50',
+                                isExists_2ndGBDP
+                                    ? 'bg-red-600 text-white cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                            ]"
+                            :disabled="isExists_2ndGBDP"
                         >
-                            SUBMIT
+                            {{ isExists_2ndGBDP ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
                         </button>
 
                         <!-- Cancel -->
@@ -1147,18 +1176,18 @@
                     <div>
                         <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
                             <div class="flex items-center gap-1">
-                                <label class="font-medium text-gray-600">Average:</label>
-                                <span class="text-gray-800">
-                                    {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
-                                </span>
-                            </div>
-                            <div class="flex items-center gap-1">
                                 <label class="font-medium text-gray-600">Maximum:</label>
                                 <span class="text-gray-800">{{ coatingMaximum ?? '-' }}</span>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="font-medium text-gray-600">Minimum:</label>
                                 <span class="text-gray-800">{{ coatingMinimum ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="font-medium text-gray-600">Average:</label>
+                                <span class="text-gray-800">
+                                    {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -1290,6 +1319,21 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Coating',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
     // Load existing session value
@@ -1326,15 +1370,21 @@ const bypassValidation = ref(false);
 //Toggle Control
 const showModalFinalize = ref(false);
 const showModalSubmit = ref(false);
+const isExists = ref(false);
+const isExists_2ndGBDP = ref(false);
+const isModelMissing = ref(false);
 //Toggle Control
 
 const massProd_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const existingLayers = ref([]);
+const existingLayers_2ndGBDP = ref([]);
+const available_layers = ref([]);
 const completedLayers = ref([]);
 const completedLayers_1st_2nd_gbdp = ref([]);
 const lotNo = ref();
 const lotNo_1stGBDP = ref();
-const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const firstSecondGBDP_models = ref([]);
 const fetchedModelValue = ref();
 const selectedMassProd_fetch = ref();
 const selectedLayer_fetch = ref();
@@ -1346,7 +1396,7 @@ const fetchedCoatingData = ref([]);
 
 const coatingInfo = reactive({ // <--- this is the 2nd GBDP
     selectedMassProd: '',
-    selectedLayer: '1',
+    selectedLayer: null,
     coatingDate: '',
     coatingMachineNo: '',
     slurryLotNo: '',
@@ -1590,7 +1640,7 @@ const clearAll = () => {
     // Reset coatingInfo
     Object.assign(coatingInfo, {
         selectedMassProd: '',
-        selectedLayer: '1',
+        selectedLayer: null,
         coatingDate: '',
         coatingMachineNo: '',
         slurryLotNo: '',
@@ -1620,6 +1670,9 @@ const clearAll = () => {
         { module: "M-05", new: null, homo: null, time: null, liters: null },
         { module: "M-06", new: null, homo: null, time: null, liters: null },
     ];
+
+    lotNo.value = null;
+    lotNo_1stGBDP.value = null;
 
     toast.success("All fields cleared.");
 };
@@ -1652,7 +1705,8 @@ const clearAllTransition = () => {
 
     // Reset arrays
      // Keep the shape intact
-    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    concentrationData_1stGBDP.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    concentrationData_2ndGBDP.value = Array.from({ length: 7 }, () => Array(7).fill(null));
     coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
         no: i + 1,
         coating: null
@@ -1753,6 +1807,7 @@ const saveToDatabase = async() => {
         const response = await axios.post('/api/coating-data/', coatingDataPayload);
         console.log('Saved Successfully: ', response.data);
         toast.success('Saved Successfully');
+        await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
@@ -1832,15 +1887,17 @@ const saveToDatabase_1st2ndgbdp = async() => {
                 "Coating Amount Data": coatingAmountData_2ndgbdp,
                 "Concentration Data": concentrationAmountData_2ndgbdp,
                 "Lot no": lotNo.value
-            }
+            },
         }
 
         const response = await axios.post(`/api/gbdp-second-coating`, payload);
         toast.success('1st and 2nd GBDP Data Saved Successfully');
         console.log(response.data);
+        await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
+        clearAllTransition();
         showModalSubmit.value = false;
         await getCompletedLayers();
         await getCompletedLayers_1st_2nd_gbdp();
@@ -1874,10 +1931,29 @@ const getMassProdLists = async () => {
     }
 }
 
+const getSelectedMassProdData = async () => {
+    try{
+        const response = await axios.get(`/api/mass-productions/${coatingInfo.selectedMassProd}/layer-by-layerno/${coatingInfo.selectedLayer}`);
+        const massProdLayerData = response.data.layer_data;
+        console.log('Mass Prod layer data: ', massProdLayerData);
+        coatingInfo.coatingMachineNo = massProdLayerData[1].data['A'];
+        lotNo.value = massProdLayerData[2].data['A'];
+        const data = massProdLayerData[7]?.data || {};
+        const total = Object.values(data)
+        .filter(v => typeof v === 'number' && !isNaN(v))
+        .reduce((sum, v) => sum + v, 0);
+
+        coatingInfo.totalMagnetWeight = total.toFixed(2); // round to 2 decimals if needed
+        console.log('success response getSelectedMassProdData: ', coatingInfo.totalMagnetWeight);
+    }catch(error){
+        console.error('Failed to getSelectedMassProdData: ',error)
+    }
+}
+
 const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/coating-data/${coatingInfo.selectedMassProd}/layers`);
-        completedLayers.value = response.data.layers.map(String);
+        completedLayers.value = response.data.completed_layers.map(String);
         console.log(completedLayers.value);
     } catch (error) {
         console.error(error);
@@ -1888,7 +1964,7 @@ const getCompletedLayers = async () => {
 const getCompletedLayers_1st_2nd_gbdp = async () => {
     try {
         const response = await axios.get(`/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`);
-        completedLayers_1st_2nd_gbdp.value = response.data.layers.map(String);
+        completedLayers_1st_2nd_gbdp.value = response.data.completed_layers.map(String);
         console.log(completedLayers_1st_2nd_gbdp.value);
     } catch (error) {
         console.error(error);
@@ -1896,21 +1972,94 @@ const getCompletedLayers_1st_2nd_gbdp = async () => {
     }
 };
 
-// Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
-
-const fetchLayerModel = async(massProd, layerNumber) => {
+const get1st2ndGBDPModels = async () => {
     try {
-        const response = await axios.get(
-        `/api/mass-productions/${massProd}/layer/${layerNumber}/model`
-        )
-        console.log("Fetched Model: ", response.data.model);
-        fetchedModelValue.value = response.data.model
-        console.log("Activation: ", activate2ndGBDP.value);
+        const response = await axios.get(`/api/second-gbdp-models`);
+        const models = response.data;
+
+        // Extract only the model_name
+        const modelNames = models.map(model => model.model_name);
+        firstSecondGBDP_models.value = modelNames;
+        //console.log("1st & 2nd GBDP model names: ", modelNames);
     } catch (error) {
-        fetchedModelValue.value = null;
-        console.error(error.response?.data || error.message)
+        console.error('Failed to get 1st & 2nd GBDP Models: ', error);
     }
 }
+
+// Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger ------ Fetch on trigger
+
+const fetchExistingLayers = async () => {
+    if (!coatingInfo.selectedMassProd) {
+        console.warn("Mass Production not selected yet.");
+        return;
+    }
+
+    try {
+        // 1st Coating
+        const response1 = await axios.get(
+            `/api/coating-data/${coatingInfo.selectedMassProd}/layers`
+        );
+        existingLayers.value = response1.data.completed_layers;
+        console.log("Existing Layers for Coating:", existingLayers.value);
+
+        // 2nd Coating
+        const response2 = await axios.get(
+            `/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`
+        );
+        existingLayers_2ndGBDP.value = response2.data.completed_layers;
+        console.log("Existing Layers for 2nd Coating:", existingLayers_2ndGBDP.value);
+
+        // Initial check after fetching
+        if (coatingInfo.selectedLayer) {
+            isExists.value = existingLayers.value.includes(coatingInfo.selectedLayer);
+            isExists_2ndGBDP.value = existingLayers_2ndGBDP.value.includes(coatingInfo.selectedLayer);
+        }
+
+        if (isExists.value) {
+            toast.warning('Selected layer already contains existing coating data.');
+        }
+
+        if (isExists_2ndGBDP.value) {
+            toast.warning('Selected layer already contains existing 1st and 2nd GBDP coating data.');
+        }
+
+    } catch (error) {
+        console.error("Error fetching existing layers:", error);
+        toast.error('Failed to fetch existing layers.');
+    }
+};
+
+const fetchAvailableLayers = async () => {
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${coatingInfo.selectedMassProd}/completed-layers`
+        );
+        available_layers.value = response.data.completed_layers;
+        console.log("Available Layers: ", available_layers.value);
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch available layers from Heat Treatment');
+    }
+};
+
+const fetchLayerModel = async (massProd, layerNumber) => {
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${massProd}/layer/${layerNumber}/model`
+        );
+        console.log("Fetched Model: ", response.data.model);
+        fetchedModelValue.value = response.data.model;
+        console.log("Activation: ", activate2ndGBDP.value);
+        isModelMissing.value = false; // reset in case it was true before
+    } catch (error) {
+        fetchedModelValue.value = null;
+        console.error(error.response?.data || error.message);
+
+        if (error.response?.status === 404) {
+            isModelMissing.value = true;
+        }
+    }
+};
 
 watch(
     () => [coatingInfo.selectedMassProd, coatingInfo.selectedLayer],
@@ -1920,6 +2069,27 @@ watch(
         }
     }
 )
+
+watch(
+    [() => coatingInfo.selectedMassProd, () => coatingInfo.selectedLayer],
+    async ([newMassProd, newLayer]) => {
+        if (!newMassProd || !newLayer) {
+        // Reset the flags if either is missing
+        isExists.value = false;
+        isExists_2ndGBDP.value = false;
+        return;
+        }
+
+        // Fetch existing layers whenever either value changes
+        await fetchExistingLayers();
+        await getSelectedMassProdData();
+
+        console.log(
+        `Selected MassProd: ${newMassProd}, Selected Layer: ${newLayer}, ` +
+        `isExists: ${isExists.value}, isExists_2ndGBDP: ${isExists_2ndGBDP.value}`
+        );
+    }
+);
 
 const activate2ndGBDP = computed(() => {
     const model = fetchedModelValue.value;
@@ -1950,6 +2120,7 @@ watch(
       await getCompletedLayers_1st_2nd_gbdp();
     } else {
       await getCompletedLayers();
+      await fetchAvailableLayers();
     }
   }
 );
@@ -2058,6 +2229,7 @@ onMounted(async () => {
         return;
     }
     await getMassProdLists();
+    await get1st2ndGBDPModels();
 });
 
 </script>

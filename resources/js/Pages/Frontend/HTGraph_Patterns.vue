@@ -308,6 +308,21 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'HT Graph',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
+
 // General Variables ---------------------------------- General Variables
 
 //Toggles
@@ -443,7 +458,7 @@ const saveToDatabase = async () => {
         await uploadGraphFinal();
 
         toast.success('Graph Pattern created successfully!');
-
+        await userManageLogging('created Graph Pattern no: '+ patternNo.value +' Encoded by: ' + encodedBy.value + ' successfully.');
     } catch (error) {
         if (error.response?.status === 422) {
         const errors = error.response.data.errors;

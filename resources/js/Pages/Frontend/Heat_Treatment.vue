@@ -10,6 +10,18 @@
             </div>
         </div>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
+            <div class="p-4 mb-4 text-sm rounded-lg bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 flex items-center justify-between">
+                <div>
+                    <strong>Note:</strong> For 1st & 2nd GBDP formats, select <span class="font-semibold">Mass Prod</span>, <span class="font-semibold">Layer</span>, and <span class="font-semibold">Model</span>, then click the
+                    <span class="bg-orange-500 text-white px-2 py-0.5 rounded">Apply 1st & 2nd GBDP</span> button in the <span class="font-semibold">Control Panel</span>. If button is disabled, the model is not yet registered.
+                </div>
+                <button
+                    class="ml-4 text-blue-600 hover:underline font-semibold"
+                    @click.prevent="$inertia.visit('/second_gbdp_models')"
+                >
+                    Register Here
+                </button>
+            </div>
             <div class="flex flex-row justify-center gap-0">
                 <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
@@ -46,7 +58,7 @@
                     </div>
 
                     <!-- Group: Basic Info -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Model<span class="text-red-500"> *</span></label>
                             <select v-model="mpcs.selectedModel" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
@@ -58,6 +70,10 @@
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating M/C No.<span class="text-red-500"> *</span></label>
                             <input v-model="mpcs.coatingMCNo" type="text" @input="mpcs.coatingMCNo = mpcs.coatingMCNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Raw Material Code<span class="text-red-500"> *</span></label>
+                            <input v-model="mpcs.rawMaterialCode" type="text" @input="mpcs.rawMaterialCode = mpcs.rawMaterialCode.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
 
@@ -215,6 +231,10 @@
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Loader<span class="text-red-500"> *</span></label>
                                     <input v-model="hti.loader" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Partial No.<span class="text-red-500"> *</span></label>
+                                    <input v-model="hti.partialNo" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
@@ -390,9 +410,15 @@
                     <div class="w-full">
                         <button
                             @click="finalize"
-                            class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+                            :disabled="isExisting"
+                            :class="[
+                            'w-full py-2 text-sm font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                            isExisting
+                                ? 'bg-red-600 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
+                                : 'bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-white focus:ring-indigo-400 text-white'
+                            ]"
                         >
-                            FINALIZE
+                            {{ isExisting ? 'DUPLICATE DETECTED' : 'FINALIZE' }}
                         </button>
                     </div>
 
@@ -401,7 +427,7 @@
                         <!-- Apply 2nd GBDP -->
                         <button
                             @click="second_heat_treatment()"
-                            :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected)"
+                            :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected) || isExisting_2ndGBDP"
                             class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-500 disabled:hover:to-orange-600"
                         >
                             APPLY 1ST 2ND GBDP
@@ -721,6 +747,20 @@ const checkAuthentication = async () => {
     }
 };
 
+const userManageLogging = async (logEvent) => {
+    try{
+        const responseUserLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Heat Treatment',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userManageLogging post request failed: ',error);
+    }
+}
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
   // Load existing session value
@@ -764,8 +804,12 @@ const initialFurnaceData = ref();
 const massProd_names = ref([]);
 const model_names = ref([]);
 const graph_patterns = ref([]);
-const firstSecondGBDP_models = ref(['TIC0755G','DNS0A54G']);
+const firstSecondGBDP_models = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const existingLayers = ref([]);
+const existingLayers_2ndGBDP = ref([]);
+const isExisting = ref(false);
+const isExisting_2ndGBDP = ref(false);
 const completedLayers = ref(['1','2']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K','L'];
 const boxesEndList = ref(['B','C','D','E','F','G','H','J','K','L']);
@@ -810,6 +854,7 @@ const mpcs = reactive({
     selectedBoxEndList: 'K',
     selectedModel: '',
     coatingMCNo: '',
+    rawMaterialCode: '',
     lotNo: '',
     qty: 0,
     qty_lastBox: 0,
@@ -846,6 +891,7 @@ const hti = reactive({
     currentPattern: '',
     dateStart: '',
     timeStart: '',
+    partialNo: 0,
     loader: '',
     dateFinish: '',
     timeFinish: '',
@@ -904,6 +950,20 @@ const getMassProdData = async () => { //Function for getting the current selecet
     }
 }
 
+const get1st2ndGBDPModels = async () => {
+    try {
+        const response = await axios.get(`/api/second-gbdp-models`);
+        const models = response.data;
+
+        // Extract only the model_name
+        const modelNames = models.map(model => model.model_name);
+        firstSecondGBDP_models.value = modelNames;
+        //console.log("1st & 2nd GBDP model names: ", modelNames);
+    } catch (error) {
+        console.error('Failed to get 1st & 2nd GBDP Models: ', error);
+    }
+}
+
 const getMassProdLists = async () => {
     try{
         const response = await axios.get('/api/mass-production/');
@@ -940,6 +1000,47 @@ const getGraphPatterns = async () => {
     }
 }
 
+const fetchExistingLayers = async () => {
+    if (!mpcs.selectedMassProd) {
+        console.warn("Mass Production not selected yet.");
+        return;
+    }
+
+    try {
+        const response = await axios.get(
+            `/api/mass-productions/${mpcs.selectedMassProd}/completed-layers`
+        );
+        existingLayers.value = response.data.completed_layers;
+        console.log("Existing Layers for heat treatment:", existingLayers.value);
+
+        const response2 = await axios.get(
+            `/api/mass-productions/${mpcs.selectedMassProd}/second-ht-completed-layers`
+        );
+        existingLayers_2ndGBDP.value = response2.data['2nd_gbdp_layers'];
+        console.log("Existing Layers for heat treatment 2ND GBDP:", existingLayers_2ndGBDP.value);
+
+        // Initial check after fetching
+        if (mpcs.selectedLayer) {
+            isExisting.value = existingLayers.value.includes(mpcs.selectedLayer);
+        }
+
+        if (mpcs.selectedLayer) {
+            isExisting_2ndGBDP.value = existingLayers_2ndGBDP.value.includes(mpcs.selectedLayer);
+        }
+
+        if (isExisting.value){
+            toast.warning('Selected layer already contains existing data.');
+        }
+
+        if (isExisting_2ndGBDP.value){
+            toast.warning('Selected layer already contains existing 1st and 2nd gbdp data.');
+        }
+    } catch (error) {
+        console.error("Error fetching existing layers:", error);
+        toast.error('Failed to fetch existing layers.');
+    }
+};
+
 const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/second-heat-treatment-data/${mpcs.selectedMassProd}/layers`);
@@ -950,6 +1051,21 @@ const getCompletedLayers = async () => {
         toast.error('Failed to fetch layers');
     }
 };
+
+// Watch for changes in selectedLayer
+watch(
+    [() => mpcs.selectedMassProd, () => mpcs.selectedLayer],
+    async ([newMassProd, newLayer]) => {
+        if (!newMassProd || !newLayer) {
+            isExisting.value = false;
+            return;
+        }
+
+        await fetchExistingLayers(); // fetch backend data
+        isExisting.value = existingLayers.value.includes(newLayer);
+        console.log(`MassProd: ${newMassProd}, Selected Layer: ${newLayer}, Exists? ${isExisting.value}`);
+    }
+);
 
 watch(
     [() => mpcs.selectedMassProd, () => activate2ndGBDP.value],
@@ -1039,7 +1155,7 @@ const finalize = () => {
         // validate MPCS fields
         if (
             !mpcs.selectedMassProd || !mpcs.selectedLayer || !mpcs.selectedBoxEndList ||
-            !mpcs.selectedModel || !mpcs.coatingMCNo || !mpcs.lotNo ||
+            !mpcs.selectedModel || !mpcs.coatingMCNo || !mpcs.lotNo || !mpcs.rawMaterialCode ||
             mpcs.qty <= 0 || mpcs.qty_lastBox <= 0 ||
             !mpcs.coating || !mpcs.magnetPreparedBy
         ) {
@@ -1068,7 +1184,6 @@ const finalize = () => {
                 return;
             }
         }
-
     }
 
     // new per-box check
@@ -1082,7 +1197,7 @@ const finalize = () => {
 }
 
 const saveToDatabase = async () => {
-    const layerKey = `layer_${mpcs.selectedLayer.replace('.', '_')}`;
+    const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5' : `layer_${mpcs.selectedLayer}`;
     const visibleBoxesData = visibleBoxes.value; // e.g., ['A','B','C']
 
     // QTY (PCS) with last box logic
@@ -1094,6 +1209,9 @@ const saveToDatabase = async () => {
             qtyData[box] = mpcs.qty; // all others
         }
     });
+
+    // Calculate total quantity
+    const totalQty = Object.values(qtyData).reduce((sum, val) => sum + Number(val || 0), 0);
 
     // Construct layer payload
     const layerPayload = [
@@ -1108,6 +1226,8 @@ const saveToDatabase = async () => {
         { rowTitle: 'BOX No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, boxNoValues.value[box] || ''])) },
         { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.magnetPreparedBy])) },
         { rowTitle: 'Box prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.boxPreparedBy])) },
+        { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.rawMaterialCode])) },
+        { rowTitle: 'TOTAL QTY', data: Object.fromEntries(visibleBoxesData.map(box => [box, totalQty])) }
     ];
 
     // Base payload
@@ -1128,6 +1248,7 @@ const saveToDatabase = async () => {
             current_pattern: hti.currentPattern,
             date_start: hti.dateStart,
             time_start: hti.timeStart,
+            partial_no: hti.partialNo,
             loader: hti.loader,
             date_finished: hti.dateFinish,
             time_finished: hti.timeFinish,
@@ -1149,13 +1270,36 @@ const saveToDatabase = async () => {
         await uploadGraphs();
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
+        if(!heatTreatmentInformationDetected.value){
+            await userManageLogging('created ' + mpcs.selectedMassProd +' Heat Treatment Info successfully | Control Sheet Layer: ' + mpcs.selectedLayer);
+        }else{
+            await userManageLogging('created '+ mpcs.selectedMassProd +' Control Sheet Layer: ' + mpcs.selectedLayer + ' successfully.');
+        }
         showModalCreate.value = false;
-        clearAll(); // Clear all fields after successful save
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
+    } finally {
+        await updateFormatType();
+        clearAll(); // Clear all fields after successful save
     }
 };
+
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5_format_type' : `layer_${mpcs.selectedLayer}_format_type`;
+
+    const dataPayload = {
+        mass_prod: mpcs.selectedMassProd,
+        [layerKey]: 'Normal',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedMassProd}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+    }
+}
 
 const uploadGraphs = async () => {
     if (!mpcs.selectedMassProd) return;
@@ -1169,7 +1313,7 @@ const uploadGraphs = async () => {
         formData.append('actual_graph', actualGraphFile.value);
     }
 
-    // 🔑 Pass patternNo so backend fetches standard graph
+    // Pass patternNo so backend fetches standard graph
     formData.append('pattern_no', hti.patternNo);
 
     try {
@@ -1220,6 +1364,7 @@ onMounted(async () => {
     await getMassProdLists();
     await getModelLists();
     await getGraphPatterns();
+    await get1st2ndGBDPModels();
 });
 
 </script>

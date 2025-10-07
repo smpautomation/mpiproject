@@ -76,9 +76,15 @@ class GbdpSecondCoatingController extends Controller
      */
     public function getLayersByMassProd($massProd)
     {
+        // Fetch all layer values for this mass_prod
         $layers = GbdpSecondCoating::where('mass_prod', $massProd)
-            ->pluck('layer');
+            ->pluck('layer')  // get only the "layer" column
+            ->filter()         // remove nulls
+            ->map(fn($layer) => (string)$layer) // cast to string if needed
+            ->toArray();
 
-        return response()->json(['layers' => $layers], 200);
+        return response()->json([
+            'completed_layers' => $layers,
+        ]);
     }
 }

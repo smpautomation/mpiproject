@@ -33,14 +33,16 @@
         <table class="w-full border-collapse rounded-lg shadow-lg">
             <thead>
                 <tr class="text-white bg-gradient-to-r from-green-400 via-black to-blue-400">
-                <th class="px-2 py-2 whitespace-nowrap">Serial No</th>
-                <th class="px-2 py-2 whitespace-nowrap">Model Name</th>
-                <th class="px-2 py-2 whitespace-nowrap">Lot No</th>
-                <th class="px-2 py-2 whitespace-nowrap">Furnace No</th>
-                <th class="px-2 py-2 whitespace-nowrap">Tracer No</th>
-                <th class="px-2 py-2 whitespace-nowrap">SMP Judgement</th>
-                <th class="px-2 py-2 whitespace-nowrap">Status</th>
-                <th v-if="state.user && state.user.access_type !== 'Basic User'" class="px-2 py-2 whitespace-nowrap">Action</th> <!-- New Action Column -->
+                    <th class="px-2 py-2 whitespace-nowrap">Mass Production</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Layer</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Serial No</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Model Name</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Lot No</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Furnace No</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Tracer No</th>
+                    <th class="px-2 py-2 whitespace-nowrap">SMP Judgement</th>
+                    <th class="px-2 py-2 whitespace-nowrap">Status</th>
+                    <th v-if="state.user && state.user.access_type !== 'Basic User'" class="px-2 py-2 whitespace-nowrap">Action</th> <!-- New Action Column -->
                 </tr>
             </thead>
             <tbody>
@@ -49,6 +51,16 @@
                 :key="index"
                 class="bg-gradient-to-r from-green-400 via-black to-blue-400"
                 >
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.tpm[0].mass_prod || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.tpm[0].layer_no || "NO DATA" }}
+                    </div>
+                </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
                     {{ item.category[0].tpm_data_serial || "NO DATA" }}
