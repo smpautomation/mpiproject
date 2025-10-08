@@ -486,24 +486,32 @@ const saveToDatabase = async () => {
 const searchQuery = ref('');
 
 const filteredPatterns = computed(() => {
-  if (!searchQuery.value) return graphFileLists.value;
-  const q = searchQuery.value.toLowerCase();
+  const q = String(searchQuery.value || '').toLowerCase(); // <-- coerce safely
+  if (!q) return graphFileLists.value;
+
   return graphFileLists.value.filter(
     p =>
-      String(p.pattern_no).includes(q) ||
-      p.encoded_by.toLowerCase().includes(q)
+      String(p.pattern_no || '').includes(q) ||
+      String(p.encoded_by || '').toLowerCase().includes(q)
   );
 });
 
-const getAllPatterns = async() => {
-    try {
-        const response = await axios.get('/api/htgraph-patterns/list');
-        graphFileLists.value = response.data; // array of URLs
-        console.log('All patterns: ',graphFileLists.value);
-    } catch (error) {
-        console.error('Failed to fetch graphs', error);
+const getAllPatterns = async () => {
+  try {
+    const response = await axios.get('/api/htgraph-patterns/list');
+    let data = response.data;
+
+    // If it's an object with numeric keys, convert to array
+    if (!Array.isArray(data) && typeof data === 'object' && data !== null) {
+      data = Object.values(data);
     }
-}
+
+    graphFileLists.value = data;
+    console.log('Normalized patterns:', graphFileLists.value);
+  } catch (error) {
+    console.error('Failed to fetch graphs', error);
+  }
+};
 
 const getFurnaceLists = async() => {
     try{
