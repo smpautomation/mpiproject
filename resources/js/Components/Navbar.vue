@@ -22,51 +22,61 @@
 
 
 
-    <!-- Desktop Menu -->
+        <!-- Desktop Menu -->
     <ul class="items-center hidden gap-6 font-medium text-gray-700 md:flex dark:text-gray-300">
-      <li v-for="item in filteredNavItems" :key="item.label" class="relative group">
-        <template v-if="item.children && item.children.length">
-          <span class="flex items-center transition-colors cursor-pointer hover:text-blue-600">
-            {{ item.label }}
-            <svg class="w-3 h-3 ml-1 transition-transform duration-300 group-hover:rotate-180"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </span>
-          <ul class="absolute left-0 z-50 invisible w-48 mt-2 transition-all duration-200 bg-white border border-gray-200 rounded shadow-md opacity-0 group-hover:opacity-100 group-hover:visible">
-            <li v-for="child in item.children" :key="child.label">
-                <Link :href="route(child.route)" class="block px-4 py-2 hover:bg-gray-100">
-                    {{ child.label }}
+        <li v-for="item in filteredNavItems" :key="item.label" class="relative group">
+            <template v-if="item.children && item.children.length">
+                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 cursor-pointer hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                    {{ item.label }}
+                    <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:rotate-180 text-gray-500 group-hover:text-blue-600"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </span>
+                <ul class="absolute left-0 z-50 invisible w-52 mt-1 transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible group-hover:translate-y-1">
+                    <li v-for="child in item.children" :key="child.label" class="first:rounded-t-lg last:rounded-b-lg overflow-hidden">
+                        <Link :href="route(child.route)"
+                            class="block px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-blue-50 hover:text-blue-600 hover:pl-5">
+                            {{ child.label }}
+                        </Link>
+                    </li>
+                </ul>
+            </template>
+            <template v-else>
+                <Link :href="route(item.route)"
+                    class="px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 rounded-lg hover:text-blue-600 hover:bg-blue-50">
+                    {{ item.label }}
                 </Link>
-            </li>
-          </ul>
-        </template>
-        <template v-else>
-          <Link :href="route(item.route)" class="transition hover:text-blue-600">{{ item.label }}</Link>
-        </template>
-      </li>
+            </template>
+        </li>
 
 
-        <!-- User Info + Logout -->
-        <li v-if="state.isAuthenticated && state.user" class="flex items-center px-3 py-1 space-x-3 transition-all duration-200 bg-gray-100 rounded-full shadow-sm dark:bg-gray-800 hover:shadow-md">
+        <li v-if="state.isAuthenticated && state.user"
+            class="flex items-center px-4 py-2 space-x-3 transition-all duration-200 bg-white rounded-full shadow-md border border-blue-100 hover:shadow-lg hover:border-blue-200">
 
-        <!-- Avatar -->
-        <div class="flex items-center justify-center text-sm font-semibold text-white rounded-full shadow-inner w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600">
-            {{ state.user.firstName.charAt(0).toUpperCase() }}
-        </div>
+            <!-- Avatar -->
+            <div class="flex items-center justify-center text-sm font-bold text-white rounded-full shadow-md w-10 h-10 bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500">
+                {{ state.user.firstName.charAt(0).toUpperCase() }}
+            </div>
 
-        <!-- Name -->
-        <span class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate max-w-[6rem]">
-            {{ state.user.firstName }}
-        </span>
+            <!-- Name -->
+            <span class="text-sm font-semibold text-gray-700 truncate max-w-[6rem]">
+                <span class="text-sm font-semibold text-gray-700 flex flex-col leading-tight">
+                    <span class="truncate max-w-[8rem]">{{ state.user.firstName }}</span>
+                    <span class="text-xs font-medium text-blue-600 whitespace-nowrap">({{ state.user.access_type }})</span>
+                </span>
+            </span>
 
-        <!-- Logout -->
-        <button
-            @click="handleLogout"
-            class="px-2 py-1 text-sm font-semibold text-red-500 transition-colors duration-200 rounded-full bg-red-50 hover:bg-red-100 hover:text-red-700 dark:bg-red-700 dark:text-red-200 dark:hover:bg-red-600 dark:hover:text-red-50"
-        >
-            Logout
-        </button>
+            <!-- Logout -->
+            <button
+                @click="handleLogout"
+                class="px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 rounded-full
+                    bg-gradient-to-r from-blue-500 to-cyan-500
+                    hover:from-blue-600 hover:to-cyan-600 hover:shadow-md
+                    active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
+            >
+                Logout
+            </button>
         </li>
 
     </ul>
@@ -79,22 +89,22 @@
     </button>
   </div>
 
-  <!-- Mobile Menu -->
-  <ul v-if="mobileOpen" class="p-4 space-y-2 border-t border-gray-200 md:hidden bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+    <!-- Mobile Menu -->
+    <ul v-if="mobileOpen" class="p-4 space-y-2 border-t border-gray-200 md:hidden bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
     <li v-for="item in filteredNavItems" :key="item.label">
-      <template v-if="item.children && item.children.length">
+        <template v-if="item.children && item.children.length">
         <span class="block py-2 font-medium">{{ item.label }}</span>
         <ul class="pl-4 space-y-1">
-          <li v-for="child in item.children" :key="child.label">
+            <li v-for="child in item.children" :key="child.label">
             <Link :href="route(child.route)" class="block py-1">{{ child.label }}</Link>
-          </li>
+            </li>
         </ul>
-      </template>
-      <template v-else>
+        </template>
+        <template v-else-if="item.route">
         <Link :href="route(item.route)" class="block py-2">{{ item.label }}</Link>
-      </template>
+        </template>
     </li>
-  </ul>
+    </ul>
 </nav>
 </template>
 
@@ -128,26 +138,32 @@ const logUserLogout = async () => {
 
 // Nav items with children
 const navItems = [
-    { label: 'Home', route: 'homePage', access: ['Basic User','Automation','Final Approver','Proxy Approver','Coating','Heat Treatment'] },
-    { label: 'Mass Production', route: 'massprod', access: ['Automation','Final Approver','Coating','Heat Treatment'] },
-    { label: 'Input Forms', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'], children: [
-        { label: 'Heat Treatment', route: 'heat_treatment' },
-        { label: 'Coating', route: 'coating' },
-        { label: 'Film Pasting', route: 'film_pasting' },
-        { label: 'JH Curve', route: 'manage' },
-        { label: 'MPI Report', route: 'reports' }
+    { label: 'Home', route: 'homePage', access: ['Basic User','Automation','Final Approver','Proxy Approver','Coating','Heat Treatment','Checking Approver', 'Preparation Approver'] },
+    { label: 'Mass Production', route: 'massprod', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'] },
+    {
+        label: 'Input Forms',
+        access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'],
+        children: [
+            { label: 'Heat Treatment', route: 'heat_treatment', access: ['Heat Treatment','Automation','Coating'] },
+            { label: 'Coating', route: 'coating', access: ['Heat Treatment','Automation','Coating'] },
+            { label: 'Film Pasting', route: 'film_pasting', access: ['Heat Treatment','Automation','Coating'] },
+            { label: 'JH Curve', route: 'manage', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
+            { label: 'MPI Report', route: 'reports', access: ['Automation','Final Approver','Proxy Approver','Coating','Heat Treatment','Checking Approver', 'Preparation Approver'] }
         ]
     },
-    { label: 'Options', access: ['Automation','Basic User','Preparation Approver','Checking Approver','Hybrid Approver','Bypass Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'], children: [
-        { label: 'Inspection', route: 'inspection' },
-        { label: 'View List', route: 'viewList' },
-        { label: 'Approval', route: 'approval' },
-        { label: 'Furnace', route: 'furnace' },
-        { label: '1st & 2nd GBDP', route: 'second_gbdp_models' },
-        { label: 'Special Instructions', route: 'instructions' },
-        { label: 'Send Email', route: 'email' },
-        { label: 'Mias Factor Emp', route: 'mias_factor' },
-        { label: 'HT Graph Patterns', route: 'htgraph_patterns' }
+    {
+        label: 'Options',
+        access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'],
+        children: [
+            { label: 'Inspection', route: 'inspection', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
+            { label: 'View List', route: 'viewList', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver'] },
+            { label: 'Approval', route: 'approval', access: ['Automation','Final Approver','Proxy Approver'] },
+            { label: 'Furnace', route: 'furnace', access: ['Heat Treatment','Automation','Coating'] },
+            { label: '1st & 2nd GBDP', route: 'second_gbdp_models', access: ['Heat Treatment','Automation','Coating'] },
+            { label: 'Special Instructions', route: 'instructions', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
+            { label: 'Send Email', route: 'email', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
+            { label: 'Mias Factor Emp', route: 'mias_factor', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
+            { label: 'HT Graph Patterns', route: 'htgraph_patterns', access: ['Heat Treatment','Automation','Coating'] }
         ]
     },
     { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver','Coating','Heat Treatment','Checking Approver','Preparation Approver'] }
@@ -156,11 +172,19 @@ const navItems = [
 // Safe filtering
 const filteredNavItems = computed(() => {
     if (!state.user) return [];
+
     return navItems
-      .filter(item => item.access.includes(state.user.access_type))
-      .map(item => ({
-          ...item,
-          children: item.children ? [...item.children] : undefined
-      }));
+        .filter(item => item.access.includes(state.user.access_type))
+        .map(item => {
+            const filteredChildren = item.children
+                ? item.children.filter(child => child.access.includes(state.user.access_type))
+                : undefined;
+
+            return {
+                ...item,
+                children: filteredChildren && filteredChildren.length ? filteredChildren : undefined
+            };
+        })
+        .filter(item => item.children !== undefined || item.route); // hide parent if no accessible children
 });
 </script>
