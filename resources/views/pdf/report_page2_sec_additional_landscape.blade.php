@@ -391,15 +391,6 @@
                         Lot # {{ $controlLotNo['A'] }}
                     </p>
 
-                    @if (!empty($noteReasonsSorted))
-                        <div style="margin-top: 8px; margin-bottom: 10px;">
-                            <p style="margin: 0;">Remarks Encountered:</p>
-                            <p style="color: #c00; font-weight: bold; font-size: 9px; margin: 2px 0 0;">
-                                {{ implode(', ', array_map(fn($r) => preg_replace('/^\s*-\s*/', '', $r), $noteReasonsSorted)) }}
-                            </p>
-                        </div>
-                    @endif
-
                     <p style="margin: 0 0 4px; color: rgb(65, 61, 252); font-size: 14px;">
                         {{ $currentNSA->set_name }}
                     </p>

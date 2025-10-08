@@ -1174,7 +1174,7 @@
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
                 const firstSerialNumber = '000001';
                 serialNo.value = `${year}${month}${firstSerialNumber}`;
-                alert(`Generated First Serial Number: ${serialNo.value}`);
+                //alert(`Generated First Serial Number: ${serialNo.value}`);
             }
         } catch (error) {
             console.error('Error generating serial number:', error);
