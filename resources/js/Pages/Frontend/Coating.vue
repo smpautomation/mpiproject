@@ -1804,7 +1804,7 @@ const saveToDatabase = async() => {
     }
 
     try{
-        const response = await axios.post('/api/coating-data/', coatingDataPayload);
+        const response = await axios.post('/api/coating-data', coatingDataPayload);
         console.log('Saved Successfully: ', response.data);
         toast.success('Saved Successfully');
         await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
