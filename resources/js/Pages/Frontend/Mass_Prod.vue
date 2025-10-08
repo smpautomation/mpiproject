@@ -303,7 +303,7 @@ const getMassProdData = async() => {
 
 const getFurnaceLists = async() => {
     try{
-        const response = await axios.get('/api/furnace-data/');
+        const response = await axios.get('/api/furnace-data');
         const furnaceData = response.data;
         furnace_lists.value = furnaceData.map(item => item.furnace_name);
         console.log("Furnace Lists: ", furnace_lists.value);

@@ -333,7 +333,7 @@ const showModalEdit = ref(false)
 //Toggles
 
 const patternNo = ref(0);
-const furnaceNo = ref(['K-40','K-82']);
+const furnaceNo = ref([]);
 const selectedFurnace = ref();
 const uploadedGraph = ref();
 const uploadedGraphEdited = ref();
@@ -505,8 +505,21 @@ const getAllPatterns = async() => {
     }
 }
 
+const getFurnaceLists = async() => {
+    try{
+        const response = await axios.get('/api/furnace-data/');
+        const furnaceData = response.data;
+        furnaceNo.value = furnaceData.map(item => item.furnace_name);
+        console.log("Furnace Lists: ", furnaceNo.value);
+    }catch(error){
+        console.error('Failed to fetch furnace data lists: ',error);
+        toast.error('Furnace Data List error.');
+    }
+}
+
 onMounted(async() => {
     await getAllPatterns();
+    await getFurnaceLists();
 });
 
 
