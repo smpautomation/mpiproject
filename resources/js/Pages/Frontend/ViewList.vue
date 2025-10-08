@@ -18,8 +18,8 @@
           <option value="PREPARED_PENDING">Prepared by Pending</option>
           <option value="CHECKED_PENDING">Checked by Pending</option>
           <option value="FINALIZED_PENDING">Finalize Pending</option>
-          <option value="COATING_PENDING">Coating Pending</option>
-          <option value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option>
+          <!--option value="COATING_PENDING">Coating Pending</!--option>
+          <option-- value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option-->
         </select>
 
       </div>
@@ -33,6 +33,7 @@
         <table class="w-full border-collapse rounded-lg shadow-lg">
             <thead>
                 <tr class="text-white bg-gradient-to-r from-green-400 via-black to-blue-400">
+                    <th class="px-2 py-2 whitespace-nowrap">Date</th>
                     <th class="px-2 py-2 whitespace-nowrap">Mass Production</th>
                     <th class="px-2 py-2 whitespace-nowrap">Layer</th>
                     <th class="px-2 py-2 whitespace-nowrap">Serial No</th>
@@ -51,6 +52,11 @@
                 :key="index"
                 class="bg-gradient-to-r from-green-400 via-black to-blue-400"
                 >
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ formatDate(item.report[0]?.updated_at) || "NO DATA" }}
+                    </div>
+                </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
                     {{ item.tpm[0].mass_prod || "NO DATA" }}
@@ -209,6 +215,20 @@ const checkAuthentication = async () => {
         Inertia.visit('/'); // Redirect on error
         return false; // Indicate not authenticated
     }
+};
+
+const formatDate = (isoString) => {
+    if (!isoString) return null;
+    const date = new Date(isoString);
+    return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // or true if you want AM/PM
+    });
 };
 
 const userSerialDeleteLogging = async (logEvent) => {

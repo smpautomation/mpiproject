@@ -293,3 +293,5 @@ Route::get(
 );
 
 Route::get('/mass-productions/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
+
+Route::get('/tpm/check-existing/{massprod}/{layer}', [TPMDataController::class, 'checkExisting']);
