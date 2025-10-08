@@ -97,7 +97,7 @@
 
             <!-- Center: Property Data -->
             <td style="width: 33.33%; text-align: center; vertical-align: top;">
-                <h1 style="margin: 0; font-size: 24px;"><i>Property Data Set - {{ $setNo }}</i></h1>
+                <h1 style="margin: 0; font-size: 24px;"><i>Property Data</i></h1>
             </td>
 
             <!-- Right Side: Optional future use or keep empty -->
@@ -323,6 +323,10 @@
 
     <!-- Thick Horizontal Line -->
     <div style="height: 1px; border-bottom: 3px solid black; margin-top: 5px; margin-bottom: 5px;"></div>
+
+    <p style="margin: 0 0 4px; color: rgb(65, 61, 252); font-size: 14px;">
+        {{ $currentNSA->set_name }}
+    </p>
 
     @php
         // Get total rows in current set
