@@ -166,7 +166,7 @@ const navItems = [
             { label: 'HT Graph Patterns', route: 'htgraph_patterns', access: ['Heat Treatment','Automation','Coating'] }
         ]
     },
-    { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation','Bypass Approver','Coating','Heat Treatment','Checking Approver','Preparation Approver'] }
+    { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation'] }
 ];
 
 // Safe filtering

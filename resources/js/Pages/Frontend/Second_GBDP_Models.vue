@@ -299,7 +299,7 @@ const submitForm = () => {
 const saveToDatabase = async () => {
     loadingState.value = true;
     try {
-        const response = await axios.post('/api/second-gbdp-models/',{
+        const response = await axios.post('/api/second-gbdp-models',{
             model_name: modelName.value,
         });
         console.log('Saved To Database: ', response.data);
@@ -318,7 +318,7 @@ const saveToDatabase = async () => {
 
 const getModelLists = async () => {
     try {
-        const response = await axios.get('/api/second-gbdp-models/');
+        const response = await axios.get('/api/second-gbdp-models');
         modelDataLists.value = response.data; // keep everything
         console.log("Model Data List: ", modelDataLists.value);
     } catch (error) {

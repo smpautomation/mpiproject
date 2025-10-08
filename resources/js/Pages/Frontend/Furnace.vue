@@ -313,7 +313,7 @@ const submitForm = () => {
 const saveToDatabase = async () => {
     loadingState.value = true;
     try {
-        const response = await axios.post('/api/furnace-data/',{
+        const response = await axios.post('/api/furnace-data',{
             furnace_name: furnaceNo.value,
             encoded_by: encodedBy.value,
         });
@@ -333,7 +333,7 @@ const saveToDatabase = async () => {
 
 const getFurnaceLists = async () => {
     try {
-        const response = await axios.get('/api/furnace-data/');
+        const response = await axios.get('/api/furnace-data');
         furnaceDataLists.value = response.data; // keep everything
         console.log("Furnace Data List: ", furnaceDataLists.value);
     } catch (error) {
