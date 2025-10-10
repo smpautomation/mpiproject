@@ -23,27 +23,50 @@
         </div>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
-                <div> <!-- Selection Panel -->
-                    <div class="flex flex-row items-center justify-center mt-10 align-baseline">
-                        <p>Select Serial No: </p>
+                <div class="max-w-2xl mx-auto mt-8 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+                    <!-- Header -->
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full mb-3 shadow-md">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1">Generate Report</h3>
+                        <p class="text-sm text-gray-500">Select a serial number to proceed</p>
+                    </div>
+
+                    <!-- Selection Panel -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Serial Number</label>
                         <select
-                        v-model="currentSerialSelected"
-                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
+                            v-model="currentSerialSelected"
+                            class="w-full py-3 px-4 text-base font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer">
+                            <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
                         </select>
                     </div>
-                    <div class="flex flex-col items-center justify-center space-x-8">
-                        <!-- Button -->
-                        <button
-                            @click="generateReport"
-                            :disabled="showNotif2"
-                            class="px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
+
+                    <!-- Button -->
+                    <button
+                        @click="generateReport"
+                        :disabled="showNotif2"
+                        class="w-full px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-md hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg transition-all duration-200 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
+                    >
+                        <span class="flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                             Generate Report
-                        </button>
-                    </div>
-                    <div v-show="showNotif2" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
-                        <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                        </span>
+                    </button>
+
+                    <!-- Notification -->
+                    <div v-show="showNotif2" class="mt-6 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-800 flex-1">{{ reportNotificationMessage }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2991,31 +3014,31 @@ const saveReportUpdate = async (saveData, serial) => {
 
 // Function to fetch serial data
 const fetchSerial = async () => {
-  try {
-    const response = await axios.get("/api/tpmdata");
-    //console.log("API Response fetchSerial-data:", response.data);
+    try {
+        const response = await axios.get("/api/tpmdata");
+        //console.log("API Response fetchSerial-data:", response.data);
 
-    // Grab the raw tpmData object
-    const rawTpmData = response.data.data["tpmData"] || {};
+        // Grab the raw tpmData object
+        const rawTpmData = response.data.data["tpmData"] || {};
 
-    // Assign it to tpmData for future access
-    tpmData.value = rawTpmData;
+        // Assign it to tpmData for future access
+        tpmData.value = rawTpmData;
 
-    // Extract the serial numbers (object keys)
-    serialList.value = Object.keys(rawTpmData);
+        // Extract the serial numbers (object keys)
+        serialList.value = Object.keys(rawTpmData);
 
-    // Sort in descending order
-    serialList.value = serialList.value.sort((a, b) => Number(b) - Number(a));
+        // Sort in descending order
+        serialList.value = serialList.value.sort((a, b) => Number(b) - Number(a));
 
-    // Set default selected serial
-    if (serialList.value.length > 0) {
-      currentSerialSelected.value = serialList.value[0];
+        // Set default selected serial
+        if (serialList.value.length > 0) {
+            currentSerialSelected.value = serialList.value[0];
+        }
+
+        //console.log("Serials ↓", serialList.value);
+    } catch (error) {
+        console.error("Error fetching serial data:", error);
     }
-
-    //console.log("Serials ↓", serialList.value);
-  } catch (error) {
-    console.error("Error fetching serial data:", error);
-  }
 };
 // Fetching the serial start end
 
