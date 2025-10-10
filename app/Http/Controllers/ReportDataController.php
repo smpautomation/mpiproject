@@ -178,7 +178,7 @@ class ReportDataController extends Controller
         }
     }
 
-    public function getViewList()
+    public function getViewListChecked()
     {
         // Step 1: Get all serials where prepared_by_date is not null or empty
         $serials = ReportData::whereNotNull('prepared_by_date')
@@ -230,6 +230,65 @@ class ReportDataController extends Controller
                 'Tracer_No' => $tpm->Tracer ?? null,
                 'Prepared_By' => trim(($rep->prepared_by_firstname ?? '') . ' ' . ($rep->prepared_by_surname ?? '')) ?: null,
                 'Status' => (bool) $rep?->checked_by_date,
+                'SMP_Judgement' => $rep->smp_judgement ?? null,
+            ];
+        });
+
+        return response()->json(['data' => $flattened->values()]);
+    }
+
+    public function getViewListPrepared()
+    {
+        // Step 1: Get all serials where prepared_by_date is not null or empty
+        $serials = ReportData::whereNull('prepared_by_date') // null values
+        ->orWhere('prepared_by_date', '')                // empty strings
+        ->pluck('tpm_data_serial')
+        ->toArray();
+
+        $serials = array_map('strval', $serials);
+
+        Log::info('ApprovalViewList: Serials found', ['count' => count($serials), 'serials' => $serials]);
+
+        if (empty($serials)) {
+            return response()->json([]);
+        }
+
+        // Step 2
+        $tpmData = TPMData::whereIn('serial_no', $serials)
+            ->select('serial_no', 'mass_prod', 'layer_no', 'Tracer', 'sintering_furnace_no')
+            ->get()
+            ->keyBy('serial_no');
+        Log::info('ApprovalViewList: TPMData fetched', ['count' => $tpmData->count()]);
+
+        // Step 3
+        $categoryData = TPMDataCategory::whereIn('tpm_data_serial', $serials)
+            ->select('tpm_data_serial', 'actual_model', 'jhcurve_lotno')
+            ->get()
+            ->keyBy('tpm_data_serial');
+        Log::info('ApprovalViewList: CategoryData fetched', ['count' => $categoryData->count()]);
+
+        // Step 4
+        $reportData = ReportData::whereIn('tpm_data_serial', $serials)
+            ->select('tpm_data_serial', 'smp_judgement', 'prepared_by_date')
+            ->get()
+            ->keyBy('tpm_data_serial');
+        Log::info('ApprovalViewList: ReportData fetched', ['count' => $reportData->count()]);
+
+        // Step 5: Flatten merged result
+        $flattened = collect($serials)->map(function ($serial) use ($tpmData, $categoryData, $reportData) {
+            $tpm = $tpmData[$serial] ?? null;
+            $cat = $categoryData[$serial] ?? null;
+            $rep = $reportData[$serial] ?? null;
+
+            return [
+                'Mass_Production' => $tpm->mass_prod ?? null,
+                'Layer' => $tpm->layer_no ?? null,
+                'Serial_No' => $tpm->serial_no ?? $serial,
+                'Model_Name' => $cat->actual_model ?? null,
+                'Lot_No' => $cat->jhcurve_lotno ?? null,
+                'Furnace_No' => $tpm->sintering_furnace_no ?? null,
+                'Tracer_No' => $tpm->Tracer ?? null,
+                'Status' => (bool) $rep?->prepared_by_date,
                 'SMP_Judgement' => $rep->smp_judgement ?? null,
             ];
         });

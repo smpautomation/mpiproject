@@ -1,435 +1,404 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-            <div>
-                <div v-if="reportDataList == null || reportDataList.length <= 0" class="flex flex-col items-center justify-center animate-pulse">
-                    <div
-                        class="w-32 h-32 transition duration-300 bg-center bg-no-repeat bg-cover"
-                        :style="{
-                            backgroundImage: 'url(\'/photo/no_data.png\')',
-                            backgroundSize: '80%'
-                        }"
-                    ></div>
-                    <p class="text-lg font-extrabold">No data available yet for approval</p>
-                </div>
-                <div v-else>
-                    <!-- Status Filter -->
-                    <div class="flex items-center justify-end mb-4 align-middle">
-                    <label for="statusFilter" class="mr-2 font-semibold">Filter by Status:</label>
-                    <select id="statusFilter" v-model="statusFilter" class="p-2 w-[125px] border rounded">
-                        <option value="ALL">ALL</option>
-                        <option value="APPROVED">APPROVED</option>
-                        <option value="PENDING">PENDING</option>
-                    </select>
-                    <button
-                        @click="checkAllToggle"
-                        :disabled="filteredReports.filter(r => r.checked === 1).length === 0"
-                        :class="[
-                            'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
-                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by_firstname)).length === 0
-                                ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
-                                : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-                        ]"
-                    >
-                        {{
-                            filteredReports.filter(r => r.checked === 1 && (!r.approved_by_firstname)).length === 0
-                                ? 'No eligible data to approve'
-                                : filteredReports
-                                    .filter(r => r.checked === 1)
-                                    .every(r => selectedRows.includes(r.tpm_data_serial))
-                                    ? 'Uncheck All Eligible'
-                                    : 'Check All Eligible'
-                        }}
-                    </button>
+        <div class="p-6">
+            <!-- HEADER -->
+            <div class="flex justify-between items-center mb-6 pb-5 border-b-2 border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-10 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"></div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">
+                            Approval Page
+                        </h1>
+                        <p class="text-sm font-medium text-teal-600 mt-0.5">(Preparation Approver)</p>
                     </div>
-                    <div class="m-10">
-                        <table class="w-full overflow-hidden text-sm text-left bg-white border-separate rounded-lg shadow-lg border-spacing-0">
-                            <thead class="text-white bg-gray-800">
-                                <tr>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Serial No</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Magnet Model</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Material Code</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700">Total Quantity</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-blue-600 border-b border-gray-700">SMP Judgement</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center text-black uppercase bg-yellow-500 border-b border-gray-700">Prepared By</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center text-black uppercase bg-yellow-500 border-b border-gray-700">Checked By</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-green-600 border-b border-gray-700">Action</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-green-800 border-b border-gray-700">Status</th>
-                                <th class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-red-500 border-b border-gray-700">Approval</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-800 bg-white">
-                                <tr v-for="(report) in paginatedReports" :key="report.tpm_data_serial"
-                                    class="transition-colors duration-150 border-b border-gray-200 hover:bg-gray-100">
-                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.tpm_data_serial }}</td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.model }}</td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.material_code }}</td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.total_quantity }}</td>
-                                <td class="px-4 py-2 text-lg font-semibold text-center whitespace-nowrap"
-                                    :class="{
-                                        'text-red-600': report.smp_judgement === 'REJECT' || report.smp_judgement === 'HOLD',
-                                        'text-green-600': report.smp_judgement === 'OK',
-                                        'text-gray-600': !['REJECT', 'HOLD', 'OK'].includes(report.smp_judgement)
-                                    }">
-                                    {{ report.smp_judgement }}
-                                </td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">
-                                    {{ report.prepared_by ?? `${report.prepared_by_firstname} ${report.prepared_by_surname}` }}
-                                </td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">
-                                    {{ report.checked_by ?? `${report.checked_by_firstname} ${report.checked_by_surname}` }}
-                                </td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">
-                                    <button @click="viewReport(report.tpm_data_serial)"
-                                            class="inline-block px-3 py-1 text-sm font-medium text-blue-600 transition duration-150 border border-blue-500 rounded hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                    View
-                                    </button>
-                                </td>
-                                <td class="px-4 py-2 text-sm font-bold text-center whitespace-nowrap">
-                                    <span v-if="report.approved_by_firstname" class="text-green-700">APPROVED</span>
-                                    <span v-else class="text-yellow-600">PENDING</span>
-                                </td>
-                                <td class="px-4 py-2 text-center whitespace-nowrap">
-                                    <input v-if="!report.approved_by_firstname && report.checked == 1" type="checkbox"
-                                        :value="report.tpm_data_serial"
-                                        v-model="selectedRows"
-                                        class="w-5 h-5 text-blue-600 border-gray-300 rounded cursor-pointer focus:ring focus:ring-blue-300">
-                                </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="flex justify-center mb-10 space-y-6">
-                        <DotsLoader v-show="isLoadingApproval" class="z-10 mt-8"/>
-                        <!-- Approve Button -->
-                        <div v-if="!approveNotif && !blockedNotif">
-                            <button
-                                v-show="showApproveButton"
-                                @click="approveSelected"
-                                class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1 transition duration-150 ease-in-out">
-                                Approve Selected
-                            </button>
-                        </div>
-                        <!-- Confirmation Box -->
-                        <div v-show="showApproveConfirmation" class="max-w-md p-6 mx-auto text-center bg-white border border-gray-200 rounded-lg shadow">
-                            <p class="mb-4 text-lg font-semibold text-gray-800"><span class="font-extrabold text-blue-500">Warning: </span>Are you sure?</p>
-                            <div class="flex justify-center gap-4">
-                                <button @click="confirmationApprove" class="px-5 py-2 text-white transition bg-green-500 rounded-md hover:bg-green-600">
-                                    Yes
-                                </button>
-                                <button @click="cancelApprove" class="px-5 py-2 text-white transition bg-red-500 rounded-md hover:bg-red-600">
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Notification -->
-                        <div v-show="approveNotif"
-                            class="flex items-center max-w-md p-4 mx-auto text-green-800 bg-green-100 rounded-md shadow-md">
-                            <p class="text-sm font-medium">{{ reportNotificationMessage }}</p>
-                        </div>
-                        <!-- Notification with close button -->
-                        <div v-show="blockedNotif" class="w-[1000px] h-[180px] items-center p-4 mx-auto bg-red-200 rounded-md shadow-md text-red-800 relative">
-                            <!-- Close Button -->
-                            <button @click="closeNotification" class="absolute font-extrabold text-red-800 underline bg-transparent border-none cursor-pointer top-2 right-2 text-md">
-                                close
-                            </button>
-
-                            <!-- Notification Content -->
-                            <div>
-                            <div v-for="(line, index) in notificationMessageLines" :key="index" v-html="line"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between mt-4">
-                    <button
-                        class="px-4 py-2 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
-                        @click="prevPage"
-                        :disabled="currentPage === 1"
-                    >
-                        Previous
-                    </button>
-                    <span class="text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
-                    <button
-                        class="px-4 py-2 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
-                        @click="nextPage"
-                        :disabled="currentPage === totalPages"
-                    >
-                        Next
-                    </button>
-                    </div>
-
                 </div>
             </div>
 
+            <!-- NOTIFICATIONS -->
+            <transition name="fade">
+                <div v-if="approveNotif" class="bg-green-500 text-white p-3 rounded mb-4 text-center">
+                    {{ reportNotificationMessage }}
+                </div>
+            </transition>
+
+            <transition name="fade">
+                <div v-if="blockedNotif" class="bg-red-500 text-white p-4 rounded mb-4 text-center">
+                    <div v-for="(line, index) in notificationMessageLines" :key="index" v-html="line"></div>
+                    <button class="mt-3 bg-white text-red-600 px-3 py-1 rounded" @click="closeNotification">
+                        Close
+                    </button>
+                </div>
+            </transition>
+
+            <!-- LOADER -->
+            <div v-if="isLoadingApproval" class="flex justify-center items-center py-10">
+                <DotsLoader />
+            </div>
+
+            <!-- REPORT TABLE -->
+            <div v-else class="overflow-x-auto">
+                <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+                    <thead class="bg-gradient-to-r from-teal-500 to-cyan-500">
+                        <tr>
+                            <th class="border border-teal-400 p-3 w-12 text-center">
+                                <input type="checkbox" v-model="checkAll" @change="onCheckAllChange"
+                                    class="w-4 h-4 rounded border-white/30 bg-white/20 text-cyan-600 focus:ring-2 focus:ring-white/50" />
+                            </th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Mass Production</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Layer</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Furnace No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Serial No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Model Name</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Lot No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Tracer No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">SMP Judgement</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Status</th>
+                            <th class="border border-teal-400 p-3 text-center text-white font-semibold text-sm w-24">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="bg-white">
+                        <tr v-if="paginatedReports.length === 0">
+                            <td colspan="12" class="p-6 text-center text-gray-400 bg-gray-50">
+                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p class="font-medium">No reports found.</p>
+                            </td>
+                        </tr>
+
+                        <tr
+                            v-for="report in paginatedReports"
+                            :key="report.Serial_No"
+                            class="border-b border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 transition-colors duration-150"
+                        >
+                            <td class="border-x border-gray-200 p-3 text-center">
+                                <input
+                                    type="checkbox"
+                                    :value="String(report.Serial_No)"
+                                    v-model="selectedRows"
+                                    :disabled="!!report.Status"
+                                    class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-2 focus:ring-cyan-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                                />
+                            </td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Mass_Production }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Layer }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Furnace_No }}</td>
+                            <td class="border-x border-gray-200 p-3 font-semibold text-gray-800 text-sm">{{ report.Serial_No }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Model_Name }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Lot_No }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Tracer_No }}</td>
+                            <td
+                                class="border-x border-gray-200 p-3 font-bold text-sm"
+                                :class="{
+                                    'text-green-600': report.SMP_Judgement === 'PASSED',
+                                    'text-red-600': report.SMP_Judgement === 'REJECT'
+                                }"
+                            >
+                                {{ report.SMP_Judgement }}
+                            </td>
+                            <td class="border-x border-gray-200 p-3 text-center"
+                                :class="{
+                                    'text-green-600': report.Status === true,
+                                    'text-red-600': report.Status === false
+                                }"
+                            >
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    :class="{
+                                        'bg-green-100': report.Status === true,
+                                        'bg-red-100': report.Status === false
+                                    }">
+                                    {{ report.Status ? 'Approved' : 'Pending' }}
+                                </span>
+                            </td>
+                            <td class="border-x border-gray-200 p-3 text-center">
+                                <button
+                                    @click="viewReport(report.Serial_No)"
+                                    class="bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:from-teal-600 hover:to-cyan-600 hover:shadow-md transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                >
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINATION -->
+            <div class="flex justify-between items-center mt-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <button
+                    @click="prevPage"
+                    :disabled="currentPage === 1"
+                    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-300"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Previous
+                </button>
+
+                <span class="text-sm font-semibold text-gray-700">
+                    Page <span class="text-teal-600">{{ currentPage }}</span> of <span class="text-gray-500">{{ totalPages }}</span>
+                </span>
+
+                <button
+                    @click="nextPage"
+                    :disabled="currentPage >= totalPages"
+                    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-300"
+                >
+                    Next
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- APPROVAL BUTTONS -->
+            <div class="mt-6 text-center">
+                <transition name="fade">
+                    <button
+                        v-if="showApproveButton"
+                        @click="approveSelected"
+                        class="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold px-8 py-3 rounded-lg hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100"
+                        :disabled="selectedRows.length === 0"
+                    >
+                        <span class="flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Approve Selected ({{ selectedRows.length }})
+                        </span>
+                    </button>
+                </transition>
+
+                <transition name="fade">
+                    <div v-if="showApproveConfirmation" class="mt-6 p-6 bg-white rounded-xl border border-cyan-200 shadow-lg">
+                        <div class="mb-5">
+                            <svg class="w-12 h-12 mx-auto mb-3 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                            </svg>
+                            <p class="text-lg font-semibold text-gray-800">Confirm Approval</p>
+                            <p class="text-sm text-gray-600 mt-1">You are about to approve <span class="font-bold text-teal-600">{{ selectedRows.length }}</span> report(s)</p>
+                        </div>
+                        <div class="flex justify-center gap-3">
+                            <button
+                                @click="confirmationApprove"
+                                class="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold px-6 py-2.5 rounded-lg hover:from-teal-600 hover:to-cyan-600 hover:shadow-md transition-all active:scale-95"
+                            >
+                                Confirm Approval
+                            </button>
+                            <button
+                                @click="cancelApprove"
+                                class="bg-gray-100 text-gray-700 font-medium px-6 py-2.5 rounded-lg hover:bg-gray-200 transition-all active:scale-95 border border-gray-300"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </transition>
+            </div>
         </div>
     </Frontend>
 </template>
 
+
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted, toRaw, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
-import { useAuth } from '@/Composables/useAuth.js'
+import { useAuth } from '@/Composables/useAuth.js';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
 const { state } = useAuth();
 
-// Function to check authentication
+/* ---------------- AUTH CHECK ---------------- */
 const checkAuthentication = async () => {
     try {
-
         const start = Date.now();
-        const timeout = 500; // 5 seconds
-
+        const timeout = 5000;
         while (!state.user) {
             if (Date.now() - start > timeout) {
-                console.error('Auth timeout: user data failed to load within 5 seconds.');
-                Inertia.visit('/'); // Redirect if not authenticated
+                console.error('Auth timeout: user data failed to load.');
+                Inertia.visit('/');
                 return false;
             }
-            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
-
-            return false; // Indicate not authenticated
+            Inertia.visit('/');
+            return false;
         }
 
         console.warn("USER AUTHENTICATED!");
-        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
-        console.warn("Access: ", state.user.access_type);
-
-        return true; // Indicate authenticated
+        console.warn("Name:", state.user.firstName + " " + state.user.surname);
+        console.warn("Access:", state.user.access_type);
+        return true;
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
-        return false; // Indicate not authenticated
+        Inertia.visit('/');
+        return false;
     }
 };
 
+/* ---------------- LOGGING ---------------- */
 const userApprovalLogging = async (logEvent) => {
-    try{
-        const responseApprovalLogging = await axios.post('/api/userlogs', {
-            user: state.user.firstName + " " + state.user.surname,
+    try {
+        await axios.post('/api/userlogs', {
+            user: `${state.user.firstName} ${state.user.surname}`,
             event: logEvent,
             section: 'Approval',
         });
-
-        //console.log('responseUserLogin-data: ',responseUserLogin.data);
-    }catch(error){
-        console.error('userApprovalLogging post request failed: ',error);
+    } catch (error) {
+        console.error('userApprovalLogging failed:', error);
     }
-}
+};
 
-// UI
-
+/* ---------------- UI STATES ---------------- */
 const statusFilter = ref('ALL');
-
-watch(statusFilter, () => {
-  currentPage.value = 1;
-});
-
 const currentPage = ref(1);
-const itemsPerPage = ref(10); // You can change to 20, 50, etc.
-
+const itemsPerPage = ref(10);
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
 const blockedNotif = ref(false);
 const reportNotificationMessage = ref('');
 const isLoadingApproval = ref(false);
-
-// UI end
+const notificationMessageLines = ref([]);
+const selectedRows = ref([]);
 const ipAddress = ref('');
 const reportDataList = ref([]);
+const checkAll = ref(false);
+
+const props = defineProps({
+    ipAddress: String,
+    filterStatus_checked: String,
+    fromReports: Boolean
+});
+ipAddress.value = props.ipAddress;
+if (props.fromReports) {
+    statusFilter.value = props.filterStatus_checked;
+}
+
+/* ---------------- FILTERING ---------------- */
+watch(statusFilter, () => {
+    currentPage.value = 1;
+});
 
 const filteredReports = computed(() => {
-  if (statusFilter.value === 'ALL') return reportDataList.value;
-
-  return reportDataList.value.filter(report => {
-    const isApproved = report.approved_by_firstname;
-    if (statusFilter.value === 'APPROVED') return isApproved;
-    if (statusFilter.value === 'PENDING') return !isApproved;
-  });
+    if (statusFilter.value === 'ALL') return reportDataList.value;
+    if (statusFilter.value === 'APPROVED')
+        return reportDataList.value.filter(r => r.Status === true);
+    if (statusFilter.value === 'PENDING')
+        return reportDataList.value.filter(r => r.Status === false);
+    return reportDataList.value;
 });
 
 const paginatedReports = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredReports.value.slice(start, end);
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredReports.value.slice(start, end);
 });
 
-const totalPages = computed(() => {
-  return Math.ceil(filteredReports.value.length / itemsPerPage.value);
-});
+const totalPages = computed(() => Math.ceil(filteredReports.value.length / itemsPerPage.value));
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
+const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++; };
+const prevPage = () => { if (currentPage.value > 1) currentPage.value--; };
 
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-
-const selectedRows = ref([]); // Track selected rows by their serial numbers
-
-const props = defineProps({
-  ipAddress: String,
-  filterStatus : String,
-  fromReports : Boolean
-})
-ipAddress.value = props.ipAddress;
-if(props.fromReports){
-    statusFilter.value = props.filterStatus;
-}
-console.log("Current IP Detected: ",ipAddress.value);
-
+/* ---------------- NOTIFICATIONS ---------------- */
 const showApprovedNotification = (message) => {
-    // Show notification and set the message
     approveNotif.value = true;
     reportNotificationMessage.value = message;
     showApproveButton.value = false;
-
-    // Set a timeout to hide the notification after 3 seconds (3000 milliseconds)
     setTimeout(() => {
         approveNotif.value = false;
         showApproveButton.value = true;
-    }, 3000);  // 3000ms = 3 seconds
-}
+    }, 3000);
+};
 
-// Notification message content as an array
-const notificationMessageLines = ref([]);
-
-// Function to show the blocked notification
 const showBlockedNotification = (message) => {
-  // Split the message into separate lines (use <br> for line breaks in the message)
-  notificationMessageLines.value = message.split('<br><br>');
-
-  // Show the notification and set the message
-  blockedNotif.value = true;
-  showApproveButton.value = false;
+    notificationMessageLines.value = message.split('<br><br>');
+    blockedNotif.value = true;
+    showApproveButton.value = false;
 };
 
-// Function to close the notification
 const closeNotification = () => {
-  blockedNotif.value = false;
-  showApproveButton.value = true;
+    blockedNotif.value = false;
+    showApproveButton.value = true;
 };
 
-// Watcher to observe changes to selectedRows and log them
-watch(selectedRows, (newValue) => {
-    //console.log("Currently selected rows:", newValue);
-}, { deep: true });
+const eligibleSerialsForPage = computed(() =>
+  paginatedReports.value
+    .filter(report => !report.Status) // only unapproved rows
+    .map(report => String(report.Serial_No))
+);
 
+
+/* ---------------- CHECK ALL ---------------- */
+// called when header checkbox is toggled
+const onCheckAllChange = () => {
+  if (checkAll.value) {
+    // add eligible serials from current page
+    selectedRows.value = Array.from(new Set([...selectedRows.value, ...eligibleSerialsForPage.value]));
+  } else {
+    // remove eligible serials of current page
+    selectedRows.value = selectedRows.value.filter(serial => !eligibleSerialsForPage.value.includes(serial));
+  }
+};
+
+// keep header checkbox state in sync when user toggles individual rows or when page changes
+watch([selectedRows, paginatedReports], () => {
+  const eligible = eligibleSerialsForPage.value;
+  checkAll.value = eligible.length > 0 && eligible.every(s => selectedRows.value.includes(s));
+});
+
+/* ---------------- FETCH FLATTENED DATA ---------------- */
+const showReportData = async () => {
+    try {
+        const response = await axios.get(`/api/approve-list-prepared`);
+        console.log("Raw approval response:", response.data);
+
+        const data = Array.isArray(response.data)
+            ? response.data
+            : response.data?.data || [];
+
+        console.log("Normalized approval data:", data.length, data);
+
+        reportDataList.value = data
+            .filter(item => item.SMP_Judgement && item.SMP_Judgement.trim() !== '')
+            .sort((a, b) => Number(b.Serial_No) - Number(a.Serial_No));
+
+        console.log('Approval View List fetched:', reportDataList.value.length);
+    } catch (error) {
+        console.error("Error fetching flattened approval data:", error);
+    }
+};
+
+/* ---------------- APPROVAL ACTIONS ---------------- */
 const viewReport = (serial) => {
-    saveReportChecked(serial);
-    //console.log('Navigating to report with serial:', serial);
     Inertia.visit('/reports', {
-        method: 'get',   // You can keep 'get' since we are not modifying any data
-        data: { serialParam: serial, fromApproval: true, filterStatus: statusFilter.value },   // Passing the serialParam here
+        method: 'get',
+        data: { serialParam: serial, fromApproval_prepared: true },
         preserveState: true,
         preserveScroll: true,
     });
 };
 
-const checkAllToggle = () => {
-    const eligibleSerials = filteredReports.value
-        .filter(report => report.checked === 1 && !report.approved_by_firstname)
-        .map(report => report.tpm_data_serial);
-
-    const allEligibleSelected = eligibleSerials.every(serial => selectedRows.value.includes(serial));
-
-    if (allEligibleSelected) {
-        selectedRows.value = selectedRows.value.filter(serial => !eligibleSerials.includes(serial));
-    } else {
-        selectedRows.value = Array.from(new Set([...selectedRows.value, ...eligibleSerials]));
-    }
-};
-
-const showReportData = async () => {
-    try {
-        const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data);
-
-        // Filter out rows where smp_judgement is null or an empty string
-        reportDataList.value = response.data.data
-            .filter(report =>
-                report.smp_judgement && report.smp_judgement.trim() !== '' &&
-                (
-                    (report.checked_by && report.checked_by.trim() !== '' &&
-                     report.prepared_by && report.prepared_by.trim() !== '') ||
-                    (report.checked_by_firstname && report.checked_by_firstname.trim() !== '' &&
-                     report.prepared_by_firstname && report.prepared_by_firstname.trim() !== '')
-                )
-            )
-            .sort((a, b) => {
-                // Ensure both values are treated as numbers for natural ordering
-                return Number(b.tpm_data_serial) - Number(a.tpm_data_serial);
-            });
-
-        //console.log("Filtered and sorted report data: ", reportDataList.value);
-    } catch (error) {
-        console.error("Error fetching report data:", error);
-    }
-};
-
-const saveReportChecked = async (serial) => {
-    try {
-        const response = await axios.patch(`/api/reportdata/${serial}`, {
-            "checked": 1
-        });
-        //console.log("Patched checked report data: ", response.data);
-    } catch (error) {
-        console.error("Patch data checking report error:", error);
-    }
-}
-
 const approveSelected = async () => {
-    if (selectedRows.value.length === 0) {
-        //console.log("No rows selected for approval");
-        return;
-    }else{
-        showApproveButton.value = false;
-        showApproveConfirmation.value = true;
-    }
+    if (selectedRows.value.length === 0) return;
+    showApproveButton.value = false;
+    showApproveConfirmation.value = true;
 };
 
 const cancelApprove = () => {
     showApproveButton.value = true;
     showApproveConfirmation.value = false;
-}
-
-const finalizeReport = async (serial) => {
-  try {
-    const responseFinalize = await axios.patch(`/api/reportdata/${serial}`, {
-      is_finalized: 1,
-    });
-    //console.log('[Finalize Report] Response:', responseFinalize.data);
-  } catch (error) {
-    console.error('[Finalize Report] Error finalizing report:', error);
-  }
 };
 
 const datenow = () => {
     const now = new Date();
-    const pad = (n) => n.toString().padStart(2, '0');
-
-    const year = now.getFullYear();
-    const month = pad(now.getMonth() + 1); // Months are zero-based
-    const day = pad(now.getDate());
-
-    const hours = pad(now.getHours());
-    const minutes = pad(now.getMinutes());
-    const seconds = pad(now.getSeconds());
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    const pad = n => n.toString().padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 };
 
 const confirmationApprove = async () => {
@@ -437,60 +406,39 @@ const confirmationApprove = async () => {
     showApproveConfirmation.value = false;
 
     try {
-        console.log("== Starting approval process ==");
         const dateNow = datenow();
-
         const reportData = {
-            approved_by_firstname: state.user.firstName,
-            approved_by_surname: state.user.surname,
-            approved_by_date: dateNow,
+            prepared_by_firstname: state.user.firstName,
+            prepared_by_surname: state.user.surname,
+            prepared_by_date: dateNow,
         };
 
-        // 1. Stamp approval
         for (const serial of selectedRows.value) {
-            await userApprovalLogging(`has successfully stamped Approved by of serial ${serial}`);
+            await userApprovalLogging(`has successfully stamped Checked by of serial ${serial}`);
             await axios.patch(`/api/reportdata/${serial}`, reportData);
         }
 
-        // 2. Generate + save PDFs
-        for (const serial of selectedRows.value) {
-            try {
-                await axios.get(`/api/reports/${encodeURIComponent(serial)}/generate-and-save`);
-                console.log(`✅ PDF generated and saved for serial: ${serial}`);
-            } catch (pdfErr) {
-                console.error(`❌ PDF generation failed for serial ${serial}`, pdfErr);
-                await rollbackApproval(); // ⬅ safe undo
-                throw pdfErr; // bubble up to outer catch
-            }
-        }
-
-        // 3. Finalize report
-        for (const serial of selectedRows.value) {
-            await finalizeReport(serial);
-        }
-
-        showApprovedNotification("Approved and PDF saved successfully.");
-
+        showApprovedNotification("Approved successfully.");
     } catch (error) {
         console.error("Error during approval:", error);
-        await rollbackApproval(); // failsafe backup
         showBlockedNotification(`
             An error occurred while saving the PDF reports.<br>
             Please try again later or contact support.
         `);
     } finally {
-        isLoadingApproval.value = false;
-        await showReportData(); // refresh
+        // reset checkboxes
+        selectedRows.value = [];
+        checkAll.value = false; // only if you have a "select all" checkbox
+
+        await showReportData(); // refresh list after reset
         showApproveButton.value = true;
+        isLoadingApproval.value = false;
     }
 };
 
-
-
-
-onMounted( async () => {
+/* ---------------- INIT ---------------- */
+onMounted(async () => {
     await checkAuthentication();
     await showReportData();
 });
-
 </script>

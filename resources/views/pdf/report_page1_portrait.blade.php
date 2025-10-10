@@ -7,9 +7,9 @@
     <style>
         @page {
             size: A4 portrait;
-            margin-top: 7mm;
-            margin-left: 15mm;
-            margin-right: 15mm;
+            margin-top: 5mm;
+            margin-left: 10mm;
+            margin-right: 10mm;
         }
 
         body { //reset
@@ -110,7 +110,7 @@
 
     <div style="clear:both; margin: 0px; padding: 0px;"></div> <!-- Break Line -->
 
-    <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+    <div style="padding: 1px; border: 1px solid black; margin-top: -5px;">
         <label class="bold" style="font-size: 10px; padding-left: 1px;">COATING INFORMATION</label>
 
         <div class="table-block">

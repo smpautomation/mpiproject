@@ -2,18 +2,29 @@
     <Frontend>
         <div class="p-6">
             <!-- HEADER -->
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold">Approval Page</h1>
+            <div class="flex justify-between items-center mb-6 pb-5 border-b-2 border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-10 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"></div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">
+                            Approval Page
+                        </h1>
+                        <p class="text-sm font-medium text-teal-600 mt-0.5">(Checking Approver)</p>
+                    </div>
+                </div>
 
-                <div class="flex gap-3 items-center">
-                    <label class="font-medium">Status:</label>
-                    <select v-model="statusFilter" class="border rounded px-3 py-1">
+                <div class="flex gap-2 items-center bg-white px-4 py-2.5 rounded-lg border border-gray-300 shadow-sm">
+                    <label class="text-sm font-semibold text-gray-700">Status:</label>
+                    <select v-model="statusFilter"
+                            class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer">
                         <option value="ALL">All</option>
                         <option value="APPROVED">Approved</option>
                         <option value="PENDING">Pending</option>
                     </select>
                 </div>
             </div>
+
+
 
             <!-- NOTIFICATIONS -->
             <transition name="fade">
@@ -38,75 +49,84 @@
 
             <!-- REPORT TABLE -->
             <div v-else class="overflow-x-auto">
-                <table class="w-full border-collapse border border-gray-300 text-sm">
-                    <thead class="bg-gray-100">
+                <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+                    <thead class="bg-gradient-to-r from-teal-500 to-cyan-500">
                         <tr>
-                            <th class="border p-2 w-12 text-center">
-                                <input type="checkbox" @change="checkAllToggle" />
+                            <th class="border border-teal-400 p-3 w-12 text-center">
+                                <input type="checkbox" v-model="checkAll" @change="onCheckAllChange"
+                                    class="w-4 h-4 rounded border-white/30 bg-white/20 text-cyan-600 focus:ring-2 focus:ring-white/50" />
                             </th>
-                            <th class="border p-2 text-left">Mass Production</th>
-                            <th class="border p-2 text-left">Layer</th>
-                            <th class="border p-2 text-left">Furnace No</th>
-                            <th class="border p-2 text-left">Serial No</th>
-                            <th class="border p-2 text-left">Model Name</th>
-                            <th class="border p-2 text-left">Lot No</th>
-                            <th class="border p-2 text-left">Tracer No</th>
-                            <th class="border p-2 text-left">Prepared By</th>
-                            <th class="border p-2 text-left">SMP Judgement</th>
-                            <th class="border p-2 text-left">Status</th>
-                            <th class="border p-2 text-center w-24">Action</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Mass Production</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Layer</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Furnace No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Serial No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Model Name</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Lot No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Tracer No</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Prepared By</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">SMP Judgement</th>
+                            <th class="border border-teal-400 p-3 text-left text-white font-semibold text-sm">Status</th>
+                            <th class="border border-teal-400 p-3 text-center text-white font-semibold text-sm w-24">Action</th>
                         </tr>
                     </thead>
-
-                    <tbody>
+                    <tbody class="bg-white">
                         <tr v-if="paginatedReports.length === 0">
-                            <td colspan="12" class="p-4 text-center text-gray-500">
-                                No reports found.
+                            <td colspan="12" class="p-6 text-center text-gray-400 bg-gray-50">
+                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p class="font-medium">No reports found.</p>
                             </td>
                         </tr>
-
                         <tr
                             v-for="report in paginatedReports"
                             :key="report.Serial_No"
-                            class="hover:bg-gray-50"
+                            class="border-b border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 transition-colors duration-150"
                         >
-                            <td class="border p-2 text-center">
+                            <td class="border-x border-gray-200 p-3 text-center">
                                 <input
                                     type="checkbox"
-                                    :value="report.Serial_No"
+                                    :value="String(report.Serial_No)"
                                     v-model="selectedRows"
-                                    :disabled="!!report.prepared_by_firstname"
+                                    :disabled="!!report.Status"
+                                    class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-2 focus:ring-cyan-400 disabled:opacity-30 disabled:cursor-not-allowed"
                                 />
                             </td>
-                            <td class="border p-2">{{ report.Mass_Production }}</td>
-                            <td class="border p-2">{{ report.Layer }}</td>
-                            <td class="border p-2">{{ report.Furnace_No }}</td>
-                            <td class="border p-2 font-medium">{{ report.Serial_No }}</td>
-                            <td class="border p-2">{{ report.Model_Name }}</td>
-                            <td class="border p-2">{{ report.Lot_No }}</td>
-                            <td class="border p-2">{{ report.Tracer_No }}</td>
-                            <td class="border p-2">{{ report.Prepared_By }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Mass_Production }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Layer }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Furnace_No }}</td>
+                            <td class="border-x border-gray-200 p-3 font-semibold text-gray-800 text-sm">{{ report.Serial_No }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Model_Name }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Lot_No }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Tracer_No }}</td>
+                            <td class="border-x border-gray-200 p-3 text-gray-700 text-sm">{{ report.Prepared_By }}</td>
                             <td
-                                class="border p-2 font-semibold"
+                                class="border-x border-gray-200 p-3 font-bold text-sm"
                                 :class="{
                                     'text-green-600': report.SMP_Judgement === 'PASSED',
-                                    'text-red-600': report.SMP_Judgement === 'FAILED'
+                                    'text-red-600': report.SMP_Judgement === 'REJECT'
                                 }"
                             >
                                 {{ report.SMP_Judgement }}
                             </td>
-                            <td class="border p-2 font-semibold text-center"
+                            <td class="border-x border-gray-200 p-3 text-center"
                                 :class="{
                                     'text-green-600': report.Status === true,
                                     'text-red-600': report.Status === false
                                 }"
                             >
-                                {{ report.Status ? 'Approved' : 'Pending' }}
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    :class="{
+                                        'bg-green-100': report.Status === true,
+                                        'bg-red-100': report.Status === false
+                                    }">
+                                    {{ report.Status ? 'Approved' : 'Pending' }}
+                                </span>
                             </td>
-                            <td class="border p-2 text-center">
+                            <td class="border-x border-gray-200 p-3 text-center">
                                 <button
                                     @click="viewReport(report.Serial_No)"
-                                    class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700"
+                                    class="bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:from-teal-600 hover:to-cyan-600 hover:shadow-md transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                                 >
                                     View
                                 </button>
@@ -241,6 +261,7 @@ const notificationMessageLines = ref([]);
 const selectedRows = ref([]);
 const ipAddress = ref('');
 const reportDataList = ref([]);
+const checkAll = ref(false);
 
 const props = defineProps({
     ipAddress: String,
@@ -299,26 +320,30 @@ const closeNotification = () => {
     showApproveButton.value = true;
 };
 
+const eligibleSerialsForPage = computed(() =>
+  paginatedReports.value
+    .filter(report => !report.Status) // only unapproved rows
+    .map(report => String(report.Serial_No))
+);
+
+
 /* ---------------- CHECK ALL ---------------- */
-const checkAllToggle = () => {
-    const eligibleSerials = filteredReports.value
-        .filter(report => !report.prepared_by_firstname)
-        .map(report => report.serial_no);
-
-    const allEligibleSelected = eligibleSerials.every(serial =>
-        selectedRows.value.includes(serial)
-    );
-
-    if (allEligibleSelected) {
-        selectedRows.value = selectedRows.value.filter(
-            serial => !eligibleSerials.includes(serial)
-        );
-    } else {
-        selectedRows.value = Array.from(
-            new Set([...selectedRows.value, ...eligibleSerials])
-        );
-    }
+// called when header checkbox is toggled
+const onCheckAllChange = () => {
+  if (checkAll.value) {
+    // add eligible serials from current page
+    selectedRows.value = Array.from(new Set([...selectedRows.value, ...eligibleSerialsForPage.value]));
+  } else {
+    // remove eligible serials of current page
+    selectedRows.value = selectedRows.value.filter(serial => !eligibleSerialsForPage.value.includes(serial));
+  }
 };
+
+// keep header checkbox state in sync when user toggles individual rows or when page changes
+watch([selectedRows, paginatedReports], () => {
+  const eligible = eligibleSerialsForPage.value;
+  checkAll.value = eligible.length > 0 && eligible.every(s => selectedRows.value.includes(s));
+});
 
 /* ---------------- FETCH FLATTENED DATA ---------------- */
 const showReportData = async () => {
