@@ -1,6 +1,5 @@
 <template>
     <Frontend>
-
         <div
             class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-cover md:flex-row"
             :style="{ backgroundImage: 'url(/photo/home_background.jpg)' }"
@@ -37,7 +36,7 @@
                                         v-model="username"
                                         type="text"
                                         id="username"
-                                        placeholder=" "
+                                        placeholder=""
                                         required
                                         autocomplete="username"
                                         class="input"
@@ -50,7 +49,7 @@
                                         v-model="password"
                                         type="password"
                                         id="password"
-                                        placeholder=" "
+                                        placeholder=""
                                         required
                                         autocomplete="current-password"
                                         class="input"

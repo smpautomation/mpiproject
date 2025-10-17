@@ -520,7 +520,7 @@ class TxtExportService
         //dd($lines->toArray());
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
+            File::makeDirectory($directory, 0755, recursive: true);
         }
 
         $filePath = "{$directory}/Data4.txt";

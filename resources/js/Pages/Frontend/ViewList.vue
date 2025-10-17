@@ -8,25 +8,38 @@
         placeholder="Search model name or lot no..."
         class="w-full max-w-md p-2 border rounded shadow-sm"
       />
-      <div class="flex flex-row items-center align-middle space-x-4">
-        <label>Status: </label>
-      <!-- Status Filter -->
-        <select v-model="statusFilter" class="w-[200px] p-2 border rounded shadow-sm">
-          <option value="">All</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="PENDING">Approved by Pending</option>
-          <option value="PREPARED_PENDING">Prepared by Pending</option>
-          <option value="CHECKED_PENDING">Checked by Pending</option>
-          <option value="FINALIZED_PENDING">Finalize Pending</option>
-          <!--option value="COATING_PENDING">Coating Pending</!--option>
-          <option-- value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option-->
-        </select>
+        <div class="flex flex-row items-center align-middle space-x-4">
 
-      </div>
-      <!-- No Data -->
-      <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
-            No matching data found.
-      </div>
+            <label>Mass Prod: </label>
+            <!-- Status Filter -->
+            <select v-model="selectedMassProd" class="w-[200px] p-2 border rounded shadow-sm">
+                <!--option value="COATING_PENDING">Coating Pending</!--option>
+                <option-- value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option-->
+                <option value="">All</option> <!-- new line -->
+                <option v-for="item in massProd_names" :key="item" :value="item">
+                    {{ item }}
+                </option>
+            </select>
+
+            <label>Status: </label>
+            <!-- Status Filter -->
+            <select v-model="statusFilter" class="w-[200px] p-2 border rounded shadow-sm">
+                <option value="">All</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="PENDING">Approved by Pending</option>
+                <option value="PREPARED_PENDING">Prepared by Pending</option>
+                <option value="CHECKED_PENDING">Checked by Pending</option>
+                <option value="FINALIZED_PENDING">Finalize Pending</option>
+                <!--option value="COATING_PENDING">Coating Pending</!--option>
+                <option-- value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option-->
+            </select>
+
+        </div>
+
+        <!-- No Data -->
+        <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
+                No matching data found.
+        </div>
 
       <!-- Table -->
       <div v-else class="w-full overflow-x-auto">
@@ -69,32 +82,32 @@
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.category[0].tpm_data_serial || "NO DATA" }}
+                        {{ item.category[0].tpm_data_serial || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.category[0].actual_model || "NO DATA" }}
+                        {{ item.category[0].actual_model || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.category[0].jhcurve_lotno || "NO DATA" }}
+                        {{ item.category[0].jhcurve_lotno || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.tpm[0].sintering_furnace_no || "NO DATA" }}
+                        {{ item.tpm[0].sintering_furnace_no || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.tpm[0].Tracer || "NO DATA" }}
+                        {{ item.tpm[0].Tracer || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.report[0]?.smp_judgement || "NO DATA" }}
+                        {{ item.report[0]?.smp_judgement || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
@@ -186,7 +199,6 @@ const { state } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-
         const start = Date.now();
         const timeout = 500; // 5 seconds
 
@@ -262,7 +274,8 @@ const statusFilter = ref('');
 const totalPages = ref(0);
 const maxPagesAllowed = ref(20);
 const confirmDeleteFor = ref(null);
-
+const massProd_names = ref([]);
+const selectedMassProd = ref('');
 
 // Fetch data
 const viewAllSerialedLayers = async () => {
@@ -281,24 +294,37 @@ const viewAllSerialedLayers = async () => {
   }
 };
 
+const getMassProdLists = async () => {
+    try{
+        const response = await axios.get('/api/mass-production/');
+        const massProdList = response.data;
+        massProd_names.value = massProdList.map(item => item.mass_prod);
+        //console.log("List of mass prods: ",massProd_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
 onMounted(async ()=>{
     await checkAuthentication();
     await viewAllSerialedLayers();
+    await getMassProdLists();
 });
 
 // Search + filter
 const filteredData = computed(() => {
   const query = searchQuery.value.toLowerCase();
   const status = statusFilter.value;
+  const massProd = selectedMassProd.value;
 
   return tpmData.value.filter(item => {
     const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
     const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
     const matchesQuery = !query || model.includes(query) || lot.includes(query);
 
+    const tpm = item.tpm?.[0] || {};
     const report = item.report?.[0] || {};
-    console.log('TPM',tpmData.value);
-    console.log('[REPORT]:', report);
 
     const isEmpty = (val) =>
       val === null ||
@@ -314,9 +340,6 @@ const filteredData = computed(() => {
                      !isEmpty(report.prepared_by_firstname) &&
                      !isEmpty(report.checked_by_firstname);
     } else if (status === 'PREPARED_PENDING') {
-        // console.log('[REPORT]:', report);
-            //console.log('[prepared_by_firstname]:', report.prepared_by_firstname);
-            //console.log('[isEmpty]:', isEmpty(report.prepared_by_firstname));
       matchesStatus = isEmpty(report.prepared_by_firstname) &&
                      isEmpty(report.checked_by_firstname) &&
                      isEmpty(report.approved_by_firstname);
@@ -330,12 +353,16 @@ const filteredData = computed(() => {
                      !isEmpty(report.checked_by_firstname) &&
                      !isEmpty(report.approved_by_firstname);
     } else if (status === 'COATING_PENDING') {
-        matchesStatus = report.coating_completed == false;
+      matchesStatus = report.coating_completed == false;
     } else if (status === 'HEAT_TREATMENT_PENDING') {
       matchesStatus = report.heat_treatment_completed == false;
     }
 
-    return matchesQuery && matchesStatus;
+    // ✅ Use the first tpm entry safely
+    const matchesMassProd = !massProd || tpm.mass_prod === massProd;
+
+    // ✅ You forgot to include matchesMassProd in the return
+    return matchesQuery && matchesStatus && matchesMassProd;
   });
 });
 
