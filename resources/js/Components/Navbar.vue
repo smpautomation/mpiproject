@@ -167,7 +167,8 @@ const navItems = [
             { label: 'Special Instructions', route: 'instructions', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
             { label: 'Send Email', route: 'email', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
             { label: 'Mias Factor Emp', route: 'mias_factor', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
-            { label: 'HT Graph Patterns', route: 'htgraph_patterns', access: ['Heat Treatment','Automation','Coating'] }
+            { label: 'HT Graph Patterns', route: 'htgraph_patterns', access: ['Heat Treatment','Automation','Coating'] },
+            { label: 'Mass Prod Status', route: 'mass_prod_monitoring', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'] }
         ]
     },
     { label: 'Admin', route: 'admin', access: ['Final Approver','Proxy Approver','Automation'] }

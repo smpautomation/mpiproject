@@ -45,6 +45,10 @@ class FrontendController extends Controller
         ]);
     }
 
+    public function massProdMonitoring(Request $request){
+        return Inertia::render('Frontend/Mass_Prod_Monitoring');
+    }
+
     public function heatTreatment(Request $request){
         return Inertia::render('Frontend/Heat_Treatment');
     }

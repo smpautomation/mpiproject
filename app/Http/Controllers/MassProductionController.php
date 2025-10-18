@@ -741,4 +741,94 @@ class MassProductionController extends Controller
         ]);
     }
 
+    public function massProductionMonitoring($massprod)
+    {
+        // Fetch all mass production names for dropdown
+        $massProdNames = MassProduction::pluck('mass_prod')->toArray();
+
+        // Fetch the selected mass production row
+        $prod = MassProduction::where('mass_prod', $massprod)->first();
+
+        if (!$prod) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mass production not found',
+                'massProdNames' => $massProdNames,
+                'data' => [],
+            ]);
+        }
+
+        $layers = [];
+
+        // Layers 1 to 9
+        for ($i = 1; $i <= 9; $i++) {
+            $layer_json = $prod->{'layer_'.$i};
+            $layer_type = $prod->{'layer_'.$i.'_format_type'};
+
+            $layerStatus = [
+                'type' => $layer_type,
+                'heat_treatment_completed' => false,
+                'coating_completed' => false,
+                'mpi_completed' => false,
+            ];
+
+            if ($layer_type === 'Normal') {
+                $layerStatus['heat_treatment_completed'] = !empty($layer_json);
+                $layerStatus['coating_completed'] = Coating::where('mass_prod', $prod->mass_prod)
+                                                            ->where('layer', $i)
+                                                            ->exists();
+                $layerStatus['mpi_completed'] = TPMData::where('mass_prod', $prod->mass_prod)
+                                                        ->where('layer_no', $i)
+                                                        ->exists();
+            } elseif ($layer_type === '1st and 2nd GBDP') {
+                $layerStatus['heat_treatment_completed'] = GbdpSecondHeatTreatment::where('mass_prod', $prod->mass_prod)
+                                                                                ->where('layer', $i)
+                                                                                ->exists();
+                $layerStatus['coating_completed'] = GbdpSecondCoating::where('mass_prod', $prod->mass_prod)
+                                                                    ->where('layer', $i)
+                                                                    ->exists();
+                $layerStatus['mpi_completed'] = TPMData::where('mass_prod', $prod->mass_prod)
+                                                        ->where('layer_no', $i)
+                                                        ->exists();
+            } elseif ($layer_type === 'Film Pasting') {
+                $layerStatus['heat_treatment_completed'] = !empty($layer_json);
+                $layerStatus['coating_completed'] = FilmPastingData::where('mass_prod', $prod->mass_prod)
+                                                                    ->where('layer', $i)
+                                                                    ->exists();
+                $layerStatus['mpi_completed'] = TPMData::where('mass_prod', $prod->mass_prod)
+                                                        ->where('layer_no', $i)
+                                                        ->exists();
+            }
+
+            $layers[$i] = $layerStatus;
+        }
+
+        // Layer 9.5
+        $layer_9_5_json = $prod->layer_9_5;
+        $layer_9_5_type = $prod->layer_9_5_format_type;
+
+        $layers['9.5'] = [
+            'type' => $layer_9_5_type,
+            'heat_treatment_completed' => !empty($layer_9_5_json),
+            'coating_completed' => Coating::where('mass_prod', $prod->mass_prod)
+                                        ->where('layer', '9.5')
+                                        ->exists(),
+            'mpi_completed' => TPMData::where('mass_prod', $prod->mass_prod)
+                                    ->where('layer_no', '9.5')
+                                    ->exists(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'massProdNames' => $massProdNames,
+            'data' => [
+                [
+                    'mass_prod' => $prod->mass_prod,
+                    'layers' => $layers,
+                ]
+            ],
+        ]);
+    }
+
+
 }

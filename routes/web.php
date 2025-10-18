@@ -25,6 +25,7 @@ Route::get('/control_sheet', [FrontendController::class,'controlSheet'])->name('
 Route::get('/htgraph', [FrontendController::class,'htgraph'])->name('htgraph');
 Route::get('/ht_graph_patterns', [FrontendController::class,'heatTreatmentGraphPatterns'])->name('htgraph_patterns');
 Route::get('/smpdata', [FrontendController::class,'smpData'])->name('smpdata');
+Route::get('/mass_prod_monitoring',[FrontendController::class, 'massProdMonitoring'])->name('mass_prod_monitoring');
 Route::get('/heat_treatment', [FrontendController::class, 'heatTreatment'])->name('heat_treatment');
 Route::get('/manage', [FrontendController::class,'manage'])->name('manage');
 Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspection');
