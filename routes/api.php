@@ -235,6 +235,8 @@ Route::get('/film-pasting-data/{massProd}/layers', [FilmPastingDataController::c
 Route::get('/coating-data/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-coating-data/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
+Route::get('/second-ht-data/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
+Route::get('/second-coating-data/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
 
 Route::get('/mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');

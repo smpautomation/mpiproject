@@ -81,6 +81,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Second_GBDP_Models');
     }
 
+    public function viewSecondGbdp(){
+        return Inertia::render('Frontend/View_Second_GBDP');
+    }
+
     public function second_heat_treatment(Request $request){
 
         $massProd = $request->get('massProd');

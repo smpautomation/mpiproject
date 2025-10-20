@@ -87,4 +87,26 @@ class GbdpSecondCoatingController extends Controller
             'completed_layers' => $layers,
         ]);
     }
+
+    public function getLayerData($massprod, $layer)
+    {
+        try {
+            $data = GbdpSecondCoating::where('mass_prod', $massprod)
+                ->where('layer', $layer)
+                ->first();
+
+            if (!$data) {
+                return response()->json([
+                    'message' => "No coating data found for Mass Production: {$massprod}, Layer: {$layer}"
+                ], 404);
+            }
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server error while fetching coating layer data',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -41,6 +41,7 @@ Route::get('/instructions', [FrontendController::class,'instructions'])->name('i
 Route::get('/coating', [FrontendController::class,'coating'])->name('coating');
 Route::get('/furnace', [FrontendController::class,'furnace'])->name('furnace');
 Route::get('/second_gbdp_models', [FrontendController::class,'second_gbdp_models'])->name('second_gbdp_models');
+Route::get('/view_second_gbdp', [FrontendController::class,'viewSecondGbdp'])->name('view_second_gbdp');
 Route::get('/second_heat_treatment', [FrontendController::class,'second_heat_treatment'])->name('second_heat_treatment');
 Route::get('/film_pasting', [FrontendController::class,'filmPasting'])->name('film_pasting');
 Route::get('/approval_checked', [FrontendController::class,'approval_checked'])->name('approval_checked');
