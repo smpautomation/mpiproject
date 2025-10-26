@@ -33,6 +33,7 @@ use App\Http\Controllers\SecondGBDPController;
 use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use App\Http\Controllers\SmpDataController;
+use App\Mail\TakefuMail_Manual;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -199,7 +200,7 @@ Route::post('/send-takefu-email-manual', function(Request $request) {
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
 
     try {
-        Mail::to($emailList)->send(new TakefuMail(
+        Mail::to($emailList)->send(new TakefuMail_Manual(
             $validated['massPro'],
             $customMessage,
             $validated['selectedFiles'] // PASS selected files

@@ -12,16 +12,18 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
-class TakefuMail extends Mailable
+class TakefuMail_Manual extends Mailable
 {
     use Queueable, SerializesModels;
     public string $massPro;
     protected $customMessage;
+    protected array $selectedFiles;
 
-    public function __construct(string $massPro, $customMessage = '')
+    public function __construct(string $massPro, string $customMessage = '', array $selectedFiles = [])
     {
         $this->massPro = $massPro;
         $this->customMessage = $customMessage;
+        $this->selectedFiles = $selectedFiles;
     }
 
     /**
@@ -40,7 +42,7 @@ class TakefuMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.takefu-email',
+            view: 'emails.takefu-email-manual',
             with: [
                 'massPro' => $this->massPro,
                 'customMessage' => $this->customMessage
@@ -65,7 +67,7 @@ class TakefuMail extends Mailable
 
             // Force the Blade view to render here inside try/catch
             try {
-                $html = view('emails.takefu-email', [
+                $html = view('emails.takefu-email-manual', [
                     'customMessage' => $this->customMessage,
                     'massPro' => $this->massPro
                 ])->render();
@@ -81,32 +83,25 @@ class TakefuMail extends Mailable
             $mail = $this->html($html)->subject($this->massPro . ' Reports');
 
             $directory = public_path("files/{$this->massPro}");
-            Log::info("Resolved directory path: {$directory}");
 
             if (!File::exists($directory)) {
                 throw new \RuntimeException("The folder for this {$this->massPro} does not exist.");
             }
 
-            $files = File::files($directory);
-            Log::info("Files found in directory {$directory}: " . json_encode(array_map(fn($f) => $f->getFilename(), $files)));
-
             $pdfFilesAttached = 0;
 
-            foreach ($files as $file) {
-                $path = $file->getRealPath();
-                $filename = strtolower($file->getFilename());
-                Log::info("Attempting to attach file: {$path}");
-
-                if (str_ends_with($filename, '.pdf') || str_ends_with($filename, '.txt')) {
-                    $mail->attach($path);
+            foreach ($this->selectedFiles as $fileName) {
+                $filePath = $directory . DIRECTORY_SEPARATOR . $fileName;
+                if (File::exists($filePath)) {
+                    $mail->attach($filePath);
                     $pdfFilesAttached++;
+                } else {
+                    Log::warning("Selected file does not exist: {$filePath}");
                 }
             }
 
-            Log::info("Building mail with attachments count: {$pdfFilesAttached}");
-
             if ($pdfFilesAttached === 0) {
-                throw new \RuntimeException("No PDF files found in the folder for this {$this->massPro}.");
+                throw new \RuntimeException("No valid files selected for {$this->massPro}.");
             }
 
             return $mail;
