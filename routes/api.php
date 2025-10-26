@@ -181,6 +181,56 @@ Route::post('/send-takefu-email', function(Request $request) {
     return response()->json(['message' => 'Email sent successfully'], 200);
 });
 
+Route::post('/send-takefu-email-manual', function(Request $request) {
+
+    $validated = $request->validate([
+        'emails' => 'required|string',
+        'message' => 'nullable|string|max:5000',
+        'massPro' => 'required|string',
+        'selectedFiles' => 'required|array',
+    ]);
+
+    $emailList = array_map('trim', explode(',', $validated['emails']));
+    $emailList[] = 'automation2@smp.com.ph';
+    $emailList[] = 'automation5@smp.com.ph';
+    $emailList[] = 'myke@smp.com.ph';
+    $emailList = array_unique($emailList);
+
+    $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
+
+    try {
+        Mail::to($emailList)->send(new TakefuMail(
+            $validated['massPro'],
+            $customMessage,
+            $validated['selectedFiles'] // PASS selected files
+        ));
+    } catch (\Throwable $e) {
+        return response()->json(['error' => 'Mail sending failed', 'message' => $e->getMessage()], 500);
+    }
+
+    return response()->json(['message' => 'Email sent successfully'], 200);
+});
+
+Route::get('/files/{massPro}', function (Request $request, $massPro) {
+    $directory = public_path("files/{$massPro}");
+
+    if (!File::exists($directory)) {
+        return response()->json([
+            'files' => [],
+            'message' => "No folder found for Mass Production: {$massPro}"
+        ]);
+    }
+
+    $files = File::files($directory);
+
+    // Return only file names (not full paths)
+    $fileNames = array_map(fn($file) => $file->getFilename(), $files);
+
+    return response()->json([
+        'files' => $fileNames
+    ]);
+});
+
 Route::get('/test-pdf-view', function () {
     return view('preview-pdf');
 });

@@ -298,9 +298,9 @@
                     <!-- Coating Amount Tables -->
                     <div class="flex flex-row gap-4">
                         <div
-                        v-for="(slice, colIndex) in Math.ceil(coatingsTable_1stgbdp.length / 10)"
-                        :key="colIndex"
-                        class="overflow-x-auto"
+                            v-for="(slice, colIndex) in Math.ceil(coatingsTable_1stgbdp.length / 10)"
+                            :key="colIndex"
+                            class="overflow-x-auto"
                         >
                         <table class="min-w-full text-sm border border-gray-200 rounded-lg">
                             <thead class="bg-gray-100">
@@ -347,7 +347,6 @@
                         </tbody>
                         </table>
                     </div>
-
                     </div>
                 </div>
             </div>
@@ -414,11 +413,9 @@
                         </tbody>
                         </table>
                     </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
     </Frontend>
 </template>
