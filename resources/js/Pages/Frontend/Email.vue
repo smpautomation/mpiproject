@@ -5,7 +5,7 @@
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-12 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"></div>
                     <div>
-                        <h2 class="text-3xl font-bold text-gray-800">Test Email Configuration</h2>
+                        <h2 class="text-3xl font-bold text-gray-800">Email: Send Reports</h2>
                         <p class="text-sm text-gray-600 mt-1">Fill out all fields to send an email</p>
                     </div>
                 </div>
