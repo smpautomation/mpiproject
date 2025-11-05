@@ -36,7 +36,7 @@
                             <th scope="col" class="px-4 py-3 whitespace-nowrap">Username</th>
                             <th scope="col" class="px-4 py-3 whitespace-nowrap">Employee&nbsp;ID</th>
                             <th scope="col" class="px-4 py-3 whitespace-nowrap">Plant</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Current&nbsp;Role</th>
+                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Access&nbsp;Type</th>
                             <th scope="col" class="px-4 py-3 whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
@@ -112,18 +112,20 @@
                     </div>
                     <!-- Role Instructions Panel -->
                     <div class="p-4 mt-4 overflow-y-auto text-xs text-gray-300 bg-gray-700 border border-gray-600 rounded-lg max-h-40">
-                    <strong class="block mb-2 text-sm text-yellow-300">Role Instructions</strong>
-                    <ul class="space-y-1 leading-tight list-disc list-inside">
-                        <li><strong>Basic User (default)</strong> → Manage, Inspection, and View List (Cannot stamp)</li>
-                        <li><strong>Preparation Approver</strong> → All except Approval/Admin (Prepared By Stamping only)</li>
-                        <li><strong>Checking Approver</strong> → All except Approval/Admin (Checked By Stamping only)</li>
-                        <li><strong>Proxy Approver</strong> → Access to ALL (Approved By Stamp only)</li>
-                        <!-- hidden for now
-
+                    <strong class="block mb-2 text-sm text-yellow-300">Role Instructions (Navbar Access)</strong>
+                    <ul class="space-y-1 leading-tight list-disc list-inside text-[10px]">
+                        <li><strong>Basic User (default)</strong> → Home (Cannot stamp)</li>
+                        <li><strong>Heat Treatment</strong> → Home, Heat Treatment, Coating, Film Pasting, MPI Reports, 1st & 2nd GBDP, Furnace, HT Graph Patterns (Cannot stamp)</li>
+                        <li><strong>Coating</strong> → Home, Heat Treatment, Coating, Film Pasting, MPI Reports, 1st & 2nd GBDP, Furnace, HT Graph Patterns (Cannot stamp)</li>
+                        <li><strong>Preparation Approver</strong> → Home, Mass Production JH Curve, MPI Reports, View List, Inspection, Sppecial Instructions, Send Email, Mias Factor Emp (Prepared By Stamping only)</li>
+                        <li><strong>Checking Approver</strong> → Home, Mass Production JH Curve, MPI Reports, View List, Inspection, Sppecial Instructions, Send Email, Mias Factor Emp (Checked By Stamping only)</li>
+                        <li><strong>Proxy Approver</strong> → Home, Mass Production, JH Curve, MPI Reports, View List, Inspection, Approval, Sppecial Instructions, Send Email, Mias Factor Emp, Admin (Approved By Stamp only)</li>
+                        <li><strong>Final Approver</strong> → Home, Mass Production, MPI Reports, Approval, View List, Admin (Approved By Stamp only)</li>
+                        <!--
                         <li><strong>Hybrid Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)</li>
                         <li><strong>Bypass Approver</strong> → All except Admin (All stamps: Prepared, Checked, Approved)</li>
-
                         -->
+
                     </ul>
                     </div>
                     </div>
@@ -187,7 +189,7 @@
                         :key="log.id"
                         class="p-3 bg-gray-600 rounded-lg shadow-sm"
                     >
-                        <span class="text-sm">
+                        <span class="text-xs">
                         <span class="mr-2 text-orange-600">[{{ log.section }}]</span>
                         <span class="mr-2 text-gray-200">[{{ formatDate(log.created_at) }}]</span>
                         <span class="mr-2 text-green-400">{{ log.user }}</span>

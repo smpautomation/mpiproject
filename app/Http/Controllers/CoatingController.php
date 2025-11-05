@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coating;
+use App\Models\CoatingPending;
+use App\Models\GbdpSecondCoating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -16,8 +18,9 @@ class CoatingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'serial' => 'required|integer',
             'date' => 'nullable|date',
+            'mass_prod' => 'nullable|string',
+            'layer' => 'nullable|string',
             'machine_no' => 'nullable|string',
             'slurry_lot_no' => 'nullable|string',
             'loader_operator' => 'nullable|string',
@@ -53,8 +56,9 @@ class CoatingController extends Controller
         $coating = Coating::where('serial', $serial)->firstOrFail();
 
         $validated = $request->validate([
-            'serial' => 'sometimes|integer',
             'date' => 'sometimes|nullable|date',
+            'mass_prod' => 'sometimes|string',
+            'layer' => 'sometimes|string',
             'machine_no' => 'sometimes|nullable|string',
             'slurry_lot_no' => 'sometimes|nullable|string',
             'loader_operator' => 'sometimes|nullable|string',
@@ -89,4 +93,97 @@ class CoatingController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function checkExisting(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|string',
+        ]);
+
+        $exists = Coating::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
+    public function checkPending(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|string',
+        ]);
+
+        $pending = CoatingPending::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->exists();
+
+        return response()->json(['pending' => $pending]);
+    }
+
+    public function addPending(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        // Avoid duplicates
+        $pending = CoatingPending::firstOrCreate([
+            'mass_prod' => $validated['mass_prod'],
+            'layer'     => $validated['layer'],
+        ]);
+
+        return response()->json($pending, 201);
+    }
+
+    public function removePending(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        CoatingPending::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->delete();
+
+        return response()->json(['message' => 'Pending cleared'], 200);
+    }
+
+    public function getCoatingData(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+        ]);
+
+        $coating = Coating::where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->first();
+
+        if (!$coating) {
+            return response()->json([
+                'message' => 'Coating record not found.'
+            ], 404);
+        }
+
+        return response()->json($coating);
+    }
+
+    public function getLayersByMassProd($massProd)
+    {
+        // Fetch all layer values for this mass_prod
+        $layers = Coating::where('mass_prod', $massProd)
+            ->pluck('layer')  // get only the "layer" column
+            ->filter()         // remove nulls
+            ->map(fn($layer) => (string)$layer) // cast to string if needed
+            ->toArray();
+
+        return response()->json([
+            'completed_layers' => $layers,
+        ]);
+    }
+
 }

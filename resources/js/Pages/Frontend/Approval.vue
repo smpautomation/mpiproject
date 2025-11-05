@@ -60,7 +60,7 @@
                                 </tr>
                             </thead>
                             <tbody class="text-gray-800 bg-white">
-                                <tr v-for="(report, index) in paginatedReports" :key="report.tpm_data_serial"
+                                <tr v-for="(report) in paginatedReports" :key="report.tpm_data_serial"
                                     class="transition-colors duration-150 border-b border-gray-200 hover:bg-gray-100">
                                 <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.tpm_data_serial }}</td>
                                 <td class="px-4 py-2 text-center whitespace-nowrap">{{ report.model }}</td>

@@ -1,6 +1,5 @@
 <template>
     <Frontend>
-
         <div
             class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-cover md:flex-row"
             :style="{ backgroundImage: 'url(/photo/home_background.jpg)' }"
@@ -37,7 +36,7 @@
                                         v-model="username"
                                         type="text"
                                         id="username"
-                                        placeholder=" "
+                                        placeholder=""
                                         required
                                         autocomplete="username"
                                         class="input"
@@ -50,7 +49,7 @@
                                         v-model="password"
                                         type="password"
                                         id="password"
-                                        placeholder=" "
+                                        placeholder=""
                                         required
                                         autocomplete="current-password"
                                         class="input"
@@ -253,6 +252,11 @@
                             </h2>
                             <p class="mb-6 text-base text-center drop-shadow-sm">
                               You can now access different sections via the navigation bar at the top.
+                            </p>
+                            <p v-if="state.user && state.user.access_type"
+                                class="text-sm text-white/90 font-medium backdrop-blur-sm bg-white/10 px-4 py-2 rounded-lg border border-white/20 shadow-sm">
+                                    Current Access Type:
+                                <span class="font-semibold text-cyan-100">{{ state.user.access_type }}</span>
                             </p>
                           </div>
                         </div>

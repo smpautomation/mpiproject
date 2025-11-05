@@ -95,6 +95,16 @@ class AuthController extends Controller
             '004884','004025','004489','005828','004391','004608'
         ];
 
+        $heatTreatmentUsers_id = [
+            '4021','3358','6640','6699','6423','6528','3485','7003',
+            '6747','6502','003485','002121','000021'
+        ];
+
+        $coatingUsers_id = [
+            '4143','7060','2963','6729','7053','6996','4825','6903',
+            '001808'
+        ];
+
         $userAccess = null;
 
         // Log the employee_id being checked
@@ -119,6 +129,14 @@ class AuthController extends Controller
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $preparedByApprovers_id, true)) {
             $userAccess = 'Preparation Approver';
             Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Preparation Approver".');
+        }
+        if (isset($validated['employee_id']) && in_array($validated['employee_id'], $heatTreatmentUsers_id, true)) {
+            $userAccess = 'Heat Treatment';
+            Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Heat Treatment".');
+        }
+        if (isset($validated['employee_id']) && in_array($validated['employee_id'], $coatingUsers_id, true)) {
+            $userAccess = 'Coating';
+            Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Coating".');
         }
 
         $user = User::create([

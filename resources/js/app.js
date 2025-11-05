@@ -6,9 +6,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createApp, h } from 'vue';
 import axios from 'axios';
-
-// Import VueApexCharts
-import VueApexCharts from 'vue3-apexcharts';
+import ToastPlugin from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 // Set CSRF and credentials for all axios calls
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -35,13 +34,13 @@ axios.interceptors.response.use(
       error.response &&
       error.response.status === 401 &&
       !alreadyRedirecting &&
-      window.location.pathname !== '/' // avoid loop if already on home
+      window.location.pathname !== '/mpi-online-system' // avoid loop if already on home
     ) {
       alreadyRedirecting = true;
       console.warn('Session expired. Redirecting to login.');
       localStorage.removeItem('access_token');
       import('@inertiajs/inertia').then(({ Inertia }) => {
-        Inertia.visit('/');
+        Inertia.visit('/mpi-online-system');
       });
     }
 
@@ -71,7 +70,7 @@ createInertiaApp({
     return createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(ZiggyVue)
-      .use(VueApexCharts) // <-- Register VueApexCharts here
+      .use(ToastPlugin)
       .mount(el);
   },
   progress: {

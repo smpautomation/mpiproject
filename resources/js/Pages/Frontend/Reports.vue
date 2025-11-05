@@ -4,7 +4,7 @@
             YOU ARE ON TEST SERVER
         </div>
       <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
-        <div v-if="!isFromApproval && !isFromViewList">
+        <div v-if="!isFromApproval && !isFromViewList && !isFromApproval_checked && !isFromApproval_prepared">
             <div v-if="serialList.length == 0"> <!-- default div -->
                 <div class="flex flex-col items-center justify-center mt-10 align-baseline">
                     <div
@@ -23,27 +23,50 @@
         </div>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
-                <div> <!-- Selection Panel -->
-                    <div class="flex flex-row items-center justify-center mt-10 align-baseline">
-                        <p>Select Serial No: </p>
+                <div class="max-w-2xl mx-auto mt-8 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+                    <!-- Header -->
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full mb-3 shadow-md">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1">Generate Report</h3>
+                        <p class="text-sm text-gray-500">Select a serial number to proceed</p>
+                    </div>
+
+                    <!-- Selection Panel -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Serial Number</label>
                         <select
-                        v-model="currentSerialSelected"
-                        class="py-2 m-4 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm px-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
+                            v-model="currentSerialSelected"
+                            class="w-full py-3 px-4 text-base font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer">
+                            <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
                         </select>
                     </div>
-                    <div class="flex flex-col items-center justify-center space-x-8">
-                        <!-- Button -->
-                        <button
-                            @click="generateReport"
-                            :disabled="showNotif2"
-                            class="px-6 py-3 mt-10 mb-10 text-xl font-extrabold text-white bg-blue-500 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
+
+                    <!-- Button -->
+                    <button
+                        @click="generateReport"
+                        :disabled="showNotif2"
+                        class="w-full px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-md hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg transition-all duration-200 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
+                    >
+                        <span class="flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                             Generate Report
-                        </button>
-                    </div>
-                    <div v-show="showNotif2" class="flex flex-row items-center justify-center px-4 py-2 my-10 text-white bg-yellow-500 shadow-lg rounded-2xl">
-                        <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
+                        </span>
+                    </button>
+
+                    <!-- Notification -->
+                    <div v-show="showNotif2" class="mt-6 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-800 flex-1">{{ reportNotificationMessage }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -151,6 +174,18 @@
 
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <div class="flex flex-row gap-4 mt-4 justify-evenly">
+                        <!-- Mass Prod (display-only) -->
+                        <div class="flex flex-col w-[12rem]">
+                            <label class="mb-1 text-sm font-medium text-gray-700">
+                                Mass Production:
+                            </label>
+                            <span
+                                class="flex items-center px-3 text-sm text-gray-800 bg-gray-100 border border-gray-300 rounded-md cursor-default h-9 hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                            >
+                                {{ selectedMassProd }}
+                            </span>
+                        </div>
+
                         <!-- Model (display-only) -->
                         <div class="flex flex-col w-[12rem]">
                             <label class="mb-1 text-sm font-medium text-gray-700">
@@ -168,29 +203,11 @@
                             <label for="materialCode" class="mb-1 text-sm font-medium text-gray-700">
                                 Material Code:
                             </label>
-                            <input
-                                v-model="reportMaterialCode"
-                                @input="reportMaterialCode = reportMaterialCode.toUpperCase()"
-                                type="text"
-                                name="materialCode"
-                                id="materialCode"
-                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                            />
-                        </div>
-
-                        <!-- Partial No. -->
-                        <div class="flex flex-col w-[12rem]">
-                            <label for="partialNo" class="mb-1 text-sm font-medium text-gray-700">
-                                Partial No.:
-                            </label>
-                            <input
-                                v-model="reportPartialNo"
-                                @input="reportPartialNo = reportPartialNo.toUpperCase()"
-                                type="text"
-                                name="partialNo"
-                                id="partialNo"
-                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                            />
+                            <span
+                                class="flex items-center px-3 text-sm text-gray-800 bg-gray-100 border border-gray-300 rounded-md cursor-default h-9 hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                            >
+                                {{ reportMaterialCode }}
+                            </span>
                         </div>
 
                         <!-- Total Quantity -->
@@ -198,1120 +215,14 @@
                             <label for="totalQuantity" class="mb-1 text-sm font-medium text-gray-700">
                                 Total Quantity:
                             </label>
-                            <input
-                                v-model="reportTotalQuantity"
-                                type="number"
-                                name="totalQuantity"
-                                id="totalQuantity"
-                                class="px-3 text-sm text-gray-800 transition duration-200 ease-in-out bg-white border border-gray-300 rounded-md h-9 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                            />
+                            <span
+                                class="flex items-center px-3 text-sm text-gray-800 bg-gray-100 border border-gray-300 rounded-md cursor-default h-9 hover:ring-1 hover:ring-blue-400 hover:shadow-sm"
+                            >
+                                {{ reportTotalQuantity }}
+                            </span>
                         </div>
                     </div>
                 </div>
-
-                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
-                    <!-- Coating Information Section -->
-                    <div class="flex flex-col mb-4 space-y-4">
-                        <p class="mb-2 text-xl font-semibold text-gray-700">Coating Information</p>
-
-                        <!-- Coating Row 1 -->
-                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
-                            <!-- Coating Date -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingDate" class="mb-1 text-sm font-medium text-gray-700">
-                                    Coating Date:
-                                </label>
-                                <input
-                                    v-model="reportCoatingDate"
-                                    type="date"
-                                    name="coatingDate"
-                                    id="coatingDate"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Coating Machine No -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingMachineNo" class="mb-1 text-sm font-medium text-gray-700">Coating Machine No:</label>
-                                <input
-                                    v-model="reportCoatingMachineNo"
-                                    type="text"
-                                    name="coatingMachineNo"
-                                    id="coatingMachineNo"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Slurry Lot No -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingSlurryLotNo" class="mb-1 text-sm font-medium text-gray-700">Slurry Lot No:</label>
-                                <input
-                                    v-model="reportCoatingSlurryLotNo"
-                                    type="text"
-                                    name="coatingSlurryLotNo"
-                                    id="coatingSlurryLotNo"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Loader Operator -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingLoaderOperator" class="mb-1 text-sm font-medium text-gray-700">Loader Operator:</label>
-                                <input
-                                    v-model="reportCoatingLoaderOperator"
-                                    @input="reportCoatingLoaderOperator = reportCoatingLoaderOperator.toUpperCase()"
-                                    type="text"
-                                    name="coatingLoaderOperator"
-                                    id="coatingLoaderOperator"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Time Start -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTimeStart" class="mb-1 text-sm font-medium text-gray-700">Time Start:</label>
-                                <input
-                                    v-model="reportCoatingTimeStart"
-                                    type="time"
-                                    name="coatingTimeStart"
-                                    id="coatingTimeStart"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Time Finish -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTimeFinish" class="mb-1 text-sm font-medium text-gray-700">Time Finish:</label>
-                                <input
-                                    v-model="reportCoatingTimeFinish"
-                                    type="time"
-                                    name="coatingTimeFinish"
-                                    id="coatingTimeFinish"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                        </div>
-
-                        <!-- Coating Row 2 -->
-                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
-                            <!-- MIN. TB CONTENT -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingMinTbContent" class="mb-1 text-sm font-medium text-gray-700">MIN. TB CONTENT (µg/mm²):</label>
-                                <input
-                                    v-model="reportCoatingMinTbContent"
-                                    type="text"
-                                    name="coatingMinTbContent"
-                                    id="coatingMinTbContent"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Sample Quantity -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingSampleQuantity" class="mb-1 text-sm font-medium text-gray-700">Sample Quantity (pcs):</label>
-                                <input
-                                    v-model="reportCoatingSampleQuantity"
-                                    type="text"
-                                    name="coatingSampleQuantity"
-                                    id="coatingSampleQuantity"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Total Magnet Weight -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingTotalMagnetWeight" class="mb-1 text-sm font-medium text-gray-700">Total Magnet Weight:</label>
-                                <input
-                                    v-model="reportCoatingTotalMagnetWeight"
-                                    type="text"
-                                    name="coatingTotalMagnetWeight"
-                                    id="coatingTotalMagnetWeight"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Unloader Operator -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingUnloaderOperator" class="mb-1 text-sm font-medium text-gray-700">Unloader Operator:</label>
-                                <input
-                                    v-model="reportCoatingUnloaderOperator"
-                                    @input="reportCoatingUnloaderOperator = reportCoatingUnloaderOperator.toUpperCase()"
-                                    type="text"
-                                    name="coatingUnloaderOperator"
-                                    id="coatingUnloaderOperator"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Checker Operator -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="coatingCheckerOperator" class="mb-1 text-sm font-medium text-gray-700">Checker Operator:</label>
-                                <input
-                                    v-model="reportCoatingCheckerOperator"
-                                    @input="reportCoatingCheckerOperator = reportCoatingCheckerOperator.toUpperCase()"
-                                    type="text"
-                                    name="coatingCheckerOperator"
-                                    id="coatingCheckerOperator"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (coatingAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <p class="mb-2 text-md font-semibold text-gray-700">Coating Data (UNIT: µ g/mm2)</p>
-
-                    <div class="flex flex-row flex-wrap gap-2 text-[0.7rem]">
-                        <template v-for="group in 6" :key="'group-' + group">
-                            <div class="w-[200px] p-1 border rounded bg-white shadow-sm">
-                                <div class="mb-1 font-semibold text-gray-700 text-center text-[0.7rem]">
-                                    {{ (group - 1) * 5 + 1 }} – {{ group * 5 }}<br />(M-01 ~ M-05)
-                                </div>
-
-                                <template v-for="j in 5" :key="'input-' + (group - 1) * 5 + j">
-                                    <div class="mb-1">
-                                        <label class="block text-[0.65rem] text-gray-600 mb-[1px]">
-                                            {{ (group - 1) * 5 + j }} (M-{{ String(j).padStart(2, '0') }})
-                                        </label>
-                                        <input
-                                            v-model="reportCoatingAmounts[(group - 1) * 5 + (j - 1)]"
-                                            type="number"
-                                            placeholder="Amt"
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-full h-6 px-1 text-[0.65rem] border rounded mb-[2px]',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'text-gray-800 bg-white border-gray-300 focus:ring-blue-400 focus:ring-1'
-                                                    : 'text-gray-400 bg-gray-100 border-gray-300 cursor-not-allowed'
-                                            ]"
-                                        />
-                                        <input
-                                            v-model="reportConcentrationValues[(group - 1) * 5 + (j - 1)]"
-                                            type="number"
-                                            placeholder="Conc."
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-full h-6 px-1 text-[0.65rem] border rounded',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'text-gray-800 bg-white border-gray-300 focus:ring-blue-400 focus:ring-1'
-                                                    : 'text-gray-400 bg-gray-100 border-gray-300 cursor-not-allowed'
-                                            ]"
-                                        />
-                                    </div>
-                                </template>
-
-                                <div class="pt-1 mt-1 border-t">
-                                    <div class="font-semibold text-yellow-700 text-[0.65rem] mb-1 text-center">
-                                        M-06<br />(for {{ (group - 1) * 5 + 1 }}–{{ group * 5 }})
-                                    </div>
-
-                                    <template v-for="k in 2" :key="'m06-' + group + '-' + k">
-                                        <input
-                                            v-model="reportConcentrationValues[35 + (group - 1) * 2 + (k - 1)]"
-                                            type="number"
-                                            placeholder="M-06"
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-full h-6 px-1 text-[0.65rem] border rounded mb-1',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'border-yellow-400 bg-yellow-50 focus:ring-yellow-500 focus:ring-1 text-gray-800'
-                                                    : 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            ]"
-                                        />
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-
-                    <div class="flex flex-row">
-
-                        <table class="mt-4 border-4 border-collapse border-white table-auto">
-                            <thead class="text-center text-white bg-blue-400">
-                                <tr>
-                                    <th rowspan="2" class="px-2 border-2 border-white">MODULE</th>
-                                    <th colspan="3" class="px-2 border-2 border-white">ADDITIONAL SLURRY</th>
-                                    <th rowspan="2" class="px-2 border-2 border-white">LITERS</th>
-                                </tr>
-                                <tr>
-                                    <th class="px-2 border-2 border-white">NEW</th>
-                                    <th class="px-2 border-2 border-white">HOMO</th>
-                                    <th class="px-2 border-2 border-white">TIME</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center text-blue-600">
-                                <tr v-for="(module, index) in modules" :key="index">
-                                    <td class="px-2 border-2 border-white">{{ module.name }}</td>
-
-                                    <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="module.new"
-                                            type="text"
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                            ]"
-                                        />
-                                    </td>
-
-                                    <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="module.homo"
-                                            type="text"
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                            ]"
-                                        />
-                                    </td>
-
-                                    <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="module.time"
-                                            type="text"
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                            ]"
-                                        />
-                                    </td>
-
-                                    <td class="px-2 border-2 border-white">
-                                        <input
-                                            v-model="module.liters"
-                                            type="text"
-                                            :disabled="!(coatingAccess || automationAcess)"
-                                            :class="[
-                                                'w-[4rem] h-[2rem] text-sm border rounded-md transition duration-200 ease-in-out',
-                                                (coatingAccess || automationAcess)
-                                                    ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                    : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                            ]"
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-
-                        <div class="flex flex-col mt-4 ml-20">
-
-                            <div class="flex flex-row">
-                                <div class="mt-10 mr-10">
-                                    <table class="border-4 border-white table-auto">
-                                        <tbody>
-                                            <tr>
-                                                <th class="px-2 text-white bg-blue-400 border-2 border-white">MAXIMUM:</th>
-                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleMaximum }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="mt-10 mr-10">
-                                    <table class="border-4 border-white table-auto">
-                                        <tbody>
-                                            <tr>
-                                                <th class="px-2 text-white bg-blue-400 border-2 border-white">MINIMUM:</th>
-                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleMinimum }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="mt-10 mr-10">
-                                    <table class="border-4 border-white table-auto">
-                                        <tbody>
-                                            <tr>
-                                                <th class="px-2 text-white bg-blue-400 border-2 border-white">AVERAGE:</th>
-                                                <td class="font-semibold text-blue-600"> {{ reportCoatingModuleAverage }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-row mt-10">
-                            <!-- Coating Remarks -->
-                            <div class="flex flex-col w-[47rem]">
-                                <label for="reportCoatingRemarks" class="mb-1 text-sm font-medium text-gray-700">
-                                    Remarks:
-                                </label>
-                                <input
-                                    v-model="reportCoatingRemarks"
-                                    @input="reportCoatingRemarks = reportCoatingRemarks.toUpperCase()"
-                                    type="text"
-                                    name="coatingRemarks"
-                                    id="coatingRemarks"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm rounded-md h-9 transition duration-200 ease-in-out border',
-                                        (coatingAccess || automationAcess)
-                                            ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-                            </div>
-                            <div
-                                :class="[
-                                    'flex items-center mt-4 space-x-2 rounded-md px-3 py-2 shadow-sm border',
-                                    coatingCompleted
-                                        ? 'bg-green-50 border-green-300'
-                                        : 'bg-gray-100 border-gray-300'
-                                ]"
-                            >
-                                <input
-                                    id="coatingCheckbox"
-                                    type="checkbox"
-                                    v-model="coatingCompleted"
-                                    :disabled="!(coatingAccess || automationAcess)"
-                                    class="w-5 h-5 transition duration-200 ease-in-out border rounded"
-                                    :class="[
-                                        coatingCompleted
-                                            ? 'text-green-600 focus:ring-green-500'
-                                            : 'text-gray-500 focus:ring-gray-400',
-                                        !(coatingAccess || automationAcess)
-                                            ? 'bg-gray-100 cursor-not-allowed'
-                                            : ''
-                                    ]"
-                                />
-
-                                <label for="coatingCheckbox" class="flex items-center text-sm font-semibold"
-                                    :class="coatingCompleted ? 'text-green-700' : 'text-gray-600'">
-                                    <svg v-if="coatingCompleted" class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 5.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l7-7a1 1 0 000-1.414z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>
-                                        {{ coatingCompleted ? 'Coating inspection completed' : '✓ Tick the box to finalize Coating' }}
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-
-
-                </div>
-
-                <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
-                    <!-- Heat Treatment Information Section -->
-                    <div class="flex flex-col mb-4 space-y-4">
-                        <p class="mb-2 text-xl font-semibold text-gray-700">Heat Treatment Information</p>
-
-                        <!-- Row 1 -->
-                        <div class="flex flex-row gap-4 justify-evenly">
-
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenMachineNo" class="mb-1 text-sm font-medium text-gray-700">
-                                    Furnace Machine:
-                                </label>
-                                <input
-                                    v-model="reportHTFurnaceMachine"
-                                    @input="reportHTFurnaceMachine = reportHTFurnaceMachine.toUpperCase()"
-                                    type="text"
-                                    name="ovenMachineNo"
-                                    id="ovenMachineNo"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- CYCLE No -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="timeLoading" class="mb-1 text-sm font-medium text-gray-700">
-                                    CYCLE No:
-                                </label>
-                                <input
-                                    v-model="reportHTCycleNo"
-                                    @input="reportHTCycleNo = reportHTCycleNo.toUpperCase()"
-                                    type="text"
-                                    name="timeLoading"
-                                    id="timeLoading"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- BATCH CYCLE No -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="temperature_timeLoading" class="mb-1 text-sm font-medium text-gray-700">
-                                    BATCH CYCLE No:
-                                </label>
-                                <input
-                                    v-model="reportHTBatchCycleNo"
-                                    @input="reportHTBatchCycleNo = reportHTBatchCycleNo.toUpperCase()"
-                                    type="text"
-                                    name="temperature_timeLoading"
-                                    id="temperature_timeLoading"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- LOADER -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_date" class="mb-1 text-sm font-medium text-gray-700">
-                                    LOADER:
-                                </label>
-                                <input
-                                    v-model="reportHTLoader"
-                                    @input="reportHTLoader = reportHTLoader.toUpperCase()"
-                                    type="text"
-                                    name="ovenInfo_date"
-                                    id="ovenInfo_date"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- DATE START -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
-                                    DATE START:
-                                </label>
-                                <input
-                                    v-model="reportHTDateStart"
-                                    type="date"
-                                    name="ovenInfo_shift"
-                                    id="ovenInfo_shift"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- TIME START -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
-                                    TIME START:
-                                </label>
-                                <input
-                                    v-model="reportHTTimeStart"
-                                    type="time"
-                                    name="ovenInfo_shift"
-                                    id="ovenInfo_shift"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                        </div>
-
-                        <!-- Row 2 -->
-                        <div class="flex flex-row gap-4 mt-4 justify-evenly">
-
-                            <!-- PATTERN No -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_shift" class="mb-1 text-sm font-medium text-gray-700">
-                                    PATTERN No:
-                                </label>
-                                <input
-                                    v-model="reportHTPatternNo"
-                                    @input="reportHTPatternNo = reportHTPatternNo.toUpperCase()"
-                                    type="text"
-                                    name="ovenInfo_shift"
-                                    id="ovenInfo_shift"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Cycle Pattern -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
-                                    Cycle Pattern:
-                                </label>
-                                <input
-                                    v-model="reportHTCyclePattern"
-                                    @input="reportHTCyclePattern = reportHTCyclePattern.toUpperCase()"
-                                    type="text"
-                                    name="ovenInfo_operator"
-                                    id="ovenInfo_operator"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- Current Pattern -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
-                                    Current Pattern:
-                                </label>
-                                <input
-                                    v-model="reportHTCurrentPattern"
-                                    @input="reportHTCurrentPattern = reportHTCurrentPattern.toUpperCase()"
-                                    type="text"
-                                    name="ovenInfo_operator"
-                                    id="ovenInfo_operator"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- UNLOADER -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="ovenInfo_operator" class="mb-1 text-sm font-medium text-gray-700">
-                                    UNLOADER:
-                                </label>
-                                <input
-                                    v-model="reportHTUnloader"
-                                    @input="reportHTUnloader = reportHTUnloader.toUpperCase()"
-                                    type="text"
-                                    name="ovenInfo_operator"
-                                    id="ovenInfo_operator"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- DATE FINISH -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="timeUnloading" class="mb-1 text-sm font-medium text-gray-700">
-                                    DATE FINISH:
-                                </label>
-                                <input
-                                    v-model="reportHTDateFinish"
-                                    type="date"
-                                    name="timeUnloading"
-                                    id="timeUnloading"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                            <!-- TIME FINISH -->
-                            <div class="flex flex-col w-[12rem]">
-                                <label for="temperature_TimeUnloading" class="text-[13px] font-medium text-gray-700 mb-1">
-                                    TIME FINISH:
-                                </label>
-                                <input
-                                    v-model="reportHTTimeFinish"
-                                    type="time"
-                                    name="temperature_TimeUnloading"
-                                    id="temperature_TimeUnloading"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-
-                        </div>
-
-                            <table class="mt-[1.1rem] border-collapse table-auto border-4 border-white">
-                                <thead>
-                                    <tr class="bg-blue-400">
-                                        <th colspan="11" class="px-2 py-2 text-lg font-semibold text-center text-white">MAGNET BOX LOCATION</th>
-                                    </tr>
-                                    <tr class="bg-blue-400">
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">BOX No.</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">A</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">B</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">C</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">D</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">E</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">F</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">G</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">H</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">J</th>
-                                        <th class="px-1 py-1 text-md font-semibold text-center text-white border-4 border-white">K</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">{{ currentLayerName }}</td>
-                                        <!-- MBL A to K -->
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLA"
-                                                @input="reportHT_MBLA = reportHT_MBLA.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLA"
-                                                id="reportHT_MBLA"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLB"
-                                                @input="reportHT_MBLB = reportHT_MBLB.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLB"
-                                                id="reportHT_MBLB"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLC"
-                                                @input="reportHT_MBLC = reportHT_MBLC.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLC"
-                                                id="reportHT_MBLC"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLD"
-                                                @input="reportHT_MBLD = reportHT_MBLD.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLD"
-                                                id="reportHT_MBLD"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLE"
-                                                @input="reportHT_MBLE = reportHT_MBLE.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLE"
-                                                id="reportHT_MBLE"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLF"
-                                                @input="reportHT_MBLF = reportHT_MBLF.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLF"
-                                                id="reportHT_MBLF"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLG"
-                                                @input="reportHT_MBLG = reportHT_MBLG.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLG"
-                                                id="reportHT_MBLG"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLH"
-                                                @input="reportHT_MBLH = reportHT_MBLH.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLH"
-                                                id="reportHT_MBLH"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLJ"
-                                                @input="reportHT_MBLJ = reportHT_MBLJ.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLJ"
-                                                id="reportHT_MBLJ"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-
-                                        <td class="px-1 py-1 text-md font-semibold text-center text-blue-600 border-2 border-white">
-                                            <input
-                                                v-model="reportHT_MBLK"
-                                                @input="reportHT_MBLK = reportHT_MBLK.toUpperCase()"
-                                                type="text"
-                                                name="reportHT_MBLK"
-                                                id="reportHT_MBLK"
-                                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                                :class="[
-                                                    'w-[100px] text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                                    (heatTreatmentAccess || automationAcess)
-                                                        ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                                        : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                                ]"
-                                            />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <div class="flex flex-row mt-10">
-                            <!-- Heat Treatment Remarks -->
-                            <div class="flex flex-col w-[62rem]">
-                                <label for="reportHeatTreatmentRemarks" class="mb-1 text-sm font-medium text-gray-700">
-                                    Remarks:
-                                </label>
-                                <input
-                                    v-model="reportHTRemarks"
-                                    @input="reportHTRemarks = reportHTRemarks.toUpperCase()"
-                                    type="text"
-                                    name="reportHeatTreatmentRemarks"
-                                    id="reportHeatTreatmentRemarks"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    :class="[
-                                        'px-3 text-sm transition duration-200 ease-in-out border rounded-md h-9',
-                                        (heatTreatmentAccess || automationAcess)
-                                            ? 'text-gray-800 bg-white border-gray-300 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent'
-                                            : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                                    ]"
-                                />
-                            </div>
-                            <button
-                                @click="showModal = true"
-                                :disabled="!(heatTreatmentAccess || automationAcess)"
-                                :class="[
-                                    'px-4 py-1 ml-2 rounded-lg transition-all duration-200',
-                                    heatTreatmentAccess || automationAcess
-                                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                ]"
-                            >
-                                Fill Mass Production Control Sheet
-                            </button>
-                            </div>
-
-                            <div
-                                :class="[
-                                    'flex items-center mt-4 mx-10 space-x-2 rounded-md px-3 py-2 shadow-sm border',
-                                    heatTreatmentCompleted
-                                        ? 'bg-green-50 border-green-300'
-                                        : 'bg-gray-100 border-gray-300'
-                                ]"
-                            >
-                                <input
-                                    id="heatTreatmentCheckbox"
-                                    type="checkbox"
-                                    v-model="heatTreatmentCompleted"
-                                    :disabled="!(heatTreatmentAccess || automationAcess)"
-                                    class="w-5 h-5 rounded border-gray-300 transition duration-150 ease-in-out"
-                                    :class="[
-                                        heatTreatmentCompleted
-                                            ? 'text-green-600 focus:ring-green-500'
-                                            : 'text-gray-500 focus:ring-gray-400',
-                                        !(heatTreatmentAccess || automationAcess)
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : ''
-                                    ]"
-                                />
-
-                                <label
-                                    for="heatTreatmentCheckbox"
-                                    class="flex items-center text-sm font-semibold"
-                                    :class="heatTreatmentCompleted ? 'text-green-700' : 'text-gray-600'"
-                                >
-                                    <svg
-                                        v-if="heatTreatmentCompleted"
-                                        class="w-4 h-4 mr-1 text-green-600"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 5.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                    {{ heatTreatmentCompleted ? 'Heat Treatment completed' : '✓ Tick the box to finalize Heat Treatment' }}
-                                </label>
-                            </div>
-                    </div>
-                </div>
-
-                <Modal :show="showModal" @close="showModal = false">
-                    <div class="flex flex-col items-center justify-center bg-blue-300 p-5 rounded-lg w-full max-w-3xl mx-auto shadow-xl mb-0">
-                        <p class="mb-6 text-lg font-bold text-white text-center">Mass Production Control Sheet</p>
-
-                        <div class="flex flex-row justify-between w-full mb-4">
-                            <span class="text-white font-semibold text-xl">Box: <span class="underline text-yellow-200">{{ massProd_letter[currentBoxIndex] }}</span></span>
-                            <span class="text-white font-semibold">Current Layer: {{ currentLayerName }}</span>
-                        </div>
-
-                        <!-- Input Fields Group 1 -->
-                        <div class="flex flex-wrap gap-4 w-full mb-4">
-                            <div class="flex flex-col w-[30%]">
-                                <label class="text-sm font-semibold text-white mb-1">Quantity</label>
-                                <input type="number" v-model="massProd_qty"
-                                    placeholder="e.g. 1600"
-                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
-                            </div>
-
-                            <div class="flex flex-col w-[30%]">
-                                <label class="text-sm font-semibold text-white mb-1">Box No.</label>
-                                <input type="text" v-model="massProd_boxNo" @input="massProd_boxNo = massProd_boxNo.toUpperCase()"
-                                    placeholder="e.g. UBP8 5071"
-                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
-                            </div>
-
-                            <div class="flex flex-col w-[30%]">
-                                <label class="text-sm font-semibold text-white mb-1">WT</label>
-                                <input type="number" v-model="massProd_WT"
-                                    placeholder="e.g. 15.23"
-                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
-                            </div>
-                        </div>
-
-                        <!-- Input Fields Group 2 -->
-                        <div class="flex flex-wrap gap-4 w-full mb-6">
-                            <div class="flex flex-col w-[48%]">
-                                <label class="text-sm font-semibold text-white mb-1">Coating</label>
-                                <input type="number" v-model="massProd_coating"
-                                    placeholder="e.g. 4"
-                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
-                            </div>
-
-                            <div class="flex flex-col w-[48%]">
-                                <label class="text-sm font-semibold text-white mb-1">Raw Material Code</label>
-                                <input type="text" v-model="massProd_rawMatCode" @input="massProd_rawMatCode = massProd_rawMatCode.toUpperCase()"
-                                    placeholder="e.g. 0G0V755"
-                                    class="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white" />
-                            </div>
-                        </div>
-
-                        <!-- TPM Boxes Preview Table -->
-                        <div class="w-full bg-white rounded-md shadow-md overflow-x-auto mb-6 select-none pointer-events-none">
-                            <table class="min-w-full text-sm text-left text-gray-800 table-fixed border border-gray-300">
-                                <thead class="bg-gray-100 text-xs uppercase font-semibold text-gray-600">
-                                    <tr>
-                                        <th class="px-4 py-2 w-12">Box</th>
-                                        <th class="px-4 py-2 w-20">Layer</th>
-                                        <th class="px-4 py-2 w-20">Qty</th>
-                                        <th class="px-4 py-2 w-20">WT</th>
-                                        <th class="px-4 py-2 w-32">Box No</th>
-                                        <th class="px-4 py-2 w-20">Coating</th>
-                                        <th class="px-4 py-2 w-32">Raw Mat</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr
-                                        v-for="(box, index) in allBoxesData"
-                                        :key="box.id"
-                                        class="border-t border-gray-200 bg-white"
-                                    >
-                                        <td class="px-4 py-2">{{ box.box_letter }}</td>
-                                        <td class="px-4 py-2">{{ box.layer_no ?? '-' }}</td>
-                                        <td class="px-4 py-2">{{ box.quantity ?? '-' }}</td>
-                                        <td class="px-4 py-2">{{ box.weight ?? '-' }}</td>
-                                        <td class="px-4 py-2">{{ box.box_no ?? '-' }}</td>
-                                        <td class="px-4 py-2">{{ box.coating ?? '-' }}</td>
-                                        <td class="px-4 py-2">{{ box.raw_mat_code ?? '-' }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="flex flex-row justify-end w-full gap-4">
-                            <button
-                                @click="showModal = false"
-                                class="px-4 py-2 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-white transition">
-                                Close
-                            </button>
-                            <button
-                                @click="revert_boxLetter"
-                                class="px-4 py-2 font-semibold text-white bg-gray-600 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white transition">
-                                Redo Previous
-                            </button>
-                            <button
-                                @click="saveToTpmBoxes"
-                                class="px-4 py-2 font-semibold bg-white text-blue-600 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white transition">
-                                Next
-                            </button>
-                        </div>
-                    </div>
-                </Modal>
-
 
                 <div class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl">
                     <!-- Oven Heating Information Section -->
@@ -2331,15 +1242,15 @@
                     <p class="text-lg font-extrabold text-center">{{ reportNotificationMessage }}</p>
                 </div>
                 <div class="flex flex-row items-center justify-center mb-8">
-                    <button v-if="(!approvedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Proxy Approver')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
+                    <button v-if="(!approvedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Proxy Approver' || state.user.access_type === 'Automation')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
-                    <button @click="viewPropertyData(currentSerialSelected)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
+                    <button @click="viewPropertyData(currentSerialSelected, selectedMassProd, selectedLayer)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
                         View Property Data
                     </button>
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
                     <button
-                        @click="sec_additional_redirect(currentSerialSelected)"
+                        @click="sec_additional_redirect(currentSerialSelected, selectedMassProd, selectedLayer)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                         Apply Additional
@@ -2352,12 +1263,20 @@
                         View PDF Report
                     </button>
 
-                    <button v-if="showExitButton && !isFromApproval && !isFromViewList" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button v-if="showExitButton && !isFromApproval && !isFromViewList && !isFromApproval_checked && !isFromApproval_prepared" @click="exitReport()" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK
                     </button>
 
                     <button v-if="isFromApproval && !isFromViewList" @click="backToApprovalFunction" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
                         BACK TO APPROVAL
+                    </button>
+
+                    <button v-if="isFromApproval_checked && !isFromViewList" @click="backToApprovalFunction_checked" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                        BACK TO APPROVAL (Checked)
+                    </button>
+
+                    <button v-if="isFromApproval_prepared && !isFromViewList" @click="backToApprovalFunction_prepared" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                        BACK TO APPROVAL (Prepared)
                     </button>
 
                     <button v-if="isFromViewList && !isFromApproval" @click="$inertia.visit('/view')" class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900">
@@ -2493,7 +1412,7 @@ const timeOfDay = computed(() => {
   return 'Evening';
 });
 
-//Debug mode --
+
 const onTestServer = ref(false);
 
 const page = usePage();
@@ -2509,6 +1428,8 @@ function toggleSwitch() {
 const showReportLoading = ref(false);
 
 const isFromApproval = ref(false);
+const isFromApproval_checked = ref(false);
+const isFromApproval_prepared = ref(false);
 const backToApproval = ref(false);
 const isFromViewList = ref(false);
 
@@ -2698,6 +1619,7 @@ const currentSerialSelected = ref('');
 const reportRemarksDisplay = ref('');
 const ipAddress = ref('');
 const filterStatus = ref('');
+const filterStatus_checked = ref('');
 const currentUserData = ref([]);
 const loggedUserData = ref([]);
 const currentUserApproverStage = ref('');
@@ -2890,6 +1812,9 @@ const showModal = ref(false);
 const coatingCompleted = ref(false);
 const heatTreatmentCompleted = ref(false);
 
+const selectedMassProd = ref();
+const selectedLayer = ref();
+
 const massProd_qty = ref('');
 const massProd_WT = ref('');
 const massProd_boxNo = ref('');
@@ -2932,29 +1857,10 @@ const saveToTpmBoxes = async () => {
             showModal.value = false; // ✅ Replace the confirmation step
         }
 
-        await getTpmBoxes(currentSerialSelected.value); // re-fetch to refresh
-
     } catch (error) {
         console.error("❌ Failed to save TPM Box:", error);
     }
 };
-
-const getTpmBoxes = async (serial) => {
-    try {
-        const responseTPMBoxes = await axios.get(`/api/tpmboxes/${serial}`);
-        allBoxesData.value = responseTPMBoxes.data.data; // assign array directly
-        console.log('getTpmBoxes response:', responseTPMBoxes.data);
-    } catch (error) {
-        console.error("Failed to fetch TPM Boxes:", error);
-        isLoading.value = false;
-    }
-};
-
-watch(showModal, (newVal) => {
-    if (newVal && currentSerialSelected.value) {
-        getTpmBoxes(currentSerialSelected.value);
-    }
-});
 
 
 const modules = reactive([
@@ -3383,7 +2289,7 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-
+    console.log('Entered Special Judgement function');
     const responseGetVTData = await axios.get('/api/vt-models');
     const fetchAllVT = responseGetVTData.data;
     MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
@@ -3416,35 +2322,61 @@ const checkSpecialJudgement = async () => {
     if (!hasNGihc) return;
 
     // === Logic Blocks ===
+    console.log('--- Logic Evaluation Start ---');
+    console.log('Model:', model);
+    console.log('VT Sample Qty:', reportVT_samplesQty.value);
+    console.log('BH Sample Qty:', reportBH_sampleQty.value);
 
-    if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) { //reportBH_sampleQty
+    // VT Data
+    if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) {
         showVTData.value = true;
         showVTData_default.value = false;
-    }else if(MODELS_SHOW_VT_DATA.value.includes(model)){
+        console.log('[VT] Showing VT Data (sample qty > 0)');
+    } else if (MODELS_SHOW_VT_DATA.value.includes(model)) {
         showVTData.value = false;
         showVTData_default.value = true;
+        console.log('[VT] Showing default VT layout (sample qty = 0)');
     }
 
+    // BH Data
     if (MODELS_SHOW_BH.value.includes(model) && reportBH_sampleQty.value > 0) {
         showBHData.value = true;
         showBHData_default.value = false;
-    }else if(MODELS_SHOW_BH.value.includes(model)){
+        console.log('[BH] Showing BH Data (sample qty > 0)');
+    } else if (MODELS_SHOW_BH.value.includes(model)) {
         showBHData.value = false;
         showBHData_default.value = true;
+        console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
+    // 1x1x1 Data (TTM)
     if (model.includes("TTM")) {
         show1x1x1Data_withoutCorner.value = true;
         show1x1x1Data_Corner.value = true;
+        console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
 
-        if (model.includes("TTM") && MODELS_1X1X1_NO_CORNER.value.includes(model)) {
+        if (MODELS_1X1X1_NO_CORNER.value.includes(model)) {
             show1x1x1Data_Corner.value = false;
+            console.log('[TTM] Corner data disabled for this model');
         }
     }
 
-    if (MODELS_SHOW_CPK.value.includes(model))  showCpkFrom_iHc.value = true;
-    if (MODELS_SHOW_GX.value.includes(model))   showGX.value = true;
-    if (MODELS_SHOW_ROB.value.includes(model))  showROB.value = true;
+    // Flags
+    if (MODELS_SHOW_CPK.value.includes(model)) {
+        showCpkFrom_iHc.value = true;
+        console.log('[CPK] CPK enabled');
+    }
+    if (MODELS_SHOW_GX.value.includes(model)) {
+        showGX.value = true;
+        console.log('[GX] GX enabled');
+    }
+    if (MODELS_SHOW_ROB.value.includes(model)) {
+        showROB.value = true;
+        console.log('[ROB] ROB enabled');
+    }
+
+    console.log('--- Logic Evaluation End ---');
+
 };
 
 const autoCheckRemarks = () => {
@@ -3459,15 +2391,31 @@ const autoCheckRemarks = () => {
     }
 }
 
+const getControlSheetData = async () => {
+    try{
+        const response = await axios.get(`/api/mass-productions/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
+        const controlSheet = response.data.layer_data;
+        reportTotalQuantity.value = controlSheet[12].data.A;
+        console.log('reportTotalQuantity: ', reportTotalQuantity.value);
+
+    }catch(error){
+        console.log('Failed to get response Control Sheet Data: ', error);
+    }
+}
+
 const fetchAllData = async () => {
     try {
         const serial = currentSerialSelected.value;
         if (!serial) throw new Error("No serial selected.");
 
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
-
+        let TPM_Data = responseTpm.data.data[0];
+        selectedMassProd.value = TPM_Data.mass_prod;
+        selectedLayer.value = TPM_Data.layer_no;
+        console.log("Mass Prod number: ", selectedMassProd.value, " Layer no: ", selectedLayer.value);
         // Unwrap nested array if exists
         let rawData = responseTpm.data?.[0];
+
         if (Array.isArray(rawData)) {
             rawData = rawData[0];
         }
@@ -3481,14 +2429,16 @@ const fetchAllData = async () => {
         tpmData.value = rawData;
         tpmDataQuantity.value = modelData.length;
         //console.log('TPM TOTAL -> ',tpmDataQuantity.value);
+        const responseControlSheet = await axios.get(`/api/mass-productions/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
+        const getActualModel = responseControlSheet.data.layer_data[0].data.A;
         getTpmModel.value = modelData;
 
         fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");
-        jhCurveActualModel.value = modelData[0].category?.actual_model || throwError("Missing actual model.");
+        jhCurveActualModel.value = getActualModel;
         fetchActualModel.value = jhCurveActualModel.value;
-
+        await getControlSheetData();
         setJudgmentFlags(modelData);
-
+        //ggggg
         await resolveFurnaceAndLayer(modelData[0]);
 
         parseAggregates(rawData);
@@ -3580,24 +2530,12 @@ const setJudgmentFlags = (models) => {
 };
 
 const resolveFurnaceAndLayer = async (model) => {
-    const [layerRes, furnaceRes] = await Promise.all([
-        axios.get(`/api/layerdata/`),
-        axios.get(`/api/furnacedata/`)
-    ]);
-
-    const layerData = layerRes.data?.data?.["Layer Data"];
-    const furnaceData = furnaceRes.data?.data?.["Furnace Data"];
-    if (!layerData || !furnaceData) throwError("Layer or Furnace data missing.");
-
-    const furnace = furnaceData.find(f => f.furnace_id === model.furnace_id);
-    const layer = layerData.find(l => l.layer_no == model.layer_no && l.furnace_id === model.furnace_id);
-
-    if (!furnace) throwError("Furnace not found.");
-    if (!layer) throwError("Layer not found.");
-
-    currentFurnaceName.value = furnace.furnace_name;
-    currentLayerName.value = layer.layer_name;
-
+    const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+    const massProd = response.data;
+    currentFurnaceName.value = massProd.furnace; // K-40
+    currentLayerName.value = "Layer " + selectedLayer.value; // Layer 1
+    console.log("Current Furnace: ", currentFurnaceName.value);
+    console.log("Current Layer: ", currentLayerName.value);
     tpmData_tracerNo.value = model.Tracer;
 };
 
@@ -3655,6 +2593,8 @@ const matchInspectionModel = async (model) => {
     inspectionOperator_OvenInfo.value = found.operator;
     inspectionAutomotive.value = found.is_automotive;
 
+    console.log("OVEN MACHINE NO: ", inspectionOvenMachineNo.value);
+
     // Parse br bounds
     if (inspectionBrStandard.value.includes("~")) {
         const [lower, upper] = inspectionBrStandard.value.split("~");
@@ -3677,23 +2617,10 @@ const createReport = async (reportData, serial) => {
 const showReportData = async () => {
     try {
         isReportDataReady.value = false;
-        await getTpmBoxes(currentSerialSelected.value);
         const response = await axios.get(`/api/reportdata/`);
         //console.log("Getting report data API result: ", response.data.data);
         const filterBySerial = response.data.data.filter(column => column.tpm_data_serial == currentSerialSelected.value); // filter by serial
         //console.log("Filtered data: ", filterBySerial);
-
-        const responseCoating = await axios.get(`/api/coating-data/`);
-        //console.log('get responseCoatingData: ', responseCoating.data);
-        const coating_filterBySerial = responseCoating.data.filter(column => column.serial == currentSerialSelected.value); // filter by serial
-        console.log("Filtered coating data: ", coating_filterBySerial);
-        const c = coating_filterBySerial[0];
-
-        const responseHeatTreatment = await axios.get(`/api/heat-treatment-data/`);
-        //console.log('get responseHeatTreatmentData: ',responseHeatTreatment.data);
-        const heatTreatment_filterBySerial = responseHeatTreatment.data.filter(column => column.serial == currentSerialSelected.value); // filter by serial
-        console.log("Filtered heat treatment data: ", heatTreatment_filterBySerial);
-        const ht = heatTreatment_filterBySerial[0];
 
         reportModel.value = filterBySerial[0].model;
         reportPulseTracerMachineNo.value = filterBySerial[0].pulse_tracer_machine_number;
@@ -3701,7 +2628,7 @@ const showReportData = async () => {
         reportDate.value = filterBySerial[0].date;
         reportPartialNo.value = filterBySerial[0].partial_number;
         reportShift.value = filterBySerial[0]["shift"];
-        reportTotalQuantity.value = filterBySerial[0].total_quantity;
+        //reportTotalQuantity.value = filterBySerial[0].total_quantity;
         reportOperator.value = filterBySerial[0].operator;
         reportLength.value = filterBySerial[0].length;
         reportWidth.value = filterBySerial[0].width;
@@ -3738,14 +2665,14 @@ const showReportData = async () => {
 
         //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
 
-        reportOvenMachineNo.value = filterBySerial[0].oven_machine_no;
-        reportTimeLoading.value = filterBySerial[0].time_loading;
-        reportTimeUnloading.value = filterBySerial[0].time_unloading;
-        reportTemperature_TimeLoading.value = filterBySerial[0].temp_time_loading;
-        reportTemperature_TimeUnloading.value = filterBySerial[0].temp_time_unloading;
-        reportDate_OvenInfo.value = filterBySerial[0].date_oven_info;
-        reportShift_OvenInfo.value = filterBySerial[0].shift_oven_info;
-        reportOperator_OvenInfo.value = filterBySerial[0].operator_oven_info;
+        reportOvenMachineNo.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].oven_machine_no;
+        reportTimeLoading.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].time_loading;
+        reportTimeUnloading.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].time_unloading;
+        reportTemperature_TimeLoading.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].temp_time_loading;
+        reportTemperature_TimeUnloading.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].temp_time_unloading;
+        reportDate_OvenInfo.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].date_oven_info;
+        reportShift_OvenInfo.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].shift_oven_info;
+        reportOperator_OvenInfo.value = inspectionOvenMachineNo.value === 0 ? 'N/A' : filterBySerial[0].operator_oven_info;
 
 
         reportStdDev.value = filterBySerial[0].std_dev;
@@ -3890,94 +2817,7 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
-        //Coating & Heat Treatment update
-        //COATING ---
-        reportCoatingDate.value = c.date ?? null;
-        reportCoatingMachineNo.value = c.machine_no ?? 'NA';
-        reportCoatingSlurryLotNo.value = c.slurry_lot_no ?? 'NA';
-        reportCoatingLoaderOperator.value = c.loader_operator ?? 'NA';
-        reportCoatingMinTbContent.value = c.min_tb_content ?? 'NA';
-        reportCoatingSampleQuantity.value = c.sample_qty ?? 'NA';
-        reportCoatingTotalMagnetWeight.value = c.total_magnet_weight ?? 'NA';
-        reportCoatingUnloaderOperator.value = c.unloader_operator ?? 'NA';
-        reportCoatingCheckerOperator.value = c.checker_operator ?? 'NA';
-        reportCoatingTimeStart.value = c.time_start ?? null;
-        reportCoatingTimeFinish.value = c.time_finish ?? null;
-        reportCoatingModuleMaximum.value = c.maximum ?? 0;
-        reportCoatingModuleMinimum.value = c.minimum ?? 0;
-        reportCoatingModuleAverage.value = c.average ?? 0;
-        reportCoatingRemarks.value = c.remarks ?? 'NA';
-        const rawDataCoating = (c.coating_data && typeof c.coating_data === 'string')
-            ? JSON.parse(c.coating_data)
-            : {};
-
-        reportCoatingAmounts.value = Array(30).fill(null);
-        reportConcentrationValues.value = Array(30).fill(null);
-
-        for (let i = 0; i < 30; i++) {
-            const index = i + 1;
-            const mLabel = `M${((i % 5) + 1).toString().padStart(2, '0')}`;
-
-            const amountKey = `${index}_${mLabel}_Amount`;
-            const concentrationKey = `${index}_${mLabel}_Concentration`;
-
-            reportCoatingAmounts.value[i] = rawDataCoating[amountKey] ?? null;
-            reportConcentrationValues.value[i] = rawDataCoating[concentrationKey] ?? null;
-        }
-
-        // M06: starts at index 35
-        const M06_START_INDEX = 35;
-
-        for (let i = 0; i < 12; i++) {
-            const groupStart = (Math.floor(i / 2) * 5) + 1;
-            const groupEnd = groupStart + 4;
-            const key = `${groupStart}to${groupEnd}_M06_${i + 1}_Concentration`;
-
-            reportConcentrationValues.value[M06_START_INDEX + i] = rawDataCoating[key] ?? null;
-        }
-
-        modules.forEach((mod) => {
-            const key = mod.name.toLowerCase(); // e.g., "m-01" — KEEP dash
-            mod.new    = rawDataCoating[`add_slurry_${key}_new`]    ?? '';
-            mod.homo   = rawDataCoating[`add_slurry_${key}_homo`]   ?? '';
-            mod.time   = rawDataCoating[`add_slurry_${key}_time`]   ?? '';
-            mod.liters = rawDataCoating[`add_slurry_${key}_liters`] ?? '';
-        });
-
-        //HEAT TREATMENT ---
-
-        reportHTFurnaceMachine.value = ht.furnace_machine ?? 'NA';
-        reportHTCycleNo.value = ht.cycle_no ?? 'NA';
-        reportHTBatchCycleNo.value = ht.batch_cycle_no ?? 'NA';
-        reportHTPatternNo.value = ht.pattern_no ?? 'NA';
-        reportHTDateStart.value = ht.date_start ?? null;
-        reportHTTimeStart.value = ht.time_start ?? null;
-        reportHTLoader.value = ht.loader ?? 'NA';
-        reportHTDateFinish.value = ht.date_finish ?? null;
-        reportHTTimeFinish.value = ht.time_finish ?? null;
-        reportHTUnloader.value = ht.unloader ?? 'NA';
-        reportHTCyclePattern.value = ht.cycle_pattern ?? 'NA';
-        reportHTCurrentPattern.value = ht.current_pattern ?? 'NA';
-        reportHTRemarks.value = ht.remarks ?? 'NA';
-        const rawDataHT = (ht.magnet_box_location && typeof ht.magnet_box_location === 'string')
-            ? JSON.parse(ht.magnet_box_location)
-            : {};
-
-        reportHT_MBLA.value = rawDataHT.box_a ?? 'NA';
-        reportHT_MBLB.value = rawDataHT.box_b ?? 'NA';
-        reportHT_MBLC.value = rawDataHT.box_c ?? 'NA';
-        reportHT_MBLD.value = rawDataHT.box_d ?? 'NA';
-        reportHT_MBLE.value = rawDataHT.box_e ?? 'NA';
-        reportHT_MBLF.value = rawDataHT.box_f ?? 'NA';
-        reportHT_MBLG.value = rawDataHT.box_g ?? 'NA';
-        reportHT_MBLH.value = rawDataHT.box_h ?? 'NA';
-        reportHT_MBLJ.value = rawDataHT.box_j ?? 'NA';
-        reportHT_MBLK.value = rawDataHT.box_k ?? 'NA';
-
-        //End of Coating & Heat Treatment update
-
-
-        //console.log('Entering Evalation for Reject reasons...');
+        console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
@@ -4146,83 +2986,7 @@ const saveReport = async () => {
     }
     //console.log('reportConcentrationValues:', reportConcentrationValues.value.length, reportConcentrationValues.value);
 
-
-    const saveCoatingData = {
-        "serial":currentSerialSelected.value,
-        "date":reportCoatingDate.value,
-        "machine_no":reportCoatingMachineNo.value,
-        "slurry_lot_no":reportCoatingSlurryLotNo.value,
-        "loader_operator":reportCoatingLoaderOperator.value,
-        "min_tb_content":reportCoatingMinTbContent.value,
-        "sample_qty":reportCoatingSampleQuantity.value,
-        "total_magnet_weight":reportCoatingTotalMagnetWeight.value,
-        "unloader_operator":reportCoatingUnloaderOperator.value,
-        "checker_operator":reportCoatingCheckerOperator.value,
-        "time_start":reportCoatingTimeStart.value,
-        "time_finish":reportCoatingTimeFinish.value,
-        "maximum":reportCoatingModuleMaximum.value,
-        "minimum":reportCoatingModuleMinimum.value,
-        "average":reportCoatingModuleAverage.value,
-        "remarks":reportCoatingRemarks.value,
-
-        "coating_data": {
-            ...coatingData,         // structured key-value object
-            ...structuredModules,   // M-01 to M-06 slurry data
-        },
-    }
-    //console.log("Save coating data: ", saveCoatingData);
-    await saveCoating_data(saveCoatingData, currentSerialSelected.value);
-
-    const saveHeatTreatmentData = {
-        "serial": currentSerialSelected.value,
-        "furnace_machine": reportHTFurnaceMachine.value,
-        "cycle_no": reportHTCycleNo.value,
-        "batch_cycle_no": reportHTBatchCycleNo.value,
-        "pattern_no": reportHTPatternNo.value,
-        "date_start": reportHTDateStart.value,
-        "time_start": reportHTTimeStart.value,
-        "loader": reportHTLoader.value,
-        "date_finish": reportHTDateFinish.value,
-        "time_finish": reportHTTimeFinish.value,
-        "unloader": reportHTUnloader.value,
-        "cycle_pattern": reportHTCyclePattern.value,
-        "current_pattern": reportHTCurrentPattern.value,
-        "remarks": reportHTRemarks.value,
-        "magnet_box_location":{
-            "box_a": reportHT_MBLA.value,
-            "box_b": reportHT_MBLB.value,
-            "box_c": reportHT_MBLC.value,
-            "box_d": reportHT_MBLD.value,
-            "box_e": reportHT_MBLE.value,
-            "box_f": reportHT_MBLF.value,
-            "box_g": reportHT_MBLG.value,
-            "box_h": reportHT_MBLH.value,
-            "box_j": reportHT_MBLJ.value,
-            "box_k": reportHT_MBLK.value,
-        },
-    }
-    console.log("Save heat treatment data: ", saveHeatTreatmentData);
-    await saveHeatTreatment_data(saveHeatTreatmentData, currentSerialSelected.value);
-
     await saveReportUpdate(saveReportData, currentSerialSelected.value);
-}
-
-const saveCoating_data = async (coatingData, serial) => {
-    try{
-        const responseCoatingDataPost = await axios.patch(`/api/coating-data/${serial}`,coatingData);
-        //console.log('API PATCH REQUEST COATING DATA: ',responseCoatingDataPost.data);
-    }catch(error){
-        console.error('Error has occured for responseCoatingDataPost: ',error);
-    }
-}
-
-const saveHeatTreatment_data = async (heatTreatmentData, serial) => {
-    try{
-        const responseHeatTreatmentDataPost = await axios.patch(`/api/heat-treatment-data/${serial}`,heatTreatmentData);
-        //console.log('API PATCH REQUEST HEAT TREATMENT DATA: ',responseHeatTreatmentDataPost.data);
-    }catch(error){
-        console.error('Error has occured for responseHeatTreatmentDataPost: ',error);
-    }
 }
 
 const saveReportUpdate = async (saveData, serial) => {
@@ -4250,31 +3014,31 @@ const saveReportUpdate = async (saveData, serial) => {
 
 // Function to fetch serial data
 const fetchSerial = async () => {
-  try {
-    const response = await axios.get("/api/tpmdata");
-    //console.log("API Response fetchSerial-data:", response.data);
+    try {
+        const response = await axios.get("/api/tpmdata");
+        //console.log("API Response fetchSerial-data:", response.data);
 
-    // Grab the raw tpmData object
-    const rawTpmData = response.data.data["tpmData"] || {};
+        // Grab the raw tpmData object
+        const rawTpmData = response.data.data["tpmData"] || {};
 
-    // Assign it to tpmData for future access
-    tpmData.value = rawTpmData;
+        // Assign it to tpmData for future access
+        tpmData.value = rawTpmData;
 
-    // Extract the serial numbers (object keys)
-    serialList.value = Object.keys(rawTpmData);
+        // Extract the serial numbers (object keys)
+        serialList.value = Object.keys(rawTpmData);
 
-    // Sort in descending order
-    serialList.value = serialList.value.sort((a, b) => Number(b) - Number(a));
+        // Sort in descending order
+        serialList.value = serialList.value.sort((a, b) => Number(b) - Number(a));
 
-    // Set default selected serial
-    if (serialList.value.length > 0) {
-      currentSerialSelected.value = serialList.value[0];
+        // Set default selected serial
+        if (serialList.value.length > 0) {
+            currentSerialSelected.value = serialList.value[0];
+        }
+
+        //console.log("Serials ↓", serialList.value);
+    } catch (error) {
+        console.error("Error fetching serial data:", error);
     }
-
-    //console.log("Serials ↓", serialList.value);
-  } catch (error) {
-    console.error("Error fetching serial data:", error);
-  }
 };
 // Fetching the serial start end
 
@@ -4282,16 +3046,22 @@ const fetchSerial = async () => {
 const props = defineProps({
   serialParam: String,  // Expecting the serialParam to be a string
   filterStatus: String,
+  filterStatus_checked: String,
   ipAddress: String,
   fromApproval: [Boolean, String],
   fromViewList: [Boolean, String],
+  fromApproval_checked: [Boolean, String],
+  fromApproval_prepared: [Boolean, String],
 });
 // Update value after props are available
 isFromApproval.value = props.fromApproval === true || props.fromApproval === 'true';
+isFromApproval_checked.value = props.fromApproval_checked === true || props.fromApproval_checked === 'true';
+isFromApproval_prepared.value = props.fromApproval_prepared === true || props.fromApproval_prepared === 'true';
 isFromViewList.value = props.fromViewList === true || props.fromViewList === 'true';
 //console.log('isFromApproval:', isFromApproval.value);
 ipAddress.value = props.ipAddress;
 filterStatus.value = props.filterStatus;
+filterStatus_checked.value = props.filterStatus_checked;
 
 if(ipAddress.value === '127.0.0.1'){
     onTestServer.value = true;
@@ -4299,11 +3069,11 @@ if(ipAddress.value === '127.0.0.1'){
 //console.log('Current IP address is:', props.ipAddress); // You can use this for debugging
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
 
-const viewPropertyData = (serial) => {
+const viewPropertyData = (serial, massprod, layer) => {
   //console.log('Navigating to manage with serial:', serial);
   Inertia.visit('/manage', {
-    method: 'get',   // You can keep 'get' since we are not modifying any data
-    data: { manageSerialParam: serial },   // Passing the serialParam here
+    method: 'get',
+    data: { manageSerialParam: serial, manageMassProd: massprod, manageLayer: layer },   // Passing the serialParam here
     preserveState: true,
     preserveScroll: true,
   });
@@ -4472,12 +3242,12 @@ const checkApprovalStates = async () => {
         approvedByPerson_firstName.value = approved_by_firstname ?? '';
         approvedByPerson_lastName.value = approved_by_surname ?? '';
 
-        if((state.user.access_type) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')){
+        if((state.user.access_type) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Automation')){
             preparedByButton.value = true;
             showPreparedByDefault.value = false;
         }
 
-        if((state.user.access_type) && (prepared_by_firstname) && (state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver')){
+        if((state.user.access_type) && (prepared_by_firstname) && (state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Automation')){
             checkedByButton.value = true;
             showCheckedByDefault.value = false;
         }
@@ -4607,12 +3377,12 @@ const finalizeReport = async (serial) => {
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, '_blank');
 };
 
-const sec_additional_redirect = (sec_serial) => {
+const sec_additional_redirect = (sec_serial, sec_massprod, sec_layer) => {
     try {
         //console.log('Navigating to report with serial:', sec_serial);
         Inertia.visit('/sec_additional', {
             method: 'get',
-            data: { sec_serialParam: sec_serial },
+            data: { sec_serialParam: sec_serial, sec_massProd: sec_massprod, sec_layer: sec_layer },
             preserveState: true,
             preserveScroll: true,
             onError: (errors) => {
@@ -4640,12 +3410,32 @@ const backToApprovalFunction = () => {
     });
 };
 
+const backToApprovalFunction_checked = () => {
+    //console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/approval_checked', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { filterStatus_checked: filterStatus_checked.value, fromReports: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
+const backToApprovalFunction_prepared = () => {
+    //console.log('Navigating to report with serial:', serial);
+    Inertia.visit('/approval_prepared', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { fromReports: true },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
-    if (props.serialParam && props.fromApproval || props.fromViewList) {
+    if (props.serialParam && props.fromApproval || props.serialParam && props.fromApproval_checked || props.serialParam && props.fromApproval_prepared || props.fromViewList) {
         await checkAuthentication();
         await checkApprovalStates();
         currentSerialSelected.value = props.serialParam;

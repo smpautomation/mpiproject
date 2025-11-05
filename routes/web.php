@@ -15,8 +15,18 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-Route::get('/', [FrontendController::class,'index'])->name('homePage');
+Route::get('/mpi-online-system', [FrontendController::class,'index'])->name('homePage');
+Route::get('/', function(){
+    return redirect('/mpi-online-system');
+});
 Route::get('/view', [FrontendController::class,'viewList'])->name('viewList');
+Route::get('/massprod', [FrontendController::class,'massprod'])->name('massprod');
+Route::get('/control_sheet', [FrontendController::class,'controlSheet'])->name('control_sheet');
+Route::get('/htgraph', [FrontendController::class,'htgraph'])->name('htgraph');
+Route::get('/ht_graph_patterns', [FrontendController::class,'heatTreatmentGraphPatterns'])->name('htgraph_patterns');
+Route::get('/smpdata', [FrontendController::class,'smpData'])->name('smpdata');
+Route::get('/mass_prod_monitoring',[FrontendController::class, 'massProdMonitoring'])->name('mass_prod_monitoring');
+Route::get('/heat_treatment', [FrontendController::class, 'heatTreatment'])->name('heat_treatment');
 Route::get('/manage', [FrontendController::class,'manage'])->name('manage');
 Route::get('/inspection', [FrontendController::class,'inspection'])->name('inspection');
 Route::get('/reports', [FrontendController::class,'reports'])->name('reports');
@@ -26,8 +36,17 @@ Route::get('/data_ins', [FrontendController::class,'data_ins'])->name('data_ins'
 Route::get('/create_pdf', [FrontendController::class,'generatePdf'])->name('create_pdf');
 Route::get('/sec_additional', [FrontendController::class,'sec_additional'])->name('sec_additional');
 Route::get('/email_form', [FrontendController::class,'emailForm'])->name('email');
+Route::get('/email_form_manual', [FrontendController::class,'emailFormManual'])->name('email_form_manual');
 Route::get('/mias_factor', [FrontendController::class,'mias_factor'])->name('mias_factor');
 Route::get('/instructions', [FrontendController::class,'instructions'])->name('instructions');
+Route::get('/coating', [FrontendController::class,'coating'])->name('coating');
+Route::get('/furnace', [FrontendController::class,'furnace'])->name('furnace');
+Route::get('/second_gbdp_models', [FrontendController::class,'second_gbdp_models'])->name('second_gbdp_models');
+Route::get('/view_second_gbdp', [FrontendController::class,'viewSecondGbdp'])->name('view_second_gbdp');
+Route::get('/second_heat_treatment', [FrontendController::class,'second_heat_treatment'])->name('second_heat_treatment');
+Route::get('/film_pasting', [FrontendController::class,'filmPasting'])->name('film_pasting');
+Route::get('/approval_checked', [FrontendController::class,'approval_checked'])->name('approval_checked');
+Route::get('/approval_prepared', [FrontendController::class,'approval_prepared'])->name('approval_prepared');
 
 Route::get('/generate-pdf', [PdfController::class, 'generate']);
 
@@ -122,9 +141,12 @@ Route::get('/reports/{serial}/pdf', [BackEndPdfController::class, 'generateAndMe
     ->where('serial', '[A-Za-z0-9\-\s#]+');
 
 Route::post('/upload-chart', [ChartUploadController::class, 'store']);
+Route::post('/upload-chart-sec', [ChartUploadController::class, 'storeSecondary']);
 
 Route::get('/debug-export', function () {
-    return app(\App\Services\TxtExportService::class)->exportData2('K40', '541ST');
-}); 
+    return app(\App\Services\TxtExportService::class)->exportData3('K40', '567th');
+});
+
+
 
 require __DIR__.'/auth.php';

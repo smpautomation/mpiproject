@@ -6,10 +6,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use iio\libmergepdf\Merger;
 use App\Models\ReportData;
 use App\Models\Coating;
-use App\Models\HeatTreatment;
+use App\Models\MassProduction;
+use App\Models\GbdpSecondCoating;
+use App\Models\GbdpSecondHeatTreatment;
+use App\Models\FilmPastingData;
 use App\Models\TPMDataCategory;
 use App\Models\TPMData;
 use App\Models\TPMDataAggregateFunctions;
+use App\Models\NormalSecAdditionals;
+use App\Models\NSAAggregateFunctions;
+use App\Models\NSACategory;
 use App\Models\VtModel;
 use App\Models\CpkIhcModel;
 use App\Models\GxModel;
@@ -64,30 +70,6 @@ class BackEndPdfController extends Controller
             $ihkVariance = $magneticProperty['ihkMaximum'] - $magneticProperty['ihkMinimum'];
         }
 
-        $coatingData = Coating::where('serial', $serial)->first();
-        if(!$coatingData) {
-            return response()->json([
-                'status' => false,
-                'message' => "Coating Data with serial: {$serial} not found",
-            ], 404);
-        }
-
-        $HTData = HeatTreatment::where('serial', $serial)->first();
-        if (!$HTData) {
-            return response()->json([
-                'status' => false,
-                'message' => "Heat Treatment Data with serial: {$serial} not found",
-            ], 404);
-        }
-
-        $MBL = json_decode($HTData->magnet_box_location, true);
-        if (!$MBL) {
-            return response()->json([
-                'status' => false,
-                'message' => "Magnet Box Location for serial: {$serial} is invalid or missing",
-            ], 404);
-        }
-
         $preparedByDate = null;
         $checkedByDate = null;
         $approvedByDate = null;
@@ -140,14 +122,6 @@ class BackEndPdfController extends Controller
             return $aPriority - $bPriority;
         });
 
-        $coatingDetails = json_decode($coatingData->coating_data, true);
-        if (!$coatingDetails) {
-            return response()->json([
-                'status' => false,
-                'message' => "Coating Data for serial: {$serial} is invalid or missing",
-            ], 404);
-        }
-
         $tpmCategories = TPMDataCategory::where('tpm_data_serial', $serial)->first();
         $tpmData = TPMData::where('serial_no', $serial)->first();
         if (!$tpmCategories || !$tpmData) {
@@ -156,13 +130,106 @@ class BackEndPdfController extends Controller
                 'message' => "TPM Data for serial: {$serial} is invalid or missing",
             ], 404);
         }
-        $tpmDataAll = TPMData::with('remark')->where('serial_no', $serial)->get();
+        $tpmDataAll = TPMData::with('remark')
+            ->where('serial_no', $serial)
+            ->orderBy('zone', 'asc') // ensure zone order is consistent
+            ->get();
         if ($tpmDataAll->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => "TPM Data for serial: {$serial} is invalid or missing",
             ], 404);
         }
+        //dd($tpmDataAll);
+
+        $massprod = $tpmData->mass_prod;
+        $layer = $tpmData->layer_no;
+
+        $massProdData = MassProduction::where('mass_prod', $massprod)->first();
+        if (!$massProdData) {
+            return response()->json([
+                'status' => false,
+                'message' => "MassProduction record not found for mass_prod: {$massprod}"
+            ], 404);
+        }
+
+        // Build column name dynamically
+        $columnLayerData = 'layer_' . str_replace('.', '_', $layer);
+        $columnLayerFormat = 'layer_' . str_replace('.', '_', $layer) . '_format_type';
+        //dd($columnLayerFormat);
+        // Fetch the value safely
+        $gbdp_report_format_type = $massProdData->$columnLayerFormat ?? null;
+        $control_sheet_data = $massProdData->$columnLayerData ?? null;
+
+        if (!$gbdp_report_format_type) {
+            return response()->json([
+                'status' => false,
+                'message' => "No format type found for layer: {$layer}"
+            ], 404);
+        }
+
+        // Decode JSON string
+        $controlSheetArray = json_decode($control_sheet_data, true);
+        if (!$controlSheetArray) {
+            return response()->json([
+                'status' => false,
+                'message' => "Control sheet data is invalid"
+            ], 404);
+        }
+
+        // Map rowTitles to clean variable names
+        $cs = [];
+        foreach ($controlSheetArray as $row) {
+            $title = strtolower($row['rowTitle']);            // lowercase
+            $title = preg_replace('/[^a-z0-9]+/', '_', $title); // replace non-alphanumeric with _
+            $title = trim($title, '_');                        // remove trailing/leading underscores
+            $cs[$title] = $row['data'];
+        }
+
+        // Create variables dynamically
+        foreach ($cs as $key => $value) {
+            ${"cs_{$key}"} = $value;
+        }
+
+        //Coating data --------------- Coating data --------------- Coating data --------------- Coating data
+        $coatingData = Coating::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+
+        $coatingDataJson = $coatingData->coating_data ?? null;
+        $coatingDataValues = json_decode($coatingDataJson, true);
+
+        //Coating data --------------- Coating data --------------- Coating data --------------- Coating data End
+
+        //Film Pasting --------------- Film Pasting --------------- Film Pasting --------------- Film Pasting
+
+        $filmPastingData = FilmPastingData::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+        $filmPastingHLineValues = $filmPastingData->h_line_parameters ?? null;
+        $filmPastingTLineValues = $filmPastingData->t_line_parameters ?? null;
+
+        //Film Pasting --------------- Film Pasting --------------- Film Pasting --------------- Film Pasting End
+
+        //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp
+
+        $secondGbdpCoatingData = GbdpSecondCoating::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+        /*$secondGbdpHTData = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+        if (!$secondGbdpHTData) {
+            return response()->json([
+                'status' => false,
+                'message' => "Second GBDP Heat Treatment record not found for mass_prod: {$massprod} or layer: {$layer}"
+            ], 404);
+        }*/
+
+        //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp End
 
         $onlyFurnacePrefix = explode('-', $tpmData->sintering_furnace_no)[0] ?? null;
         $onlyFurnacePostfix = explode('-', $tpmData->sintering_furnace_no)[1] ?? null;
@@ -237,18 +304,87 @@ class BackEndPdfController extends Controller
         }
         //dd($show1x1x1Data_Corner);
 
+        //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals
+        $nsaData = NormalSecAdditionals::where('serial_no', $serial)->first();
+
+        // group rows by set_no (ordered)
+        $nsaGroups = NormalSecAdditionals::where('serial_no', $serial)
+            ->orderBy('set_no')
+            ->get()
+            ->groupBy('set_no'); // collection keyed by set_no
+
+        $nsaAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial)
+            ->get()
+            ->keyBy('nsa_set'); // now keyed by set number
+
+        // Directly assign aggregates from DB, no computation
+        $nsaAggregates = [];
+        // --- NSA chart filenames setup ---
+        $nsaChartFilenames = [];
+
+        foreach ($nsaGroups as $setNo => $rows) {
+            $chartFile = "chart_{$serial}_set{$setNo}.png";
+            $chartPath = public_path("sec_charts/{$chartFile}");
+
+            $nsaChartFilenames[$setNo] = file_exists($chartPath) ? $chartFile : null;
+
+            if (isset($nsaAggregateFunctions[$setNo])) {
+                $func = $nsaAggregateFunctions[$setNo];
+                $nsaAggregates[$setNo]['average'] = json_decode($func->average, true) ?? [];
+                $nsaAggregates[$setNo]['max']     = json_decode($func->maximum, true) ?? [];
+                $nsaAggregates[$setNo]['min']     = json_decode($func->minimum, true) ?? [];
+            } else {
+                $nsaAggregates[$setNo]['average'] = [];
+                $nsaAggregates[$setNo]['max']     = [];
+                $nsaAggregates[$setNo]['min']     = [];
+            }
+        }
+
+        $nsaCategory = NSACategory::where('nsa_serial', $serial)->first();
+
+        $nsa_onlyFurnacePrefix  = isset($nsaData->sintering_furnace_no) ? explode('-', $nsaData->sintering_furnace_no)[0] ?? null : null;
+        $nsa_onlyFurnacePostfix = isset($nsaData->sintering_furnace_no) ? explode('-', $nsaData->sintering_furnace_no)[1] ?? null : null;
+
+        // how many sets we have
+        $nsaSetCount = $nsaGroups->count();
+        //dd($nsaChartFilenames);
+        //dd($nsaAggregateMaximum);
+
+        //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals End
 
         $data = [
+            'massProd' => $massprod,
+            'layer' => $layer,
             'serial' => $serial,
             'chartFilename' => $chartFilename, // pass to Blade
+            'nsaChartFilenames' => $nsaChartFilenames, // per-NSA-set charts
             'reportData' => $reportData, // pass report data to Blade
             'magneticProperty' => $magneticProperty,
             'brBounds' => $brBounds,
             'brVariance' => $brVariance,
             'ihcVariance' => $ihcVariance,
             'ihkVariance' => $ihkVariance,
-            'coatingData' => $coatingData, // pass coating data to Blade
-            'heatTreatmentData' => $HTData, // pass heat treatment data to Blade
+            'coatingData' => $coatingData ?? null, // pass coating data to Blade
+            'coatingDataValues' => $coatingDataValues ?? null,
+            'secondGbdp2ndCoatingData' => $secondGbdpCoatingData['coating_data_2ndgbdp'] ?? null,
+            'secondGbdp2ndCoatingInfo' => $secondGbdpCoatingData['coating_info_2ndgbdp'] ?? null,
+            'secondGbdpCoatingData' => $secondGbdpCoatingData ?? null,
+            'heatTreatmentData' => $massProdData, // pass heat treatment data to Blade
+            'filmPastingData' => $filmPastingData ?? null,
+            'filmPastingHLine' => $filmPastingHLineValues ?? null,
+            'filmPastingTLine' => $filmPastingTLineValues ?? null,
+            'controlModel' => $cs_model,
+            'controlCoatingMCNo' => $cs_coating_m_c_no,
+            'controlLotNo' => $cs_lt_no,
+            'controlQty' => $cs_qty_pcs,
+            'controlHt' => $cs_ht_pcs,
+            'controlLt' => $cs_lt_pcs,
+            'controlCoating' => $cs_coating,
+            'controlWeight' => $cs_wt_kg,
+            'controlBoxNo' => $cs_box_no,
+            'controlMagnetPreparedBy' => $cs_magnet_prepared_by,
+            'controlBoxPreparedBy' => $cs_box_prepared_by,
+            'controlTotalQty' => $cs_total_qty,
             'preparedByDate' => $preparedByDate, // pass prepared by
             'checkedByDate' => $checkedByDate, // pass checked by date
             'approvedByDate' => $approvedByDate, // pass approved by date
@@ -259,11 +395,13 @@ class BackEndPdfController extends Controller
             'approvedFirstFontSize' => $approvedFirstFontSize, // pass font size for approved first name
             'approvedLastFontSize' => $approvedLastFontSize, // pass font size for
             'noteReasonsSorted' => $noteReasonRaw, // pass sorted note reasons
-            'coatingDetails' => $coatingDetails, // pass coating details
+            //'coatingDetails' => $coatingDetails, // pass coating details
             'tpmCat' => $tpmCategories, // pass TPM categories
             'tpmData' => $tpmData, // pass single TPM data
             'tpmDataAll' => $tpmDataAll, // pass all TPM data
-            'magnetBoxLocation' => $MBL, // pass magnet box location
+            'miasEmp' => $massProdData->mias_emp,
+            'factorEmp' => $massProdData->factor_emp,
+            //'magnetBoxLocation' => $MBL, // pass magnet box location
             'reportDate' => $reportDate ?? null, // pass report date
             'sinteringFurnaceNo' => $onlyFurnacePrefix, // pass only furnace prefix
             'sinteringNo' => $onlyFurnacePostfix, // pass only furnace postfix
@@ -289,12 +427,38 @@ class BackEndPdfController extends Controller
                 'rob' => $dROB,
                 'd1x1x1' => $d1x1x1,
             ],
+            'nsaData'       => $nsaData,
+            'nsaGroups'     => $nsaGroups,
+            'nsaAggregates' => $nsaAggregates,
+            'nsaSetCount'   => $nsaSetCount,
+            'nsaCategory'   => $nsaCategory,
+            'nsa_sinteringFurnaceNo' => $nsa_onlyFurnacePrefix, // pass only furnace prefix
+            'nsa_sinteringNo' => $nsa_onlyFurnacePostfix, // pass only furnace postfix
+            'nsa_mias' => $nsaCategory->mias_emp ?? null,
+            'nsa_factor' => $nsaCategory->factor_emp ?? null,
         ];
 
-        $portrait = Pdf::loadView('pdf.report_page1_portrait', $data)
+        // Decide which portrait view to use
+        switch ($gbdp_report_format_type) {
+            case 'Normal':
+                $portraitView = 'pdf.report_page1_portrait';
+                break;
+            case 'Film Pasting':
+                $portraitView = 'pdf.report_page1_filmpasting_portrait';
+                break;
+            case '1st and 2nd Gbdp':
+                $portraitView = 'pdf.report_page1_second_gbdp_portrait';
+                break;
+            default:
+                throw new \Exception("Unknown report format type: {$gbdp_report_format_type}");
+        }
+
+        // Generate portrait
+        $portrait = Pdf::loadView($portraitView, $data)
             ->setPaper('a4', 'portrait')
             ->output();
 
+        // Landscape stays the same
         $landscape = Pdf::loadView('pdf.report_page2_landscape', $data)
             ->setPaper('a4', 'landscape')
             ->output();
@@ -302,12 +466,25 @@ class BackEndPdfController extends Controller
         $merger = new Merger();
         $merger->addRaw($portrait);
         $merger->addRaw($landscape);
+
+
+        // Conditionally add secondary landscape page if NSA data exists
+        if ($nsaData) {
+            $secLandscape = Pdf::loadView('pdf.report_page2_sec_additional_landscape', $data)
+                ->setPaper('a4', 'landscape')
+                ->output();
+            $merger->addRaw($secLandscape);
+        }
+
+
         $mergedPdf = $merger->merge();
 
-        $massProd = $tpmCategories->massprod_name ?? 'unknown';
-        $rawFilename = "({$reportData->smp_judgement}) {$tpmCategories->actual_model} Lot No {$tpmCategories->jhcurve_lotno}";
+        $massProd = $massprod ?? 'unknown';
+        $furnace = str_replace('-', '', $massProdData->furnace);
+        $rawFilename = "({$reportData->smp_judgement}) {$cs_model['A']} Lot No {$cs_lt_no['A']}";
+        //dd($rawFilename);
 
-        $savedPath = $this->saveMergedPdf($massProd, $rawFilename, $mergedPdf);
+        $savedPath = $this->saveMergedPdf($massprod, $rawFilename, $mergedPdf, $furnace);
 
         return response($mergedPdf, 200)
             ->header('Content-Type', 'application/pdf')
@@ -336,14 +513,15 @@ class BackEndPdfController extends Controller
         };
     }
 
-    private function saveMergedPdf(string $massProd, string $rawFilename, string $pdfContent): string
+    private function saveMergedPdf(string $massProd, string $rawFilename, string $pdfContent, string $furnace): string
     {
         $massProd = preg_replace('/[^A-Za-z0-9\-\s#]/', '_', $massProd);
         $safeBaseName = preg_replace('/[^A-Za-z0-9\-\s\(\)#]/', '_', $rawFilename);
         $safeBaseName = preg_replace('/[\/\s]+/', '_', $safeBaseName);
 
         $fileName = $safeBaseName . '.pdf';
-        $destinationPath = public_path("files/{$massProd}");
+        $destinationPath = public_path("files/{$furnace} {$massProd}");
+        //dd($destinationPath);
 
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);
