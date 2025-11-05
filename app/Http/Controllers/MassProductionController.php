@@ -25,7 +25,7 @@ class MassProductionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'mass_prod' => 'required|string|unique:mass_productions,mass_prod',
+            'mass_prod' => 'nullable|string',
             'furnace' => 'nullable|string',
             'batch_cycle_no' => 'nullable|string',
             'machine_no' => 'nullable|string',
