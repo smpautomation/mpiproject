@@ -27,7 +27,18 @@
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
 
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
+                        <div class="relative">
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
+                            <select
+                                v-model="mpcs.selectedFurnace"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            >
+                                <option v-for="item in furnace_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
                         <div class="relative">
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
                             <select
@@ -801,6 +812,7 @@ const actualGraphFile = ref(null);
 const actualGraphPreview = ref(null);
 const showModalCreate = ref(false);
 const initialFurnaceData = ref();
+const furnace_names = ref([]);
 const massProd_names = ref([]);
 const model_names = ref([]);
 const graph_patterns = ref([]);
@@ -849,6 +861,7 @@ watch(
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
 
 const mpcs = reactive({
+    selectedFurnace: '',
     selectedMassProd: '',
     selectedLayer: '1',
     selectedBoxEndList: 'K',
@@ -970,6 +983,18 @@ const getMassProdLists = async () => {
         const massProdList = response.data;
         massProd_names.value = massProdList.map(item => item.mass_prod);
         //console.log("List of mass prods: ",massProd_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
+const getFurnaceLists = async () => {
+    try{
+        const response = await axios.get('/api/furnace-data');
+        const furnaceList = response.data;
+        furnace_names.value = furnaceList.map(item => item.furnace_name);
+        //console.log("List of mass prods: ",furnace_names.value);
     }catch(error){
         console.error('Error fetching mass prod lists',error);
         toast.error('Failed to get the mass prod lists api error');
@@ -1361,6 +1386,7 @@ onMounted(async () => {
     if (!isAuthenticated) {
         return; // Stop execution if not authenticated
     }
+    await getFurnaceLists();
     await getMassProdLists();
     await getModelLists();
     await getGraphPatterns();
