@@ -91,10 +91,12 @@ class FrontendController extends Controller
 
     public function second_heat_treatment(Request $request){
 
+        $furnace = $request->get('furnace');
         $massProd = $request->get('massProd');
         $layer = $request->get('layer');
 
         return Inertia::render('Frontend/Second_Heat_Treatment',[
+            'furnace' => $furnace,
             'massProd' => $massProd,
             'layer' => $layer,
         ]);

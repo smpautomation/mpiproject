@@ -1313,6 +1313,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
     const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5_format_type' : `layer_${mpcs.selectedLayer}_format_type`;
 
     const dataPayload = {
+        furnace: mpcs.selectedFurnace,
         mass_prod: mpcs.selectedMassProd,
         [layerKey]: 'Normal',
     }
@@ -1359,7 +1360,7 @@ const uploadGraphs = async () => {
 const second_heat_treatment = () => {
     Inertia.visit('/second_heat_treatment', {
         method: 'get',   // You can keep 'get' since we are not modifying any data
-        data: { massProd: mpcs.selectedMassProd, layer: mpcs.selectedLayer },   // Passing the serialParam here
+        data: { furnace: mpcs.selectedFurnace, massProd: mpcs.selectedMassProd, layer: mpcs.selectedLayer },   // Passing the serialParam here
         preserveState: true,
         preserveScroll: true,
     });

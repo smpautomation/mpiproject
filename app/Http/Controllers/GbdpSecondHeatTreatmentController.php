@@ -19,7 +19,8 @@ class GbdpSecondHeatTreatmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'mass_prod' => 'required|string|max:255',
+            'furnace' => 'nullable|string|max:255',
+            'mass_prod' => 'nullable|string|max:255',
             'layer'     => 'nullable|numeric',
             'gbdp_1st'  => 'nullable|array',
             'gbdp_2nd'  => 'nullable|array',

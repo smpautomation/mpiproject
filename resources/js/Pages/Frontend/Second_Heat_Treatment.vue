@@ -42,8 +42,8 @@
                             >
                                 Auto Fetch
                             </button>
-                            <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="Enter Mass Production name..." class="ml-5 w-[12rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                            <input v-model="selectedLayer_fetch" type="number" placeholder="Enter Layer number..." class="ml-5 w-[9rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="selectedFurnace_fetch" type="text" @input="selectedFurnace_fetch = selectedFurnace_fetch.toUpperCase()" placeholder="e.g. K-40 (furnace)" class="ml-5 w-[8rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="e.g. 101ST (mass prod)" class="ml-5 w-[9.5rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         </div>
                     </div>
@@ -61,7 +61,15 @@
                         <div class="mt-1 h-1 w-40 rounded-full bg-gradient-to-r from-teal-500 to-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]"></div>
                         </div>
                         <!-- Body -->
-                        <div class="flex flex-row space-x-10">
+                        <div class="flex flex-row space-x-5">
+                            <div>
+                                <label class="block mb-1 text-xs font-semibold text-gray-700">
+                                    Selected Furnace
+                                </label>
+                                <span class="px-2 py-1 text-sm font-semibold text-teal-700 border border-teal-200 rounded-md shadow-sm bg-teal-50">
+                                    {{ selectedFurnace }}
+                                </span>
+                            </div>
                             <div>
                                 <label class="block mb-1 text-xs font-semibold text-gray-700">
                                     Selected Mass Prod
@@ -439,6 +447,8 @@ const heatTreatmentInformationDetected = ref(false);
 const showModalCreate = ref(false);
 const selectedLayer_fetch = ref();
 const selectedMassProd_fetch = ref();
+const selectedFurnace_fetch = ref();
+const selectedFurnace = ref();
 const selectedMassProd = ref();
 const fetchedMassProdData = ref(null);
 const selectedLayer = ref();
@@ -530,7 +540,7 @@ const get1st2ndGBDPModels = async () => {
 
 const getCurrentMassProdData = async () => {
     try{
-        const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+        const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`);
         const massProdData = response.data;
         if (!massProdData) {
             toast.error(`No data found for Mass Production: ${selectedMassProd.value}`);
@@ -554,23 +564,24 @@ const getCurrentMassProdData = async () => {
     }
 }
 
-const props = defineProps(['massProd', 'layer']);
+const props = defineProps(['furnace','massProd', 'layer']);
+selectedFurnace.value = props.furnace;
 selectedMassProd.value = props.massProd;
 selectedLayer.value = props.layer;
 
 // Trigger Based Fetching below ----- Trigger Based Fetching below ----- Trigger Based Fetching below
 
 const autoFetch = async () => {
+    if(!selectedFurnace_fetch.value){
+        toast.error("Please enter Mass Production name to fetch data.");
+        return;
+    }
     if(!selectedMassProd_fetch.value){
         toast.error("Please enter Mass Production name to fetch data.");
         return;
     }
-    if(!selectedLayer_fetch.value){
-        toast.error("Please enter layer number to fetch data.");
-        return;
-    }
     try{
-        const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd_fetch.value}`);
+        const response = await axios.get(`/api/mass-production/${selectedFurnace_fetch.value}/${selectedMassProd_fetch.value}`);
         const massProdData = response.data;
         if (!massProdData) {
             toast.error(`No data found for Mass Production: ${selectedMassProd_fetch.value}`);
@@ -642,6 +653,7 @@ const saveToDatabase = async () => {
 
     // Base payload
     const dataPayload = {
+        furnace: selectedFurnace.value,
         mass_prod: selectedMassProd.value,
         layer: selectedLayer.value,
         gbdp_1st: {
@@ -693,12 +705,13 @@ const updateFormatType = async () => { // Update format type of Mass Productions
     const layerKey = selectedLayer.value === '9.5' ? 'layer_9_5_format_type' : `layer_${selectedLayer.value}_format_type`;
 
     const dataPayload = {
+        furnace: selectedFurnace.value,
         mass_prod: selectedMassProd.value,
         [layerKey]: '1st and 2nd Gbdp',
     }
 
     try{
-        const responseUpdate = await axios.patch(`/api/mass-production/${selectedMassProd.value}`, dataPayload);
+        const responseUpdate = await axios.patch(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`, dataPayload);
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
@@ -717,11 +730,11 @@ onMounted(async () => {
     if (!isAuthenticated) {
         return; // Stop execution if not authenticated
     }
-    await getMassProdLists();
+    //await getMassProdLists();
     await getFurnaceLists();
     await getGraphPatterns();
     await getCurrentMassProdData();
-    await get1st2ndGBDPModels();
+    //await get1st2ndGBDPModels();
 });
 
 </script>
