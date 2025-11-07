@@ -289,10 +289,11 @@ Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreat
 Route::get('/second-ht-data/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
 Route::get('/second-coating-data/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
 
-Route::get('/mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'getByMassProd']);
+Route::get('/mass-production/{furnace}/{massprod}', [MassProductionController::class, 'getByFurnaceAndMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
-Route::patch('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'updateByMassProd']);
-Route::post('mass-production/by-mass-prod/{massprod}',[MassProductionController::class, 'uploadGraphs']);
+Route::patch('/mass-production/{furnace}/{massprod}', [MassProductionController::class, 'updateByFurnaceAndMassProd']);
+
+Route::post('/mass-production/{furnace}/{massprod}/upload-graphs', [MassProductionController::class, 'uploadGraphs']);
 
 Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 'apiGenerateAndSave']);
 
@@ -313,41 +314,49 @@ Route::get('/approve-list-prepared', [ReportDataController::class, 'getViewListP
 
 Route::get('/mass-production-monitoring/{massprod}', [MassProductionController::class, 'massProductionMonitoring']);
 
-Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
-    [MassProductionController::class, 'getLayerModel']);
+//Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
+    //[MassProductionController::class, 'getLayerModel']);
+Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}', [MassProductionController::class, 'getLayerModel']);
 
-Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
-[MassProductionController::class, 'getLayerLotno']);
+//Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
+//[MassProductionController::class, 'getLayerLotno']);
+Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}/lotno', [MassProductionController::class, 'getLayerLotno']);
 
-Route::get(
-    '/mass-productions/{massprod}/completed-layers',
-    [MassProductionController::class, 'getAllHTCompletedLayers']
-);
+//Route::get(
+//    '/mass-productions/{massprod}/completed-layers',
+//    [MassProductionController::class, 'getAllHTCompletedLayers']
+//);
+Route::get('/mass-production/{furnace}/{massprod}/completed-layers', [MassProductionController::class, 'getAllHTCompletedLayers']);
 
-Route::get(
-    '/mass-productions/{massprod}/coating-completed-layers',
-    [MassProductionController::class, 'getAllCoatingCompleteLayers']
-);
+//Route::get(
+//    '/mass-productions/{massprod}/coating-completed-layers',
+//    [MassProductionController::class, 'getAllCoatingCompleteLayers']
+//);
+Route::get('/mass-production/{furnace}/{massprod}/coating-complete-layers', [MassProductionController::class, 'getAllCoatingCompleteLayers']);
 
-Route::get(
-    '/mass-productions/{massprod}/filmpasting-completed-layers',
-    [MassProductionController::class, 'getAllFilmPastingCompletedLayers']
-);
+//Route::get(
+//    '/mass-productions/{massprod}/filmpasting-completed-layers',
+//    [MassProductionController::class, 'getAllFilmPastingCompletedLayers']
+//);
+Route::get('/mass-production/{furnace}/{massprod}/film-pasting-completed-layers', [MassProductionController::class, 'getAllFilmPastingCompletedLayers']);
 
-Route::get(
-    '/mass-productions/{massprod}/second-ht-completed-layers',
-    [MassProductionController::class, 'getAllSecondHTCompletedLayers']
-);
+//Route::get(
+//    '/mass-productions/{massprod}/second-ht-completed-layers',
+//    [MassProductionController::class, 'getAllSecondHTCompletedLayers']
+//);
+Route::get('/mass-production/{furnace}/{massprod}/second-ht-completed-layers', [MassProductionController::class, 'getAllSecondHTCompletedLayers']);
 
-Route::get(
-    '/mass-productions/{massprod}/layer-by-serial/{serial}',
-    [MassProductionController::class, 'getLayerDataBySerial']
-);
+//Route::get(
+//    '/mass-productions/{massprod}/layer-by-serial/{serial}',
+//   [MassProductionController::class, 'getLayerDataBySerial']
+//);
+Route::get('/mass-production/{furnace}/{massprod}/layer-by-serial/{serial}', [MassProductionController::class, 'getLayerDataBySerial']);
 
-Route::get(
-    '/mass-productions/{massprod}/layer-by-layerno/{layer}',
-    [MassProductionController::class, 'getLayerDataByLayerNo']
-);
+//Route::get(
+//    '/mass-productions/{massprod}/layer-by-layerno/{layer}',
+//    [MassProductionController::class, 'getLayerDataByLayerNo']
+//);
+Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}', [MassProductionController::class, 'getLayerDataByLayerNo']);
 
 Route::get('/mass-productions/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
 

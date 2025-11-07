@@ -298,7 +298,7 @@ const itemsPerPage = 5;
 const getMassProdData = async() => {
     const responseMassProd = await axios.get('/api/mass-production');
     massProd_list.value = responseMassProd.data;
-    //console.log(massProd_list.value);
+    console.log(massProd_list.value);
 }
 
 const getFurnaceLists = async() => {

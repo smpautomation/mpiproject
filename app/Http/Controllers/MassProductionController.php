@@ -12,6 +12,7 @@ use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\SmpData;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 
@@ -19,13 +20,26 @@ class MassProductionController extends Controller
 {
     public function index()
     {
-        return MassProduction::orderBy('created_at', 'desc')->get();
+        return MassProduction::whereIn('id', function ($query) {
+                $query->selectRaw('MAX(id)')
+                    ->from('mass_productions')
+                    ->whereNotNull('mass_prod')
+                    ->groupBy('mass_prod');
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'mass_prod' => 'nullable|string',
+            'mass_prod' => [
+                'nullable',
+                'string',
+                Rule::unique('mass_productions')->where(function ($query) use ($request) {
+                    return $query->where('furnace', $request->furnace);
+                }),
+            ],
             'furnace' => 'nullable|string',
             'batch_cycle_no' => 'nullable|string',
             'machine_no' => 'nullable|string',
@@ -87,19 +101,28 @@ class MassProductionController extends Controller
         return MassProduction::create($validated);
     }
 
+
     public function show($id)
     {
         return MassProduction::findOrFail($id);
     }
 
-    public function update(Request $request, $massProd)
+    public function update(Request $request, $furnace, $massProd)
     {
-        // Find the record by mass_prod column
-        $production = MassProduction::where('mass_prod', $massProd)->firstOrFail();
+        // Find the record by composite key: furnace + mass_prod
+        $production = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->firstOrFail();
 
         // Validate only fields that may be sent in the payload
         $validated = $request->validate([
-            'mass_prod' => 'required|string|unique:mass_productions,mass_prod,' . $production->id,
+            'mass_prod' => [
+                'required',
+                'string',
+                Rule::unique('mass_productions')
+                    ->ignore($production->id)
+                    ->where(fn ($query) => $query->where('furnace', $request->furnace ?? $furnace)),
+            ],
             'furnace' => 'nullable|string',
             'batch_cycle_no' => 'nullable|string',
             'machine_no' => 'nullable|string',
@@ -172,26 +195,31 @@ class MassProductionController extends Controller
         return response()->json(['message' => 'Deleted'], 204);
     }
 
-    public function getByMassProd($massprod)
+    public function getByFurnaceAndMassProd($furnace, $massprod)
     {
-        $record = MassProduction::where('mass_prod', $massprod)->first();
-        if(!$record){
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
+        if (!$record) {
             return response()->json([
-                'message' => "Mass Production record not found.",
+                'message' => "No record found for Furnace: {$furnace}, Mass Production: {$massprod}."
             ], 404);
         }
 
         return response()->json($record);
     }
 
-    public function updateByMassProd(Request $request, $massprod)
+    public function updateByFurnaceAndMassProd(Request $request, $furnace, $massprod)
     {
-        // Find the record by mass_prod
-        $production = MassProduction::where('mass_prod', $massprod)->first();
+        // Find the record by composite key: furnace + mass_prod
+        $production = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
 
         if (!$production) {
             return response()->json([
-                'message' => "Mass Production record not found.",
+                'message' => "No record found for Furnace: {$furnace}, Mass Production: {$massprod}.",
             ], 404);
         }
 
@@ -255,27 +283,38 @@ class MassProductionController extends Controller
             'layer_9_5_format_type' => 'nullable|string',
         ]);
 
-        // Update the record
+        // Update record
         $production->update($validated);
 
         return response()->json([
-            'message' => 'Mass Production updated successfully.',
+            'message' => "Mass Production record updated successfully for Furnace: {$furnace}, Mass Production: {$massprod}.",
             'data' => $production,
         ]);
     }
 
-    public function uploadGraphs(Request $request, $massprod)
+
+    public function uploadGraphs(Request $request, $furnace, $massprod)
     {
-        $baseDir = public_path("htgraphs/{$massprod}");
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => "No record found for Furnace: {$furnace}, Mass Production: {$massprod}.",
+            ], 404);
+        }
+
+        // Folder name format: "K40 101"
+        $folderName = "{$furnace} {$massprod}";
+        $baseDir = public_path("htgraphs/{$folderName}");
         $folders = ['cycle', 'actual', 'standard'];
 
-        // Ensure folders exist
         foreach ($folders as $folder) {
             $path = "{$baseDir}/{$folder}";
             if (!file_exists($path)) mkdir($path, 0777, true);
         }
 
-        // Handle cycle and actual graphs
         foreach (['cycle_graph' => 'cycle', 'actual_graph' => 'actual'] as $inputName => $folder) {
             if ($request->hasFile($inputName)) {
                 $file = $request->file($inputName);
@@ -285,7 +324,6 @@ class MassProductionController extends Controller
             }
         }
 
-        // Handle standard graph from pattern_no
         if ($request->has('pattern_no')) {
             $patternNo = $request->input('pattern_no');
             $pattern = \App\Models\HtGraphPatterns::where('pattern_no', $patternNo)->first();
@@ -295,30 +333,35 @@ class MassProductionController extends Controller
                 $files = glob("{$sourceDir}/pattern_{$patternNo}.{png,jpg,jpeg}", GLOB_BRACE);
 
                 if (count($files)) {
-                    copy($files[0], "{$baseDir}/standard/graph.png"); // copy to standard folder
+                    copy($files[0], "{$baseDir}/standard/graph.png");
                 }
             }
         }
 
-        return response()->json(['message' => 'Graphs uploaded successfully.']);
+        return response()->json([
+            'message' => "Graphs uploaded successfully for {$folderName}.",
+        ]);
     }
 
-    public function getLayerModel($massprod, $layerNumber)
+
+    public function getLayerModel($furnace, $massprod, $layerNumber)
     {
-        $record = MassProduction::where('mass_prod', $massprod)->first();
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
 
         if (!$record) {
             return response()->json([
-                'message' => "Mass Production record not found.",
+                'message' => "Record not found for Furnace: {$furnace}, Mass Production: {$massprod}.",
             ], 404);
         }
 
         // Normalize layer number (e.g., 9.5 → layer_9_5)
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
-        if (!isset($record->$layerColumn)) {
+        if (!property_exists($record, $layerColumn)) {
             return response()->json([
-                'message' => "Layer {$layerNumber} not found for this Mass Production.",
+                'message' => "Layer {$layerNumber} not found for this record.",
             ], 404);
         }
 
@@ -330,9 +373,8 @@ class MassProductionController extends Controller
             ], 404);
         }
 
-        // Search for row with "MODEL:"
         foreach ($layerData as $row) {
-            if (isset($row['rowTitle']) && $row['rowTitle'] === 'MODEL:') {
+            if (($row['rowTitle'] ?? null) === 'MODEL:') {
                 return response()->json([
                     'model' => $row['data']['A'] ?? null,
                 ]);
@@ -344,22 +386,24 @@ class MassProductionController extends Controller
         ], 404);
     }
 
-    public function getLayerLotno($massprod, $layerNumber)
+    public function getLayerLotno($furnace, $massprod, $layerNumber)
     {
-        $record = MassProduction::where('mass_prod', $massprod)->first();
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
 
         if (!$record) {
             return response()->json([
-                'message' => "Mass Production record not found.",
+                'message' => "Record not found for Furnace: {$furnace}, Mass Production: {$massprod}.",
             ], 404);
         }
 
         // Normalize layer number (e.g., 9.5 → layer_9_5)
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
-        if (!isset($record->$layerColumn)) {
+        if (!property_exists($record, $layerColumn)) {
             return response()->json([
-                'message' => "Layer {$layerNumber} not found for this Mass Production.",
+                'message' => "Layer {$layerNumber} not found for this record.",
             ], 404);
         }
 
@@ -371,9 +415,9 @@ class MassProductionController extends Controller
             ], 404);
         }
 
-        // Search for row with "MODEL:"
+        // Search for row with "LT. No.:"
         foreach ($layerData as $row) {
-            if (isset($row['rowTitle']) && $row['rowTitle'] === 'LT. No.:') {
+            if (($row['rowTitle'] ?? null) === 'LT. No.:') {
                 return response()->json([
                     'lotno' => $row['data']['A'] ?? null,
                 ]);
@@ -381,21 +425,25 @@ class MassProductionController extends Controller
         }
 
         return response()->json([
-            'message' => "LOTNO row not found in Layer {$layerNumber}.",
+            'message' => "LT. No. row not found in Layer {$layerNumber}.",
         ], 404);
     }
 
-    public function getAllHTCompletedLayers($massprod)
+
+    public function getAllHTCompletedLayers($furnace, $massprod)
     {
-        // Fetch MassProduction record
-        $record = MassProduction::where('mass_prod', $massprod)->first();
+        // Fetch record using composite key
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
         if (!$record) {
             return response()->json([
-                'message' => "Mass Production record not found.",
+                'message' => "Record not found for Furnace: {$furnace}, Mass Production: {$massprod}.",
             ], 404);
         }
 
-        // Define all possible layer columns
+        // Define possible layers
         $layers = [
             'layer_1'   => '1',
             'layer_2'   => '2',
@@ -411,9 +459,9 @@ class MassProductionController extends Controller
 
         $completed = [];
 
-        // Check MassProduction layers
+        // Check layers in MassProduction
         foreach ($layers as $column => $label) {
-            $value = $record->$column;
+            $value = $record->$column ?? null;
             if (!empty($value) && $value !== 'null') {
                 $decoded = json_decode($value, true);
                 if (!empty($decoded)) {
@@ -422,14 +470,15 @@ class MassProductionController extends Controller
             }
         }
 
-        // Fetch GbdpSecondHeatTreatment layers for this mass production
-        $gbdpLayers = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
-                        ->pluck('layer')
-                        ->toArray();
+        // Fetch completed layers from GbdpSecondHeatTreatment (scoped by furnace + mass_prod)
+        $gbdpLayers = GbdpSecondHeatTreatment::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->toArray();
 
         // Merge, remove duplicates, and sort numerically
         $allCompletedLayers = array_unique(array_merge($completed, $gbdpLayers));
-        sort($allCompletedLayers, SORT_NUMERIC); // numeric ascending
+        sort($allCompletedLayers, SORT_NUMERIC);
 
         return response()->json([
             'completed_layers' => $allCompletedLayers,
@@ -437,27 +486,31 @@ class MassProductionController extends Controller
     }
 
 
-    public function getAllCoatingCompleteLayers($massprod)
+
+    public function getAllCoatingCompleteLayers($furnace, $massprod)
     {
         // Get layers from gbdp_second_coatings
-        $secondLayers = GbdpSecondCoating::where('mass_prod', $massprod)
+        $secondLayers = GbdpSecondCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
             ->whereNotNull('layer')
             ->pluck('layer')
             ->map(fn($layer) => (string) $layer);
 
         // Get layers from coatings
-        $coatingLayers = Coating::where('mass_prod', $massprod)
+        $coatingLayers = Coating::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
             ->whereNotNull('layer')
             ->pluck('layer')
             ->map(fn($layer) => (string) $layer);
 
         // Get layers from film_pasting_data
-        $filmLayers = FilmPastingData::where('mass_prod', $massprod)
+        $filmLayers = FilmPastingData::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
             ->whereNotNull('layer')
             ->pluck('layer')
             ->map(fn($layer) => (string) $layer);
 
-        // Merge, remove duplicates, sort, reindex
+        // Merge, remove duplicates, sort, and reindex
         $layers = $secondLayers
             ->merge($coatingLayers)
             ->merge($filmLayers)
@@ -470,39 +523,53 @@ class MassProductionController extends Controller
         ]);
     }
 
-    public function getAllSecondHTCompletedLayers($massprod)
+
+    public function getAllSecondHTCompletedLayers($furnace, $massprod)
     {
-        // Fetch layers from gbdp_second_heat_treatments table only
-        $gbdpLayers = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
+        // Fetch layers from gbdp_second_heat_treatments table for specific furnace + mass_prod
+        $gbdpLayers = GbdpSecondHeatTreatment::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
             ->pluck('layer')
             ->filter() // remove nulls
-            ->map(fn($layer) => (string)$layer) // cast to string
-            ->toArray();
+            ->map(fn($layer) => (string) $layer) // cast to string for consistency
+            ->values(); // reindex array
 
         return response()->json([
             '2nd_gbdp_layers' => $gbdpLayers,
         ]);
     }
 
-    public function getAllFilmPastingCompletedLayers($massprod)
+
+    public function getAllFilmPastingCompletedLayers($furnace, $massprod)
     {
-        // Fetch layers from gbdp_second_heat_treatments table only
-        $filmPastingLayers = FilmPastingData::where('mass_prod', $massprod)
+        // Fetch film pasting layers for specific furnace + mass production
+        $filmPastingLayers = FilmPastingData::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
             ->pluck('layer')
             ->filter() // remove nulls
-            ->map(fn($layer) => (string)$layer) // cast to string
-            ->toArray();
+            ->map(fn($layer) => (string) $layer) // cast to string
+            ->values(); // reindex array
 
         return response()->json([
             'film_pasting_layers' => $filmPastingLayers,
         ]);
     }
 
-    public function getLayerDataBySerial($massprod, $serial)
+
+    public function getLayerDataBySerial($furnace, $massprod, $serial)
     {
+        // Find record by composite key: furnace + mass_prod
+        $production = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
 
-        $production = MassProduction::where('mass_prod', $massprod)->firstOrFail();
+        if (!$production) {
+            return response()->json([
+                'message' => "Mass Production record not found for furnace '{$furnace}' and mass production '{$massprod}'.",
+            ], 404);
+        }
 
+        // Map serial columns to layer columns
         $layers = [
             'layer_1_serial'   => 'layer_1',
             'layer_2_serial'   => 'layer_2',
@@ -527,13 +594,22 @@ class MassProductionController extends Controller
         }
 
         return response()->json([
-            'message' => "No layer data found for serial: {$serial}"
+            'message' => "No layer data found for serial '{$serial}' in furnace '{$furnace}' mass production '{$massprod}'.",
         ], 404);
     }
 
-    public function getLayerDataByLayerNo($massprod, $layer)
+    public function getLayerDataByLayerNo($furnace, $massprod, $layer)
     {
-        $production = MassProduction::where('mass_prod', $massprod)->firstOrFail();
+        // Find the record by composite key: furnace + mass_prod
+        $production = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
+        if (!$production) {
+            return response()->json([
+                'message' => "Mass Production record not found for furnace '{$furnace}' and mass production '{$massprod}'.",
+            ], 404);
+        }
 
         // Map numeric layer identifiers to actual DB columns
         $layerMap = [
@@ -549,19 +625,19 @@ class MassProductionController extends Controller
             '9.5' => 'layer_9_5',
         ];
 
-        // Check if provided layer number exists in the map
+        // Validate layer input
         if (!array_key_exists($layer, $layerMap)) {
             return response()->json([
-                'message' => "Invalid layer number: {$layer}"
+                'message' => "Invalid layer number: {$layer}",
             ], 400);
         }
 
         $layerColumn = $layerMap[$layer];
         $layerData = $production->$layerColumn ? json_decode($production->$layerColumn, true) : null;
 
-        if (!$layerData) {
+        if (empty($layerData) || !is_array($layerData)) {
             return response()->json([
-                'message' => "No data found for layer: {$layer}"
+                'message' => "No valid data found for layer {$layer} in furnace '{$furnace}' mass production '{$massprod}'.",
             ], 404);
         }
 
@@ -571,11 +647,16 @@ class MassProductionController extends Controller
         ]);
     }
 
-    public function smpDataSummary($massprod){
-        $massProdData = MassProduction::where('mass_prod', $massprod)->first();
+
+    public function smpDataSummary($furnace, $massprod)
+    {
+        // Fetch Mass Production record using composite key
+        $massProdData = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
 
         if (!$massProdData) {
-            return response()->json(['error' => 'Mass production not found'], 404);
+            return response()->json(['error' => "Mass production not found for {$furnace} {$massprod}"], 404);
         }
 
         $attributes = collect($massProdData->getAttributes());
@@ -596,9 +677,11 @@ class MassProductionController extends Controller
         $tpmRecords = TPMData::whereIn('serial_no', $layerSerials)->get()->groupBy('serial_no');
         $tpmAggregates = TPMDataAggregateFunctions::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
         $reportRecords = ReportData::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
-        $coatings = Coating::where('mass_prod', $massprod)->get()->keyBy(fn($c) => $c->layer);
 
-
+        $coatings = Coating::where('furnace', $furnace)
+        ->where('mass_prod', $massprod)
+        ->get()
+        ->keyBy(fn($c) => $c->layer);
 
         // -----------------------------
         // Build flat data per layer for frontend
@@ -644,12 +727,14 @@ class MassProductionController extends Controller
 
             $layerOrdinal = (string)$layerNumber;
 
-            // Fetch remarks & special instructions for this mass production and layer
-            $smpData = SmpData::where('mass_prod', $massProdData->mass_prod)
+             // Fetch remarks & special instructions for this furnace + massprod + layer
+            $smpData = SmpData::where('furnace', $furnace)
+                ->where('mass_prod', $massProdData->mass_prod)
                 ->where('layer', $layerOrdinal)
                 ->first();
 
-            $filmPastingData = FilmPastingData::where('mass_prod', $massProdData->mass_prod)
+            $filmPastingData = FilmPastingData::where('furnace', $furnace)
+                ->where('mass_prod', $massProdData->mass_prod)
                 ->where('layer', $layerOrdinal)
                 ->first();
 
@@ -741,13 +826,17 @@ class MassProductionController extends Controller
         ]);
     }
 
-    public function massProductionMonitoring($massprod)
+    public function massProductionMonitoring($furnace, $massprod)
     {
-        // Fetch all mass production names for dropdown
-        $massProdNames = MassProduction::pluck('mass_prod')->toArray();
+        // Fetch all mass production names for dropdown — limited to this furnace
+        $massProdNames = MassProduction::where('furnace', $furnace)
+            ->pluck('mass_prod')
+            ->toArray();
 
         // Fetch the selected mass production row
-        $prod = MassProduction::where('mass_prod', $massprod)->first();
+        $prod = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
 
         if (!$prod) {
             return response()->json([
@@ -774,30 +863,39 @@ class MassProductionController extends Controller
 
             if ($layer_type === 'Normal') {
                 $layerStatus['heat_treatment_completed'] = !empty($layer_json);
-                $layerStatus['coating_completed'] = Coating::where('mass_prod', $prod->mass_prod)
-                                                            ->where('layer', $i)
-                                                            ->exists();
-                $layerStatus['mpi_completed'] = TPMData::where('mass_prod', $prod->mass_prod)
-                                                        ->where('layer_no', $i)
-                                                        ->exists();
+                $layerStatus['coating_completed'] = Coating::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer', $i)
+                    ->exists();
+                $layerStatus['mpi_completed'] = TPMData::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer_no', $i)
+                    ->exists();
+
             } elseif ($layer_type === '1st and 2nd GBDP') {
-                $layerStatus['heat_treatment_completed'] = GbdpSecondHeatTreatment::where('mass_prod', $prod->mass_prod)
-                                                                                ->where('layer', $i)
-                                                                                ->exists();
-                $layerStatus['coating_completed'] = GbdpSecondCoating::where('mass_prod', $prod->mass_prod)
-                                                                    ->where('layer', $i)
-                                                                    ->exists();
-                $layerStatus['mpi_completed'] = TPMData::where('mass_prod', $prod->mass_prod)
-                                                        ->where('layer_no', $i)
-                                                        ->exists();
+                $layerStatus['heat_treatment_completed'] = GbdpSecondHeatTreatment::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer', $i)
+                    ->exists();
+                $layerStatus['coating_completed'] = GbdpSecondCoating::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer', $i)
+                    ->exists();
+                $layerStatus['mpi_completed'] = TPMData::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer_no', $i)
+                    ->exists();
+
             } elseif ($layer_type === 'Film Pasting') {
                 $layerStatus['heat_treatment_completed'] = !empty($layer_json);
-                $layerStatus['coating_completed'] = FilmPastingData::where('mass_prod', $prod->mass_prod)
-                                                                    ->where('layer', $i)
-                                                                    ->exists();
-                $layerStatus['mpi_completed'] = TPMData::where('mass_prod', $prod->mass_prod)
-                                                        ->where('layer_no', $i)
-                                                        ->exists();
+                $layerStatus['coating_completed'] = FilmPastingData::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer', $i)
+                    ->exists();
+                $layerStatus['mpi_completed'] = TPMData::where('furnace', $furnace)
+                    ->where('mass_prod', $prod->mass_prod)
+                    ->where('layer_no', $i)
+                    ->exists();
             }
 
             $layers[$i] = $layerStatus;
@@ -810,12 +908,14 @@ class MassProductionController extends Controller
         $layers['9.5'] = [
             'type' => $layer_9_5_type,
             'heat_treatment_completed' => !empty($layer_9_5_json),
-            'coating_completed' => Coating::where('mass_prod', $prod->mass_prod)
-                                        ->where('layer', '9.5')
-                                        ->exists(),
-            'mpi_completed' => TPMData::where('mass_prod', $prod->mass_prod)
-                                    ->where('layer_no', '9.5')
-                                    ->exists(),
+            'coating_completed' => Coating::where('furnace', $furnace)
+                ->where('mass_prod', $prod->mass_prod)
+                ->where('layer', '9.5')
+                ->exists(),
+            'mpi_completed' => TPMData::where('furnace', $furnace)
+                ->where('mass_prod', $prod->mass_prod)
+                ->where('layer_no', '9.5')
+                ->exists(),
         ];
 
         return response()->json([
@@ -823,12 +923,11 @@ class MassProductionController extends Controller
             'massProdNames' => $massProdNames,
             'data' => [
                 [
+                    'furnace' => $furnace,
                     'mass_prod' => $prod->mass_prod,
                     'layers' => $layers,
                 ]
             ],
         ]);
     }
-
-
 }

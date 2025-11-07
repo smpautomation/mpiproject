@@ -10,13 +10,13 @@
             </div>
         </div>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
-            <div class="p-4 mb-4 text-sm rounded-lg bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 flex items-center justify-between">
+            <div class="flex items-center justify-between p-4 mb-4 text-sm text-yellow-800 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg">
                 <div>
                     <strong>Note:</strong> For 1st & 2nd GBDP formats, select <span class="font-semibold">Mass Prod</span>, <span class="font-semibold">Layer</span>, and <span class="font-semibold">Model</span>, then click the
                     <span class="bg-orange-500 text-white px-2 py-0.5 rounded">Apply 1st & 2nd GBDP</span> button in the <span class="font-semibold">Control Panel</span>. If button is disabled, the model is not yet registered.
                 </div>
                 <button
-                    class="ml-4 text-blue-600 hover:underline font-semibold"
+                    class="ml-4 font-semibold text-blue-600 hover:underline"
                     @click.prevent="$inertia.visit('/second_gbdp_models')"
                 >
                     Register Here
@@ -222,11 +222,11 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Cycle Pattern<span class="text-red-500"> *</span></label>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Cycle Pattern</label>
                                     <input v-model="hti.cyclePattern" type="text" @input="hti.cyclePattern = hti.cyclePattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Current Pattern<span class="text-red-500"> *</span></label>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Current Pattern</label>
                                     <input v-model="hti.currentPattern" type="text" @input="hti.currentPattern = hti.currentPattern.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                             </div>
@@ -250,11 +250,11 @@
                             </div>
                             <div class="flex flex-col">
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Date Finish<span class="text-red-500"> *</span></label>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Date Finish</label>
                                     <input v-model="hti.dateFinish" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Finish<span class="text-red-500"> *</span></label>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Finish</label>
                                     <input v-model="hti.timeFinish" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
@@ -373,7 +373,7 @@
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Heat Treatment Graph Upload <span class="text-xs text-gray-300">(PNG, JPG and JPEG)</span></h2>
                     <div class="flex flex-col p-6 space-y-8 bg-white border border-gray-300 rounded-lg shadow-sm">
                     <div class="flex flex-col pb-4 space-y-2 border-b border-gray-200">
-                        <label for="cycleGraph" class="text-sm font-semibold text-gray-800">Cycle Graph<span class="text-red-500"> *</span></label>
+                        <label for="cycleGraph" class="text-sm font-semibold text-gray-800">Cycle Graph</label>
                         <input
                         id="cycleGraph"
                         @change="handleCycleGraphUpload"
@@ -384,7 +384,7 @@
                     </div>
 
                     <div class="flex flex-col space-y-2">
-                        <label for="actualGraph" class="text-sm font-semibold text-gray-800">Actual Graph<span class="text-red-500"> *</span></label>
+                        <label for="actualGraph" class="text-sm font-semibold text-gray-800">Actual Graph</label>
                         <input
                         id="actualGraph"
                         @change="handleActualGraphUpload"
@@ -801,7 +801,7 @@ function useSessionStorage(key, state) {
 
 //Dev Controls ----------------- Allow Commands
 const bypassValidation = ref(false);
-const overwriteHeatTreatment = ref(false);
+const overwriteHeatTreatment = ref(true);
 //Dev Controls ----------------- Allow Commands
 
 const heatTreatmentInformationDetected = ref(false);
@@ -823,8 +823,8 @@ const existingLayers_2ndGBDP = ref([]);
 const isExisting = ref(false);
 const isExisting_2ndGBDP = ref(false);
 const completedLayers = ref(['1','2']);
-const allBoxes = ['A','B','C','D','E','F','G','H','J','K','L'];
-const boxesEndList = ref(['B','C','D','E','F','G','H','J','K','L']);
+const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
+const boxesEndList = ref(['B','C','D','E','F','G','H','J','K']);
 const visibleBoxes = computed(() => {
   const endIndex = allBoxes.indexOf(mpcs.selectedBoxEndList); //Looks for the position of selected Letter in the array.
   return allBoxes.slice(0, endIndex + 1);
@@ -879,9 +879,12 @@ const mpcs = reactive({
 });
 
 // Watch for changes to selectedMassProd
-watch(() => mpcs.selectedMassProd, async (newVal, oldVal) => {
-    await getMassProdData();
-});
+watch(
+    [() => mpcs.selectedMassProd, () => mpcs.selectedFurnace],
+    async ([newMassProd, newFurnace], [oldMassProd, oldFurnace]) => {
+        await getMassProdData();
+    }
+);
 
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
 
@@ -942,7 +945,7 @@ const getMassProdData = async () => { //Function for getting the current selecet
         return; // skip if empty
     }
     try {
-        const response = await axios.get(`/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`);
+        const response = await axios.get(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`);
         //console.log('Mass Production Data:', response.data);
         const massProdData = response.data;
         initialFurnaceData.value = massProdData.furnace;
@@ -958,6 +961,7 @@ const getMassProdData = async () => { //Function for getting the current selecet
         console.log("Activate 2nd GBDP:", activate2ndGBDP.value);
     } catch (error) {
         initialFurnaceData.value = null; // Reset if no mass production selected
+        heatTreatmentInformationDetected.value = false;
         console.error('Error fetching mass production data:', error);
         toast.error('Failed to load mass production data.');
     }
@@ -1033,13 +1037,13 @@ const fetchExistingLayers = async () => {
 
     try {
         const response = await axios.get(
-            `/api/mass-productions/${mpcs.selectedMassProd}/completed-layers`
+            `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/completed-layers`
         );
         existingLayers.value = response.data.completed_layers;
         console.log("Existing Layers for heat treatment:", existingLayers.value);
 
         const response2 = await axios.get(
-            `/api/mass-productions/${mpcs.selectedMassProd}/second-ht-completed-layers`
+            `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/second-ht-completed-layers`
         );
         existingLayers_2ndGBDP.value = response2.data['2nd_gbdp_layers'];
         console.log("Existing Layers for heat treatment 2ND GBDP:", existingLayers_2ndGBDP.value);
@@ -1079,16 +1083,20 @@ const getCompletedLayers = async () => {
 
 // Watch for changes in selectedLayer
 watch(
-    [() => mpcs.selectedMassProd, () => mpcs.selectedLayer],
-    async ([newMassProd, newLayer]) => {
-        if (!newMassProd || !newLayer) {
+    [
+        () => mpcs.selectedFurnace,
+        () => mpcs.selectedMassProd,
+        () => mpcs.selectedLayer
+    ],
+    async ([newFurnace, newMassProd, newLayer]) => {
+        if (!newFurnace || !newMassProd || !newLayer) {
             isExisting.value = false;
             return;
         }
 
         await fetchExistingLayers(); // fetch backend data
         isExisting.value = existingLayers.value.includes(newLayer);
-        console.log(`MassProd: ${newMassProd}, Selected Layer: ${newLayer}, Exists? ${isExisting.value}`);
+        console.log(`Furnace: ${newFurnace}, MassProd: ${newMassProd}, Selected Layer: ${newLayer}, Exists? ${isExisting.value}`);
     }
 );
 
@@ -1191,21 +1199,12 @@ const finalize = () => {
         // validate HTI fields only if not detected already
         if (!heatTreatmentInformationDetected.value) {
             if (
-                !initialFurnaceData || !hti.cycleNo || !hti.patternNo ||
-                !hti.cyclePattern || !hti.currentPattern || !hti.dateStart ||
-                !hti.timeStart || !hti.loader || !hti.dateFinish || !hti.timeFinish ||
+                !initialFurnaceData || !hti.cycleNo || !hti.patternNo || !hti.dateStart ||
+                !hti.timeStart || !hti.loader ||
                 !hti.unloader || !hti.boxCondition || !hti.boxCover ||
                 !hti.boxArrangement || !hti.encodedBy
             ) {
                 toast.error("Please fill in all required Heat Treatment Info fields.");
-                return;
-            }
-        }
-        if (!heatTreatmentInformationDetected.value) {
-            if (
-                !cycleGraphFile.value || !actualGraphFile.value
-            ) {
-                toast.error("Please upload all required graph files.");
                 return;
             }
         }
@@ -1291,7 +1290,7 @@ const saveToDatabase = async () => {
     console.log('Data Payload:', dataPayload);
 
     try {
-        const response = await axios.patch(`/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`, dataPayload);
+        const response = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
         await uploadGraphs();
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
@@ -1319,7 +1318,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
     }
 
     try{
-        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedMassProd}`, dataPayload);
+        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
@@ -1343,7 +1342,7 @@ const uploadGraphs = async () => {
 
     try {
         const response = await axios.post(
-            `/api/mass-production/by-mass-prod/${mpcs.selectedMassProd}`,
+            `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/upload-graphs`,
             formData,
             {
                 headers: { 'Content-Type': 'multipart/form-data' }
@@ -1369,7 +1368,7 @@ const second_heat_treatment = () => {
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
 useSessionStorage('bypassValidation',bypassValidation);
-useSessionStorage('showModalCreate',showModalCreate);
+//useSessionStorage('showModalCreate',showModalCreate);
 useSessionStorage('initialFurnaceData',initialFurnaceData);
 useSessionStorage('massProd_names',massProd_names);
 useSessionStorage('model_names',model_names);
