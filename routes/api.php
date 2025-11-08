@@ -283,11 +283,12 @@ Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 Route::apiResource('smp-data',SmpDataController::class);
 
 Route::get('/film-pasting-data/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
-Route::get('/coating-data/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
-Route::get('/second-coating-data/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
+Route::get('/coating-data/{furnace}/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
+Route::get('/second-coating-data/{furnace}/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
-Route::get('/second-ht-data/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
-Route::get('/second-coating-data/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
+//Route::get('/second-ht-data/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
+Route::get('/second-ht-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
+Route::get('/second-coating-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
 
 Route::get('/mass-production/{furnace}/{massprod}', [MassProductionController::class, 'getByFurnaceAndMassProd']);
     //->where('massprod', '[A-Za-z0-9\-]+');
@@ -356,7 +357,7 @@ Route::get('/mass-production/{furnace}/{massprod}/layer-by-serial/{serial}', [Ma
 //    '/mass-productions/{massprod}/layer-by-layerno/{layer}',
 //    [MassProductionController::class, 'getLayerDataByLayerNo']
 //);
-Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}', [MassProductionController::class, 'getLayerDataByLayerNo']);
+Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}/layer-no', [MassProductionController::class, 'getLayerDataByLayerNo']);
 
 Route::get('/mass-productions/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
 

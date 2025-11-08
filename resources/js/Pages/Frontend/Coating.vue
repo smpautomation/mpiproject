@@ -279,14 +279,15 @@
                         >
                             Auto Fetch
                         </button>
-                        <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="Enter Mass Production name..." class="ml-5 w-[12rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        <input v-model="selectedLayer_fetch" type="number" placeholder="Enter Layer number..." class="ml-5 w-[9rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input v-model="selectedFurnace_fetch" type="text" @input="selectedFurnace_fetch = selectedFurnace_fetch.toUpperCase()" placeholder="e.g. K-40 (furnace)" class="ml-5 w-[8rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="e.g. 541ST (mass prod)" class="ml-5 w-[9.5rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input v-model="selectedLayer_fetch" type="number" placeholder="e.g. 1 (layer no)" class="ml-5 w-[7rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="isModelMissing" class="p-4 mb-4 border-l-4 border-red-500 bg-red-50 text-red-800 rounded-md shadow-sm">
+            <div v-if="isModelMissing" class="p-4 mb-4 text-red-800 border-l-4 border-red-500 rounded-md shadow-sm bg-red-50">
                 <strong class="font-semibold">Warning:</strong> Control Sheet for this layer has not been completed. Please ensure the model exists before proceeding.
             </div>
 
@@ -345,7 +346,18 @@
                     <h2 v-if="!activate2ndGBDP" class="pb-1 font-bold text-gray-800 border-b text-md">Coating Information</h2>
                     <h2 v-else class="pb-1 font-bold text-gray-800 border-b text-md">2nd GBDP Coating Information</h2>
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div class="relative">
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
+                            <select
+                                v-model="coatingInfo.selectedFurnace"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            >
+                                <option v-for="items in furnace_names" :key="items" :value="items">
+                                    {{ items }}
+                                </option>
+                            </select>
+                        </div>
                         <div class="relative">
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
                             <select
@@ -1376,6 +1388,7 @@ const isModelMissing = ref(false);
 //Toggle Control
 
 const massProd_names = ref([]);
+const furnace_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const existingLayers = ref([]);
 const existingLayers_2ndGBDP = ref([]);
@@ -1386,6 +1399,7 @@ const lotNo = ref();
 const lotNo_1stGBDP = ref();
 const firstSecondGBDP_models = ref([]);
 const fetchedModelValue = ref();
+const selectedFurnace_fetch = ref();
 const selectedMassProd_fetch = ref();
 const selectedLayer_fetch = ref();
 const fetchedCoatingData = ref([]);
@@ -1395,6 +1409,7 @@ const fetchedCoatingData = ref([]);
 // Coating Information Variables --------- Coating Information Variables
 
 const coatingInfo = reactive({ // <--- this is the 2nd GBDP
+    selectedFurnace: '',
     selectedMassProd: '',
     selectedLayer: null,
     coatingDate: '',
@@ -1766,6 +1781,7 @@ const saveToDatabase = async() => {
 
     // Final payload
     const coatingDataPayload = {
+        furnace: coatingInfo.selectedFurnace,
         mass_prod: coatingInfo.selectedMassProd,
         layer: coatingInfo.selectedLayer,
         date: coatingInfo.coatingDate,
@@ -1794,6 +1810,7 @@ const saveToDatabase = async() => {
     console.log('Coating Data Payload: ', coatingDataPayload);
 
     const exists = await checkExisting(
+        coatingInfo.selectedFurnace,
         coatingInfo.selectedMassProd,
         coatingInfo.selectedLayer
     );
@@ -1850,6 +1867,7 @@ const saveToDatabase_1st2ndgbdp = async() => {
 
     try{
         const payload = {
+            furnace: coatingInfo.selectedFurnace,
             mass_prod: coatingInfo.selectedMassProd,
             layer: coatingInfo.selectedLayer,
             coating_info_1stgbdp: {
@@ -1904,10 +1922,10 @@ const saveToDatabase_1st2ndgbdp = async() => {
     }
 }
 
-const checkExisting = async(massprod, layer) => {
+const checkExisting = async(furnace, massprod, layer) => {
     try {
         const response = await axios.get('/api/coating-data/check', {
-            params: { mass_prod: massprod, layer }
+            params: { furnace: furnace, mass_prod: massprod, layer }
         });
         return response.data.exists; // true = already exists
     } catch (error) {
@@ -1931,9 +1949,21 @@ const getMassProdLists = async () => {
     }
 }
 
+const getFurnaceLists = async () => {
+    try{
+        const response = await axios.get('/api/furnace-data');
+        const furnaceList = response.data;
+        furnace_names.value = furnaceList.map(item => item.furnace_name);
+        //console.log("List of mass prods: ",furnace_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
 const getSelectedMassProdData = async () => {
     try{
-        const response = await axios.get(`/api/mass-productions/${coatingInfo.selectedMassProd}/layer-by-layerno/${coatingInfo.selectedLayer}`);
+        const response = await axios.get(`/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layer/${coatingInfo.selectedLayer}/layer-no`);
         const massProdLayerData = response.data.layer_data;
         console.log('Mass Prod layer data: ', massProdLayerData);
         coatingInfo.coatingMachineNo = massProdLayerData[1].data['A'];
@@ -1952,7 +1982,7 @@ const getSelectedMassProdData = async () => {
 
 const getCompletedLayers = async () => {
     try {
-        const response = await axios.get(`/api/coating-data/${coatingInfo.selectedMassProd}/layers`);
+        const response = await axios.get(`/api/coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`);
         completedLayers.value = response.data.completed_layers.map(String);
         console.log(completedLayers.value);
     } catch (error) {
@@ -1963,7 +1993,7 @@ const getCompletedLayers = async () => {
 
 const getCompletedLayers_1st_2nd_gbdp = async () => {
     try {
-        const response = await axios.get(`/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`);
+        const response = await axios.get(`/api/second-coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`);
         completedLayers_1st_2nd_gbdp.value = response.data.completed_layers.map(String);
         console.log(completedLayers_1st_2nd_gbdp.value);
     } catch (error) {
@@ -1994,18 +2024,19 @@ const fetchExistingLayers = async () => {
         return;
     }
 
+    if (!coatingInfo.selectedFurnace) {
+        console.warn("Furnace not selected yet.");
+        return;
+    }
+
     try {
         // 1st Coating
-        const response1 = await axios.get(
-            `/api/coating-data/${coatingInfo.selectedMassProd}/layers`
-        );
+        const response1 = await axios.get(`/api/coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`);
         existingLayers.value = response1.data.completed_layers;
         console.log("Existing Layers for Coating:", existingLayers.value);
 
         // 2nd Coating
-        const response2 = await axios.get(
-            `/api/second-coating-data/${coatingInfo.selectedMassProd}/layers`
-        );
+        const response2 = await axios.get(`/api/second-coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`);
         existingLayers_2ndGBDP.value = response2.data.completed_layers;
         console.log("Existing Layers for 2nd Coating:", existingLayers_2ndGBDP.value);
 
@@ -2032,7 +2063,7 @@ const fetchExistingLayers = async () => {
 const fetchAvailableLayers = async () => {
     try {
         const response = await axios.get(
-            `/api/mass-productions/${coatingInfo.selectedMassProd}/completed-layers`
+            `/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/completed-layers`
         );
         available_layers.value = response.data.completed_layers;
         console.log("Available Layers: ", available_layers.value);
@@ -2042,10 +2073,10 @@ const fetchAvailableLayers = async () => {
     }
 };
 
-const fetchLayerModel = async (massProd, layerNumber) => {
+const fetchLayerModel = async (furnace, massProd, layerNumber) => {
     try {
         const response = await axios.get(
-            `/api/mass-productions/${massProd}/layer/${layerNumber}/model`
+            `/api/mass-production/${furnace}/${massProd}/layer/${layerNumber}`
         );
         console.log("Fetched Model: ", response.data.model);
         fetchedModelValue.value = response.data.model;
@@ -2062,31 +2093,35 @@ const fetchLayerModel = async (massProd, layerNumber) => {
 };
 
 watch(
-    () => [coatingInfo.selectedMassProd, coatingInfo.selectedLayer],
-    ([mp, layer]) => {
-        if (mp && layer) {
-        fetchLayerModel(mp, layer)
+    () => [coatingInfo.selectedFurnace, coatingInfo.selectedMassProd, coatingInfo.selectedLayer],
+    ([furnace, mp, layer]) => {
+        if (furnace && mp && layer) {
+            fetchLayerModel(furnace, mp, layer);
         }
     }
-)
+);
 
 watch(
-    [() => coatingInfo.selectedMassProd, () => coatingInfo.selectedLayer],
-    async ([newMassProd, newLayer]) => {
-        if (!newMassProd || !newLayer) {
-        // Reset the flags if either is missing
-        isExists.value = false;
-        isExists_2ndGBDP.value = false;
-        return;
+    [
+        () => coatingInfo.selectedFurnace,
+        () => coatingInfo.selectedMassProd,
+        () => coatingInfo.selectedLayer
+    ],
+    async ([newFurnace, newMassProd, newLayer]) => {
+        if (!newFurnace || !newMassProd || !newLayer) {
+            // Reset the flags if any value is missing
+            isExists.value = false;
+            isExists_2ndGBDP.value = false;
+            return;
         }
 
-        // Fetch existing layers whenever either value changes
+        // Fetch existing layers whenever any value changes
         await fetchExistingLayers();
         await getSelectedMassProdData();
 
         console.log(
-        `Selected MassProd: ${newMassProd}, Selected Layer: ${newLayer}, ` +
-        `isExists: ${isExists.value}, isExists_2ndGBDP: ${isExists_2ndGBDP.value}`
+            `Selected Furnace: ${newFurnace}, MassProd: ${newMassProd}, Layer: ${newLayer}, ` +
+            `isExists: ${isExists.value}, isExists_2ndGBDP: ${isExists_2ndGBDP.value}`
         );
     }
 );
@@ -2108,9 +2143,13 @@ const activate2ndGBDP = computed(() => {
 // Watch zone -------- Watch Zone
 
 watch(
-  [() => coatingInfo.selectedMassProd, () => activate2ndGBDP.value],
-  async ([newMassProd, newActivate2ndGBDP]) => {
-    if (!newMassProd) {
+  [
+    () => coatingInfo.selectedFurnace,
+    () => coatingInfo.selectedMassProd,
+    () => activate2ndGBDP.value
+  ],
+  async ([furnace, newMassProd, newActivate2ndGBDP]) => {
+    if (!furnace || !newMassProd) {
       completedLayers.value = [];
       completedLayers_1st_2nd_gbdp.value = [];
       return;
@@ -2128,6 +2167,10 @@ watch(
 // Watch zone -------- Watch Zone END
 
 const autoFetch = async () => {
+    if(!selectedFurnace_fetch.value){
+        toast.error("Please enter Mass Production name to fetch data.");
+        return;
+    }
     if(!selectedMassProd_fetch.value){
         toast.error("Please enter Mass Production name to fetch data.");
         return;
@@ -2139,6 +2182,7 @@ const autoFetch = async () => {
     try{
         const response = await axios.get(`/api/coating/get-data`, {
             params: {
+                furnace: selectedFurnace_fetch.value,
                 mass_prod: selectedMassProd_fetch.value,
                 layer: selectedLayer_fetch.value
             }
@@ -2229,6 +2273,7 @@ onMounted(async () => {
         return;
     }
     await getMassProdLists();
+    await getFurnaceLists();
     await get1st2ndGBDPModels();
 });
 

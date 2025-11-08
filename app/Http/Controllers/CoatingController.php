@@ -97,11 +97,13 @@ class CoatingController extends Controller
     public function checkExisting(Request $request)
     {
         $request->validate([
+            'furnace'   => 'required|string', // added furnace
             'mass_prod' => 'required|string',
             'layer'     => 'required|string',
         ]);
 
-        $exists = Coating::where('mass_prod', $request->mass_prod)
+        $exists = Coating::where('furnace', $request->furnace) // include furnace
+            ->where('mass_prod', $request->mass_prod)
             ->where('layer', $request->layer)
             ->exists();
 
@@ -155,29 +157,32 @@ class CoatingController extends Controller
     public function getCoatingData(Request $request)
     {
         $request->validate([
+            'furnace' => 'required|string',
             'mass_prod' => 'required|string',
             'layer'     => 'required|numeric',
         ]);
 
-        $coating = Coating::where('mass_prod', $request->mass_prod)
+        $coating = Coating::where('furnace', $request->furnace) // added furnace filter
+            ->where('mass_prod', $request->mass_prod)
             ->where('layer', $request->layer)
             ->first();
 
         if (!$coating) {
             return response()->json([
-                'message' => 'Coating record not found.'
+                'message' => "Coating record not found for Furnace: {$request->furnace}, Mass Production: {$request->mass_prod}, Layer: {$request->layer}."
             ], 404);
         }
 
         return response()->json($coating);
     }
 
-    public function getLayersByMassProd($massProd)
+    public function getLayersByMassProd($furnace, $massProd)
     {
-        // Fetch all layer values for this mass_prod
-        $layers = Coating::where('mass_prod', $massProd)
-            ->pluck('layer')  // get only the "layer" column
-            ->filter()         // remove nulls
+        // Fetch all layer values for this furnace + mass_prod
+        $layers = Coating::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->pluck('layer')               // get only the "layer" column
+            ->filter()                     // remove nulls
             ->map(fn($layer) => (string)$layer) // cast to string if needed
             ->toArray();
 

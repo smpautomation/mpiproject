@@ -21,6 +21,7 @@ class GbdpSecondCoatingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'furnace' => 'nullable|string',
             'mass_prod' => 'nullable|string',
             'layer' => 'nullable|numeric',
             'coating_info_1stgbdp' => 'required|array',
@@ -48,6 +49,7 @@ class GbdpSecondCoatingController extends Controller
     public function update(Request $request, GbdpSecondCoating $gbdpSecondCoating)
     {
         $validated = $request->validate([
+            'furnace' => 'nullable|string',
             'mass_prod' => 'nullable|string',
             'layer' => 'nullable|numeric',
             'coating_info_1stgbdp' => 'nullable|array',
@@ -74,12 +76,13 @@ class GbdpSecondCoatingController extends Controller
     /**
      * Custom: Get all layers for a given mass_prod.
      */
-    public function getLayersByMassProd($massProd)
+    public function getLayersByMassProd($furnace, $massProd)
     {
-        // Fetch all layer values for this mass_prod
-        $layers = GbdpSecondCoating::where('mass_prod', $massProd)
-            ->pluck('layer')  // get only the "layer" column
-            ->filter()         // remove nulls
+        // Fetch all layer values for this furnace + mass_prod
+        $layers = GbdpSecondCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->pluck('layer')                  // get only the "layer" column
+            ->filter()                        // remove nulls
             ->map(fn($layer) => (string)$layer) // cast to string if needed
             ->toArray();
 
@@ -88,16 +91,18 @@ class GbdpSecondCoatingController extends Controller
         ]);
     }
 
-    public function getLayerData($massprod, $layer)
+
+    public function getLayerData($furnace, $massprod, $layer)
     {
         try {
-            $data = GbdpSecondCoating::where('mass_prod', $massprod)
+            $data = GbdpSecondCoating::where('furnace', $furnace) // added furnace
+                ->where('mass_prod', $massprod)
                 ->where('layer', $layer)
                 ->first();
 
             if (!$data) {
                 return response()->json([
-                    'message' => "No coating data found for Mass Production: {$massprod}, Layer: {$layer}"
+                    'message' => "No coating data found for Furnace: {$furnace}, Mass Production: {$massprod}, Layer: {$layer}"
                 ], 404);
             }
 
@@ -109,4 +114,5 @@ class GbdpSecondCoatingController extends Controller
             ], 500);
         }
     }
+
 }

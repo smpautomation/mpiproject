@@ -81,22 +81,27 @@ class GbdpSecondHeatTreatmentController extends Controller
         return response()->json(['layers' => $layers], 200);
     }
 
-    public function getLayerData($massprod,$layer){
+    public function getLayerData($furnace, $massprod, $layer)
+    {
         try {
-            $data = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
+            $data = GbdpSecondHeatTreatment::where('furnace', $furnace)
+                ->where('mass_prod', $massprod)
                 ->where('layer', $layer)
                 ->first();
 
             if (!$data) {
                 return response()->json([
-                    'message' => "No data found for Mass Production: {$massprod}, Layer: {$layer}"
+                    'message' => "No data found for Furnace: {$furnace}, Mass Production: {$massprod}, Layer: {$layer}"
                 ], 404);
             }
+
             return response()->json($data, 200);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Server error while fetching layer data'
+                'error' => 'Server error while fetching layer data',
+                'details' => $e->getMessage()
             ], 500);
         }
     }
+
 }

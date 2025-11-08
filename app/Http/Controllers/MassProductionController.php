@@ -359,9 +359,26 @@ class MassProductionController extends Controller
         // Normalize layer number (e.g., 9.5 → layer_9_5)
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
-        if (!property_exists($record, $layerColumn)) {
+        if (!$record) {
             return response()->json([
-                'message' => "Layer {$layerNumber} not found for this record.",
+                'message' => "No record found for furnace '{$furnace}' and mass production '{$massprod}'"
+            ], 404);
+        }
+
+        Log::info('Record fetched: ', $record->toArray());
+        Log::info('Layer column: ' . $layerColumn);
+
+        if (!isset($record->$layerColumn)) {
+            return response()->json([
+                'message' => "No valid data in Layer {$layerNumber}.",
+            ], 404);
+        }
+
+        $layerData = json_decode($record->$layerColumn, true);
+
+        if (empty($layerData) || !is_array($layerData)) {
+            return response()->json([
+                'message' => "No valid data in Layer {$layerNumber}.",
             ], 404);
         }
 
@@ -600,18 +617,19 @@ class MassProductionController extends Controller
 
     public function getLayerDataByLayerNo($furnace, $massprod, $layer)
     {
-        // Find the record by composite key: furnace + mass_prod
-        $production = MassProduction::where('furnace', $furnace)
-            ->where('mass_prod', $massprod)
+        Log::info('getLayerDataByLayerNo called', compact('furnace','massprod','layer'));
+
+        $production = MassProduction::where('furnace', trim($furnace))
+            ->where('mass_prod', trim($massprod))
             ->first();
 
         if (!$production) {
+            Log::warning('Record not found', compact('furnace','massprod'));
             return response()->json([
                 'message' => "Mass Production record not found for furnace '{$furnace}' and mass production '{$massprod}'.",
             ], 404);
         }
 
-        // Map numeric layer identifiers to actual DB columns
         $layerMap = [
             '1'   => 'layer_1',
             '2'   => 'layer_2',
@@ -625,8 +643,9 @@ class MassProductionController extends Controller
             '9.5' => 'layer_9_5',
         ];
 
-        // Validate layer input
+        $layer = (string)$layer; // force string
         if (!array_key_exists($layer, $layerMap)) {
+            Log::warning('Invalid layer', compact('layer'));
             return response()->json([
                 'message' => "Invalid layer number: {$layer}",
             ], 400);
@@ -636,6 +655,7 @@ class MassProductionController extends Controller
         $layerData = $production->$layerColumn ? json_decode($production->$layerColumn, true) : null;
 
         if (empty($layerData) || !is_array($layerData)) {
+            Log::warning('Layer data empty', compact('layerColumn','layerData'));
             return response()->json([
                 'message' => "No valid data found for layer {$layer} in furnace '{$furnace}' mass production '{$massprod}'.",
             ], 404);
