@@ -254,7 +254,7 @@
                               You can now access different sections via the navigation bar at the top.
                             </p>
                             <p v-if="state.user && state.user.access_type"
-                                class="text-sm text-white/90 font-medium backdrop-blur-sm bg-white/10 px-4 py-2 rounded-lg border border-white/20 shadow-sm">
+                                class="px-4 py-2 text-sm font-medium border rounded-lg shadow-sm text-white/90 backdrop-blur-sm bg-white/10 border-white/20">
                                     Current Access Type:
                                 <span class="font-semibold text-cyan-100">{{ state.user.access_type }}</span>
                             </p>
@@ -282,35 +282,31 @@ const { state, fetchUser } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-
         const start = Date.now();
-        const timeout = 5000; // 5 seconds
+        const maxWait = 5000; // 5 seconds
 
         while (!state.user) {
-            if (Date.now() - start > timeout) {
-                console.error('Auth timeout: user data failed to load within 5 seconds.');
+            if (Date.now() - start > maxWait) {
+                console.error('User data failed to load in time. Redirecting...');
+                Inertia.visit('/'); // Redirect if user never loads
                 return false;
             }
-            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
-
-            return false; // Indicate not authenticated
+            console.warn('User is not authenticated. Redirecting...');
+            Inertia.visit('/');
+            return false;
         }
 
-        console.warn("USER AUTHENTICATED!");
-        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
-        console.warn("Access: ", state.user.access_type);
+        console.log("USER AUTHENTICATED!", `${state.user.firstName} ${state.user.surname}`);
+        return true;
 
-        await logUserLogin();
-
-        return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
-        return false; // Indicate not authenticated
+        Inertia.visit('/');
+        return false;
     }
 };
 

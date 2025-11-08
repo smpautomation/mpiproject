@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="flex flex-col items-center justify-center min-h-screen px-4 py-4 bg-gray-100">
-            <div v-if="!filmPastingInfo.selected_mass_prod" class="mb-6">
+            <div v-if="!filmPastingInfo.selected_mass_prod && !filmPastingInfo.selectedFurnace" class="mb-6">
                 <div class="flex items-center p-4 space-x-3 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
                 <!-- Info Icon -->
                 <div class="flex-shrink-0">
@@ -125,7 +125,18 @@
                 <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">Film Pasting Information</h2>
                     <!-- Group: Mass Prod, Layer -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div class="relative">
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
+                            <select
+                                v-model="filmPastingInfo.selectedFurnace"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            >
+                                <option v-for="items in furnace_names" :key="items" :value="items">
+                                    {{ items }}
+                                </option>
+                            </select>
+                        </div>
                         <div class="relative">
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
                             <select
@@ -216,24 +227,24 @@
                     <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                         <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">H-Line Parameters</h2>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
                             <input v-model="filmPastingInfo.h_line_parameters['sprayer_water_amount']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
                             <input v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_1']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                            <input v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_2']" type="number" class="w-full text-xs mt-2 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_2']" type="number" class="w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %</label>
                             <input v-model="filmPastingInfo.h_line_parameters['film_machine_humidity']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature</label>
                             <input v-model="filmPastingInfo.h_line_parameters['film_machine_temperature']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting</label>
                             <input  v-model="filmPastingInfo.h_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.h_line_parameters['dryer_temp_setting'] = filmPastingInfo.h_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
@@ -242,24 +253,24 @@
                     <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                         <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">T-Line Parameters</h2>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
                             <input v-model="filmPastingInfo.t_line_parameters['sprayer_water_amount']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
                             <input v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_1']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                            <input v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_2']" type="number" class="w-full text-xs mt-2 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_2']" type="number" class="w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %</label>
                             <input v-model="filmPastingInfo.t_line_parameters['film_machine_humidity']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature</label>
                             <input v-model="filmPastingInfo.t_line_parameters['film_machine_temperature']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting</label>
                             <input v-model="filmPastingInfo.t_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.t_line_parameters['dryer_temp_setting'] = filmPastingInfo.t_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
@@ -277,7 +288,7 @@
                                 name="setter_sand"
                                 value="1"
                                 v-model="filmPastingInfo.is_setter_sand"
-                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                             >
                             <span>With Setter Sand</span>
                             </label>
@@ -288,7 +299,7 @@
                                 name="setter_sand"
                                 value="0"
                                 v-model="filmPastingInfo.is_setter_sand"
-                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                             >
                             <span>Without Setter Sand</span>
                             </label>
@@ -338,6 +349,13 @@
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
                         >
                             CLEAR ALL
+                        </button>
+                        <!-- Coating -->
+                        <button
+                            @click="Inertia.visit('/coating')"
+                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50"
+                        >
+                            COATING FORMAT
                         </button>
                     </div>
                 </div>
@@ -478,31 +496,30 @@ const { state } = useAuth();
 const checkAuthentication = async () => {
     try {
         const start = Date.now();
-        const timeout = 500; // 5 seconds
+        const maxWait = 5000; // 5 seconds
 
         while (!state.user) {
-            if (Date.now() - start > timeout) {
-                console.error('Auth timeout: user data failed to load within 5 seconds.');
-                Inertia.visit('/'); // Redirect if not authenticated
+            if (Date.now() - start > maxWait) {
+                console.error('User data failed to load in time. Redirecting...');
+                Inertia.visit('/'); // Redirect if user never loads
                 return false;
             }
-            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
-            return false; // Indicate not authenticated
+            console.warn('User is not authenticated. Redirecting...');
+            Inertia.visit('/');
+            return false;
         }
 
-        console.warn("USER AUTHENTICATED!");
-        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
-        console.warn("Access: ", state.user.access_type);
+        console.log("USER AUTHENTICATED!", `${state.user.firstName} ${state.user.surname}`);
+        return true;
 
-        return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
-        return false; // Indicate not authenticated
+        Inertia.visit('/');
+        return false;
     }
 };
 
@@ -548,8 +565,10 @@ const existingLayers = ref([]);
 const available_layers = ref([]);
 const completedLayers = ref([]);
 const massProdLists = ref([]);
+const furnace_names = ref([]);
 
 const filmPastingInfo = reactive({
+    selectedFurnace: '',
     selected_mass_prod: '',
     selected_layer: null,
     film_pasting_date: '',
@@ -606,26 +625,6 @@ const submit = async () => {
             toast.error("Please fill in all required Film Pasting Info fields.");
             return;
         }else if(
-            filmPastingInfo.h_line_parameters['sprayer_water_amount'] == 0 ||
-            filmPastingInfo.h_line_parameters['film_paste_lot_no_1'] == 0 ||
-            filmPastingInfo.h_line_parameters['film_paste_lot_no_2'] == 0 ||
-            filmPastingInfo.h_line_parameters['film_machine_humidity'] == 0 ||
-            filmPastingInfo.h_line_parameters['film_machine_temperature'] == 0 ||
-            !filmPastingInfo.h_line_parameters['dryer_temp_setting']
-        ){
-            toast.error("Please fill in all required H Line Parameters fields.");
-            return;
-        }else if(
-            filmPastingInfo.t_line_parameters['sprayer_water_amount'] == 0 ||
-            filmPastingInfo.t_line_parameters['film_paste_lot_no_1'] == 0 ||
-            filmPastingInfo.t_line_parameters['film_paste_lot_no_2'] == 0 ||
-            filmPastingInfo.t_line_parameters['film_machine_humidity'] == 0 ||
-            filmPastingInfo.t_line_parameters['film_machine_temperature'] == 0 ||
-            !filmPastingInfo.t_line_parameters['dryer_temp_setting']
-        ){
-            toast.error("Please fill in all required T Line Parameters fields.");
-            return;
-        }else if(
             !filmPastingInfo.is_setter_sand
         ){
             toast.error("Please choose Setter sand application per layer.");
@@ -639,6 +638,7 @@ const submit = async () => {
 const saveToDatabase = async () => {
     try{
         const payload = {
+            furnace: filmPastingInfo.selectedFurnace,
             mass_prod: filmPastingInfo.selected_mass_prod,
             layer: filmPastingInfo.selected_layer,
             date: filmPastingInfo.film_pasting_date,
@@ -676,12 +676,13 @@ const updateFormatType = async () => { // Update format type of Mass Productions
     const layerKey = filmPastingInfo.selected_layer === '9.5' ? 'layer_9_5_format_type' : `layer_${filmPastingInfo.selected_layer}_format_type`;
 
     const dataPayload = {
+        furance: filmPastingInfo.selectedFurnace,
         mass_prod: filmPastingInfo.selected_mass_prod,
         [layerKey]: 'Film Pasting',
     }
 
     try{
-        const responseUpdate = await axios.patch(`/api/mass-production/${filmPastingInfo.selected_mass_prod}`, dataPayload);
+        const responseUpdate = await axios.patch(`/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}`, dataPayload);
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
@@ -690,6 +691,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
 
 const clearAll = () => {
     Object.assign(filmPastingInfo,{
+        selectedFurnace: '',
         selected_mass_prod: '',
         selected_layer: null,
         film_pasting_date: '',
@@ -729,7 +731,7 @@ const clearAll = () => {
 
 const getMassProdLists = async () => {
     try{
-        const response = await axios.get('/api/mass-production/');
+        const response = await axios.get('/api/mass-production');
         const massProdList = response.data;
         massProdLists.value = massProdList.map(item => item.mass_prod);
         //console.log("List of mass prods: ",massProd_names.value);
@@ -739,9 +741,21 @@ const getMassProdLists = async () => {
     }
 }
 
+const getFurnaceLists = async () => {
+    try{
+        const response = await axios.get('/api/furnace-data');
+        const furnaceList = response.data;
+        furnace_names.value = furnaceList.map(item => item.furnace_name);
+        //console.log("List of mass prods: ",furnace_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
 const getCompletedLayers = async () => {
     try {
-        const response = await axios.get(`/api/film-pasting-data/${filmPastingInfo.selected_mass_prod}/layers`);
+        const response = await axios.get(`/api/film-pasting-data/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/layers`);
         completedLayers.value = response.data.layers.map(String);
         console.log("Completed Layers: ",completedLayers.value);
     } catch (error) {
@@ -757,26 +771,27 @@ const getCompletedLayers = async () => {
 const fetchAvailableLayers = async () => {
     try {
         const response = await axios.get(
-            `/api/mass-productions/${filmPastingInfo.selected_mass_prod}/completed-layers`
+            `/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/completed-layers-film-paste`
         );
         available_layers.value = response.data.completed_layers;
         console.log("Available Layers: ", available_layers.value);
     } catch (error) {
         console.error(error);
+        available_layers.value = [];
         toast.error('Failed to fetch available layers from Heat Treatment');
     }
 };
 
 const fetchExistingLayers = async () => {
-    if (!filmPastingInfo.selected_mass_prod && !filmPastingInfo.selected_layer) {
-        console.warn("Mass Production and layer not selected yet.");
+    if (!filmPastingInfo.selected_mass_prod && !filmPastingInfo.selected_layer && !filmPastingInfo.selectedFurnace) {
+        console.warn("Furnace, Mass Production or layer not selected yet.");
         return;
     }
 
     try {
         // 1st Coating
         const response1 = await axios.get(
-            `/api/mass-productions/${filmPastingInfo.selected_mass_prod}/filmpasting-completed-layers`
+            `/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/film-pasting-completed-layers`
         );
         existingLayers.value = response1.data.film_pasting_layers;
         console.log("Existing Layers for Coating:", existingLayers.value);
@@ -791,6 +806,7 @@ const fetchExistingLayers = async () => {
         }
 
     } catch (error) {
+        isExists.value = false;
         console.error("Error fetching existing layers:", error);
         toast.error('Failed to fetch existing layers.');
     }
@@ -803,22 +819,20 @@ const fetchExistingLayers = async () => {
 // Watch zone -------- Watch Zone
 
 watch(
-    () => filmPastingInfo.selected_mass_prod,
-    async (newValue) => {
-        if (newValue) {
+    [
+        () => filmPastingInfo.selectedFurnace,
+        () => filmPastingInfo.selected_mass_prod,
+        () => filmPastingInfo.selected_layer
+    ],
+    async ([newFurnace, newMassProd, newLayer]) => {
+        if (newFurnace && newMassProd) {
             await getCompletedLayers();
             await fetchAvailableLayers();
+            await fetchExistingLayers();
         } else {
-            completedLayers.value = []; // reset if cleared
+            completedLayers.value = []; // reset if furnace or mass_prod is cleared
         }
     }
-);
-
-watch(
-  () => [filmPastingInfo.selected_mass_prod, filmPastingInfo.selected_layer],
-  async () => {
-    await fetchExistingLayers();
-  }
 );
 
 // Watch zone -------- Watch Zone END
@@ -836,6 +850,7 @@ onMounted(async () => {
         return;
     }
     await getMassProdLists();
+    await getFurnaceLists();
 });
 
 </script>

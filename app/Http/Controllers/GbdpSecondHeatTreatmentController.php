@@ -46,7 +46,8 @@ class GbdpSecondHeatTreatmentController extends Controller
         $item = GbdpSecondHeatTreatment::findOrFail($id);
 
         $validated = $request->validate([
-            'mass_prod' => 'sometimes|required|string|max:255',
+            'furnace' => 'sometimes|string|max:255',
+            'mass_prod' => 'sometimes|string|max:255',
             'layer'     => 'nullable|numeric',
             'gbdp_1st'  => 'nullable|array',
             'gbdp_2nd'  => 'nullable|array',
@@ -73,13 +74,15 @@ class GbdpSecondHeatTreatmentController extends Controller
         return response()->json(['message' => 'Deleted'], 204);
     }
 
-    public function getLayersByMassProd($massProd)
+    public function getLayersByMassProd($furnace, $massProd)
     {
-        $layers = GbdpSecondHeatTreatment::where('mass_prod', $massProd)
+        $layers = GbdpSecondHeatTreatment::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
             ->pluck('layer');
 
         return response()->json(['layers' => $layers], 200);
     }
+
 
     public function getLayerData($furnace, $massprod, $layer)
     {

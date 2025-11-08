@@ -1,16 +1,16 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-center min-h-screen px-4 py-2 bg-gray-100">
-            <div class="flex flex-row space-x-8 whitespace-nowrap mt-10">
+            <div class="flex flex-row mt-10 space-x-8 whitespace-nowrap">
                 <!-- Header Selection Section -->
                 <div class="w-full max-w-4xl mb-12">
                     <div class="px-8 py-6 bg-white border border-gray-200 shadow-lg rounded-xl">
                         <!-- Header -->
-                        <div class="mb-6 pb-4 border-b border-gray-200">
+                        <div class="pb-4 mb-6 border-b border-gray-200">
                             <div class="flex items-start gap-3">
-                                <div class="w-1 h-14 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full flex-shrink-0"></div>
+                                <div class="flex-shrink-0 w-1 rounded-full h-14 bg-gradient-to-b from-teal-500 to-cyan-500"></div>
                                 <div class="flex-1">
-                                    <h2 class="text-2xl font-bold text-gray-800 mb-1">
+                                    <h2 class="mb-1 text-2xl font-bold text-gray-800">
                                         GBDP Heat Treatment & Coating Information
                                     </h2>
                                     <p class="text-sm text-gray-600">
@@ -22,6 +22,22 @@
 
                         <!-- Body -->
                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                            <!-- Furnace -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                    Furnace Name <span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    v-model="selectedFurnace"
+                                    class="w-full px-4 py-3 text-sm font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
+                                >
+                                    <option value="" disabled>Select Furnace</option>
+                                    <option v-for="items in furnace_names" :key="items" :value="items">
+                                        {{ items }}
+                                    </option>
+                                </select>
+                            </div>
+
                             <!-- Mass Production -->
                             <div>
                                 <label class="block mb-2 text-sm font-semibold text-gray-700">
@@ -29,7 +45,7 @@
                                 </label>
                                 <select
                                     v-model="selectedMassProd"
-                                    class="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer"
+                                    class="w-full px-4 py-3 text-sm font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
                                 >
                                     <option value="" disabled>Select Mass Production</option>
                                     <option v-for="items in massProd_names" :key="items" :value="items">
@@ -45,7 +61,7 @@
                                 </label>
                                 <select
                                     v-model="selectedLayer"
-                                    class="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer"
+                                    class="w-full px-4 py-3 text-sm font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
                                 >
                                     <option value="" disabled>Select Layer</option>
                                     <option v-for="items in layers" :key="items" :value="items">
@@ -61,7 +77,7 @@
             </div>
 
             <div class="my-6">
-                <h2 class="relative text-2xl font-bold text-gray-800 pb-2 tracking-wide uppercase inline-block">
+                <h2 class="relative inline-block pb-2 text-2xl font-bold tracking-wide text-gray-800 uppercase">
                     Heat Treatment
                     <span class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full shadow-[0_0_8px_rgba(20,184,166,0.5)]"></span>
                 </h2>
@@ -176,7 +192,7 @@
             </div>
 
             <div class="my-6">
-                <h2 class="relative text-2xl font-bold text-gray-800 pb-2 tracking-wide uppercase inline-block">
+                <h2 class="relative inline-block pb-2 text-2xl font-bold tracking-wide text-gray-800 uppercase">
                     Coating
                     <span class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full shadow-[0_0_8px_rgba(20,184,166,0.5)]"></span>
                 </h2>
@@ -511,8 +527,10 @@ function useSessionStorage(key, state) {
 
 
 const showModalCreate = ref(false);
+const selectedFurnace = ref();
 const selectedMassProd = ref();
 const massProd_names = ref([]);
+const furnace_names = ref([]);
 const selectedLayer = ref();
 const layers = ref([]);
 const graph_patterns = ref([]);
@@ -613,10 +631,22 @@ const getMassProdLists = async () => {
     }
 }
 
+const getFurnaceLists = async () => {
+    try{
+        const response = await axios.get('/api/furnace-data');
+        const furnaceList = response.data;
+        furnace_names.value = furnaceList.map(item => item.furnace_name);
+        //console.log("List of mass prods: ",furnace_names.value);
+    }catch(error){
+        console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the mass prod lists api error');
+    }
+}
+
 const getMassProdLayers = async () => {
     try{
         // ✅ Fetch available layers for the selected mass production
-        const layersResponse = await axios.get(`/api/second-heat-treatment-data/${selectedMassProd.value}/layers`);
+        const layersResponse = await axios.get(`/api/second-heat-treatment-data/${selectedFurnace.value}/${selectedMassProd.value}/layers`);
         layers.value = layersResponse.data.layers || [];
 
         console.log('Available Layers: ', layers.value);
@@ -628,7 +658,7 @@ const getMassProdLayers = async () => {
 const getCurrentMassProdData = async () => {
     try {
         // Fetch both the specific mass prod + layer data
-        const response = await axios.get(`/api/second-ht-data/${selectedMassProd.value}/layer/${selectedLayer.value}`);
+        const response = await axios.get(`/api/second-ht-data/${selectedFurnace.value}/${selectedMassProd.value}/layer/${selectedLayer.value}`);
         const massProdData = response.data?.data || response.data;
 
         if (!massProdData) {
@@ -672,7 +702,7 @@ const getCurrentMassProdData = async () => {
         console.log('GBDP 1st:', gbdp_1st);
         console.log('GBDP 2nd:', gbdp_2nd);
 
-        const response2 = await axios.get(`/api/second-coating-data/${selectedMassProd.value}/layer/${selectedLayer.value}`);
+        const response2 = await axios.get(`/api/second-coating-data/${selectedFurnace.value}/${selectedMassProd.value}/layer/${selectedLayer.value}`);
         const coatingData = response2.data?.data || response2.data;
 
         if (!coatingData) {
@@ -794,7 +824,7 @@ onMounted(async () => {
         return; // Stop execution if not authenticated
     }
     await getMassProdLists();
-    //await getFurnaceLists();
+    await getFurnaceLists();
     //await getGraphPatterns();
     //await get1st2ndGBDPModels();
 });

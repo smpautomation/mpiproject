@@ -502,6 +502,141 @@ class MassProductionController extends Controller
         ]);
     }
 
+    public function getAllCompletedLayersFilmPaste($furnace, $massprod)
+    {
+        // Fetch record using composite key
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => "Record not found for Furnace: {$furnace}, Mass Production: {$massprod}.",
+            ], 404);
+        }
+
+        // Define possible layers
+        $layers = [
+            'layer_1'   => '1',
+            'layer_2'   => '2',
+            'layer_3'   => '3',
+            'layer_4'   => '4',
+            'layer_5'   => '5',
+            'layer_6'   => '6',
+            'layer_7'   => '7',
+            'layer_8'   => '8',
+            'layer_9'   => '9',
+            'layer_9_5' => '9.5',
+        ];
+
+        $completed = [];
+
+        // Check layers in MassProduction
+        foreach ($layers as $column => $label) {
+            $value = $record->$column ?? null;
+            if (!empty($value) && $value !== 'null') {
+                $decoded = json_decode($value, true);
+                if (!empty($decoded)) {
+                    $completed[] = $label;
+                }
+            }
+        }
+
+        // Fetch completed layers from GbdpSecondHeatTreatment (scoped by furnace + mass_prod)
+        $gbdpLayers = GbdpSecondHeatTreatment::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->toArray();
+
+        // Merge, remove duplicates, and sort numerically
+        $allCompletedLayers = array_unique(array_merge($completed, $gbdpLayers));
+
+        // Fetch layers that exist in Coating and Second Coating
+        $coatingLayers = Coating::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->toArray();
+
+        $secondCoatingLayers = GbdpSecondCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->toArray();
+
+        // Exclude layers that exist in coatings
+        $unavailableLayers = array_merge($coatingLayers, $secondCoatingLayers);
+        $availableLayers = array_diff($allCompletedLayers, $unavailableLayers);
+
+        // Sort numerically
+        sort($availableLayers, SORT_NUMERIC);
+
+        return response()->json([
+            'completed_layers' => array_values($availableLayers),
+        ]);
+    }
+
+    public function getAllCompletedLayersCoating($furnace, $massprod)
+    {
+        // Fetch MassProduction record
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => "Record not found for Furnace: {$furnace}, Mass Production: {$massprod}.",
+            ], 404);
+        }
+
+        // Define possible layers
+        $layers = [
+            'layer_1'   => '1',
+            'layer_2'   => '2',
+            'layer_3'   => '3',
+            'layer_4'   => '4',
+            'layer_5'   => '5',
+            'layer_6'   => '6',
+            'layer_7'   => '7',
+            'layer_8'   => '8',
+            'layer_9'   => '9',
+            'layer_9_5' => '9.5',
+        ];
+
+        // Collect completed layers from MassProduction
+        $completed = [];
+        foreach ($layers as $column => $label) {
+            $value = $record->$column ?? null;
+            if (!empty($value) && $value !== 'null') {
+                $decoded = json_decode($value, true);
+                if (!empty($decoded)) {
+                    $completed[] = $label;
+                }
+            }
+        }
+
+        // Merge with completed layers from GbdpSecondHeatTreatment
+        $heatTreatmentLayers = GbdpSecondHeatTreatment::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->toArray();
+
+        $allCompletedLayers = array_unique(array_merge($completed, $heatTreatmentLayers));
+
+        // Fetch layers that exist in FilmPastingData
+        $filmPastingLayers = FilmPastingData::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer')
+            ->toArray();
+
+        // Remove layers that already exist in FilmPastingData
+        $availableLayers = array_diff($allCompletedLayers, $filmPastingLayers);
+
+        // Sort numerically
+        sort($availableLayers, SORT_NUMERIC);
+
+        return response()->json([
+            'completed_layers' => array_values($availableLayers),
+        ]);
+    }
 
 
     public function getAllCoatingCompleteLayers($furnace, $massprod)

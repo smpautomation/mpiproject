@@ -1303,31 +1303,30 @@ const { state } = useAuth();
 const checkAuthentication = async () => {
     try {
         const start = Date.now();
-        const timeout = 500; // 5 seconds
+        const maxWait = 5000; // 5 seconds
 
         while (!state.user) {
-            if (Date.now() - start > timeout) {
-                console.error('Auth timeout: user data failed to load within 5 seconds.');
-                Inertia.visit('/'); // Redirect if not authenticated
+            if (Date.now() - start > maxWait) {
+                console.error('User data failed to load in time. Redirecting...');
+                Inertia.visit('/'); // Redirect if user never loads
                 return false;
             }
-            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
-            return false; // Indicate not authenticated
+            console.warn('User is not authenticated. Redirecting...');
+            Inertia.visit('/');
+            return false;
         }
 
-        console.warn("USER AUTHENTICATED!");
-        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
-        console.warn("Access: ", state.user.access_type);
+        console.log("USER AUTHENTICATED!", `${state.user.firstName} ${state.user.surname}`);
+        return true;
 
-        return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
-        return false; // Indicate not authenticated
+        Inertia.visit('/');
+        return false;
     }
 };
 
@@ -2063,7 +2062,7 @@ const fetchExistingLayers = async () => {
 const fetchAvailableLayers = async () => {
     try {
         const response = await axios.get(
-            `/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/completed-layers`
+            `/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/completed-layers-coating`
         );
         available_layers.value = response.data.completed_layers;
         console.log("Available Layers: ", available_layers.value);

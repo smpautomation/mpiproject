@@ -282,10 +282,10 @@ Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 
 Route::apiResource('smp-data',SmpDataController::class);
 
-Route::get('/film-pasting-data/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
+Route::get('/film-pasting-data/{furnace}/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
 Route::get('/coating-data/{furnace}/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
 Route::get('/second-coating-data/{furnace}/{massProd}/layers', [GbdpSecondCoatingController::class, 'getLayersByMassProd']);
-Route::get('/second-heat-treatment-data/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
+Route::get('/second-heat-treatment-data/{furnace}/{massProd}/layers', [GbdpSecondHeatTreatmentController::class, 'getLayersByMassProd']);
 //Route::get('/second-ht-data/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
 Route::get('/second-ht-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
 Route::get('/second-coating-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
@@ -328,7 +328,8 @@ Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}/lotno', [M
 //    [MassProductionController::class, 'getAllHTCompletedLayers']
 //);
 Route::get('/mass-production/{furnace}/{massprod}/completed-layers', [MassProductionController::class, 'getAllHTCompletedLayers']);
-
+Route::get('/mass-production/{furnace}/{massprod}/completed-layers-film-paste', [MassProductionController::class, 'getAllCompletedLayersFilmPaste']);
+Route::get('/mass-production/{furnace}/{massprod}/completed-layers-coating', [MassProductionController::class, 'getAllCompletedLayersCoating']);
 //Route::get(
 //    '/mass-productions/{massprod}/coating-completed-layers',
 //    [MassProductionController::class, 'getAllCoatingCompleteLayers']
