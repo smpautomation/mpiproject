@@ -26,7 +26,7 @@
             </button>
             <div v-if="!errMsg">
                 <div>
-                    <p><span>{{ redirectedMassPro }}</span> Mass Production</p>
+                    <p><span>{{ redirectedFurnace }} {{ redirectedMassPro }}</span> Mass Production</p>
                 </div>
                 <table id="controlSheetTable" class="border border-collapse border-gray-300 table-auto ">
                     <thead>

@@ -5,8 +5,6 @@
                 <p>Dev Controls:</p>
                 <button @click="bypassValidation = true" class="p-1 bg-gray-200 rounded-lg" :class="[bypassValidation ? 'bg-yellow-400' : '']">ByPass Validation</button>
                 <button @click="bypassValidation = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
-                <button @click="overwriteHeatTreatment = true" class="p-1 bg-gray-200 rounded-lg" :class="[overwriteHeatTreatment ? 'bg-yellow-400' : '']">Allow Overwrite</button>
-                <button @click="overwriteHeatTreatment = false" class="p-1 bg-gray-300 rounded-lg"> x </button>
             </div>
         </div>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
@@ -25,46 +23,70 @@
             <div class="flex flex-row justify-center gap-0">
                 <div v-if="!overwriteMode" class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
-
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                         <div class="relative">
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
                             <select
-                                v-model="mpcs.selectedFurnace"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            v-model="mpcs.selectedFurnace"
+                            class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
-                                <option v-for="item in furnace_names" :key="item" :value="item">
-                                    {{ item }}
-                                </option>
+                            <option v-for="item in furnace_names" :key="item" :value="item">
+                                {{ item }}
+                            </option>
                             </select>
                         </div>
+
                         <div class="relative">
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
                             <select
-                                v-model="mpcs.selectedMassProd"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            v-model="mpcs.selectedMassProd"
+                            class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
-                                <option v-for="item in massProd_names" :key="item" :value="item">
-                                    {{ item }}
-                                </option>
+                            <option v-for="item in massProd_names" :key="item" :value="item">
+                                {{ item }}
+                            </option>
                             </select>
                         </div>
+
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                             <select v-model="mpcs.selectedLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                                <option v-for="item in layers" :key="item" :value="item">
-                                    {{ item }}
-                                </option>
+                            <option v-for="item in layers" :key="item" :value="item">
+                                {{ item }}
+                            </option>
                             </select>
                         </div>
+
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Boxes: A to<span class="text-red-500"> *</span></label>
                             <select v-model="mpcs.selectedBoxEndList" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                <option v-for="item in boxesEndList" :key="item" :value="item">
-                                    {{ item }}
-                                </option>
+                            <option v-for="item in boxesEndList" :key="item" :value="item">
+                                {{ item }}
+                            </option>
                             </select>
+                        </div>
+
+                        <!-- 9.5 Layer Radios: Full width row -->
+                        <div v-if="isLayerNinePointFive" class="col-span-1 md:col-span-4">
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">9.5 Layer Set <span class="text-red-500">*</span></label>
+                            <div class="flex flex-col gap-4 md:flex-row">
+                            <label
+                                class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
+                                :class="{'border-yellow-500 bg-yellow-50': mpcs.nineHalfSet === 'SET1'}"
+                            >
+                                <input type="radio" value="SET1" v-model="mpcs.nineHalfSet" class="accent-yellow-500" />
+                                First Half: A, C, E, G, J
+                            </label>
+
+                            <label
+                                class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
+                                :class="{'border-yellow-500 bg-yellow-50': mpcs.nineHalfSet === 'SET2'}"
+                            >
+                                <input type="radio" value="SET2" v-model="mpcs.nineHalfSet" class="accent-yellow-500" />
+                                Second Half: B, D, F, H, K
+                            </label>
+                            </div>
                         </div>
                     </div>
 
@@ -514,6 +536,14 @@
                 <div
                     class="relative flex flex-col items-start bg-white p-8 rounded-2xl shadow-2xl w-[60vw] h-[55vh] overflow-auto mx-auto"
                 >
+                    <div class="flex items-center px-4 py-3 mb-2 text-white rounded-lg shadow-md bg-gradient-to-r from-cyan-500 to-teal-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1 4v-4h1m-1 0V8m-6 8h6m-6 0h6"/>
+                        </svg>
+                        <p class="text-sm font-medium">
+                            Note: When finished, click the <span class="font-bold">(×)</span> button at the top-right corner to close this panel.
+                        </p>
+                    </div>
                     <!-- Close Button -->
                     <button
                         @click="showHTLTPanel = false"
@@ -941,9 +971,20 @@ const isExisting_2ndGBDP = ref(false);
 const completedLayers = ref(['1','2']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
 const boxesEndList = ref(['B','C','D','E','F','G','H','J','K']);
+
+const isLayerNinePointFive = computed(() => mpcs.selectedLayer === '9.5');
+
 const visibleBoxes = computed(() => {
-  const endIndex = allBoxes.indexOf(mpcs.selectedBoxEndList); //Looks for the position of selected Letter in the array.
-  return allBoxes.slice(0, endIndex + 1);
+    if (isLayerNinePointFive.value && mpcs.nineHalfSet) {
+        // 9.5 Layer override
+        const set1 = ['A','C','E','G','J'];
+        const set2 = ['B','D','F','H','K'];
+        return mpcs.nineHalfSet === 'SET1' ? set1 : set2;
+    } else {
+        // Normal logic
+        const endIndex = allBoxes.indexOf(mpcs.selectedBoxEndList);
+        return allBoxes.slice(0, endIndex + 1);
+    }
 });
 const boxNoValues = ref({});
 allBoxes.forEach(box => {
@@ -997,7 +1038,8 @@ const mpcs = reactive({
     qty_lastBox: 0,
     coating: 0,
     magnetPreparedBy: '',
-    boxPreparedBy: ''
+    boxPreparedBy: '',
+    nineHalfSet: '', // 'SET1' for A,C,E,G,J | 'SET2' for B,D,F,H,K
 });
 
 // Watch for changes to selectedMassProd
@@ -1056,6 +1098,7 @@ watch(
 const activate2ndGBDP = computed(() => {
     return firstSecondGBDP_models.value.includes(mpcs.selectedModel);
 });
+
 
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
@@ -1297,6 +1340,16 @@ const clearAll = () => {
         weightValues.value[key] = '';
     });
 
+    // Reset boxNoValues
+    Object.keys(ltValues.value).forEach(key => {
+        ltValues.value[key] = '';
+    });
+
+    // Reset weightValues
+    Object.keys(htValues.value).forEach(key => {
+        htValues.value[key] = '';
+    });
+
     mpcs.selectedBoxEndList = 'K';
     mpcs.selectedModel = '';
     initialFurnaceData.value = null;
@@ -1365,11 +1418,27 @@ const finalize = () => {
                 return;
             }
         }
+
+        if (isLayerNinePointFive.value && !mpcs.nineHalfSet) {
+            toast.error('Please select which half of 9.5 layer to use.');
+            return;
+        }
+    }
+
+    // Determine which boxes to validate
+    let boxesToValidate = visibleBoxes.value;
+
+    if (isLayerNinePointFive.value && mpcs.nineHalfSet) {
+        if (mpcs.nineHalfSet === 'SET1') {
+            boxesToValidate = visibleBoxes.value.filter(b => ['A','C','E','G','J'].includes(b));
+        } else if (mpcs.nineHalfSet === 'SET2') {
+            boxesToValidate = visibleBoxes.value.filter(b => ['B','D','F','H','K'].includes(b));
+        }
     }
 
     // new per-box check
-    for (const box of visibleBoxes.value) {
-        if ((bypassValidation.value == false)  && (!boxNoValues.value[box] || !weightValues.value[box] || weightValues.value[box] <= 0)) {
+    for (const box of boxesToValidate) {
+        if (!bypassValidation.value && (!boxNoValues.value[box] || !weightValues.value[box] || weightValues.value[box] <= 0)) {
             toast.error(`Please fill in box number and weight for box ${box}.`);
             return;
         }
