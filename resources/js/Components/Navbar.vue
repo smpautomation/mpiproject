@@ -26,15 +26,15 @@
     <ul class="items-center hidden gap-6 font-medium text-gray-700 md:flex dark:text-gray-300">
         <li v-for="item in filteredNavItems" :key="item.label" class="relative group">
             <template v-if="item.children && item.children.length">
-                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 cursor-pointer hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 rounded-lg cursor-pointer hover:text-blue-600 hover:bg-blue-50">
                     {{ item.label }}
                     <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:rotate-180 text-gray-500 group-hover:text-blue-600"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </span>
-                <ul class="absolute left-0 z-50 invisible w-52 mt-1 transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible group-hover:translate-y-1">
-                    <li v-for="child in item.children" :key="child.label" class="first:rounded-t-lg last:rounded-b-lg overflow-hidden">
+                <ul class="absolute left-0 z-50 invisible mt-1 transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 w-52 group-hover:opacity-100 group-hover:visible group-hover:translate-y-1">
+                    <li v-for="child in item.children" :key="child.label" class="overflow-hidden first:rounded-t-lg last:rounded-b-lg">
                         <Link :href="route(child.route)"
                             class="block px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-blue-50 hover:text-blue-600 hover:pl-5">
                             {{ child.label }}
@@ -52,16 +52,16 @@
 
 
         <li v-if="state.isAuthenticated && state.user"
-            class="flex items-center px-4 py-2 space-x-3 transition-all duration-200 bg-white rounded-full shadow-md border border-blue-100 hover:shadow-lg hover:border-blue-200">
+            class="flex items-center px-4 py-2 space-x-3 transition-all duration-200 bg-white border border-blue-100 rounded-full shadow-md hover:shadow-lg hover:border-blue-200">
 
             <!-- Avatar -->
-            <div class="flex items-center justify-center text-sm font-bold text-white rounded-full shadow-md w-10 h-10 bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500">
+            <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full shadow-md bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500">
                 {{ state.user.firstName.charAt(0).toUpperCase() }}
             </div>
 
             <!-- Name -->
             <span class="text-sm font-semibold text-gray-700 truncate max-w-[6rem]">
-                <span class="text-sm font-semibold text-gray-700 flex flex-col leading-tight">
+                <span class="flex flex-col text-sm font-semibold leading-tight text-gray-700">
                     <span class="truncate max-w-[8rem]">{{ state.user.firstName }}</span>
                     <span class="text-xs font-medium text-blue-600 whitespace-nowrap">({{ state.user.access_type }})</span>
                 </span>
@@ -155,7 +155,7 @@ const navItems = [
         label: 'Options',
         access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'],
         children: [
-            { label: 'Inspection', route: 'inspection', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
+            { label: 'Inspection', route: 'inspection', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Coating','Heat Treatment'] },
             { label: 'View List', route: 'viewList', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver'] },
             { label: 'Approval', route: 'approval', access: ['Automation','Final Approver','Proxy Approver'] },
             { label: 'Approval', route: 'approval_prepared', access: ['Preparation Approver'] },
