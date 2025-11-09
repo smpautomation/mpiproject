@@ -2075,7 +2075,7 @@ const fetchAvailableLayers = async () => {
 const fetchLayerModel = async (furnace, massProd, layerNumber) => {
     try {
         const response = await axios.get(
-            `/api/mass-production/${furnace}/${massProd}/layer/${layerNumber}`
+            `/api/mass-production/${furnace}/${massProd}/layer/${layerNumber}/model`
         );
         console.log("Fetched Model: ", response.data.model);
         fetchedModelValue.value = response.data.model;
@@ -2087,6 +2087,8 @@ const fetchLayerModel = async (furnace, massProd, layerNumber) => {
 
         if (error.response?.status === 404) {
             isModelMissing.value = true;
+        }else{
+            isModelMissing.value = false;
         }
     }
 };

@@ -9,13 +9,24 @@
         }">
         <!-- Overlay -->
         <div class="absolute inset-0 z-0 bg-black bg-opacity-50"></div>
-            <div v-if="toggleManageForm" class="max-w-5xl p-8 mx-auto mb-8 bg-white/95 backdrop-blur-sm border border-teal-200/50 rounded-xl shadow-2xl">
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-10">
+            <div v-if="toggleManageForm" class="max-w-5xl p-8 mx-auto mb-8 border shadow-2xl bg-white/95 backdrop-blur-sm border-teal-200/50 rounded-xl">
+                <div class="grid grid-cols-1 gap-6 mb-10 md:grid-cols-3">
+                    <div class="relative">
+                        <label class="block mb-2 text-sm font-medium text-gray-700">Furnace Name <span class="text-red-500">*</span></label>
+                        <select
+                            v-model="selectedFurnace"
+                            class="w-full px-4 py-3 text-sm font-medium text-gray-800 transition-all duration-200 bg-white border border-teal-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400"
+                        >
+                            <option v-for="item in furnace_names" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                        </select>
+                    </div>
                     <div class="relative">
                         <label class="block mb-2 text-sm font-medium text-gray-700">Mass Prod. Name <span class="text-red-500">*</span></label>
                         <select
                             v-model="selectedMassProd"
-                            class="w-full px-4 py-3 text-sm font-medium text-gray-800 bg-white border border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400"
+                            class="w-full px-4 py-3 text-sm font-medium text-gray-800 transition-all duration-200 bg-white border border-teal-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400"
                         >
                             <option v-for="item in massProd_names" :key="item" :value="item">
                                 {{ item }}
@@ -24,7 +35,7 @@
                     </div>
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
-                        <select v-model="currentLayerNo" class="w-full px-4 py-3 text-sm font-medium text-gray-800 bg-white border border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400">
+                        <select v-model="currentLayerNo" class="w-full px-4 py-3 text-sm font-medium text-gray-800 transition-all duration-200 bg-white border border-teal-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400">
                             <option v-for="item in available_layers" :key="item" :value="item">
                                 {{ item }}
                             </option>
@@ -33,18 +44,18 @@
                 </div>
                 <p v-if="showUploadTPMFiles" class="mb-6 text-xl font-semibold text-gray-800">Please select and upload TPM files:</p>
                 <div v-show="showUploadData" class="flex flex-row items-center justify-center">
-                    <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-12 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                    <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-12 overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl">
                         <!-- Header -->
-                        <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
+                        <div class="px-6 py-4 bg-gradient-to-r from-teal-600 to-cyan-600">
                             <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <div class="flex items-center justify-center w-10 h-10 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
                                 <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-white font-semibold text-lg">Upload TPM Files</h3>
-                                <p class="text-cyan-100 text-sm">Select your .tpm files for processing</p>
+                                <h3 class="text-lg font-semibold text-white">Upload TPM Files</h3>
+                                <p class="text-sm text-cyan-100">Select your .tpm files for processing</p>
                             </div>
                             </div>
                         </div>
@@ -59,28 +70,28 @@
                                 type="file"
                                 accept=".tpm"
                                 multiple
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                class="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer"
                                 @change="storeFileList"
                             />
 
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-teal-400 hover:bg-teal-50 transition-all duration-200 group">
+                            <div class="p-8 text-center transition-all duration-200 border-2 border-gray-300 border-dashed rounded-xl hover:border-teal-400 hover:bg-teal-50 group">
                                 <!-- Upload Icon -->
-                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 transition-transform bg-gradient-to-br from-teal-100 to-cyan-100 rounded-2xl group-hover:scale-110">
                                 <svg class="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                                 </svg>
                                 </div>
 
                                 <!-- Upload Text -->
-                                <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                                <h4 class="mb-2 text-lg font-semibold text-gray-900">
                                     Drop files here or click to browse
                                 </h4>
-                                <p class="text-sm text-gray-600 mb-4">
+                                <p class="mb-4 text-sm text-gray-600">
                                     Select multiple .tpm files for upload
                                 </p>
 
                                 <!-- File Type Badge -->
-                                <div class="inline-flex items-center px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
+                                <div class="inline-flex items-center px-3 py-1 text-xs font-medium text-teal-800 bg-teal-100 rounded-full">
                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd" />
                                 </svg>
@@ -93,10 +104,10 @@
                             <!-- You can add this section to show selected files -->
 
                             <!-- Action Button -->
-                            <div class="mt-6 flex justify-center">
+                            <div class="flex justify-center mt-6">
                             <button
                                 @click="clearFileUpload"
-                                class="group px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-300"
+                                class="px-6 py-3 font-semibold text-white transition-all duration-200 transform shadow-lg group bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-300"
                             >
                                 <span class="flex items-center space-x-2">
                                 <svg class="w-4 h-4 transition-transform group-hover:rotate-12" fill="currentColor" viewBox="0 0 20 20">
@@ -109,14 +120,14 @@
                             </div>
 
                             <!-- Help Text -->
-                            <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                            <div class="p-3 mt-4 rounded-lg bg-gray-50">
                             <div class="flex items-start space-x-2">
                                 <svg class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                                 </svg>
                                 <div>
-                                <p class="text-sm text-gray-700 font-medium mb-1">Upload Instructions:</p>
-                                <ul class="text-xs text-gray-600 space-y-1">
+                                <p class="mb-1 text-sm font-medium text-gray-700">Upload Instructions:</p>
+                                <ul class="space-y-1 text-xs text-gray-600">
                                     <li>• Multiple file selection supported</li>
                                     <li>• Only .tpm file format accepted</li>
                                     <li>• Drag and drop or click to select</li>
@@ -126,103 +137,132 @@
                             </div>
                         </div>
                     </div>
-
-                    <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-12 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden ml-10">
-                        <!-- Header -->
-                        <div class="bg-gradient-to-r from-cyan-600 to-teal-600 px-6 py-4">
-                            <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd" />
-                                </svg>
-                                </div>
-                                <div>
-                                <h3 class="text-white font-semibold text-lg">Selected Files</h3>
-                                <p class="text-cyan-100 text-sm">Preview of uploaded files</p>
-                                </div>
-                            </div>
-
-                            <!-- File Count Badge -->
-                            <div v-if="fileLists.length > 0" class="bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                                <span class="text-white text-sm font-semibold">{{ fileLists.length }} files</span>
-                            </div>
-                            </div>
-                        </div>
-
-                        <!-- Content Area -->
-                        <div class="p-6">
-
-                            <!-- Files List -->
-                            <div v-if="fileLists.length > 0" class="h-48 overflow-auto">
-                            <div class="space-y-3">
-                                <div
-                                v-for="(fileList, index) in fileLists"
-                                :key="index"
-                                class="group flex items-center justify-between p-3 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-lg hover:from-teal-100 hover:to-cyan-100 transition-all duration-200"
-                                >
-                                <!-- File Icon and Name -->
-                                <div class="flex items-center space-x-3 flex-1 min-w-0">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                    <div class="flex flex-col items-center space-y-6">
+                        <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-5 ml-10 overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl">
+                            <!-- Header -->
+                            <div class="px-6 py-4 bg-gradient-to-r from-cyan-600 to-teal-600">
+                                <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd" />
                                     </svg>
                                     </div>
-
-                                    <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">
-                                        {{ fileList }}
-                                    </p>
-                                    <p class="text-xs text-gray-500">.tpm file</p>
+                                    <div>
+                                    <h3 class="text-lg font-semibold text-white">Selected Files</h3>
+                                    <p class="text-sm text-cyan-100">Preview of uploaded files</p>
                                     </div>
                                 </div>
 
-                                <!-- File Status -->
-                                <div class="flex items-center space-x-2 flex-shrink-0">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <span class="text-xs text-green-700 font-medium">Ready</span>
+                                <!-- File Count Badge -->
+                                <div v-if="fileLists.length > 0" class="px-3 py-1 bg-white rounded-full bg-opacity-20">
+                                    <span class="text-sm font-semibold text-white">{{ fileLists.length }} files</span>
                                 </div>
                                 </div>
                             </div>
-                            </div>
 
-                            <!-- Empty State -->
-                            <div v-else class="h-48 flex flex-col items-center justify-center text-center">
-                            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
-                                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4zm14 4.5H2V14a2 2 0 002 2h12a2 2 0 002-2V7.5zM5 9a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
+                            <!-- Content Area -->
+                            <div class="p-6">
 
-                            <h4 class="text-lg font-semibold text-gray-900 mb-2">No Files Selected</h4>
-                            <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
-                                Upload some .tpm files to see them listed here for processing.
-                            </p>
+                                <!-- Files List -->
+                                <div v-if="fileLists.length > 0" class="h-48 overflow-auto">
+                                <div class="space-y-3">
+                                    <div
+                                    v-for="(fileList, index) in fileLists"
+                                    :key="index"
+                                    class="flex items-center justify-between p-3 transition-all duration-200 border border-teal-200 rounded-lg group bg-gradient-to-r from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100"
+                                    >
+                                    <!-- File Icon and Name -->
+                                    <div class="flex items-center flex-1 min-w-0 space-x-3">
+                                        <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                        </svg>
+                                        </div>
 
-                            <!-- Animated Indicator -->
-                            <div class="mt-4 flex space-x-1">
-                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
-                            </div>
-                            </div>
+                                        <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            {{ fileList }}
+                                        </p>
+                                        <p class="text-xs text-gray-500">.tpm file</p>
+                                        </div>
+                                    </div>
 
-                            <!-- Summary Footer (when files exist) -->
-                            <div v-if="fileLists.length > 0" class="mt-4 pt-4 border-t border-gray-200">
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-600">Total files selected:</span>
-                                <span class="font-semibold text-gray-900">{{ fileLists.length }} files</span>
-                            </div>
+                                    <!-- File Status -->
+                                    <div class="flex items-center flex-shrink-0 space-x-2">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span class="text-xs font-medium text-green-700">Ready</span>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <!-- Empty State -->
+                                <div v-else class="flex flex-col items-center justify-center h-48 text-center">
+                                <div class="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-2xl">
+                                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4zm14 4.5H2V14a2 2 0 002 2h12a2 2 0 002-2V7.5zM5 9a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+
+                                <h4 class="mb-2 text-lg font-semibold text-gray-900">No Files Selected</h4>
+                                <p class="max-w-xs text-sm leading-relaxed text-gray-500">
+                                    Upload some .tpm files to see them listed here for processing.
+                                </p>
+
+                                <!-- Animated Indicator -->
+                                <div class="flex mt-4 space-x-1">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                                </div>
+                                </div>
+
+                                <!-- Summary Footer (when files exist) -->
+                                <div v-if="fileLists.length > 0" class="pt-4 mt-4 border-t border-gray-200">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Total files selected:</span>
+                                    <span class="font-semibold text-gray-900">{{ fileLists.length }} files</span>
+                                </div>
+                                </div>
                             </div>
                         </div>
+                        <div class="w-[370px] ml-10 p-4 mx-auto space-y-2 text-white shadow-md bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl text-center">
+                            <!-- Model -->
+                            <div class="text-sm font-medium tracking-wide uppercase opacity-80">
+                                Model
+                            </div>
+                            <div class="text-lg font-bold">
+                                <template v-if="jhCurveActualModel">
+                                    {{ jhCurveActualModel }}
+                                </template>
+                                <template v-else>
+                                    <span class="font-normal text-gray-200">Please select Furnace</span>
+                                </template>
+                            </div>
+
+                            <!-- Lot No -->
+                            <div class="mt-2 text-sm font-medium tracking-wide uppercase opacity-80">
+                                Lot No
+                            </div>
+                            <div class="text-lg font-bold">
+                                <template v-if="jhCurveLotNo">
+                                    {{ jhCurveLotNo }}
+                                </template>
+                                <template v-else>
+                                    <span class="font-normal text-gray-200">Please select Mass Production and Layer</span>
+                                </template>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
                 <div>
-                    <div class="flex flex-col items-center justify-center max-w-lg p-8 mx-auto mb-12 bg-white border border-teal-200 rounded-xl shadow-xl">
+                    <div class="flex flex-col items-center justify-center max-w-lg p-8 mx-auto mb-12 bg-white border border-teal-200 shadow-xl rounded-xl">
                         <!-- Upload Section Title -->
                         <div class="flex items-center mb-6">
-                            <div class="p-3 mr-3 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full">
+                            <div class="p-3 mr-3 rounded-full bg-gradient-to-r from-teal-100 to-cyan-100">
                                 <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                 </svg>
@@ -243,7 +283,7 @@
                                     id="csv-file-upload"
                                     type="file"
                                     accept=".csv"
-                                    class="block w-full px-4 py-3 text-gray-700 bg-teal-50 border-2 border-teal-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-500 file:text-white file:cursor-pointer hover:file:bg-teal-600"
+                                    class="block w-full px-4 py-3 text-gray-700 transition-all duration-200 border-2 border-teal-300 rounded-lg shadow-sm bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-teal-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-500 file:text-white file:cursor-pointer hover:file:bg-teal-600"
                                     @change="csv_handleFileSelect"
                                 />
                             </div>
@@ -251,7 +291,7 @@
                             <!-- Clear Button -->
                             <div>
                                 <button
-                                    class="px-6 py-2 font-medium text-gray-600 bg-gray-100 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200"
+                                    class="px-6 py-2 font-medium text-gray-600 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                     @click="csv_clearFile"
                                 >
                                     Clear File
@@ -626,16 +666,25 @@
                     <!-- Confirm Button with Animation -->
                     <button
                         @click="finalizeGraph()"
-                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
+                        :disabled="showLoadingForGraphAndTables"
+                        :class="[
+                            'group flex-1 px-4 py-3 text-white font-semibold text-sm rounded-xl shadow-lg relative overflow-hidden transition-all duration-300 transform flex items-center justify-center',
+                            showLoadingForGraphAndTables
+                                ? 'bg-gray-400 cursor-not-allowed hover:from-gray-400 hover:to-gray-400 focus:ring-gray-300'
+                                : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-cyan-300 hover:shadow-xl hover:scale-[1.02] active:scale-95'
+                        ]"
                     >
                         <!-- Shine effect -->
                         <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
 
                         <span class="relative flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Submit Now</span>
+                            <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                    clip-rule="evenodd"/>
+                            </svg>
+                            <span>{{ showLoadingForGraphAndTables ? 'Processing...' : 'Submit Now' }}</span>
                         </span>
                     </button>
                     </div>
@@ -715,13 +764,12 @@
     }
 
     //New Variables
+    const selectedFurnace = ref();
     const selectedMassProd = ref();
+    const furnace_names = ref([]);
     const massProd_names = ref([]);
     const isDataExisting = ref(false);
-    const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
     const available_layers = ref([]);
-    const showModalSubmit = ref(false);
-    const controlSheet_layerdata = ref();
 
     //UI VISIBILITY variables...
     const mias_factorCsvError = ref(false);
@@ -800,13 +848,25 @@
         }
     };
 
+    const getFurnaceLists = async () => {
+        try{
+            const response = await axios.get('/api/furnace-data');
+            const furnaceList = response.data;
+            furnace_names.value = furnaceList.map(item => item.furnace_name);
+            //console.log("List of mass prods: ",furnace_names.value);
+        }catch(error){
+            console.error('Error fetching mass prod lists',error);
+            toast.error('Failed to get the mass prod lists api error');
+        }
+    }
+
     const fetchAvailableLayers = async () => {
         try {
             const response = await axios.get(
-                `/api/mass-productions/${selectedMassProd.value}/coating-completed-layers`
+                `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/coating-completed-layers`
             );
             available_layers.value = response.data.completed_layers;
-            console.log("Available Layers: ", available_layers.value);
+            //console.log("Available Layers: ", available_layers.value);
         } catch (error) {
             console.error(error);
             toast.error('Failed to fetch available layers from Heat Treatment');
@@ -824,11 +884,11 @@
 
         try {
             const responseModel = await axios.get(
-                `/api/mass-productions/${selectedMassProd.value}/layer/${currentLayerNo.value}/model`
+                `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer/${currentLayerNo.value}/model`
             );
             model = responseModel.data.model;
             jhCurveActualModel.value = model;
-            console.log("Model:", jhCurveActualModel.value);
+            //console.log("Model:", jhCurveActualModel.value);
         } catch (error) {
             console.error("Error fetching layer model:", error);
             toast.error('Failed to fetch model data for this layer.');
@@ -836,11 +896,11 @@
 
         try {
             const responseLotno = await axios.get(
-                `/api/mass-productions/${selectedMassProd.value}/layer/${currentLayerNo.value}/lotno`
+                `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer/${currentLayerNo.value}/lotno`
             );
             lotno = responseLotno.data.lotno;
             jhCurveLotNo.value = lotno;
-            console.log("Lot No:", jhCurveLotNo.value);
+            //console.log("Lot No:", jhCurveLotNo.value);
         } catch (error) {
             console.error("Error fetching layer lotno:", error);
             toast.error('Failed to fetch lotno data for this layer.');
@@ -851,7 +911,7 @@
 
     const fetchMiasFactor = async () => {
         try{
-            const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+            const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`);
             const massProd = response.data;
             propData_factorEmp.value = massProd.factor_emp;
             propData_miasEmp.value = massProd.mias_emp;
@@ -862,10 +922,10 @@
 
     const checkExisting = async () => {
         try {
-            const response = await axios.get(`/api/tpm/check-existing/${selectedMassProd.value}/${currentLayerNo.value}`);
+            const response = await axios.get(`/api/tpm/check-existing/${selectedFurnace.value}/${selectedMassProd.value}/${currentLayerNo.value}`);
             // Assign the boolean result to your ref
             isDataExisting.value = !!response.data; // double bang converts 1/0 to true/false
-            console.log('Existing data: ', isDataExisting.value);
+            //console.log('Existing data: ', isDataExisting.value);
         } catch (error) {
             console.error('Error checking TPM data:', error);
             isDataExisting.value = false; // fallback
@@ -876,10 +936,10 @@
     // Watcher go back ggggg
     watch([selectedMassProd, currentLayerNo], async ([newProd, newLayer]) => {
         if (newProd && newLayer) {
-            console.log(`Watcher triggered → MassProd: ${newProd}, Layer: ${newLayer}`);
+            //console.log(`Watcher triggered → MassProd: ${newProd}, Layer: ${newLayer}`);
             const { model, lotno } = await fetchLayerModelAndLotno();
             await checkExisting();
-            console.log("Fetched values:", { model, lotno });
+            //console.log("Fetched values:", { model, lotno });
         }
     });
 
@@ -930,7 +990,7 @@
         }
 
         // Step 3: MIAS check
-        console.log("⚡ Checking mias:", mias);
+        //console.log("⚡ Checking mias:", mias);
         const miasMatch = findByEmpOrMiasNo(mias);
         if (miasMatch) {
             propData_miasEmp.value = miasMatch.employee_name;
@@ -956,7 +1016,9 @@
 
     const finalizeGraph = async () => {
         toast.success('Generating graph...');
-
+        showGraphProceedConfirmation.value = false;
+        toggleManageForm.value = false;
+        showLoadingForGraphAndTables.value = true;
         // Step 1: Save to database
         await saveToDatabase();
 
@@ -991,8 +1053,8 @@
             mias_no: row["Factor Employee"],
         }));
 
-        console.log('CSV Parsed Data:', csv_parsedData.value);
-        console.log('Temp with Data class:', csv_tempWithDataStat.value);
+        //console.log('CSV Parsed Data:', csv_parsedData.value);
+        //console.log('Temp with Data class:', csv_tempWithDataStat.value);
 
         function cleanInteger(str) {
             if (typeof str !== 'string') return null;
@@ -1020,10 +1082,10 @@
             //console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
             if (factor && mias) {
-                console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
+                //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                 await mias_factorData(factor, mias);
             } else {
-                console.warn('Invalid or missing factor/mias:', row);
+                //console.warn('Invalid or missing factor/mias:', row);
                 continue; // Don't crash the loop, just skip
             }
         }
@@ -1164,12 +1226,12 @@
                     // Generate the first serial number
                     serialNo.value = `${year}${month}${firstSerialNumber}`;
 
-                    console.log('Generated First Serial Number:', serialNo.value);
+                    //console.log('Generated First Serial Number:', serialNo.value);
                     //alert(`Generated First Serial Number: ${serialNo.value}`);
                 }
             } else {
                 // Handle case where there's no data
-                console.log('No data available in tpmData');
+                //console.log('No data available in tpmData');
                 const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
                 const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
                 const firstSerialNumber = '000001';
@@ -1427,9 +1489,10 @@
 
             const normalized = normalizeLayerNo(currentLayerNo.value);
             const layerToUpdate = `layer_${normalized}_serial`;
-            console.log('Column to update: ', layerToUpdate);
+            //console.log('Column to update: ', layerToUpdate);
 
             const payload = {
+                furnace: selectedFurnace.value,
                 mass_prod: selectedMassProd.value, // your validator expects this
                 mias_emp: propData_miasEmp.value,
                 factor_emp: propData_factorEmp.value,
@@ -1437,11 +1500,11 @@
             };
 
             const response = await axios.patch(
-                `/api/mass-production/${selectedMassProd.value}`,
+                `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`,
             payload
             );
 
-            console.log('Update Response For Mass Production: ', response.data);
+            //console.log('Update Response For Mass Production: ', response.data);
         } catch (error) {
             console.error('Failed to update massproduction table.', error);
         }
@@ -1507,7 +1570,7 @@
                         const [x, y] = parsedData[key].split(',').map(Number);
 
                         // Custom condition: x must be less than 100 and y must be greater than -1000
-                        if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
+                        if (x >= 100 || y <= -2000) { // If x >= 100 or y <= -1000, skip the data
                             //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
                             continue; // Skip this iteration if condition is not met
                         }
@@ -1554,6 +1617,7 @@
                 const layerData = {
                     "date": formattedDate,
                     "serial_no": serialNo.value,
+                    "furnace": selectedFurnace.value,
                     "mass_prod": selectedMassProd.value,
                     "layer_no": currentLayerNo.value,
                     "code_no": rowCell.value[1],
@@ -1610,7 +1674,7 @@
                     "iHr95_remarks": saveIHr95Remarks.value,
                     "iHr98_remarks": saveIHr98Remarks.value,
                 };
-                console.log("Layer Data:", layerData);
+                //console.log("Layer Data:", layerData);
 
                 await sendLayerData(layerData); // Send the parsed data to the server
                 resolve();
@@ -1670,7 +1734,7 @@
     const sendLayerData = async (layerData) => {
         try {
             const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
-            console.log('API Response sendlayerdata:', response.data);
+            //console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
             console.error('Error sending data to API:', error.response?.data || error.message);
         }
@@ -1728,7 +1792,7 @@
                     jhcurve_lotno: jhCurveLotNo.value,
                     massprod_name: selectedMassProd.value,
                 });
-                console.log("API PATCHED category: ",responsePatchCategory);
+                //console.log("API PATCHED category: ",responsePatchCategory);
 
 
         }catch(error){
@@ -2324,7 +2388,7 @@ const renderChart = () => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Chart image saved at:", data.path);
+                    //console.log("Chart image saved at:", data.path);
                     // Optional: store this filename in a hidden input or use it to trigger PDF render
                 })
                 .catch(err => console.error("Chart upload failed:", err));
@@ -2369,7 +2433,7 @@ const renderChart = () => {
 
         await checkAuthentication();
         await getMassProdLists();
-
+        await getFurnaceLists();
     });
 
 

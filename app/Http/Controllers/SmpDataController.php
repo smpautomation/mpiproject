@@ -22,6 +22,7 @@ class SmpDataController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'furnace' => 'nullable|string|max:255',
             'mass_prod' => 'nullable|string|max:255',
             'layer' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
@@ -50,6 +51,7 @@ class SmpDataController extends Controller
     public function update(Request $request, SmpData $smpData)
     {
         $validated = $request->validate([
+            'furnace' => 'nullable|string|max:255',
             'mass_prod' => 'nullable|string|max:255',
             'layer' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',

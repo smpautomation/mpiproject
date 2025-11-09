@@ -1,17 +1,17 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 space-y-6 bg-gray-100">
-            <h1 class="text-2xl font-semibold text-gray-800"><span>{{ redirectedMassPro }}</span> Mass Production Heat Treatment Graphs</h1>
+            <h1 class="text-2xl font-semibold text-gray-800"><span>{{ redirectedFurnace }} {{ redirectedMassPro }}</span> Mass Production Heat Treatment Graphs</h1>
             <div class="flex flex-col w-full max-w-6xl gap-6">
-                <div class="w-full bg-white border border-gray-300 rounded shadow-sm p-4">
-                    <h2 class="text-lg font-medium text-gray-700 mb-4">Cycle Graph</h2>
+                <div class="w-full p-4 bg-white border border-gray-300 rounded shadow-sm">
+                    <h2 class="mb-4 text-lg font-medium text-gray-700">Cycle Graph</h2>
                     <div
                         class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
                     >
                         <img
                             v-if="cycleGraphUrl"
                             :src="cycleGraphUrl"
-                            class="w-full h-full object-contain"
+                            class="object-contain w-full h-full"
                             alt="Cycle Graph"
                             @error="cycleGraphMissing = true"
                             v-show="!cycleGraphMissing"
@@ -19,7 +19,7 @@
                         <p v-if="cycleGraphMissing">No image uploaded</p>
                     </div>
                     <button
-                        class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
+                        class="p-2 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
                         @click="downloadImage('cycle')"
                     >
                         Download Image
@@ -29,15 +29,15 @@
                 <!-- Two Panels Side-by-Side -->
                 <div class="flex w-full gap-6">
                     <!-- Standard Graph Panel -->
-                    <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
-                        <h2 class="text-lg font-medium text-gray-700 mb-4">Standard Graph</h2>
+                    <div class="flex-1 p-4 bg-white border border-gray-300 rounded shadow-sm">
+                        <h2 class="mb-4 text-lg font-medium text-gray-700">Standard Graph</h2>
                         <div
                             class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
                         >
                             <img
                                 v-if="standardGraphUrl"
                                 :src="standardGraphUrl"
-                                class="w-full h-full object-contain"
+                                class="object-contain w-full h-full"
                                 alt="Standard Graph"
                                 @error="standardGraphMissing = true"
                                 v-show="!standardGraphMissing"
@@ -45,7 +45,7 @@
                             <p v-if="standardGraphMissing">No image uploaded</p>
                         </div>
                         <button
-                            class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
+                            class="p-2 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
                             @click="downloadImage('standard')"
                         >
                             Download Image
@@ -53,15 +53,15 @@
                     </div>
 
                     <!-- Actual Graph Panel -->
-                    <div class="flex-1 bg-white border border-gray-300 rounded shadow-sm p-4">
-                        <h2 class="text-lg font-medium text-gray-700 mb-4">Actual Graph</h2>
+                    <div class="flex-1 p-4 bg-white border border-gray-300 rounded shadow-sm">
+                        <h2 class="mb-4 text-lg font-medium text-gray-700">Actual Graph</h2>
                         <div
                             class="w-full h-[400px] bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 mb-4"
                         >
                             <img
                                 v-if="actualGraphUrl"
                                 :src="actualGraphUrl"
-                                class="w-full h-full object-contain"
+                                class="object-contain w-full h-full"
                                 alt="Actual Graph"
                                 @error="actualGraphMissing = true"
                                 v-show="!actualGraphMissing"
@@ -69,7 +69,7 @@
                             <p v-if="actualGraphMissing">No image uploaded</p>
                         </div>
                         <button
-                            class="p-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded"
+                            class="p-2 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
                             @click="downloadImage('actual')"
                         >
                             Download Image
@@ -81,7 +81,7 @@
             <div class="flex justify-start mt-8">
                 <button
                     @click="Inertia.visit('/massprod')"
-                    class="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-black transition duration-150 ease-in-out shadow-sm"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -134,15 +134,18 @@ const checkAuthentication = async () => {
     }
 };
 const redirectedMassPro = ref();
+const redirectedFurnace = ref();
 const ht_props = defineProps({
     massProd: String,
+    furnace: String
 });
 redirectedMassPro.value = ht_props.massProd;
+redirectedFurnace.value = ht_props.furnace;
 
 const standardGraphMissing = ref(false);
 const actualGraphMissing = ref(false);
 const cycleGraphMissing = ref(false);
-const basePath = `/htgraphs/` + redirectedMassPro.value;
+const basePath = `/htgraphs/` + redirectedFurnace.value + ` ` + redirectedMassPro.value;
 const standardGraphUrl = computed(() =>
   `${basePath}/standard/graph.png?ts=${Date.now()}`  //Note: The addition of ?ts=${Date.now()} is to prevent browser cache so that it will always show the current image.
 );
@@ -180,7 +183,7 @@ const downloadImage = (type) => {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${redirectedMassPro.value}_${type}_graph.png`;
+    link.download = `${redirectedFurnace.value}_${redirectedMassPro.value}_${type}_graph.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

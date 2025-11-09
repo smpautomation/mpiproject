@@ -34,7 +34,7 @@
                           <th colspan="2" rowspan="2" :class="[borderColor, headerPaddings]">
                             #
                           </th>
-                          <th colspan="11" :class="[borderColor, headerPaddings]">
+                          <th colspan="10" :class="[borderColor, headerPaddings]">
                             <p>Heat Treatment Production Control Sheet</p>
                           </th>
                           <th rowspan="2" :class="[borderColor, headerPaddings]">
@@ -114,7 +114,7 @@
                           </tr>
                         </template>
                         <tr :class="[headerFontSize]">
-                          <td v-for="n in 11" :key="n"></td>
+                          <td v-for="n in 10" :key="n"></td>
                           <th colspan="2" :class="[borderColor]">GRAND TOTAL</th>
                           <th :class="[borderColor]">
                             {{ totalWt }}
@@ -265,11 +265,14 @@ const checkAuthentication = async () => {
 
 const massProd_list = ref([]);
 const redirectedMassPro = ref();
+const redirectedFurnace = ref();
 const errMsg = ref();
 const controlSheet_props = defineProps({
-    massProd: String
+    massProd: String,
+    furnace: String
 });
 redirectedMassPro.value = controlSheet_props.massProd;
+redirectedFurnace.value = controlSheet_props.furnace;
 console.log(redirectedMassPro.value);
 
 const tableProperties = {
@@ -298,7 +301,7 @@ const ht_info_inputBoxSize = ref(heatTreatmentInformationProperties.inputBoxSize
 const ht_info_underline = ref(heatTreatmentInformationProperties.underlineEffect);
 const ht_info_underline2 = ref(heatTreatmentInformationProperties.underlineEffect2);
 
-const controlSheet_headerLetters = ref(['A','B','C','D','E','F','G','H','J','K','L']);
+const controlSheet_headerLetters = ref(['A','B','C','D','E','F','G','H','J','K']);
 const controlSheet_layers = ref(['9.5','9','8','7','6','5','4','3','2','1']);
 const controlSheet_rowTitles = ref([
   'MODEL:',
@@ -360,9 +363,9 @@ function setDataMatrixValue(layer, rowTitle, letter, value) {
 }
 
 
-const getMassProdData = async (massprod) => {
+const getMassProdData = async (massprod, furnace) => {
     try{
-        const response = await axios.get(`api/mass-production/by-mass-prod/${massprod}`);
+        const response = await axios.get(`api/mass-production/${furnace}/${massprod}`);
         massProd_list.value = response.data;
         console.log('filtered through backend massprod_list: ', massProd_list.value);
         const mp = massProd_list.value;
@@ -517,7 +520,8 @@ const getTotalMpiQty = (qty) => {
 
 onMounted(async()=>{
     const massPro = redirectedMassPro.value;
-    getMassProdData(massPro);
+    const furnace = redirectedFurnace.value;
+    getMassProdData(massPro, furnace);
 });
 
 const exportToExcel = () => {

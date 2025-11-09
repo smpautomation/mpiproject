@@ -23,7 +23,7 @@
                 </button>
             </div>
             <div class="flex flex-row justify-center gap-0">
-                <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                <div v-if="!overwriteMode" class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
 
                     <!-- Group: Selection -->
@@ -109,27 +109,46 @@
                     </div>
 
                     <!-- Group: Prepared By -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
+                    <div class="grid items-end grid-cols-1 gap-6 md:grid-cols-3">
+                        <!-- Button -->
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">HT (PCS)</label>
-                            <input v-model="mpcs.ht" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <button
+                                @click="applyHTLT()"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-1"
+                            >
+                                Apply HT and LT
+                            </button>
                         </div>
+
+                        <!-- Magnet Prepared By -->
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">LT (PCS)</label>
-                            <input v-model="mpcs.lt" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Magnet Prepared By<span class="text-red-500"> *</span>
+                            </label>
+                            <input
+                                v-model="mpcs.magnetPreparedBy"
+                                type="text"
+                                @input="mpcs.magnetPreparedBy = mpcs.magnetPreparedBy.toUpperCase()"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
+
+                        <!-- Box Prepared By -->
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Magnet Prepared By<span class="text-red-500"> *</span></label>
-                            <input v-model="mpcs.magnetPreparedBy" type="text" @input="mpcs.magnetPreparedBy = mpcs.magnetPreparedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Box Prepared By</label>
-                            <input v-model="mpcs.boxPreparedBy" type="text" @input="mpcs.boxPreparedBy = mpcs.boxPreparedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Box Prepared By
+                            </label>
+                            <input
+                                v-model="mpcs.boxPreparedBy"
+                                type="text"
+                                @input="mpcs.boxPreparedBy = mpcs.boxPreparedBy.toUpperCase()"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
                     </div>
                 </div>
 
-                <div class="max-w-4xl px-8 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12">
+                <div v-if="!overwriteMode" class="max-w-4xl px-8 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12">
                     <p class="pb-2 text-sm font-semibold text-gray-800 border-b">BOX No. <span class="text-gray-300">(example: UBP85172)</span><span class="text-red-500"> *</span></p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-center border border-collapse border-gray-300">
@@ -198,7 +217,10 @@
             <div class="flex flex-row mt-12">
                 <div v-if="!heatTreatmentInformationDetected" class="max-w-5xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8">
                     <div>
-                        <h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2>
+                        <div v-if="overwriteMode"><h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Overwriting Heat Treatment Information</h2> <p class="px-3 py-1 mb-3 text-xs font-medium text-teal-900 border rounded-md bg-cyan-100 border-cyan-300">
+                            Note: Only <span class="font-semibold">Cycle Pattern, Current Pattern, Date Finish, Time Finish, Remarks</span> and <span class="font-semibold">Graph Uploads</span> can be overwritten.
+                        </p></div>
+                        <div v-else><h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2></div>
                         <div class="flex flex-row space-x-3">
                             <div class="flex flex-col">
                                 <div>
@@ -211,11 +233,11 @@
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Cycle No<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.cycleNo" type="text" @input="hti.cycleNo = hti.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.cycleNo" type="text" :disabled="overwriteMode" @input="hti.cycleNo = hti.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No<span class="text-red-500"> *</span></label>
-                                    <select v-model="hti.patternNo" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <select v-model="hti.patternNo" :disabled="overwriteMode" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                         <option v-for="item in graph_patterns" :key="item" :value="item">
                                             {{ item }}
                                         </option>
@@ -233,19 +255,19 @@
                             <div class="flex flex-col">
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Date Start<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.dateStart" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.dateStart" :disabled="overwriteMode" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.timeStart" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.timeStart" :disabled="overwriteMode" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Loader<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.loader" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.loader" :disabled="overwriteMode" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Partial No.<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.partialNo" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.partialNo" :disabled="overwriteMode" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
@@ -259,25 +281,25 @@
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Unloader<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.unloader" type="text" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.unloader" type="text" :disabled="overwriteMode" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Box Condition<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.boxCondition" type="text" @input="hti.boxCondition = hti.boxCondition.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.boxCondition" type="text" :disabled="overwriteMode" @input="hti.boxCondition = hti.boxCondition.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Box Cover<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.boxCover" type="text" @input="hti.boxCover = hti.boxCover.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.boxCover" type="text" :disabled="overwriteMode" @input="hti.boxCover = hti.boxCover.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Box Arrangement<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.boxArrangement" type="text" @input="hti.boxArrangement = hti.boxArrangement.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.boxArrangement" type="text" :disabled="overwriteMode" @input="hti.boxArrangement = hti.boxArrangement.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Encoded By<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.encodedBy" type="text" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.encodedBy" type="text" :disabled="overwriteMode" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                             </div>
                             <div class="flex flex-col w-[40rem]">
@@ -362,7 +384,7 @@
                         <!-- Button -->
                         <button
                         v-if="overwriteHeatTreatment"
-                        @click="heatTreatmentInformationDetected = false"
+                        @click="updateHeatTreatmentInfo()"
                         class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
                         >
                         <span>OVERWRITE</span>
@@ -420,6 +442,14 @@
                     <!-- Finalize Button -->
                     <div class="w-full">
                         <button
+                            v-if="overwriteMode"
+                            @click="overwriteDatabase()"
+                            class="w-full py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-500 disabled:hover:to-orange-600"
+                        >
+                            PROCEED OVERWRITE
+                        </button>
+                        <button
+                            v-else
                             @click="finalize"
                             :disabled="isExisting"
                             :class="[
@@ -430,6 +460,13 @@
                             ]"
                         >
                             {{ isExisting ? 'DUPLICATE DETECTED' : 'FINALIZE' }}
+                        </button>
+                        <button
+                            v-if="overwriteMode"
+                            @click="cancelOverwrite()"
+                            class="w-full py-2 mt-4 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:red-cyan-600 hover:to-white hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-500 disabled:hover:to-orange-600"
+                        >
+                            CANCEL OVERWRITE
                         </button>
                     </div>
 
@@ -472,6 +509,84 @@
                     </div>
                 </div>
             </div>
+
+            <Modal :show="showHTLTPanel" maxWidth="none" @close="showHTLTPanel = false">
+                <div
+                    class="relative flex flex-col items-start bg-white p-8 rounded-2xl shadow-2xl w-[60vw] h-[55vh] overflow-auto mx-auto"
+                >
+                    <!-- Close Button -->
+                    <button
+                        @click="showHTLTPanel = false"
+                        class="absolute flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full shadow-md top-4 right-4 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+
+                    <div
+                        class="w-full max-w-6xl px-10 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-lg rounded-2xl"
+                    >
+                        <!-- HT (PCS) -->
+                        <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                            HT (PCS)
+                        </p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                            {{ box }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                            <input
+                                                v-model="htValues[box]"
+                                                @input="htValues[box] = htValues[box].toUpperCase()"
+                                                type="text"
+                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- LT (PCS) -->
+                        <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                            LT (PCS)
+                        </p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                            {{ box }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                            <input
+                                                v-model="ltValues[box]"
+                                                @input="ltValues[box] = ltValues[box].toUpperCase()"
+                                                type="text"
+                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+
+
             <Modal :show="showModalCreate" @close="showModalCreate = false">
                 <div
                     class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
@@ -551,21 +666,21 @@
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
                                     <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
                                         class="px-2 py-1 text-center border border-gray-300"
                                     >
-                                        {{ mpcs.ht }}
+                                    {{ htValues[box] }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
                                     <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
                                         class="px-2 py-1 text-center border border-gray-300"
                                     >
-                                        {{ mpcs.lt }}
+                                    {{ ltValues[box] }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -801,6 +916,8 @@ function useSessionStorage(key, state) {
 //Dev Controls ----------------- Allow Commands
 const bypassValidation = ref(false);
 const overwriteHeatTreatment = ref(true);
+const overwriteMode = ref(false);
+const showHTLTPanel = ref(false);
 //Dev Controls ----------------- Allow Commands
 
 const heatTreatmentInformationDetected = ref(false);
@@ -836,6 +953,14 @@ const weightValues = ref({});
 allBoxes.forEach(box => {
     weightValues.value[box] = '';
 });
+const htValues = ref({});
+allBoxes.forEach(box => {
+  htValues.value[box] = '';
+});
+const ltValues = ref({});
+allBoxes.forEach(box => {
+  ltValues.value[box] = '';
+});
 
 /* debugging weightValues
 watch(
@@ -870,8 +995,6 @@ const mpcs = reactive({
     lotNo: '',
     qty: 0,
     qty_lastBox: 0,
-    ht: 0,
-    lt: 0,
     coating: 0,
     magnetPreparedBy: '',
     boxPreparedBy: ''
@@ -1071,7 +1194,7 @@ const fetchExistingLayers = async () => {
 
 const getCompletedLayers = async () => {
     try {
-        const response = await axios.get(`/api/second-heat-treatment-data/${mpcs.selectedMassProd}/layers`);
+        const response = await axios.get(`/api/second-heat-treatment-data/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/layers`);
         completedLayers.value = response.data.layers.map(String);
         console.log(completedLayers.value);
     } catch (error) {
@@ -1115,8 +1238,43 @@ watch(
     }
 );
 
-// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+// DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 
+const applyHTLT = () => {
+    showHTLTPanel.value = true;
+}
+
+const updateHeatTreatmentInfo = async() => {
+    heatTreatmentInformationDetected.value = false;
+    overwriteMode.value = true;
+    try{
+        const response = await axios.get(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`);
+        const massprod_data = response.data;
+        console.log('Mass Production Data:', response.data);
+        hti.cycleNo = massprod_data.cycle_no;
+        hti.patternNo = massprod_data.pattern_no;
+        hti.cyclePattern = massprod_data.cycle_pattern;
+        hti.currentPattern = massprod_data.current_pattern;
+        hti.dateStart = massprod_data.date_start;
+        hti.dateFinish = massprod_data.date_finished;
+        hti.timeStart = massprod_data.time_start;
+        hti.timeFinish = massprod_data.time_finished;
+        hti.loader = massprod_data.loader;
+        hti.unloader = massprod_data.unloader;
+        hti.partialNo = massprod_data.partial_no;
+        hti.boxCondition = massprod_data.box_condition;
+        hti.boxCover = massprod_data.box_cover;
+        hti.boxArrangement = massprod_data.box_arrangement;
+        hti.encodedBy = massprod_data.encoded_by;
+        hti.remarks1 = massprod_data.remarks1;
+        hti.remarks2 = massprod_data.remarks2;
+        hti.remarks3 = massprod_data.remarks3;
+    }catch(error){
+        console.error('failed to fetch mass prod data', error);
+        toast.error('Failed to fetch Mass Prod data', error);
+    }
+
+}
 
 const clearAll = () => {
     // Reset all hti fields
@@ -1242,8 +1400,9 @@ const saveToDatabase = async () => {
         { rowTitle: 'COATING M/C No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.coatingMCNo || ''])) },
         { rowTitle: 'LT. No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.lotNo || ''])) },
         { rowTitle: 'QTY (PCS):', data: qtyData },
-        { rowTitle: 'HT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.ht])) },
-        { rowTitle: 'LT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.lt])) },
+        // Updated HT and LT integration
+        { rowTitle: 'HT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, htValues.value[box] || ''])) },
+        { rowTitle: 'LT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, ltValues.value[box] || ''])) },
         { rowTitle: 'COATING:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.coating])) },
         { rowTitle: 'WT (KG):', data: Object.fromEntries(visibleBoxesData.map(box => [box, weightValues.value[box] || ''])) },
         { rowTitle: 'BOX No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, boxNoValues.value[box] || ''])) },
@@ -1305,6 +1464,69 @@ const saveToDatabase = async () => {
     } finally {
         await updateFormatType();
         clearAll(); // Clear all fields after successful save
+    }
+};
+
+const cancelOverwrite = () => {
+    overwriteMode.value = false;
+    heatTreatmentInformationDetected.value = false;
+    clearAll();
+}
+
+const overwriteDatabase = async () => {
+    // Base payload
+    const dataPayload = {
+        mass_prod: mpcs.selectedMassProd,
+        furnace: initialFurnaceData.value,
+    };
+
+    // Only include heat treatment info if not detected
+    if (!heatTreatmentInformationDetected.value) {
+        Object.assign(dataPayload, {
+            batch_cycle_no: mpcs.selectedMassProd,
+            machine_no: initialFurnaceData.value,
+            cycle_no: hti.cycleNo,
+            pattern_no: hti.patternNo,
+            cycle_pattern: hti.cyclePattern,
+            current_pattern: hti.currentPattern,
+            date_start: hti.dateStart,
+            time_start: hti.timeStart,
+            partial_no: hti.partialNo,
+            loader: hti.loader,
+            date_finished: hti.dateFinish,
+            time_finished: hti.timeFinish,
+            unloader: hti.unloader,
+            box_condition: hti.boxCondition,
+            box_cover: hti.boxCover,
+            box_arrangement: hti.boxArrangement,
+            encoded_by: hti.encodedBy,
+            remarks1: hti.remarks1,
+            remarks2: hti.remarks2,
+            remarks3: hti.remarks3,
+        });
+    }
+
+    console.log('Data Payload:', dataPayload);
+
+    try {
+        const response = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
+        await uploadGraphs();
+        console.log('Data overwritten successfully:', response.data);
+        toast.success('Data overwritten successfully!');
+        if(!heatTreatmentInformationDetected.value){
+            await userManageLogging('overwritten ' + mpcs.selectedMassProd +' Heat Treatment Info successfully | Control Sheet Layer: ' + mpcs.selectedLayer);
+        }else{
+            await userManageLogging('overwritten '+ mpcs.selectedMassProd +' Control Sheet Layer: ' + mpcs.selectedLayer + ' successfully.');
+        }
+        showModalCreate.value = false;
+    } catch (error) {
+        console.error('Error saving data:', error);
+        toast.error('Failed to save data. Please try again.');
+    } finally {
+        //await updateFormatType();
+        clearAll(); // Clear all fields after successful save
+        overwriteMode.value = false;
+        heatTreatmentInformationDetected.value = true;
     }
 };
 

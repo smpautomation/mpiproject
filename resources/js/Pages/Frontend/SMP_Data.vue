@@ -2,14 +2,14 @@
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
             <div class="w-full overflow-x-auto">
-                <div class="flex items-center justify-center w-full p-4 mb-4 bg-gradient-to-r from-cyan-600 to-teal-600 rounded-lg shadow-md">
-  <p class="text-lg font-bold text-white tracking-wide">
-    SMP DATA for <span class="px-2 py-1 bg-white text-cyan-700 rounded-md shadow-sm">{{ redirectedMassPro }}</span> Mass Production
+                <div class="flex items-center justify-center w-full p-4 mb-4 rounded-lg shadow-md bg-gradient-to-r from-cyan-600 to-teal-600">
+  <p class="text-lg font-bold tracking-wide text-white">
+    SMP DATA for <span class="px-2 py-1 bg-white rounded-md shadow-sm text-cyan-700">{{ redirectedFurnace }} {{ redirectedMassPro }}</span> Mass Production
   </p>
 </div>
                 <div>
-                    <table class="table-auto w-full border border-gray-300 border-collapse rounded-lg shadow-sm">
-                        <thead class="bg-gradient-to-r from-cyan-600 to-teal-600 text-white text-sm uppercase">
+                    <table class="w-full border border-collapse border-gray-300 rounded-lg shadow-sm table-auto">
+                        <thead class="text-sm text-white uppercase bg-gradient-to-r from-cyan-600 to-teal-600">
                             <tr class="text-[10px]">
                                 <th rowspan="2" class="px-1 text-center border border-gray-300">MPI Date <br> (E-mail sending)</th>
                                 <th rowspan="2" class="px-1 text-center border border-gray-300">Pulse Tracer <br> Machine</th>
@@ -53,11 +53,11 @@
                                 <th class="px-1 text-center border border-gray-300">Ave</th>
                             </tr>
                         </thead>
-                        <tbody class="text-xs text-gray-700 divide-y divide-gray-200 text-center whitespace-nowrap">
+                        <tbody class="text-xs text-center text-gray-700 divide-y divide-gray-200 whitespace-nowrap">
                             <tr
                                 v-for="(layer, index) in massProdData.layersData"
                                 :key="index"
-                                class="hover:bg-gray-50 transition-colors"
+                                class="transition-colors hover:bg-gray-50"
                             >
                                 <td class="px-1 border border-gray-300">{{ layer.MPI_Date }}</td>
                                 <td class="px-1 border border-gray-300">{{ layer.Pulse_Tracer_Machine }}</td>
@@ -100,17 +100,17 @@
                     </table>
                 </div>
 
-                <div class="p-6 mt-10 bg-white border border-cyan-100 rounded-xl shadow-md">
-                    <div class="mb-4 pb-3 border-b border-teal-100">
-                        <h3 class="text-base font-semibold text-gray-800 flex items-center">
-                            <span class="w-1 h-5 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full mr-2"></span>
+                <div class="p-6 mt-10 bg-white border shadow-md border-cyan-100 rounded-xl">
+                    <div class="pb-3 mb-4 border-b border-teal-100">
+                        <h3 class="flex items-center text-base font-semibold text-gray-800">
+                            <span class="w-1 h-5 mr-2 rounded-full bg-gradient-to-b from-teal-500 to-cyan-500"></span>
                             SMP Data Entry
                         </h3>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-3 sm:space-y-0">
+                    <div class="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
                         <label class="flex flex-col w-full sm:w-1/3">
-                        <span class="text-xs font-medium text-teal-600 mb-1">Remarks:</span>
+                        <span class="mb-1 text-xs font-medium text-teal-600">Remarks:</span>
                         <input
                             v-model="smp_data_remarks"
                             type="text"
@@ -122,7 +122,7 @@
                         </label>
 
                         <label class="flex flex-col w-full sm:w-1/3">
-                        <span class="text-xs font-medium text-teal-600 mb-1">Special Instruction:</span>
+                        <span class="mb-1 text-xs font-medium text-teal-600">Special Instruction:</span>
                         <input
                             v-model="smp_data_special_instructions"
                             type="text"
@@ -134,7 +134,7 @@
                         </label>
 
                         <label class="flex flex-col w-full sm:w-1/4">
-                        <span class="text-xs font-medium text-teal-600 mb-1">Layer:</span>
+                        <span class="mb-1 text-xs font-medium text-teal-600">Layer:</span>
                         <select
                             v-model="smp_data_selectedLayer"
                             class="px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-gray-50
@@ -361,21 +361,24 @@ const smp_data_special_instructions = ref('');
 const smp_data_selectedLayer = ref('');
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const redirectedMassPro = ref();
+const redirectedFurnace = ref();
 const massProdData = ref([]);
 const controlSheet_props = defineProps({
-    massProd: String
+    massProd: String,
+    furnace: String
 });
 redirectedMassPro.value = controlSheet_props.massProd;
+redirectedFurnace.value = controlSheet_props.furnace;
 console.log("Redirected Mass Pro: ", redirectedMassPro.value);
 
 //Fetch zone -------------- Fetch zone ---------------- Fetch zone
 
 const getMassProdData = async () => { //Function for getting the current selected Massprod
-    if (!redirectedMassPro.value){
+    if (!redirectedMassPro.value || !redirectedFurnace.value){
         return; // skip if empty
     }
     try {
-        const response = await axios.get(`/api/mass-productions/${redirectedMassPro.value}/smp-data`);
+        const response = await axios.get(`/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}/smp-data`);
         //console.log('Mass Production Data:', response.data);
         massProdData.value = response.data;
         if(massProdData.value.format_type == 'Film Pasting'){
@@ -406,6 +409,7 @@ const confirmDataSubmit = async () => {
 const saveToDatabase = async () => {
 
     const payload = {
+        furnace: redirectedFurnace.value,
         mass_prod: redirectedMassPro.value,
         layer: smp_data_selectedLayer.value,
         remarks: smp_data_remarks.value,

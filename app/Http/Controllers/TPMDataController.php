@@ -35,7 +35,7 @@ class TPMDataController extends Controller
                             ->limit(100)
                             ->pluck('serial_no');
                 $tpmData = TPMData::whereIn('serial_no', $latestSerials)
-                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'mass_prod', 'layer_no')
+                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace', 'mass_prod', 'layer_no')
                             ->orderByDesc('created_at')
                             ->get()
                             ->groupBy('serial_no');
@@ -187,6 +187,7 @@ class TPMDataController extends Controller
                 'x' => $request->input('x', null),
                 'y' => $request->input('y', null),
                 'mass_prod' => $request->input('mass_prod', null), // renamed + nullable string
+                'furnace' => $request->input('furnace', null), // renamed + nullable string
                 'layer_no' => $request->input('layer_no', null), // now nullable in DB
                 'temperature' => $request->input('temperature', null),
                 'data_status' => $request->input('data_status', null)
@@ -539,10 +540,12 @@ class TPMDataController extends Controller
         }
     }
 
-    public function checkExisting(string $massprod, string $layer): bool
+    public function checkExisting(string $furnace, string $massprod, string $layer): bool
     {
-        return TPMData::where('mass_prod', $massprod)
+        return TPMData::where('furnace', $furnace)
+                    ->where('mass_prod', $massprod)
                     ->where('layer_no', $layer)
                     ->exists();
     }
+
 }

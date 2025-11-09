@@ -19,6 +19,7 @@ class CoatingController extends Controller
     {
         $validated = $request->validate([
             'date' => 'nullable|date',
+            'furnace' => 'nullable|string',
             'mass_prod' => 'nullable|string',
             'layer' => 'nullable|string',
             'machine_no' => 'nullable|string',
@@ -57,6 +58,7 @@ class CoatingController extends Controller
 
         $validated = $request->validate([
             'date' => 'sometimes|nullable|date',
+            'furnace' => 'sometimes"nullable|string',
             'mass_prod' => 'sometimes|string',
             'layer' => 'sometimes|string',
             'machine_no' => 'sometimes|nullable|string',

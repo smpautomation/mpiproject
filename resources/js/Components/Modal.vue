@@ -70,27 +70,28 @@ const maxWidthClass = computed(() => {
         lg: 'sm:max-w-lg',
         xl: 'sm:max-w-xl',
         '2xl': 'sm:max-w-2xl',
+        none: 'max-w-[60vw] h-[50vh]', // allows large panel nearly full screen
     }[props.maxWidth];
 });
 </script>
 
 <template>
     <dialog
-        class="z-50 m-0 w-screen h-screen overflow-y-auto bg-transparent backdrop:bg-transparent"
+        class="z-50 w-screen h-screen m-0 overflow-y-auto bg-transparent backdrop:bg-transparent"
         ref="dialog"
     >
-        <div class="fixed inset-0 z-50 overflow-y-auto px-4 py-20 sm:px-0" scroll-region>
+        <div class="fixed inset-0 z-50 px-4 py-20 overflow-y-auto sm:px-0" scroll-region>
             <Transition
-                enter-active-class="ease-out duration-300"
+                enter-active-class="duration-300 ease-out"
                 enter-from-class="opacity-0"
                 enter-to-class="opacity-100"
-                leave-active-class="ease-in duration-200"
+                leave-active-class="duration-200 ease-in"
                 leave-from-class="opacity-100"
                 leave-to-class="opacity-0"
             >
                 <div
                     v-show="show"
-                    class="fixed inset-0 transform transition-all"
+                    class="fixed inset-0 transition-all transform"
                     @click="close"
                 >
                     <div
@@ -100,16 +101,16 @@ const maxWidthClass = computed(() => {
             </Transition>
 
             <Transition
-                enter-active-class="ease-out duration-300"
-                enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                enter-to-class="opacity-100 translate-y-0 sm:scale-100"
-                leave-active-class="ease-in duration-200"
-                leave-from-class="opacity-100 translate-y-0 sm:scale-100"
-                leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enter-active-class="duration-300 ease-out"
+                enter-from-class="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
+                enter-to-class="translate-y-0 opacity-100 sm:scale-100"
+                leave-active-class="duration-200 ease-in"
+                leave-from-class="translate-y-0 opacity-100 sm:scale-100"
+                leave-to-class="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
             >
                 <div
                     v-show="show"
-                    class="mb-2 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full"
+                    class="mb-2 overflow-hidden transition-all transform bg-white rounded-lg shadow-xl sm:mx-auto sm:w-full"
                     :class="maxWidthClass"
                 >
                     <slot v-if="showSlot" />

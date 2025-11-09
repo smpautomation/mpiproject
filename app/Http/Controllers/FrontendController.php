@@ -21,27 +21,33 @@ class FrontendController extends Controller
     public function controlSheet(Request $request){
 
         $massProd = $request->get('massProd');
+        $furnace = $request->get('furnace');
 
         return Inertia::render('Frontend/Control_Sheet',[
             'massProd' => $massProd,
+            'furnace' => $furnace
         ]);
     }
 
     public function htgraph(Request $request){
 
         $massProd = $request->get('massProd');
+        $furnace = $request->get('furnace');
 
         return Inertia::render('Frontend/HT_Graph',[
             'massProd' => $massProd,
+            'furnace' => $furnace
         ]);
     }
 
     public function smpData(Request $request){
 
         $massProd = $request->get('massProd');
+        $furnace = $request->get('furnace');
 
         return Inertia::render('Frontend/SMP_Data',[
             'massProd' => $massProd,
+            'furnace' => $furnace
         ]);
     }
 

@@ -272,7 +272,7 @@ Route::apiResource('second-gbdp-models', SecondGbdpModelsController::class);
 Route::apiResource('coating-data',CoatingController::class);
 Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
 
-Route::apiResource('mass-production',MassProductionController::class);
+Route::get('/mass-production/all-duplicates', [MassProductionController::class, 'allMassProductionWithDuplicates']);
 
 Route::apiResource('second_heat_treatment',GbdpSecondHeatTreatmentController::class);
 
@@ -313,11 +313,11 @@ Route::get('/approve-list-checked', [ReportDataController::class, 'getViewListCh
 
 Route::get('/approve-list-prepared', [ReportDataController::class, 'getViewListPrepared']);
 
-Route::get('/mass-production-monitoring/{massprod}', [MassProductionController::class, 'massProductionMonitoring']);
+Route::get('/mass-production-monitoring/{furnace}/{massprod}', [MassProductionController::class, 'massProductionMonitoring']);
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     //[MassProductionController::class, 'getLayerModel']);
-Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}', [MassProductionController::class, 'getLayerModel']);
+Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}/model', [MassProductionController::class, 'getLayerModel']);
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
 //[MassProductionController::class, 'getLayerLotno']);
@@ -334,7 +334,7 @@ Route::get('/mass-production/{furnace}/{massprod}/completed-layers-coating', [Ma
 //    '/mass-productions/{massprod}/coating-completed-layers',
 //    [MassProductionController::class, 'getAllCoatingCompleteLayers']
 //);
-Route::get('/mass-production/{furnace}/{massprod}/coating-complete-layers', [MassProductionController::class, 'getAllCoatingCompleteLayers']);
+Route::get('/mass-production/{furnace}/{massprod}/coating-completed-layers', [MassProductionController::class, 'getAllCoatingCompleteLayers']);
 
 //Route::get(
 //    '/mass-productions/{massprod}/filmpasting-completed-layers',
@@ -360,6 +360,9 @@ Route::get('/mass-production/{furnace}/{massprod}/layer-by-serial/{serial}', [Ma
 //);
 Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}/layer-no', [MassProductionController::class, 'getLayerDataByLayerNo']);
 
-Route::get('/mass-productions/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
+Route::get('/mass-production/{furnace}/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
 
-Route::get('/tpm/check-existing/{massprod}/{layer}', [TPMDataController::class, 'checkExisting']);
+Route::get('/tpm/check-existing/{furnace}/{massprod}/{layer}', [TPMDataController::class, 'checkExisting']);
+
+
+Route::apiResource('mass-production',MassProductionController::class);

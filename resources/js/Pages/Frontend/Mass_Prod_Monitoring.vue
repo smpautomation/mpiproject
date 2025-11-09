@@ -1,42 +1,62 @@
 <template>
     <Frontend>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
-            <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-200">
+            <div class="max-w-4xl p-6 mx-auto bg-white border border-gray-200 shadow-lg rounded-xl">
                 <!-- Header Section -->
-                <div class="mb-6 pb-4 border-b-2 border-gray-200">
+                <div class="pb-4 mb-6 border-b-2 border-gray-200">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-1.5 h-10 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"></div>
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Process Monitoring Dashboard</h2>
-                            <p class="text-sm text-gray-600 mt-1 leading-relaxed">
-                                Select a mass production below to view real-time process completion status across all layers
+                            <p class="mt-1 text-sm leading-relaxed text-gray-600">
+                                Select a furnace + mass production below to view real-time process completion status across all layers
                             </p>
                         </div>
                     </div>
 
-                    <!-- Mass Prod Selector -->
-                    <div class="flex flex-col space-y-2">
-                        <label class="text-sm font-semibold text-gray-700">
-                            Mass Production Name <span class="text-red-500">*</span>
-                        </label>
-                        <select
-                            v-model="selectedMassProd"
-                            class="w-full max-w-md px-4 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer"
-                        >
-                            <option value="">Select Mass Production</option>
-                            <option v-for="item in massProd_names" :key="item" :value="item">
-                                {{ item }}
-                            </option>
-                        </select>
+                    <div class="flex flex-row justify-around">
+                        <!-- Furnace Selector -->
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-gray-700">
+                                Furnace Name <span class="text-red-500">*</span>
+                            </label>
+                            <select
+                                v-model="selectedFurnace"
+                                class="w-full max-w-md px-4 py-3 text-sm font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
+                            >
+                                <option value="">Select Mass Furnace</option>
+                                <option v-for="item in furnace_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Mass Prod Selector -->
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-gray-700">
+                                Mass Production Name <span class="text-red-500">*</span>
+                            </label>
+                            <select
+                                v-model="selectedMassProd"
+                                class="w-full max-w-md px-4 py-3 text-sm font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
+                            >
+                                <option value="">Select Mass Production</option>
+                                <option v-for="item in massProd_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
+
+
                 </div>
 
                 <!-- Tree Process -->
                 <div v-if="massProductionData.length > 0" class="space-y-6">
                     <div v-for="mpc in massProductionData" :key="mpc.mass_prod">
-                        <div class="mb-4 flex items-center gap-2">
+                        <div class="flex items-center gap-2 mb-4">
                             <h3 class="text-lg font-bold text-gray-800">{{ mpc.mass_prod }}</h3>
-                            <span class="px-3 py-1 text-xs font-semibold bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 rounded-full border border-teal-200">
+                            <span class="px-3 py-1 text-xs font-semibold text-teal-700 border border-teal-200 rounded-full bg-gradient-to-r from-teal-100 to-cyan-100">
                                 {{ mpc.layers.length }} Layers
                             </span>
                         </div>
@@ -45,12 +65,12 @@
                             <div
                                 v-for="(layer, index) in mpc.layers"
                                 :key="index"
-                                class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-cyan-300 hover:shadow-md transition-all duration-200"
+                                class="p-4 transition-all duration-200 border border-gray-200 rounded-lg bg-gray-50 hover:border-cyan-300 hover:shadow-md"
                             >
                                 <!-- Layer Header -->
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 flex items-center justify-center font-bold text-white bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg shadow-sm">
+                                        <div class="flex items-center justify-center w-10 h-10 font-bold text-white rounded-lg shadow-sm bg-gradient-to-br from-teal-500 to-cyan-500">
                                             {{ index }}
                                         </div>
                                         <div>
@@ -71,7 +91,7 @@
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
                                     >
-                                        <div v-if="layer.heat_treatment_completed" class="absolute -top-2 -right-2 w-6 h-6 bg-green-600 rounded-full flex items-center justify-center shadow-md">
+                                        <div v-if="layer.heat_treatment_completed" class="absolute flex items-center justify-center w-6 h-6 bg-green-600 rounded-full shadow-md -top-2 -right-2">
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                             </svg>
@@ -88,7 +108,7 @@
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
                                     >
-                                        <div v-if="layer.coating_completed || layer.film_pasting_completed" class="absolute -top-2 -right-2 w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center shadow-md">
+                                        <div v-if="layer.coating_completed || layer.film_pasting_completed" class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2">
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                             </svg>
@@ -105,7 +125,7 @@
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
                                     >
-                                        <div v-if="layer.mpi_completed" class="absolute -top-2 -right-2 w-6 h-6 bg-cyan-600 rounded-full flex items-center justify-center shadow-md">
+                                        <div v-if="layer.mpi_completed" class="absolute flex items-center justify-center w-6 h-6 rounded-full shadow-md -top-2 -right-2 bg-cyan-600">
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                             </svg>
@@ -119,11 +139,11 @@
                 </div>
 
                 <!-- Empty State -->
-                <div v-else class="text-center py-12">
+                <div v-else class="py-12 text-center">
                     <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                     </svg>
-                    <p class="text-gray-500 font-medium">Select a mass production to view progress</p>
+                    <p class="font-medium text-gray-500">Select a mass production to view progress</p>
                 </div>
             </div>
 
@@ -177,7 +197,9 @@ const checkAuthentication = async () => {
 
 const massProductionData = ref([]);
 const selectedMassProd = ref('');
+const selectedFurnace = ref('');
 const massProd_names = ref([]);
+const furnace_names = ref([]);
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
@@ -188,10 +210,11 @@ const getMassProdLists = async () => {
         massProd_names.value = massProdList.map(item => item.mass_prod);
 
         // Optionally, set default selected mass prod
+        /*
         if(massProd_names.value.length > 0) {
             selectedMassProd.value = massProd_names.value[0];
             await getMassProductionStatus(selectedMassProd.value);
-        }
+        }*/
 
     } catch(error) {
         console.error('Error fetching mass prod lists', error);
@@ -199,17 +222,31 @@ const getMassProdLists = async () => {
     }
 };
 
-const getMassProductionStatus = async (massProd) => {
-    if(!massProd) return;
+const getFurnaceLists = async () => {
+        try{
+            const response = await axios.get('/api/furnace-data');
+            const furnaceList = response.data;
+            furnace_names.value = furnaceList.map(item => item.furnace_name);
+            //console.log("List of mass prods: ",furnace_names.value);
+        }catch(error){
+            console.error('Error fetching mass prod lists',error);
+            toast.error('Failed to get the mass prod lists api error');
+        }
+    }
+
+const getMassProductionStatus = async () => {
+    if(!selectedFurnace.value || !selectedMassProd.value) return;
 
     try {
-        const response = await axios.get(`/api/mass-production-monitoring/${massProd}`);
+        const response = await axios.get(`/api/mass-production-monitoring/${selectedFurnace.value}/${selectedMassProd.value}`);
         if(response.data.success) {
             massProductionData.value = response.data.data; // should be a single mass prod data
         } else {
+            massProductionData.value = [];
             toast.error('Failed to load mass production data.');
         }
     } catch(error) {
+        massProductionData.value = [];
         console.error('Failed to get mass production status data', error);
         toast.error('Error fetching mass production data.');
     }
@@ -218,17 +255,22 @@ const getMassProductionStatus = async (massProd) => {
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
-watch(selectedMassProd, async (newMassProd) => {
-    await getMassProductionStatus(newMassProd);
-});
+watch(
+    [selectedFurnace, selectedMassProd],
+    async ([newFurnace, newMassProd]) => {
+        if (newFurnace && newMassProd) {
+            await getMassProductionStatus(newFurnace, newMassProd);
+        }
+    }
+);
 
 onMounted(async () => {
     const isAuthenticated = await checkAuthentication();
     if (!isAuthenticated) {
         return; // Stop execution if not authenticated
     }
-    await getMassProductionStatus();
     await getMassProdLists();
+    await getFurnaceLists();
 });
 
 </script>

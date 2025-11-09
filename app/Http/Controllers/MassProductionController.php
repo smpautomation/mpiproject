@@ -195,6 +195,11 @@ class MassProductionController extends Controller
         return response()->json(['message' => 'Deleted'], 204);
     }
 
+    public function allMassProductionWithDuplicates()
+    {
+        return MassProduction::orderBy('created_at', 'desc')->get();
+    }
+
     public function getByFurnaceAndMassProd($furnace, $massprod)
     {
         $record = MassProduction::where('furnace', $furnace)
@@ -418,7 +423,8 @@ class MassProductionController extends Controller
         // Normalize layer number (e.g., 9.5 → layer_9_5)
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
-        if (!property_exists($record, $layerColumn)) {
+        // Check if the layer column exists and is not null
+        if (!isset($record->$layerColumn) || $record->$layerColumn === null) {
             return response()->json([
                 'message' => "Layer {$layerNumber} not found for this record.",
             ], 404);

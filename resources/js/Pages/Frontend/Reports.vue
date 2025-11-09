@@ -23,24 +23,24 @@
         </div>
         <div v-show="showSelectionPanel">
             <div v-if="serialList.length > 0">
-                <div class="max-w-2xl mx-auto mt-8 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+                <div class="max-w-2xl p-8 mx-auto mt-8 bg-white border border-gray-200 shadow-lg rounded-xl">
                     <!-- Header -->
-                    <div class="text-center mb-6">
-                        <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full mb-3 shadow-md">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="mb-6 text-center">
+                        <div class="inline-flex items-center justify-center mb-3 rounded-full shadow-md w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500">
+                            <svg class="text-white w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">Generate Report</h3>
+                        <h3 class="mb-1 text-2xl font-bold text-gray-800">Generate Report</h3>
                         <p class="text-sm text-gray-500">Select a serial number to proceed</p>
                     </div>
 
                     <!-- Selection Panel -->
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Serial Number</label>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">Serial Number</label>
                         <select
                             v-model="currentSerialSelected"
-                            class="w-full py-3 px-4 text-base font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all cursor-pointer">
+                            class="w-full px-4 py-3 text-base font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white">
                             <option v-for="serial in serialList" :key="serial" :value="serial">{{ serial }}</option>
                         </select>
                     </div>
@@ -60,12 +60,12 @@
                     </button>
 
                     <!-- Notification -->
-                    <div v-show="showNotif2" class="mt-6 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-sm">
+                    <div v-show="showNotif2" class="p-4 mt-6 border-l-4 border-yellow-400 rounded-lg shadow-sm bg-gradient-to-r from-amber-50 to-yellow-50">
                         <div class="flex items-start gap-3">
                             <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                             </svg>
-                            <p class="text-sm font-semibold text-gray-800 flex-1">{{ reportNotificationMessage }}</p>
+                            <p class="flex-1 text-sm font-semibold text-gray-800">{{ reportNotificationMessage }}</p>
                         </div>
                     </div>
                 </div>
@@ -1417,7 +1417,7 @@ const onTestServer = ref(false);
 
 const page = usePage();
 
-console.log('Current page props:', page.props)
+//console.log('Current page props:', page.props)
 //UI Control start
 
 const isOn = ref(false);
@@ -1685,7 +1685,7 @@ const modifiedSMPJudgement = ref('');
 watch(
   reportSMPJudgement,
   (newVal, oldVal) => {
-    console.log('reportSMPJudgement changed:', oldVal, '→', newVal);
+    //console.log('reportSMPJudgement changed:', oldVal, '→', newVal);
     // Add your reactive logic here
   },
   { immediate: true } // Triggers on component mount
@@ -1812,6 +1812,7 @@ const showModal = ref(false);
 const coatingCompleted = ref(false);
 const heatTreatmentCompleted = ref(false);
 
+const selectedFurnace = ref();
 const selectedMassProd = ref();
 const selectedLayer = ref();
 
@@ -2289,31 +2290,31 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-    console.log('Entered Special Judgement function');
+    //console.log('Entered Special Judgement function');
     const responseGetVTData = await axios.get('/api/vt-models');
     const fetchAllVT = responseGetVTData.data;
     MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
-    console.log('VT MODELS: ',MODELS_SHOW_VT_DATA.value);
+    //console.log('VT MODELS: ',MODELS_SHOW_VT_DATA.value);
     const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
     const fetchAllCPKIHC = responseGetCPKIHCData.data;
     MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
-    console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
+    //console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
     const responseGetGXData = await axios.get('/api/gx-models');
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
-    console.log('GX MODELS: ',MODELS_SHOW_GX.value);
+    //console.log('GX MODELS: ',MODELS_SHOW_GX.value);
     const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
     const fetchAllTTMNC = responseGetTTMNCData.data;
     MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
-    console.log('TTMNC MODELS: ',MODELS_1X1X1_NO_CORNER.value);
+    //console.log('TTMNC MODELS: ',MODELS_1X1X1_NO_CORNER.value);
     const responseGetBHData = await axios.get('/api/bh-models');
     const fetchAllBH = responseGetBHData.data;
     MODELS_SHOW_BH.value = fetchAllBH.map(item => item.model_name);
-    console.log('BH MODELS: ',MODELS_SHOW_BH.value);
+    //console.log('BH MODELS: ',MODELS_SHOW_BH.value);
     const responseGetROBData = await axios.get('/api/rob-models');
     const fetchAllROB = responseGetROBData.data;
     MODELS_SHOW_ROB.value = fetchAllROB.map(item => item.model_name);
-    console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
+    //console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
 
     const model = jhCurveActualModel.value;
 
@@ -2322,10 +2323,10 @@ const checkSpecialJudgement = async () => {
     if (!hasNGihc) return;
 
     // === Logic Blocks ===
-    console.log('--- Logic Evaluation Start ---');
-    console.log('Model:', model);
-    console.log('VT Sample Qty:', reportVT_samplesQty.value);
-    console.log('BH Sample Qty:', reportBH_sampleQty.value);
+    //console.log('--- Logic Evaluation Start ---');
+    //console.log('Model:', model);
+    //console.log('VT Sample Qty:', reportVT_samplesQty.value);
+    //console.log('BH Sample Qty:', reportBH_sampleQty.value);
 
     // VT Data
     if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) {
@@ -2342,40 +2343,40 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_BH.value.includes(model) && reportBH_sampleQty.value > 0) {
         showBHData.value = true;
         showBHData_default.value = false;
-        console.log('[BH] Showing BH Data (sample qty > 0)');
+        //console.log('[BH] Showing BH Data (sample qty > 0)');
     } else if (MODELS_SHOW_BH.value.includes(model)) {
         showBHData.value = false;
         showBHData_default.value = true;
-        console.log('[BH] Showing default BH layout (sample qty = 0)');
+        //console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
     // 1x1x1 Data (TTM)
     if (model.includes("TTM")) {
         show1x1x1Data_withoutCorner.value = true;
         show1x1x1Data_Corner.value = true;
-        console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
+        //console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
 
         if (MODELS_1X1X1_NO_CORNER.value.includes(model)) {
             show1x1x1Data_Corner.value = false;
-            console.log('[TTM] Corner data disabled for this model');
+            //console.log('[TTM] Corner data disabled for this model');
         }
     }
 
     // Flags
     if (MODELS_SHOW_CPK.value.includes(model)) {
         showCpkFrom_iHc.value = true;
-        console.log('[CPK] CPK enabled');
+        //console.log('[CPK] CPK enabled');
     }
     if (MODELS_SHOW_GX.value.includes(model)) {
         showGX.value = true;
-        console.log('[GX] GX enabled');
+        //console.log('[GX] GX enabled');
     }
     if (MODELS_SHOW_ROB.value.includes(model)) {
         showROB.value = true;
-        console.log('[ROB] ROB enabled');
+        //console.log('[ROB] ROB enabled');
     }
 
-    console.log('--- Logic Evaluation End ---');
+    //console.log('--- Logic Evaluation End ---');
 
 };
 
@@ -2393,10 +2394,10 @@ const autoCheckRemarks = () => {
 
 const getControlSheetData = async () => {
     try{
-        const response = await axios.get(`/api/mass-productions/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
+        const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
         const controlSheet = response.data.layer_data;
         reportTotalQuantity.value = controlSheet[12].data.A;
-        console.log('reportTotalQuantity: ', reportTotalQuantity.value);
+        //console.log('reportTotalQuantity: ', reportTotalQuantity.value);
 
     }catch(error){
         console.log('Failed to get response Control Sheet Data: ', error);
@@ -2411,8 +2412,9 @@ const fetchAllData = async () => {
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
         let TPM_Data = responseTpm.data.data[0];
         selectedMassProd.value = TPM_Data.mass_prod;
+        selectedFurnace.value = TPM_Data.furnace;
         selectedLayer.value = TPM_Data.layer_no;
-        console.log("Mass Prod number: ", selectedMassProd.value, " Layer no: ", selectedLayer.value);
+        //console.log("Mass Prod number: ", selectedMassProd.value, " Layer no: ", selectedLayer.value);
         // Unwrap nested array if exists
         let rawData = responseTpm.data?.[0];
 
@@ -2429,7 +2431,7 @@ const fetchAllData = async () => {
         tpmData.value = rawData;
         tpmDataQuantity.value = modelData.length;
         //console.log('TPM TOTAL -> ',tpmDataQuantity.value);
-        const responseControlSheet = await axios.get(`/api/mass-productions/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
+        const responseControlSheet = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
         const getActualModel = responseControlSheet.data.layer_data[0].data.A;
         getTpmModel.value = modelData;
 
@@ -2530,12 +2532,12 @@ const setJudgmentFlags = (models) => {
 };
 
 const resolveFurnaceAndLayer = async (model) => {
-    const response = await axios.get(`/api/mass-production/by-mass-prod/${selectedMassProd.value}`);
+    const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`);
     const massProd = response.data;
     currentFurnaceName.value = massProd.furnace; // K-40
     currentLayerName.value = "Layer " + selectedLayer.value; // Layer 1
-    console.log("Current Furnace: ", currentFurnaceName.value);
-    console.log("Current Layer: ", currentLayerName.value);
+    //console.log("Current Furnace: ", currentFurnaceName.value);
+    //console.log("Current Layer: ", currentLayerName.value);
     tpmData_tracerNo.value = model.Tracer;
 };
 
@@ -2593,7 +2595,7 @@ const matchInspectionModel = async (model) => {
     inspectionOperator_OvenInfo.value = found.operator;
     inspectionAutomotive.value = found.is_automotive;
 
-    console.log("OVEN MACHINE NO: ", inspectionOvenMachineNo.value);
+    //console.log("OVEN MACHINE NO: ", inspectionOvenMachineNo.value);
 
     // Parse br bounds
     if (inspectionBrStandard.value.includes("~")) {
@@ -2654,7 +2656,7 @@ const showReportData = async () => {
         : '';
 
         report_isFinalized.value = filterBySerial[0].is_finalized == 1;
-        console.log("Report is finalized: ", report_isFinalized.value);
+        //console.log("Report is finalized: ", report_isFinalized.value);
 
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
@@ -2817,7 +2819,7 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
-        console.log('Entering Evalation for Reject reasons...');
+        //console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();

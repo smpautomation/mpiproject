@@ -44,19 +44,19 @@
                             <td class="px-6 py-4 text-center">
                                 <div class="flex flex-wrap justify-center gap-2">
                                     <button
-                                        @click="viewControlSheet(item.mass_prod)"
+                                        @click="viewControlSheet(item.mass_prod, item.furnace)"
                                         class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
                                     >
                                         Control Sheet
                                     </button>
                                     <button
-                                        @click="viewHTGraph(item.mass_prod)"
+                                        @click="viewHTGraph(item.mass_prod, item.furnace)"
                                         class="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
                                     >
                                         HT Graph
                                     </button>
                                     <button
-                                        @click="viewSMPData(item.mass_prod)"
+                                        @click="viewSMPData(item.mass_prod, item.furnace)"
                                         class="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-500"
                                     >
                                         SMP Data
@@ -295,11 +295,16 @@ const searchQuery = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 5;
 
-const getMassProdData = async() => {
-    const responseMassProd = await axios.get('/api/mass-production');
-    massProd_list.value = responseMassProd.data;
-    console.log(massProd_list.value);
-}
+const getMassProdData = async () => {
+    try {
+        const responseMassProd = await axios.get('/api/mass-production/all-duplicates');
+        massProd_list.value = responseMassProd.data;
+        console.log(massProd_list.value);
+    } catch (error) {
+        console.error('Failed to fetch all mass production data:', error);
+        toast.error('Failed to fetch mass production data.');
+    }
+};
 
 const getFurnaceLists = async() => {
     try{
@@ -337,28 +342,28 @@ const prevPage = () => {
   }
 }
 
-const viewControlSheet = (massprod) => {
+const viewControlSheet = (massprod, furnace) => {
     Inertia.visit('/control_sheet',{
         method: 'get',
-        data: { massProd: massprod },
+        data: { massProd: massprod, furnace: furnace },
         preserveState: true,
         preserveScroll: true,
     });
 }
 
-const viewHTGraph = (massprod) => {
+const viewHTGraph = (massprod, furnace) => {
     Inertia.visit('/htgraph',{
         method: 'get',
-        data: { massProd: massprod },
+        data: { massProd: massprod, furnace: furnace },
         preserveScroll: true,
         preserveState: true,
     });
 }
 
-const viewSMPData = (massprod) => {
+const viewSMPData = (massprod, furnace) => {
     Inertia.visit('/smpdata',{
         method: 'get',
-        data: { massProd: massprod },
+        data: { massProd: massprod, furnace: furnace },
         preserveState: true,
         preserveScroll: true,
     });
