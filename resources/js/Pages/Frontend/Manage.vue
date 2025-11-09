@@ -1570,7 +1570,7 @@
                         const [x, y] = parsedData[key].split(',').map(Number);
 
                         // Custom condition: x must be less than 100 and y must be greater than -1000
-                        if (x >= 100 || y <= -2000) { // If x >= 100 or y <= -1000, skip the data
+                        if (x >= 10000 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
                             //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
                             continue; // Skip this iteration if condition is not met
                         }
