@@ -1,25 +1,46 @@
 <template>
     <Frontend>
         <div
-            class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto bg-center bg-cover md:flex-row"
-            :style="{ backgroundImage: 'url(/photo/home_background.jpg)' }"
+            class="relative flex flex-col items-center justify-center min-h-screen px-8 py-12 mx-auto transition-all duration-1000 ease-in-out bg-center bg-cover md:flex-row"
+            :style="{ backgroundImage: `url(${currentImage})` }"
         >
             <!-- Overlay -->
             <div class="absolute inset-0 z-0 bg-black bg-opacity-60"></div>
 
             <div class="relative z-10 flex flex-row items-center justify-center w-full max-w-6xl gap-16 px-4">
-                <!-- Headline -->
-                <div
-                    class="flex-shrink-0 font-extrabold tracking-widest text-white animate-fade-in-down"
-                    style="min-width: 320px;"
-                >
-                    <p class="mb-2 text-3xl leading-tight text-left whitespace-normal md:text-5xl">
+                <!-- Enhanced Headline -->
+                <div class="flex-shrink-0 font-bold tracking-wide animate-fade-in-down" style="min-width: 320px;">
+
+                <!-- Welcome Text -->
+                <div class="mb-3">
+                    <p class="mb-1 text-xl font-medium tracking-wider uppercase md:text-2xl text-white/90">
                     Welcome to
                     </p>
-                    <p class="text-4xl leading-tight text-left text-transparent whitespace-normal md:text-6xl bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text">
-                    the MPI Website
-                    </p>
+                    <div class="w-16 h-1 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400"></div>
                 </div>
+
+                <!-- Main Title -->
+                <h1 class="mb-4 text-4xl font-extrabold leading-tight md:text-6xl lg:text-7xl">
+                    <span class="block text-transparent bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-500 bg-clip-text drop-shadow-lg animate-gradient-x bg-[length:200%_auto]">
+                    GBDP MPI
+                    </span>
+                    <span class="block mt-2 text-white drop-shadow-2xl">
+                    Website
+                    </span>
+                </h1>
+
+                <!-- Subtitle/Description -->
+                <p class="max-w-md text-sm font-normal leading-relaxed tracking-normal md:text-base text-white/80">
+                    Centralized data management and control hub for your GBDP MPI system
+                </p>
+
+                <!-- Decorative Element -->
+                <div class="flex items-center mt-6 space-x-2">
+                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                    <div class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 0.4s"></div>
+                </div>
+            </div>
 
                 <!-- Form Container -->
                 <div class="flex-shrink-0 w-full max-w-md form-container">
@@ -270,7 +291,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 import axios from 'axios';
@@ -309,6 +330,14 @@ const checkAuthentication = async () => {
         return false;
     }
 };
+const images = [
+    '/photo/home_background.jpg',
+    '/photo/htfurnace.jpg'
+];
+
+const currentImage = ref(images[0]);
+let index = 0;
+let intervalId = null;
 
 const logUserLogin = async () => {
     try{
@@ -427,6 +456,17 @@ const login = async () => {
   }
 };
 
+onMounted(() => {
+    intervalId = setInterval(() => {
+        index = (index + 1) % images.length
+        currentImage.value = images[index]
+    }, 5000) // switch every 5 seconds
+})
+
+onBeforeUnmount(() => {
+    clearInterval(intervalId)
+})
+
 const register = async () => {
     registerError.value = '';
     registerSuccess.value = false;
@@ -459,10 +499,25 @@ const register = async () => {
         registerSuccess.value = false;
     }
 };
+
 </script>
 
 
 <style scoped>
+
+div[style] {
+    transition: background-image 1.5s ease-in-out;
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 @keyframes fade-in-down {
   0% {
     opacity: 0;
@@ -500,6 +555,10 @@ const register = async () => {
   100% {
     opacity: 0;
   }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
 }
 
 .animate-fade-in-notif-login {

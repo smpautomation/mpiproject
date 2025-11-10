@@ -2242,7 +2242,7 @@ const autoFetch = async () => {
 
         if (error.response) {
             if (error.response.status === 404) {
-                toast.error(`"${selectedFurnace_fetch.value}" "${selectedMassProd_fetch.value}" layer "${selectedLayer_fetch.value}" does not exists.`);
+                toast.error(`"${selectedFurnace_fetch.value} ${selectedMassProd_fetch.value}" layer ${selectedLayer_fetch.value} does not exists.`);
             } else {
                 toast.error(`Server error (${error.response.status}): Unable to fetch data.`);
             }

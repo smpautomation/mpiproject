@@ -60,7 +60,7 @@ HTMLCanvasElement.prototype.getContext = function(type, options) {
 // ============================================
 
 createInertiaApp({
-  title: (title) => title ? `${title} MPIOnlineSystem` : 'MPIOnlineSystem',
+  title: (title) => title ? `${title} GBDP-MPIOnlineSystem` : 'GBDP-MPIOnlineSystem',
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.vue`,

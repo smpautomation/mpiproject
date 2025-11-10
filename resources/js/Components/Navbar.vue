@@ -2,21 +2,57 @@
 <nav class="bg-white border-b border-gray-200 shadow dark:bg-gray-900 dark:border-gray-700">
   <div class="flex items-center justify-between max-w-screen-xl px-4 py-3 mx-auto">
 
-    <!-- Logo -->
+    <!-- Enhanced MPI Logo with Magnetic Theme -->
     <div v-if="state.isAuthenticated && state.user" class="relative flex items-center space-x-4 cursor-pointer group">
-    <!-- Logo Image with subtle hover effect -->
-    <img
-        src="photo/smp_logo.png"
-        class="h-10 transition-transform duration-300 ease-in-out group-hover:scale-105 group-hover:rotate-2"
-        alt="SMP Logo"
-    />
 
-    <!-- Text with gradient and subtle shadow on hover -->
-    <span class="relative z-10 text-xl font-extrabold text-gray-900 transition-all duration-300 dark:text-white group-hover:drop-shadow-lg">
-        MPI
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-400">Online</span>
-        <span class="text-gray-400"> System</span>
-    </span>
+        <!-- Animated Magnetic Logo SVG -->
+        <div class="relative w-12 h-12">
+            <!-- Outer glow effect -->
+            <div class="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-br from-cyan-400 to-teal-500 rounded-xl blur-md group-hover:opacity-60"></div>
+
+            <!-- Main logo container -->
+            <div class="relative w-12 h-12 p-2 transition-all duration-300 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-2xl">
+
+            <!-- Magnetic Field Icon -->
+            <svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <!-- Magnetic field lines (animated) -->
+                <g class="animate-pulse">
+                <path d="M20 50 Q30 30, 50 30 Q70 30, 80 50" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <path d="M20 50 Q30 70, 50 70 Q70 70, 80 50" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                </g>
+
+                <!-- Magnet poles -->
+                <g class="transition-transform group-hover:scale-105">
+                <!-- North pole (left) -->
+                <rect x="15" y="35" width="20" height="30" rx="3" fill="white" opacity="0.9"/>
+                <text x="25" y="55" font-size="16" font-weight="bold" fill="#0891b2" text-anchor="middle">N</text>
+
+                <!-- South pole (right) -->
+                <rect x="65" y="35" width="20" height="30" rx="3" fill="white" opacity="0.9"/>
+                <text x="75" y="55" font-size="16" font-weight="bold" fill="#14b8a6" text-anchor="middle">S</text>
+                </g>
+
+                <!-- Center attraction particles -->
+                <circle cx="50" cy="50" r="3" fill="white" opacity="0.8" class="animate-ping"/>
+                <circle cx="50" cy="50" r="2" fill="white"/>
+            </svg>
+            </div>
+        </div>
+
+        <!-- Enhanced Text with Gradient -->
+        <div class="relative">
+            <span class="block text-xl font-extrabold leading-none">
+            <span class="text-transparent transition-all duration-300 bg-clip-text bg-gradient-to-r from-cyan-600 to-teal-600 group-hover:from-cyan-500 group-hover:to-teal-500 drop-shadow-sm">
+                GBDP MPI
+            </span>
+            </span>
+            <span class="block text-sm font-semibold text-gray-600 transition-colors duration-300 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">
+            Online System
+            </span>
+        </div>
+
+        <!-- Hover indicator line -->
+        <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-500 to-teal-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
     </div>
 
 
@@ -195,3 +231,16 @@ const filteredNavItems = computed(() => {
         .filter(item => item.children !== undefined || item.route); // hide parent if no accessible children
 });
 </script>
+
+<style scoped>
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+</style>
