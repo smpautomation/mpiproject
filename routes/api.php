@@ -25,6 +25,7 @@ use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
+use App\Http\Controllers\ExcessLayersController;
 use App\Http\Controllers\FilmPastingDataController;
 use App\Http\Controllers\GbdpSecondCoatingController;
 use App\Http\Controllers\HtGraphPatternsController;
@@ -37,6 +38,7 @@ use App\Mail\TakefuMail_Manual;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
+use App\Models\ExcessLayers;
 use App\Models\GbdpSecondCoating;
 use App\Models\MassProduction;
 use Illuminate\Support\Facades\Mail;
@@ -300,6 +302,7 @@ Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 
 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
+Route::get('/pattern-hours/{patternNo}', [HtGraphPatternsController::class, 'getHours']);
 
 Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);
 
@@ -362,7 +365,13 @@ Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}/layer-no', [Mass
 
 Route::get('/mass-production/{furnace}/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
 
+Route::get('/break-lot-monitoring/{furnace}/{massprod}', [MassProductionController::class, 'breakLotMonitoring']);
+
 Route::get('/tpm/check-existing/{furnace}/{massprod}/{layer}', [TPMDataController::class, 'checkExisting']);
 
+Route::post('/excess-layers/merge', [ExcessLayersController::class, 'mergeExcessLayer']);
+
+Route::patch('/mass-production/{furnace}/{massProd}/merge', [MassProductionController::class, 'mergeMainLayer']);
 
 Route::apiResource('mass-production',MassProductionController::class);
+Route::apiResource('excess-layers',ExcessLayersController::class);

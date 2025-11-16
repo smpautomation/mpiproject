@@ -59,6 +59,17 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Heat_Treatment');
     }
 
+    public function breakLots(Request $request){
+
+        $massprod = $request->get('massprod');
+        $furnace = $request->get('furnace');
+
+        return Inertia::render('Frontend/HT_BreakLots',[
+            'massprod' => $massprod,
+            'furnace' => $furnace
+        ]);
+    }
+
     public function viewList(){
         return Inertia::render('Frontend/ViewList');
     }

@@ -6,7 +6,7 @@
                     <div class="w-1.5 h-12 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"></div>
                     <div>
                         <h2 class="text-3xl font-bold text-gray-800">Email: Send Reports</h2>
-                        <p class="text-sm text-gray-600 mt-1">Fill out all fields to send an email</p>
+                        <p class="mt-1 text-sm text-gray-600">Fill out all fields to send an email</p>
                     </div>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                         type="text"
                         @input="form.massPro = form.massPro.toUpperCase()"
                         id="massProd"
-                        class="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all placeholder-gray-400"
+                        class="w-full px-4 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 transition-all border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
                         required
                         placeholder="e.g., K40 541ST"
                     />
@@ -32,12 +32,12 @@
                     <label for="emails" class="block mb-2 text-sm font-semibold text-gray-700">
                         Recipients <span class="text-red-500">*</span>
                     </label>
-                    <p class="text-xs text-gray-500 mb-2">Enter email addresses separated by commas</p>
+                    <p class="mb-2 text-xs text-gray-500">Enter email addresses separated by commas</p>
                     <input
                         v-model="form.emails"
                         type="text"
                         id="emails"
-                        class="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all placeholder-gray-400"
+                        class="w-full px-4 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 transition-all border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
                         required
                         placeholder="automation3@smp.com.ph, automation2@smp.com.ph"
                     />
@@ -45,13 +45,13 @@
 
                 <div>
                     <label for="message" class="block mb-2 text-sm font-semibold text-gray-700">
-                        Message <span class="text-gray-400 text-xs font-normal">(Optional)</span>
+                        Message <span class="text-xs font-normal text-gray-400">(Optional)</span>
                     </label>
                     <textarea
                         v-model="form.message"
                         id="message"
                         rows="5"
-                        class="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white transition-all placeholder-gray-400 resize-none"
+                        class="w-full px-4 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 transition-all border border-gray-300 rounded-lg shadow-sm resize-none bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
                         placeholder="Add an optional message..."
                     ></textarea>
                 </div>
@@ -70,8 +70,8 @@
                 </button>
             </form>
 
-            <div v-if="success" class="p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
-                <p class="text-sm font-semibold text-green-700 flex items-center gap-2">
+            <div v-if="success" class="p-4 border-l-4 border-green-500 rounded-r-lg bg-green-50">
+                <p class="flex items-center gap-2 text-sm font-semibold text-green-700">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>

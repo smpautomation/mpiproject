@@ -11,6 +11,7 @@ use App\Models\TPMData;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\SmpData;
+use App\Models\ExcessLayers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Schema;
@@ -811,175 +812,8 @@ class MassProductionController extends Controller
 
     public function smpDataSummary($furnace, $massprod)
     {
-        // Fetch Mass Production record using composite key
-        $massProdData = MassProduction::where('furnace', $furnace)
-            ->where('mass_prod', $massprod)
-            ->first();
-
-        if (!$massProdData) {
-            return response()->json(['error' => "Mass production not found for {$furnace} {$massprod}"], 404);
-        }
-
-        $attributes = collect($massProdData->getAttributes());
-
-        // -----------------------------
-        // Extract main layers and serials
-        // -----------------------------
-        $layersData = $attributes
-            ->filter(fn($value, $key) => preg_match('/^layer_\d+(_\d+)?$/', $key) && $value !== null)
-            ->mapWithKeys(fn($value, $key) => [$key => @json_decode($value, true) ?: $value]);
-
-        $layerSerials = $attributes
-            ->filter(fn($value, $key) => preg_match('/^layer_\d+(_\d+)?_serial$/', $key) && $value !== null);
-
-        // -----------------------------
-        // Fetch all related data at once
-        // -----------------------------
-        $tpmRecords = TPMData::whereIn('serial_no', $layerSerials)->get()->groupBy('serial_no');
-        $tpmAggregates = TPMDataAggregateFunctions::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
-        $reportRecords = ReportData::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
-
-        $coatings = Coating::where('furnace', $furnace)
-        ->where('mass_prod', $massprod)
-        ->get()
-        ->keyBy(fn($c) => $c->layer);
-
-        // -----------------------------
-        // Build flat data per layer for frontend
-        // -----------------------------
-        $flattenedLayers = [];
-
-        foreach ($layersData as $layerCol => $layerArray) {
-            $serial = $massProdData->{$layerCol . '_serial'} ?? null;
-            $formatType = $massProdData->{$layerCol . '_format_type'} ?? null;
-
-            $coating = null;
-            $layerNumber = (float) str_replace('_', '.', str_replace('layer_', '', $layerCol));
-            if (isset($coatings[$layerNumber])) {
-                $coating = $coatings[$layerNumber];
-            }
-
-            $tpmData = $serial && isset($tpmRecords[$serial]) ? $tpmRecords[$serial]->values() : collect();
-            $tpmAggregate = $serial && isset($tpmAggregates[$serial]) ? $tpmAggregates[$serial] : null;
-            $reportData = $serial && isset($reportRecords[$serial]) ? $reportRecords[$serial] : null;
-
-            // Helper to get row data by title
-            $getRowData = fn($title) => collect($layerArray)->firstWhere('rowTitle', $title)['data'] ?? '';
-
-            $magProp = $reportData && $reportData->magnetic_property_data ? json_decode($reportData->magnetic_property_data, true) : [];
-
-            // -----------------------------
-            // Layer ordinal conversion
-            // -----------------------------
-            $layerNumberStr = str_replace('_', '.', str_replace('layer_', '', $layerCol));
-
-            if (strpos($layerNumberStr, '.') !== false) {
-                $layerOrdinal = $layerNumberStr . 'th';
-            } else {
-                $num = (int) $layerNumberStr;
-                $suffix = match($num % 10) {
-                    1 => ($num % 100 === 11 ? 'th' : 'st'),
-                    2 => ($num % 100 === 12 ? 'th' : 'nd'),
-                    3 => ($num % 100 === 13 ? 'th' : 'rd'),
-                    default => 'th',
-                };
-                $layerOrdinal = $num . $suffix;
-            }
-
-            $layerOrdinal = (string)$layerNumber;
-
-             // Fetch remarks & special instructions for this furnace + massprod + layer
-            $smpData = SmpData::where('furnace', $furnace)
-                ->where('mass_prod', $massProdData->mass_prod)
-                ->where('layer', $layerOrdinal)
-                ->first();
-
-            $filmPastingData = FilmPastingData::where('furnace', $furnace)
-                ->where('mass_prod', $massProdData->mass_prod)
-                ->where('layer', $layerOrdinal)
-                ->first();
-
-            /*Log::info('SMP DATA RESULT', [
-                'mass_prod' => $massProdData->mass_prod,
-                'layer' => $layerOrdinal,
-                'found' => $smpData ? true : false,
-                'remarks' => $smpData->remarks ?? null,
-            ]);*/
-
-            if ($formatType === 'Film Pasting') {
-                $flattenedLayers[$layerCol] = [
-                    'MPI_Date' => '',
-                    'Pulse_Tracer_Machine' => $tpmData[0]->Tracer ?? '',
-                    'Furnace_Cycle_No' => $massProdData->cycle_no,
-                    'Mass_Production' => $massProdData->mass_prod,
-                    'Cycle_Pattern' => $massProdData->pattern_no,
-                    'Model' => $getRowData('MODEL:')['A'] ?? '',
-                    'Lot_No' => $getRowData('LT. No.:')['A'] ?? '',
-                    'Layer' => $layerOrdinal,
-                    'Batches' => count($tpmData),
-                    'Total_Lot_Qty' => $getRowData('TOTAL QTY')['A'] ?? '',
-                    'Date' => $coating->date ?? '',
-                    'M_C' => $coating->machine_no ?? '',
-                    'Magnet_Weight' => $coating->total_magnet_weight ?? '',
-
-                    // Film Pasting fields
-                    'Film_Coating_Amount' => $filmPastingData->film_coating_amount ?? '',
-                    'Film_Type' => $filmPastingData->film_type ?? '',
-                    'Film_Class' => $filmPastingData->film_class ?? '',
-                    'blank' => '',
-
-                    // iHc
-                    'iHc_Target' => $magProp['ihcStandard'] ?? '',
-                    'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? '' : '',
-                    'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? '' : '',
-                    'iHc_Ave' => $tpmAggregate && $tpmAggregate->average ? json_decode($tpmAggregate->average, true)['iHc'] ?? '' : '',
-
-                    'Remarks' => $smpData->remarks ?? '',
-                    'Status' => $reportData->smp_judgement ?? '',
-                    'HT_Trouble' => $massProdData->current_pattern === null || $massProdData->current_pattern === ''
-                        ? null
-                        : ($massProdData->current_pattern === 'PASS' ? 'NO' : 'YES'),
-                    'Special_Instruction' => $smpData->special_instruction ?? '',
-                    'format_type' => $formatType,
-                ];
-            } else {
-                $flattenedLayers[$layerCol] = [
-                    'MPI_Date' => '',
-                    'Pulse_Tracer_Machine' => $tpmData[0]->Tracer ?? '',
-                    'Furnace_Cycle_No' => $massProdData->cycle_no,
-                    'Mass_Production' => $massProdData->mass_prod,
-                    'Cycle_Pattern' => $massProdData->pattern_no,
-                    'Model' => $getRowData('MODEL:')['A'] ?? '',
-                    'Lot_No' => $getRowData('LT. No.:')['A'] ?? '',
-                    'Layer' => $layerOrdinal,
-                    'Batches' => count($tpmData),
-                    'Total_Lot_Qty' => $getRowData('TOTAL QTY')['A'] ?? '',
-                    'Date' => $coating->date ?? '',
-                    'M_C' => $coating->machine_no ?? '',
-                    'Magnet_Weight' => $coating->total_magnet_weight ?? '',
-
-                    // Coating fields
-                    'Coating_Target' => $coating->min_tb_content ?? '',
-                    'Coating_Max' => $coating->maximum ?? '',
-                    'Coating_Min' => $coating->minimum ?? '',
-                    'Coating_Ave' => $coating->average ?? '',
-
-                    // iHc
-                    'iHc_Target' => $magProp['ihcStandard'] ?? '',
-                    'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? '' : '',
-                    'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? '' : '',
-                    'iHc_Ave' => $tpmAggregate && $tpmAggregate->average ? json_decode($tpmAggregate->average, true)['iHc'] ?? '' : '',
-
-                    'Remarks' => $smpData->remarks ?? '',
-                    'Status' => $reportData->smp_judgement ?? '',
-                    'HT_Trouble' => $massProdData->current_pattern === null || $massProdData->current_pattern === ''
-                        ? null
-                        : ($massProdData->current_pattern === 'PASS' ? 'NO' : 'YES'),
-                    'Special_Instruction' => $smpData->special_instruction ?? '',
-                    'format_type' => $formatType,
-                ];
-            }
-        }
+        $flattenedLayers = app(\App\Services\SmpDataService::class)->getFlattenedData($furnace, $massprod);
+        $formatType = reset($flattenedLayers)['format_type'] ?? null;
 
         return response()->json([
             'layersData' => $flattenedLayers,
@@ -1091,4 +925,122 @@ class MassProductionController extends Controller
             ],
         ]);
     }
+
+    public function breakLotMonitoring($furnace, $massprod)
+    {
+        // Fetch the mass production record
+        $record = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->first();
+
+        if (!$record) {
+            return response()->json(['error' => 'Mass production not found'], 404);
+        }
+
+        $layers = [];
+        $boxLetters = ['A','B','C','D','E','F','G','H','J','K'];
+
+        // Fetch all excess layers for this furnace + massprod in one query
+        $excessLayers = ExcessLayers::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->get()
+            ->keyBy('layer'); // key by layer number for easy access
+
+        // Loop through each main layer_1 to layer_9
+        for ($i = 1; $i <= 9; $i++) {
+            $layerKey = "layer_{$i}";
+            $mainLayerData = $record->$layerKey ? json_decode($record->$layerKey, true) : [];
+
+            // If there is an excess layer for this layer, merge its data
+            $excessLayerData = $excessLayers->has($i) ? $excessLayers[$i]->layer_data : [];
+
+            // Merge main layer data and excess layer data
+            $combinedData = array_merge($mainLayerData ?? [], $excessLayerData ?? []);
+
+            $availableBoxes = [];
+
+            if (!empty($combinedData)) {
+                foreach ($boxLetters as $box) {
+                    $hasData = false;
+
+                    foreach ($combinedData as $row) {
+                        if (!empty($row['data'][$box])) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+
+                    if (!$hasData) {
+                        $availableBoxes[] = $box;
+                    }
+                }
+            } else {
+                // Entire layer empty → all boxes are available
+                $availableBoxes = $boxLetters;
+            }
+
+            $layers[$layerKey] = $availableBoxes;
+        }
+
+        return response()->json([
+            'furnace' => $furnace,
+            'massprod' => $massprod,
+            'available_slots' => $layers
+        ]);
+    }
+
+
+    public function mergeMainLayer(Request $request, $furnace, $massProd)
+    {
+        $validated = $request->validate([
+            'layer' => 'required|string', // e.g., layer_1, layer_2
+            'layer_data' => 'required|array', // decoded array from Vue
+        ]);
+
+        // Fetch the mass production record
+        $massProdRecord = MassProduction::where([
+            'furnace' => $furnace,
+            'mass_prod' => $massProd,
+        ])->firstOrFail();
+
+        $layerColumn = $validated['layer'];
+        $newLayerData = $validated['layer_data'];
+
+        // Check if the column already has data
+        if ($massProdRecord->$layerColumn) {
+            $existingData = json_decode($massProdRecord->$layerColumn, true);
+
+            // Merge box data per rowTitle
+            $mergedData = [];
+            foreach ($existingData as $row) {
+                $mergedData[$row['rowTitle']] = $row['data'];
+            }
+            foreach ($newLayerData as $row) {
+                $title = $row['rowTitle'];
+                if (!isset($mergedData[$title])) {
+                    $mergedData[$title] = $row['data'];
+                } else {
+                    $mergedData[$title] = array_merge($mergedData[$title], $row['data']);
+                }
+            }
+
+            $finalData = [];
+            foreach ($mergedData as $rowTitle => $boxes) {
+                $finalData[] = [
+                    'rowTitle' => $rowTitle,
+                    'data' => $boxes
+                ];
+            }
+
+            $massProdRecord->$layerColumn = json_encode($finalData);
+        } else {
+            // No existing data, just insert
+            $massProdRecord->$layerColumn = json_encode($newLayerData);
+        }
+
+        $massProdRecord->save();
+
+        return response()->json($massProdRecord, 200);
+    }
+
 }

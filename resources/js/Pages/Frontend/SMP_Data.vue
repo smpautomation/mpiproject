@@ -3,10 +3,10 @@
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
             <div class="w-full overflow-x-auto">
                 <div class="flex items-center justify-center w-full p-4 mb-4 rounded-lg shadow-md bg-gradient-to-r from-cyan-600 to-teal-600">
-  <p class="text-lg font-bold tracking-wide text-white">
-    SMP DATA for <span class="px-2 py-1 bg-white rounded-md shadow-sm text-cyan-700">{{ redirectedFurnace }} {{ redirectedMassPro }}</span> Mass Production
-  </p>
-</div>
+                <p class="text-lg font-bold tracking-wide text-white">
+                    SMP DATA for <span class="px-2 py-1 bg-white rounded-md shadow-sm text-cyan-700">{{ redirectedFurnace }} {{ redirectedMassPro }}</span> Mass Production
+                </p>
+                </div>
                 <div>
                     <table class="w-full border border-collapse border-gray-300 rounded-lg shadow-sm table-auto">
                         <thead class="text-sm text-white uppercase bg-gradient-to-r from-cyan-600 to-teal-600">

@@ -92,6 +92,7 @@
                     <div class="mb-4 text-center">
                     <p class="text-lg font-semibold text-gray-800">Pattern {{ selectedPattern?.pattern_no }}</p>
                     <p class="text-sm text-gray-500">Encoded by: {{ selectedPattern?.encoded_by }}</p>
+                    <p class="text-sm text-gray-500">Hours: {{ selectedPattern?.pattern_no_hours }}</p>
                     </div>
 
                     <!-- Image -->
@@ -115,40 +116,53 @@
 
                     <!-- Form Fields -->
                     <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
-                    <div class="flex flex-col">
-                        <label class="mb-1 text-sm font-medium text-gray-700">Pattern No.</label>
-                        <input type="number" v-model="patternNo" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
+                        <div class="flex flex-col">
+                            <label class="mb-1 text-sm font-medium text-gray-700">Pattern No.</label>
+                            <input type="number" v-model="patternNo" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-1 text-sm font-medium text-gray-700">Furnace No</label>
+                            <select v-model="selectedFurnace" class="w-full border-gray-300 rounded-lg shadow-sm form-select focus:ring-2 focus:ring-green-400">
+                            <option v-for="item in furnaceNo" :key="item" :value="item">{{ item }}</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-1 text-sm font-medium text-gray-700">Encoded By</label>
+                            <input type="text" v-model="encodedBy" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
+                        </div>
                     </div>
 
-                    <div class="flex flex-col">
-                        <label class="mb-1 text-sm font-medium text-gray-700">Furnace No</label>
-                        <select v-model="selectedFurnace" class="w-full border-gray-300 rounded-lg shadow-sm form-select focus:ring-2 focus:ring-green-400">
-                        <option v-for="item in furnaceNo" :key="item" :value="item">{{ item }}</option>
-                        </select>
-                    </div>
+                    <!-- Form fields -->
+                    <div class="flex flex-col w-full gap-6 mb-8 md:flex-row">
+                        <!-- Upload Graph (separate row) -->
+                        <div  class="flex flex-col flex-1 mb-8">
+                            <label class="mb-1 text-sm font-medium text-gray-700">Replace Graph (optional)</label>
+                            <input type="file" ref="editFile" @change="handleEditGraph" class="p-2 border rounded-lg file-input"/>
+                            <!-- Preview -->
+                            <div v-if="uploadedGraphEdited" class="mb-6 text-center">
+                                <p class="mb-2 text-xs font-semibold text-gray-600">Preview:</p>
+                                <img :src="uploadedGraphEdited" class="inline-block border rounded-lg shadow-sm max-h-48"/>
+                            </div>
+                        </div>
 
-                    <div class="flex flex-col">
-                        <label class="mb-1 text-sm font-medium text-gray-700">Encoded By</label>
-                        <input type="text" v-model="encodedBy" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
-                    </div>
-                    </div>
-
-                    <!-- Replace Graph -->
-                    <div class="flex flex-col w-full mb-6">
-                    <label class="mb-1 text-sm font-medium text-gray-700">Replace Graph (optional)</label>
-                    <input type="file" ref="editFile" @change="handleEditGraph" class="p-2 border rounded-lg file-input"/>
-                    </div>
-
-                    <!-- Preview -->
-                    <div v-if="uploadedGraphEdited" class="mb-6 text-center">
-                    <p class="mb-2 text-xs font-semibold text-gray-600">Preview:</p>
-                    <img :src="uploadedGraphEdited" class="inline-block border rounded-lg shadow-sm max-h-48"/>
+                        <!-- Pattern No -->
+                        <div class="flex flex-col flex-1">
+                            <label class="mb-1 text-sm font-semibold text-gray-700">Time (Hours)</label>
+                            <input
+                                type="number"
+                                v-model="patternNoHours"
+                                placeholder=""
+                                class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-100 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
                     </div>
 
                     <!-- Save Button -->
                     <button @click="updatePattern"
-                    class="w-full py-3 text-white transition-colors bg-green-600 rounded-lg shadow hover:bg-green-700">
-                    Save Changes
+                        class="w-full py-3 text-white transition-colors bg-green-600 rounded-lg shadow hover:bg-green-700">
+                        Save Changes
                     </button>
                 </div>
             </Modal>
@@ -205,16 +219,31 @@
                         </div>
                     </div>
 
-                    <!-- Upload Graph (separate row) -->
-                    <div class="flex flex-col w-full mb-8">
-                        <label class="mb-1 text-sm font-semibold text-gray-700">Upload Graph</label>
-                        <input
-                            type="file"
-                            id="cycleGraph"
-                            @change="uploadGraph"
-                            class="w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-semibold hover:file:bg-blue-100 file:transition-colors file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
+                    <!-- Form fields -->
+                    <div class="flex flex-col w-full gap-6 mb-8 md:flex-row">
+                        <!-- Upload Graph (separate row) -->
+                        <div  class="flex flex-col flex-1 mb-8">
+                            <label class="mb-1 text-sm font-semibold text-gray-700">Upload Graph</label>
+                            <input
+                                type="file"
+                                id="cycleGraph"
+                                @change="uploadGraph"
+                                class="w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-semibold hover:file:bg-blue-100 file:transition-colors file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+
+                        <!-- Pattern No -->
+                        <div class="flex flex-col flex-1">
+                            <label class="mb-1 text-sm font-semibold text-gray-700">Time (Hours)</label>
+                            <input
+                                type="number"
+                                v-model="patternNoHours"
+                                placeholder="Input Pattern Number..."
+                                class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
                     </div>
+
                     <!-- File preview -->
                     <div v-if="uploadedGraph" class="mt-4 mb-8">
                         <p class="mb-1 text-xs font-semibold text-gray-700">Preview:</p>
@@ -333,6 +362,7 @@ const showModalEdit = ref(false)
 //Toggles
 
 const patternNo = ref(0);
+const patternNoHours = ref(0);
 const furnaceNo = ref([]);
 const selectedFurnace = ref();
 const uploadedGraph = ref();
@@ -349,6 +379,7 @@ const editFile = ref(null);
 const editPattern = (pattern) => {
     editId.value = pattern.id;
     patternNo.value = pattern.pattern_no;
+    patternNoHours.value = pattern.pattern_no_hours;
     selectedFurnace.value = pattern.furnace_no;
     encodedBy.value = pattern.encoded_by;
     uploadedGraph.value = pattern.url;
@@ -361,6 +392,7 @@ const updatePattern = async () => {
 
     const formData = new FormData();
     formData.append('pattern_no', patternNo.value || '');
+    formData.append('pattern_no_hours', patternNoHours.value || '');
     formData.append('furnace_no', selectedFurnace.value || '');
     formData.append('encoded_by', encodedBy.value || '');
 
@@ -372,11 +404,12 @@ const updatePattern = async () => {
     formData.append('_method', 'PATCH');
 
     try {
-        await axios.post(`/api/patterns/${editId.value}/update`, formData, {
+        const updateResponse = await axios.post(`/api/patterns/${editId.value}/update`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
         toast.success('Pattern updated successfully');
         showModalEdit.value = false;
+        console.log("Success: ", updateResponse.data);
     } catch (error) {
         toast.error('Failed to update pattern');
         console.error(error.response?.data || error);
@@ -451,6 +484,7 @@ const saveToDatabase = async () => {
     try {
         const response = await axios.post('/api/ht-graph-patterns', {
             pattern_no: patternNo.value,
+            pattern_no_hours: patternNoHours.value,
             furnace_no: selectedFurnace.value,
             encoded_by: encodedBy.value
         });
@@ -478,6 +512,7 @@ const saveToDatabase = async () => {
         selectedFurnace.value = '';
         encodedBy.value = '';
         patternNo.value = 0;
+        patternNoHours.value = 0;
         uploadedGraph.value = null;
         showConfirmation.value = false;
     }

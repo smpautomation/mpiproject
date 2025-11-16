@@ -22,7 +22,32 @@
             </div>
             <div class="flex flex-row justify-center gap-0">
                 <div v-if="!overwriteMode" class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Mass Production Control Sheet</h2>
+                    <div class="flex items-center justify-between pb-4 mb-6 border-b-2 border-gray-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"></div>
+                            <div>
+                            <h2 class="text-xl font-bold text-gray-900">Mass Production Control Sheet</h2>
+                             <p class="text-sm text-gray-500">Fill up all details below. Fields with <span class="font-semibold text-red-500">*</span> are required</p>
+                            </div>
+                        </div>
+
+                        <!-- Toggle Button -->
+                        <button
+                            @click="showBreakLotForm()"
+                            class="group relative inline-flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-teal-300 overflow-hidden"
+                        >
+                            <div class="absolute inset-0 transition-transform duration-500 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full"></div>
+                            <svg class="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="relative">Break Lots Form</span>
+                            <!-- Arrow indicator -->
+                            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                         <div class="relative">
@@ -963,16 +988,15 @@ const massProd_names = ref([]);
 const model_names = ref([]);
 const graph_patterns = ref([]);
 const firstSecondGBDP_models = ref([]);
-const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const existingLayers = ref([]);
 const existingLayers_2ndGBDP = ref([]);
 const isExisting = ref(false);
 const isExisting_2ndGBDP = ref(false);
 const completedLayers = ref(['1','2']);
+const isLayerNinePointFive = computed(() => mpcs.selectedLayer === '9.5');
+const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
 const boxesEndList = ref(['B','C','D','E','F','G','H','J','K']);
-
-const isLayerNinePointFive = computed(() => mpcs.selectedLayer === '9.5');
 
 const visibleBoxes = computed(() => {
     if (isLayerNinePointFive.value && mpcs.nineHalfSet) {
@@ -1598,6 +1622,20 @@ const overwriteDatabase = async () => {
         heatTreatmentInformationDetected.value = true;
     }
 };
+
+const showBreakLotForm = () => {
+    if(!mpcs.selectedFurnace || !mpcs.selectedMassProd){
+        toast.warning('Please select Furnace and Mass Production');
+        return;
+    }
+
+    Inertia.visit('/ht_breaklots', {
+        method: 'get',   // You can keep 'get' since we are not modifying any data
+        data: { furnace: mpcs.selectedFurnace, massprod: mpcs.selectedMassProd },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+}
 
 const updateFormatType = async () => { // Update format type of Mass Productions Table
     const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5_format_type' : `layer_${mpcs.selectedLayer}_format_type`;

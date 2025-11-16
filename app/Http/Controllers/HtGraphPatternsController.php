@@ -25,6 +25,7 @@ class HtGraphPatternsController extends Controller
         try {
             $validated = $request->validate([
                 'pattern_no' => 'required|integer|unique:ht_graph_patterns,pattern_no',
+                'pattern_no_hours' => 'nullable|numeric',
                 'furnace_no' => 'nullable|string|max:255',
                 'encoded_by' => 'nullable|string|max:255',
             ]);
@@ -66,6 +67,7 @@ class HtGraphPatternsController extends Controller
 
         $request->validate([
             'pattern_no' => 'required|integer',
+            'pattern_no_hours' => 'nullable|numeric',
             'furnace_no' => 'required|string|max:50',
             'encoded_by' => 'required|string|max:100',
             'graph'      => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
@@ -75,6 +77,7 @@ class HtGraphPatternsController extends Controller
         $newPatternNo = $request->input('pattern_no');
         $pattern->pattern_no = $newPatternNo;
         $pattern->furnace_no = $request->input('furnace_no');
+        $pattern->pattern_no_hours = $request->input('pattern_no_hours');
         $pattern->encoded_by = $request->input('encoded_by');
 
         $uploadDir = public_path('htgraph_patterns');
@@ -175,6 +178,7 @@ class HtGraphPatternsController extends Controller
             return [
                 'id' => $pattern->id,
                 'pattern_no' => $pattern->pattern_no,
+                'pattern_no_hours' => $pattern->pattern_no_hours,
                 'furnace_no' => $pattern->furnace_no,
                 'encoded_by' => $pattern->encoded_by,
                 'url' => $url,
@@ -183,4 +187,26 @@ class HtGraphPatternsController extends Controller
 
         return response()->json($patterns);
     }
+
+    public function getHours($patternNo)
+    {
+        // Validate the parameter manually
+        if (!is_numeric($patternNo)) {
+            return response()->json(['error' => 'Pattern number must be numeric.'], 422);
+        }
+
+        // Fetch the record
+        $pattern = HtGraphPatterns::where('pattern_no', $patternNo)->first();
+
+        if (!$pattern) {
+            return response()->json(['error' => 'Pattern not found.'], 404);
+        }
+
+        // Return the hours
+        return response()->json([
+            'pattern_no' => $pattern->pattern_no,
+            'pattern_no_hours' => $pattern->pattern_no_hours,
+        ]);
+    }
+
 }

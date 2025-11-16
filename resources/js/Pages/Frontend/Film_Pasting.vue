@@ -361,119 +361,95 @@
                 </div>
             </div>
             <Modal :show="showModalSubmit" @close="showModalSubmit = false">
-                <!-- Modal Content - goes directly in the slot -->
                 <div class="relative">
-
-                <!-- Header with Gradient -->
-                <div class="relative px-6 py-6 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
-                    <!-- Geometric Pattern Background -->
+                    <!-- Header with Danger Gradient -->
+                    <div class="relative px-6 py-6 bg-gradient-to-r from-red-600 via-orange-600 to-red-700">
                     <div class="absolute inset-0 opacity-10">
-                    <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                            <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
                             <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5"/>
-                        </pattern>
+                            </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill="url(#hexagon)" />
-                    </svg>
+                        </svg>
                     </div>
-
                     <!-- Header Content -->
                     <div class="relative flex items-center justify-between">
-                    <!-- Create Icon -->
-                    <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40 animate-pulse">
+                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.584c.75 1.334-.213 2.983-1.742 2.983H3.48c-1.53 0-2.492-1.65-1.742-2.983L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-.993.883L9 6v4a1 1 0 001.993.117L11 10V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
-                    </div>
+                        </div>
 
-                    <!-- Close Button -->
-                    <button
-                        @click="showModalSubmit = false"
-                        class="p-2 text-white transition-all duration-200 rounded-lg hover:text-gray-200 hover:bg-white hover:bg-opacity-20 hover:scale-110"
-                    >
+                        <button @click="showModalSubmit = false"
+                        class="p-2 text-white transition-all duration-200 rounded-lg hover:text-gray-200 hover:bg-white hover:bg-opacity-20 hover:scale-110">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
-                    </button>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Main Content -->
-                <div class="px-6 py-6">
-
-                    <!-- Title -->
+                    </div>
+                    <!-- Main Content -->
+                    <div class="px-6 py-6 border border-red-200 rounded-lg shadow-inner bg-red-50">
                     <div class="mb-6 text-center">
-                    <h3 class="flex items-center justify-center mb-2 space-x-2 text-xl font-bold text-gray-900">
-                        <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <h3 class="flex items-center justify-center mb-2 space-x-2 text-xl font-bold text-red-700">
+                        <svg class="w-5 h-5 text-red-600 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
-                        <span>Confirm Submission</span>
-                    </h3>
-                    <p class="text-sm leading-relaxed text-gray-600">
-                        Are you sure? Please ensure all inputs are correct before proceeding.
-                    </p>
+                        <span>⚠️ Confirm Submission Carefully</span>
+                        </h3>
+                        <p class="text-sm font-semibold text-red-700">
+                        This action is <span class="underline">irreversible</span>! Please double-check all inputs.
+                        </p>
                     </div>
-
                     <!-- Validation Checklist -->
-                    <div class="p-4 mb-6 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
-                    <h4 class="flex items-center mb-3 space-x-2 text-sm font-semibold text-gray-800">
-                        <svg class="w-4 h-4 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd" />
+                    <div class="p-4 mb-6 bg-red-100 border border-red-300 rounded-lg">
+                        <h4 class="flex items-center mb-3 space-x-2 text-sm font-semibold text-red-800">
+                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd" />
                         </svg>
-                        <span>Validation Summary</span>
-                    </h4>
+                        <span>Checklist</span>
+                        </h4>
 
-                    <div class="space-y-2 text-xs text-gray-700">
+                        <div class="space-y-2 text-xs text-red-800">
                         <div class="flex items-center space-x-2">
-                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
-                        <span>All required fields completed</span>
+                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                            <span>All required fields completed</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                        <div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>
-                        <span>Data validation passed</span>
+                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                            <span>Data validated successfully</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                        <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
-                        <span>Ready for database insertion</span>
+                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                            <span>Submission is permanent. Proceed only if confident!</span>
+                        </div>
                         </div>
                     </div>
-                    </div>
-
                     <!-- Action Buttons -->
                     <div class="flex space-x-3">
-
-                    <!-- Cancel Button -->
-                    <button
+                        <button
                         @click="showModalSubmit = false"
-                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 transform hover:scale-[0.98] active:scale-95 flex items-center justify-center space-x-2"
-                    >
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Cancel</span>
-                    </button>
+                        class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-all duration-200 transform hover:scale-[0.98] flex items-center justify-center space-x-2">
+                        Cancel
+                        </button>
 
-                    <!-- Confirm Button with Animation -->
-                    <button
+                        <button
                         @click="saveToDatabase()"
-                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
-                    >
-                        <!-- Shine effect -->
+                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
                         <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
-
                         <span class="relative flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Submit Now</span>
+                            </svg>
+                            <span>⚠️ Submit Now</span>
                         </span>
-                    </button>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Bottom accent line -->
-                <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
+                    </div>
+                    <!-- Bottom accent line -->
+                    <div class="h-1 bg-gradient-to-r from-red-500 via-orange-400 to-red-500"></div>
                 </div>
             </Modal>
         </div>

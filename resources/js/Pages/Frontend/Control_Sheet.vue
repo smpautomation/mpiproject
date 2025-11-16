@@ -83,12 +83,11 @@
 
                             <!-- Data Cells -->
                             <td
-                              v-for="letter in controlSheet_headerLetters"
-                              :key="letter"
-                              :class="[borderColor, cellPaddings]"
-                              class="text-center"
-                            >
-                              {{ row.data[letter] }}
+                                v-for="letter in controlSheet_headerLetters"
+                                :key="letter"
+                                :class="[borderColor, cellPaddings, 'text-center', getCellClass(layer, row.rowTitle, letter)]"
+                                >
+                                {{ row.data[letter] }}
                             </td>
                             <!-- Final 3 total cells (only show once per layer, at last row) -->
                             <template v-if="rowIndex === 0">
@@ -190,6 +189,14 @@
                         </div>
                     </div>
                     </div>
+                    <div class="w-full max-w-md p-4 mt-5 bg-white rounded-md shadow-md">
+                        <h3 class="mb-1 text-sm font-semibold tracking-wide text-gray-700 uppercase">
+                            Estimated Completion
+                        </h3>
+                        <p class="text-lg font-medium text-gray-900">
+                            {{ estimated_DateTimeFinish || 'Calculating...' }}
+                        </p>
+                    </div>
                     <div class="flex flex-row justify-end mt-3">
                         <button
                             @click="exportToExcel"
@@ -263,6 +270,39 @@ const checkAuthentication = async () => {
     }
 };
 
+const highlightColors = [
+    'bg-yellow-100',
+    'bg-green-100',
+    'bg-blue-100',
+    'bg-pink-100',
+    'bg-purple-100',
+    'bg-teal-100',
+    'bg-orange-100',
+    'bg-lime-100',
+    'bg-indigo-100',
+    'bg-rose-100',
+    'bg-cyan-100',
+    'bg-amber-100',
+    'bg-fuchsia-100',
+    'bg-violet-100',
+    'bg-sky-100',
+    'bg-lime-200',
+    'bg-emerald-100',
+    'bg-pink-200',
+    'bg-purple-200',
+    'bg-blue-200',
+    'bg-teal-200',
+    'bg-orange-200',
+    'bg-yellow-200',
+    'bg-rose-200',
+    'bg-cyan-200',
+    'bg-fuchsia-200',
+    'bg-violet-200',
+    'bg-sky-200',
+    'bg-emerald-200'
+];
+
+const estimated_DateTimeFinish = ref();
 const massProd_list = ref([]);
 const redirectedMassPro = ref();
 const redirectedFurnace = ref();
@@ -274,6 +314,162 @@ const controlSheet_props = defineProps({
 redirectedMassPro.value = controlSheet_props.massProd;
 redirectedFurnace.value = controlSheet_props.furnace;
 console.log(redirectedMassPro.value);
+
+const ltNoMatrix = computed(() => {
+    const map = {};
+    // { "LT001": [ { layer:"9.5", letter:"A" }, ... ] }
+
+    for (const layer of controlSheet_layers.value) {
+        const rows = controlSheet_dataMatrix.value[layer];
+        if (!rows) continue;
+
+        const ltRow = rows.find(r => r.rowTitle === 'LT. No.:');
+        if (!ltRow) continue;
+
+        for (const [letter, ltNo] of Object.entries(ltRow.data)) {
+            if (!ltNo) continue;
+
+            if (!map[ltNo]) map[ltNo] = [];
+            map[ltNo].push({ layer, letter });
+        }
+    }
+
+    return map;
+});
+
+const ltNoAnalysis = computed(() => {
+    const result = {};
+    const allLetters = ['A','B','C','D','E','F','G','H','J','K'];
+
+    for (const [ltNo, positions] of Object.entries(ltNoMatrix.value)) {
+
+        // group per layer
+        const layersUsed = {};
+        for (const pos of positions) {
+            if (!layersUsed[pos.layer]) layersUsed[pos.layer] = new Set();
+            layersUsed[pos.layer].add(pos.letter);
+        }
+
+        const layerNames = Object.keys(layersUsed);
+        const layerCount = layerNames.length;
+
+        let fullLayers = 0;
+        let partialLayers = 0;
+
+        for (const layer of layerNames) {
+            const letters = layersUsed[layer];
+            if (letters.size === allLetters.length) {
+                fullLayers++;
+            } else {
+                partialLayers++;
+            }
+        }
+
+        // Rule evaluation
+        let highlight = false;
+
+        // RULE 1 — ONE FULL LAYER ONLY → NO highlight
+        if (layerCount === 1 && fullLayers === 1) {
+            highlight = false;
+        }
+        else {
+            // RULE 2 — multi-layer
+            if (layerCount > 1) highlight = true;
+
+            // RULE 3 — single layer but partial
+            if (layerCount === 1 && partialLayers === 1) highlight = true;
+        }
+
+        result[ltNo] = {
+            highlight,
+            layersUsed,
+            fullLayers,
+            partialLayers,
+            layerCount
+        };
+    }
+
+    return result;
+});
+
+const ltNoClassMap = computed(() => {
+    const map = {};
+    const ltNos = Object.keys(ltNoAnalysis.value).sort(); // stable ordering
+
+    ltNos.forEach((ltNo, index) => {
+        const analysis = ltNoAnalysis.value[ltNo];
+        if (!analysis.highlight) return;
+
+        const classIndex = index % highlightColors.length;
+        map[ltNo] = highlightColors[classIndex];
+    });
+
+    return map; // { "LT001": "bg-yellow-100", ... }
+});
+
+const getCellClass = (layer, rowTitle, letter) => {
+    if (!highlightableRows.includes(rowTitle)) return '';
+
+    const ltRow = controlSheet_dataMatrix.value[layer]?.find(
+        r => r.rowTitle === 'LT. No.:'
+    );
+    if (!ltRow) return '';
+
+    const ltNo = ltRow.data[letter];
+    if (!ltNo) return '';
+
+    const analysis = ltNoAnalysis.value[ltNo];
+    if (!analysis || !analysis.highlight) return '';
+
+    return ltNoClassMap.value[ltNo] || '';
+};
+
+const highlightableRows = [
+  'MODEL:',
+  'COATING M/C No.:',
+  'LT. No.:',
+  'QTY (PCS):',
+  'HT (PCS):',
+  'LT (PCS):',
+  'COATING:',
+  'WT (KG):',
+  'BOX No.:',
+  'Magnet prepared by:',
+  'Box prepared by:'
+];
+
+const calc_dateTimeFinish = async (patternNo, dateStart, timeStart) => {
+    try {
+        // 1️⃣ Fetch the hours for the pattern
+        const response = await axios.get(`/api/pattern-hours/${patternNo}`);
+        const patternHours = response.data.pattern_no_hours;
+
+        if (patternHours == null) {
+            console.error('No hours found for this pattern.');
+            return;
+        }
+
+        const startDateTime = new Date(`${dateStart}T${timeStart}`);
+
+        const finishDateTime = new Date(startDateTime.getTime() + patternHours * 60 * 60 * 1000);
+
+        const formattedFinish = finishDateTime.toLocaleString('en-US', {
+            weekday: 'short', // Wed
+            year: 'numeric',
+            month: 'short',   // Apr
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false     // 24-hour format
+        });
+
+        estimated_DateTimeFinish.value = formattedFinish;
+
+    } catch (error) {
+        console.error('Failed to fetch HT graph pattern:', error.response?.data || error.message);
+    }
+};
 
 const tableProperties = {
     borderColor: 'border border-gray-400',
@@ -352,26 +548,24 @@ for (const layer of controlSheet_layers.value) {
 }
 //console.log(controlSheet_dataMatrix.value);
 
-function setDataMatrixValue(layer, rowTitle, letter, value) {
-  const layerRows = controlSheet_dataMatrix.value[layer];
-  if (!layerRows) return;
+const setDataMatrixValue = (layer, rowTitle, letter, value) => {
+    const layerRows = controlSheet_dataMatrix.value[layer];
+    if (!layerRows) return;
 
-  const row = layerRows.find(r => r.rowTitle === rowTitle);
-  if (row) {
-    row.data[letter] = value;
-  }
+    const row = layerRows.find(r => r.rowTitle === rowTitle);
+    if (row) {
+        row.data[letter] = value;
+    }
 }
 
-
 const getMassProdData = async (massprod, furnace) => {
-    try{
+    try {
         const response = await axios.get(`api/mass-production/${furnace}/${massprod}`);
-        massProd_list.value = response.data;
-        console.log('filtered through backend massprod_list: ', massProd_list.value);
-        const mp = massProd_list.value;
+        const mp = response.data;
+        massProd_list.value = mp;
+
         const htVal = controlSheet_ht_info_values.value;
 
-        //heat treatment values
         htVal.batchCycleNo = mp.batch_cycle_no || 'NA';
         htVal.machineNo = mp.machine_no || 'NA';
         htVal.cycleNo = mp.cycle_no || 'NA';
@@ -392,6 +586,8 @@ const getMassProdData = async (massprod, furnace) => {
         htVal.remarks2 = mp.remarks2 || '';
         htVal.remarks3 = mp.remarks3 || '';
 
+        await calc_dateTimeFinish(htVal.patternNo, htVal.dateStart, htVal.timeStart);
+
         for (const layer of controlSheet_layers.value) {
             const fieldName = `layer_${layer.replace('.', '_')}`;
             const rawLayer = mp[fieldName];
@@ -409,19 +605,52 @@ const getMassProdData = async (massprod, furnace) => {
                 }
             }
         }
-    }catch(error){
-        if(error.response && error.response.status === 404){
+
+        const excessResponse = await axios.get('/api/excess-layers'); // use index
+        const allExcessLayers = excessResponse.data;
+
+        const excessLayers = allExcessLayers.filter(
+            e => e.furnace === furnace && e.mass_prod === massprod
+        );
+
+        for (const layer of controlSheet_layers.value) {
+            const excessLayerRecord = excessLayers.find(e => e.layer === parseFloat(layer));
+            if (!excessLayerRecord) continue;
+
+            const excessLayerData = excessLayerRecord.layer_data; // already array from cast
+            if (!Array.isArray(excessLayerData)) continue;
+
+            for (let rowIndex = 0; rowIndex < controlSheet_rowTitles.value.length; rowIndex++) {
+                const rowTitle = controlSheet_rowTitles.value[rowIndex];
+                const rowData = excessLayerData[rowIndex]?.data ?? {};
+
+                for (const letter of controlSheet_headerLetters.value) {
+                    const existingValue = controlSheet_dataMatrix.value[layer][rowIndex].data[letter];
+                    const newValue = rowData[letter] ?? '';
+
+                    // Only fill empty cells
+                    if (!existingValue && newValue) {
+                        setDataMatrixValue(layer, rowTitle, letter, newValue);
+                    }
+                }
+            }
+        }
+
+
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
             errMsg.value = 'Record not found for this Mass Production name.';
             toast.warning('Record not found for this Mass Production name.');
             console.error('Record not found for this Mass Production name.');
-        }else{
+        } else {
             errMsg.value = 'An unexpected error occured. Please try again.';
             toast.error('An unexpected error occured. Please try again.');
             console.error('An unexpected error occured. Please try again.');
         }
         massProd_list.value = null;
     }
-}
+};
+
 
 
 
