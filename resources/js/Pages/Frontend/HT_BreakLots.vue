@@ -1179,7 +1179,7 @@ const saveToDatabase = async () => {
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
-useSessionStorage('mpcsbl',mpcsbl);
+//useSessionStorage('mpcsbl',mpcsbl);
 
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
