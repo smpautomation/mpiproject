@@ -357,38 +357,40 @@
                             <!-- Qty (PCS) -->
                             <div class="group">
                                 <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
-                                    <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
-                                    <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
-                                </svg>
-                                Qty (PCS)
-                                <span class="ml-1 font-bold text-red-500">*</span>
+                                    <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                                    </svg>
+                                    Qty (PCS)
+                                    <span class="ml-1 font-bold text-red-500">*</span>
                                 </label>
                                 <input
-                                v-model="mpcsbl.qty"
-                                type="number"
-                                placeholder="0"
-                                class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
+                                    v-model="mpcsbl.qty"
+                                    type="number"
+                                    placeholder="0"
+                                    :disabled="Object.values(manualQtyMode).some(val => val === true)"
+                                    class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
                                 />
                             </div>
 
                             <!-- Qty Last Box -->
                             <div class="group">
                                 <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
-                                    <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
-                                    <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
-                                </svg>
-                                Qty Last Box
-                                <span class="ml-1 font-bold text-red-500">*</span>
+                                    <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                                    </svg>
+                                    Qty Last Box
+                                    <span class="ml-1 font-bold text-red-500">*</span>
                                 </label>
                                 <input
-                                v-model="mpcsbl.qty_lastBox"
-                                type="number"
-                                placeholder="0"
-                                class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
+                                    v-model="mpcsbl.qty_lastBox"
+                                    type="number"
+                                    placeholder="0"
+                                    :disabled="Object.values(manualQtyMode).some(val => val === true)"
+                                    class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
                                 />
                             </div>
 
@@ -458,39 +460,95 @@
 
                     <!-- Dynamic Layer Inputs (Per-box unique inputs) -->
                     <div v-for="layer in layersInvolvedUserPick" :key="layer" class="pt-4 mb-6 border-t border-gray-200">
-                        <h3 class="mb-2 text-sm font-semibold text-gray-700">Layer {{ layer }}</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-sm font-semibold text-gray-700">Layer {{ layer }}</h3>
+
+                            <!-- Manual Qty Toggle -->
+                            <button
+                                type="button"
+                                @click="manualQtyMode[layer] = !manualQtyMode[layer]"
+                                class="px-2 py-1 text-xs font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+                            >
+                                {{ manualQtyMode[layer] ? 'Disable Edit' : 'Edit Qty' }}
+                            </button>
+                        </div>
 
                         <div class="overflow-x-auto">
                             <table class="min-w-full text-center border border-gray-300">
                                 <thead class="bg-gray-100">
                                     <tr>
                                         <th class="px-4 py-2 text-xs border border-gray-300">Input</th>
-                                        <th v-for="box in groupedByLayer[layer]" :key="box" class="px-4 py-2 text-xs border border-gray-300">{{ box }}</th>
+                                        <th v-for="box in groupedByLayer[layer]" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                            {{ box }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- BOX No. -->
                                     <tr>
                                         <td class="px-2 py-1 font-medium border border-gray-300">BOX No.</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input type="text" v-model="layerInputs[layer][box].boxNo" @input="layerInputs[layer][box].boxNo = layerInputs[layer][box].boxNo.toUpperCase()" class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
+                                            <input
+                                                type="text"
+                                                v-model="layerInputs[layer][box].boxNo"
+                                                @input="layerInputs[layer][box].boxNo = layerInputs[layer][box].boxNo.toUpperCase()"
+                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
+                                            />
                                         </td>
                                     </tr>
+
+                                    <!-- Weight -->
                                     <tr>
                                         <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Weight (KG)</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input type="number" v-model="layerInputs[layer][box].weight" class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
+                                            <input
+                                                type="number"
+                                                v-model="layerInputs[layer][box].weight"
+                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
+                                            />
                                         </td>
                                     </tr>
+
+                                    <!-- HT -->
                                     <tr>
                                         <td class="px-2 py-1 font-medium border border-gray-300">HT (PCS)</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input type="text" v-model="layerInputs[layer][box].ht" @input="layerInputs[layer][box].ht = layerInputs[layer][box].ht.toUpperCase()" class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
+                                            <input
+                                                type="text"
+                                                v-model="layerInputs[layer][box].ht"
+                                                @input="layerInputs[layer][box].ht = layerInputs[layer][box].ht.toUpperCase()"
+                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
+                                            />
                                         </td>
                                     </tr>
+
+                                    <!-- LT -->
                                     <tr>
                                         <td class="px-2 py-1 font-medium border border-gray-300">LT (PCS)</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input type="text" v-model="layerInputs[layer][box].lt" @input="layerInputs[layer][box].lt = layerInputs[layer][box].lt.toUpperCase()" class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
+                                            <input
+                                                type="text"
+                                                v-model="layerInputs[layer][box].lt"
+                                                @input="layerInputs[layer][box].lt = layerInputs[layer][box].lt.toUpperCase()"
+                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </td>
+                                    </tr>
+
+                                    <!-- QTY (PCS) - Manual Edit Row -->
+                                    <tr v-if="manualQtyMode[layer]">
+                                        <td class="px-2 py-1 font-medium border border-gray-300">QTY (PCS)</td>
+                                        <td
+                                            v-for="box in groupedByLayer[layer]"
+                                            :key="box"
+                                            class="px-2 py-1 border border-gray-300"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="layerInputs[layer][box].qty"
+                                                placeholder="0"
+                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
+                                            />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -841,6 +899,7 @@ const mpcsbl = reactive({
     boxPreparedBy: '',
 });
 
+const manualQtyMode = reactive({});
 const layerInputs = reactive({});
 
 // Initialize structure when user selects coordinates
@@ -852,7 +911,8 @@ const initializeLayerInputs = (layer, boxes) => {
                 boxNo: '',
                 weight: '',
                 ht: '',
-                lt: ''
+                lt: '',
+                qty: ''    // <-- new added
             };
         }
     });
@@ -1094,9 +1154,16 @@ const formatLayerDataForDatabase = (layer) => {
     boxesInLayer.forEach(box => {
         const values = layerInputs[layer][box];
 
-        // Use qty_lastBox if this is the last box
+        // Manual qty takes priority
+        const manualQty = values.qty;
         const isLastBox = lastBoxSelected.value?.replace(layer, '') === box;
-        qtyData[box] = isLastBox ? mpcsbl.qty_lastBox || 0 : mpcsbl.qty || 0;
+
+        qtyData[box] =
+            manualQty !== undefined && manualQty !== null && manualQty !== ''
+                ? manualQty
+                : isLastBox
+                    ? mpcsbl.qty_lastBox || 0
+                    : mpcsbl.qty || 0;
 
         htData[box] = values.ht || 0;
         ltData[box] = values.lt || 0;
@@ -1122,6 +1189,7 @@ const formatLayerDataForDatabase = (layer) => {
         { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxesInLayer.map(box => [box, totalQty])) }
     ];
 };
+
 
 const saveToDatabase = async () => {
     if (!selectedCoordinates.value.length) return; // safety check
@@ -1179,7 +1247,7 @@ const saveToDatabase = async () => {
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
-useSessionStorage('mpcsbl',mpcsbl);
+//useSessionStorage('mpcsbl',mpcsbl);
 
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
