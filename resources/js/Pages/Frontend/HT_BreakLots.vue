@@ -978,6 +978,27 @@ watch(groupedByLayer, (newGroups) => {
     });
 });
 
+watch(
+  () => manualQtyMode,
+  (newVal) => {
+    if (!newVal) return;
+
+    // For each layer in manual mode
+    Object.keys(newVal).forEach(layer => {
+      if (!newVal[layer]) return; // skip if manual mode off for this layer
+
+      const boxes = groupedByLayer.value[layer] || [];
+      boxes.forEach((box, index) => {
+        const isLastBox = lastBoxSelected.value?.replace(layer, '') === box;
+        if (!layerInputs[layer][box].qty) {
+          layerInputs[layer][box].qty = isLastBox ? mpcsbl.qty_lastBox : mpcsbl.qty;
+        }
+      });
+    })
+  },
+  { immediate: true, deep: true }
+);
+
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
 
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
@@ -1114,8 +1135,15 @@ const confirmValidate = () => {
     for (const field of requiredGeneralFields) {
         if (!mpcsbl[field] || mpcsbl[field].toString().trim() === '') {
             toast.warning(`Validation failed: Check for required input in general info.`);
-            return; // abort, do not show confirmation
+            return; // abort
         }
+    }
+
+    // If no manual edit active, validate lastBoxSelected
+    const manualEditActive = Object.values(manualQtyMode).some(val => val);
+    if (!manualEditActive && !lastBoxSelected.value) {
+        toast.warning('Validation failed: You must select a Last Box.');
+        return;
     }
 
     // Validate selected boxes
