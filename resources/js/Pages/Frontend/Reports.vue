@@ -1385,7 +1385,7 @@ const userReportLogging = async (logEvent) => {
     }
 }
 
-    const userFinalizedLogging = async (logEvent) => {
+const userFinalizedLogging = async (logEvent) => {
     try{
         const responseFinalizedLogging = await axios.post('/api/userlogs', {
             user: state.user.firstName + " " + state.user.surname,
@@ -3374,8 +3374,10 @@ const addCarmark = async () => {
     }
 }
 
-const finalizeReport = async (serial) => {
-    await userFinalizedLogging(`has finalized report serial: ${serial}`);
+const finalizeReport = async (serial, report_isFinalized) => {
+    if (!report_isFinalized) {
+        await userFinalizedLogging(`has finalized report serial: ${serial}`);
+    }
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, '_blank');
 };
 

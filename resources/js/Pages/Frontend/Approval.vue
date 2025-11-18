@@ -226,6 +226,20 @@ const userApprovalLogging = async (logEvent) => {
     }
 }
 
+const userFinalizedLogging = async (logEvent) => {
+    try{
+        const responseFinalizedLogging = await axios.post('/api/userlogs', {
+            user: state.user.firstName + " " + state.user.surname,
+            event: logEvent,
+            section: 'Report',
+        });
+
+        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userFinalizedLogging post request failed: ',error);
+    }
+}
+
 // UI
 
 const statusFilter = ref('ALL');
@@ -413,6 +427,7 @@ const finalizeReport = async (serial) => {
     const responseFinalize = await axios.patch(`/api/reportdata/${serial}`, {
       is_finalized: 1,
     });
+    await userFinalizedLogging(`has finalized report serial: ${serial}`);
     //console.log('[Finalize Report] Response:', responseFinalize.data);
   } catch (error) {
     console.error('[Finalize Report] Error finalizing report:', error);

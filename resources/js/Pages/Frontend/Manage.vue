@@ -1803,6 +1803,7 @@
 
     // Function to fetch data from the API
     const showAllData = async () => {
+        const fromAnotherPage = Object.values(props).some(val => val !== '' && val !== undefined && val !== null);
         showLoadingForGraphAndTables.value = true;
         layerTableRowLoading.value = true;
         showProceed3.value = false;
@@ -2161,7 +2162,11 @@
             //await autoRenameFurnace();
             await updateMassProductionTable();
             await saveToTpmCategory();
-            await userManageLogging('created '+ serialNo.value +' data successfully | Model : ' + jhCurveActualModel.value);
+            if (!fromAnotherPage) {
+                await userManageLogging(
+                    'created ' + serialNo.value + ' data successfully | Model : ' + jhCurveActualModel.value
+                );
+            }
         }
         await fetchDataCreateGraph();
     };
