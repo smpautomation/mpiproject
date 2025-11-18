@@ -139,19 +139,47 @@
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Lot No.<span class="text-red-500"> *</span></label>
-                            <input v-model="mpcs.lotNo" type="text" @input="mpcs.lotNo = mpcs.lotNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="mpcs.lotNo" type="text"
+                                @input="mpcs.lotNo = mpcs.lotNo.toUpperCase()"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Qty (PCS)<span class="text-red-500"> *</span>
+                            </label>
+                            <input
+                                v-model="mpcs.qty"
+                                type="number"
+                                :disabled="manualQtyMode"
+                                :class="[
+                                    'w-full text-xs border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                                    manualQtyMode
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300'
+                                        : 'border-gray-300'
+                                ]"
+                            />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Qty (PCS)<span class="text-red-500"> *</span></label>
-                            <input v-model="mpcs.qty" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700 whitespace-nowrap">Qty (PCS) - Last Box<span class="text-red-500"> *</span></label>
-                            <input v-model="mpcs.qty_lastBox" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <label class="block mb-1 text-xs font-medium text-gray-700 whitespace-nowrap">
+                                Qty (PCS) - Last Box<span class="text-red-500"> *</span>
+                            </label>
+                            <input
+                                v-model="mpcs.qty_lastBox"
+                                type="number"
+                                :disabled="manualQtyMode"
+                                :class="[
+                                    'w-full text-xs border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                                    manualQtyMode
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300'
+                                        : 'border-gray-300'
+                                ]"
+                            />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating<span class="text-red-500"> *</span></label>
-                            <input v-model="mpcs.coating" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="mpcs.coating" type="number"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
 
@@ -196,69 +224,97 @@
                 </div>
 
                 <div v-if="!overwriteMode" class="max-w-4xl px-8 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12">
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">BOX No. <span class="text-gray-300">(example: UBP85172)</span><span class="text-red-500"> *</span></p>
+
+                    <!-- BOX No. table -->
+                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                        BOX No. <span class="text-gray-300">(example: UBP85172)</span><span class="text-red-500"> *</span>
+                    </p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-center border border-collapse border-gray-300">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th
-                                v-for="box in visibleBoxes"
-                                :key="box"
-                                class="px-4 py-2 text-xs border border-gray-300"
-                                >
+                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
                                 {{ box }}
-                                </th>
+                            </th>
                             </tr>
-                            </thead>
-                            <tbody>
+                        </thead>
+                        <tbody>
                             <tr>
-                                <td
-                                v-for="box in visibleBoxes"
-                                :key="box"
-                                class="px-2 py-1 border border-gray-300"
-                                >
+                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
                                 <input
-                                    v-model="boxNoValues[box]"
-                                    @input="boxNoValues[box] = boxNoValues[box].toUpperCase()"
-                                    type="text"
-                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                v-model="boxNoValues[box]"
+                                @input="boxNoValues[box] = boxNoValues[box].toUpperCase()"
+                                type="text"
+                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
-                                </td>
+                            </td>
                             </tr>
                         </tbody>
                         </table>
                     </div>
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span></p>
+
+                    <!-- Weight table -->
+                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                        Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span>
+                    </p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-center border border-collapse border-gray-300">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th
-                                v-for="box in visibleBoxes"
-                                :key="box"
-                                class="px-4 py-2 text-xs border border-gray-300"
-                                >
+                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                {{ box }}
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                <input
+                                v-model="weightValues[box]"
+                                type="number"
+                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Manual Quantity override button -->
+                    <div class="mt-4">
+                        <button @click="manualQtyMode = !manualQtyMode"
+                                class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 rounded hover:bg-blue-700">
+                        {{ manualQtyMode ? 'Hide Manual Qty' : 'Edit Qty per Box' }}
+                        </button>
+                    </div>
+
+                    <!-- Manual Quantity table -->
+                    <div v-if="manualQtyMode" class="mt-6">
+                        <p class="pb-2 text-sm font-semibold text-gray-800 border-b">Quantity (PCS) per Box<span class="text-red-500"> *</span></p>
+                        <div class="overflow-x-auto">
+                        <table class="min-w-full text-center border border-collapse border-gray-300">
+                            <thead class="bg-gray-100">
+                            <tr>
+                                <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
                                 {{ box }}
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td
-                                v-for="box in visibleBoxes"
-                                :key="box"
-                                class="px-2 py-1 border border-gray-300"
-                                >
+                                <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
                                 <input
-                                    v-model="weightValues[box]"
+                                    v-model="qtyValues[box]"
                                     type="number"
                                     class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                                 </td>
                             </tr>
-                        </tbody>
+                            </tbody>
                         </table>
+                        </div>
                     </div>
+
                 </div>
             </div>
             <div class="flex flex-row mt-12">
@@ -708,16 +764,18 @@
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
                                     <td
-                                        v-for="n in visibleBoxes.length - 1"
-                                        :key="n"
+                                        v-for="(box, index) in visibleBoxes"
+                                        :key="box"
                                         class="px-2 py-1 text-center border border-gray-300"
                                     >
-                                        {{ mpcs.qty }}
-                                    </td>
-                                    <td class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.qty_lastBox }}
+                                        <!-- If manualQtyMode, show qtyValues, else show top-level qty / qty_lastBox -->
+                                        <span v-if="manualQtyMode">{{ qtyValues[box] }}</span>
+                                        <span v-else>
+                                        {{ index === visibleBoxes.length - 1 ? mpcs.qty_lastBox : mpcs.qty }}
+                                        </span>
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
                                     <td
@@ -973,6 +1031,7 @@ const bypassValidation = ref(false);
 const overwriteHeatTreatment = ref(true);
 const overwriteMode = ref(false);
 const showHTLTPanel = ref(false);
+const manualQtyMode = ref(false);
 //Dev Controls ----------------- Allow Commands
 
 const heatTreatmentInformationDetected = ref(false);
@@ -1025,6 +1084,47 @@ allBoxes.forEach(box => {
 const ltValues = ref({});
 allBoxes.forEach(box => {
   ltValues.value[box] = '';
+});
+const qtyValues = ref({});
+
+// Initialize qtyValues from mpcs.qty / qty_lastBox when manual mode is enabled
+watch(manualQtyMode, (val) => {
+  if (val) {
+    qtyValues.value = {};
+    const visible = visibleBoxes.value;
+    visible.forEach((box, index) => {
+      if (index === visible.length - 1) {
+        qtyValues.value[box] = mpcs.qty_lastBox;
+      } else {
+        qtyValues.value[box] = mpcs.qty;
+      }
+    });
+  }
+});
+
+// Compute qtyData for payload
+const qtyData = computed(() => {
+  const data = {};
+  const visible = visibleBoxes.value;
+  if (manualQtyMode.value) {
+    visible.forEach(box => {
+      data[box] = qtyValues.value[box] || 0;
+    });
+  } else {
+    visible.forEach((box, index) => {
+      if (index === visible.length - 1) {
+        data[box] = mpcs.qty_lastBox;
+      } else {
+        data[box] = mpcs.qty;
+      }
+    });
+  }
+  return data;
+});
+
+// Example of totalQty calculation
+const totalQty = computed(() => {
+  return Object.values(qtyData.value).reduce((acc, val) => acc + Number(val || 0), 0);
 });
 
 /* debugging weightValues
@@ -1474,25 +1574,12 @@ const saveToDatabase = async () => {
     const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5' : `layer_${mpcs.selectedLayer}`;
     const visibleBoxesData = visibleBoxes.value; // e.g., ['A','B','C']
 
-    // QTY (PCS) with last box logic
-    const qtyData = {};
-    visibleBoxesData.forEach((box, index) => {
-        if (index === visibleBoxesData.length - 1) {
-            qtyData[box] = mpcs.qty_lastBox; // last box
-        } else {
-            qtyData[box] = mpcs.qty; // all others
-        }
-    });
-
-    // Calculate total quantity
-    const totalQty = Object.values(qtyData).reduce((sum, val) => sum + Number(val || 0), 0);
-
     // Construct layer payload
     const layerPayload = [
         { rowTitle: 'MODEL:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.selectedModel || ''])) },
         { rowTitle: 'COATING M/C No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.coatingMCNo || ''])) },
         { rowTitle: 'LT. No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.lotNo || ''])) },
-        { rowTitle: 'QTY (PCS):', data: qtyData },
+        { rowTitle: 'QTY (PCS):', data: qtyData.value },
         // Updated HT and LT integration
         { rowTitle: 'HT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, htValues.value[box] || ''])) },
         { rowTitle: 'LT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, ltValues.value[box] || ''])) },
@@ -1502,7 +1589,7 @@ const saveToDatabase = async () => {
         { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.magnetPreparedBy])) },
         { rowTitle: 'Box prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.boxPreparedBy])) },
         { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.rawMaterialCode])) },
-        { rowTitle: 'TOTAL QTY', data: Object.fromEntries(visibleBoxesData.map(box => [box, totalQty])) }
+        { rowTitle: 'TOTAL QTY', data: Object.fromEntries(visibleBoxesData.map(box => [box, totalQty.value])) }
     ];
 
     // Base payload

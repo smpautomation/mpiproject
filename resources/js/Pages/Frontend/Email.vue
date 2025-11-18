@@ -191,9 +191,10 @@ loading.value = true;
     await userEmailLogging(`has successfully sent an email for ${form.massPro}`); //user logs email
 
     // Reset form
-    form.massPro = ''
-    form.emails = ''
-    form.message = ''
+    form.massPro = '';
+    form.emails = '';
+    form.message = '';
+
   } catch (error) {
     if (error.response) {
       console.error('Backend error status:', error.response.status);

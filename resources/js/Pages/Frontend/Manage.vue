@@ -874,6 +874,7 @@
     };
 
     const fetchLayerModelAndLotno = async () => {
+        console.log('Entering fetchLayerModelAndLotno function | MassProd: ', selectedMassProd.value ,' Layer: ', currentLayerNo.value);
         if (!selectedMassProd.value || !currentLayerNo.value) {
             console.warn("MassProd or Layer not selected yet.");
             return;
@@ -2405,7 +2406,8 @@ const renderChart = () => {
     const props = defineProps({
         manageSerialParam: String,  // Expecting the serialParam to be a string
         manageMassProd: String,
-        manageLayer: String
+        manageLayer: String,
+        manageFurnace: String,
     });
 
     //console.log('Serial Param in Manage.vue:', props.manageSerialParam); // You can use this for debugging
@@ -2414,16 +2416,18 @@ const renderChart = () => {
     onMounted(async () => {
         // Log the value to check if it's being passed correctly
         //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
-        if (props.manageSerialParam && props.manageMassProd && props.manageLayer) {
+        if (props.manageSerialParam && props.manageMassProd && props.manageLayer && props.manageFurnace) {
             // If serialParam has a value, do not fetch serial
             serialNo.value = props.manageSerialParam;
             selectedMassProd.value = props.manageMassProd;
             currentLayerNo.value = props.manageLayer;
+            selectedFurnace.value = props.manageFurnace;
             toggleManageForm.value = false;
             showGraphAndTables.value = true;
             showUploadData.value = false;
             //console.log("Showdiv graphs ",showGraphAndTables.value);
             await fetchMiasFactor();
+            await fetchLayerModelAndLotno();
             await showAllData();
             //console.log('serialParam is provided, skipping fetchSerial.');
         } else {
