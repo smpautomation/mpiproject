@@ -1257,7 +1257,7 @@
                     </button>
                     <button
                         v-if="approvedByPerson_firstName"
-                        @click="finalizeReport(currentSerialSelected)"
+                        @click="finalizeReport(currentSerialSelected, report_isFinalized)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                     >
                         View PDF Report
@@ -3375,6 +3375,7 @@ const addCarmark = async () => {
 }
 
 const finalizeReport = async (serial, isFinalized) => {
+    console.log('isFInalized: ',isFinalized);
     if (!isFinalized) {
         await userFinalizedLogging(`has finalized report serial: ${serial}`);
     }
