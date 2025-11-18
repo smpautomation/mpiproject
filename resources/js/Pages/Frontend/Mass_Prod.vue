@@ -434,6 +434,7 @@ const saveToDatabase = async () => {
         await userManageLogging('created '+ massProd_name.value +' Mass Production | Furnace : ' + massProd_furnace.value);
         massProd_name.value = '';
         massProd_furnace.value = '';
+        showConfirmation.value = false;
     }
 };
 
