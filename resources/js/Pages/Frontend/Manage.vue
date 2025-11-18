@@ -763,6 +763,20 @@
         }
     }
 
+    const systemErrorLogging = async (logEvent) => {
+        try{
+            const responseSystemLogging = await axios.post('/api/error-logs', {
+                user: state.user.firstName + " " + state.user.surname,
+                event: logEvent,
+                section: 'Manage',
+            });
+
+            console.log('responseSystemLogging-data: ',responseSystemLogging.data);
+        }catch(error){
+            console.error('responseSystemLogging post request failed: ',error);
+        }
+    }
+
     //New Variables
     const selectedFurnace = ref();
     const selectedMassProd = ref();

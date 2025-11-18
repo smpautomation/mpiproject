@@ -369,14 +369,45 @@ const viewSMPData = (massprod, furnace) => {
     });
 }
 
+const isValidMassProdName = (value) => {
+    if (!value) return false;
+
+    const match = value.match(/^([0-9]+)(ST|ND|RD|TH)$/);
+    if (!match) return false;
+
+    const num = parseInt(match[1], 10);
+    const suffix = match[2];
+
+    const lastTwo = num % 100;
+    const lastOne = num % 10;
+
+    let correctSuffix;
+
+    if (lastTwo >= 11 && lastTwo <= 13) {
+        correctSuffix = 'TH';
+    } else {
+        if (lastOne === 1) correctSuffix = 'ST';
+        else if (lastOne === 2) correctSuffix = 'ND';
+        else if (lastOne === 3) correctSuffix = 'RD';
+        else correctSuffix = 'TH';
+    }
+
+    return suffix === correctSuffix;
+};
+
 const submitForm = async () => {
-    if (!massProd_name.value || !massProd_furnace.value) {
-        toast.error('Please fill out all fields.');
-        showModalCreate.value = false; // Keep the modal open
+    const name = massProd_name.value?.trim();
+
+    if (!name || !massProd_furnace.value || !isValidMassProdName(name)) {
+        toast.error('Invalid format. Example: 221ST, 222ND, 223RD, 111TH');
+        showModalCreate.value = false;
+
         massProd_name.value = '';
         massProd_furnace.value = '';
+
         return;
     }
+
     showConfirmation.value = true;
 };
 

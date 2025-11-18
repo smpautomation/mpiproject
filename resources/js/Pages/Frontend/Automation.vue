@@ -1,258 +1,188 @@
 <template>
-    <Frontend>
-        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-500">
-            Automation master control page
+    <div class="flex min-h-screen bg-cyan-50">
+        <!-- Sidebar -->
+        <aside class="flex flex-col w-64 text-white bg-teal-600">
+            <!-- Logo -->
+            <div class="flex items-center px-6 py-4 space-x-3 cursor-pointer group">
+                <!-- Magnetic Logo Container -->
+                <div class="relative flex-shrink-0 w-16 h-16">
+                    <!-- Outer glow -->
+                    <div class="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-br from-cyan-400 to-teal-400 rounded-xl blur-md group-hover:opacity-80"></div>
+
+                    <!-- Main magnet box -->
+                    <div class="relative w-full h-full p-2 transition-all duration-300 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-2xl">
+                        <svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Magnetic field lines (brighter) -->
+                            <g class="animate-pulse">
+                                <path d="M20 50 Q30 30, 50 30 Q70 30, 80 50" fill="none" stroke="rgba(0,255,255,0.6)" stroke-width="2"/>
+                                <path d="M20 50 Q30 70, 50 70 Q70 70, 80 50" fill="none" stroke="rgba(0,255,255,0.6)" stroke-width="2"/>
+                            </g>
+
+                            <!-- Magnet poles (stronger colors) -->
+                            <g class="transition-transform group-hover:scale-105">
+                                <rect x="15" y="35" width="20" height="30" rx="3" fill="#ffffff" opacity="1"/>
+                                <text x="25" y="55" font-size="16" font-weight="bold" fill="#00ffff" text-anchor="middle">N</text>
+
+                                <rect x="65" y="35" width="20" height="30" rx="3" fill="#ffffff" opacity="1"/>
+                                <text x="75" y="55" font-size="16" font-weight="bold" fill="#00e5b4" text-anchor="middle">S</text>
+                            </g>
+
+                            <!-- Center attraction particles -->
+                            <circle cx="50" cy="50" r="3" fill="cyan" opacity="0.9" class="animate-ping"/>
+                            <circle cx="50" cy="50" r="2" fill="cyan"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Text -->
+                <div class="flex flex-col justify-center">
+                    <span class="text-xl font-extrabold leading-none text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-300 group-hover:from-cyan-300 group-hover:to-teal-200 drop-shadow-md">
+                        GBDP MPI
+                    </span>
+                    <span class="text-sm font-semibold text-gray-100 group-hover:text-white">
+                        Online System
+                    </span>
+                </div>
+            </div>
+
+
+            <!-- Navigation -->
+            <nav class="flex-1 px-4 space-y-2">
+                <button @click="activeSection = 'home'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Dashboard</button>
+                <button @click="activeSection = 'errors'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Error Logs</button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+        <!-- Topbar -->
+        <div class="flex items-center justify-between p-4 mb-6 text-white rounded-lg shadow bg-cyan-500">
+            <h1 class="text-lg font-semibold">{{ sectionTitle }}</h1>
+            <div class="flex space-x-4">
+                <button @click="Inertia.visit('/')" class="px-3 py-1 rounded bg-cyan-400 hover:bg-cyan-300">Return Home</button>
+            </div>
+        </div>
+
+        <!-- Section Content -->
+        <div v-if="activeSection === 'home'">
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
+            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
+                <div class="text-sm font-medium">Total Tasks</div>
+                <div class="text-2xl font-bold">123</div>
+            </div>
+            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
+                <div class="text-sm font-medium">Active Machines</div>
+                <div class="text-2xl font-bold">45</div>
+            </div>
+            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
+                <div class="text-sm font-medium">Pending Reports</div>
+                <div class="text-2xl font-bold">7</div>
+            </div>
+            </div>
+
+            <!-- Charts & Tables (placeholders) -->
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="p-6 bg-white rounded-lg shadow">
+                <h2 class="mb-4 text-lg font-semibold text-teal-700">Performance Chart</h2>
+                <div class="flex items-center justify-center h-64 rounded-lg bg-cyan-100">[Chart here]</div>
+            </div>
+
+            <div class="p-6 bg-white rounded-lg shadow">
+                <h2 class="mb-4 text-lg font-semibold text-teal-700">Recent Activity</h2>
+                <div class="flex items-center justify-center h-64 rounded-lg bg-cyan-100">[Table here]</div>
+            </div>
+            </div>
+        </div>
+
+        <div v-if="activeSection === 'errors'">
+            <div class="p-6 overflow-x-auto bg-white rounded-lg shadow">
+                <table class="min-w-full text-left border border-gray-300">
+                    <thead class="bg-cyan-100">
+                    <tr>
+                        <th class="px-4 py-2 border">Timestamp</th>
+                        <th class="px-4 py-2 border">User</th>
+                        <th class="px-4 py-2 border">Title</th>
+                        <th class="px-4 py-2 border">Details</th>
+                        <th class="px-4 py-2 border">Trigger Function</th>
+                        <th class="px-4 py-2 border">Section</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Empty State -->
+                    <tr v-if="!errorLogs.length">
+                        <td class="px-4 py-2 text-center text-gray-400 border" colspan="6">
+                        No error logs found.
+                        </td>
+                    </tr>
+
+                    <!-- Error Log Rows -->
+                    <tr v-for="(log, index) in errorLogs" :key="index" class="hover:bg-cyan-50" v-else>
+                        <td class="px-4 py-2 border">{{ log.timestamp }}</td>
+                        <td class="px-4 py-2 border">{{ log.user }}</td>
+                        <td class="px-4 py-2 border">{{ log.title }}</td>
+                        <td class="px-4 py-2 border">{{ log.details }}</td>
+                        <td class="px-4 py-2 border">{{ log.trigger_function }}</td>
+                        <td class="px-4 py-2 border">{{ log.section }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
 
         </div>
-    </Frontend>
+
+        <!-- Add more sections as needed -->
+        </main>
+    </div>
 </template>
 
 <script setup>
-import Frontend from '@/Layouts/FrontendLayout.vue';
 import { onMounted, ref, computed } from "vue";
 import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
-import { useAuth } from '@/Composables/useAuth.js'
 
-const { state } = useAuth();
+const activeSection = ref('home');
+const errorLogs = ref([]);
 
-// Function to check authentication
-const checkAuthentication = async () => {
-    try {
-        const start = Date.now();
-        const maxWait = 5000; // 5 seconds
-
-        while (!state.user) {
-            if (Date.now() - start > maxWait) {
-                console.error('User data failed to load in time. Redirecting...');
-                Inertia.visit('/'); // Redirect if user never loads
-                return false;
-            }
-            await new Promise(resolve => setTimeout(resolve, 50));
-        }
-
-        if (!state.isAuthenticated) {
-            console.warn('User is not authenticated. Redirecting...');
-            Inertia.visit('/');
-            return false;
-        }
-
-        console.log("USER AUTHENTICATED!", `${state.user.firstName} ${state.user.surname}`);
-        return true;
-
-    } catch (error) {
-        console.error('Error checking authentication:', error);
-        Inertia.visit('/');
-        return false;
+const sectionTitle = computed(() => {
+    switch (activeSection.value) {
+        case 'home': return 'Automation Master Control';
+        case 'errors': return 'Error Logs';
+        default: return '';
     }
-};
-
-const userAdminLogging = async (logEvent) => {
-    try{
-        const responseAdminLogging = await axios.post('/api/userlogs', {
-            user: state.user.firstName + " " + state.user.surname,
-            event: logEvent,
-            section: 'Admin',
-        });
-
-        //console.log('responseUserLogin-data: ',responseUserLogin.data);
-    }catch(error){
-        console.error('responseAdminLogging post request failed: ',error);
-    }
-}
-
-const getToday = () => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-};
-
-const users = ref([]);
-const editingUser = ref(null);
-const tempRole = ref("");
-const allUserLogs = ref([]);
-const searchQuery = ref('');
-const selectedUser = ref('');
-const selectedSection = ref('');
-const sortOrder = ref('');
-const selectedDate = ref(getToday());
-const uniqueUsers = ref([]);
-const uniqueSections = ref([]);
-
-//just for fixing stamp
-const reportData = ref([]);
-
-const startEditing = (user) => {
-    editingUser.value = user.employee_id; // Updated to match API response
-    tempRole.value = user.access_type;   // Updated to match API response
-};
-
-const cancelEditing = () => {
-    editingUser.value = null;
-    tempRole.value = "";
-};
-
-const formatDate = (isoString) => {
-  if (!isoString) return '';
-  const date = new Date(isoString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',  // Jun, Jul etc.
-    day: 'numeric',
-    timeZone: 'Asia/Manila'  // Set your timezone here
-  });
-};
-
-const saveRole = async (user) => {
-  try {
-    const response = await axios.put(`/api/users/${user.id}`, {
-        access_type: tempRole.value
-    });
-
-    //console.log(`Response from server:`, response.data);
-
-    // Update the user's role in the local state if the update succeeds
-    user.access_type = tempRole.value;
-    editingUser.value = null;
-    tempRole.value = "";
-
-    //console.log(`Role for ${user.username} updated to: ${user.access_type}`);
-    await userAdminLogging(`Updated role for ${user.firstName} ${user.surname} to: ${user.access_type}`);
-  } catch (error) {
-    console.error(`Error updating role for ${user.username}:`, error);
-    // Optional: Add error handling logic, e.g., show a toast notification
-  }
-};
-
-const formatTime = (date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
-const fetchAllUsers = async () => {
-  try {
-    const response = await axios.get('/api/users');
-    //console.log('Fetched users:', response.data);
-    users.value = response.data.data; // Assign the array to users
-    //console.log('Fetched users in my users array:', users.value);
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
-};
-
-const fetchAllLogs = async () => {
-    try {
-        const response = await axios.get('/api/userlogs');
-        allUserLogs.value = response.data;
-        //console.log('allUserLogs-array: ',allUserLogs.value);
-        // Extract unique users dynamically
-        const usersSet = new Set(allUserLogs.value.map(log => log.user).filter(Boolean));
-        uniqueUsers.value = Array.from(usersSet).sort();
-        const sectionsSet = new Set(allUserLogs.value.map(log => log.section).filter(Boolean));
-        uniqueSections.value = Array.from(sectionsSet).sort();
-        //console.log('uniqueUsers array: ',uniqueUsers.value);
-        //console.log('uniqueSections array: ',uniqueSections.value);
-    } catch (error) {
-        console.error('Failed to fetch logs:', error);
-    }
-}
-
-// Computed: filtered and sorted logs
-const filteredLogs = computed(() => {
-    let logs = [...allUserLogs.value]
-
-    // Filter by search query (event or user)
-    if (searchQuery.value.trim()) {
-        const query = searchQuery.value.toLowerCase()
-        logs = logs.filter(log =>
-        (log.event?.toLowerCase().includes(query)) ||
-        (log.user?.toLowerCase().includes(query))
-        );
-    }
-
-    // Filter by selected user
-    if (selectedUser.value) {
-        logs = logs.filter(log => log.user === selectedUser.value);
-    }
-
-    // Filter by selected section
-    if (selectedSection.value) {
-        logs = logs.filter(log => log.section === selectedSection.value);
-    }
-
-    // Filter by selected date (exact date match)
-    if (selectedDate.value) {
-        logs = logs.filter(log => {
-        if (!log.created_at) return false;
-            const date = new Date(log.created_at.replace(' ', 'T')) // convert to ISO format
-            const localDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-            return localDate === selectedDate.value
-        });
-    }
-
-    // Sort by date
-    if (sortOrder.value === 'newest') {
-        logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    } else if (sortOrder.value === 'oldest') {
-        logs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    }
-
-    return logs;
 });
 
-const fixStampIssue = async() => {
-    const responseReport = await axios.get(`/api/reportdata`);
-    //console.log('responseReport-data get request: ',responseReport.data);
-    const rows = responseReport.data.data;
-    reportData.value = rows;
-    //console.log('reportData array: ',reportData.value);
-    //console.log(Array.isArray(rows));
-    for (const row of rows){
-        const payload = {};
+// Fetch logs from API
+const fetchErrorLogs = async () => {
+  try {
+    const response = await axios.get('/api/error-logs');
+    console.log('API response:', response.data);
 
-        if(row.prepared_by){
-            const parts = row.prepared_by.trim().split(/\s+/); // chop into pieces for each phrase separated by space
-            const surname = parts.pop(); //pop removes the last part
-            const firstname = parts.join(' ');
-            payload.prepared_by_firstname = firstname;
-            payload.prepared_by_surname = surname;
-        }
+    errorLogs.value = response.data.map(log => ({
+      timestamp: formatTimestampUTC(log.created_at),
+      user: log.user || '',
+      title: log.title || '',
+      details: log.details || 'N/A',
+      trigger_function: log.trigger_function || 'N/A',
+      section: log.section || 'N/A'
+    }));
 
-        if(row.checked_by){
-            const parts = row.checked_by.trim().split(/\s+/);
-            const surname = parts.pop();
-            const firstname = parts.join(' ');
-            payload.checked_by_firstname = firstname;
-            payload.checked_by_surname = surname;
-        }
+    console.log('Mapped logs:', errorLogs.value);
+  } catch (err) {
+    console.error('Failed to fetch error logs:', err);
+  }
+};
 
-        if(row.approved_by){
-            const parts = row.checked_by.trim().split(/\s+/);
-            const surname = parts.pop();
-            const firstname = parts.join(' ');
-            payload.approved_by_firstname = firstname;
-            payload.approved_by_surname = surname;
-        }
+const formatTimestampUTC = (isoString) => {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    return date.toISOString().replace('T', ' ').split('.')[0]; // "2025-11-18 17:36:53"
+};
 
-        if(Object.keys(payload).length > 0 && row.tpm_data_serial){
-            try{
-                let numberOfFix = Object.keys(payload).length/2;
-                const resultPatchFix = await axios.patch(`/api/reportdata/${row.tpm_data_serial}`, payload);
-                console.log(`Detected ${numberOfFix} rows of data affected`);
-                console.log('Stamp issue FIXED successfully no errors',resultPatchFix);
-            }catch(error){
-                console.error('Fix Patch failed: ',error);
-            }
-        }
-    }
-}
 
-onMounted(async() => {
-    await checkAuthentication();
-    await fetchAllUsers();
-    await fetchAllLogs();
+// Fetch on mount
+onMounted( async () => {
+    await fetchErrorLogs();
 });
 
 </script>

@@ -34,6 +34,7 @@ use App\Http\Controllers\SecondGBDPController;
 use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use App\Http\Controllers\SmpDataController;
+use App\Http\Controllers\ErrorLogsController;
 use App\Mail\TakefuMail_Manual;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
@@ -376,3 +377,4 @@ Route::patch('/mass-production/{furnace}/{massProd}/merge', [MassProductionContr
 
 Route::apiResource('mass-production',MassProductionController::class);
 Route::apiResource('excess-layers',ExcessLayersController::class);
+Route::apiResource('error-logs', ErrorLogsController::class);
