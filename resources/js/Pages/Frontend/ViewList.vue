@@ -8,7 +8,7 @@
         placeholder="Search model name or lot no..."
         class="w-full max-w-md p-2 border rounded shadow-sm"
       />
-        <div class="flex flex-row items-center align-middle space-x-4">
+        <div class="flex flex-row items-center space-x-4 align-middle">
 
             <label>Mass Prod: </label>
             <!-- Status Filter -->
@@ -118,44 +118,58 @@
                 <td v-if="state.user && state.user.access_type !== 'Basic User'" class="p-[1px] text-center"> <!-- New Cell -->
                     <div class="flex flex-row justify-center px-0 py-1 text-sm text-center bg-white rounded-sm space-x-7 whitespace-nowrap">
                         <div>
-                          <button
-                            @click="viewReport(item.category[0].tpm_data_serial)"
-                          class="bg-blue-600 text-white rounded-sm w-[100px] mr-2
-                                      hover:bg-blue-500 active:bg-blue-700
-                                      transition-colors duration-200 ease-in-out
-                                      focus:outline-none focus:ring-2 focus:ring-blue-400">View Report</button>
+                            <button
+                                @click="viewReport(item.category[0].tpm_data_serial)"
+                                class="w-[110px]
+                                        bg-blue-600 text-white
+                                        rounded-md font-medium text-sm
+                                        shadow-sm
+                                        hover:bg-blue-500
+                                        active:bg-blue-700 active:shadow-none
+                                        transition-all duration-150
+                                        focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                >
+                                View Report
+                            </button>
                         </div>
                         <div>
                             <template v-if="confirmDeleteFor === item.category[0].tpm_data_serial">
-                              <button
-                                @click="deleteRow(item.category[0].tpm_data_serial)"
-                                class="bg-green-600 text-white rounded-sm w-[40px] mr-2
-                                      hover:bg-green-500 active:bg-green-700
-                                      transition-colors duration-200 ease-in-out
-                                      focus:outline-none focus:ring-2 focus:ring-green-400"
-                              >
-                                Yes
-                              </button>
-                              <button
-                                @click="confirmDeleteFor = null"
-                                class="bg-gray-300 text-gray-800 rounded-sm w-[60px]
-                                      hover:bg-gray-400 active:bg-gray-500
-                                      transition-colors duration-200 ease-in-out
-                                      focus:outline-none focus:ring-2 focus:ring-gray-400"
-                              >
-                                Cancel
-                              </button>
+                              <!-- Yes Button -->
+                            <button
+                            @click="deleteRow(item.category[0].tpm_data_serial)"
+                            class="bg-gradient-to-b from-green-600 to-green-500 text-white rounded-sm w-[40px] mr-2
+                                    shadow-md hover:from-green-500 hover:to-green-400 active:shadow-inner active:from-green-700 active:to-green-600
+                                    transition-all duration-150
+                                    focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1"
+                            >
+                            Yes
+                            </button>
+
+                            <!-- Cancel Button -->
+                            <button
+                            @click="confirmDeleteFor = null"
+                            class="bg-gradient-to-b from-gray-300 to-gray-200 text-gray-800 rounded-sm w-[60px]
+                                    shadow-md hover:from-gray-400 hover:to-gray-300 active:shadow-inner active:from-gray-500 active:to-gray-400
+                                    transition-all duration-150
+                                    focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                            >
+                            Cancel
+                            </button>
                             </template>
                             <template v-else>
-                              <button
-                                @click="confirmDeleteFor = item.category[0].tpm_data_serial"
-                                class="bg-red-700 text-white rounded-sm w-[100px]
-                                      hover:bg-red-600 active:bg-red-800
-                                      transition-colors duration-200 ease-in-out
-                                      focus:outline-none focus:ring-2 focus:ring-red-500"
-                              >
-                                Delete
-                              </button>
+                                <button
+                                    @click="confirmDeleteFor = item.category[0].tpm_data_serial"
+                                    class="w-[110px]
+                                            bg-red-700 text-white
+                                            rounded-md font-medium text-sm
+                                            shadow-sm
+                                            hover:bg-red-600
+                                            active:bg-red-800 active:shadow-none
+                                            transition-all duration-150
+                                            focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    >
+                                    Delete
+                                </button>
                             </template>
                         </div>
                     </div>
@@ -400,15 +414,23 @@ watch(statusFilter, () => {
 });
 
 const deleteRow = async (serial) => {
-  try {
-    await axios.delete(`/api/tpmdata/${serial}`);
-    tpmData.value = tpmData.value.filter(item => item.serial !== serial);
-    confirmDeleteFor.value = null; // reset confirm after delete
-    console.log(`[Row Deleted]: Serial ${serial}`);
-    userSerialDeleteLogging(`has successfully deleted Serial: ${serial}`);
-  } catch (error) {
-    console.error(`[Error Deleting Row]: Serial ${serial}`, error);
-    confirmDeleteFor.value = null; // reset confirm on error too
-  }
+    try {
+        // Tell backend to delete the chart image
+        await axios.delete(`/api/tpmdata/${serial}/delete-chart`);
+
+        // Delete the database row
+        await axios.delete(`/api/tpmdata/${serial}`);
+
+        // Update UI
+        tpmData.value = tpmData.value.filter(item => item.serial !== serial);
+        confirmDeleteFor.value = null;
+
+        console.log(`[Row + Chart Deleted]: Serial ${serial}`);
+        userSerialDeleteLogging(`deleted Serial ${serial} and its chart image`);
+    } catch (error) {
+        console.error(`[Error Deleting Serial ${serial}]`, error);
+        confirmDeleteFor.value = null;
+    }
 };
+
 </script>

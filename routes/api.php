@@ -55,6 +55,7 @@ Route::patch('/tpmaggregateupdate/{id}', action: [TPMDataController::class, 'upd
 Route::patch('/updatecategory/{id}', [TPMDataController::class, 'updateCategory']);
 Route::patch('/updateboxes/{id}', [TPMDataController::class, 'updateBoxes']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
+Route::delete('/tpmdata/{serial}/delete-chart', [TpmDataController::class, 'deleteChart']);
 
 Route::get('/reportdata', [ReportDataController::class, 'index']);
 Route::get('/reportdata/{id}', [ReportDataController::class, 'show']);

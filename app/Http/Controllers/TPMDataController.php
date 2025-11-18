@@ -548,4 +548,15 @@ class TPMDataController extends Controller
                     ->exists();
     }
 
+    public function deleteChart($serial)
+    {
+        // build full path
+        $path = public_path("charts/chart_{$serial}.png");
+
+        // delete only if it exists
+        if (file_exists($path)) {
+            unlink($path);
+        }
+    }
+
 }
