@@ -1285,7 +1285,7 @@
 
                 </div>
                 <div>
-                    <button v-if="onTestServer" @click="finalizeReport(currentSerialSelected)" class="p-2 bg-blue-100 rounded-lg">
+                    <button v-if="onTestServer" @click="finalizeReport(currentSerialSelected, report_isFinalized)" class="p-2 bg-blue-100 rounded-lg">
                         View PDF Report BYPASS
                     </button>
                 </div>
@@ -3374,8 +3374,8 @@ const addCarmark = async () => {
     }
 }
 
-const finalizeReport = async (serial, report_isFinalized) => {
-    if (!report_isFinalized) {
+const finalizeReport = async (serial, isFinalized) => {
+    if (!isFinalized) {
         await userFinalizedLogging(`has finalized report serial: ${serial}`);
     }
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, '_blank');
