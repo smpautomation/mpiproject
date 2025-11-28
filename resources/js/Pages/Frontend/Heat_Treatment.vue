@@ -138,11 +138,24 @@
                     <!-- Group: Lot + Qty -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot No.<span class="text-red-500"> *</span></label>
-                            <input v-model="mpcs.lotNo" type="text"
-                                @input="mpcs.lotNo = mpcs.lotNo.toUpperCase()"
-                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Lot No.<span class="text-red-500"> *</span>
+                            </label>
+                            <select
+                                v-model="mpcs.lotNo"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="" disabled>Select Lot No</option>
+                                <option
+                                v-for="(lot, index) in lotNoLists"
+                                :key="index"
+                                :value="lot.lot_no"
+                                >
+                                    {{ lot.lot_no }}
+                                </option>
+                            </select>
                         </div>
+
 
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">
@@ -999,31 +1012,47 @@ const userManageLogging = async (logEvent) => {
     }
 }
 
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try{
+        const response = await axios.post('/api/error-logs', {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: 'Heat Treatment',
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userErrorLogging post request failed: ',error);
+    }
+}
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
-  // Load existing session value
-  const saved = sessionStorage.getItem(key)
-  if (saved !== null) {
-    try {
-      const parsed = JSON.parse(saved)
-      if (typeof state === 'object' && 'value' in state) {
-        state.value = parsed
-      } else {
-        Object.assign(state, parsed)
-      }
-    } catch {
-      /* ignore parse errors */
+    // Load existing session value
+    const saved = sessionStorage.getItem(key)
+    if (saved !== null) {
+        try {
+        const parsed = JSON.parse(saved)
+        if (typeof state === 'object' && 'value' in state) {
+            state.value = parsed
+        } else {
+            Object.assign(state, parsed)
+        }
+        } catch {
+            /* ignore parse errors */
+        }
     }
-  }
 
-  // Watch and persist changes
-  watch(
-    state,
-    (val) => {
-      sessionStorage.setItem(key, JSON.stringify(val))
-    },
-    { deep: true }
-  )
+    // Watch and persist changes
+    watch(
+        state,
+        (val) => {
+            sessionStorage.setItem(key, JSON.stringify(val))
+        },
+        { deep: true }
+    )
 }
 
 //Dev Controls ----------------- Allow Commands
@@ -1045,6 +1074,7 @@ const initialFurnaceData = ref();
 const furnace_names = ref([]);
 const massProd_names = ref([]);
 const model_names = ref([]);
+const lotNoLists = ref([]);
 const graph_patterns = ref([]);
 const firstSecondGBDP_models = ref([]);
 const existingLayers = ref([]);
@@ -1253,6 +1283,16 @@ const getMassProdData = async () => { //Function for getting the current selecet
         heatTreatmentInformationDetected.value = false;
         console.error('Error fetching mass production data:', error);
         toast.error('Failed to load mass production data.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getMassProdData",
+            "Failed to load mass production data"
+        );
     }
 }
 
@@ -1267,6 +1307,16 @@ const get1st2ndGBDPModels = async () => {
         //console.log("1st & 2nd GBDP model names: ", modelNames);
     } catch (error) {
         console.error('Failed to get 1st & 2nd GBDP Models: ', error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "get1st2ndGBDPModels",
+            "Failed to get 1st & 2nd GBDP Models"
+        );
     }
 }
 
@@ -1277,8 +1327,18 @@ const getMassProdLists = async () => {
         massProd_names.value = massProdList.map(item => item.mass_prod);
         //console.log("List of mass prods: ",massProd_names.value);
     }catch(error){
-        console.error('Error fetching mass prod lists',error);
+        //console.error('Error fetching mass prod lists',error);
         toast.error('Failed to get the mass prod lists api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getMassProdLists",
+            "Failed to get the mass prod lists api error"
+        );
     }
 }
 
@@ -1289,8 +1349,18 @@ const getFurnaceLists = async () => {
         furnace_names.value = furnaceList.map(item => item.furnace_name);
         //console.log("List of mass prods: ",furnace_names.value);
     }catch(error){
-        console.error('Error fetching mass prod lists',error);
-        toast.error('Failed to get the mass prod lists api error');
+        //console.error('Error fetching mass prod lists',error);
+        toast.error('Failed to get the furnace lists api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getFurnaceLists",
+            "Failed to get the furnace lists api error"
+        );
     }
 }
 
@@ -1303,6 +1373,16 @@ const getModelLists = async () => {
     }catch(error){
         console.error('Error fetching model names', error);
         toast.error('Failed to get the model names.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getModelLists",
+            "Failed to get the model names"
+        );
     }
 }
 
@@ -1315,6 +1395,16 @@ const getGraphPatterns = async () => {
     }catch(error){
         console.error('Error fetching model names', error);
         toast.error('Failed to get graph patterns.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getGraphPatterns",
+            "Failed to get graph patterns"
+        );
     }
 }
 
@@ -1356,6 +1446,16 @@ const fetchExistingLayers = async () => {
     } catch (error) {
         console.error("Error fetching existing layers:", error);
         toast.error('Failed to fetch existing layers.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchExistingLayers",
+            "Failed to fetch existing layers"
+        );
     }
 };
 
@@ -1367,8 +1467,30 @@ const getCompletedLayers = async () => {
     } catch (error) {
         console.error(error);
         toast.error('Failed to fetch layers');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getCompletedLayers",
+            "Failed to fetch layers"
+        );
     }
 };
+
+const fetchAllLotNoData = async () => {
+    try {
+        const response = await axios.get('/api/initial-control-sheets/lot-all');
+        //console.log(response.data); // All records with lot_no, newest first
+        lotNoLists.value = response.data;
+    } catch (err) {
+        console.error('Failed to fetch lot_no data:', err);
+    }
+};
+
+
 
 // Watch for changes in selectedLayer
 watch(
@@ -1439,6 +1561,16 @@ const updateHeatTreatmentInfo = async() => {
     }catch(error){
         console.error('failed to fetch mass prod data', error);
         toast.error('Failed to fetch Mass Prod data', error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "updateHeatTreatmentInfo",
+            "Failed to fetch Mass Prod data"
+        );
     }
 
 }
@@ -1641,6 +1773,16 @@ const saveToDatabase = async () => {
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "saveToDatabase",
+            "Failed to save data. Please try again."
+        );
     } finally {
         await updateFormatType();
         clearAll(); // Clear all fields after successful save
@@ -1701,7 +1843,17 @@ const overwriteDatabase = async () => {
         showModalCreate.value = false;
     } catch (error) {
         console.error('Error saving data:', error);
-        toast.error('Failed to save data. Please try again.');
+        toast.error('Failed to overwrite data. Please try again.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "overwriteDatabase",
+            "Failed to overwrite data. Please try again."
+        );
     } finally {
         //await updateFormatType();
         clearAll(); // Clear all fields after successful save
@@ -1738,6 +1890,16 @@ const updateFormatType = async () => { // Update format type of Mass Productions
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "updateFormatType",
+            "Failed to update format type"
+        );
     }
 }
 
@@ -1769,6 +1931,16 @@ const uploadGraphs = async () => {
     } catch (error) {
         console.error('Error uploading graphs:', error);
         toast.error('Failed to upload graphs. Please try again.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "uploadGraphs",
+            "Failed to upload graphs. Please try again."
+        );
     }
 };
 
@@ -1804,6 +1976,7 @@ onMounted(async () => {
     await getFurnaceLists();
     await getMassProdLists();
     await getModelLists();
+    await fetchAllLotNoData();
     await getGraphPatterns();
     await get1st2ndGBDPModels();
 });

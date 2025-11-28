@@ -18,6 +18,10 @@ class FrontendController extends Controller
         return Inertia::render('Frontend/Automation');
     }
 
+    public function initial_process(){
+        return Inertia::render('Frontend/Initial_Process');
+    }
+
     public function massprod(){
         return Inertia::render('Frontend/Mass_Prod');
     }

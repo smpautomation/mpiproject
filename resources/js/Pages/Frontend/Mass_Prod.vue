@@ -281,6 +281,22 @@ const userManageLogging = async (logEvent) => {
     }
 }
 
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try{
+        const response = await axios.post('/api/error-logs', {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: 'Mass Production',
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userErrorLogging post request failed: ',error);
+    }
+}
+
 const showModalCreate = ref(false);
 const showConfirmation = ref(false);
 const loadingState = ref(false);
@@ -303,6 +319,16 @@ const getMassProdData = async () => {
     } catch (error) {
         console.error('Failed to fetch all mass production data:', error);
         toast.error('Failed to fetch mass production data.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getMassProdData",
+            "Failed to fetch mass production data."
+        );
     }
 };
 
@@ -315,20 +341,30 @@ const getFurnaceLists = async() => {
     }catch(error){
         console.error('Failed to fetch furnace data lists: ',error);
         toast.error('Furnace Data List error.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getFurnaceLists",
+            "Furnace Data List error."
+        );
     }
 }
 
 const filteredItems = computed(() => {
-  return massProd_list.value.filter((item) =>
-    item.mass_prod.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-})
+    return massProd_list.value.filter((item) =>
+        item.mass_prod.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+});
 
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage)
 const endIndex = computed(() => startIndex.value + itemsPerPage)
 const paginatedItems = computed(() =>
   filteredItems.value.slice(startIndex.value, endIndex.value)
-)
+);
 
 const nextPage = () => {
   if (endIndex.value < filteredItems.value.length) {
@@ -429,6 +465,16 @@ const saveToDatabase = async () => {
     } catch (error) {
         console.error('Error creating Mass Production:', error);
         toast.error('An error occurred while creating Mass Production.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                endpoint: error.config?.url,
+                status: error.response?.status ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "saveToDatabase",
+            "An error occurred while creating Mass Production."
+        );
     } finally {
         loadingState.value = false // stop loading
         await userManageLogging('created '+ massProd_name.value +' Mass Production | Furnace : ' + massProd_furnace.value);

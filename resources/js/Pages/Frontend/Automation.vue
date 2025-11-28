@@ -36,10 +36,10 @@
 
                 <!-- Text -->
                 <div class="flex flex-col justify-center">
-                    <span class="text-xl font-extrabold leading-none text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-300 group-hover:from-cyan-300 group-hover:to-teal-200 drop-shadow-md">
+                    <span class="text-xl font-extrabold leading-none text-transparent whitespace-nowrap bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-300 group-hover:from-cyan-300 group-hover:to-teal-200 drop-shadow-md">
                         GBDP MPI
                     </span>
-                    <span class="text-sm font-semibold text-gray-100 group-hover:text-white">
+                    <span class="text-sm font-semibold text-gray-100 whitespace-nowrap group-hover:text-white">
                         Online System
                     </span>
                 </div>
@@ -121,13 +121,46 @@
                         <td class="px-4 py-2 border">{{ log.timestamp }}</td>
                         <td class="px-4 py-2 border">{{ log.user }}</td>
                         <td class="px-4 py-2 border">{{ log.title }}</td>
-                        <td class="px-4 py-2 border">{{ log.details }}</td>
+<td class="px-4 py-2 align-top border">
+  <div>
+    <!-- Expanded -->
+    <div v-if="expandedRows.has(index)">
+      <pre class="text-sm break-words whitespace-pre-wrap">
+{{ typeof log.details === 'string' ? log.details.trim() : JSON.stringify(log.details, null, 2) }}
+      </pre>
+      <button
+        class="mt-1 text-teal-600 hover:underline"
+        @click="toggleRow(index)">
+        See less
+      </button>
+    </div>
+
+    <!-- Collapsed -->
+    <div v-else>
+      <pre class="text-sm break-words whitespace-pre-wrap">
+{{
+    typeof log.details === 'string'
+    ? log.details.trim().slice(0, 120)
+    : JSON.stringify(log.details).slice(0, 200)
+}}…
+      </pre>
+      <button
+        class="mt-1 text-teal-600 hover:underline"
+        @click="toggleRow(index)">
+        See more
+      </button>
+    </div>
+  </div>
+</td>
+
+
+
                         <td class="px-4 py-2 border">{{ log.trigger_function }}</td>
                         <td class="px-4 py-2 border">{{ log.section }}</td>
                     </tr>
                     </tbody>
                 </table>
-                </div>
+            </div>
 
         </div>
 
@@ -143,6 +176,7 @@ import axios from 'axios';
 
 const activeSection = ref('home');
 const errorLogs = ref([]);
+const expandedRows = ref(new Set());
 
 const sectionTitle = computed(() => {
     switch (activeSection.value) {
@@ -152,25 +186,33 @@ const sectionTitle = computed(() => {
     }
 });
 
+const toggleRow = (index) => {
+    if (expandedRows.value.has(index)) {
+        expandedRows.value.delete(index);
+    } else {
+        expandedRows.value.add(index);
+    }
+};
+
 // Fetch logs from API
 const fetchErrorLogs = async () => {
-  try {
-    const response = await axios.get('/api/error-logs');
-    console.log('API response:', response.data);
+    try {
+        const response = await axios.get('/api/error-logs');
+        console.log('API response:', response.data);
 
-    errorLogs.value = response.data.map(log => ({
-      timestamp: formatTimestampUTC(log.created_at),
-      user: log.user || '',
-      title: log.title || '',
-      details: log.details || 'N/A',
-      trigger_function: log.trigger_function || 'N/A',
-      section: log.section || 'N/A'
-    }));
+        errorLogs.value = response.data.map(log => ({
+        timestamp: formatTimestampUTC(log.created_at),
+        user: log.user || '',
+        title: log.title || '',
+        details: log.details || 'N/A',
+        trigger_function: log.trigger_function || 'N/A',
+        section: log.section || 'N/A'
+        }));
 
-    console.log('Mapped logs:', errorLogs.value);
-  } catch (err) {
-    console.error('Failed to fetch error logs:', err);
-  }
+        console.log('Mapped logs:', errorLogs.value);
+    } catch (err) {
+        console.error('Failed to fetch error logs:', err);
+    }
 };
 
 const formatTimestampUTC = (isoString) => {

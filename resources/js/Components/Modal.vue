@@ -102,11 +102,11 @@ const maxWidthClass = computed(() => {
 
             <Transition
                 enter-active-class="duration-300 ease-out"
-                enter-from-class="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
+                enter-from-class="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-100"
                 enter-to-class="translate-y-0 opacity-100 sm:scale-100"
                 leave-active-class="duration-200 ease-in"
                 leave-from-class="translate-y-0 opacity-100 sm:scale-100"
-                leave-to-class="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
+                leave-to-class="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-100"
             >
                 <div
                     v-show="show"

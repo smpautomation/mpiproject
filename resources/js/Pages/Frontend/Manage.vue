@@ -754,7 +754,7 @@
             const responseUserLogging = await axios.post('/api/userlogs', {
                 user: state.user.firstName + " " + state.user.surname,
                 event: logEvent,
-                section: 'Manage',
+                section: 'JH Curve',
             });
 
             //console.log('responseUserLogin-data: ',responseUserLogin.data);
@@ -763,17 +763,19 @@
         }
     }
 
-    const systemErrorLogging = async (logEvent) => {
+    const userErrorLogging = async (details, triggerFunction, title) => {
         try{
-            const responseSystemLogging = await axios.post('/api/error-logs', {
+            const response = await axios.post('/api/error-logs', {
                 user: state.user.firstName + " " + state.user.surname,
-                event: logEvent,
-                section: 'Manage',
+                title: title,
+                details: details,
+                trigger_function: triggerFunction,
+                section: 'JH Curve',
             });
 
-            console.log('responseSystemLogging-data: ',responseSystemLogging.data);
+            //console.log('userErrorLogging-data: ',responseUserLogin.data);
         }catch(error){
-            console.error('responseSystemLogging post request failed: ',error);
+            console.error('userErrorLogging post request failed: ',error);
         }
     }
 
@@ -859,6 +861,16 @@
         } catch (error) {
             console.error('Error fetching mass prod lists', error);
             toast.error('Failed to get the mass prod lists api error');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "getMassProdLists",
+                "Failed to get the mass prod lists api error."
+            );
         }
     };
 
@@ -870,7 +882,17 @@
             //console.log("List of mass prods: ",furnace_names.value);
         }catch(error){
             console.error('Error fetching mass prod lists',error);
-            toast.error('Failed to get the mass prod lists api error');
+            toast.error('Failed to get the furnace lists api error');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "getFurnaceLists",
+                "Failed to get the furnace lists api error"
+            );
         }
     }
 
@@ -884,6 +906,16 @@
         } catch (error) {
             console.error(error);
             toast.error('Failed to fetch available layers from Heat Treatment');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchAvailableLayers",
+                "Failed to fetch available layers from Heat Treatment"
+            );
         }
     };
 
@@ -907,6 +939,16 @@
         } catch (error) {
             console.error("Error fetching layer model:", error);
             toast.error('Failed to fetch model data for this layer.');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchLayerModelAndLotno",
+                "Error fetching layer model"
+            );
         }
 
         try {
@@ -919,6 +961,16 @@
         } catch (error) {
             console.error("Error fetching layer lotno:", error);
             toast.error('Failed to fetch lotno data for this layer.');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchLayerModelAndLotno",
+                "Error fetching layer lotno"
+            );
         }
 
         return { model, lotno };
@@ -932,6 +984,16 @@
             propData_miasEmp.value = massProd.mias_emp;
         }catch(error){
             console.log('Failed to get Mias & Factor Employee');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchMiasFactor",
+                "Failed to get Mias & Factor Employee"
+            );
         }
     }
 
@@ -942,8 +1004,18 @@
             isDataExisting.value = !!response.data; // double bang converts 1/0 to true/false
             //console.log('Existing data: ', isDataExisting.value);
         } catch (error) {
-            console.error('Error checking TPM data:', error);
+            //console.error('Error checking TPM data:', error);
             isDataExisting.value = false; // fallback
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "checkExisting",
+                "Error checking TPM data"
+            );
         }
     }
 
@@ -1089,7 +1161,7 @@
 
             const isEmptyRow = !factor && !mias && !temp && !status;
             if (isEmptyRow) {
-                console.warn('Skipping completely empty row:', row);
+                //console.warn('Skipping completely empty row:', row);
                 continue;
             }
 
@@ -1145,7 +1217,17 @@
             //console.log('All patch results:', patchResults);
 
         } catch (error) {
-            console.error("Something went wrong in mergeTempToTPM:", error);
+            //console.error("Something went wrong in mergeTempToTPM:", error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "mergeTempToTPM",
+                "Failed to merge Temp to TPM data"
+            );
         } finally{
             showCsvLoading.value = false;
             showGraphProceedConfirmation.value = false;
@@ -1254,7 +1336,17 @@
                 //alert(`Generated First Serial Number: ${serialNo.value}`);
             }
         } catch (error) {
-            console.error('Error generating serial number:', error);
+            //console.error('Error generating serial number:', error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "generateSerialNumber",
+                "Error generating serial number"
+            );
         }
     };
 
@@ -1521,7 +1613,17 @@
 
             //console.log('Update Response For Mass Production: ', response.data);
         } catch (error) {
-            console.error('Failed to update massproduction table.', error);
+            //console.error('Failed to update massproduction table.', error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "updateMassProductionTable",
+                "Failed to update massproduction table"
+            );
         }
     };
 
@@ -1696,7 +1798,7 @@
             };
 
             reader.onerror = () => {
-                console.error('Error reading file:', file.name);
+                //console.error('Error reading file:', file.name);
                 reject(reader.error);
             };
 
@@ -1710,7 +1812,17 @@
             showProceed1.value = true;
             showSerialNo.value = true;
         }catch(e){
-            console.error("One or more files failed to upload." , e);
+            //console.error("One or more files failed to upload." , e);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "saveToDatabase",
+                "One or more files failed to upload. This is under filePromises map loop."
+            );
         }finally{
             layerTableRowLoading.value = false;
             showSaveToDatabase_confirmation.value = false;
@@ -1751,7 +1863,17 @@
             const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
             //console.log('API Response sendlayerdata:', response.data);
         } catch (error) {
-            console.error('Error sending data to API:', error.response?.data || error.message);
+            //console.error('Error sending data to API:', error.response?.data || error.message);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "sendLayerData",
+                "Error sending data to API. This function send raw data via API "
+            );
         }
     };
 
@@ -1811,7 +1933,17 @@
 
 
         }catch(error){
-            console.error("Error fetching API Response saveToNsaCategory:", error);
+            //console.error("Error fetching API Response saveToNsaCategory:", error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "saveToTpmCategory",
+                "Error fetching API Response saveToNsaCategory"
+            );
         }
     }
 
@@ -2169,6 +2301,16 @@
 
         } catch (error) {
             console.error('Error fetching data:', error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "showAllData",
+                "Error fetching data"
+            );
             return;
         } finally {
             showProceed3.value = false;
@@ -2238,6 +2380,16 @@ const fetchDataCreateGraph = async () => {
     } catch (err) {
         error.value = err;
         console.error("Error fetching data:", err);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchDataCreateGraph",
+            "Error fetching graph data"
+        );
     } finally {
         showGraphAndTables.value = true;
         layerTableRowLoading.value = false;
@@ -2415,9 +2567,29 @@ const renderChart = () => {
             }, 1000); // Give Chart.js time to fully render
         } catch (error) {
             console.error("Error initializing Chart.js:", error);
+            userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchDataCreateGraph",
+                "Error fetching graph data"
+            );
         }
     } else {
         console.error("Chart cannot be rendered: Missing data or canvas context.");
+        userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "renderChart",
+            "Chart cannot be rendered: Missing data or canvas context."
+        );
     }
 };
 

@@ -35,6 +35,7 @@ use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use App\Http\Controllers\SmpDataController;
 use App\Http\Controllers\ErrorLogsController;
+use App\Http\Controllers\InitialControlSheetController;
 use App\Mail\TakefuMail_Manual;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
@@ -261,6 +262,7 @@ Route::post('/route-email', function (Request $request) {
 Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUpload']);
 
 Route::post('/mias-factor/bulk-upload', [MiasFactorController::class, 'bulkUpload']);
+
 Route::apiResource('mias-factor', MiasFactorController::class);
 Route::apiResource('vt-models',VtModelController::class);
 Route::apiResource('cpk-ihc-models',CpkIhcModelController::class);
@@ -375,6 +377,11 @@ Route::post('/excess-layers/merge', [ExcessLayersController::class, 'mergeExcess
 
 Route::patch('/mass-production/{furnace}/{massProd}/merge', [MassProductionController::class, 'mergeMainLayer']);
 
+Route::post('/initial_control_sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
+
+Route::get('/initial-control-sheets/lot-all', [InitialControlSheetController::class, 'fetchAllLotNumbers']);
+
 Route::apiResource('mass-production',MassProductionController::class);
 Route::apiResource('excess-layers',ExcessLayersController::class);
 Route::apiResource('error-logs', ErrorLogsController::class);
+Route::apiResource('initial_control_sheet', InitialControlSheetController::class);

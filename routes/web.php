@@ -21,6 +21,7 @@ Route::get('/', function(){
 });
 Route::get('/view', [FrontendController::class,'viewList'])->name('viewList');
 Route::get('/automation', [FrontendController::class,'automation'])->name('automation');
+Route::get('/initial_process', [FrontendController::class,'initial_process'])->name('initial_process');
 Route::get('/massprod', [FrontendController::class,'massprod'])->name('massprod');
 Route::get('/control_sheet', [FrontendController::class,'controlSheet'])->name('control_sheet');
 Route::get('/htgraph', [FrontendController::class,'htgraph'])->name('htgraph');
