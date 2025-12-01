@@ -736,8 +736,8 @@ const showModalDuplicateWarning = ref(false);
 
 const activeSection = ref('control_sheet');
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
-const boxesEndList = ref(['B','C','D','E','F','G','H','J','K']);
-const excessBoxesEndList = ref(['B','C','D','E','F','G','H','J','K']);
+const boxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
+const excessBoxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
 const model_names = ref([]);
 const boxNoValues = ref({});
 const weightValues = ref({});
@@ -793,16 +793,6 @@ const visibleExcessBoxes = computed(() => {
     return allBoxes.slice(startIndex, endIndex + 1);
 });
 
-const combinedBoxes = computed(() => {
-    if (initial_mpcs.moreThanTenBoxes) {
-        // merge main and excess boxes only if >10 boxes
-        return [...visibleBoxes.value, ...visibleExcessBoxes.value];
-    } else {
-        // normal scenario: only main boxes
-        return visibleBoxes.value;
-    }
-});
-
 // Initialize qtyValues from mpcs.qty / qty_lastBox when manual mode is enabled
 // Watch manualQtyMode and initialize qtyValues for both tables
 watch(manualQtyMode, (val) => {
@@ -827,12 +817,6 @@ watch(manualQtyMode, (val) => {
         : initial_mpcs.qty;
     });
   }
-});
-
-// Compute the true last box in the combined set
-const lastBoxInCombined = computed(() => {
-  const boxes = combinedBoxes.value;
-  return boxes.length ? boxes[boxes.length - 1] : null;
 });
 
 // For MAIN table
@@ -1053,16 +1037,17 @@ const saveNormalCase = async () => {
             model_name: initial_mpcs.selectedModel,
             lot_no: initial_mpcs.lotNo,
             layer_data: layerPayload,
+            total_boxes: numberOfBoxes.value,
         };
 
-        console.log('Payload for Normal Case: ', payload);
-        console.log('Number Of Boxes: ',numberOfBoxes.value);
+        //console.log('Payload for Normal Case: ', payload);
+        //console.log('Number Of Boxes: ',numberOfBoxes.value);
 
         // POST to your API
-        //const response = await axios.post('/api/initial_control_sheet', payload);
+        const response = await axios.post('/api/initial_control_sheet', payload);
         //console.log('Normal case saved:', response.data);
         toast.success('Normal Control Sheet saved successfully.');
-        //clearAll(); // reset form
+        clearAll(); // reset form
     } catch (err) {
         console.error('Error saving normal case:', err);
         toast.error('Failed to save normal Control Sheet.');
@@ -1112,16 +1097,17 @@ const saveExcessCase = async () => {
             lot_no: initial_mpcs.lotNo,
             layer_data: layerPayload,
             excess_data: excessPayload,
+            total_boxes: numberOfBoxes.value,
         };
 
-        console.log('Excess payload', payload);
-        console.log('Number Of Boxes: ',numberOfBoxes.value);
+        //console.log('Excess payload', payload);
+        //console.log('Number Of Boxes: ',numberOfBoxes.value);
 
         // POST to your API
-        //const response = await axios.post('/api/initial_control_sheet', payload);
+        const response = await axios.post('/api/initial_control_sheet', payload);
         //console.log('Excess case saved:', response.data);
         toast.success('Excess Control Sheet saved successfully.');
-        //clearAll(); // reset form
+        clearAll(); // reset form
     } catch (err) {
         console.error('Error saving excess case:', err);
         toast.error('Failed to save excess Control Sheet.');

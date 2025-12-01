@@ -27,6 +27,7 @@ class InitialControlSheetController extends Controller
             // Optional
             'layer_data'  => 'nullable|array',
             'excess_data' => 'nullable|array',
+            'total_boxes' => 'nullable|integer',
         ]);
 
         $sheet = InitialControlSheet::create([
@@ -34,6 +35,7 @@ class InitialControlSheetController extends Controller
             'lot_no'      => $validated['lot_no'],
             'layer_data'  => $validated['layer_data'] ?? null,
             'excess_data' => $validated['excess_data'] ?? null,
+            'total_boxes' => $validated['total_boxes'],
         ]);
 
         return response()->json($sheet, 201);
@@ -57,6 +59,7 @@ class InitialControlSheetController extends Controller
             'lot_no'     => 'sometimes|string|max:50',
             'layer_data' => 'sometimes|array',
             'excess_data' => 'sometimes|array',
+            'total_boxes' => 'sometimes|integer',
         ]);
 
         $initialControlSheet->update($validated);
@@ -94,5 +97,32 @@ class InitialControlSheetController extends Controller
             ->get();
 
         return response()->json($records);
+    }
+
+    public function fetchAllLotModels($lotNo)
+    {
+        if (!$lotNo) {
+            return response()->json([
+                'message' => 'Lot number is required.'
+            ], 400);
+        }
+
+        $records = InitialControlSheet::where('lot_no', $lotNo)
+            ->whereNotNull('model_name')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($records);
+    }
+
+    public function fetchLotData($modelName, $lotNo)
+    {
+        $sheet = InitialControlSheet::where('model_name', $modelName)
+            ->where('lot_no', $lotNo)
+            ->first();
+
+        return response()->json([
+            'data'  => $sheet
+        ]);
     }
 }
