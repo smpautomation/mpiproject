@@ -1043,4 +1043,85 @@ class MassProductionController extends Controller
         return response()->json($massProdRecord, 200);
     }
 
+    public function excessLayerList($furnace, $massprod, $excessData)
+    {
+        $excessBoxes = $this->parseBoxRange($excessData);
+        $allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
+
+        // --- Fetch main mass production row ---
+        $mp = MassProduction::where('furnace', $furnace)
+                ->where('mass_prod', $massprod)
+                ->first();
+
+        if (!$mp) {
+            return response()->json(['message' => 'Mass production not found'], 404);
+        }
+
+        // --- Fetch all excess layers for this mass production ---
+        $excessLayers = ExcessLayers::where('furnace', $furnace)
+                            ->where('mass_prod', $massprod)
+                            ->get()
+                            ->keyBy('layer'); // key by layer number for easier lookup
+
+        $availableLayers = [];
+
+        for ($i = 1; $i <= 9; $i++) {
+            $layerName = "layer_$i";
+            $layerData = is_array($mp[$layerName]) ? $mp[$layerName] : json_decode($mp[$layerName], true) ?? [];
+
+            // Determine filled boxes from main layer
+            $qtyRow = collect($layerData)->firstWhere('rowTitle', 'QTY (PCS):')['data'] ?? [];
+            $filledBoxes = [];
+            foreach ($allBoxes as $box) {
+                if (isset($qtyRow[$box]) && $qtyRow[$box] !== null && $qtyRow[$box] !== '') {
+                    $filledBoxes[] = $box;
+                }
+            }
+
+            // --- Include any previously saved excess boxes ---
+            if (isset($excessLayers[$i])) {
+                $excessLayerData = is_array($excessLayers[$i]->layer_data)
+                    ? $excessLayers[$i]->layer_data
+                    : json_decode($excessLayers[$i]->layer_data, true) ?? [];
+                $excessQtyRow = collect($excessLayerData)->firstWhere('rowTitle', 'QTY (PCS):')['data'] ?? [];
+                foreach ($allBoxes as $box) {
+                    if (isset($excessQtyRow[$box]) && $excessQtyRow[$box] !== null && $excessQtyRow[$box] !== '') {
+                        $filledBoxes[] = $box;
+                    }
+                }
+                $filledBoxes = array_unique($filledBoxes);
+            }
+
+            $availableBoxes = array_diff($allBoxes, $filledBoxes);
+
+            if (empty($filledBoxes)) {
+                // Entire layer empty → all boxes available
+                $availableLayers[$i] = $allBoxes;
+            } elseif (!empty($availableBoxes)) {
+                // Partially filled → check if excess boxes fit
+                $fits = empty(array_diff($excessBoxes, $availableBoxes));
+                if ($fits) {
+                    $availableLayers[$i] = $availableBoxes;
+                }
+            }
+            // Fully filled layers are automatically ignored
+        }
+
+        return response()->json([
+            'availableLayers' => $availableLayers
+        ]);
+    }
+
+    private function parseBoxRange(string $range): array
+    {
+        $letters = range('A', 'K'); // All possible boxes
+        if (strpos($range, '-') !== false) {
+            [$start, $end] = explode('-', $range);
+            $startIndex = array_search($start, $letters);
+            $endIndex   = array_search($end, $letters);
+            return array_slice($letters, $startIndex, $endIndex - $startIndex + 1);
+        }
+        return [$range]; // Single box
+    }
+
 }

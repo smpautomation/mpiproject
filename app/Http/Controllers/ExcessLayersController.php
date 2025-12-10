@@ -132,7 +132,16 @@ class ExcessLayersController extends Controller
         return response()->json($newRecord, 201);
     }
 
+    public function existingExcessLayerList($furnace, $massprod)
+    {
+        $excess = ExcessLayers::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->pluck('layer'); // returns [2,4,5]
 
+        return response()->json([
+            'excess_layers' => $excess
+        ]);
+    }
 
 
 }

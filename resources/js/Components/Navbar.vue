@@ -184,7 +184,8 @@ const navItems = [
             { label: 'Coating', route: 'coating', access: ['Heat Treatment','Automation','Coating'] },
             { label: 'Film Pasting', route: 'film_pasting', access: ['Heat Treatment','Automation','Coating'] },
             { label: 'JH Curve', route: 'manage', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
-            { label: 'MPI Report', route: 'reports', access: ['Automation','Final Approver','Proxy Approver','Coating','Heat Treatment','Checking Approver', 'Preparation Approver'] }
+            { label: 'MPI Report', route: 'reports', access: ['Automation','Final Approver','Proxy Approver','Coating','Heat Treatment','Checking Approver', 'Preparation Approver'] },
+            { label: 'Initial Process', route: 'initial_process', access: ['Heat Treatment','Automation','Coating'] },
         ]
     },
     {

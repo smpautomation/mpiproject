@@ -80,13 +80,21 @@ class InitialControlSheetController extends Controller
     public function checkDuplicateLot(Request $request)
     {
         $request->validate([
-            'lot_no' => 'required|string|max:50',
+            'lot_no'     => 'required|string|max:50',
+            'model_name' => 'required|string|max:100',
         ]);
 
-        $exists = InitialControlSheet::where('lot_no', $request->lot_no)->exists();
+        // Check based only on lot_no
+        $lotExists = InitialControlSheet::where('lot_no', $request->lot_no)->exists();
+
+        // Check based on the pair (model_name + lot_no)
+        $pairExists = InitialControlSheet::where('lot_no', $request->lot_no)
+            ->where('model_name', $request->model_name)
+            ->exists();
 
         return response()->json([
-            'duplicate_detected' => $exists
+            'duplicate_lot'  => $lotExists,
+            'duplicate_pair' => $pairExists,
         ]);
     }
 
@@ -125,4 +133,84 @@ class InitialControlSheetController extends Controller
             'data'  => $sheet
         ]);
     }
+
+    public function fetchTotalBoxes($modelName, $lotNo)
+    {
+        $record = InitialControlSheet::where('model_name', $modelName)
+            ->where('lot_no', $lotNo)
+            ->select('total_boxes')
+            ->first();
+
+        return response()->json([
+            'total_boxes' => $record ? $record->total_boxes : null
+        ]);
+    }
+
+    public function validateLayers($modelName, $lotNo, $mainCount, $excessCount)
+    {
+        $record = InitialControlSheet::where('model_name', $modelName)
+            ->where('lot_no', $lotNo)
+            ->select('layer_data', 'excess_data')
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'validated' => false,
+                'message' => 'Record not found.'
+            ]);
+        }
+
+        // Ensure layer_data and excess_data are arrays
+        $layerData  = is_array($record->layer_data) ? $record->layer_data : json_decode($record->layer_data, true);
+        $excessData = is_array($record->excess_data) ? $record->excess_data : json_decode($record->excess_data, true);
+
+        // Safely extract number of boxes in main layer
+        $layerCount = 0;
+        if (!empty($layerData) && isset($layerData[0]['data']) && is_array($layerData[0]['data'])) {
+            $layerCount = count($layerData[0]['data']);
+        }
+
+        // Safely extract number of boxes in excess layer
+        $excessBoxCount = 0;
+        if (!empty($excessData) && isset($excessData[0]['data']) && is_array($excessData[0]['data'])) {
+            $excessBoxCount = count($excessData[0]['data']);
+        }
+
+        // Compare counts with user-provided values
+        $validated = (intval($mainCount) === $layerCount) && (intval($excessCount) === $excessBoxCount);
+
+        return response()->json([
+            'validated'    => $validated,
+            'layer_count'  => $layerCount,
+            'excess_count' => $excessBoxCount
+        ]);
+    }
+
+    public function fetchLayerExcessData($modelName, $lotNo)
+    {
+        $record = InitialControlSheet::where('model_name', $modelName)
+            ->where('lot_no', $lotNo)
+            ->select('layer_data', 'excess_data', 'total_boxes')
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'layer_data'  => [],
+                'excess_data' => [],
+                'total_boxes' => 0,
+                'message'     => 'Record not found.'
+            ]);
+        }
+
+        $layerData  = is_array($record->layer_data) ? $record->layer_data : json_decode($record->layer_data, true);
+        $excessData = is_array($record->excess_data) ? $record->excess_data : json_decode($record->excess_data, true);
+
+        return response()->json([
+            'layer_data'  => $layerData ?? [],
+            'excess_data' => $excessData ?? [],
+            'total_boxes' => $record->total_boxes ?? 0
+        ]);
+    }
+
+
 }

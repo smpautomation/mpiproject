@@ -35,35 +35,61 @@
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div class="relative">
-                            <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">
+                                Furnace Name <span class="text-red-500">*</span>
+                            </label>
                             <select
-                            v-model="mpcs.selectedFurnace"
-                            class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                v-model="mpcs.selectedFurnace"
+                                :disabled="isDataShown"
+                                :class="isDataShown
+                                    ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
+                                    : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                                "
                             >
-                            <option v-for="item in furnace_names" :key="item" :value="item">
-                                {{ item }}
-                            </option>
+                                <option v-for="item in furnace_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
                             </select>
                         </div>
 
                         <div class="relative">
-                            <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">
+                                Mass Prod. Name <span class="text-red-500">*</span>
+                            </label>
                             <select
-                            v-model="mpcs.selectedMassProd"
-                            class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                v-model="mpcs.selectedMassProd"
+                                :disabled="isDataShown"
+                                :class="isDataShown
+                                    ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
+                                    : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                                "
                             >
-                            <option v-for="item in massProd_names" :key="item" :value="item">
-                                {{ item }}
-                            </option>
+                                <option v-for="item in massProd_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
-                            <select v-model="mpcs.selectedLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                            <option v-for="item in layers" :key="item" :value="item">
-                                {{ item }}
-                            </option>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Layer<span class="text-red-500"> *</span>
+                            </label>
+                            <select
+                                v-model="mpcs.selectedLayer"
+                                :disabled="isDataShown"
+                                :class="isDataShown
+                                    ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
+                                    : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                                "
+                            >
+                                <option
+                                    v-for="item in layers"
+                                    :key="item"
+                                    :value="item"
+                                    :disabled="item === '9.5' && Number(totalBoxes) !== 10"
+                                >
+                                    {{ item }}
+                                </option>
                             </select>
                         </div>
 
@@ -71,22 +97,41 @@
                         <div v-if="isLayerNinePointFive" class="col-span-1 md:col-span-4">
                             <label class="block mb-1 text-xs font-semibold text-gray-800">9.5 Layer Set <span class="text-red-500">*</span></label>
                             <div class="flex flex-col gap-4 md:flex-row">
-                            <label
-                                class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
-                                :class="{'border-yellow-500 bg-yellow-50': mpcs.nineHalfSet === 'SET1'}"
-                            >
-                                <input type="radio" value="SET1" v-model="mpcs.nineHalfSet" class="accent-yellow-500" />
-                                First Half: A, C, E, G, J
-                            </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
+                                    :class="{
+                                        'border-yellow-500 bg-yellow-50': mpcs.nineHalfSet === 'SET1',
+                                        'opacity-50 cursor-not-allowed': isDataShown
+                                    }"
+                                >
+                                    <input
+                                        type="radio"
+                                        value="SET1"
+                                        v-model="mpcs.nineHalfSet"
+                                        class="accent-yellow-500"
+                                        :disabled="isDataShown"
+                                    />
+                                    First Half: A, C, E, G, J
+                                </label>
 
-                            <label
-                                class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
-                                :class="{'border-yellow-500 bg-yellow-50': mpcs.nineHalfSet === 'SET2'}"
-                            >
-                                <input type="radio" value="SET2" v-model="mpcs.nineHalfSet" class="accent-yellow-500" />
-                                Second Half: B, D, F, H, K
-                            </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
+                                    :class="{
+                                        'border-yellow-500 bg-yellow-50': mpcs.nineHalfSet === 'SET2',
+                                        'opacity-50 cursor-not-allowed': isDataShown
+                                    }"
+                                >
+                                    <input
+                                        type="radio"
+                                        value="SET2"
+                                        v-model="mpcs.nineHalfSet"
+                                        class="accent-yellow-500"
+                                        :disabled="isDataShown"
+                                    />
+                                    Second Half: B, D, F, H, K
+                                </label>
                             </div>
+
                         </div>
                     </div>
 
@@ -98,43 +143,71 @@
                             </label>
                             <select
                                 v-model="mpcs.lotNo"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                :disabled="isDataShown"
+                                :class="[
+                                'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
+                                isDataShown
+                                    ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
+                                    : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600'
+                                ]"
                             >
                                 <option value="" disabled>Select Lot No</option>
-                                <option
-                                v-for="(lot, index) in lotNoLists"
-                                :key="index"
-                                :value="lot.lot_no"
-                                >
-                                    {{ lot.lot_no }}
+                                <option v-for="(lot, index) in lotNoLists" :key="index" :value="lot.lot_no">
+                                {{ lot.lot_no }}
                                 </option>
                             </select>
                         </div>
+
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Model<span class="text-red-500"> *</span></label>
-                            <select v-model="mpcs.selectedModel" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
-                                <option v-for="(lot, index) in model_names"
-                                :key="index"
-                                :value="lot.model_name">
-                                    {{ lot.model_name }}
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Model<span class="text-red-500"> *</span>
+                            </label>
+                            <select
+                                v-model="mpcs.selectedModel"
+                                :disabled="isDataShown"
+                                :class="[
+                                'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
+                                isDataShown
+                                    ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
+                                    : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600'
+                                ]"
+                            >
+                                <option v-for="(lot, index) in model_names" :key="index" :value="lot.model_name">
+                                {{ lot.model_name }}
                                 </option>
                             </select>
                         </div>
+
                         <div class="mt-5">
                             <button
+                                v-if="!isDataShown"
                                 @click="fetchAllLotDataBoxDetails()"
                                 class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                             >
                                 Show Data
                             </button>
-
+                            <button
+                                v-else
+                                @click="changeData()"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-yellow-600 hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            >
+                                Change Data
+                            </button>
                         </div>
                     </div>
 
                     <!-- Group: Prepared By -->
-                    <div class="grid items-end grid-cols-1 gap-6 md:grid-cols-3">
+                    <div class="grid items-end grid-cols-1 gap-6 md:grid-cols-3 pt-10">
+                        <div
+                            class="mt-4 w-full px-4 py-3 bg-gray-100 border-l-4 border-cyan-600 rounded-md shadow-sm"
+                        >
+                            <p class="text-sm font-semibold text-gray-800">
+                                Detected Total Boxes:
+                                <span class="text-blue-700">{{ totalBoxes }}</span>
+                            </p>
+                        </div>
                         <!-- Button -->
-                        <div>
+                        <div v-if="isDataShown">
                             <button
                                 @click="applyHTLT()"
                                 class="w-full px-4 py-2 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-1"
@@ -142,328 +215,457 @@
                                 Apply HT and LT
                             </button>
                         </div>
+                        <div v-if="isDataShown && mpcs.moreThanTenBoxes">
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Excess Layer<span class="text-red-500"> *</span></label>
+                            <select v-model="mpcs.selectedExcessLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
+                            <option v-for="item in excessLayers" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                            </select>
+                        </div>
                     </div>
+
+                    <div class="p-4 rounded-xl shadow-lg border border-gray-300 bg-white">
+
+                        <h3 class="text-sm font-bold text-gray-800 mb-2 tracking-wide">
+                            Manual Layer Allocation
+                        </h3>
+
+                        <div class="h-px bg-gray-200 mb-4"></div>
+
+                        <p
+                            class="text-xs mb-3 tracking-wide"
+                            :class="(!mpcs.selectedFurnace || !mpcs.selectedMassProd || isDataShown || noMassProdData)
+                                ? 'text-red-600'
+                                : 'text-gray-700'"
+                        >
+                            {{
+                                noMassProdData
+                                    ? 'The selected furnace and mass production does not exist.'
+                                    : isDataShown
+                                        ? 'Click Change Data button to enable Manual Allocation.'
+                                        : 'Select a Furnace and Mass Production Name to enable Manual Layer Allocation.'
+                            }}
+                        </p>
+
+                        <button
+                            @click="showBreakLotForm()"
+                            :disabled="!mpcs.selectedFurnace || !mpcs.selectedMassProd || isDataShown || noMassProdData"
+                            class="w-full py-3 text-sm font-bold rounded-lg transition-all duration-300
+                                text-white tracking-wide
+                                bg-gradient-to-r from-teal-600 to-blue-600
+                                hover:from-indigo-500 hover:to-cyan-500
+                                hover:shadow-xl hover:scale-105 active:scale-95
+                                disabled:opacity-50 disabled:cursor-not-allowed
+                                disabled:hover:scale-100 disabled:hover:shadow-none"
+                        >
+                            Manual Layer Allocation
+                        </button>
+
+                    </div>
+
                 </div>
 
                 <div v-if="!overwriteMode" class="w-full px-8 py-8 ml-10 mr-5 space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12">
 
-                    <!-- Professional Instruction Label -->
-                    <div class="p-4 mb-6 border-l-4 rounded-lg shadow-sm bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-500">
-                        <div class="flex items-start space-x-3">
-                            <!-- Info Icon -->
-                            <div class="flex-shrink-0 mt-0.5">
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg shadow-md bg-gradient-to-br from-cyan-500 to-teal-500">
-                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            </div>
+                    <div v-if="isDataShown">
+                        <div v-if="!mpcs.moreThanTenBoxes" class="w-full px-5">
+                            <table class="min-w-full text-xs border border-collapse border-gray-200">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-2 py-1 text-left border border-gray-300"></th>
+                                        <th
+                                            v-for="item in visibleBoxes"
+                                            :key="item"
+                                            class="px-2 py-1 font-semibold text-center border border-gray-300"
+                                        >
+                                            {{ item }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
+                                        <td
+                                            v-for="n in visibleBoxes.length"
+                                            :key="n"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ mpcs.selectedModel }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
+                                        <td
+                                            v-for="n in visibleBoxes.length"
+                                            :key="n"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ mpcs.coatingMCNo }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
+                                        <td
+                                            v-for="n in visibleBoxes.length"
+                                            :key="n"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ mpcs.lotNo }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
+                                        <td
+                                            v-for="(box) in visibleBoxes"
+                                            :key="box"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ qtyValues[box] }}
+                                        </td>
+                                    </tr>
 
-                            <!-- Message Content -->
-                            <div class="flex-1">
-                            <p class="text-base font-semibold leading-relaxed text-gray-800">
-                                Select <span class="font-bold text-cyan-700">Model</span> and <span class="font-bold text-cyan-700">Lot No.</span>, then click the
-                                <span class="inline-flex items-center px-2 py-0.5 mx-1 bg-cyan-600 text-white text-sm font-bold rounded shadow-sm">Show Data</span>
-                                button to view the lot details.
-                            </p>
-                            </div>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
+                                        <td
+                                            v-for="box in visibleBoxes"
+                                            :key="box"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                        {{ htValues[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
+                                        <td
+                                            v-for="box in visibleBoxes"
+                                            :key="box"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                        {{ ltValues[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
+                                        <td
+                                            v-for="box in visibleBoxes"
+                                            :key="box"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ weightValues[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
+                                        <td
+                                            v-for="box in visibleBoxes"
+                                            :key="box"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ boxNoValues[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
+                                        <td
+                                            v-for="n in visibleBoxes.length"
+                                            :key="n"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ mpcs.coating }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
+                                        <td
+                                            v-for="n in visibleBoxes.length"
+                                            :key="n"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ mpcs.magnetPreparedBy }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
+                                        <td
+                                            v-for="n in visibleBoxes.length"
+                                            :key="n"
+                                            class="px-2 py-1 text-center border border-gray-300"
+                                        >
+                                            {{ mpcs.boxPreparedBy }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
 
-                    <div v-if="!mpcs.moreThanTenBoxes" class="w-full px-5">
-                        <table class="min-w-full text-xs border border-collapse border-gray-200">
-                            <thead class="bg-gray-100">
+                        <div v-else class="w-full px-5">
+
+                            <!-- ================= MAIN 10 BOXES ================= -->
+                            <p class="mb-2 font-semibold text-gray-700">Main Boxes - Layer {{ mpcs.selectedLayer }}</p>
+                            <table class="min-w-full mb-6 text-xs border border-collapse border-gray-200">
+                                <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-2 py-1 text-left border border-gray-300"></th>
-                                    <th
-                                        v-for="item in visibleBoxes"
-                                        :key="item"
-                                        class="px-2 py-1 font-semibold text-center border border-gray-300"
-                                    >
-                                        {{ item }}
+                                    <th v-for="box in visibleBoxes" :key="'main-header-' + box" class="px-2 py-1 font-semibold text-center border border-gray-300">
+                                    {{ box }}
                                     </th>
                                 </tr>
-                            </thead>
-                            <tbody>
+                                </thead>
+                                <tbody>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.selectedModel }}
+                                    <td v-for="box in visibleBoxes" :key="'main-model-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ mpcs.selectedModel }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.coatingMCNo }}
+                                    <td v-for="box in visibleBoxes" :key="'main-coatingMC-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ mpcs.coatingMCNo }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.lotNo }}
+                                    <td v-for="box in visibleBoxes" :key="'main-lot-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ mpcs.lotNo }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
-                                    <td
-                                        v-for="(box, index) in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ qtyValues[box] }}
+                                    <td v-for="box in visibleBoxes" :key="'main-qty-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ qtyValues[box] }}
                                     </td>
                                 </tr>
-
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
+                                    <td v-for="box in visibleBoxes" :key="'main-ht-' + box" class="px-2 py-1 text-center border border-gray-300">
                                     {{ htValues[box] }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
+                                    <td v-for="box in visibleBoxes" :key="'main-lt-' + box" class="px-2 py-1 text-center border border-gray-300">
                                     {{ ltValues[box] }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ weightValues[box] }}
+                                    <td v-for="box in visibleBoxes" :key="'main-weight-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ weightValues[box] }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ boxNoValues[box] }}
+                                    <td v-for="box in visibleBoxes" :key="'main-boxno-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ boxNoValues[box] }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.coating }}
+                                    <td v-for="box in visibleBoxes" :key="'main-coating-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ mpcs.coating }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.magnetPreparedBy }}
+                                    <td v-for="box in visibleBoxes" :key="'main-magnet-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ mpcs.magnetPreparedBy }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.boxPreparedBy }}
+                                    <td v-for="box in visibleBoxes" :key="'main-boxprep-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                    {{ mpcs.boxPreparedBy }}
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div v-else class="w-full px-5">
-
-                        <!-- ================= MAIN 10 BOXES ================= -->
-                        <p class="mb-2 font-semibold text-gray-700">Main Boxes</p>
-                        <table class="min-w-full mb-6 text-xs border border-collapse border-gray-200">
-                            <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-2 py-1 text-left border border-gray-300"></th>
-                                <th v-for="box in visibleBoxes" :key="'main-header-' + box" class="px-2 py-1 font-semibold text-center border border-gray-300">
-                                {{ box }}
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-model-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ mpcs.selectedModel }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-coatingMC-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ mpcs.coatingMCNo }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-lot-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ mpcs.lotNo }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
-                                <td v-for="box in visibleBoxes" :key="'main-qty-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ qtyValues[box] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
-                                <td v-for="box in visibleBoxes" :key="'main-ht-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ htValues[box] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
-                                <td v-for="box in visibleBoxes" :key="'main-lt-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ ltValues[box] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
-                                <td v-for="box in visibleBoxes" :key="'main-weight-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ weightValues[box] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-boxno-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ boxNoValues[box] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-coating-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ mpcs.coating }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-magnet-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ mpcs.magnetPreparedBy }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
-                                <td v-for="box in visibleBoxes" :key="'main-boxprep-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                {{ mpcs.boxPreparedBy }}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- ================= EXCESS BOXES ================= -->
-                        <div>
-                            <p class="mb-2 font-semibold text-gray-700">Excess Boxes</p>
-                            <table class="min-w-full text-xs border border-collapse border-gray-200">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                <th class="px-2 py-1 text-left border border-gray-300"></th>
-                                <th v-for="box in visibleExcessBoxes" :key="'excess-header-' + box" class="px-2 py-1 font-semibold text-center border border-gray-300">
-                                    {{ box }}
-                                </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-model-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.selectedModel }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-coatingMC-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.coatingMCNo }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-lot-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.lotNo }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-qty-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ qtyValuesExcess[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-ht-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ htValuesExcess[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-lt-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ ltValuesExcess[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-weight-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ weightValuesExcess[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-boxno-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ boxNoValuesExcess[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-coating-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.coating }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-magnet-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.magnetPreparedBy }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
-                                    <td v-for="box in visibleExcessBoxes" :key="'excess-boxprep-' + box" class="px-2 py-1 text-center border border-gray-300">
-                                        {{ mpcs.boxPreparedBy }}
-                                    </td>
-                                </tr>
-                            </tbody>
+                                </tbody>
                             </table>
+
+                            <!-- ================= EXCESS BOXES ================= -->
+                            <div>
+                                <p class="mb-2 font-semibold text-gray-700">Excess Boxes - Layer {{ mpcs.selectedExcessLayer }}</p>
+                                <table class="min-w-full text-xs border border-collapse border-gray-200">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                    <th class="px-2 py-1 text-left border border-gray-300"></th>
+                                    <th v-for="box in visibleExcessBoxes" :key="'excess-header-' + box" class="px-2 py-1 font-semibold text-center border border-gray-300">
+                                        {{ box }}
+                                    </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-model-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ mpcs.selectedModel }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-coatingMC-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ mpcs.coatingMCNo }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-lot-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ mpcs.lotNo }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-qty-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ qtyValuesExcess[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-ht-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ htValuesExcess[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-lt-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ ltValuesExcess[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-weight-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ weightValuesExcess[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-boxno-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ boxNoValuesExcess[box] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-coating-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ mpcs.coating }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-magnet-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ mpcs.magnetPreparedBy }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
+                                        <td v-for="box in visibleExcessBoxes" :key="'excess-boxprep-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                            {{ mpcs.boxPreparedBy }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="w-full max-w-4xl mx-auto px-8 py-0 relative overflow-hidden">
+                         <!-- Animated Background Pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="dot-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                                <circle cx="5" cy="5" r="1" fill="currentColor" class="text-cyan-400"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#dot-pattern)" />
+                            </svg>
+                        </div>
+
+                        <!-- Main Card -->
+                        <div class="relative bg-gradient-to-br from-white via-gray-50 to-white border-2 border-gray-200 shadow-2xl rounded-3xl overflow-hidden">
+
+                            <!-- Top Gradient Accent -->
+                            <div class="h-2 bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-500 bg-[length:200%_100%] animate-gradient-flow"></div>
+
+                            <!-- Content Container -->
+                            <div class="px-8 py-10 flex flex-col items-center justify-center space-y-6">
+
+                            <!-- Animated Icon Container -->
+                            <div class="relative">
+                                <!-- Outer rotating ring -->
+                                <div class="absolute inset-0 w-24 h-24 -m-3">
+                                <div class="absolute inset-0 border-3 border-transparent border-t-cyan-400 border-r-teal-400 rounded-full animate-spin-slow"></div>
+                                </div>
+
+                                <!-- Glowing background -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-2xl blur-xl animate-pulse"></div>
+
+                                <!-- Icon Container -->
+                                <div class="relative w-18 h-18 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl border-2 border-gray-200 shadow-lg flex items-center justify-center group hover:scale-110 transition-transform duration-500">
+                                <!-- Inner glow on hover -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-400/0 to-teal-400/0 group-hover:from-cyan-400/30 group-hover:to-teal-400/30 rounded-xl transition-all duration-500"></div>
+
+                                <!-- Main Icon -->
+                                <svg class="relative w-10 h-10 text-gray-400 group-hover:text-cyan-500 transition-colors duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                </svg>
+                                </div>
+                            </div>
+
+                            <!-- Title Section -->
+                            <div class="text-center space-y-2">
+                                <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800">
+                                No Data Available
+                                </h2>
+                                <div class="flex items-center justify-center space-x-2">
+                                <div class="w-12 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></div>
+                                <div class="w-12 h-0.5 bg-gradient-to-r from-transparent via-teal-400 to-transparent rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <!-- Description Card -->
+                            <div class="max-w-xl">
+                                <div class="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-5 shadow-lg">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0 mt-1">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-lg flex items-center justify-center shadow-md">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    </div>
+                                    <div class="flex-1 space-y-2">
+                                    <p class="text-gray-700 text-sm leading-relaxed">
+                                        No heat treatment data has been loaded yet. Click <span class="bg-cyan-600 p-1 rounded-lg font-bold text-white">Show Data</span> button.
+                                    </p>
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                        <svg class="w-4 h-4 text-cyan-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Select a <span class="font-semibold text-gray-800">Model</span></span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Choose a <span class="font-semibold text-gray-800">Lot Number</span></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 pt-1 italic">
+                                        Once loaded, the table will display all relevant information including main and excess boxes.
+                                    </p>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+
+                            <!-- Decorative Elements -->
+                            <div class="flex items-center justify-center space-x-2 pt-2">
+                                <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+                                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                                <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
+                            </div>
+                            </div>
                         </div>
                     </div>
 
@@ -474,9 +676,30 @@
             <div class="flex flex-row mt-12">
                 <div v-if="!heatTreatmentInformationDetected" class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8">
                     <div>
-                        <div v-if="overwriteMode"><h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Overwriting Heat Treatment Information</h2> <p class="px-3 py-1 mb-3 text-xs font-medium text-teal-900 border rounded-md bg-cyan-100 border-cyan-300">
-                            Note: Only <span class="font-semibold">Cycle Pattern, Current Pattern, Date Finish, Time Finish, Remarks</span> and <span class="font-semibold">Graph Uploads</span> can be overwritten.
-                        </p></div>
+                        <div v-if="overwriteMode">
+                            <h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">
+                                Overwriting Heat Treatment Information
+                            </h2>
+
+                            <p class="px-3 py-1 mb-3 text-xs font-medium text-teal-900 border rounded-md bg-cyan-100 border-cyan-300">
+                                Note: Only
+                                <span class="font-semibold">Cycle Pattern, Current Pattern, Date Finish, Time Finish, Remarks</span>
+                                and
+                                <span class="font-semibold">Graph Uploads</span>
+                                can be overwritten.
+                            </p>
+
+                            <p class="px-3 py-1 mb-3 text-xs font-medium text-yellow-800 border-l-2 border-yellow-500 pl-2" v-if="!isEditingExpired">
+                                ⚠ Time Start and Date Start can only be edited within 24 hours.
+                            </p>
+
+                            <p class="px-3 py-1 mb-3 text-xs font-medium text-red-700" v-if="isEditingExpired">
+                                ⚠ Edit window has expired.
+                            </p>
+                            <p class="px-3 py-1 mb-3 text-xs font-medium text-teal-900" v-else>
+                                ⏱ Hours left until expiration: {{ hoursLeftDisplay }}
+                            </p>
+                        </div>
                         <div v-else><h2 class="pb-1 mb-4 font-bold text-gray-800 border-b text-md">Heat Treatment Information</h2></div>
                         <div class="flex flex-row space-x-3">
                             <div class="flex flex-col">
@@ -490,11 +713,11 @@
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Cycle No<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.cycleNo" type="text" :disabled="overwriteMode" @input="hti.cycleNo = hti.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.cycleNo" type="text" :disabled="overwriteMode" @input="hti.cycleNo = hti.cycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Pattern No<span class="text-red-500"> *</span></label>
-                                    <select v-model="hti.patternNo" :disabled="overwriteMode" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <select v-model="hti.patternNo" :disabled="overwriteMode" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
                                         <option v-for="item in graph_patterns" :key="item" :value="item">
                                             {{ item }}
                                         </option>
@@ -511,20 +734,38 @@
                             </div>
                             <div class="flex flex-col">
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Date Start<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.dateStart" :disabled="overwriteMode" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">
+                                        Date Start<span class="text-red-500"> *</span>
+                                    </label>
+                                    <input
+                                        v-model="hti.dateStart"
+                                        :disabled="overwriteMode && isEditingExpired"
+                                        type="date"
+                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500
+                                            disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                    />
                                 </div>
+
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.timeStart" :disabled="overwriteMode" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">
+                                        Time Start<span class="text-red-500"> *</span>
+                                    </label>
+                                    <input
+                                        v-model="hti.timeStart"
+                                        :disabled="overwriteMode && isEditingExpired"
+                                        type="time"
+                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500
+                                            disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                    />
                                 </div>
+
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Loader<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.loader" :disabled="overwriteMode" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.loader" :disabled="overwriteMode" type="text" @input="hti.loader = hti.loader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Partial No.<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.partialNo" :disabled="overwriteMode" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.partialNo" :disabled="overwriteMode" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
@@ -538,25 +779,25 @@
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Unloader<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.unloader" type="text" :disabled="overwriteMode" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.unloader" type="text" :disabled="overwriteMode" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Box Condition<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.boxCondition" type="text" :disabled="overwriteMode" @input="hti.boxCondition = hti.boxCondition.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.boxCondition" type="text" :disabled="overwriteMode" @input="hti.boxCondition = hti.boxCondition.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Box Cover<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.boxCover" type="text" :disabled="overwriteMode" @input="hti.boxCover = hti.boxCover.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.boxCover" type="text" :disabled="overwriteMode" @input="hti.boxCover = hti.boxCover.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Box Arrangement<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.boxArrangement" type="text" :disabled="overwriteMode" @input="hti.boxArrangement = hti.boxArrangement.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.boxArrangement" type="text" :disabled="overwriteMode" @input="hti.boxArrangement = hti.boxArrangement.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Encoded By<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.encodedBy" type="text" :disabled="overwriteMode" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="hti.encodedBy" type="text" :disabled="overwriteMode" @input="hti.encodedBy = hti.encodedBy.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                             </div>
                             <div class="flex flex-col w-[40rem]">
@@ -720,35 +961,94 @@
                         </span>
                         </button>
 
-                        <!-- FINALIZE / DUPLICATE Button -->
                         <button
-                        v-else
-                        @click="finalize"
-                        :disabled="isExisting"
-                        :class="[
-                            'group relative w-full py-3.5 text-sm font-bold transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
-                            isExisting
-                            ? 'bg-gradient-to-r from-red-600 to-red-700 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
-                            : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 focus:ring-cyan-400 text-white hover:shadow-teal-500/60 hover:shadow-2xl hover:scale-105 active:scale-95'
-                        ]"
+                            v-else
+                            @click="finalize"
+                            :disabled="
+                                noMassProdData ||
+                                isExisting ||
+                                isExisting_2ndGBDP ||
+                                isExistingExcess ||
+                                !isDataShown
+                            "
+                            :class="[
+                                'group relative w-full py-3.5 text-sm font-bold transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
+
+                                // Any reason disabled
+                                (noMassProdData || isExisting || isExisting_2ndGBDP || isExistingExcess || !isDataShown)
+                                    ? 'bg-gradient-to-r from-red-600 to-red-700 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
+                                    : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 focus:ring-cyan-400 text-white hover:shadow-teal-500/60 hover:shadow-2xl hover:scale-105 active:scale-95'
+                            ]"
                         >
-                        <div v-if="!isExisting" class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
-                        <span class="relative flex items-center justify-center space-x-2">
-                            <svg v-if="isExisting" class="w-5 h-5 drop-shadow-md" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                            </svg>
-                            <svg v-else class="w-5 h-5 transition-transform group-hover:rotate-12 drop-shadow-md" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                            </svg>
-                            <span class="drop-shadow-md">{{ isExisting ? 'LAYER OCCUPIED' : 'FINALIZE' }}</span>
-                        </span>
-                        <div v-if="isExisting" class="absolute inset-0 bg-red-400 opacity-10 animate-pulse"></div>
+                            <!-- Shine (only when enabled) -->
+                            <div
+                                v-if="!(
+                                    noMassProdData ||
+                                    isExisting ||
+                                    isExisting_2ndGBDP ||
+                                    isExistingExcess ||
+                                    !isDataShown
+                                )"
+                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                            ></div>
+
+                            <span class="relative flex items-center justify-center space-x-2">
+
+                                <!-- Disabled icon -->
+                                <svg
+                                    v-if="
+                                        noMassProdData ||
+                                        isExisting ||
+                                        isExisting_2ndGBDP ||
+                                        isExistingExcess ||
+                                        !isDataShown
+                                    "
+                                    class="w-5 h-5 drop-shadow-md"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+
+                                <!-- Active icon -->
+                                <svg
+                                    v-else
+                                    class="w-5 h-5 transition-transform group-hover:rotate-12 drop-shadow-md"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+
+                                <!-- Button Label -->
+                                <span class="drop-shadow-md">
+                                    {{
+                                        noMassProdData
+                                            ? 'NO MASS PROD DATA'
+                                            : (isExisting || isExisting_2ndGBDP || isExistingExcess)
+                                                ? 'LAYER OCCUPIED'
+                                                : (!isDataShown
+                                                    ? 'SHOW DATA FIRST'
+                                                    : 'FINALIZE')
+                                    }}
+                                </span>
+                            </span>
+
+                            <!-- Pulse for disabled -->
+                            <div
+                                v-if="noMassProdData || isExisting || isExisting_2ndGBDP || isExistingExcess || !isDataShown"
+                                class="absolute inset-0 bg-red-400 opacity-10 animate-pulse">
+                            </div>
                         </button>
 
                         <!-- CANCEL OVERWRITE Button -->
                         <button
                         v-if="overwriteMode"
-                        @click="cancelOverwrite()"
+                        @click="cancelOverwrite"
                         class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 hover:shadow-red-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-50 overflow-hidden"
                         >
                         <div class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
@@ -835,65 +1135,115 @@
                         </svg>
                     </button>
 
-                    <div
-                        class="w-full max-w-6xl px-10 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-lg rounded-2xl"
-                    >
-                        <!-- HT (PCS) -->
-                        <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                            HT (PCS)
-                        </p>
-                        <div class="overflow-x-auto">
+                    <div class="w-full max-w-6xl px-10 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-lg rounded-2xl">
+
+                        <!-- MAIN Boxes Table -->
+                        <div v-if="visibleBoxes.length">
+                            <p class="pb-2 text-sm font-semibold text-gray-800 border-b">HT (PCS) - Main Boxes</p>
+                            <div class="overflow-x-auto">
                             <table class="min-w-full text-center border border-collapse border-gray-300">
                                 <thead class="bg-gray-100">
-                                    <tr>
-                                        <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                            {{ box }}
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                    {{ box }}
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input
-                                                v-model="htValues[box]"
-                                                @input="htValues[box] = htValues[box].toUpperCase()"
-                                                type="text"
-                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            />
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                    <input
+                                        :value="htValues[box]"
+                                        @input="htValues[box] = $event.target.value.toUpperCase()"
+                                        type="text"
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    />
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
+                            </div>
+
+                            <p class="pb-2 pt-4 text-sm font-semibold text-gray-800 border-b">LT (PCS) - Main Boxes</p>
+                            <div class="overflow-x-auto">
+                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                                <thead class="bg-gray-100">
+                                <tr>
+                                    <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                    {{ box }}
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                    <input
+                                        :value="ltValues[box]"
+                                        @input="ltValues[box] = $event.target.value.toUpperCase()"
+                                        type="text"
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    />
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
                         </div>
 
-                        <!-- LT (PCS) -->
-                        <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                            LT (PCS)
-                        </p>
-                        <div class="overflow-x-auto">
+                        <!-- EXCESS Boxes Table -->
+                        <div v-if="visibleExcessBoxes.length">
+                            <p class="pb-2 text-sm font-semibold text-gray-800 border-b">HT (PCS) - Excess Boxes</p>
+                            <div class="overflow-x-auto">
                             <table class="min-w-full text-center border border-collapse border-gray-300">
                                 <thead class="bg-gray-100">
-                                    <tr>
-                                        <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                            {{ box }}
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                    {{ box }}
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input
-                                                v-model="ltValues[box]"
-                                                @input="ltValues[box] = ltValues[box].toUpperCase()"
-                                                type="text"
-                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            />
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                    <input
+                                        :value="htValuesExcess[box]"
+                                        @input="htValuesExcess[box] = $event.target.value.toUpperCase()"
+                                        type="text"
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    />
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
+                            </div>
+
+                            <p class="pb-2 pt-4 text-sm font-semibold text-gray-800 border-b">LT (PCS) - Excess Boxes</p>
+                            <div class="overflow-x-auto">
+                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                                <thead class="bg-gray-100">
+                                <tr>
+                                    <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                    {{ box }}
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                    <input
+                                        :value="ltValuesExcess[box]"
+                                        @input="ltValuesExcess[box] = $event.target.value.toUpperCase()"
+                                        type="text"
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    />
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </Modal>
 
@@ -916,7 +1266,7 @@
 
                     <p class="mb-6 text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
 
-                    <div class="px-5 overflow-auto">
+                    <div v-if="!mpcs.moreThanTenBoxes" class="w-full px-5">
                         <table class="min-w-full text-xs border border-collapse border-gray-200">
                             <thead class="bg-gray-100">
                                 <tr>
@@ -964,15 +1314,11 @@
                                 <tr>
                                     <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
                                     <td
-                                        v-for="(box, index) in visibleBoxes"
+                                        v-for="(box) in visibleBoxes"
                                         :key="box"
                                         class="px-2 py-1 text-center border border-gray-300"
                                     >
-                                        <!-- If manualQtyMode, show qtyValues, else show top-level qty / qty_lastBox -->
-                                        <span v-if="manualQtyMode">{{ qtyValues[box] }}</span>
-                                        <span v-else>
-                                        {{ index === visibleBoxes.length - 1 ? mpcs.qty_lastBox : mpcs.qty }}
-                                        </span>
+                                        {{ qtyValues[box] }}
                                     </td>
                                 </tr>
 
@@ -1048,6 +1394,173 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div v-else class="w-full px-5">
+
+                        <!-- ================= MAIN 10 BOXES ================= -->
+                        <p class="mb-2 font-semibold text-gray-700">Main Boxes (Selected Layer - {{ mpcs.selectedLayer }})</p>
+                        <table class="min-w-full mb-6 text-xs border border-collapse border-gray-200">
+                            <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-2 py-1 text-left border border-gray-300"></th>
+                                <th v-for="box in visibleBoxes" :key="'main-header-' + box" class="px-2 py-1 font-semibold text-center border border-gray-300">
+                                {{ box }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-model-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ mpcs.selectedModel }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-coatingMC-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ mpcs.coatingMCNo }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-lot-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ mpcs.lotNo }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
+                                <td v-for="box in visibleBoxes" :key="'main-qty-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ qtyValues[box] }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
+                                <td v-for="box in visibleBoxes" :key="'main-ht-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ htValues[box] }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
+                                <td v-for="box in visibleBoxes" :key="'main-lt-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ ltValues[box] }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
+                                <td v-for="box in visibleBoxes" :key="'main-weight-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ weightValues[box] }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-boxno-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ boxNoValues[box] }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-coating-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ mpcs.coating }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-magnet-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ mpcs.magnetPreparedBy }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
+                                <td v-for="box in visibleBoxes" :key="'main-boxprep-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                {{ mpcs.boxPreparedBy }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ================= EXCESS BOXES ================= -->
+                        <div>
+                            <p class="mb-2 font-semibold text-gray-700">Excess Boxes (Selected Layer - {{ mpcs.selectedExcessLayer }})</p>
+                            <table class="min-w-full text-xs border border-collapse border-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                <th class="px-2 py-1 text-left border border-gray-300"></th>
+                                <th v-for="box in visibleExcessBoxes" :key="'excess-header-' + box" class="px-2 py-1 font-semibold text-center border border-gray-300">
+                                    {{ box }}
+                                </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-model-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ mpcs.selectedModel }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-coatingMC-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ mpcs.coatingMCNo }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-lot-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ mpcs.lotNo }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Qty (PCS):</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-qty-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ qtyValuesExcess[box] }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS):</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-ht-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ htValuesExcess[box] }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS):</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-lt-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ ltValuesExcess[box] }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">WT (KG):</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-weight-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ weightValuesExcess[box] }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-boxno-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ boxNoValuesExcess[box] }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-coating-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ mpcs.coating }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-magnet-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ mpcs.magnetPreparedBy }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By:</td>
+                                    <td v-for="box in visibleExcessBoxes" :key="'excess-boxprep-' + box" class="px-2 py-1 text-center border border-gray-300">
+                                        {{ mpcs.boxPreparedBy }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div v-if="!heatTreatmentInformationDetected" class="p-4 my-2 border border-gray-200">
@@ -1144,7 +1657,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted, watch, reactive } from 'vue';
+import { ref, computed, onMounted, watch, reactive, onUnmounted } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
 import Modal from '@/Components/Modal.vue'
@@ -1243,11 +1756,20 @@ function useSessionStorage(key, state) {
 }
 
 //Dev Controls ----------------- Allow Commands
+const isEditingExpired = ref(false); //This is for Time Start and Date Start ONLYY!!!
+
+let intervalId = null;
+
 const bypassValidation = ref(false);
 const overwriteHeatTreatment = ref(true);
 const overwriteMode = ref(false);
 const showHTLTPanel = ref(false);
 const manualQtyMode = ref(false);
+const isDataShown = ref(false);
+const isExisting = ref(false);
+const isExisting_2ndGBDP = ref(false);
+const isExistingExcess = ref(false);
+const noMassProdData = ref(false);
 //Dev Controls ----------------- Allow Commands
 
 const heatTreatmentInformationDetected = ref(false);
@@ -1266,12 +1788,13 @@ const graph_patterns = ref([]);
 const firstSecondGBDP_models = ref([]);
 const existingLayers = ref([]);
 const existingLayers_2ndGBDP = ref([]);
-const isExisting = ref(false);
-const isExisting_2ndGBDP = ref(false);
 const completedLayers = ref(['1','2']);
 const isLayerNinePointFive = computed(() => mpcs.selectedLayer === '9.5');
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
+const excessLayers = ref([]);
+const existingExcessLayers = ref([]);
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
+const totalBoxes = ref();
 
 const visibleBoxes = ref([]);
 const visibleExcessBoxes = ref([]);
@@ -1303,15 +1826,6 @@ allBoxes.forEach(box => {
     qtyValuesExcess.value[box] = '';
     htValuesExcess.value[box] = '';
     ltValuesExcess.value[box]= '';
-});
-
-
-
-// totalQty sums main + excess qty maps (safe for missing keys)
-const totalQty = computed(() => {
-    const main = Object.values(qtyValues.value || {}).reduce((a, v) => a + Number(v || 0), 0);
-    const exc  = Object.values(qtyValuesExcess.value || {}).reduce((a, v) => a + Number(v || 0), 0);
-    return main + exc;
 });
 
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
@@ -1418,9 +1932,11 @@ const getMassProdData = async () => { //Function for getting the current selecet
         }
         console.log("Heat treatment info detected:", heatTreatmentInformationDetected.value);
         console.log("Activate 2nd GBDP:", activate2ndGBDP.value);
+        noMassProdData.value = false;
     } catch (error) {
         initialFurnaceData.value = null; // Reset if no mass production selected
         heatTreatmentInformationDetected.value = false;
+        noMassProdData.value = true;
         console.error('Error fetching mass production data:', error);
         toast.error('Failed to load mass production data.');
         await userErrorLogging(
@@ -1525,6 +2041,18 @@ const getModelLists = async () => {
     }
 }
 
+const getTotalBoxes = async () => {
+    try{
+        const response = await axios.get(`/api/initial-control-sheets/${mpcs.selectedModel}/${mpcs.lotNo}/lot-total-boxes`);
+        //console.log("Total Boxes data: ", response.data);
+        const tbox = response.data;
+        totalBoxes.value = tbox.total_boxes || 'Loading...';
+        console.log('Total Boxes: ', totalBoxes.value);
+    }catch(error){
+        console.error('Failed to get total boxes: ', error);
+    }
+}
+
 const getGraphPatterns = async () => {
     try{
         const response = await axios.get('/api/ht-graph-patterns/');
@@ -1554,34 +2082,48 @@ const fetchExistingLayers = async () => {
     }
 
     try {
+        // 1. Completed initial layers
         const response = await axios.get(
             `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/completed-layers`
         );
         existingLayers.value = response.data.completed_layers;
-        console.log("Existing Layers for heat treatment:", existingLayers.value);
 
+        // 2. Completed 2nd GBDP layers
         const response2 = await axios.get(
             `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/second-ht-completed-layers`
         );
         existingLayers_2ndGBDP.value = response2.data['2nd_gbdp_layers'];
-        console.log("Existing Layers for heat treatment 2ND GBDP:", existingLayers_2ndGBDP.value);
 
-        // Initial check after fetching
+        // 3. NEW — excess layers
+        const response3 = await axios.get(
+            `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/excess-existing-layers`
+        );
+        existingExcessLayers.value = response3.data.excess_layers.map(String);
+        console.log('Existing excess layers: ', existingExcessLayers.value);
+        // Check current selected layer
         if (mpcs.selectedLayer) {
-            isExisting.value = existingLayers.value.includes(mpcs.selectedLayer);
+            isExisting.value =
+                existingLayers.value.includes(mpcs.selectedLayer);
+
+            isExisting_2ndGBDP.value =
+                existingLayers_2ndGBDP.value.includes(mpcs.selectedLayer);
+
+            isExistingExcess.value =
+                existingExcessLayers.value.includes(mpcs.selectedLayer);
         }
 
-        if (mpcs.selectedLayer) {
-            isExisting_2ndGBDP.value = existingLayers_2ndGBDP.value.includes(mpcs.selectedLayer);
-        }
-
-        if (isExisting.value){
+        if (isExisting.value) {
             toast.warning('Selected layer already contains existing data.');
         }
 
-        if (isExisting_2ndGBDP.value){
+        if (isExisting_2ndGBDP.value) {
             toast.warning('Selected layer already contains existing 1st and 2nd gbdp data.');
         }
+
+        if (isExistingExcess.value) {
+            toast.warning('Selected layer already contains excess data.');
+        }
+
     } catch (error) {
         console.error("Error fetching existing layers:", error);
         toast.error('Failed to fetch existing layers.');
@@ -1619,6 +2161,29 @@ const getCompletedLayers = async () => {
     }
 };
 
+const fetchAvailableLayersForExcessList = async (excessData) => {
+    if (!mpcs.selectedFurnace || !mpcs.selectedMassProd) return;
+
+    try {
+        const response = await axios.get(
+            `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/${excessData}/excess-layers-list`
+        );
+
+        const layers = Object.keys(response.data.availableLayers);
+
+        // selectedLayer might be number — convert to string for clean comparison
+        const blocked = String(mpcs.selectedLayer);
+
+        excessLayers.value = layers.filter(l => l !== blocked);
+
+        console.log('excess layer lists:', excessLayers.value);
+
+    } catch (error) {
+        console.error('Failed to fetch excess layers list', error);
+        excessLayers.value = [];
+    }
+};
+
 const fetchAllLotNoData = async () => {
     try {
         const response = await axios.get('/api/initial-control-sheets/lot-all');
@@ -1629,6 +2194,39 @@ const fetchAllLotNoData = async () => {
     }
 };
 
+const changeData = () => {
+    const preserveKeys = [
+        'selectedFurnace',
+        'selectedMassProd',
+        'selectedLayer',
+        'selectedModel',
+        'lotNo'
+    ];
+
+    Object.keys(mpcs).forEach(key => {
+        if (!preserveKeys.includes(key)) {
+        mpcs[key] = typeof mpcs[key] === 'number' ? 0 : '';
+        }
+    });
+
+    isDataShown.value = false;
+};
+
+const getExcessDataRange = (boxes) => {
+    if (!boxes || !boxes.length) return '';
+
+    // Sort alphabetically just in case
+    const sorted = [...boxes].sort();
+
+    const first = sorted[0];
+    const last = sorted[sorted.length - 1];
+
+    // Single box case
+    if (first === last) return first;
+
+    return `${first}-${last}`;
+};
+
 const fetchAllLotDataBoxDetails = async () => {
 
     if(!mpcs.selectedModel || !mpcs.lotNo){
@@ -1637,6 +2235,7 @@ const fetchAllLotDataBoxDetails = async () => {
     }
 
     try{
+
         const response = await axios.get(
             `/api/initial-control-sheets/${mpcs.selectedModel}/${mpcs.lotNo}/lot-all-data`
         );
@@ -1655,14 +2254,88 @@ const fetchAllLotDataBoxDetails = async () => {
         if (total === 10) {
             mpcs.moreThanTenBoxes = false;
             loadNormalBoxData(layer);
-            toast.success('Data loaded into table');
+
+            if (mpcs.selectedLayer === '9.5' && mpcs.nineHalfSet) {
+                const allowedBoxes = mpcs.nineHalfSet === 'SET1'
+                    ? ['A', 'C', 'E', 'G', 'J']
+                    : ['B', 'D', 'F', 'H', 'K'];
+
+                // Filter visibleBoxes to allowed boxes only
+                visibleBoxes.value = visibleBoxes.value.filter(box => allowedBoxes.includes(box));
+
+                // Remove values for boxes not in 9.5 set
+                Object.keys(qtyValues.value).forEach(box => {
+                    if (!visibleBoxes.value.includes(box)) qtyValues.value[box] = '';
+                });
+                Object.keys(weightValues.value).forEach(box => {
+                    if (!visibleBoxes.value.includes(box)) weightValues.value[box] = '';
+                });
+                Object.keys(boxNoValues.value).forEach(box => {
+                    if (!visibleBoxes.value.includes(box)) boxNoValues.value[box] = '';
+                });
+                Object.keys(htValues.value).forEach(box => {
+                    if (!visibleBoxes.value.includes(box)) htValues.value[box] = '';
+                });
+                Object.keys(ltValues.value).forEach(box => {
+                    if (!visibleBoxes.value.includes(box)) ltValues.value[box] = '';
+                });
+
+                // Adjust end box for UI
+                mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
+            }
+
+            toast.info('Data loaded into table');
+            isDataShown.value = true;
             return;
         }
 
-        // less than 10 → reject
         if (total < 10) {
             mpcs.moreThanTenBoxes = false;
-            toast.warning('Box is less than 10');
+
+            const getRow = (title) => layer.find(r => r.rowTitle === title)?.data || {};
+
+            const qtyRow      = getRow("QTY (PCS):");
+            const weightRow   = getRow("WT (KG):");
+            const boxNoRow    = getRow("BOX No.:");
+
+            const modelRow    = getRow("MODEL:");
+            const coatingRow  = getRow("COATING:");
+            const lotRow      = getRow("LT. No.:");
+            const magnetRow   = getRow("Magnet prepared by:");
+            const boxPrepRow  = getRow("Box prepared by:");
+
+            // Only the keys that exist (less than 10)
+            visibleBoxes.value = Object.keys(boxNoRow || {}).filter(k => boxNoRow[k] !== "" && boxNoRow[k] !== null);
+
+            // Clear previous reactive maps
+            qtyValues.value = {};
+            weightValues.value = {};
+            boxNoValues.value = {};
+            htValues.value = {};
+            ltValues.value = {};
+
+            // Populate values
+            visibleBoxes.value.forEach(box => {
+                qtyValues.value[box]    = qtyRow[box] || '';
+                weightValues.value[box] = weightRow[box] || '';
+                boxNoValues.value[box]  = boxNoRow[box] || '';
+                htValues.value[box]     = '';
+                ltValues.value[box]     = '';
+            });
+
+            // Top-level MPCS
+            const firstBox = visibleBoxes.value[0];
+            mpcs.selectedModel       = modelRow[firstBox] || '';
+            mpcs.coatingMCNo         = coatingRow[firstBox] || '';
+            mpcs.lotNo               = lotRow[firstBox] || '';
+            mpcs.coating             = coatingRow[firstBox] || 0;
+            mpcs.magnetPreparedBy    = magnetRow[firstBox] || '';
+            mpcs.boxPreparedBy       = boxPrepRow[firstBox] || '';
+
+            mpcs.selectedBoxEndList = visibleBoxes.value[visibleBoxes.value.length - 1];
+
+            toast.info('Less than 10 boxes, data loaded into table');
+            isDataShown.value = true;
             return;
         }
 
@@ -1671,13 +2344,13 @@ const fetchAllLotDataBoxDetails = async () => {
         // ==========================
         mpcs.moreThanTenBoxes = true;
 
-        // --- 1. Extract row data ---
-        const getRow = (title) => layer.find(r => r.rowTitle === title)?.data || {};
+        // --- 1. Extract MAIN row data ---
+        const getRow = (title) =>
+            layer.find(r => r.rowTitle === title)?.data || {};
 
         const qtyRow        = getRow("QTY (PCS):");
         const weightRow     = getRow("WT (KG):");
         const boxNoRow      = getRow("BOX No.:");
-
         const modelRow      = getRow("MODEL:");
         const coatingRow    = getRow("COATING:");
         const lotRow        = getRow("LT. No.:");
@@ -1685,22 +2358,29 @@ const fetchAllLotDataBoxDetails = async () => {
         const boxPrepRow    = getRow("Box prepared by:");
         const rawMatRow     = getRow("RAW MATERIAL CODE:");
 
-        // --- 2. Determine main and excess boxes ---
-        let allFoundBoxes = Object.keys(boxNoRow || {}); // fallback for top-level mpcs
+        // --- 2. Extract EXCESS row data (if exists) ---
+        let excessQtyRow = {};
+        let excessWeightRow = {};
+        let excessBoxNoRow = {};
 
         if (sheet.excess_data && Array.isArray(sheet.excess_data) && sheet.excess_data.length) {
-            const getExcessRow = (title) => sheet.excess_data.find(r => r.rowTitle === title)?.data || {};
-            const boxNoExcessRow = getExcessRow("BOX No.:");
-            const excessKeys = Object.keys(boxNoExcessRow || {});
+            const getExcessRow = (title) =>
+                sheet.excess_data.find(r => r.rowTitle === title)?.data || {};
 
-            visibleBoxes.value = allFoundBoxes.slice(0, 10);
-            visibleExcessBoxes.value = excessKeys.length ? excessKeys : allFoundBoxes.slice(10);
-        } else {
-            visibleBoxes.value = allFoundBoxes.slice(0, 10);
-            visibleExcessBoxes.value = allFoundBoxes.slice(10);
+            excessQtyRow       = getExcessRow("QTY (PCS):");
+            excessWeightRow    = getExcessRow("WT (KG):");
+            excessBoxNoRow     = getExcessRow("BOX No.:");
         }
 
-        // --- 3. Clear previous reactive maps ---
+        // --- 3. Determine main/excess box keys ---
+        const allFoundMain = Object.keys(boxNoRow || {});
+        const allFoundExcess = Object.keys(excessBoxNoRow || {});
+
+        visibleBoxes.value = allFoundMain.slice(0, 10);
+        visibleExcessBoxes.value =
+            allFoundExcess.length ? allFoundExcess : allFoundMain.slice(10);
+
+        // --- 4. Clear reactive maps ---
         qtyValues.value = {};
         weightValues.value = {};
         boxNoValues.value = {};
@@ -1708,22 +2388,29 @@ const fetchAllLotDataBoxDetails = async () => {
         weightValuesExcess.value = {};
         boxNoValuesExcess.value = {};
 
-        // --- 4. Populate MAIN box values ---
+        // --- 5. Populate MAIN box values ---
         visibleBoxes.value.forEach(box => {
             qtyValues.value[box]       = qtyRow[box] || '';
             weightValues.value[box]    = weightRow[box] || '';
             boxNoValues.value[box]     = boxNoRow[box] || '';
         });
 
-        // --- 5. Populate EXCESS box values ---
+        // --- 6. Populate EXCESS box values (from excess rows, not main row) ---
         visibleExcessBoxes.value.forEach(box => {
-            qtyValuesExcess.value[box]    = qtyRow[box] || '';
-            weightValuesExcess.value[box] = weightRow[box] || '';
-            boxNoValuesExcess.value[box]  = boxNoRow[box] || '';
+            qtyValuesExcess.value[box]    = excessQtyRow[box] || '';
+            weightValuesExcess.value[box] = excessWeightRow[box] || '';
+            boxNoValuesExcess.value[box]  = excessBoxNoRow[box] || '';
         });
 
-        // --- 6. Assign top-level MPCS values using first main box key ---
-        const firstBox = allFoundBoxes[0] || visibleBoxes.value[0];
+        if (mpcs.moreThanTenBoxes && visibleExcessBoxes.value.length) {
+            const excessData = getExcessDataRange(visibleExcessBoxes.value); // e.g., "A-E"
+            console.log('Excess Data: ',excessData);
+            await fetchAvailableLayersForExcessList(excessData);
+        }
+
+        // --- 7. Assign top-level MPCS values ---
+        const firstBox = visibleBoxes.value[0];
+
         mpcs.selectedModel        = modelRow[firstBox] || '';
         mpcs.coatingMCNo          = coatingRow[firstBox] || '';
         mpcs.lotNo                = lotRow[firstBox] || '';
@@ -1732,18 +2419,19 @@ const fetchAllLotDataBoxDetails = async () => {
         mpcs.boxPreparedBy        = boxPrepRow[firstBox] || '';
         mpcs.rawMaterialCode      = rawMatRow[firstBox] || '';
 
-        // --- 7. Last box letters for UI ---
-        mpcs.selectedBoxEndList = visibleBoxes.value[visibleBoxes.value.length - 1];
-        mpcs.selectedExcessBoxEndList = visibleExcessBoxes.value[visibleExcessBoxes.value.length - 1] || null;
+        // --- 8. UI end letters ---
+        mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
+        mpcs.selectedExcessBoxEndList = visibleExcessBoxes.value.at(-1) || null;
 
-        toast.success("Loaded more-than-10 data");
+        toast.info("Loaded more than 10 boxes data");
+        isDataShown.value = true;
+
 
     } catch(error) {
         toast.error('Failed to fetch initial process data via lot number and model');
         console.log(error);
     }
 };
-
 
 //Watch for changes in Model Lists
 watch(
@@ -1753,6 +2441,15 @@ watch(
         await getModelLists();
         console.log("Lot No: ",mpcs.lotNo);
         console.log("Model: ",mpcs.selectedModel);
+    }
+);
+
+watch(
+    () => [mpcs.selectedModel, mpcs.lotNo],
+    async ([model, lot]) => {
+        if (model && lot) {
+            await getTotalBoxes();
+        }
     }
 );
 
@@ -1766,12 +2463,12 @@ watch(
     async ([newFurnace, newMassProd, newLayer]) => {
         if (!newFurnace || !newMassProd || !newLayer) {
             isExisting.value = false;
+            isExisting_2ndGBDP.value = false;
+            isExistingExcess.value = false;
             return;
         }
 
-        await fetchExistingLayers(); // fetch backend data
-        isExisting.value = existingLayers.value.includes(newLayer);
-        console.log(`Furnace: ${newFurnace}, MassProd: ${newMassProd}, Selected Layer: ${newLayer}, Exists? ${isExisting.value}`);
+        await fetchExistingLayers(); // this function already sets all flags
     }
 );
 
@@ -1797,42 +2494,49 @@ const loadNormalBoxData = (layerData) => {
 
     const getRow = (title) => layerData.find(r => r.rowTitle === title)?.data || {};
 
-    const model        = getRow("MODEL:");
-    const coatingMC    = getRow("COATING M/C No.:");
-    const lotNumber    = getRow("LT. No.:");
-    const qtyRow       = getRow("QTY (PCS):");
-    const coatingRow   = getRow("COATING:");
-    const weightRow    = getRow("WT (KG):");
-    const boxNoRow     = getRow("BOX No.:");
-    const magnetRow    = getRow("Magnet prepared by:");
-    const boxPrepRow   = getRow("Box prepared by:");
+    const model       = getRow("MODEL:");
+    const coatingMC   = getRow("COATING M/C No.:");
+    const lotNumber   = getRow("LT. No.:");
+    const qtyRow      = getRow("QTY (PCS):");
+    const coatingRow  = getRow("COATING:");
+    const weightRow   = getRow("WT (KG):");
+    const boxNoRow    = getRow("BOX No.:");
+    const magnetRow   = getRow("Magnet prepared by:");
+    const boxPrepRow  = getRow("Box prepared by:");
 
-    visibleBoxes.value = Object.keys(boxNoRow).filter(
-        key => boxNoRow[key] !== '' && boxNoRow[key] !== null
-    );
+    // --- 1. Determine visible boxes ---
+    let allBoxes = Object.keys(boxNoRow).filter(key => boxNoRow[key] !== '' && boxNoRow[key] !== null);
 
-    // assign top level fields
-    mpcs.selectedModel     = model.A || "";
-    mpcs.coatingMCNo       = coatingMC.A || "";
-    mpcs.lotNo             = lotNumber.A || "";
-    mpcs.coating           = coatingRow.A || 0;
-    mpcs.magnetPreparedBy  = magnetRow.A || "";
-    mpcs.boxPreparedBy     = boxPrepRow.A || "";
+    // --- 2. Apply 9.5 layer filter if needed ---
+    if (isLayerNinePointFive.value && mpcs.nineHalfSet) {
+        const set1 = ['A','C','E','G','J'];
+        const set2 = ['B','D','F','H','K'];
+        allBoxes = mpcs.nineHalfSet === 'SET1' ? set1 : set2;
+    }
 
-    // *** Fix visibleBoxes here ***
-    const filledBoxes = Object.keys(boxNoRow).filter(key => boxNoRow[key] !== "" && boxNoRow[key] !== null);
-    mpcs.selectedBoxEndList = filledBoxes[filledBoxes.length - 1] || "A";
+    visibleBoxes.value = allBoxes;
 
-    // assign row values
+    // --- 3. Assign top-level MPCS fields ---
+    const firstBox = visibleBoxes.value[0];
+    mpcs.selectedModel      = model[firstBox] || "";
+    mpcs.coatingMCNo        = coatingMC[firstBox] || "";
+    mpcs.lotNo              = lotNumber[firstBox] || "";
+    mpcs.coating            = coatingRow[firstBox] || 0;
+    mpcs.magnetPreparedBy   = magnetRow[firstBox] || "";
+    mpcs.boxPreparedBy      = boxPrepRow[firstBox] || "";
+    mpcs.selectedBoxEndList = visibleBoxes.value[visibleBoxes.value.length - 1] || firstBox;
+
+    // --- 4. Populate reactive maps for each visible box ---
     visibleBoxes.value.forEach(box => {
         qtyValues.value[box]    = qtyRow[box] || "";
         weightValues.value[box] = weightRow[box] || "";
         boxNoValues.value[box]  = boxNoRow[box] || "";
     });
 
-    const last = visibleBoxes.value[visibleBoxes.value.length - 1];
-    mpcs.qty_lastBox = qtyRow[last] || 0;
-    mpcs.qty = qtyRow['A'] || 0;
+    // --- 5. Set first and last quantities for UI/logic ---
+    const lastBox = visibleBoxes.value[visibleBoxes.value.length - 1];
+    mpcs.qty      = qtyRow[firstBox] || 0;
+    mpcs.qty_lastBox = qtyRow[lastBox] || 0;
 };
 
 
@@ -1840,13 +2544,46 @@ const applyHTLT = () => {
     showHTLTPanel.value = true;
 }
 
+const hoursLeft = ref(0); // reactive variable
+
+const checkExpiration = async () => {
+    try {
+        const response = await axios.get(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`);
+        const massprod_data = response.data;
+
+        const dateBaseLine = new Date(massprod_data.created_at);
+        const now = new Date();
+
+        const diffMs = now.getTime() - dateBaseLine.getTime();
+        const hoursPassed = diffMs / 1000 / 60 / 60;
+
+        const expired = hoursPassed >= 24;
+        isEditingExpired.value = expired;
+
+        hoursLeft.value = expired ? 0 : 24 - hoursPassed;
+        // console.log(`Hours left: ${hoursLeft.value.toFixed(2)}`);
+    } catch (error) {
+        console.error('Could not fetch real time expiration tracking', error);
+    }
+};
+
+// Computed for display in h/m format
+const hoursLeftDisplay = computed(() => {
+    const totalMinutes = Math.floor(hoursLeft.value * 60);
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${h}h ${m}m`;
+});
+
 const updateHeatTreatmentInfo = async() => {
+    checkExpiration();
     heatTreatmentInformationDetected.value = false;
     overwriteMode.value = true;
     try{
         const response = await axios.get(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`);
         const massprod_data = response.data;
         console.log('Mass Production Data:', response.data);
+
         hti.cycleNo = massprod_data.cycle_no;
         hti.patternNo = massprod_data.pattern_no;
         hti.cyclePattern = massprod_data.cycle_pattern;
@@ -1918,6 +2655,50 @@ const clearAll = () => {
     initialFurnaceData.value = null;
 }
 
+const clearAllAfterSave = () => {
+    // Reset all hti fields
+    Object.keys(hti).forEach(key => {
+        hti[key] = typeof hti[key] === 'number' ? 0 : '';
+    });
+
+    const preserveKeys = [
+        'selectedFurnace',
+        'selectedMassProd',
+        'selectedLayer',
+        'selectedModel',
+        'lotNo'
+    ];
+
+    Object.keys(mpcs).forEach(key => {
+        if (!preserveKeys.includes(key)) {
+        mpcs[key] = typeof mpcs[key] === 'number' ? 0 : '';
+        }
+    });
+
+    // Reset boxNoValues
+    Object.keys(boxNoValues.value).forEach(key => {
+        boxNoValues.value[key] = '';
+    });
+
+    // Reset weightValues
+    Object.keys(weightValues.value).forEach(key => {
+        weightValues.value[key] = '';
+    });
+
+    // Reset boxNoValues
+    Object.keys(ltValues.value).forEach(key => {
+        ltValues.value[key] = '';
+    });
+
+    // Reset weightValues
+    Object.keys(htValues.value).forEach(key => {
+        htValues.value[key] = '';
+    });
+
+
+    initialFurnaceData.value = null;
+}
+
 const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 const handleCycleGraphUpload = (event) => {
     const file = event.target.files[0];
@@ -1960,12 +2741,18 @@ const finalize = () => {
     if (!bypassValidation.value) {
         // validate MPCS fields
         if (
-            !mpcs.selectedMassProd || !mpcs.selectedLayer || !mpcs.selectedBoxEndList ||
-            !mpcs.selectedModel || !mpcs.coatingMCNo || !mpcs.lotNo || !mpcs.rawMaterialCode ||
-            !mpcs.coating || !mpcs.magnetPreparedBy
+            !mpcs.selectedMassProd || !mpcs.selectedLayer ||
+            !mpcs.selectedModel || !mpcs.lotNo
         ) {
             toast.error("Please fill in all required Control Sheet fields.");
             return;
+        }
+
+        if(mpcs.moreThanTenBoxes){
+            if(!mpcs.selectedExcessLayer){
+                toast.error("Please fill in Excess Layer.");
+                return;
+            }
         }
 
         // validate HTI fields only if not detected already
@@ -2009,35 +2796,33 @@ const finalize = () => {
 }
 
 const saveToDatabase = async () => {
+    // Determine layer key
     const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5' : `layer_${mpcs.selectedLayer}`;
-    const visibleBoxesData = visibleBoxes.value; // e.g., ['A','B','C']
 
-    // Construct layer payload
-    const layerPayload = [
-        { rowTitle: 'MODEL:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.selectedModel || ''])) },
-        { rowTitle: 'COATING M/C No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.coatingMCNo || ''])) },
-        { rowTitle: 'LT. No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.lotNo || ''])) },
-        { rowTitle: 'QTY (PCS):', data: qtyData.value },
-        // Updated HT and LT integration
-        { rowTitle: 'HT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, htValues.value[box] || ''])) },
-        { rowTitle: 'LT (PCS):', data: Object.fromEntries(visibleBoxesData.map(box => [box, ltValues.value[box] || ''])) },
-        { rowTitle: 'COATING:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.coating])) },
-        { rowTitle: 'WT (KG):', data: Object.fromEntries(visibleBoxesData.map(box => [box, weightValues.value[box] || ''])) },
-        { rowTitle: 'BOX No.:', data: Object.fromEntries(visibleBoxesData.map(box => [box, boxNoValues.value[box] || ''])) },
-        { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.magnetPreparedBy])) },
-        { rowTitle: 'Box prepared by:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.boxPreparedBy])) },
-        { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(visibleBoxesData.map(box => [box, mpcs.rawMaterialCode])) },
-        { rowTitle: 'TOTAL QTY', data: Object.fromEntries(visibleBoxesData.map(box => [box, totalQty.value])) }
-    ];
+    // --- 1️⃣ Determine which boxes to save ---
+    let mainBoxes = [...visibleBoxes.value];
 
-    // Base payload
+    // Handle 9.5 layer: only save the selected half
+    if (mpcs.selectedLayer === '9.5' && mpcs.nineHalfSet) {
+        const set1 = ['A','C','E','G','J'];
+        const set2 = ['B','D','F','H','K'];
+        mainBoxes = mpcs.nineHalfSet === 'SET1' ? set1 : set2;
+
+        // Filter only boxes that exist in visibleBoxes
+        mainBoxes = mainBoxes.filter(box => visibleBoxes.value.includes(box));
+    }
+
+    // --- 2️⃣ Prepare main layer payload ---
+    const mainLayerPayload = formatLayerDataForDatabase(mainBoxes, false);
+
+    // --- 3️⃣ Base payload for mass production ---
     const dataPayload = {
         mass_prod: mpcs.selectedMassProd,
         furnace: initialFurnaceData.value,
-        [layerKey]: JSON.stringify(layerPayload),
+        [layerKey]: JSON.stringify(mainLayerPayload),
     };
 
-    // Only include heat treatment info if not detected
+    // Include heat treatment info if not already detected
     if (!heatTreatmentInformationDetected.value) {
         Object.assign(dataPayload, {
             batch_cycle_no: mpcs.selectedMassProd,
@@ -2063,42 +2848,80 @@ const saveToDatabase = async () => {
         });
     }
 
-    console.log('Data Payload:', dataPayload);
-
     try {
         const response = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
-        await uploadGraphs();
-        console.log('Data saved successfully:', response.data);
-        toast.success('Data saved successfully!');
-        if(!heatTreatmentInformationDetected.value){
-            await userManageLogging('created ' + mpcs.selectedMassProd +' Heat Treatment Info successfully | Control Sheet Layer: ' + mpcs.selectedLayer);
-        }else{
-            await userManageLogging('created '+ mpcs.selectedMassProd +' Control Sheet Layer: ' + mpcs.selectedLayer + ' successfully.');
+        console.log('Main layer saved:', response.data);
+
+        if (mpcs.moreThanTenBoxes && visibleExcessBoxes.value.length) {
+            const excessLayerPayload = formatLayerDataForDatabase(visibleExcessBoxes.value, true);
+            const excessPayload = {
+                furnace: mpcs.selectedFurnace,
+                mass_prod: mpcs.selectedMassProd,
+                layer: mpcs.selectedExcessLayer,
+                layer_data: excessLayerPayload,
+            };
+            const saveExcess = await axios.post('/api/excess-layers/merge', excessPayload);
+            console.log('Excess layer saved:', saveExcess.data);
         }
+
+        await uploadGraphs();
+        toast.success('Data saved successfully!');
+        changeData();
+
+        const logMsg = !heatTreatmentInformationDetected.value
+            ? `created ${mpcs.selectedMassProd} Heat Treatment Info | Control Sheet Layer: ${mpcs.selectedLayer}`
+            : `created ${mpcs.selectedMassProd} Control Sheet Layer: ${mpcs.selectedLayer}`;
+        await userManageLogging(logMsg);
+
         showModalCreate.value = false;
+
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
-        await userErrorLogging(
-            {
-                message: error.message,
-                code: error.code ?? null,
-                response: error.response?.data ?? null,
-                payload: error.response?.data ?? null,
-            },
-            "saveToDatabase",
-            "Failed to save data. Please try again."
-        );
+        await userErrorLogging({
+            message: error.message,
+            code: error.code ?? null,
+            response: error.response?.data ?? null,
+            payload: error.response?.data ?? null,
+        }, "saveToDatabase", "Failed to save data. Please try again.");
     } finally {
         await updateFormatType();
-        clearAll(); // Clear all fields after successful save
+        clearAllAfterSave();
     }
+};
+
+const formatLayerDataForDatabase = (boxes, isExcess = false) => {
+    if (!boxes || !boxes.length) return [];
+
+    const qtyMap    = isExcess ? qtyValuesExcess.value    : qtyValues.value;
+    const weightMap = isExcess ? weightValuesExcess.value : weightValues.value;
+    const boxNoMap  = isExcess ? boxNoValuesExcess.value  : boxNoValues.value;
+    const htMap     = htValues.value;
+    const ltMap     = ltValues.value;
+
+    const totalQty = boxes.reduce((acc, box) => acc + Number(qtyMap[box] || 0), 0);
+
+    return [
+        { rowTitle: 'MODEL:', data: Object.fromEntries(boxes.map(box => [box, mpcs.selectedModel || ''])) },
+        { rowTitle: 'COATING M/C No.:', data: Object.fromEntries(boxes.map(box => [box, mpcs.coatingMCNo || ''])) },
+        { rowTitle: 'LT. No.:', data: Object.fromEntries(boxes.map(box => [box, mpcs.lotNo || ''])) },
+        { rowTitle: 'QTY (PCS):', data: Object.fromEntries(boxes.map(box => [box, qtyMap[box] || 0])) },
+        { rowTitle: 'HT (PCS):', data: Object.fromEntries(boxes.map(box => [box, htMap[box] || 0])) },
+        { rowTitle: 'LT (PCS):', data: Object.fromEntries(boxes.map(box => [box, ltMap[box] || 0])) },
+        { rowTitle: 'COATING:', data: Object.fromEntries(boxes.map(box => [box, mpcs.coating || 0])) },
+        { rowTitle: 'WT (KG):', data: Object.fromEntries(boxes.map(box => [box, weightMap[box] || 0])) },
+        { rowTitle: 'BOX No.:', data: Object.fromEntries(boxes.map(box => [box, boxNoMap[box] || ''])) },
+        { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(boxes.map(box => [box, mpcs.magnetPreparedBy || ''])) },
+        { rowTitle: 'Box prepared by:', data: Object.fromEntries(boxes.map(box => [box, mpcs.boxPreparedBy || ''])) },
+        { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(boxes.map(box => [box, mpcs.rawMaterialCode || ''])) },
+        { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes.map(box => [box, totalQty])) }
+    ];
 };
 
 const cancelOverwrite = () => {
     overwriteMode.value = false;
     heatTreatmentInformationDetected.value = false;
-    clearAll();
+    clearAllAfterSave();
 }
 
 const overwriteDatabase = async () => {
@@ -2284,6 +3107,18 @@ onMounted(async () => {
     await fetchAllLotNoData();
     await getGraphPatterns();
     await get1st2ndGBDPModels();
+
+    // Initial check
+    checkExpiration();
+
+    // Update every minute (60000ms) for real-time display
+    intervalId = setInterval(() => {
+        checkExpiration();
+    }, 60000);
+});
+
+onUnmounted(() => {
+    clearInterval(intervalId);
 });
 
 </script>
@@ -2293,6 +3128,24 @@ input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .finalize-btn {
@@ -2337,6 +3190,14 @@ input[type='number']::-webkit-outer-spin-button {
   filter: blur(8px);
   animation: shine 2s ease-in-out infinite;
   z-index: 5;
+}
+
+.animate-gradient-flow {
+  animation: gradient-flow 4s ease infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
 }
 
 </style>

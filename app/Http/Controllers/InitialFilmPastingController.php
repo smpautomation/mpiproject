@@ -95,4 +95,41 @@ class InitialFilmPastingController extends Controller
 
         return response()->json(['message' => 'Deleted'], 200);
     }
+
+    public function checkDuplicateLot(Request $request)
+    {
+        $request->validate([
+            'lot_no'     => 'required|string|max:50',
+            'model_name' => 'required|string|max:100',
+        ]);
+
+        // Check based only on lot_no
+        $lotExists = InitialFilmPasting::where('lot_no', $request->lot_no)->exists();
+
+        // Check based on the pair (model_name + lot_no)
+        $pairExists = InitialFilmPasting::where('lot_no', $request->lot_no)
+            ->where('model_name', $request->model_name)
+            ->exists();
+
+        return response()->json([
+            'duplicate_lot'  => $lotExists,
+            'duplicate_pair' => $pairExists,
+        ]);
+    }
+
+    public function fetchFilmPasteSummaryData($lotno, $model)
+    {
+        $record = InitialFilmPasting::where('lot_no', $lotno)
+            ->where('model_name', $model)
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => 'No record found.'
+            ], 404);
+        }
+
+        return response()->json($record);
+    }
+
 }

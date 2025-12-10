@@ -21,6 +21,8 @@ class InitialCoatingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'model_name' => 'nullable|string|max:255',
+            'lot_no' => 'nullable|string|max:50',
             'coating_date' => 'nullable|date',
             'machine_no' => 'nullable|string',
             'slurry_lot_no' => 'nullable|string',
@@ -30,8 +32,8 @@ class InitialCoatingController extends Controller
             'sample_qty' => 'nullable|string',
             'total_magnet_weight' => 'nullable|string',
             'checker_operator' => 'nullable|string',
-            'time_start' => 'nullable|date_format:H:i:s',
-            'time_finished' => 'nullable|date_format:H:i:s',
+            'time_start' => 'nullable|date_format:H:i',
+            'time_finished' => 'nullable|date_format:H:i',
             'coating_data' => 'nullable|array',
             'maximum' => 'nullable|numeric',
             'minimum' => 'nullable|numeric',
@@ -58,6 +60,8 @@ class InitialCoatingController extends Controller
     public function update(Request $request, InitialCoating $initialCoating)
     {
         $validated = $request->validate([
+            'model_name' => 'nullable|string|max:255',
+            'lot_no' => 'nullable|string|max:50',
             'coating_date' => 'nullable|date',
             'machine_no' => 'nullable|string',
             'slurry_lot_no' => 'nullable|string',
@@ -88,5 +92,41 @@ class InitialCoatingController extends Controller
     {
         $initialCoating->delete();
         return response()->json(['message' => 'Initial coating deleted successfully.']);
+    }
+
+    public function checkDuplicateLot(Request $request)
+    {
+        $request->validate([
+            'lot_no'     => 'required|string|max:50',
+            'model_name' => 'required|string|max:100',
+        ]);
+
+        // Check based only on lot_no
+        $lotExists = InitialCoating::where('lot_no', $request->lot_no)->exists();
+
+        // Check based on the pair (model_name + lot_no)
+        $pairExists = InitialCoating::where('lot_no', $request->lot_no)
+            ->where('model_name', $request->model_name)
+            ->exists();
+
+        return response()->json([
+            'duplicate_lot'  => $lotExists,
+            'duplicate_pair' => $pairExists,
+        ]);
+    }
+
+    public function fetchCoatingSummaryData($lotno, $model)
+    {
+        $record = InitialCoating::where('lot_no', $lotno)
+            ->where('model_name', $model)
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => 'No record found.'
+            ], 404);
+        }
+
+        return response()->json($record);
     }
 }

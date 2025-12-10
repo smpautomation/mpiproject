@@ -104,11 +104,11 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Furnace Machine <span class="text-red-500">*</span></label>
-                                <input v-model="gbdp_1st.furnaceNo" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_1st.furnaceNo" type="text" @input="gbdp_1st.furnaceNo = gbdp_1st.furnaceNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Batch Cycle No</label>
-                                <input v-model="gbdp_1st.batchCycleNo" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                <input v-model="gbdp_1st.batchCycleNo" type="text" @input="gbdp_1st.batchCycleNo = gbdp_1st.batchCycleNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-medium text-gray-700">Date Start <span class="text-red-500">*</span></label>

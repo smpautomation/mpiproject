@@ -36,7 +36,10 @@ use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use App\Http\Controllers\SmpDataController;
 use App\Http\Controllers\ErrorLogsController;
 use App\Http\Controllers\InitialControlSheetController;
+use App\Http\Controllers\InitialCoatingController;
+use App\Http\Controllers\InitialFilmPastingController;
 use App\Mail\TakefuMail_Manual;
+use App\Models\InitialFilmPasting;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
@@ -377,7 +380,9 @@ Route::post('/excess-layers/merge', [ExcessLayersController::class, 'mergeExcess
 
 Route::patch('/mass-production/{furnace}/{massProd}/merge', [MassProductionController::class, 'mergeMainLayer']);
 
-Route::post('/initial_control_sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
+Route::get('/mass-production/{furnace}/{massprod}/{excessdata}/excess-layers-list', [MassProductionController::class, 'excessLayerList']);
+
+Route::post('/initial-control-sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
 
 Route::get('/initial-control-sheets/lot-all', [InitialControlSheetController::class, 'fetchAllLotNumbers']);
 
@@ -385,7 +390,28 @@ Route::get('/initial-control-sheets/{lotno}/lot-all-model', [InitialControlSheet
 
 Route::get('/initial-control-sheets/{model}/{lotno}/lot-all-data', [InitialControlSheetController::class, 'fetchLotData']);
 
+Route::get('/initial-control-sheets/{model}/{lotno}/lot-total-boxes', [InitialControlSheetController::class, 'fetchTotalBoxes']);
+
+Route::get('/initial-control-sheets/fetch-layer-excess-data/{model}/{lotno}', [InitialControlSheetController::class, 'fetchLayerExcessData']);
+
+Route::get(
+    '/mass-production/{furnace}/{massprod}/excess-existing-layers',
+    [ExcessLayersController::class, 'existingExcessLayerList']
+);
+
+Route::get(
+    '/initial-control-sheets/second-validation/{model}/{lotNo}/{mainCount}/{excessCount}',
+    [InitialControlSheetController::class, 'validateLayers']
+);
+
+Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class, 'checkDuplicateLot']);
+Route::get('/initial-coating/{lotno}/{model}/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
+Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
+Route::get('/initial-film-pasting/{lotno}/{model}/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
+
 Route::apiResource('mass-production',MassProductionController::class);
 Route::apiResource('excess-layers',ExcessLayersController::class);
 Route::apiResource('error-logs', ErrorLogsController::class);
 Route::apiResource('initial_control_sheet', InitialControlSheetController::class);
+Route::apiResource('initial-coating',InitialCoatingController::class);
+Route::apiResource('initial-film-pasting', InitialFilmPastingController::class);

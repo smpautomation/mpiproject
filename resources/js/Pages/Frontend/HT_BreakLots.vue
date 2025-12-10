@@ -45,7 +45,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-gray-900">Break Lot Selection Grid</h2>
+                                <h2 class="text-xl font-bold text-gray-900">Manual Allocation Selection Grid</h2>
                                 <p class="text-sm text-gray-500">Select production slots for processing</p>
                             </div>
                         </div>
@@ -67,139 +67,133 @@
                         </div>
                     </div>
 
-                    <!-- Grid Table -->
-                    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                    <!-- Grid Table Container -->
+                    <div class="relative overflow-x-auto border border-gray-200 rounded-lg">
+
+                        <!-- Validation Overlay -->
+                        <div
+                            v-if="validationPassed"
+                            class="absolute inset-0 z-20 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-lg pointer-events-none"
+                        >
+                            <div class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded shadow">
+                                ✅ Data has been validated — grid is locked
+                            </div>
+                        </div>
+
                         <table class="min-w-full text-sm text-center">
-                        <thead>
-                            <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
-                            <th class="sticky left-0 z-10 w-32 px-4 py-3 text-xs font-bold text-gray-700 bg-gray-100 border-b-2 border-r-2 border-gray-300">
-                                <div class="flex items-center justify-center space-x-1">
-                                <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Layer / Box</span>
-                                </div>
-                            </th>
-                            <th
-                                v-for="box in boxes"
-                                :key="box"
-                                class="px-4 py-3 text-sm font-semibold text-gray-700 border-b-2 border-gray-300"
-                            >
-                                <span class="inline-flex items-center justify-center w-8 h-8 font-bold text-gray-800 bg-white border border-gray-300 rounded-lg">
-                                {{ box }}
-                                </span>
-                            </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr v-for="layer in layers" :key="layer" class="transition-colors hover:bg-gray-50/50">
-                                <!-- Layer Header Cell -->
-                                <td class="sticky left-0 z-10 px-2 py-2 font-semibold border-b border-r-2 border-gray-300 bg-gradient-to-r from-gray-100 to-gray-50">
-                                    <div class="flex items-center justify-between gap-1">
-                                        <span class="inline-flex items-center justify-center w-8 h-8 font-bold text-gray-800 bg-white border-2 border-gray-300 rounded-lg">
-                                        {{ layer }}
-                                        </span>
-
-                                        <!-- First Layer Radio -->
-                                        <div class="flex items-center space-x-1">
-                                        <input
-                                            type="radio"
-                                            :value="layer"
-                                            v-model="firstLayerSelected"
-                                            :disabled="!selectedCoordinates.some(coord => coord.startsWith(layer))"
-                                            id="first-layer-{{ layer }}"
-                                        />
-                                        <label :for="'first-layer-' + layer" class="text-xs text-gray-600">Main</label>
-                                        </div>
-
-                                        <!-- Action Buttons -->
-                                        <div class="flex gap-1">
-                                        <button
-                                            type="button"
-                                            @click.stop="selectLayer(layer)"
-                                            class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 hover:shadow-md hover:scale-105 active:scale-95"
-                                            title="Select all available boxes in this layer"
-                                        >
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            <thead>
+                                <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
+                                    <th class="sticky left-0 z-10 w-32 px-4 py-3 text-xs font-bold text-gray-700 bg-gray-100 border-b-2 border-r-2 border-gray-300">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
                                             </svg>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            @click.stop="unselectLayer(layer)"
-                                            class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-md hover:scale-105 active:scale-95"
-                                            title="Unselect all selected boxes in this layer"
-                                        >
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
+                                            <span>Layer / Box</span>
                                         </div>
-                                    </div>
-                                </td>
-
-                                <!-- Coordinate Cells -->
-                                <td
-                                    v-for="box in boxes"
-                                    :key="box"
-                                    @click="!isCoordinateOccupied(layer, box) && toggleCoordinate(layer, box)"
-                                    class="relative px-3 py-3 transition-all duration-200 border-b border-gray-200 group"
-                                    :class="{
-                                        'bg-gray-200 text-gray-400 cursor-not-allowed': isCoordinateOccupied(layer, box),
-                                        'bg-gradient-to-br from-teal-500 to-cyan-500 text-white font-bold shadow-md cursor-pointer': selectedCoordinates.includes(`${layer}${box}`),
-                                        'bg-white hover:bg-gradient-to-br hover:from-cyan-50 hover:to-teal-50 cursor-pointer hover:shadow-sm': !selectedCoordinates.includes(`${layer}${box}`) && !isCoordinateOccupied(layer, box),
-                                        'ring-2 ring-yellow-400': lastBoxSelected === `${layer}${box}` // Highlight last box
-                                    }"
-                                >
-                                    <div class="flex flex-col items-center justify-center">
-                                        <!-- Box Label -->
-                                        <span class="text-sm font-semibold">{{ layer }}{{ box }}</span>
-
-                                        <!-- Selected checkmark -->
-                                        <svg
-                                            v-if="selectedCoordinates.includes(`${layer}${box}`)"
-                                            class="absolute w-4 h-4 text-white top-1 right-1"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
-
-                                        <!-- Occupied lock icon -->
-                                        <svg
-                                            v-if="isCoordinateOccupied(layer, box)"
-                                            class="absolute w-4 h-4 text-gray-500 top-1 right-1"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                                        </svg>
-
-                                        <!-- Last Box Badge -->
-                                        <span
-                                            v-if="lastBoxSelected === `${layer}${box}`"
-                                            class="absolute px-1 text-xs font-bold text-yellow-700 bg-yellow-100 rounded top-1 left-1"
-                                        >
-                                            Last
+                                    </th>
+                                    <th
+                                        v-for="box in boxes"
+                                        :key="box"
+                                        class="px-4 py-3 text-sm font-semibold text-gray-700 border-b-2 border-gray-300"
+                                    >
+                                        <span class="inline-flex items-center justify-center w-8 h-8 font-bold text-gray-800 bg-white border border-gray-300 rounded-lg">
+                                            {{ box }}
                                         </span>
+                                    </th>
+                                </tr>
+                            </thead>
 
-                                        <!-- Mark as Last Box Button -->
-                                        <button
-                                            v-if="selectedCoordinates.includes(`${layer}${box}`) && lastBoxSelected !== `${layer}${box}`"
-                                            @click.stop="lastBoxSelected = `${layer}${box}`"
-                                            class="absolute px-1 text-xs font-bold text-white bg-yellow-500 rounded bottom-1"
-                                            title="Mark this box as Last"
-                                        >
-                                            L
-                                        </button>
-                                    </div>
-                                </td>
+                            <tbody>
+                                <tr v-for="layer in layers" :key="layer" class="transition-colors hover:bg-gray-50/50">
+                                    <!-- Layer Header Cell -->
+                                    <td class="sticky left-0 z-10 px-2 py-2 font-semibold border-b border-r-2 border-gray-300 bg-gradient-to-r from-gray-100 to-gray-50">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span class="inline-flex items-center justify-center w-8 h-8 font-bold text-gray-800 bg-white border-2 border-gray-300 rounded-lg">
+                                                {{ layer }}
+                                            </span>
+
+                                            <!-- First Layer Radio -->
+                                            <div class="flex items-center space-x-1">
+                                                <input
+                                                    type="radio"
+                                                    :value="layer"
+                                                    v-model="firstLayerSelected"
+                                                    :disabled="validationPassed || !selectedCoordinates.some(coord => coord.startsWith(layer))"
+                                                    id="first-layer-{{ layer }}"
+                                                />
+                                                <label :for="'first-layer-' + layer" class="text-xs text-gray-600">Main</label>
+                                            </div>
+
+                                            <!-- Action Buttons -->
+                                            <div class="flex gap-1">
+                                                <button
+                                                    type="button"
+                                                    @click.stop="!validationPassed && selectLayer(layer)"
+                                                    :disabled="validationPassed"
+                                                    class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group
+                                                        bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 hover:shadow-md hover:scale-105 active:scale-95"
+                                                    title="Select all available boxes in this layer"
+                                                >
+                                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    @click.stop="!validationPassed && unselectLayer(layer)"
+                                                    :disabled="validationPassed"
+                                                    class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group
+                                                        bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-md hover:scale-105 active:scale-95"
+                                                    title="Unselect all selected boxes in this layer"
+                                                >
+                                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Coordinate Cells -->
+                                    <td
+                                        v-for="box in boxes"
+                                        :key="box"
+                                        @click="!validationPassed && !isCoordinateOccupied(layer, box) && toggleCoordinate(layer, box)"
+                                        :class="{
+                                            'bg-gray-200 text-gray-400 cursor-not-allowed': isCoordinateOccupied(layer, box) || validationPassed,
+                                            'bg-gradient-to-br from-teal-500 to-cyan-500 text-white font-bold shadow-md cursor-pointer': !validationPassed && selectedCoordinates.includes(`${layer}${box}`),
+                                            'bg-white hover:bg-gradient-to-br hover:from-cyan-50 hover:to-teal-50 cursor-pointer hover:shadow-sm': !validationPassed && !selectedCoordinates.includes(`${layer}${box}`) && !isCoordinateOccupied(layer, box)
+                                        }"
+                                        class="relative px-3 py-3 transition-all duration-200 border-b border-gray-200 group"
+                                    >
+                                        <div class="flex flex-col items-center justify-center">
+                                            <span class="text-sm font-semibold">{{ layer }}{{ box }}</span>
+
+                                            <svg
+                                                v-if="selectedCoordinates.includes(`${layer}${box}`)"
+                                                class="absolute w-4 h-4 text-white top-1 right-1"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+
+                                            <svg
+                                                v-if="isCoordinateOccupied(layer, box)"
+                                                class="absolute w-4 h-4 text-gray-500 top-1 right-1"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </td>
 
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
 
                     <!-- Footer Info -->
                     <div class="p-3 mt-4 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
@@ -221,39 +215,52 @@
                         </div>
                     </div>
 
-                    <!-- Debugging panel -->
-                    <div v-if="state.user && state.user.access_type == 'Automation'">
-                        <!-- Display summary -->
-                         <div>
-                            Automation Debugging panel
-                         </div>
-                        <div v-if="selectedCoordinates.length" class="mt-6 text-sm text-gray-700">
-                            <p class="mb-2 font-semibold">Selected Coordinates: ( {{ selectedCoordinates.length }} slots )</p>
+                    <div v-if="state.user && state.user.access_type === 'Automation'" class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm my-10">
+                        <!-- Panel Header -->
+                        <h3 class="text-sm font-bold text-gray-700 mb-3">Selection Summary</h3>
+
+                        <!-- Default system info -->
+                        <div v-if="!selectedCoordinates.length && !layersInvolvedUserPick.length" class="mb-4 text-sm text-gray-500 italic">
+                            No selection yet. Please pick boxes from the grid to see the summary.
+                        </div>
+
+                        <!-- Selected Coordinates -->
+                        <div v-else-if="selectedCoordinates.length" class="mb-4 text-sm text-gray-700">
+                            <p class="mb-2 font-semibold text-gray-600">
+                                Selected Coordinates: <span class="font-bold">{{ selectedCoordinates.length }} slots</span>
+                            </p>
                             <div class="flex flex-wrap gap-2">
                                 <span
                                     v-for="coord in selectedCoordinates"
                                     :key="coord"
-                                    class="px-2 py-1 text-xs text-teal-800 bg-teal-100 border border-teal-300 rounded"
+                                    class="px-2 py-1 text-xs font-medium text-teal-900 bg-teal-100 border border-teal-200 rounded shadow-sm"
                                 >
                                     {{ coord }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- Display layers involved -->
-                        <div v-if="layersInvolvedUserPick.length" class="mt-6 text-sm text-gray-700">
-                            <p class="mb-2 font-semibold">Layers Involved:</p>
+                        <!-- Layers Involved -->
+                        <div v-if="layersInvolvedUserPick.length" class="text-sm text-gray-700">
+                            <p class="mb-2 font-semibold text-gray-600">Layers Involved:</p>
                             <div class="flex flex-wrap gap-2">
                                 <span
                                     v-for="layer in layersInvolvedUserPick"
                                     :key="layer"
-                                    class="px-2 py-1 text-xs text-white bg-indigo-500 rounded"
+                                    :class="[
+                                        'px-3 py-1 text-xs font-medium rounded-full shadow',
+                                        String(layer) === String(firstLayerSelected)
+                                            ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
+                                            : 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white'
+                                    ]"
                                 >
                                     Layer {{ layer }}
+                                    <span v-if="String(layer) === String(firstLayerSelected)" class="ml-1 font-bold">(Main)</span>
                                 </span>
                             </div>
                         </div>
                     </div>
+
 
                      <!-- General Info Form -->
                     <div class="p-6 mb-6 border-2 border-gray-200 shadow-md bg-gradient-to-br from-gray-50 to-white rounded-xl">
@@ -274,203 +281,145 @@
                         <div class="space-y-5">
 
                             <!-- Row 1: Model, Coating M/C, Raw Material -->
-                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-
-                            <!-- Model -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                Model
-                                <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <select
-                                v-model="mpcsbl.selectedModel"
-                                class="w-full text-sm font-semibold transition-all duration-200 border-2 rounded-lg shadow-sm border-amber-400 bg-amber-50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-500"
-                                >
-                                <option v-for="item in model_names" :key="item" :value="item">{{ item }}</option>
-                                </select>
-                            </div>
-
-                            <!-- Coating M/C No -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
-                                </svg>
-                                Coating M/C No.
-                                <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <input
-                                v-model="mpcsbl.coatingMCNo"
-                                @input="mpcsbl.coatingMCNo = mpcsbl.coatingMCNo.toUpperCase()"
-                                type="text"
-                                placeholder="Enter M/C number"
-                                class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                />
-                            </div>
-
-                            <!-- Raw Material Code -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" />
-                                </svg>
-                                Raw Material Code
-                                <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <input
-                                v-model="mpcsbl.rawMaterialCode"
-                                @input="mpcsbl.rawMaterialCode = mpcsbl.rawMaterialCode.toUpperCase()"
-                                type="text"
-                                placeholder="Enter material code"
-                                class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                />
-                            </div>
-                            </div>
-
-                            <!-- Divider -->
-                            <div class="border-t border-gray-200"></div>
-
-                            <!-- Row 2: Lot No, Qty, Qty Last Box, Coating -->
-                            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-
-                            <!-- Lot No -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                                </svg>
-                                Lot No.
-                                <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <input
-                                v-model="mpcsbl.lotNo"
-                                @input="mpcsbl.lotNo = mpcsbl.lotNo.toUpperCase()"
-                                type="text"
-                                placeholder="Enter lot number"
-                                class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                />
-                            </div>
-
-                            <!-- Qty (PCS) -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                    <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
-                                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
-                                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
-                                    </svg>
-                                    Qty (PCS)
-                                    <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <input
-                                    v-model="mpcsbl.qty"
-                                    type="number"
-                                    placeholder="0"
-                                    :disabled="Object.values(manualQtyMode).some(val => val === true)"
-                                    class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                />
-                            </div>
-
-                            <!-- Qty Last Box -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                    <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
-                                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
-                                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
-                                    </svg>
-                                    Qty Last Box
-                                    <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <input
-                                    v-model="mpcsbl.qty_lastBox"
-                                    type="number"
-                                    placeholder="0"
-                                    :disabled="Object.values(manualQtyMode).some(val => val === true)"
-                                    class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                />
-                            </div>
-
-                            <!-- Coating -->
-                            <div class="group">
-                                <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd" />
-                                </svg>
-                                Coating
-                                <span class="ml-1 font-bold text-red-500">*</span>
-                                </label>
-                                <input
-                                v-model="mpcsbl.coating"
-                                type="number"
-                                placeholder="0"
-                                class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                />
-                            </div>
-                            </div>
-
-                            <!-- Divider -->
-                            <div class="border-t border-gray-200"></div>
-
-                            <!-- Row 3: Magnet Prepared By, Box Prepared By -->
                             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                                <!-- Magnet Prepared By -->
+                                <!-- Lot No -->
                                 <div class="group">
                                     <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                    <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                                    </svg>
-                                    Magnet Prepared By
-                                    <span class="ml-1 font-bold text-red-500">*</span>
+                                        <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                                        </svg>
+                                        Lot No.
+                                        <span class="ml-1 font-bold text-red-500">*</span>
                                     </label>
-                                    <input
-                                    v-model="mpcsbl.magnetPreparedBy"
-                                    @input="mpcsbl.magnetPreparedBy = mpcsbl.magnetPreparedBy.toUpperCase()"
-                                    type="text"
-                                    placeholder="Enter name"
-                                    class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400"
-                                    />
+                                    <select
+                                        v-model="mpcsbl.lotNo"
+                                        :disabled="validationPassed"
+                                        :class="['w-full text-sm transition-all duration-200 border-2 rounded-lg shadow-sm focus:ring-2 hover:border-gray-400', validationPassed ? 'bg-gray-100 border-gray-300 cursor-not-allowed' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500']"
+                                    >
+                                        <option value="" disabled>Select Lot No</option>
+                                        <option v-for="(lot, index) in lotNoLists" :key="index" :value="lot.lot_no">
+                                            {{ lot.lot_no }}
+                                        </option>
+                                    </select>
                                 </div>
 
-                                <!-- Box Prepared By -->
+                                <!-- Model -->
                                 <div class="group">
                                     <label class="flex items-center mb-2 text-sm font-semibold text-gray-700">
-                                    <svg class="w-4 h-4 mr-1.5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                                    </svg>
-                                    Box Prepared By
-                                    <span class="ml-1 text-xs text-gray-500">(Optional)</span>
+                                        <svg class="w-4 h-4 mr-1.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                        Model
+                                        <span class="ml-1 font-bold text-red-500">*</span>
                                     </label>
-                                    <input
-                                    v-model="mpcsbl.boxPreparedBy"
-                                    @input="mpcsbl.boxPreparedBy = mpcsbl.boxPreparedBy.toUpperCase()"
-                                    type="text"
-                                    placeholder="Enter name (optional)"
-                                    class="w-full text-sm transition-all duration-200 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-gray-400 focus:border-gray-400 hover:border-gray-400"
-                                    />
+                                    <select
+                                        v-model="mpcsbl.selectedModel"
+                                        :disabled="validationPassed"
+                                        :class="['w-full text-sm font-semibold transition-all duration-200 border-2 rounded-lg shadow-sm', validationPassed ? 'bg-gray-100 border-gray-300 cursor-not-allowed' : 'border-amber-400 bg-amber-50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 hover:border-amber-500']"
+                                    >
+                                        <option v-for="(lot, index) in model_names" :key="index" :value="lot.model_name">
+                                            {{ lot.model_name }}
+                                        </option>
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="border-t border-gray-200"></div>
+
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 items-start">
+
+                                <!-- Total Boxes Card -->
+                                <div class="mt-4 w-full px-4 py-3 bg-gray-50 border-l-4 border-cyan-600 rounded-md shadow-sm flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <!-- Icon -->
+                                        <svg class="w-6 h-6 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M3 3h14v2H3V3zm0 4h14v2H3V7zm0 4h14v2H3v-2zm0 4h14v2H3v-2z"/>
+                                        </svg>
+                                        <p class="text-sm font-semibold text-gray-800">
+                                            Detected Total Boxes:
+                                            <span class="text-blue-700">{{ totalBoxes }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Buttons Column -->
+                                <div class="mt-4 w-full flex flex-col gap-3">
+                                    <!-- Validate Data Button -->
+                                    <button
+                                        v-if="!validationPassed"
+                                        :disabled="!totalBoxes || !selectedCoordinates.length"
+                                        @click="validateData()"
+                                        class="w-full px-5 py-3 text-sm font-semibold text-white rounded-lg shadow-md
+                                            bg-gradient-to-r from-cyan-500 to-teal-500
+                                            hover:from-cyan-400 hover:to-teal-400
+                                            active:from-cyan-600 active:to-teal-600
+                                            focus:outline-none focus:ring-2 focus:ring-cyan-300
+                                            flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11H9v4h2V7zm0 6H9v2h2v-2z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Validate Data
+                                    </button>
+
+                                    <!-- Reset Data Button -->
+                                    <button
+                                        v-else
+                                        @click="resetData()"
+                                        class="w-full px-5 py-3 text-sm font-semibold text-white rounded-lg shadow-md
+                                            bg-gradient-to-r from-red-500 to-pink-500
+                                            hover:from-red-400 hover:to-pink-400
+                                            active:from-red-600 active:to-pink-600
+                                            focus:outline-none focus:ring-2 focus:ring-red-300
+                                            flex items-center justify-center gap-2 transition-all duration-200"
+                                    >
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Reset Data
+                                    </button>
+
+                                    <!-- Warning Message -->
+                                    <p v-if="validationAttempted && !validationPassed" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                                        <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.366-.756 1.42-.756 1.786 0l6.518 13.462c.36.745-.08 1.639-.893 1.639H2.632c-.813 0-1.253-.894-.893-1.639L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-1-1V7a1 1 0 112 0v3a1 1 0 01-1 1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Validation failed: Selected boxes ({{ selectedCoordinates.length }}) do not match total boxes ({{ totalBoxes }}).
+                                    </p>
+                                </div>
+
+                                <!-- Show Data Button Column -->
+                                <div class="mt-4 w-full">
+                                    <button
+                                        v-if="validationPassed"
+                                        @click="fetchAllLotDataBoxDetails()"
+                                        class="w-full px-5 py-3 text-sm font-semibold text-white rounded-lg shadow-md
+                                            bg-gradient-to-r from-teal-500 to-cyan-500
+                                            hover:from-teal-400 hover:to-cyan-400
+                                            active:from-teal-600 active:to-cyan-600
+                                            focus:outline-none focus:ring-2 focus:ring-teal-300
+                                            flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11H9v4h2V7zm0 6H9v2h2v-2z"/>
+                                        </svg>
+                                        Show Data
+                                    </button>
                                 </div>
                             </div>
+
 
                         </div>
                     </div>
 
-                    <!-- Dynamic Layer Inputs (Per-box unique inputs) -->
+                    <!-- Dynamic Layer Inputs (Per-box unique inputs and global outputs) -->
                     <div v-for="layer in layersInvolvedUserPick" :key="layer" class="pt-4 mb-6 border-t border-gray-200">
                         <div class="flex items-center justify-between mb-2">
                             <h3 class="text-sm font-semibold text-gray-700">Layer {{ layer }}</h3>
-
-                            <!-- Manual Qty Toggle -->
-                            <button
-                                type="button"
-                                @click="manualQtyMode[layer] = !manualQtyMode[layer]"
-                                class="px-2 py-1 text-xs font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
-                            >
-                                {{ manualQtyMode[layer] ? 'Disable Edit' : 'Edit Qty' }}
-                            </button>
                         </div>
 
                         <div class="overflow-x-auto">
@@ -484,34 +433,41 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- BOX No. -->
+                                    <!-- Model -->
                                     <tr>
-                                        <td class="px-2 py-1 font-medium border border-gray-300">BOX No.</td>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Model</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input
-                                                type="text"
-                                                v-model="layerInputs[layer][box].boxNo"
-                                                @input="layerInputs[layer][box].boxNo = layerInputs[layer][box].boxNo.toUpperCase()"
-                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
-                                            />
+                                            {{ mpcsbl.selectedModel }}
                                         </td>
                                     </tr>
 
-                                    <!-- Weight -->
+                                    <!-- Coating M/C No -->
                                     <tr>
-                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Weight (KG)</td>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating M/C No.</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
-                                            <input
-                                                type="number"
-                                                v-model="layerInputs[layer][box].weight"
-                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
-                                            />
+                                            {{ mpcsbl.coatingMCNo }}
                                         </td>
                                     </tr>
 
-                                    <!-- HT -->
+                                    <!-- Lot No -->
                                     <tr>
-                                        <td class="px-2 py-1 font-medium border border-gray-300">HT (PCS)</td>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Lot No.</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ mpcsbl.lotNo }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- QTY (PCS) -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">QTY (PCS)</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ layerInputs[layer][box].qty }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- HT (PCS) - Input -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">HT (PCS)</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
                                             <input
                                                 type="text"
@@ -522,9 +478,9 @@
                                         </td>
                                     </tr>
 
-                                    <!-- LT -->
+                                    <!-- LT (PCS) - Input -->
                                     <tr>
-                                        <td class="px-2 py-1 font-medium border border-gray-300">LT (PCS)</td>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">LT (PCS)</td>
                                         <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
                                             <input
                                                 type="text"
@@ -535,26 +491,51 @@
                                         </td>
                                     </tr>
 
-                                    <!-- QTY (PCS) - Manual Edit Row -->
-                                    <tr v-if="manualQtyMode[layer]">
-                                        <td class="px-2 py-1 font-medium border border-gray-300">QTY (PCS)</td>
-                                        <td
-                                            v-for="box in groupedByLayer[layer]"
-                                            :key="box"
-                                            class="px-2 py-1 border border-gray-300"
-                                        >
-                                            <input
-                                                type="number"
-                                                v-model="layerInputs[layer][box].qty"
-                                                placeholder="0"
-                                                class="w-full text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
-                                            />
+                                    <!-- Weight (KG) -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Weight (KG)</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ layerInputs[layer][box].weight }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- Box No. -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box No.</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ layerInputs[layer][box].boxNo }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- Coating -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Coating</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ mpcsbl.coating }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- Magnet Prepared By -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Magnet Prepared By</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ mpcsbl.magnetPreparedBy }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- Box Prepared By -->
+                                    <tr>
+                                        <td class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap">Box Prepared By</td>
+                                        <td v-for="box in groupedByLayer[layer]" :key="box" class="px-2 py-1 border border-gray-300">
+                                            {{ mpcsbl.boxPreparedBy }}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+
                     <div v-if="layersInvolvedUserPick.length" class="flex justify-center mt-20 mb-10">
                         <button
                             @click="Inertia.visit('/heat_treatment')"
@@ -731,6 +712,150 @@
                 </div>
             </Modal>
 
+            <Modal :show="showPreviewPanel" @close="showPreviewPanel = false">
+                <div
+                    class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
+                >
+                        <!-- Exit Button -->
+                        <button
+                        @click="showPreviewPanel = false"
+                        class="text-gray-400 transition duration-150 hover:text-gray-600"
+                        aria-label="Close modal"
+                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        </button>
+
+                        <p class="text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
+                    <div v-for="layer in layersInvolvedUserPick" :key="layer">
+                        <div v-if="layer !== firstLayerSelected">
+                            <h2 class="text-lg font-bold mt-8 mb-2">
+                                Layer {{ layer }}
+                            </h2>
+
+                            <table class="w-full text-xs border">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="border px-2 py-1">Field</th>
+                                        <th
+                                            v-for="box in previewBoxes(layer)"
+                                            :key="box"
+                                            class="border px-2 py-1 text-center"
+                                        >{{ box }}</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <!-- MODEL -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Model:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box" class="border px-2 py-1 text-center">
+                                            {{ mpcsbl.selectedModel }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- COATING MC NO -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Coating M/C No:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box" class="border px-2 py-1 text-center">
+                                            {{ mpcsbl.coatingMCNo }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- LOT NO -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Lot No:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box" class="border px-2 py-1 text-center">
+                                            {{ mpcsbl.lotNo }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- QTY -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Qty (PCS):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'q'" class="border px-2 py-1 text-center">
+                                            {{ layerInputs[layer][box]?.qty }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- HT -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">HT (PCS):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'ht'" class="border px-2 py-1 text-center">
+                                            {{ layerInputs[layer][box]?.ht }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- LT -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">LT (PCS):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'lt'" class="border px-2 py-1 text-center">
+                                            {{ layerInputs[layer][box]?.lt }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- WEIGHT -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">WT (KG):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'wt'" class="border px-2 py-1 text-center">
+                                            {{ layerInputs[layer][box]?.weight }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- BOX NO -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Box No.:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'bn'" class="border px-2 py-1 text-center">
+                                            {{ layerInputs[layer][box]?.boxNo }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- COATING -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Coating:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'ct'" class="border px-2 py-1 text-center">
+                                            {{ mpcsbl.coating }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- MAGNET PREPARED BY -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Magnet Prepared By:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'mpb'" class="border px-2 py-1 text-center">
+                                            {{ mpcsbl.magnetPreparedBy }}
+                                        </td>
+                                    </tr>
+
+                                    <!-- BOX PREPARED BY -->
+                                    <tr>
+                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Box Prepared By:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'bpb'" class="border px-2 py-1 text-center">
+                                            {{ mpcsbl.boxPreparedBy }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="flex my-8 space-x-3">
+                        <button
+                            @click="showPreviewPanel = false"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            @click="saveToDatabase()"
+                            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        >
+                            Proceed
+                            <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
 
         </div>
     </Frontend>
@@ -820,24 +945,29 @@ function useSessionStorage(key, state) {
   )
 }
 
+const isDataShown = ref(false);
+
 const showConfirmationPanel = ref(false);
+const showPreviewPanel = ref(false);
 const firstLayerSelected = ref('');
+const totalBoxes = ref();
 const model_names = ref([]);
+const lotNoLists = ref([]);
+const validationPassed = ref(false); // true only after successful validation
+const validationAttempted = ref(false); // to track if validation has been attempted
 const layers = ref([9, 8, 7, 6, 5, 4, 3, 2, 1]);
-const lastBoxSelected = ref(null);
 const boxes = ['A','B','C','D','E','F','G','H','J','K'];
 const currentGridData = ref();
+
 // Holds selected coordinates (e.g. ['9B','8D','6F'])
 const selectedCoordinates = ref([]);
+
 // Toggle a coordinate (select/unselect)
 function toggleCoordinate(layer, box) {
     const key = `${layer}${box}`;
     if (selectedCoordinates.value.includes(key)) {
         // Deselect
         selectedCoordinates.value = selectedCoordinates.value.filter(c => c !== key);
-
-        // Clear last box if it was deselected
-        if (lastBoxSelected.value === key) lastBoxSelected.value = '';
 
         // Clear first layer if no boxes remain in that layer
         const remainingBoxesInLayer = selectedCoordinates.value.filter(c => c.startsWith(layer));
@@ -871,17 +1001,11 @@ const layersInvolvedUserPick = computed(() => {
 // Group selections by layer — used later to build dynamic forms
 const groupedByLayer = computed(() => {
     const groups = {};
-    selectedCoordinates.value.forEach(coord => {
-        const layer = coord.match(/^\d+/)?.[0];
-        const box = coord.replace(layer, '');
-        if (!groups[layer])
-            groups[layer] = [];
-            groups[layer].push(box);
-    });
+    for (const layer in layerInputs) {
+        groups[layer] = Object.keys(layerInputs[layer]);
+    }
     return groups;
 });
-
-
 
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
 
@@ -892,14 +1016,11 @@ const mpcsbl = reactive({
     coatingMCNo: '',
     rawMaterialCode: '',
     lotNo: '',
-    qty: 0,
-    qty_lastBox: 0,
-    coating: 0,
+    coating: '',
     magnetPreparedBy: '',
     boxPreparedBy: '',
 });
 
-const manualQtyMode = reactive({});
 const layerInputs = reactive({});
 
 // Initialize structure when user selects coordinates
@@ -912,7 +1033,7 @@ const initializeLayerInputs = (layer, boxes) => {
                 weight: '',
                 ht: '',
                 lt: '',
-                qty: ''    // <-- new added
+                qty: ''
             };
         }
     });
@@ -929,22 +1050,77 @@ const removeLayerInputBox = (layer, box) => {
     }
 };
 
-// When a coordinate is unselected, auto-clear lastBoxSelected if it's gone
-watch(selectedCoordinates, (newCoords) => {
-    if (!newCoords.includes(lastBoxSelected.value)) {
-        lastBoxSelected.value = '';
-    }
-});
+const mainBoxes = computed(() =>
+    selectedCoordinates.value
+        .filter(c => c.startsWith(firstLayerSelected.value))
+        .map(c => c.replace(firstLayerSelected.value, ''))
+);
 
-// Debugging last box selcted // Debugging last box selcted // Debugging last box selcted // Debugging last box selcted
-/*watch(lastBoxSelected, (newVal, oldVal) => {
-    if (newVal) {
-        console.log(`✅ Last box selected: ${newVal}`);
-    } else if (oldVal && !newVal) {
-        console.log(`❌ Last box cleared (previous: ${oldVal})`);
+const previewBoxes = (layer) =>
+    selectedCoordinates.value
+        .filter(c => c.startsWith(layer))
+        .map(c => c.replace(layer, ''));
+
+const validateData = async () => {
+    validationAttempted.value = true;
+
+    // --- First validation: total boxes ---
+    if (selectedCoordinates.value.length !== Number(totalBoxes.value)) {
+        validationPassed.value = false;
+        toast.warning(
+            `Validation failed: You have selected ${selectedCoordinates.value.length} boxes while the fetched data contains ${totalBoxes.value} boxes for Model ${mpcsbl.selectedModel}, Lot #${mpcsbl.lotNo}. You cannot proceed.`
+        );
+        return; // stop further validation
     }
-});*/
-// Debugging last box selcted // Debugging last box selcted // Debugging last box selcted // Debugging last box selcted
+
+    // --- Ensure main layer is selected ---
+    if (!firstLayerSelected.value) {
+        validationPassed.value = false;
+        toast.warning('Please select the main layer to continue validation.');
+        return;
+    }
+
+    // --- Compute main and excess layer counts ---
+    const mainLayer = firstLayerSelected.value;
+    const mainCoordinates = selectedCoordinates.value.filter(coord => coord.startsWith(mainLayer));
+    const excessCoordinates = selectedCoordinates.value.filter(coord => !coord.startsWith(mainLayer));
+
+    const mainCount = mainCoordinates.length;
+    const excessCount = excessCoordinates.length;
+
+    // --- Second validation: call server to check layer/excess boxes ---
+    try {
+        const response = await axios.get(
+            `/api/initial-control-sheets/second-validation/${mpcsbl.selectedModel}/${mpcsbl.lotNo}/${mainCount}/${excessCount}`
+        );
+
+        if (response.data.validated) {
+            // Both validations passed
+            validationPassed.value = true;
+            toast.success('All validations passed. You may now proceed to fetch data.');
+        } else {
+            validationPassed.value = false;
+            toast.warning(
+                'Second validation failed: The main and/or excess layer box selection does not match the system data. You cannot proceed.'
+            );
+        }
+    } catch (error) {
+        validationPassed.value = false;
+        console.error('Failed to perform second validation', error);
+        toast.error('An error occurred while validating layers. Please try again.');
+    }
+};
+
+
+watch(
+    () => mpcsbl.lotNo,
+    async (newVal) => {
+        if (!newVal) return;
+        await getModelLists();
+        console.log("Lot No: ",mpcsbl.lotNo);
+        console.log("Model: ",mpcsbl.selectedModel);
+    }
+);
 
 // Automatically create or clean up form structures when user selection changes
 watch(layersInvolvedUserPick, (newLayers, oldLayers) => {
@@ -979,24 +1155,12 @@ watch(groupedByLayer, (newGroups) => {
 });
 
 watch(
-  () => manualQtyMode,
-  (newVal) => {
-    if (!newVal) return;
-
-    // For each layer in manual mode
-    Object.keys(newVal).forEach(layer => {
-      if (!newVal[layer]) return; // skip if manual mode off for this layer
-
-      const boxes = groupedByLayer.value[layer] || [];
-      boxes.forEach((box, index) => {
-        const isLastBox = lastBoxSelected.value?.replace(layer, '') === box;
-        if (!layerInputs[layer][box].qty) {
-          layerInputs[layer][box].qty = isLastBox ? mpcsbl.qty_lastBox : mpcsbl.qty;
+    () => [mpcsbl.selectedModel, mpcsbl.lotNo],
+    async ([model, lot]) => {
+        if (model && lot) {
+            await getTotalBoxes();
         }
-      });
-    })
-  },
-  { immediate: true, deep: true }
+    }
 );
 
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
@@ -1015,6 +1179,19 @@ console.log("Mass Prod: ", mpcsbl.selectedMassProd);
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
+const getTotalBoxes = async () => {
+    try{
+        const response = await axios.get(`/api/initial-control-sheets/${mpcsbl.selectedModel}/${mpcsbl.lotNo}/lot-total-boxes`);
+        //console.log("Total Boxes data: ", response.data);
+        const tbox = response.data;
+        totalBoxes.value = tbox.total_boxes || 'Loading...';
+        console.log('Total Boxes: ', totalBoxes.value);
+    }catch(error){
+        console.error('Failed to get total boxes: ', error);
+    }
+}
+
+
 // Fetch current data grid (availability)
 const getCurrentDataGrid = async () => {
     try {
@@ -1030,15 +1207,34 @@ const getCurrentDataGrid = async () => {
 
 const getModelLists = async () => {
     try{
-        const response = await axios.get('/api/inspectiondata/');
-        const inspectionDataList = response.data.data;
-        model_names.value = inspectionDataList.map(item => item.model);
+        const response = await axios.get(`/api/initial-control-sheets/${mpcsbl.lotNo}/lot-all-model`);
+        model_names.value = response.data;
         //console.log('Model lists: ',model_names.value);
     }catch(error){
         console.error('Error fetching model names', error);
         toast.error('Failed to get the model names.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getModelLists",
+            "Failed to get the model names"
+        );
     }
 }
+
+const fetchAllLotNoData = async () => {
+    try {
+        const response = await axios.get('/api/initial-control-sheets/lot-all');
+        //console.log(response.data); // All records with lot_no, newest first
+        lotNoLists.value = response.data;
+    } catch (err) {
+        console.error('Failed to fetch lot_no data:', err);
+    }
+};
 
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
@@ -1085,86 +1281,46 @@ const unselectLayer = (layer) => {
 
     // Clear first/last if affected
     if (firstLayerSelected.value === layer) firstLayerSelected.value = '';
-    if (lastBoxSelected.value?.startsWith(layer)) lastBoxSelected.value = '';
 };
 
-/*
-watch(firstLayerSelected, (newVal, oldVal) => {
-    console.log('First layer selected changed:', oldVal, '→', newVal);
-});
-*/
-/*
-const updateFormatType = async () => { // Update format type of Mass Productions Table
-    const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5_format_type' : `layer_${mpcs.selectedLayer}_format_type`;
-
-    const dataPayload = {
-        furnace: mpcs.selectedFurnace,
-        mass_prod: mpcs.selectedMassProd,
-        [layerKey]: 'Normal',
-    }
-
-    try{
-        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
-        console.log('Response Update: ', responseUpdate.data);
-    }catch(error){
-        console.log('Failed to update format type');
-    }
-}*/
-
-const clearAll = () => {
-    // Reset all mpcs fields except selectedFurnace and selectedMassProd
+const resetData = () => {
+    // Reset all mpcsbl fields except selectedFurnace and selectedMassProd
     Object.keys(mpcsbl).forEach(key => {
         if (key === 'selectedFurnace' || key === 'selectedMassProd') return;
+
+        // Reset numbers to 0, strings to empty
         mpcsbl[key] = typeof mpcsbl[key] === 'number' ? 0 : '';
     });
-}
+
+    // Clear selected coordinates in the grid
+    selectedCoordinates.value = [];
+
+    // Reset first layer selection radio
+    firstLayerSelected.value = null;
+
+    // Reset validation flags
+    validationAttempted.value = false;
+    validationPassed.value = false;
+
+    // Optionally reset layer inputs if you are storing per-box data
+    Object.keys(layerInputs).forEach(layer => {
+        Object.keys(layerInputs[layer]).forEach(box => {
+            layerInputs[layer][box] = {
+                qty: 0,
+                ht: 0,
+                lt: 0,
+                weight: 0,
+                boxNo: ''
+            };
+        });
+    });
+};
+
+
 
 const confirmValidate = () => {
-    // Validate general info
-    const requiredGeneralFields = [
-        'selectedModel',
-        'coatingMCNo',
-        'rawMaterialCode',
-        'lotNo',
-        'qty',
-        'qty_lastBox',
-        'coating',
-        'magnetPreparedBy'
-    ];
-
-    for (const field of requiredGeneralFields) {
-        if (!mpcsbl[field] || mpcsbl[field].toString().trim() === '') {
-            toast.warning(`Validation failed: Check for required input in general info.`);
-            return; // abort
-        }
-    }
-
-    // If no manual edit active, validate lastBoxSelected
-    const manualEditActive = Object.values(manualQtyMode).some(val => val);
-    if (!manualEditActive && !lastBoxSelected.value) {
-        toast.warning('Validation failed: You must select a Last Box.');
-        return;
-    }
-
-    // Validate selected boxes
-    for (const layer of Object.keys(layerInputs)) {
-        for (const box of Object.keys(layerInputs[layer])) {
-            const boxData = layerInputs[layer][box];
-            if (!boxData.boxNo || boxData.boxNo.toString().trim() === '') {
-                toast.warning(`Validation failed: Layer ${layer}, Box ${box} - Box No. is required.`);
-                return;
-            }
-            if (boxData.weight === '' || boxData.weight === null) {
-                toast.warning(`Validation failed: Layer ${layer}, Box ${box} - Weight is required.`);
-                return;
-            }
-            // ht and lt are optional
-        }
-    }
-
-    // All checks passed → show confirmation panel
-    toast.success('Validation Successful');
-    showConfirmationPanel.value = true;
+    //showConfirmationPanel.value = true;
+    showPreviewPanel.value = true;
 };
 
 const formatLayerDataForDatabase = (layer) => {
@@ -1182,17 +1338,7 @@ const formatLayerDataForDatabase = (layer) => {
     boxesInLayer.forEach(box => {
         const values = layerInputs[layer][box];
 
-        // Manual qty takes priority
-        const manualQty = values.qty;
-        const isLastBox = lastBoxSelected.value?.replace(layer, '') === box;
-
-        qtyData[box] =
-            manualQty !== undefined && manualQty !== null && manualQty !== ''
-                ? manualQty
-                : isLastBox
-                    ? mpcsbl.qty_lastBox || 0
-                    : mpcsbl.qty || 0;
-
+        qtyData[box] = values.qty || 0;
         htData[box] = values.ht || 0;
         ltData[box] = values.lt || 0;
         wtData[box] = values.weight || 0;
@@ -1218,56 +1364,147 @@ const formatLayerDataForDatabase = (layer) => {
     ];
 };
 
+const changeData = () => {
 
-const saveToDatabase = async () => {
-    if (!selectedCoordinates.value.length) return; // safety check
+}
+
+const fetchAllLotDataBoxDetails = async () => {
+    if (!mpcsbl.selectedModel || !mpcsbl.lotNo) {
+        toast.warning('Please select Model and Lot number first');
+        return;
+    }
 
     try {
-        // Sort layers and separate main vs excess
-        const sortedLayers = [...layersInvolvedUserPick.value].sort((a, b) => a - b);
-        const firstLayer = Number(firstLayerSelected.value) || Number(sortedLayers[0]);
-        const excessLayers = sortedLayers.filter(layer => Number(layer) !== firstLayer);
+        const response = await axios.get(
+            `/api/initial-control-sheets/fetch-layer-excess-data/${mpcsbl.selectedModel}/${mpcsbl.lotNo}`
+        );
 
-        // Format main layer data
-        const firstLayerData = formatLayerDataForDatabase(firstLayer);
+        const { layer_data, excess_data, total_boxes } = response.data;
+        totalBoxes.value = total_boxes ?? 0;
 
-        // Save main layer (merge if exists)
+        const mainLayer = firstLayerSelected.value;
+
+        // ---- Helper: normalize row titles for easy mapping ----
+        const normalizeTitle = (title) =>
+            title.toLowerCase().replace(/[^a-z]/g, '');
+
+        // ---- Populate global mpcsbl fields from first box of main layer ----
+        const mainBoxes = selectedCoordinates.value
+            .filter(c => c.startsWith(mainLayer))
+            .map(c => c.replace(mainLayer, ''));
+
+        if (mainBoxes.length) {
+            const firstBoxIndex = 0; // first selected box
+            layer_data.forEach(row => {
+                const title = normalizeTitle(row.rowTitle);
+                const dataValues = Object.values(row.data);
+                const value = dataValues[firstBoxIndex] ?? '';
+
+                if (title.includes('model')) mpcsbl.selectedModel = value;
+                else if (title.includes('coatingmcno')) mpcsbl.coatingMCNo = value;
+                else if (title.includes('lot')) mpcsbl.lotNo = value;
+                else if (title.includes('coating')) mpcsbl.coating = value;
+                else if (title.includes('magnetpreparedby')) mpcsbl.magnetPreparedBy = value;
+                else if (title.includes('boxpreparedby')) mpcsbl.boxPreparedBy = value;
+            });
+        }
+
+        // ---- Clear previous layerInputs ----
+        Object.keys(layerInputs).forEach(layer => delete layerInputs[layer]);
+
+        // ---- Populate layerInputs for all selected layers ----
+        layersInvolvedUserPick.value.forEach(layer => {
+            const boxesInLayer = selectedCoordinates.value
+                .filter(c => c.startsWith(layer))
+                .map(c => c.replace(layer, ''));
+
+            if (!layerInputs[layer]) layerInputs[layer] = {};
+
+            const sourceRows = (String(layer) === String(mainLayer)) ? layer_data : excess_data;
+
+            // Sequential mapping: map i-th fetched data to i-th selected box
+            boxesInLayer.forEach((box, i) => {
+                const qtyRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('qty'));
+                const weightRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('wt'));
+                const boxNoRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('box'));
+
+                const qtyValue = qtyRow ? Object.values(qtyRow.data)[i] ?? 0 : 0;
+                const weightValue = weightRow ? Object.values(weightRow.data)[i] ?? 0 : 0;
+                const boxNoValue = boxNoRow ? Object.values(boxNoRow.data)[i] ?? '' : '';
+
+                layerInputs[layer][box] = {
+                    qty: qtyValue,
+                    weight: weightValue,
+                    boxNo: boxNoValue,
+                    ht: layerInputs[layer]?.[box]?.ht ?? '',
+                    lt: layerInputs[layer]?.[box]?.lt ?? ''
+                };
+            });
+        });
+
+        toast.success('Box details fetched successfully');
+    } catch (error) {
+        console.error('Failed to fetch box details', error);
+        toast.error('Failed to fetch box details');
+    }
+};
+
+
+const saveToDatabase = async () => {
+    if (!selectedCoordinates.value.length) return;
+
+    try {
+        // --- Normalize & identify layers ---
+        const sortedLayers = [...layersInvolvedUserPick.value]
+            .map(l => Number(l))
+            .sort((a, b) => a - b);
+
+        const mainLayer = Number(firstLayerSelected.value) || sortedLayers[0];
+        const excessLayers = sortedLayers.filter(l => l !== mainLayer);
+
+        // --- MAIN LAYER SAVE ---
+        const mainLayerData = formatLayerDataForDatabase(mainLayer);
+
         const mainPayload = {
-            layer: `layer_${firstLayer}`,
-            layer_data: firstLayerData, // pass array directly
+            layer: `layer_${mainLayer}`,
+            layer_data: mainLayerData,
         };
-        const mainUrl = `/api/mass-production/${mpcsbl.selectedFurnace}/${mpcsbl.selectedMassProd}/merge`;
-        const saveMain = await axios.patch(mainUrl, mainPayload);
-        console.log('Main layer saved/merged:', saveMain.data);
 
-        // Handle excess layers
+        const mainSaveRes = await axios.patch(
+            `/api/mass-production/${mpcsbl.selectedFurnace}/${mpcsbl.selectedMassProd}/merge`,
+            mainPayload
+        );
+
+        console.log('Main layer merged:', mainSaveRes.data);
+
+        // --- EXCESS LAYERS SAVE ---
         for (const layer of excessLayers) {
             if (!layerInputs[layer]) continue;
 
-            const excessData = formatLayerDataForDatabase(layer);
+            const excessLayerData = formatLayerDataForDatabase(layer);
 
-            const mergePayload = {
+            const excessPayload = {
                 furnace: mpcsbl.selectedFurnace,
                 mass_prod: mpcsbl.selectedMassProd,
-                layer: layer,
-                layer_data: excessData, // pass array directly
+                layer,
+                layer_data: excessLayerData,
             };
 
-            const saveExcess = await axios.post('/api/excess-layers/merge', mergePayload);
-            console.log('Excess layer saved/merged:', saveExcess.data);
+            const excessSaveRes = await axios.post('/api/excess-layers/merge', excessPayload);
+
+            console.log(`Excess layer ${layer} merged:`, excessSaveRes.data);
         }
 
-    } catch (error) {
-        console.error('Error: Database saving failed.', error);
+    } catch (err) {
+        console.error('Save failed:', err);
         toast.error('Database save failed!');
     } finally {
         showConfirmationPanel.value = false;
-        clearAll(); // clears selections & layerInputs
+        resetData();
         toast.success('Saved Successfully!');
         Inertia.visit('/heat_treatment');
     }
 };
-
 
 
 
@@ -1286,7 +1523,7 @@ onMounted(async () => {
         return; // Stop execution if not authenticated
     }
     await getCurrentDataGrid();
-    await getModelLists();
+    await fetchAllLotNoData();
 });
 
 </script>

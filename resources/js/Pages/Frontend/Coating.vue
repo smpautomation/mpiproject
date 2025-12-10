@@ -293,7 +293,7 @@
 
             <div class="flex flex-row gap-10 mt-10">
                 <div v-if="activate2ndGBDP" class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">1st GBDP Coating Information</h2>
+                    <h2 class="pb-1 mb-3 font-bold text-gray-800 border-b text-md">1st GBDP Coating Information</h2>
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
@@ -348,30 +348,50 @@
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div class="relative">
-                            <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">
+                                Furnace Name <span class="text-red-500">*</span>
+                            </label>
                             <select
                                 v-model="coatingInfo.selectedFurnace"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                :disabled="isDataShown"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg
+                                    focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50
+                                    disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in furnace_names" :key="items" :value="items">
                                     {{ items }}
                                 </option>
                             </select>
                         </div>
+
                         <div class="relative">
-                            <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
+                            <label class="block mb-1 text-xs font-semibold text-gray-800">
+                                Mass Prod. Name <span class="text-red-500">*</span>
+                            </label>
                             <select
                                 v-model="coatingInfo.selectedMassProd"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                :disabled="isDataShown"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg
+                                    focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50
+                                    disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in massProd_names" :key="items" :value="items">
                                     {{ items }}
                                 </option>
                             </select>
                         </div>
+
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
-                            <select v-model="coatingInfo.selectedLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Layer <span class="text-red-500">*</span>
+                            </label>
+                            <select
+                                v-model="coatingInfo.selectedLayer"
+                                :disabled="isDataShown"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg
+                                    focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50
+                                    disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
+                            >
                                 <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
                                 </option>
@@ -380,70 +400,88 @@
                     </div>
                     <!-- Group: Selection -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <!-- Lot Number -->
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Lot no<span class="text-red-500"> *</span>
+                            </label>
+                            <input
+                                v-model="lotNo"
+                                type="text"
+                                disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <!-- Model -->
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Model<span class="text-red-500"> *</span>
+                            </label>
+                            <input
+                                v-model="coatingInfo.selectedModel"
+                                type="text"
+                                disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <!-- Button (wrapped for alignment) -->
+                        <div class="flex items-end">
+                            <button
+                                v-if="activate2ndGBDP && !isDataShown"
+                                @click="fetchCoatingData2ndGbdpSummary"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                Show Data
+                            </button>
+                            <button
+                                v-if="!activate2ndGBDP && !isDataShown"
+                                @click="fetchCoatingDataSummary"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                Show Data
+                            </button>
+                            <button
+                                v-if="isDataShown"
+                                @click="changeData"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-yellow-600 hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Group: Selection -->
+                    <div v-if="activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating Date<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.coatingDate" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.coatingDate" type="date" disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating Machine No<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.coatingMachineNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.coatingMachineNo" @input="coatingInfo.coatingMachineNo = coatingInfo.coatingMachineNo.toUpperCase()" type="text" disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Slurry Lot No<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.slurryLotNo" @input="coatingInfo.slurryLotNo = coatingInfo.slurryLotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.slurryLotNo" @input="coatingInfo.slurryLotNo = coatingInfo.slurryLotNo.toUpperCase()" type="text" disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div v-if="activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT (μg/mm²)<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.minTbContent" @input="coatingInfo.minTbContent = coatingInfo.minTbContent.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div v-if="!activate2ndGBDP">
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity (pcs)<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.sampleQuantity" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div v-else>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
-                            <input v-model="lotNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.minTbContent" @input="coatingInfo.minTbContent = coatingInfo.minTbContent.toUpperCase()" type="text" disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.totalMagnetWeight" type="number" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="coatingInfo.totalMagnetWeight" type="number" disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Selection -->
-                    <div v-if="!activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Loader Operator<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.loaderOperator" @input="coatingInfo.loaderOperator = coatingInfo.loaderOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Unloader Operator<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.unloaderOperator" @input="coatingInfo.unloaderOperator = coatingInfo.unloaderOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Checker Operator<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.checkerOperator" @input="coatingInfo.checkerOperator = coatingInfo.checkerOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                    </div>
-                    <!-- Group: Selection -->
-                    <div v-if="!activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
-                            <input v-model="lotNo" type="text" disabled class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.timeStart" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Time Finished<span class="text-red-500"> *</span></label>
-                            <input v-model="coatingInfo.timeFinished" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
-                    </div>
-                    <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
+                    <div v-if="activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-1">
                         <!-- Remarks Input -->
                         <div class="flex flex-col">
                             <label class="block mb-2 text-xs font-semibold text-gray-700">
@@ -451,77 +489,20 @@
                             </label>
                             <input
                             v-model="coatingInfo.remarks"
-                            @input="coatingInfo.remarks = coatingInfo.remarks.toUpperCase()"
+                            @input="coatingInfo.remarks = coatingInfo_1stgbdp.remarks.toUpperCase()"
                             type="text"
-                            class="w-[36rem] text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
+                            disabled
+                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter remarks here..."
                             />
                         </div>
                     </div>
                 </div>
 
-                <div v-if="!activate2ndGBDP" class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
-                        Additional Slurry
-                    </h2>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-[30rem] text-sm text-center border border-gray-200 rounded-lg">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-1 py-1 border-r border-gray-300">MODULE</th>
-                                <th class="px-1 py-1 border-r border-gray-300">NEW</th>
-                                <th class="px-1 py-1 border-r border-gray-300">HOMO</th>
-                                <th class="px-1 py-1 border-r border-gray-300">TIME</th>
-                                <th class="px-1 py-1 border-r border-gray-300">LITERS</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white">
-                            <tr
-                                v-for="(row) in additionalSlurry"
-                                :key="row.module"
-                                class="hover:bg-gray-50"
-                            >
-                            <td class="px-1 py-1 border-b border-r border-gray-200">{{ row.module }}</td>
-                            <td class="px-1 py-1 border-b border-r border-gray-200">
-                                <input
-                                    type="text"
-                                    v-model="row.new"
-                                    @input="row.new = row.new.toUpperCase()"
-                                    class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
-                                />
-                            </td>
-                            <td class="px-1 py-1 border-b border-r border-gray-200">
-                                <input
-                                    type="text"
-                                    v-model="row.homo"
-                                    @input="row.homo = row.homo.toUpperCase()"
-                                    class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
-                                />
-                            </td>
-                            <td class="px-1 py-1 border-b border-r border-gray-200">
-                                <input
-                                    type="time"
-                                    v-model="row.time"
-                                    class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
-                                />
-                            </td>
-                            <td class="px-1 py-1 border-b border-gray-200">
-                                <input
-                                    type="number"
-                                    v-model="row.liters"
-                                    class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
             <div v-if="activate2ndGBDP" class="flex flex-row gap-10 mt-10 items">
                 <div class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">1st GBDPCoating Data (Unit: µ/mm²)</h2>
+                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">1st GBDP Coating Data (Unit: µ/mm²)</h2>
                     <div class="flex flex-row gap-5 whitespace-nowrap">
                         <div class="flex flex-row gap-4">
                             <div v-for="(slice, colIndex) in Math.ceil(coatingsTable_1stgbdp.length / 10)" :key="colIndex" class="overflow-x-auto">
@@ -588,76 +569,7 @@
                 </div>
             </div>
             <div class="flex flex-row gap-10 mt-10 items">
-                <div v-if="!activate2ndGBDP" class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Data (Unit: µ/mm²)</h2>
-                    <div class="flex flex-row gap-5 whitespace-nowrap">
-                        <div class="flex flex-row gap-4">
-                            <div v-for="(slice, colIndex) in Math.ceil(visibleCoatings.length / 10)" :key="colIndex" class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-gray-200 rounded-lg">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-2 py-1 text-left border-r border-gray-300">No.</th>
-                                            <th class="px-2 py-1 text-left">Coating</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white">
-                                        <tr
-                                            v-for="(item) in visibleCoatings.slice(colIndex * 10, (colIndex + 1) * 10)"
-                                            :key="item.no"
-                                            class="hover:bg-gray-50"
-                                        >
-                                        <td class="px-3 py-1 border-b border-r border-gray-200">{{ item.no }}</td>
-                                        <td class="px-3 py-1 border-b border-gray-200">
-                                            <input
-                                                type="number"
-                                                v-model="item.coating"
-                                                class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
-                            <thead class="text-center bg-gray-100">
-                                <tr>
-                                <th colspan="8" class="text-center border-b border-gray-300">
-                                    Concentration Amount
-                                </th>
-                                </tr>
-                                <tr>
-                                <th class="px-2 py-1 border-r border-gray-300"></th>
-                                <th v-for="module in modules" :key="module" class="px-2 py-1 border-r border-gray-300">
-                                    {{ module }}
-                                </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white">
-                                <tr v-for="(range, rowIndex) in visibleRanges" :key="range" class="hover:bg-gray-50">
-                                <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
-                                <td
-                                    v-for="(module, colIndex) in modules"
-                                    :key="colIndex"
-                                    class="px-2 py-1 border-b border-r border-gray-200"
-                                >
-                                    <input
-                                    type="number"
-                                    v-model="visibleConcentrationData[rowIndex][colIndex]"
-                                    class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-else class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
+                <div v-if="activate2ndGBDP" class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 font-bold text-gray-800 border-b text-md">2nd GBDP Coating Data (Unit: µ/mm²)</h2>
                     <div class="flex flex-row gap-5 whitespace-nowrap">
                         <div class="flex flex-row gap-4">
@@ -746,8 +658,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
-                    <p v-if="activate2ndGBDP" class="font-semibold text-center">2ND GBDP</p>
+                <div v-if="activate2ndGBDP" class="px-4 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
+                    <p class="font-semibold text-center">2ND GBDP</p>
                     <!-- Stats: Average / Max / Min -->
                     <div v-if="activate2ndGBDP" class="flex flex-row gap-20">
                         <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
@@ -763,26 +675,293 @@
                             <div class="text-sm font-semibold text-gray-800">{{ coatingAverage_2ndgbdp != null ? Number(coatingAverage_2ndgbdp).toFixed(2) : '-' }}</div>
                         </div>
                     </div>
-                    <div v-else class="flex flex-row gap-20">
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Maximum</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Minimum</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
-                        </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
-                            <div class="text-xs font-medium text-gray-500">Average</div>
-                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <!-- DIV BELOW (BOTTOM PART) -->
+            <div
+                v-if="!activate2ndGBDP"
+                class="flex flex-col items-center bg-white p-6 rounded-xl shadow-2xl w-full overflow-auto pr-12"
+            >
+                <div class="flex flex-row gap-2">
+                    <div>
+                        <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                <th class="px-1 border border-gray-300">Lot No.</th>
+                                <th class="px-1 border border-gray-300">No.</th>
+                                <th class="px-1 border border-gray-300">Coating</th>
+                                <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="rowIndex in 10" :key="rowIndex">
+                                <!-- Main coating row -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-1 border border-gray-300">{{ lotNo }}</td>
+                                    <td class="px-1 border border-gray-300">{{ rowIndex }}</td>
+                                    <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex - 1] ?? '-' }}</td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex - 1) / 5)][(rowIndex - 1) % 5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">{{ modules[(rowIndex - 1) % 5] }}</td>
+                                </tr>
+
+                                <!-- Extra module-only rows after 5th and 10th coating -->
+                                <tr v-if="rowIndex === 5 || rowIndex === 10">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex - 1) / 5)][5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                <tr v-if="rowIndex === 5 || rowIndex === 10">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex - 1) / 5)][6] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-1 border border-gray-300">Lot No.</th>
+                                    <th class="px-1 border border-gray-300">No.</th>
+                                    <th class="px-1 border border-gray-300">Coating</th>
+                                    <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="rowIndex in 10" :key="'t2-' + rowIndex">
+                                <!-- Main coating row -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-1 border border-gray-300">{{ lotNo }}</td>
+                                    <td class="px-1 border border-gray-300">{{ rowIndex + 10 }}</td>
+                                    <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 9] ?? '-' }}</td>
+                                    <td class="px-1 border border-gray-300">
+                                        {{ concentrationData[Math.floor((rowIndex + 9) / 5)][(rowIndex + 9) % 5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 9) % 5] }}</td>
+                                </tr>
+
+                                <!-- Extra M-06 rows -->
+                                <tr v-if="rowIndex + 10 === 15 || rowIndex + 10 === 20">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 9) / 5)][5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                <tr v-if="rowIndex + 10 === 15 || rowIndex + 10 === 20">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 9) / 5)][6] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-if="!activate2ndGBDP">
+                        <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                <th class="px-1 border border-gray-300">Lot No.</th>
+                                <th class="px-1 border border-gray-300">No.</th>
+                                <th class="px-1 border border-gray-300">Coating</th>
+                                <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="rowIndex in 10" :key="'t3-' + rowIndex">
+                                <!-- Main coating row -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-1 border border-gray-300">{{ lotNo }}</td>
+                                    <td class="px-1 border border-gray-300">{{ rowIndex + 20 }}</td>
+                                    <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 19] ?? '-' }}</td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 19) / 5)][(rowIndex + 19) % 5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 19) % 5] }}</td>
+                                </tr>
+
+                                <!-- Extra M-06 rows -->
+                                <tr v-if="rowIndex + 20 === 25 || rowIndex + 20 === 30">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 19) / 5)][5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                <tr v-if="rowIndex + 20 === 25 || rowIndex + 20 === 30">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 19) / 5)][6] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-if="hasRows31to35">
+                        <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                <th class="px-1 border border-gray-300">Lot No.</th>
+                                <th class="px-1 border border-gray-300">No.</th>
+                                <th class="px-1 border border-gray-300">Coating</th>
+                                <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="rowIndex in 5" :key="'t4-' + rowIndex">
+                                <!-- Main coating row -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-1 border border-gray-300">{{ lotNo }}</td>
+                                    <td class="px-1 border border-gray-300">{{ rowIndex + 30 }}</td>
+                                    <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 29] ?? '-' }}</td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 29) / 5)][(rowIndex + 29) % 5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 29) % 5] }}</td>
+                                </tr>
+
+                                <!-- Extra M-06 rows -->
+                                <tr v-if="rowIndex + 30 === 35">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 29) / 5)][5] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                <tr v-if="rowIndex + 30 === 35">
+                                    <td colspan="3"></td>
+                                    <td class="px-1 border border-gray-300">
+                                    {{ concentrationData[Math.floor((rowIndex + 29) / 5)][6] ?? '-' }}
+                                    </td>
+                                    <td class="px-1 border border-gray-300">M-06</td>
+                                </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-if="!activate2ndGBDP">
+                        <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                <th rowspan="2" class="px-1 border border-gray-300">MODULE</th>
+                                <th colspan="3" class="px-1 border border-gray-300">ADDITIONAL SLURRY</th>
+                                <th rowspan="2" class="px-1 border border-gray-300">LITERS</th>
+                                </tr>
+                                <tr>
+                                <th class="px-1 border border-gray-300">NEW</th>
+                                <th class="px-1 border border-gray-300">HOMO</th>
+                                <th class="px-1 border border-gray-300">TIME</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in additionalSlurry" :key="row.module" class="hover:bg-gray-50">
+                                <td class="px-1 border border-gray-300">{{ row.module }}</td>
+                                <td class="px-1 border border-gray-300">{{ row.new }}</td>
+                                <td class="px-1 border border-gray-300">{{ row.homo }}</td>
+                                <td class="px-1 border border-gray-300">{{ row.time }}</td>
+                                <td class="px-1 border border-gray-300">{{ row.liters }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
+                        <div class="flex items-center gap-1">
+                            <label class="font-medium text-gray-600">Maximum:</label>
+                            <span class="text-gray-800">{{ coatingMaximum ?? '-' }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <label class="font-medium text-gray-600">Minimum:</label>
+                            <span class="text-gray-800">{{ coatingMinimum ?? '-' }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <label class="font-medium text-gray-600">Average:</label>
+                            <span class="text-gray-800">
+                                {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="!activate2ndGBDP">
+                    <div class="flex flex-row mt-5 text-xs whitespace-nowrap">
+                        <div class="flex flex-col items-end gap-1 font-semibold">
+                            <label>Coating Date: </label>
+                            <label>MIN TB CONTENT: </label>
+                            <label>Loader Operator: </label>
+                        </div>
+                        <div class="flex flex-col gap-1 ml-5">
+                            <span>{{ coatingInfo.coatingDate || 'NA' }}</span>
+                            <span>{{ coatingInfo.minTbContent || 'NA' }}</span>
+                            <span>{{ coatingInfo.loaderOperator || 'NA' }}</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200">
+                            <label>Coating Machine No: </label>
+                            <label>Sample Quantity: </label>
+                            <label>Unloader Operator: </label>
+                            <label>Time Start: </label>
+                        </div>
+                        <div class="flex flex-col gap-1 ml-5">
+                            <span>{{ coatingInfo.coatingMachineNo || 'NA' }}</span>
+                            <span>{{ coatingInfo.sampleQuantity || 'NA' }}</span>
+                            <span>{{ coatingInfo.unloaderOperator || 'NA' }}</span>
+                            <span>{{ coatingInfo.timeStart || 'NA' }}</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200">
+                            <label>Slurry Lot No: </label>
+                            <label>Total Magnet Weight: </label>
+                            <label>Checker Operator: </label>
+                            <label>Time Finished: </label>
+                        </div>
+                        <div class="flex flex-col gap-1 ml-5">
+                            <span>{{ coatingInfo.slurryLotNo || 'NA' }}</span>
+                            <span>{{ coatingInfo.totalMagnetWeight || 'NA' }}</span>
+                            <span>{{ coatingInfo.checkerOperator || 'NA' }}</span>
+                            <span>{{ coatingInfo.timeFinished || 'NA' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <div class="flex flex-row mt-5 text-xs whitespace-nowrap">
+                        <div class="flex flex-col items-end gap-1 font-semibold">
+                            <label>Coating Date: </label>
+                            <label>MIN TB CONTENT: </label>
+                            <label>Coating Machine No: </label>
+                        </div>
+                        <div class="flex flex-col gap-1 ml-5">
+                            <span>{{ coatingInfo.coatingDate || 'NA' }}</span>
+                            <span>{{ coatingInfo.minTbContent || 'NA' }}</span>
+                            <span>{{ coatingInfo.coatingMachineNo || 'NA' }}</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200">
+                            <label>Slurry Lot No: </label>
+                            <label>Total Magnet Weight: </label>
+                        </div>
+                        <div class="flex flex-col gap-1 ml-5">
+                            <span>{{ coatingInfo.slurryLotNo || 'NA' }}</span>
+                            <span>{{ coatingInfo.totalMagnetWeight || 'NA' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             <!-- LAST BOTTOM DIV -->
-            <div class="flex flex-row gap-20 mt-10">
-                <div class="bg-gradient-to-br from-black via-gray-900 to-gray-800 border border-cyan-600 shadow-[0_10px_25px_rgba(99,102,241,0.4),0_4px_6px_rgba(0,0,0,0.4)] rounded-3xl px-6 py-6 flex items-center gap-16 ring-1 ring-teal-400 backdrop-blur-md whitespace-nowrap">
+            <div class="flex flex-row gap-20 mt-10 whitespace-nowrap">
+                <div class="bg-gray-900 border border-cyan-600 shadow-lg rounded-3xl px-6 py-6 flex items-center gap-16">
                     <!-- Glowing Spinning Cogwheel -->
                     <div class="relative flex-shrink-0 w-12 h-12">
                         <div class="absolute inset-0 rounded-full opacity-100 bg-cyan-400 blur-xl animate-pulse"></div>
@@ -799,27 +978,28 @@
                         <!-- Finalize -->
                         <button
                             v-if="!activate2ndGBDP"
-                            :disabled="isExists"
+                            :disabled="isExists || coatingNoMassProdData"
                             @click="finalize"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
-                            :class="isExists
+                            :class="isExists || coatingNoMassProdData
                                 ? 'bg-red-600 hover:bg-red-700 focus:ring-red-400 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'"
                         >
-                            {{ isExists ? 'DUPLICATE DETECTED' : 'FINALIZE' }}
+                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists ? 'DUPLICATE DETECTED' : 'FINALIZE') }}
                         </button>
+
                         <button
                             v-else
                             @click="finalize_1st2ndGbdp"
+                            :disabled="isExists_2ndGBDP || coatingNoMassProdData"
                             :class="[
                                 'flex-1 px-4 py-3 text-lg font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50',
-                                isExists_2ndGBDP
+                                isExists_2ndGBDP || coatingNoMassProdData
                                     ? 'bg-red-600 text-white cursor-not-allowed'
                                     : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
                             ]"
-                            :disabled="isExists_2ndGBDP"
                         >
-                            {{ isExists_2ndGBDP ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
+                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DUPLICATE DETECTED' : 'SUBMIT') }}
                         </button>
 
                         <!-- Cancel -->
@@ -832,7 +1012,7 @@
                         <!-- Clear All -->
                         <button
                             v-if="!activate2ndGBDP"
-                            @click="clearAll()"
+                            @click="clearAll"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
                         >
                             CLEAR ALL
@@ -840,7 +1020,7 @@
                         <!-- Clear All -->
                         <button
                             v-else
-                            @click="clearAllTransition()"
+                            @click="clearAllTransition"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
                         >
                             CLEAR ALL
@@ -909,18 +1089,18 @@
                         </h4>
 
                         <div class="space-y-2 text-xs text-red-800">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                            <span>All required fields completed</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                            <span>Data validated successfully</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                            <span>Submission is permanent. Proceed only if confident!</span>
-                        </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                                <span>All required fields completed</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                                <span>Data validated successfully</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                                <span>Submission is permanent. Proceed only if confident!</span>
+                            </div>
                         </div>
                     </div>
                     <!-- Action Buttons -->
@@ -1035,14 +1215,14 @@
                                     <tr v-if="rowIndex + 10 === 15 || rowIndex + 10 === 20">
                                         <td colspan="3"></td>
                                         <td class="px-1 border border-gray-300">
-                                        {{ concentrationData[Math.floor((rowIndex + 9) / 5)][5] ?? '-' }}
+                                            {{ concentrationData[Math.floor((rowIndex + 9) / 5)][5] ?? '-' }}
                                         </td>
                                         <td class="px-1 border border-gray-300">M-06</td>
                                     </tr>
                                     <tr v-if="rowIndex + 10 === 15 || rowIndex + 10 === 20">
                                         <td colspan="3"></td>
                                         <td class="px-1 border border-gray-300">
-                                        {{ concentrationData[Math.floor((rowIndex + 9) / 5)][6] ?? '-' }}
+                                            {{ concentrationData[Math.floor((rowIndex + 9) / 5)][6] ?? '-' }}
                                         </td>
                                         <td class="px-1 border border-gray-300">M-06</td>
                                     </tr>
@@ -1355,11 +1535,13 @@ const bypassValidation = ref(false);
 // General Variables --------- General Variables
 
 //Toggle Control
+const coatingNoMassProdData = ref(false);
 const showModalFinalize = ref(false);
 const showModalSubmit = ref(false);
 const isExists = ref(false);
 const isExists_2ndGBDP = ref(false);
 const isModelMissing = ref(false);
+const isDataShown = ref(false);
 //Toggle Control
 
 const massProd_names = ref([]);
@@ -1383,10 +1565,11 @@ const fetchedCoatingData = ref([]);
 
 // Coating Information Variables --------- Coating Information Variables
 
-const coatingInfo = reactive({ // <--- this is the 2nd GBDP
+const coatingInfo = reactive({
     selectedFurnace: '',
     selectedMassProd: '',
     selectedLayer: null,
+    selectedModel: '',
     coatingDate: '',
     coatingMachineNo: '',
     slurryLotNo: '',
@@ -1936,11 +2119,14 @@ const getFurnaceLists = async () => {
     }
 }
 
+
+
 const getSelectedMassProdData = async () => {
     try{
         const response = await axios.get(`/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layer/${coatingInfo.selectedLayer}/layer-no`);
         const massProdLayerData = response.data.layer_data;
         console.log('Mass Prod layer data: ', massProdLayerData);
+        coatingInfo.selectedModel = massProdLayerData[0].data['A'];
         coatingInfo.coatingMachineNo = massProdLayerData[1].data['A'];
         lotNo.value = massProdLayerData[2].data['A'];
         const data = massProdLayerData[7]?.data || {};
@@ -2042,9 +2228,11 @@ const fetchAvailableLayers = async () => {
         );
         available_layers.value = response.data.completed_layers;
         console.log("Available Layers: ", available_layers.value);
+        coatingNoMassProdData.value = false;
     } catch (error) {
         console.error(error);
         toast.error('Failed to fetch available layers from Heat Treatment');
+        coatingNoMassProdData.value = true;
     }
 };
 
@@ -2229,6 +2417,218 @@ const autoFetch = async () => {
         }
     }
 }
+
+const fetchCoatingDataSummary = async () => {
+    try {
+        isDataShown.value = true;
+        const response = await axios.get(
+            `/api/initial-coating/${lotNo.value}/${coatingInfo.selectedModel}/fetch-coating-data`
+        );
+
+        console.log('Fetched Coating Data: ', response.data);
+
+        // Assign relevant fields to reactive coatingInfo
+        const coating = response.data;
+        if (!coating) return;
+
+        coatingInfo.coatingDate = coating.coating_date
+            ? coating.coating_date.split('T')[0]   // Take only the date portion
+            : '';
+        coatingInfo.coatingMachineNo  = coating.machine_no;
+        coatingInfo.slurryLotNo       = coating.slurry_lot_no;
+        coatingInfo.minTbContent      = coating.min_tb_content;
+        coatingInfo.sampleQuantity    = coating.sample_qty;
+        coatingInfo.totalMagnetWeight = coating.total_magnet_weight;
+        coatingInfo.loaderOperator    = coating.loader_operator;
+        coatingInfo.unloaderOperator  = coating.unloader_operator;
+        coatingInfo.checkerOperator   = coating.checker_operator;
+        coatingInfo.timeStart         = coating.time_start;
+        coatingInfo.timeFinished      = coating.time_finished;
+        coatingInfo.remarks           = coating.remarks;
+
+        // --- Populate coatingsTable ---
+        // console.log('Coating Amount Data from API:', coating['Coating Amount Data']);
+
+        // Determine the correct key
+        const coatingAmountData = coating['Coating Amount Data'] || coating.coating_data?.['Coating Amount Data'];
+
+        //console.log('Using coatingAmountData:', coatingAmountData);
+
+        if (Array.isArray(coatingAmountData)) {
+            coatingAmountData.forEach((item, index) => {
+                if (coatingsTable.value[index]) {
+                    coatingsTable.value[index].coating = item.coating ?? null;
+                }
+            });
+            // console.log('coatingsTable after assignment:', coatingsTable.value);
+        } else {
+            // console.warn('Coating Amount Data is not an array:', coatingAmountData);
+        }
+
+       // --- Concentration Data ---
+        const coatingData = coating.coating_data;
+        const concentrationFromApi = coatingData?.['Concentration Data'];
+        if (Array.isArray(concentrationFromApi)) {
+            //console.log('%c[DEBUG] Raw Concentration Data from API:', 'color: orange;', JSON.parse(JSON.stringify(concentrationFromApi)));
+
+            concentrationFromApi.forEach((row, rowIndex) => {
+                if (!row.modules || !Array.isArray(row.modules)) return;
+
+                row.modules.forEach((cell, colIndex) => {
+                    if (
+                        concentrationData.value[rowIndex] &&
+                        concentrationData.value[rowIndex][colIndex] !== undefined
+                    ) {
+                        concentrationData.value[rowIndex][colIndex] = cell?.value ?? null;
+                    }
+                });
+            });
+
+            //console.log('%c[INFO] concentrationData populated:', 'color: teal;', JSON.parse(JSON.stringify(concentrationData.value)));
+        } else {
+            //console.warn('[WARN] Concentration Data is missing or not an array', concentrationFromApi);
+        }
+
+        // --- Additional Slurry Data ---
+        const additionalSlurryFromApi = coating.coating_data?.['Additional Slurry Data'];
+
+        if (Array.isArray(additionalSlurryFromApi)) {
+            additionalSlurryFromApi.forEach((item, index) => {
+                if (additionalSlurry.value[index]) {
+                    additionalSlurry.value[index].module = item.module ?? additionalSlurry.value[index].module;
+                    additionalSlurry.value[index].new    = item.new ?? null;
+                    additionalSlurry.value[index].homo   = item.homo ?? null;
+                    additionalSlurry.value[index].time   = item.time ?? null;
+                    additionalSlurry.value[index].liters = item.liters ?? null;
+                }
+            });
+
+            //console.log('%c[INFO] additionalSlurry populated:', 'color: brown;', JSON.parse(JSON.stringify(additionalSlurry.value)));
+        } else {
+            //console.warn('[WARN] Additional Slurry Data missing or not an array', additionalSlurryFromApi);
+        }
+
+    } catch (error) {
+        console.log('Failed to fetch data.', error);
+    }
+};
+
+const fetchCoatingData2ndGbdpSummary = async () => {
+    try{
+        isDataShown.value = true;
+        const response = await axios.get(
+            `/api/initial-coating/${lotNo.value}/${coatingInfo.selectedModel}/fetch-coating-data`
+        );
+
+        console.log('Fetched Coating Data: ', response.data);
+
+        // Assign relevant fields to reactive coatingInfo
+        const coating = response.data;
+        if (!coating) return;
+
+        coatingInfo.coatingDate = coating.coating_date
+            ? coating.coating_date.split('T')[0]   // Take only the date portion
+            : '';
+        coatingInfo.coatingMachineNo  = coating.machine_no;
+        coatingInfo.slurryLotNo       = coating.slurry_lot_no;
+        coatingInfo.minTbContent      = coating.min_tb_content;
+        coatingInfo.totalMagnetWeight = coating.total_magnet_weight;
+        coatingInfo.remarks           = coating.remarks;
+
+        // --- Populate coatingsTable ---
+        // console.log('Coating Amount Data from API:', coating['Coating Amount Data']);
+
+        // Determine the correct key
+        const coatingAmountData_2ndgbdp = coating['Coating Amount Data'] || coating.coating_data?.['Coating Amount Data'];
+
+        //console.log('Using coatingAmountData:', coatingAmountData);
+
+        if (Array.isArray(coatingAmountData_2ndgbdp)) {
+            coatingAmountData_2ndgbdp.forEach((item, index) => {
+                if (coatingsTable_2ndgbdp.value[index]) {
+                    coatingsTable_2ndgbdp.value[index].coating = item.coating ?? null;
+                }
+            });
+            // console.log('coatingsTable after assignment:', coatingsTable_2ndgbdp.value);
+        } else {
+            // console.warn('Coating Amount Data is not an array:', coatingAmountData_2ndgbdp);
+        }
+
+        // --- Concentration Data ---
+        const coatingData = coating.coating_data;
+        const concentrationFromApi = coatingData?.['Concentration Data'];
+        if (Array.isArray(concentrationFromApi)) {
+            //console.log('%c[DEBUG] Raw Concentration Data from API:', 'color: orange;', JSON.parse(JSON.stringify(concentrationFromApi)));
+
+            concentrationFromApi.forEach((row, rowIndex) => {
+                if (!row.modules || !Array.isArray(row.modules)) return;
+
+                row.modules.forEach((cell, colIndex) => {
+                    if (
+                        concentrationData_2ndGBDP.value[rowIndex] &&
+                        concentrationData_2ndGBDP.value[rowIndex][colIndex] !== undefined
+                    ) {
+                        concentrationData_2ndGBDP.value[rowIndex][colIndex] = cell?.value ?? null;
+                    }
+                });
+            });
+
+            //console.log('%c[INFO] concentrationData populated:', 'color: teal;', JSON.parse(JSON.stringify(concentrationData_2ndGBDP.value)));
+        } else {
+            //console.warn('[WARN] Concentration Data is missing or not an array', concentrationFromApi);
+        }
+
+    }catch(error){
+        console.log('Failed to fetch 2nd gbdp coating summary data', error);
+    }
+}
+
+const changeData = () => {
+    isDataShown.value = false;
+        // Reset coatingInfo
+    Object.assign(coatingInfo, {
+        coatingDate: '',
+        coatingMachineNo: '',
+        slurryLotNo: '',
+        minTbContent: '',
+        totalMagnetWeight: '',
+        unloaderOperator: '',
+        loaderOperator: '',
+        checkerOperator: '',
+        sampleQuantity: '',
+        timeStart: '',
+        timeFinished: '',
+        remarks: ''
+    });
+
+    // Reset arrays
+     // Keep the shape intact
+    concentrationData_2ndGBDP.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+
+    coatingsTable_2ndgbdp.value = Array.from({ length: 20 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+
+    additionalSlurry.value = [
+        { module: "M-01", new: null, homo: null, time: null, liters: null },
+        { module: "M-02", new: null, homo: null, time: null, liters: null },
+        { module: "M-03", new: null, homo: null, time: null, liters: null },
+        { module: "M-04", new: null, homo: null, time: null, liters: null },
+        { module: "M-05", new: null, homo: null, time: null, liters: null },
+        { module: "M-06", new: null, homo: null, time: null, liters: null },
+    ];
+
+    //lotNo.value = null;
+    //lotNo_1stGBDP.value = null;
+
+    toast.success("All fields cleared.");
+}
+
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 

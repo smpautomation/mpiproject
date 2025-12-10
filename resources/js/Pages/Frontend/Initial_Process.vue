@@ -67,7 +67,7 @@
         <!-- Section Content -->
         <div v-if="activeSection === 'control_sheet'">
             <div class="flex flex-row justify-center gap-0">
-                <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12 mr-10">
                     <div class="flex items-center justify-between pb-4 mb-6 border-b-2 border-gray-200">
                         <div class="flex items-center space-x-3">
                             <div class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"></div>
@@ -398,9 +398,9 @@
                         <table class="min-w-full text-center border border-collapse border-gray-300">
                         <thead class="bg-gray-100">
                             <tr>
-                            <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                {{ box }}
-                            </th>
+                                <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                    {{ box }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -421,21 +421,15 @@
             </div>
             <div class="flex my-10 space-x-4">
                 <button
-                    @click="dataValidation()"
-                    class="bg-cyan-600 text-white rounded-md w-[120px]
-                        hover:bg-cyan-500 active:bg-cyan-700
-                        transition-colors duration-200 ease-in-out
-                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    @click="dataValidation"
+                    class="px-4 py-2 bg-teal-600 text-white font-semibold rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                 >
                     Finalize
                 </button>
 
                 <button
-                    @click="clearAll()"
-                    class="bg-teal-600 text-white rounded-md w-[140px]
-                        hover:bg-teal-500 active:bg-teal-700
-                        transition-colors duration-200 ease-in-out
-                        focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    @click="clearAll"
+                    class="px-4 py-2 bg-white text-teal-600 font-semibold border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200 transition-colors"
                 >
                     Reset Fields
                 </button>
@@ -582,7 +576,7 @@
 
             <Modal :show="showModalDuplicateWarning" @close="showModalDuplicateWarning = false">
                 <div
-                    class="relative flex flex-col items-start bg-white border-l-8 border-red-600 p-6 rounded-xl shadow-lg max-w-[95vw] max-h-[90vh] overflow-auto"
+                    class="relative flex flex-col items-start bg-white border-l-4 border-yellow-500 p-6 rounded-xl shadow-md max-w-[95vw] max-h-[90vh] overflow-auto"
                 >
                     <!-- Exit Button -->
                     <button
@@ -590,8 +584,1374 @@
                     class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
                     aria-label="Close modal"
                     >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    </button>
+
+                    <!-- Header -->
+                    <div class="flex items-center mb-4 space-x-3">
+                    <svg class="w-10 h-10 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                        clip-rule="evenodd" />
+                    </svg>
+                    <h2 class="text-2xl font-bold text-gray-800">Duplicate Lot Detected</h2>
+                    </div>
+
+                    <!-- Body -->
+                    <p class="text-base leading-relaxed text-gray-700">
+                    A record with the same <span class="font-semibold underline">Lot No</span> already exists in the system.
+                    You <span class="font-semibold">may proceed</span>, but please be fully aware that performing actions on
+                    duplicate lot data can lead to conflicts if done incorrectly. Ensure that you are making the correct
+                    decision before continuing.
+                    </p>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end w-full mt-6 space-x-3">
+                    <button
+                        @click="showModalDuplicateWarning = false"
+                        class="px-6 py-2 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="proceedDuplicate"
+                        class="px-6 py-2 font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
+                    >
+                        Proceed
+                    </button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal :show="showModalDuplicatePrevent" @close="showModalDuplicatePrevent = false">
+            <div
+                class="relative flex flex-col items-start bg-white border-l-8 border-red-600 p-6 rounded-xl shadow-lg max-w-[95vw] max-h-[90vh] overflow-auto"
+            >
+                <!-- Exit Button -->
+                <button
+                @click="showModalDuplicatePrevent = false"
+                class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                aria-label="Close modal"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </button>
+
+                <!-- Header with icon -->
+                <div class="flex items-center mb-4 space-x-3">
+                <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
+                <h2 class="text-2xl font-bold text-red-700">Duplicate Model + Lot Detected</h2>
+                </div>
+
+                <!-- Body -->
+                <p class="text-base leading-relaxed text-gray-700">
+                A record with the same <span class="font-semibold underline">Model Name</span> and <span class="font-semibold underline">Lot No</span> already exists in the system.
+                You <span class="font-semibold text-red-700">cannot proceed</span> with this entry as it will cause errors and conflicts.
+                Please verify and correct your entry before continuing.
+                </p>
+
+                <!-- Close Button -->
+                <div class="flex justify-end w-full mt-6">
+                <button
+                    @click="showModalDuplicatePrevent = false"
+                    class="px-6 py-2 font-semibold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
+                >
+                    Close
+                </button>
+                </div>
+            </div>
+            </Modal>
+
+        </div>
+
+        <!-- Section Content -->
+        <div v-if="activeSection === 'coating'">
+            <div class="flex flex-row justify-center gap-0">
+                <div class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                    <div class="flex flex-row mb-10 mt-5">
+                        <div class="w-full px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                            <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Information</h2>
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Coating Date<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.coatingDate" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Coating Machine No<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.coatingMachineNo" @input="coatingInfo.coatingMachineNo = coatingInfo.coatingMachineNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Slurry Lot No<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.slurryLotNo" @input="coatingInfo.slurryLotNo = coatingInfo.slurryLotNo.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">MIN TB CONTENT (μg/mm²)<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.minTbContent" @input="coatingInfo.minTbContent = coatingInfo.minTbContent.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity (pcs)<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.sampleQuantity" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.totalMagnetWeight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Loader Operator<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.loaderOperator" @input="coatingInfo.loaderOperator = coatingInfo.loaderOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Unloader Operator<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.unloaderOperator" @input="coatingInfo.unloaderOperator = coatingInfo.unloaderOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Checker Operator<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.checkerOperator" @input="coatingInfo.checkerOperator = coatingInfo.checkerOperator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Model<span class="text-red-500"> *</span></label>
+                                    <select v-model="coatingModel" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
+                                        <option v-for="item in model_names" :key="item" :value="item">
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingLotNo" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.timeStart" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Time Finished<span class="text-red-500"> *</span></label>
+                                    <input v-model="coatingInfo.timeFinished" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                            </div>
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
+                                <!-- Remarks Input -->
+                                <div class="flex flex-col">
+                                    <label class="block mb-2 text-xs font-semibold text-gray-700">
+                                        Remarks <span class="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        v-model="coatingInfo.remarks"
+                                        @input="coatingInfo.remarks = coatingInfo.remarks.toUpperCase()"
+                                        type="text"
+                                        class="w-full text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
+                                        placeholder="Enter remarks here..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 ml-10 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
+                            <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
+                                Additional Slurry
+                            </h2>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-[30rem] text-sm text-center border border-gray-200 rounded-lg">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-1 py-1 border-r border-gray-300">MODULE</th>
+                                        <th class="px-1 py-1 border-r border-gray-300">NEW</th>
+                                        <th class="px-1 py-1 border-r border-gray-300">HOMO</th>
+                                        <th class="px-1 py-1 border-r border-gray-300">TIME</th>
+                                        <th class="px-1 py-1 border-r border-gray-300">LITERS</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    <tr
+                                        v-for="(row) in additionalSlurry"
+                                        :key="row.module"
+                                        class="hover:bg-gray-50"
+                                    >
+                                    <td class="px-1 py-1 border-b border-r border-gray-200">{{ row.module }}</td>
+                                    <td class="px-1 py-1 border-b border-r border-gray-200">
+                                        <input
+                                            type="text"
+                                            v-model="row.new"
+                                            @input="row.new = row.new.toUpperCase()"
+                                            class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
+                                        />
+                                    </td>
+                                    <td class="px-1 py-1 border-b border-r border-gray-200">
+                                        <input
+                                            type="text"
+                                            v-model="row.homo"
+                                            @input="row.homo = row.homo.toUpperCase()"
+                                            class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
+                                        />
+                                    </td>
+                                    <td class="px-1 py-1 border-b border-r border-gray-200">
+                                        <input
+                                            type="time"
+                                            v-model="row.time"
+                                            class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
+                                        />
+                                    </td>
+                                    <td class="px-1 py-1 border-b border-gray-200">
+                                        <input
+                                            type="number"
+                                            v-model="row.liters"
+                                            class="w-full text-center border rounded text-xs px-1 py-0.5 border-gray-300"
+                                        />
+                                    </td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row gap-10 my-10 items">
+                        <div class="px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl max-w-8xl rounded-2xl py-7 md:px-12">
+                            <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Data (Unit: µ/mm²)</h2>
+                            <div class="flex flex-row gap-5 whitespace-nowrap">
+                                <div class="flex flex-col gap-4">
+                                    <!-- Multi-line input for pasting multiple coatings -->
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium text-gray-700">Paste Coatings (one per line)</span>
+                                        <button
+                                            @click="resetCoatingTableOnly"
+                                            type="button"
+                                            class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded-lg
+                                                bg-white shadow-sm
+                                                hover:bg-red-50
+                                                active:translate-y-[1px] active:shadow-none
+                                                transition-all"
+                                        >
+                                            Clear Field
+                                        </button>
+                                    </div>
+                                    <div>
+                                    <textarea
+                                        v-model="coatingsInput"
+                                        @input="handlePasteInput"
+                                        rows="6"
+                                        class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Paste values like:&#10;55.01&#10;59.33&#10;59.03"
+                                    ></textarea>
+                                    </div>
+
+                                    <div class="flex flex-row gap-4 overflow-x-auto">
+                                        <div
+                                            v-for="colIndex in Math.ceil(coatingsTable.length / 10)"
+                                            :key="colIndex"
+                                            class="overflow-x-auto"
+                                        >
+                                            <table class="min-w-full text-sm border border-gray-200 rounded-lg">
+                                                <thead class="bg-gray-100">
+                                                    <tr>
+                                                    <th class="px-2 py-1 text-left border-r border-gray-300">No.</th>
+                                                    <th class="px-2 py-1 text-left">Coating</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="bg-white">
+                                                    <tr
+                                                    v-for="item in coatingsTable.slice((colIndex - 1) * 10, colIndex * 10)"
+                                                    :key="item.no"
+                                                    class="hover:bg-gray-50"
+                                                    >
+                                                    <td class="px-3 py-1 border-b border-r border-gray-200">{{ item.no }}</td>
+                                                    <td class="px-3 py-1 border-b border-gray-200">
+                                                        <input
+                                                        type="number"
+                                                        v-model.number="item.coating"
+                                                        class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                                        />
+                                                    </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
+                                    <thead class="text-center bg-gray-100">
+                                        <tr>
+                                        <th colspan="8" class="text-center border-b border-gray-300">
+                                            Concentration Amount
+                                        </th>
+                                        </tr>
+                                        <tr>
+                                        <th class="px-2 py-1 border-r border-gray-300"></th>
+                                        <th v-for="module in modules" :key="module" class="px-2 py-1 border-r border-gray-300">
+                                            {{ module }}
+                                        </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr v-for="(range, rowIndex) in visibleRanges" :key="range" class="hover:bg-gray-50">
+                                        <td class="px-2 py-1 border-b border-r border-gray-200">{{ range }}</td>
+                                        <td
+                                            v-for="(module, colIndex) in modules"
+                                            :key="colIndex"
+                                            class="px-2 py-1 border-b border-r border-gray-200"
+                                        >
+                                            <input
+                                            type="number"
+                                            v-model="visibleConcentrationData[rowIndex][colIndex]"
+                                            class="w-[4rem] py-[0.1rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row gap-20">
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50 my-10">
+                            <div class="text-xs font-medium text-gray-500">Maximum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50 my-10">
+                            <div class="text-xs font-medium text-gray-500">Minimum</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
+                        </div>
+                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50 my-10">
+                            <div class="text-xs font-medium text-gray-500">Average</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                            @click="finalizeCoatingSummary"
+                            class="mr-5 px-4 py-2 bg-teal-600 text-white font-semibold rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                        >
+                            FINALIZE
+                        </button>
+                        <button
+                            @click="resetCoatingSummaryData"
+                            class="px-4 py-2 bg-white text-teal-600 font-semibold border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200 transition-colors"
+                        >
+                            Clear All Fields
+                        </button>
+                    </div>
+
+                    <Modal :show="showCoatingPreview" @close="showCoatingPreview = false">
+                        <div
+                            class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
+                        >
+                            <!-- Exit Button -->
+                            <button
+                            @click="showCoatingPreview = false"
+                            class="text-gray-400 transition duration-150 hover:text-gray-600"
+                            aria-label="Close modal"
+                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            </button>
+
+                            <p class="mb-6 text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
+
+                            <div class="flex flex-row gap-2">
+                                <div>
+                                    <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                            <th class="px-1 border border-gray-300">Lot No.</th>
+                                            <th class="px-1 border border-gray-300">No.</th>
+                                            <th class="px-1 border border-gray-300">Coating</th>
+                                            <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="rowIndex in 10" :key="rowIndex">
+                                            <!-- Main coating row -->
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-1 border border-gray-300">{{ coatingLotNo }}</td>
+                                                <td class="px-1 border border-gray-300">{{ rowIndex }}</td>
+                                                <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex - 1] ?? '-' }}</td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex - 1) / 5)][(rowIndex - 1) % 5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">{{ modules[(rowIndex - 1) % 5] }}</td>
+                                            </tr>
+
+                                            <!-- Extra module-only rows after 5th and 10th coating -->
+                                            <tr v-if="rowIndex === 5 || rowIndex === 10">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex - 1) / 5)][5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            <tr v-if="rowIndex === 5 || rowIndex === 10">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex - 1) / 5)][6] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-1 border border-gray-300">Lot No.</th>
+                                                <th class="px-1 border border-gray-300">No.</th>
+                                                <th class="px-1 border border-gray-300">Coating</th>
+                                                <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="rowIndex in 10" :key="'t2-' + rowIndex">
+                                            <!-- Main coating row -->
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-1 border border-gray-300">{{ coatingLotNo }}</td>
+                                                <td class="px-1 border border-gray-300">{{ rowIndex + 10 }}</td>
+                                                <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 9] ?? '-' }}</td>
+                                                <td class="px-1 border border-gray-300">
+                                                    {{ concentrationData[Math.floor((rowIndex + 9) / 5)][(rowIndex + 9) % 5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 9) % 5] }}</td>
+                                            </tr>
+
+                                            <!-- Extra M-06 rows -->
+                                            <tr v-if="rowIndex + 10 === 15 || rowIndex + 10 === 20">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 9) / 5)][5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            <tr v-if="rowIndex + 10 === 15 || rowIndex + 10 === 20">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 9) / 5)][6] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                            <th class="px-1 border border-gray-300">Lot No.</th>
+                                            <th class="px-1 border border-gray-300">No.</th>
+                                            <th class="px-1 border border-gray-300">Coating</th>
+                                            <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="rowIndex in 10" :key="'t3-' + rowIndex">
+                                            <!-- Main coating row -->
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-1 border border-gray-300">{{ coatingLotNo }}</td>
+                                                <td class="px-1 border border-gray-300">{{ rowIndex + 20 }}</td>
+                                                <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 19] ?? '-' }}</td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 19) / 5)][(rowIndex + 19) % 5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 19) % 5] }}</td>
+                                            </tr>
+
+                                            <!-- Extra M-06 rows -->
+                                            <tr v-if="rowIndex + 20 === 25 || rowIndex + 20 === 30">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 19) / 5)][5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            <tr v-if="rowIndex + 20 === 25 || rowIndex + 20 === 30">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 19) / 5)][6] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div v-if="hasRows31to35">
+                                    <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                            <th class="px-1 border border-gray-300">Lot No.</th>
+                                            <th class="px-1 border border-gray-300">No.</th>
+                                            <th class="px-1 border border-gray-300">Coating</th>
+                                            <th class="px-1 border border-gray-300" colspan="2">Concentration</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="rowIndex in 5" :key="'t4-' + rowIndex">
+                                            <!-- Main coating row -->
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-1 border border-gray-300">{{ coatingLotNo }}</td>
+                                                <td class="px-1 border border-gray-300">{{ rowIndex + 30 }}</td>
+                                                <td class="px-1 border border-gray-300">{{ displayCoatings[rowIndex + 29] ?? '-' }}</td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 29) / 5)][(rowIndex + 29) % 5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">{{ modules[(rowIndex + 29) % 5] }}</td>
+                                            </tr>
+
+                                            <!-- Extra M-06 rows -->
+                                            <tr v-if="rowIndex + 30 === 35">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 29) / 5)][5] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            <tr v-if="rowIndex + 30 === 35">
+                                                <td colspan="3"></td>
+                                                <td class="px-1 border border-gray-300">
+                                                {{ concentrationData[Math.floor((rowIndex + 29) / 5)][6] ?? '-' }}
+                                                </td>
+                                                <td class="px-1 border border-gray-300">M-06</td>
+                                            </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table class="table-auto text-[10px] text-center border border-gray-300 w-full whitespace-nowrap">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                            <th rowspan="2" class="px-1 border border-gray-300">MODULE</th>
+                                            <th colspan="3" class="px-1 border border-gray-300">ADDITIONAL SLURRY</th>
+                                            <th rowspan="2" class="px-1 border border-gray-300">LITERS</th>
+                                            </tr>
+                                            <tr>
+                                            <th class="px-1 border border-gray-300">NEW</th>
+                                            <th class="px-1 border border-gray-300">HOMO</th>
+                                            <th class="px-1 border border-gray-300">TIME</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="row in additionalSlurry" :key="row.module" class="hover:bg-gray-50">
+                                            <td class="px-1 border border-gray-300">{{ row.module }}</td>
+                                            <td class="px-1 border border-gray-300">{{ row.new }}</td>
+                                            <td class="px-1 border border-gray-300">{{ row.homo }}</td>
+                                            <td class="px-1 border border-gray-300">{{ row.time }}</td>
+                                            <td class="px-1 border border-gray-300">{{ row.liters }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex flex-row items-center gap-6 mt-5 text-[10px] whitespace-nowrap">
+                                    <div class="flex items-center gap-1">
+                                        <label class="font-medium text-gray-600">Maximum:</label>
+                                        <span class="text-gray-800">{{ coatingMaximum ?? '-' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <label class="font-medium text-gray-600">Minimum:</label>
+                                        <span class="text-gray-800">{{ coatingMinimum ?? '-' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <label class="font-medium text-gray-600">Average:</label>
+                                        <span class="text-gray-800">
+                                            {{ coatingAverage != null ? coatingAverage.toFixed(2) : '-' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex flex-row mt-5 text-xs whitespace-nowrap">
+                                    <div class="flex flex-col items-end gap-1 font-semibold">
+                                        <label>Coating Date: </label>
+                                        <label>MIN TB CONTENT: </label>
+                                        <label>Loader Operator: </label>
+                                    </div>
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ coatingInfo.coatingDate || 'NA' }}</span>
+                                        <span>{{ coatingInfo.minTbContent || 'NA' }}</span>
+                                        <span>{{ coatingInfo.loaderOperator || 'NA' }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200">
+                                        <label>Coating Machine No: </label>
+                                        <label>Sample Quantity: </label>
+                                        <label>Unloader Operator: </label>
+                                        <label>Time Start: </label>
+                                    </div>
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ coatingInfo.coatingMachineNo || 'NA' }}</span>
+                                        <span>{{ coatingInfo.sampleQuantity || 'NA' }}</span>
+                                        <span>{{ coatingInfo.unloaderOperator || 'NA' }}</span>
+                                        <span>{{ coatingInfo.timeStart || 'NA' }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200">
+                                        <label>Slurry Lot No: </label>
+                                        <label>Total Magnet Weight: </label>
+                                        <label>Checker Operator: </label>
+                                        <label>Time Finished: </label>
+                                    </div>
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ coatingInfo.slurryLotNo || 'NA' }}</span>
+                                        <span>{{ coatingInfo.totalMagnetWeight || 'NA' }}</span>
+                                        <span>{{ coatingInfo.checkerOperator || 'NA' }}</span>
+                                        <span>{{ coatingInfo.timeFinished || 'NA' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex mt-4 space-x-3">
+                                <button
+                                    @click="showCoatingPreview = false"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    @click="saveCoatingSummaryToDatabase"
+                                    class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                                >
+                                    Proceed
+                                    <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
+                                </button>
+                            </div>
+
+                        </div>
+                    </Modal>
+
+                    <Modal :show="showModalCoatingDuplicateWarning" @close="showModalCoatingDuplicateWarning = false">
+                        <div
+                            class="relative flex flex-col items-start bg-white border-l-4 border-yellow-500 p-6 rounded-xl shadow-md max-w-[95vw] max-h-[90vh] overflow-auto"
+                        >
+                            <!-- Exit Button -->
+                            <button
+                            @click="showModalCoatingDuplicateWarning = false"
+                            class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                            aria-label="Close modal"
+                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            </button>
+
+                            <!-- Header -->
+                            <div class="flex items-center mb-4 space-x-3">
+                            <svg class="w-10 h-10 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                            </svg>
+                            <h2 class="text-2xl font-bold text-gray-800">Duplicate Lot Detected</h2>
+                            </div>
+
+                            <!-- Body -->
+                            <p class="text-base leading-relaxed text-gray-700">
+                            A record with the same <span class="font-semibold underline">Lot No</span> already exists in the system.
+                            You <span class="font-semibold">may proceed</span>, but please be fully aware that performing actions on
+                            duplicate lot data can lead to conflicts if done incorrectly. Ensure that you are making the correct
+                            decision before continuing.
+                            </p>
+
+                            <!-- Actions -->
+                            <div class="flex justify-end w-full mt-6 space-x-3">
+                            <button
+                                @click="showModalCoatingDuplicateWarning = false"
+                                class="px-6 py-2 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                @click="proceedDuplicateCoating"
+                                class="px-6 py-2 font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
+                            >
+                                Proceed
+                            </button>
+                            </div>
+                        </div>
+                    </Modal>
+
+                    <Modal :show="showModalCoatingDuplicatePrevent" @close="showModalCoatingDuplicatePrevent = false">
+                        <div
+                            class="relative flex flex-col items-start bg-white border-l-8 border-red-600 p-6 rounded-xl shadow-lg max-w-[95vw] max-h-[90vh] overflow-auto"
+                        >
+                            <!-- Exit Button -->
+                            <button
+                            @click="showModalCoatingDuplicatePrevent = false"
+                            class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                            aria-label="Close modal"
+                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            </button>
+
+                            <!-- Header with icon -->
+                            <div class="flex items-center mb-4 space-x-3">
+                            <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                            </svg>
+                            <h2 class="text-2xl font-bold text-red-700">Duplicate Model + Lot Detected</h2>
+                            </div>
+
+                            <!-- Body -->
+                            <p class="text-base leading-relaxed text-gray-700">
+                            A record with the same <span class="font-semibold underline">Model Name</span> and <span class="font-semibold underline">Lot No</span> already exists in the system.
+                            You <span class="font-semibold text-red-700">cannot proceed</span> with this entry as it will cause errors and conflicts.
+                            Please verify and correct your entry before continuing.
+                            </p>
+
+                            <!-- Close Button -->
+                            <div class="flex justify-end w-full mt-6">
+                            <button
+                                @click="showModalCoatingDuplicatePrevent = false"
+                                class="px-6 py-2 font-semibold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
+                            >
+                                Close
+                            </button>
+                            </div>
+                        </div>
+                    </Modal>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Section Content -->
+        <div v-if="activeSection === 'film_pasting'">
+            <div class="flex flex-row justify-center gap-0">
+                <div class="w-full px-2 mx-auto space-y-2 mr-10 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                    <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">Film Pasting Information</h2>
+                    <div  class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Model<span class="text-red-500"> *</span></label>
+                            <select v-model="filmPastingInfo.selected_model" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
+                                <option v-for="item in model_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot no<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.lot_no" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                    <!-- Group: Film Pasting Date, Machine No, Total Magnet Weight -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film Pasting Date<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.film_pasting_date" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Machine No<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.machine_no" @input="filmPastingInfo.machine_no = filmPastingInfo.machine_no.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.total_magnet_weight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                    <!-- Group: Loader Operator, Unloader Operator, Checker Operator -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Loader Operator<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.loader_operator" @input="filmPastingInfo.loader_operator = filmPastingInfo.loader_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Unloader Operator<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.unloader_operator" @input="filmPastingInfo.unloader_operator = filmPastingInfo.unloader_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Checker Operator<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.checker_operator" @input="filmPastingInfo.checker_operator = filmPastingInfo.checker_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                    <!-- Group: Film Coating Amount, Time Start, Time Finished -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film Coating Amount<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.film_coating_amount" @input="filmPastingInfo.film_coating_amount = filmPastingInfo.film_coating_amount.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.time_start" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Time Finished<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.time_finished" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Remarks<span class="text-red-500"> *</span></label>
+                        <input v-model="filmPastingInfo.remarks" @input="filmPastingInfo.remarks = filmPastingInfo.remarks.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+                <div class="w-full px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                    <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">-</h2>
+                    <!-- Group: Film Pasting Date, Machine No, Total Magnet Weight -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film Type (Tb or Dy)<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.film_type" @input="filmPastingInfo.film_type = filmPastingInfo.film_type.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film Class<span class="text-red-500"> *</span></label>
+                            <input v-model="filmPastingInfo.film_class" @input="filmPastingInfo.film_class = filmPastingInfo.film_class.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 bg-white rounded-2xl shadow-lg mt-10">
+                <!-- Header -->
+                <h2 class="mb-6 text-lg font-bold text-gray-800 border-b-2 border-cyan-400 pb-2">
+                HOURLY CHECKING
+                </h2>
+
+                <!-- Horizontal scrollable blocks container -->
+                <div class="flex gap-4 overflow-x-auto pb-2">
+                <div
+                    v-for="(block, index) in hLineTLineBlocks"
+                    :key="block.id"
+                    class="min-w-[320px] p-4 rounded-xl border border-cyan-300 shadow-sm bg-cyan-50 flex-shrink-0"
+                >
+                    <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-semibold text-teal-800">Block {{ index + 1 }}</h3>
+                    <div class="space-x-2">
+                        <button
+                            v-if="index !== 0"
+                            @click="removeBlock(block.id)"
+                            class="px-2 py-1 text-xs font-bold text-white bg-red-500 rounded hover:bg-red-600 transition"
+                        >
+                            Remove
+                        </button>
+                        <button
+                            v-if="index === hLineTLineBlocks.length - 1 && hLineTLineBlocks.length < 20"
+                            @click="addBlock"
+                            class="px-2 py-1 text-xs font-bold text-white bg-teal-500 rounded hover:bg-teal-600 transition"
+                        >
+                            Add Block
+                        </button>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <table class="w-full border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-cyan-200 text-teal-800 font-semibold">
+                            <th class="p-2 border border-cyan-300 text-left">ITEMS</th>
+                            <th class="p-2 border border-cyan-300 text-left">H-LINE</th>
+                            <th class="p-2 border border-cyan-300 text-left">T-LINE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                            v-for="(row, i) in block.values"
+                            :key="i"
+                            class="hover:bg-cyan-100 transition-colors"
+                            >
+                            <td class="p-2 border border-cyan-300 font-medium">{{ row.item }}</td>
+                            <td class="p-2 border border-cyan-300" :colspan="row.item === 'Water Level (mm)' || row.item === 'Time Check' || row.item === 'Check By' ? 2 : 1">
+                            <!-- H-LINE -->
+                                <input
+                                    v-if="row.item === 'Time Check'"
+                                    v-model="row.hLine"
+                                    type="time"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+
+                                <input
+                                    v-else-if="row.item === 'Check By'"
+                                    v-model="row.hLine"
+                                    @input="row.hLine = row.hLine.toUpperCase()"
+                                    type="text"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+
+                                <input
+                                    v-else-if="row.item === 'Water Level (mm)'"
+                                    v-model.number="row.value"
+                                    type="number"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+
+                                <input
+                                    v-else-if="row.item === 'Dryer Temp Setting (°C)'"
+                                    v-model.number="row.hLine"
+                                    type="number"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+
+                                <input
+                                    v-else
+                                    v-model.number="row.hLine"
+                                    type="number"
+                                    step="0.01"
+                                    @blur="row.hLine = Number(row.hLine).toFixed(2)"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+                            </td>
+                            <td
+                                v-if="row.item !== 'Water Level (mm)' && row.item !== 'Time Check' && row.item !== 'Check By'"
+                                class="p-2 border border-cyan-300">
+                                <!-- T-LINE -->
+                                <input
+                                    v-if="row.item === 'Dryer Temp Setting (°C)'"
+                                    v-model.number="row.tLine"
+                                    type="number"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+
+                                <input
+                                    v-else
+                                    v-model.number="row.tLine"
+                                    type="number"
+                                    step="0.01"
+                                    @blur="row.tLine = Number(row.tLine).toFixed(2)"
+                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                />
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+            <div class="flex flex-row gap-10 mt-5">
+                <div class="flex flex-col gap-10 mt-5">
+                    <div class="w-full px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                        <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">H-Line Parameters</h2>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
+                            <input v-model="filmPastingInfo.h_line_parameters['sprayer_water_amount']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
+                            <input v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_1']" type="text" @input="filmPastingInfo.h_line_parameters['film_paste_lot_no_1'] = filmPastingInfo.h_line_parameters['film_paste_lot_no_1'].toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_2']" type="text" @input="filmPastingInfo.h_line_parameters['film_paste_lot_no_2'] = filmPastingInfo.h_line_parameters['film_paste_lot_no_2'].toUpperCase()" class="w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %</label>
+                            <input v-model="filmPastingInfo.h_line_parameters['film_machine_humidity']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature</label>
+                            <input v-model="filmPastingInfo.h_line_parameters['film_machine_temperature']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting (°C)</label>
+                            <input  v-model="filmPastingInfo.h_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.h_line_parameters['dryer_temp_setting'] = filmPastingInfo.h_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-10 mt-5">
+                    <div class="w-full px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                        <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">T-Line Parameters</h2>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
+                            <input v-model="filmPastingInfo.t_line_parameters['sprayer_water_amount']" type="number" disabled class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
+                            <input v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_1']" type="text" @input="filmPastingInfo.t_line_parameters['film_paste_lot_no_1'] = filmPastingInfo.t_line_parameters['film_paste_lot_no_1'].toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_2']" type="text" @input="filmPastingInfo.t_line_parameters['film_paste_lot_no_2'] = filmPastingInfo.t_line_parameters['film_paste_lot_no_2'].toUpperCase()" class="w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity (%)</label>
+                            <input v-model="filmPastingInfo.t_line_parameters['film_machine_humidity']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature (°C)</label>
+                            <input v-model="filmPastingInfo.t_line_parameters['film_machine_temperature']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting (°C)</label>
+                            <input v-model="filmPastingInfo.t_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.t_line_parameters['dryer_temp_setting'] = filmPastingInfo.t_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-10 mt-5">
+                    <div class="w-full px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                        <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">
+                            Setter Sand Application per Layer <span class="text-red-500">*</span>
+                        </h2>
+
+                        <div class="flex flex-col space-y-3">
+                            <label class="flex items-center space-x-2 text-sm font-medium text-gray-700">
+                            <input
+                                type="radio"
+                                name="setter_sand"
+                                value="1"
+                                v-model="filmPastingInfo.is_setter_sand"
+                                class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            >
+                            <span>With Setter Sand</span>
+                            </label>
+
+                            <label class="flex items-center space-x-2 text-sm font-medium text-gray-700">
+                            <input
+                                type="radio"
+                                name="setter_sand"
+                                value="0"
+                                v-model="filmPastingInfo.is_setter_sand"
+                                class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            >
+                            <span>Without Setter Sand</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row space-x-5">
+                        <!-- Finalize button (primary) -->
+                        <button
+                            @click="finalizeFilmPasting"
+                            class="px-4 py-2 bg-teal-600 text-white font-semibold rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                        >
+                            Finalize
+                        </button>
+
+                        <!-- Reset Fields button (secondary) -->
+                        <button
+                            @click="resetFilmPastingFields"
+                            class="px-4 py-2 bg-white text-teal-600 font-semibold border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200 transition-colors"
+                        >
+                            Reset Fields
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <Modal :show="showModalFilmPastingPreview" @close="showModalFilmPastingPreview = false">
+                <div
+                    class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
+                >
+                    <!-- Exit Button -->
+                    <button
+                    @click="showModalFilmPastingPreview = false"
+                    class="text-gray-400 transition duration-150 hover:text-gray-600"
+                    aria-label="Close modal"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    </button>
+
+                    <p class="mb-6 text-xl font-semibold text-gray-900">
+                        Final Review — Confirm All Details Before Submission
+                    </p>
+
+                    <div class="space-y-10">
+
+                        <!-- GROUP 1 -->
+                        <section>
+                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                                General Information
+                            </h2>
+
+                            <table class="w-full border border-gray-300 text-sm">
+                                <tbody class="divide-y">
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 w-64 font-medium">Model</th>
+                                        <td class="p-2">{{ filmPastingInfo.selected_model }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 w-64 font-medium">Lot No</th>
+                                        <td class="p-2">{{ filmPastingInfo.lot_no }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 w-64 font-medium">Film Pasting Date</th>
+                                        <td class="p-2">{{ filmPastingInfo.film_pasting_date }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Machine No.</th>
+                                        <td class="p-2">{{ filmPastingInfo.machine_no }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Total Magnet Weight</th>
+                                        <td class="p-2">{{ filmPastingInfo.total_magnet_weight }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Loader Operator</th>
+                                        <td class="p-2">{{ filmPastingInfo.loader_operator }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Unloader Operator</th>
+                                        <td class="p-2">{{ filmPastingInfo.unloader_operator }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Checker Operator</th>
+                                        <td class="p-2">{{ filmPastingInfo.checker_operator }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Coating Amount</th>
+                                        <td class="p-2">{{ filmPastingInfo.film_coating_amount }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Time Start</th>
+                                        <td class="p-2">{{ filmPastingInfo.time_start }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Time Finished</th>
+                                        <td class="p-2">{{ filmPastingInfo.time_finished }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Remarks</th>
+                                        <td class="p-2">{{ filmPastingInfo.remarks }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Type</th>
+                                        <td class="p-2">{{ filmPastingInfo.film_type }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Class</th>
+                                        <td class="p-2">{{ filmPastingInfo.film_class }}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- GROUP 2A -->
+                        <section>
+                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                                H-Line Parameters
+                            </h2>
+
+                            <table class="w-full border border-gray-300 text-sm">
+                                <tbody class="divide-y">
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 w-64 font-medium">Sprayer Water Amount</th>
+                                        <td class="p-2">{{ filmPastingInfo.h_line_parameters.sprayer_water_amount }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #1</th>
+                                        <td class="p-2">{{ filmPastingInfo.h_line_parameters['film_paste_lot_no_1'] }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #2</th>
+                                        <td class="p-2">{{ filmPastingInfo.h_line_parameters['film_paste_lot_no_2'] }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Machine Humidity</th>
+                                        <td class="p-2">{{ filmPastingInfo.h_line_parameters.film_machine_humidity }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Machine Temperature</th>
+                                        <td class="p-2">{{ filmPastingInfo.h_line_parameters.film_machine_temperature }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Dryer Setting</th>
+                                        <td class="p-2">{{ filmPastingInfo.h_line_parameters.dryer_temp_setting }}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- GROUP 2B -->
+                        <section>
+                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                                T-Line Parameters
+                            </h2>
+
+                            <table class="w-full border border-gray-300 text-sm">
+                                <tbody class="divide-y">
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 w-64 font-medium">Sprayer Water Amount</th>
+                                        <td class="p-2">{{ filmPastingInfo.t_line_parameters.sprayer_water_amount }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #1</th>
+                                        <td class="p-2">{{ filmPastingInfo.t_line_parameters['film_paste_lot_no_1'] }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #2</th>
+                                        <td class="p-2">{{ filmPastingInfo.t_line_parameters['film_paste_lot_no_2'] }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Machine Humidity</th>
+                                        <td class="p-2">{{ filmPastingInfo.t_line_parameters.film_machine_humidity }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Machine Temperature</th>
+                                        <td class="p-2">{{ filmPastingInfo.t_line_parameters.film_machine_temperature }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 font-medium">Dryer Setting</th>
+                                        <td class="p-2">{{ filmPastingInfo.t_line_parameters.dryer_temp_setting }}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- GROUP 3 -->
+                        <section>
+                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                                Additional Settings
+                            </h2>
+
+                            <table class="w-full border border-gray-300 text-sm">
+                                <tbody class="divide-y">
+                                    <tr>
+                                        <th class="bg-gray-50 p-2 w-64 font-medium text-left">Setter Sand</th>
+                                        <td class="p-2">
+                                            {{ filmPastingInfo.is_setter_sand === '1' ? 'Yes' : 'No' }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <!-- Cancel -->
+                            <button
+                                @click="showModalFilmPastingPreview = false"
+                                class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md
+                                    text-gray-700 bg-white hover:bg-gray-100
+                                    shadow-sm transition">
+                                Cancel
+                            </button>
+
+                            <!-- Proceed -->
+                            <button
+                                @click="saveToDataBaseFilmPasting"
+                                class="px-4 py-2 text-sm font-semibold rounded-md
+                                    text-white bg-teal-600 hover:bg-teal-700
+                                    shadow-md transition">
+                                Proceed
+                            </button>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </Modal>
+
+            <Modal :show="showModalFilmPasteDuplicateWarning" @close="showModalFilmPasteDuplicateWarning = false">
+                <div
+                    class="relative flex flex-col items-start bg-white border-l-4 border-yellow-500 p-6 rounded-xl shadow-md max-w-[95vw] max-h-[90vh] overflow-auto"
+                >
+                    <!-- Exit Button -->
+                    <button
+                    @click="showModalFilmPasteDuplicateWarning = false"
+                    class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                    aria-label="Close modal"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    </button>
+
+                    <!-- Header -->
+                    <div class="flex items-center mb-4 space-x-3">
+                    <svg class="w-10 h-10 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                        clip-rule="evenodd" />
+                    </svg>
+                    <h2 class="text-2xl font-bold text-gray-800">Duplicate Lot Detected</h2>
+                    </div>
+
+                    <!-- Body -->
+                    <p class="text-base leading-relaxed text-gray-700">
+                    A record with the same <span class="font-semibold underline">Lot No</span> already exists in the system.
+                    You <span class="font-semibold">may proceed</span>, but please be fully aware that performing actions on
+                    duplicate lot data can lead to conflicts if done incorrectly. Ensure that you are making the correct
+                    decision before continuing.
+                    </p>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end w-full mt-6 space-x-3">
+                    <button
+                        @click="showModalFilmPasteDuplicateWarning = false"
+                        class="px-6 py-2 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="proceedDuplicateFilmPaste"
+                        class="px-6 py-2 font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
+                    >
+                        Proceed
+                    </button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal :show="showModalFilmPasteDuplicatePrevent" @close="showModalFilmPasteDuplicatePrevent = false">
+                <div
+                    class="relative flex flex-col items-start bg-white border-l-8 border-red-600 p-6 rounded-xl shadow-lg max-w-[95vw] max-h-[90vh] overflow-auto"
+                >
+                    <!-- Exit Button -->
+                    <button
+                    @click="showModalFilmPasteDuplicatePrevent = false"
+                    class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                    aria-label="Close modal"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -604,19 +1964,20 @@
                         d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
                         clip-rule="evenodd" />
                     </svg>
-                    <h2 class="text-2xl font-bold text-red-700">Duplicate Lot Detected</h2>
+                    <h2 class="text-2xl font-bold text-red-700">Duplicate Model + Lot Detected</h2>
                     </div>
 
                     <!-- Body -->
                     <p class="text-base leading-relaxed text-gray-700">
-                    A record with the same <span class="font-semibold underline">Lot No</span> already exists in the system.
-                    You <span class="font-semibold">cannot proceed</span> until this conflict is resolved. Please verify your entry and correct the Lot No.
+                    A record with the same <span class="font-semibold underline">Model Name</span> and <span class="font-semibold underline">Lot No</span> already exists in the system.
+                    You <span class="font-semibold text-red-700">cannot proceed</span> with this entry as it will cause errors and conflicts.
+                    Please verify and correct your entry before continuing.
                     </p>
 
                     <!-- Close Button -->
                     <div class="flex justify-end w-full mt-6">
                     <button
-                        @click="showModalDuplicateWarning = false"
+                        @click="showModalFilmPasteDuplicatePrevent = false"
                         class="px-6 py-2 font-semibold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
                     >
                         Close
@@ -627,37 +1988,6 @@
 
         </div>
 
-        <!-- Section Content -->
-        <div v-if="activeSection === 'coating'">
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
-            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
-                <div class="text-sm font-medium">Total Tasks</div>
-                <div class="text-2xl font-bold">123</div>
-            </div>
-            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
-                <div class="text-sm font-medium">Active Machines</div>
-                <div class="text-2xl font-bold">45</div>
-            </div>
-            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
-                <div class="text-sm font-medium">Pending Reports</div>
-                <div class="text-2xl font-bold">7</div>
-            </div>
-            </div>
-
-            <!-- Charts & Tables (placeholders) -->
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div class="p-6 bg-white rounded-lg shadow">
-                <h2 class="mb-4 text-lg font-semibold text-teal-700">Performance Chart</h2>
-                <div class="flex items-center justify-center h-64 rounded-lg bg-cyan-100">[Chart here]</div>
-            </div>
-
-            <div class="p-6 bg-white rounded-lg shadow">
-                <h2 class="mb-4 text-lg font-semibold text-teal-700">Recent Activity</h2>
-                <div class="flex items-center justify-center h-64 rounded-lg bg-cyan-100">[Table here]</div>
-            </div>
-            </div>
-        </div>
         <!-- Add more sections as needed -->
         </main>
     </div>
@@ -669,8 +1999,42 @@ import { Inertia } from '@inertiajs/inertia';
 import Modal from '@/Components/Modal.vue'
 import { useToast } from 'vue-toast-notification';
 import axios from 'axios';
+import { useAuth } from '@/Composables/useAuth.js';
 
 const toast = useToast();
+
+const { state } = useAuth();
+
+// Function to check authentication
+const checkAuthentication = async () => {
+    try {
+        const start = Date.now();
+        const maxWait = 5000; // 5 seconds
+
+        while (!state.user) {
+            if (Date.now() - start > maxWait) {
+                console.error('User data failed to load in time. Redirecting...');
+                Inertia.visit('/'); // Redirect if user never loads
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+
+        if (!state.isAuthenticated) {
+            console.warn('User is not authenticated. Redirecting...');
+            Inertia.visit('/');
+            return false;
+        }
+
+        console.log("USER AUTHENTICATED!", `${state.user.firstName} ${state.user.surname}`);
+        return true;
+
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        Inertia.visit('/');
+        return false;
+    }
+};
 
 const userManageLogging = async (logEvent) => {
     try{
@@ -733,6 +2097,7 @@ function useSessionStorage(key, state) {
 const manualQtyMode = ref(false);
 const showModalPreview = ref(false);
 const showModalDuplicateWarning = ref(false);
+const showModalDuplicatePrevent = ref(false);
 
 const activeSection = ref('control_sheet');
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
@@ -988,6 +2353,11 @@ const dataValidation = async() => {
     await lotNoValidation();
 };
 
+const proceedDuplicate = () => {
+    showModalDuplicateWarning.value = false;
+    showModalPreview.value = true;
+}
+
 const lotNoValidation = async () => {
     try {
         if (!initial_mpcs.lotNo) {
@@ -995,16 +2365,21 @@ const lotNoValidation = async () => {
             return false;
         }
 
-        const response = await axios.post('/api/initial_control_sheet/check-duplicate', {
-            lot_no: initial_mpcs.lotNo
+        const response = await axios.post('/api/initial-control-sheet/check-duplicate', {
+            lot_no: initial_mpcs.lotNo,
+            model_name: initial_mpcs.selectedModel
         });
-
-        if (response.data.duplicate_detected) {
-            showModalDuplicateWarning.value = true;
+        //console.log("Success");
+        if(response.data.duplicate_pair) {
+            showModalDuplicatePrevent.value = true;
             return false;
+        }else if (response.data.duplicate_lot) {
+            showModalDuplicateWarning.value = true;
+            //console.log("ShowModalDuplicate Warning: ", showModalDuplicateWarning.value);
+        }else{
+            showModalPreview.value = true;
         }
-        showModalPreview.value = true;
-        return true; // no duplicate, validation passed
+
     } catch (error) {
         console.error('Error validating Lot No:', error);
         toast.error('Failed to validate Lot No.');
@@ -1116,6 +2491,607 @@ const saveExcessCase = async () => {
     }
 };
 
+//COATING SUMMARY PORTION START
+
+const showModalCoatingDuplicatePrevent = ref(false);
+const showModalCoatingDuplicateWarning = ref(false);
+const showCoatingPreview = ref(false);
+const coatingLotNo = ref();
+const coatingModel = ref();
+
+const coatingInfo = reactive({
+    coatingDate: '',
+    coatingMachineNo: '',
+    slurryLotNo: '',
+    minTbContent: '',
+    sampleQuantity: '',
+    totalMagnetWeight: '',
+    loaderOperator: '',
+    unloaderOperator: '',
+    checkerOperator: '',
+    timeStart: '',
+    timeFinished: '',
+    remarks: ''
+});
+
+const additionalSlurry = ref([
+    { module: "M-01", new: null, homo: null, time: null, liters: null },
+    { module: "M-02", new: null, homo: null, time: null, liters: null },
+    { module: "M-03", new: null, homo: null, time: null, liters: null },
+    { module: "M-04", new: null, homo: null, time: null, liters: null },
+    { module: "M-05", new: null, homo: null, time: null, liters: null },
+    { module: "M-06", new: null, homo: null, time: null, liters: null },
+]);
+
+const coatingsTable = ref(
+    Array.from({ length: 35 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }))
+);
+
+// Temporary string bound to textarea
+const coatingsInput = ref('');
+
+// Function to handle pasted or typed input
+const handlePasteInput = () => {
+    if (!coatingsInput.value) return;
+
+    // Split by newlines, filter out empty lines, parse as numbers
+    const lines = coatingsInput.value
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(line => line !== '')
+        .map(Number);
+
+    // Assign parsed numbers to coatingsTable in order
+    lines.forEach((num, index) => {
+        if (index < coatingsTable.value.length) {
+        coatingsTable.value[index].coating = isNaN(num) ? null : num;
+        }
+    });
+};
+
+const visibleCoatings = computed(() => coatingsTable.value);
+
+const coatingValues = computed(() =>
+  coatingsTable.value
+    .map(row => row.coating)
+    .filter(val => val !== null && val !== '' && !isNaN(val))
+    .map(Number)
+);
+
+const coatingMaximum = computed(() =>
+    coatingValues.value.length ? Math.max(...coatingValues.value) : null
+);
+
+const coatingMinimum = computed(() =>
+    coatingValues.value.length ? Math.min(...coatingValues.value) : null
+);
+
+const coatingAverage = computed(() =>
+    coatingValues.value.length
+    ? coatingValues.value.reduce((sum, val) => sum + val, 0) / coatingValues.value.length
+    : null
+);
+
+// Modules
+const modules = ["M-01", "M-02", "M-03", "M-04", "M-05", "M-06", "M-06"];
+// Ranges
+const ranges = ["1-5", "6-10", "11-15", "16-20", "21-25", "26-30", "31-35"];
+
+const concentrationData = ref(
+  ranges.map(() => modules.map(() => null)) // 7x8 grid of nulls
+);
+
+const visibleRanges = computed(() => ranges);
+const visibleConcentrationData = computed(() => concentrationData.value);
+
+// For display (keeps index alignment with your inputs)
+const displayCoatings = computed(() =>
+  coatingsTable.value.map(row => row.coating ?? '')
+);
+
+
+const hasRows31to35 = computed(() => {
+    return displayCoatings.value.slice(30, 35).some(
+        val => val != null && val !== '' && val !== '-'
+    )
+})
+
+const resetCoatingSummaryData = () => {
+    coatingsInput.value = '';
+
+    // Reset coatingInfo
+    Object.assign(coatingInfo, {
+        selectedMassProd: '',
+        selectedLayer: null,
+        coatingDate: '',
+        coatingMachineNo: '',
+        slurryLotNo: '',
+        minTbContent: '',
+        sampleQuantity: '',
+        totalMagnetWeight: '',
+        loaderOperator: '',
+        unloaderOperator: '',
+        checkerOperator: '',
+        timeStart: '',
+        timeFinished: '',
+        remarks: ''
+    });
+
+    // Reset arrays
+     // Keep the shape intact
+    concentrationData.value = Array.from({ length: 7 }, () => Array(7).fill(null));
+    coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+    additionalSlurry.value = [
+        { module: "M-01", new: null, homo: null, time: null, liters: null },
+        { module: "M-02", new: null, homo: null, time: null, liters: null },
+        { module: "M-03", new: null, homo: null, time: null, liters: null },
+        { module: "M-04", new: null, homo: null, time: null, liters: null },
+        { module: "M-05", new: null, homo: null, time: null, liters: null },
+        { module: "M-06", new: null, homo: null, time: null, liters: null },
+    ];
+
+    coatingLotNo.value = null;
+
+    toast.success("All fields cleared.");
+};
+
+const resetCoatingTableOnly = () => {
+    coatingsInput.value = '';
+    coatingsTable.value = Array.from({ length: 35 }, (_, i) => ({
+        no: i + 1,
+        coating: null
+    }));
+}
+
+const finalizeCoatingSummary = async () => {
+    if (
+        !coatingInfo.coatingDate ||
+        !coatingInfo.coatingMachineNo ||
+        !coatingInfo.slurryLotNo ||
+        !coatingInfo.minTbContent ||
+        !coatingInfo.sampleQuantity ||
+        !coatingInfo.totalMagnetWeight ||
+        !coatingInfo.loaderOperator ||
+        !coatingInfo.unloaderOperator ||
+        !coatingInfo.checkerOperator ||
+        !coatingInfo.timeStart ||
+        !coatingInfo.timeFinished ||
+        !coatingInfo.remarks || !coatingLotNo.value
+    ) {
+        //console.log('Coating Table: ', coatingValues.value);
+        toast.error("Please fill in all required Coating Info fields.");
+        return;
+    }
+
+    await coatingLotValidation();
+
+};
+
+const coatingLotValidation = async() => {
+    try{
+        if (!coatingLotNo.value) {
+            toast.error('Lot No. is required.');
+            return false;
+        }
+
+        const response = await axios.post('/api/initial-coating/check-duplicate', {
+            lot_no: coatingLotNo.value,
+            model_name: coatingModel.value
+        });
+        //console.log("Success");
+        if(response.data.duplicate_pair) {
+            showModalCoatingDuplicatePrevent.value = true;
+            return false;
+        }else if (response.data.duplicate_lot) {
+            showModalCoatingDuplicateWarning.value = true;
+            //console.log("ShowModalDuplicate Warning: ", showModalDuplicateWarning.value);
+        }else{
+            showCoatingPreview.value = true;
+        }
+    }catch(error){
+        console.error('Error validating Lot No:', error);
+        toast.error('Failed to validate Lot No.');
+        return false;
+    }
+}
+
+const proceedDuplicateCoating = () => {
+    showModalCoatingDuplicateWarning.value = false;
+    showCoatingPreview.value = true;
+}
+
+const saveCoatingSummaryToDatabase = async() => {
+
+    // Flatten coatingsTable
+    const coatingAmountData = coatingsTable.value.map(row => ({
+        no: row.no,
+        coating: row.coating
+    }));
+
+    // Flatten concentrationData
+    const concentrationAmountData = ranges.map((range, i) => ({
+        range,
+        modules: modules.map((module, j) => ({
+            module,
+            value: concentrationData.value[i][j]
+        }))
+    }));
+
+    // Flatten additionalSlurry
+    const additionalSlurryAmountData = additionalSlurry.value.map(item => ({
+        module: item.module,
+        new: item.new,
+        homo: item.homo,
+        time: item.time,
+        liters: item.liters
+    }));
+
+    // Final payload
+    const coatingDataPayload = {
+        model_name: coatingModel.value,
+        lot_no: coatingLotNo.value,
+        coating_date: coatingInfo.coatingDate,
+        machine_no: coatingInfo.coatingMachineNo,
+        slurry_lot_no: coatingInfo.slurryLotNo,
+        sample_qty: coatingInfo.sampleQuantity.toString(),
+        min_tb_content: coatingInfo.minTbContent,
+        total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
+        loader_operator: coatingInfo.loaderOperator,
+        unloader_operator: coatingInfo.unloaderOperator,
+        checker_operator: coatingInfo.checkerOperator,
+        time_start: coatingInfo.timeStart,
+        time_finished: coatingInfo.timeFinished,
+        average: coatingAverage.value,
+        maximum: coatingMaximum.value,
+        minimum: coatingMinimum.value,
+        remarks: coatingInfo.remarks,
+        coating_data: {
+            "Coating Amount Data": coatingAmountData,
+            "Concentration Data": concentrationAmountData,
+            "Additional Slurry Data": additionalSlurryAmountData,
+            "Lot no": coatingLotNo.value
+        }
+    };
+
+    console.log('Coating Data Payload: ', coatingDataPayload);
+
+    try{
+        const response = await axios.post('/api/initial-coating', coatingDataPayload);
+        console.log('Saved Successfully: ', response.data);
+        toast.success('Saved Successfully');
+        await userManageLogging('created Coating Data for Lot No: '+ coatingLotNo.value +' Model: ' + coatingModel.value + ' successfully.');
+    }catch(error){
+        toast.error('Failed to save to database. ',error);
+    }finally{
+        resetCoatingSummaryData();
+        showCoatingPreview.value = false;
+    }
+}
+
+
+//Film Pasting Section ---- Film Pasting Section ---- Film Pasting Section ---- Film Pasting Section ---- Film Pasting Section ---- Film Pasting Section ----
+
+const showModalFilmPastingPreview = ref(false);
+const showModalFilmPasteDuplicatePrevent = ref(false);
+const showModalFilmPasteDuplicateWarning = ref(false);
+
+const filmPastingInfo = reactive({
+    selected_model: '',
+    lot_no: '',
+    film_pasting_date: '',
+    machine_no: '',
+    total_magnet_weight: 0,
+    loader_operator: '',
+    unloader_operator: '',
+    checker_operator: '',
+    film_coating_amount: '',
+    time_start: '',
+    time_finished: '',
+    remarks: '',
+    film_type: '',
+    film_class: '',
+    h_line_parameters: {
+        sprayer_water_amount: 0,
+        film_paste_lot_no_1: 0,
+        film_paste_lot_no_2: 0,
+        film_machine_humidity: 0,
+        film_machine_temperature: 0,
+        dryer_temp_setting: ''
+    },
+    t_line_parameters: {
+        sprayer_water_amount: 0,
+        film_paste_lot_no_1: 0,
+        film_paste_lot_no_2: 0,
+        film_machine_humidity: 0,
+        film_machine_temperature: 0,
+        dryer_temp_setting: ''
+    },
+    is_setter_sand: false,
+});
+
+const itemsList = [
+    'Film Machine Humidity (%)',
+    'Film Machine Temperature (°C)',
+    'Sprayer Water Amount',
+    'Dryer Temp Setting (°C)',
+    'Water Level (mm)',
+    'Time Check',
+    'Check By'
+];
+
+// Helper function to create a block
+const createBlock = (id) => ({
+    id,
+    values: itemsList.map(item => {
+        if (item === 'Water Level (mm)') {
+            return { item, value: null }; // single input for water level
+        } else if (item === 'Dryer Temp Setting (°C)') {
+            return { item, hLine: 120, tLine: 120 }; // default 120
+        } else {
+            return { item, hLine: null, tLine: null }; // separate inputs for H-LINE & T-LINE
+        }
+    })
+});
+
+// Reactive array of H-LINE / T-LINE blocks
+const hLineTLineBlocks = ref([createBlock(1)]);
+
+// Function to add a new block (up to max 20)
+const addBlock = () => {
+    if (hLineTLineBlocks.value.length >= 20) return;
+    const newBlockId = hLineTLineBlocks.value.length + 1;
+    hLineTLineBlocks.value.push(createBlock(newBlockId));
+};
+
+// Function to remove a block by id
+const removeBlock = (id) => {
+    if (hLineTLineBlocks.value.length <= 1) return; // always keep at least one block
+    hLineTLineBlocks.value = hLineTLineBlocks.value.filter(block => block.id !== id);
+};
+
+// --------------------------
+// Computed averages for each parameter
+// --------------------------
+const hLineAverages = computed(() => {
+    const sums = {
+        'Film Machine Humidity (%)': 0,
+        'Film Machine Temperature (°C)': 0,
+        'Sprayer Water Amount': 0,
+        'Dryer Temp Setting (°C)': 0,
+        'Water Level (mm)': 0
+    };
+    const counts = { ...sums };
+
+    hLineTLineBlocks.value.forEach(block => {
+        block.values.forEach(v => {
+        if (v.item === 'Water Level (mm)') {
+            if (v.value != null && !isNaN(v.value) && Number(v.value) !== 0) {
+            sums[v.item] += Number(v.value);
+            counts[v.item]++;
+            }
+        } else if (v.hLine != null && !isNaN(v.hLine) && Number(v.hLine) !== 0) {
+            sums[v.item] += Number(v.hLine);
+            counts[v.item]++;
+        }
+        });
+    });
+
+    // Return average only based on non-zero counts
+    const avg = {};
+    Object.keys(sums).forEach(key => {
+        avg[key] = counts[key] > 0 ? sums[key] / counts[key] : 0;
+    });
+    return avg;
+});
+
+const tLineAverages = computed(() => {
+    const sums = {
+        'Film Machine Humidity (%)': 0,
+        'Film Machine Temperature (°C)': 0,
+        'Sprayer Water Amount': 0,
+        'Dryer Temp Setting (°C)': 0,
+        'Water Level (mm)': 0
+    };
+    const counts = { ...sums };
+
+    hLineTLineBlocks.value.forEach(block => {
+        block.values.forEach(v => {
+        if (v.item === 'Water Level (mm)') {
+            if (v.value != null && !isNaN(v.value) && Number(v.value) !== 0) {
+            sums[v.item] += Number(v.value);
+            counts[v.item]++;
+            }
+        } else if (v.tLine != null && !isNaN(v.tLine) && Number(v.tLine) !== 0) {
+            sums[v.item] += Number(v.tLine);
+            counts[v.item]++;
+        }
+        });
+    });
+
+    const avg = {};
+    Object.keys(sums).forEach(key => {
+        avg[key] = counts[key] > 0 ? sums[key] / counts[key] : 0;
+    });
+    return avg;
+});
+
+
+// --------------------------
+// Watch computed averages and update filmPastingInfo
+// --------------------------
+watch([hLineAverages, tLineAverages], ([newH, newT]) => {
+    // H-LINE
+    filmPastingInfo.h_line_parameters.film_machine_humidity = Math.round(newH['Film Machine Humidity (%)'] * 10) / 10;
+    filmPastingInfo.h_line_parameters.film_machine_temperature = Math.round(newH['Film Machine Temperature (°C)'] * 10) / 10;
+    filmPastingInfo.h_line_parameters.sprayer_water_amount = Math.round(newH['Sprayer Water Amount'] * 100) / 100;
+    filmPastingInfo.h_line_parameters.dryer_temp_setting = newH['Dryer Temp Setting (°C)'];
+    filmPastingInfo.h_line_parameters.water_level = newH['Water Level (mm)'];
+
+    // T-LINE
+    filmPastingInfo.t_line_parameters.film_machine_humidity = Math.round(newT['Film Machine Humidity (%)'] * 10) / 10;
+    filmPastingInfo.t_line_parameters.film_machine_temperature = Math.round(newT['Film Machine Temperature (°C)'] * 10) / 10;
+    filmPastingInfo.t_line_parameters.sprayer_water_amount = Math.round(newT['Sprayer Water Amount'] * 100) / 100;
+    filmPastingInfo.t_line_parameters.dryer_temp_setting = newT['Dryer Temp Setting (°C)'];
+    filmPastingInfo.t_line_parameters.water_level = newT['Water Level (mm)'];
+}, { immediate: true });
+
+const resetFilmPastingFields = () => {
+    Object.assign(filmPastingInfo,{
+        selectedFurnace: '',
+        selected_mass_prod: '',
+        selected_layer: null,
+        film_pasting_date: '',
+        machine_no: '',
+        total_magnet_weight: 0,
+        loader_operator: '',
+        unloader_operator: '',
+        checker_operator: '',
+        film_coating_amount: '',
+        time_start: '',
+        time_finished: '',
+        remarks: '',
+        film_type: '',
+        film_class: '',
+        h_line_parameters: {
+            sprayer_water_amount: 0,
+            film_paste_lot_no_1: 0,
+            film_paste_lot_no_2: 0,
+            film_machine_humidity: 0,
+            film_machine_temperature: 0,
+            dryer_temp_setting: ''
+        },
+        t_line_parameters: {
+            sprayer_water_amount: 0,
+            film_paste_lot_no_1: 0,
+            film_paste_lot_no_2: 0,
+            film_machine_humidity: 0,
+            film_machine_temperature: 0,
+            dryer_temp_setting: ''
+        },
+        is_setter_sand: false,
+    });
+
+    // Reset the blocks — one fresh block, id=1
+    hLineTLineBlocks.value = [createBlock(1)];
+}
+
+const finalizeFilmPasting = async() => {
+    if (
+        !filmPastingInfo.lot_no ||
+        !filmPastingInfo.selected_model ||
+        !filmPastingInfo.film_pasting_date ||
+        !filmPastingInfo.machine_no ||
+        !filmPastingInfo.total_magnet_weight ||
+        !filmPastingInfo.loader_operator ||
+        !filmPastingInfo.unloader_operator ||
+        !filmPastingInfo.checker_operator ||
+        !filmPastingInfo.film_coating_amount ||
+        !filmPastingInfo.time_start ||
+        !filmPastingInfo.time_finished ||
+        !filmPastingInfo.remarks ||
+        !filmPastingInfo.film_type ||
+        !filmPastingInfo.film_class
+    ) {
+        //console.log('Coating Table: ', coatingValues.value);
+        toast.error("Please fill in all required Film Pasting Info fields.");
+        return;
+    }else if(
+        !filmPastingInfo.is_setter_sand
+    ){
+        toast.error("Please choose Setter sand application per layer.");
+        return;
+    }
+
+    await filmPasteLotValidation();
+}
+
+const filmPasteLotValidation = async () => {
+    try {
+        console.log('[VALIDATION] Start');
+
+        if (!filmPastingInfo.selected_model) {
+            console.warn('[VALIDATION] Missing lot number.');
+            toast.error('Lot No. is required.');
+            return false;
+        }
+
+        console.log('[REQUEST] Checking duplicate for:', filmPastingInfo.selected_model);
+
+        const response = await axios.post('/api/initial-film-pasting/check-duplicate', {
+            lot_no: filmPastingInfo.lot_no,
+            model_name: filmPastingInfo.selected_model
+        });
+
+        console.log('[RESPONSE]', response.data);
+
+        if (response.data.duplicate_pair) {
+            console.warn('[DUPLICATE] Pair duplicate detected.');
+            showModalFilmPasteDuplicatePrevent.value = true;
+            return false;
+        }
+
+        if (response.data.duplicate_lot) {
+            console.warn('[WARNING] Lot duplicate detected.');
+            showModalFilmPasteDuplicateWarning.value = true;
+            return;
+        }
+
+        console.log('[OK] No duplicates. Showing preview.');
+        showModalFilmPastingPreview.value = true;
+
+    } catch (error) {
+        console.error('[ERROR] Lot No validation failed:', error);
+        toast.error('Failed to validate Lot No.');
+        return false;
+    }
+};
+
+
+const proceedDuplicateFilmPaste = () => {
+    showModalFilmPasteDuplicateWarning.value = false;
+    showModalFilmPastingPreview.value = true;
+}
+
+const saveToDataBaseFilmPasting = async() => {
+    try{
+        const payload = {
+            model_name: filmPastingInfo.selected_model,
+            lot_no: filmPastingInfo.lot_no,
+            film_pasting_date: filmPastingInfo.film_pasting_date,
+            machine_no: filmPastingInfo.machine_no,
+            total_magnet_weight: filmPastingInfo.total_magnet_weight,
+            loader_operator: filmPastingInfo.loader_operator,
+            unloader_operator: filmPastingInfo.unloader_operator,
+            checker_operator: filmPastingInfo.checker_operator,
+            film_coating_amount: filmPastingInfo.film_coating_amount,
+            time_start: filmPastingInfo.time_start,
+            time_finished: filmPastingInfo.time_finished,
+            remarks: filmPastingInfo.remarks,
+            film_type: filmPastingInfo.film_type,
+            film_class: filmPastingInfo.film_class,
+            h_line_parameters: filmPastingInfo.h_line_parameters,
+            t_line_parameters: filmPastingInfo.t_line_parameters,
+            setter_sand: filmPastingInfo.is_setter_sand,
+        };
+
+
+        const response = await axios.post(`/api/initial-film-pasting`, payload);
+        console.log('Initial Film Pasting saved successfully: ', response.data);
+        toast.success('Saved Successfully!');
+
+    }catch(error){
+        console.error('Failed to save initial film pasting data', error);
+    }finally{
+        resetFilmPastingFields();
+        showModalFilmPastingPreview.value = false;
+    }
+}
 
 // Fetch on mount
 onMounted( async () => {
@@ -1132,6 +3108,27 @@ useSessionStorage('boxNoValuesExcess',boxNoValuesExcess);
 useSessionStorage('weightValuesExcess',weightValuesExcess);
 useSessionStorage('qtyValuesExcess',qtyValuesExcess);
 
+useSessionStorage("coatingInfo", coatingInfo);
+useSessionStorage("concentrationData", concentrationData);
+useSessionStorage("coatingsTable", coatingsTable);
+useSessionStorage("additionalSlurry", additionalSlurry);
+useSessionStorage("coatingLotNo", coatingLotNo);
+useSessionStorage("coatingModel", coatingModel);
+
+useSessionStorage("filmPastingInfo", filmPastingInfo);
+useSessionStorage("hLineTLineBlocks", hLineTLineBlocks);
+
+
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
 </script>
+
+<style scoped>
+
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+</style>
