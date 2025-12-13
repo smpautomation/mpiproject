@@ -284,7 +284,62 @@
                             <tr>
                             <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
                                 <input
-                                v-model="weightValues[box]"
+                                    :value="weightValues[box]"
+                                    type="number"
+                                    disabled
+                                    class="w-full px-2 py-1 text-xs bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
+                                />
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Weight table -->
+                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                        Box Weight<span class="text-red-500"> *</span>
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-center border border-collapse border-gray-300">
+                        <thead class="bg-gray-100">
+                            <tr>
+                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                {{ box }}
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                <input
+                                v-model="boxWeight[box]"
+                                type="number"
+                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Weight table -->
+                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                        Box with Magnet Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span>
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-center border border-collapse border-gray-300">
+                        <thead class="bg-gray-100">
+                            <tr>
+                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                {{ box }}
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                <input
+                                v-model="boxWithMagnetWeight[box]"
                                 type="number"
                                 class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
@@ -341,7 +396,62 @@
                                     <tr>
                                         <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
                                             <input
-                                                v-model="weightValuesExcess[box]"
+                                                :value="weightValuesExcess[box]"
+                                                type="number"
+                                                disabled
+                                                class="w-full px-2 py-1 text-xs bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Weight table -->
+                        <p class="pb-2 mt-4 text-sm font-semibold text-gray-800 border-b">
+                            Excess Box Weight
+                        </p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                            {{ box }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                            <input
+                                                v-model="boxWeightExcess[box]"
+                                                type="number"
+                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Weight table -->
+                        <p class="pb-2 mt-4 text-sm font-semibold text-gray-800 border-b">
+                            Excess Box with Magnet Weight
+                        </p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                            {{ box }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                            <input
+                                                v-model="boxWithMagnetWeightExcess[box]"
                                                 type="number"
                                                 class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                             />
@@ -2105,29 +2215,15 @@ const boxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
 const excessBoxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
 const model_names = ref([]);
 const boxNoValues = ref({});
-const weightValues = ref({});
+//const weightValues = ref({});
+const boxWithMagnetWeight = ref({});
+const boxWeight = ref({});
+const boxWithMagnetWeightExcess = ref({});
+const boxWeightExcess = ref({});
 const qtyValues = ref({});
 const boxNoValuesExcess = ref({});
-const weightValuesExcess = ref({});
+//const weightValuesExcess = ref({});
 const qtyValuesExcess = ref({});
-
-allBoxes.forEach(box => {
-    boxNoValues.value[box] = '';
-    weightValues.value[box] = '';
-    qtyValues.value[box] = '';
-    boxNoValuesExcess.value[box] = '';
-    weightValuesExcess.value[box] = '';
-    qtyValuesExcess.value[box] = '';
-});
-
-const sectionTitle = computed(() => {
-    switch (activeSection.value) {
-        case 'control_sheet': return 'Mass Production Control Sheet';
-        case 'coating': return 'Coating Summary';
-        case 'film_pasting': return 'Film Pasting Summary';
-        default: return '';
-    }
-});
 
 const initial_mpcs = reactive({
     selectedBoxStart: 'A',              // new
@@ -2156,6 +2252,56 @@ const visibleExcessBoxes = computed(() => {
     const startIndex = allBoxes.indexOf(initial_mpcs.selectedExcessBoxStart);
     const endIndex = allBoxes.indexOf(initial_mpcs.selectedExcessBoxEnd);
     return allBoxes.slice(startIndex, endIndex + 1);
+});
+
+const weightValues = computed(() => {
+    const result = {}
+
+    visibleBoxes.value.forEach(box => {
+        const withMagnet = Number(boxWithMagnetWeight.value[box]) || 0
+        const boxWt = Number(boxWeight.value[box]) || 0
+
+        const diff = withMagnet - boxWt
+        result[box] = Math.round(diff * 100) / 100   // ← 2 decimals, numeric
+    })
+
+    return result
+});
+
+const weightValuesExcess = computed(() => {
+    const result = {}
+
+    visibleExcessBoxes.value.forEach(box => {
+        const withMagnet = Number(boxWithMagnetWeightExcess.value[box]) || 0
+        const boxWt = Number(boxWeightExcess.value[box]) || 0
+
+        const diff = withMagnet - boxWt
+        result[box] = Math.round(diff * 100) / 100   // 2 decimals
+    })
+
+    return result
+})
+
+allBoxes.forEach(box => {
+    boxNoValues.value[box] = '';
+    //weightValues.value[box] = '';
+    boxWeight.value[box] = '';
+    boxWithMagnetWeight.value[box] = '';
+    qtyValues.value[box] = '';
+    boxNoValuesExcess.value[box] = '';
+    weightValuesExcess.value[box] = '';
+    qtyValuesExcess.value[box] = '';
+    boxWithMagnetWeightExcess.value[box] = '';
+    boxWeightExcess.value[box] = '';
+});
+
+const sectionTitle = computed(() => {
+    switch (activeSection.value) {
+        case 'control_sheet': return 'Mass Production Control Sheet';
+        case 'coating': return 'Coating Summary';
+        case 'film_pasting': return 'Film Pasting Summary';
+        default: return '';
+    }
 });
 
 // Initialize qtyValues from mpcs.qty / qty_lastBox when manual mode is enabled
