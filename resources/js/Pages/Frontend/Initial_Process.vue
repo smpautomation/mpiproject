@@ -269,7 +269,7 @@
 
                     <!-- Weight table -->
                     <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                        Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span>
+                        Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span><span class="text-gray-300">Enter the Box Weight and Box with Magnet Weight to calculate the resulting value.</span>
                     </p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-center border border-collapse border-gray-300">
@@ -324,7 +324,7 @@
 
                     <!-- Weight table -->
                     <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                        Box with Magnet Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span>
+                        Box with Magnet Weight <span class="text-red-500"> *</span>
                     </p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-center border border-collapse border-gray-300">

@@ -1020,7 +1020,7 @@
                         <!-- Clear All -->
                         <button
                             v-else
-                            @click="clearAllTransition"
+                            @click="clearAll"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
                         >
                             CLEAR ALL
@@ -1812,8 +1812,10 @@ const finalize_1st2ndGbdp = async() => {
 const clearAll = () => {
     // Reset coatingInfo
     Object.assign(coatingInfo, {
+        selectedFurnace: '',
         selectedMassProd: '',
         selectedLayer: null,
+        selectedModel: '',
         coatingDate: '',
         coatingMachineNo: '',
         slurryLotNo: '',
@@ -2420,6 +2422,19 @@ const autoFetch = async () => {
 
 const fetchCoatingDataSummary = async () => {
     try {
+
+        if (!coatingInfo.selectedFurnace || !coatingInfo.selectedMassProd || !coatingInfo.selectedLayer) {
+            const missingFields = []
+
+            if (!coatingInfo.selectedFurnace) missingFields.push('Furnace')
+            if (!coatingInfo.selectedMassProd) missingFields.push('Mass Production')
+            if (!coatingInfo.selectedLayer) missingFields.push('Layer')
+
+            toast.warning(`Please select: ${missingFields.join(', ')}`)
+            return
+        }
+
+
         isDataShown.value = true;
         const response = await axios.get(
             `/api/initial-coating/${lotNo.value}/${coatingInfo.selectedModel}/fetch-coating-data`
@@ -2509,12 +2524,31 @@ const fetchCoatingDataSummary = async () => {
         }
 
     } catch (error) {
+
+        if (error.response && error.response.status === 404) {
+            toast.warning('No record exists for this model and lot no');
+            isDataShown.value = false;
+            return;
+        }
+
         console.log('Failed to fetch data.', error);
     }
 };
 
 const fetchCoatingData2ndGbdpSummary = async () => {
     try{
+
+        if (!coatingInfo.selectedFurnace || !coatingInfo.selectedMassProd || !coatingInfo.selectedLayer) {
+            const missingFields = []
+
+            if (!coatingInfo.selectedFurnace) missingFields.push('Furnace')
+            if (!coatingInfo.selectedMassProd) missingFields.push('Mass Production')
+            if (!coatingInfo.selectedLayer) missingFields.push('Layer')
+
+            toast.warning(`Please select: ${missingFields.join(', ')}`)
+            return
+        }
+
         isDataShown.value = true;
         const response = await axios.get(
             `/api/initial-coating/${lotNo.value}/${coatingInfo.selectedModel}/fetch-coating-data`
@@ -2579,6 +2613,12 @@ const fetchCoatingData2ndGbdpSummary = async () => {
         }
 
     }catch(error){
+        if (error.response && error.response.status === 404) {
+            toast.warning('No record exists for this model and lot no');
+            isDataShown.value = false;
+            return;
+        }
+
         console.log('Failed to fetch 2nd gbdp coating summary data', error);
     }
 }
@@ -2587,6 +2627,7 @@ const changeData = () => {
     isDataShown.value = false;
         // Reset coatingInfo
     Object.assign(coatingInfo, {
+        selectedModel: '',
         coatingDate: '',
         coatingMachineNo: '',
         slurryLotNo: '',
@@ -2623,8 +2664,9 @@ const changeData = () => {
         { module: "M-06", new: null, homo: null, time: null, liters: null },
     ];
 
-    //lotNo.value = null;
-    //lotNo_1stGBDP.value = null;
+    lotNo.value = null;
+    lotNo_1stGBDP.value = null;
+
 
     toast.success("All fields cleared.");
 }
