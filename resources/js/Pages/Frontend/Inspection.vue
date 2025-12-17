@@ -284,18 +284,18 @@ const currentEditId = ref(null);
 
 // Reactive state for form data
 const formData = ref({
-  model: null,
-  length: null,
-  width: null,
-  thickness: null,
-  material_grade: null,
-  br: null,
-  ihc: null,
-  ihk: null,
-  oven_machine_no: 0,
-  mpi_sample: null,
-  is_automotive: 0,
-  encoded_by: null,
+    model: null,
+    length: null,
+    width: null,
+    thickness: null,
+    material_grade: null,
+    br: null,
+    ihc: null,
+    ihk: null,
+    oven_machine_no: 0,
+    mpi_sample: null,
+    is_automotive: 0,
+    encoded_by: null,
 });
 
 // Inspection data list fetched from backend
@@ -317,20 +317,20 @@ const registerBackBtn = () => {
 
 // Reset form fields
 const resetAllField = () => {
-  formData.value = {
-    model: null,
-    length: null,
-    width: null,
-    thickness: null,
-    material_grade: null,
-    br: null,
-    ihc: null,
-    ihk: null,
-    oven_machine_no: null,
-    mpi_sample: null,
-    is_automotive: null,
-    encoded_by: null,
-  };
+    formData.value = {
+        model: null,
+        length: null,
+        width: null,
+        thickness: null,
+        material_grade: null,
+        br: null,
+        ihc: null,
+        ihk: null,
+        oven_machine_no: 0,
+        mpi_sample: null,
+        is_automotive: 0,
+        encoded_by: null,
+    };
 };
 
 // Convert input fields to uppercase for specific keys
@@ -354,26 +354,59 @@ function convertToUppercase() {
 
 // Submit form data — POST for new, PATCH for update
 const submitData = async () => {
-  try {
-    if (isEditMode.value) {
-        await axios.patch(`/api/inspectiondata/${currentEditId.value}`, formData.value);
-        userInspectionLogging(`has successfully updated existing data specs model ${formData.value.model}`);
-    } else {
-        await axios.post("/api/inspectiondata", formData.value);
-        userInspectionLogging(`has successfully inserted new data specs model ${formData.value.model}`);
-    }
+    try {
+        if (isEditMode.value) {
+            await axios.patch(
+                `/api/inspectiondata/${currentEditId.value}`,
+                formData.value
+            );
 
-    isEditMode.value = false;
-    currentEditId.value = null;
-    showMainUI.value = true;
-    showInputData.value = false;
-    await showInspectionData();
-    resetAllField();
-  } catch (error) {
-    console.warn("Error submitting data!");
-    console.error("API Error:", error);
-  }
+            userInspectionLogging(
+                `has successfully updated existing data specs model ${formData.value.model}`
+            );
+        } else {
+            await axios.post(
+                "/api/inspectiondata",
+                formData.value
+            );
+
+            userInspectionLogging(
+                `has successfully inserted new data specs model ${formData.value.model}`
+            );
+        }
+
+        isEditMode.value = false;
+        currentEditId.value = null;
+        showMainUI.value = true;
+        showInputData.value = false;
+
+        await showInspectionData();
+        resetAllField();
+
+    } catch (error) {
+        console.warn("Error submitting inspection data");
+
+        console.group("❌ submitData error breakdown");
+
+        console.error("Message:", error.message);
+        console.error("Code:", error.code ?? "N/A");
+
+        if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Response data:", error.response.data);
+            console.error("Response headers:", error.response.headers);
+        } else if (error.request) {
+            console.error("Request sent but no response:", error.request);
+        } else {
+            console.error("Error config:", error.config);
+        }
+
+        console.error("Payload sent:", formData.value);
+
+        console.groupEnd();
+    }
 };
+
 
 // Fetch all inspection data records
 const showInspectionData = async () => {

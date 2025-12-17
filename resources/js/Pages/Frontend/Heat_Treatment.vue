@@ -1980,10 +1980,29 @@ const getMassProdLists = async () => {
     try{
         const response = await axios.get('/api/mass-production/');
         const massProdList = response.data;
-        massProd_names.value = massProdList.map(item => item.mass_prod);
-        //console.log("List of mass prods: ",massProd_names.value);
+
+        massProd_names.value = massProdList
+            .map(item => item.mass_prod)
+            .filter(Boolean)
+            .map(v =>
+                v
+                    .trim()
+                    .replace(/[–—-]/g, '-') // normalize weird dashes
+            )
+            .sort((a, b) => {
+                const [aPrefix, aNum = 0] = a.split('-')
+                const [bPrefix, bNum = 0] = b.split('-')
+
+                if (aPrefix !== bPrefix) {
+                    return aPrefix.localeCompare(bPrefix)
+                }
+
+                return Number(aNum) - Number(bNum)
+            })
+
+        console.log("List of mass prods: ", massProdList);
     }catch(error){
-        //console.error('Error fetching mass prod lists',error);
+        //console.error('Error fetching mass prod lists', error);
         toast.error('Failed to get the mass prod lists api error');
         await userErrorLogging(
             {
@@ -1996,7 +2015,8 @@ const getMassProdLists = async () => {
             "Failed to get the mass prod lists api error"
         );
     }
-}
+};
+
 
 const getFurnaceLists = async () => {
     try{

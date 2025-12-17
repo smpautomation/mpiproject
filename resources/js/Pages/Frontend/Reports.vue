@@ -1376,7 +1376,7 @@ const userReportLogging = async (logEvent) => {
         const responseReportLogging = await axios.post('/api/userlogs', {
             user: state.user.firstName + " " + state.user.surname,
             event: logEvent,
-            section: 'Report',
+            section: 'MPI Reports',
         });
 
         //console.log('responseUserLogin-data: ',responseUserLogin.data);
@@ -1390,12 +1390,28 @@ const userFinalizedLogging = async (logEvent) => {
         const responseFinalizedLogging = await axios.post('/api/userlogs', {
             user: state.user.firstName + " " + state.user.surname,
             event: logEvent,
-            section: 'Report',
+            section: 'MPI Reports',
         });
 
         //console.log('responseUserLogin-data: ',responseUserLogin.data);
     }catch(error){
         console.error('userFinalizedLogging post request failed: ',error);
+    }
+}
+
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try{
+        const response = await axios.post('/api/error-logs', {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: 'MPI Reports',
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userErrorLogging post request failed: ',error);
     }
 }
 
@@ -1826,44 +1842,6 @@ const allBoxesData = ref([]);
 
 const massProd_letter = ref(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']);
 
-const revert_boxLetter = () => {
-    if (currentBoxIndex.value > 0) {
-        currentBoxIndex.value--;
-    }
-};
-
-const saveToTpmBoxes = async () => {
-    try {
-        await axios.patch(`/api/updateboxes/${currentSerialSelected.value}`, {
-            layer_no: parseFloat(currentLayerName.value.replace(/[^0-9.]/g, '')),
-            box_letter: massProd_letter.value[currentBoxIndex.value],
-            quantity: massProd_qty.value,
-            weight: massProd_WT.value,
-            coating: massProd_coating.value,
-            box_no: massProd_boxNo.value,
-            raw_mat_code: massProd_rawMatCode.value,
-        });
-
-        // Reset inputs
-        massProd_qty.value = '';
-        massProd_WT.value = '';
-        massProd_boxNo.value = '';
-        massProd_coating.value = '';
-        massProd_rawMatCode.value = '';
-
-        // Step forward or close modal
-        if (currentBoxIndex.value < massProd_letter.value.length - 1) {
-            currentBoxIndex.value++;
-        } else {
-            showModal.value = false; // ✅ Replace the confirmation step
-        }
-
-    } catch (error) {
-        console.error("❌ Failed to save TPM Box:", error);
-    }
-};
-
-
 const modules = reactive([
     { name: 'M-01', new: '', homo: '', time: '', liters: '' },
     { name: 'M-02', new: '', homo: '', time: '', liters: '' },
@@ -2286,6 +2264,17 @@ const generateReport = async () => {
         }, 2000); // Clear after 3 seconds
         console.error("generateReport failed:", error.message);
         // Optional: show user an error message
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "generateReport",
+            "Failed to generate report. Please try again."
+        );
     }
 };
 
@@ -2401,6 +2390,16 @@ const getControlSheetData = async () => {
 
     }catch(error){
         console.log('Failed to get response Control Sheet Data: ', error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getControlSheetData",
+            "Failed to get response Control Sheet Data"
+        );
     }
 }
 
@@ -2484,6 +2483,16 @@ const fetchAllData = async () => {
         isLoading.value = false;
 
     } catch (error) {
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchAllData",
+            "fetchAllData returned empty or invalid payload"
+        );
         console.error("fetchAllData failed:", error);
         showNotification2("Data is incomplete for this serial. Please rerun the data.");
         exitReport();
@@ -2613,6 +2622,16 @@ const createReport = async (reportData, serial) => {
         //console.log("Create report function Patched report data: ", response.data);
     } catch (error) {
         console.error("Patch report data Error:", error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "createReport",
+            "Patch report data Error"
+        );
     }
 }
 
@@ -2833,6 +2852,16 @@ const showReportData = async () => {
         }, 1000); // 1 second delay
     } catch (error) {
         console.error("API get request showReportData Error:", error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "showReportData",
+            "API get request showReportData Error"
+        );
     }
 }
 
@@ -2999,6 +3028,16 @@ const saveReportUpdate = async (saveData, serial) => {
         showNotification2("Saved Successfully");
     }catch (error){
         console.error("Patch report data Error:", error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "saveReportUpdate",
+            "Patch report data Error"
+        );
     }finally{
         reportReset();
         fetchAllData();

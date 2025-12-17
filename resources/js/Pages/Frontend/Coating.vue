@@ -1500,6 +1500,21 @@ const userManageLogging = async (logEvent) => {
     }
 }
 
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try{
+        const response = await axios.post('/api/error-logs', {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: 'Coating',
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userErrorLogging post request failed: ',error);
+    }
+}
 
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
@@ -2101,13 +2116,42 @@ const getMassProdLists = async () => {
     try{
         const response = await axios.get('/api/mass-production/');
         const massProdList = response.data;
-        massProd_names.value = massProdList.map(item => item.mass_prod);
-        //console.log("List of mass prods: ",massProd_names.value);
+
+        massProd_names.value = massProdList
+            .map(item => item.mass_prod)
+            .filter(Boolean)
+            .map(v =>
+                v
+                    .trim()
+                    .replace(/[–—-]/g, '-') // normalize weird dashes
+            )
+            .sort((a, b) => {
+                const [aPrefix, aNum = 0] = a.split('-')
+                const [bPrefix, bNum = 0] = b.split('-')
+
+                if (aPrefix !== bPrefix) {
+                    return aPrefix.localeCompare(bPrefix)
+                }
+
+                return Number(aNum) - Number(bNum)
+            })
+
+        console.log("List of mass prods: ", massProdList);
     }catch(error){
-        console.error('Error fetching mass prod lists',error);
+        //console.error('Error fetching mass prod lists', error);
         toast.error('Failed to get the mass prod lists api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getMassProdLists",
+            "Failed to get the mass prod lists api error"
+        );
     }
-}
+};
 
 const getFurnaceLists = async () => {
     try{
@@ -2116,8 +2160,18 @@ const getFurnaceLists = async () => {
         furnace_names.value = furnaceList.map(item => item.furnace_name);
         //console.log("List of mass prods: ",furnace_names.value);
     }catch(error){
-        console.error('Error fetching mass prod lists',error);
-        toast.error('Failed to get the mass prod lists api error');
+        console.error('Error fetching furnace lists',error);
+        toast.error('Failed to get the furnace lists api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getFurnaceLists",
+            "Failed to get the furnace lists api error"
+        );
     }
 }
 
@@ -2139,7 +2193,17 @@ const getSelectedMassProdData = async () => {
         coatingInfo.totalMagnetWeight = total.toFixed(2); // round to 2 decimals if needed
         console.log('success response getSelectedMassProdData: ', coatingInfo.totalMagnetWeight);
     }catch(error){
-        console.error('Failed to getSelectedMassProdData: ',error)
+        console.error('Failed to getSelectedMassProdData: ',error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getSelectedMassProdData",
+            "Failed to getSelectedMassProdData"
+        );
     }
 }
 
@@ -2151,6 +2215,16 @@ const getCompletedLayers = async () => {
     } catch (error) {
         console.error(error);
         toast.error('Failed to fetch layers');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getCompletedLayers",
+            "Failed to fetch layers"
+        );
     }
 };
 
@@ -2162,6 +2236,16 @@ const getCompletedLayers_1st_2nd_gbdp = async () => {
     } catch (error) {
         console.error(error);
         toast.error('Failed to fetch layers');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getCompletedLayers_1st_2nd_gbdp",
+            "Failed to fetch layers"
+        );
     }
 };
 
@@ -2176,6 +2260,16 @@ const get1st2ndGBDPModels = async () => {
         //console.log("1st & 2nd GBDP model names: ", modelNames);
     } catch (error) {
         console.error('Failed to get 1st & 2nd GBDP Models: ', error);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "get1st2ndGBDPModels",
+            "Failed to get 1st & 2nd GBDP Models"
+        );
     }
 }
 
@@ -2220,6 +2314,16 @@ const fetchExistingLayers = async () => {
     } catch (error) {
         console.error("Error fetching existing layers:", error);
         toast.error('Failed to fetch existing layers.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchExistingLayers",
+            "Failed to fetch existing layers"
+        );
     }
 };
 
@@ -2235,6 +2339,16 @@ const fetchAvailableLayers = async () => {
         console.error(error);
         toast.error('Failed to fetch available layers from Heat Treatment');
         coatingNoMassProdData.value = true;
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchAvailableLayers",
+            "Failed to fetch available layers from Heat Treatment"
+        );
     }
 };
 
@@ -2250,6 +2364,16 @@ const fetchLayerModel = async (furnace, massProd, layerNumber) => {
     } catch (error) {
         fetchedModelValue.value = null;
         console.error(error.response?.data || error.message);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchLayerModel",
+            "Failed to fetch layer model"
+        );
 
         if (error.response?.status === 404) {
             isModelMissing.value = true;
@@ -2406,6 +2530,17 @@ const autoFetch = async () => {
     }catch(error){
         console.error("Error fetching mass prod data:", error);
 
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "autoFetch",
+            "Error fetching mass prod data"
+        );
+
         if (error.response) {
             if (error.response.status === 404) {
                 toast.error(`"${selectedFurnace_fetch.value} ${selectedMassProd_fetch.value}" layer ${selectedLayer_fetch.value} does not exists.`);
@@ -2525,6 +2660,17 @@ const fetchCoatingDataSummary = async () => {
 
     } catch (error) {
 
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchCoatingDataSummary",
+            "Failed to fetch data coating summary"
+        );
+
         if (error.response && error.response.status === 404) {
             toast.warning('No record exists for this model and lot no');
             isDataShown.value = false;
@@ -2613,6 +2759,17 @@ const fetchCoatingData2ndGbdpSummary = async () => {
         }
 
     }catch(error){
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchCoatingData2ndGbdpSummary",
+            "Failed to fetch 2nd gbdp coating summary data"
+        );
+
         if (error.response && error.response.status === 404) {
             toast.warning('No record exists for this model and lot no');
             isDataShown.value = false;

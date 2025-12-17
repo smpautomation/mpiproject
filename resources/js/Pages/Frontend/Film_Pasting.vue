@@ -554,6 +554,22 @@ const checkAuthentication = async () => {
     }
 };
 
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try{
+        const response = await axios.post('/api/error-logs', {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: 'Film Pasting',
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userErrorLogging post request failed: ',error);
+    }
+}
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
     // Load existing session value
@@ -698,7 +714,17 @@ const saveToDatabase = async () => {
         toast.success('Data successfully saved.')
 
     }catch(error){
-        toast.error('Failed to save film pasting data')
+        toast.error('Failed to save film pasting data');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "saveToDatabase",
+            "Failed to save film pasting data"
+        );
     }finally{
         showModalSubmit.value = false;
         isFilmPasteDataShown.value = false;
@@ -724,6 +750,16 @@ const updateFormatType = async () => { // Update format type of Mass Productions
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "updateFormatType",
+            "Failed to update format type"
+        );
     }
 }
 
@@ -766,15 +802,44 @@ const clearAll = () => {
 
 const getMassProdLists = async () => {
     try{
-        const response = await axios.get('/api/mass-production');
+        const response = await axios.get('/api/mass-production/');
         const massProdList = response.data;
-        massProdLists.value = massProdList.map(item => item.mass_prod);
-        //console.log("List of mass prods: ",massProd_names.value);
+
+        massProdLists.value = massProdList
+            .map(item => item.mass_prod)
+            .filter(Boolean)
+            .map(v =>
+                v
+                    .trim()
+                    .replace(/[–—-]/g, '-') // normalize weird dashes
+            )
+            .sort((a, b) => {
+                const [aPrefix, aNum = 0] = a.split('-')
+                const [bPrefix, bNum = 0] = b.split('-')
+
+                if (aPrefix !== bPrefix) {
+                    return aPrefix.localeCompare(bPrefix)
+                }
+
+                return Number(aNum) - Number(bNum)
+            })
+
+        //console.log("List of mass prods: ", massProdList);
     }catch(error){
-        console.error('Error fetching mass prod lists',error);
+        //console.error('Error fetching mass prod lists', error);
         toast.error('Failed to get the mass prod lists api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getMassProdLists",
+            "Failed to get the mass prod lists api error"
+        );
     }
-}
+};
 
 const getSelectedMassProdData = async() => {
     try{
@@ -786,8 +851,18 @@ const getSelectedMassProdData = async() => {
 
         console.log('success response getSelectedMassProdData: ', massProdLayerData);
     }catch(error){
-        console.error('Error fetching mass prod data:', error);
+        //console.error('Error fetching mass prod data:', error);
         toast.error('Failed to get the mass prod data api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getSelectedMassProdData",
+            "Failed to get the mass prod data api error"
+        );
     }
 }
 
@@ -798,8 +873,18 @@ const getFurnaceLists = async () => {
         furnace_names.value = furnaceList.map(item => item.furnace_name);
         //console.log("List of mass prods: ",furnace_names.value);
     }catch(error){
-        console.error('Error fetching mass prod lists',error);
+        //console.error('Error fetching mass prod lists',error);
         toast.error('Failed to get the mass prod lists api error');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getFurnaceLists",
+            "Failed to get the mass prod data api error"
+        );
     }
 }
 
@@ -807,10 +892,20 @@ const getCompletedLayers = async () => {
     try {
         const response = await axios.get(`/api/film-pasting-data/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/layers`);
         completedLayers.value = response.data.layers.map(String);
-        console.log("Completed Layers: ",completedLayers.value);
+        //console.log("Completed Layers: ",completedLayers.value);
     } catch (error) {
-        console.error(error);
+        //console.error(error);
         toast.error('Failed to fetch layers');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getCompletedLayers",
+            "Failed to fetch layers"
+        );
     }
 };
 
@@ -826,9 +921,19 @@ const fetchAvailableLayers = async () => {
         available_layers.value = response.data.completed_layers;
         console.log("Available Layers: ", available_layers.value);
     } catch (error) {
-        console.error(error);
+        //console.error(error);
         available_layers.value = [];
         toast.error('Failed to fetch available layers from Heat Treatment');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchAvailableLayers",
+            "Failed to fetch available layers from Heat Treatment"
+        );
     }
 };
 
@@ -844,7 +949,7 @@ const fetchExistingLayers = async () => {
             `/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/film-pasting-completed-layers`
         );
         existingLayers.value = response1.data.film_pasting_layers;
-        console.log("Existing Layers for Coating:", existingLayers.value);
+        //console.log("Existing Layers for Coating:", existingLayers.value);
 
         // Initial check after fetching
         if (filmPastingInfo.selected_layer) {
@@ -857,8 +962,18 @@ const fetchExistingLayers = async () => {
 
     } catch (error) {
         isExists.value = false;
-        console.error("Error fetching existing layers:", error);
+        //console.error("Error fetching existing layers:", error);
         toast.error('Failed to fetch existing layers.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchExistingLayers",
+            "Failed to fetch existing layers."
+        );
     }
 };
 
@@ -922,7 +1037,18 @@ const fetchFilmPastingDataSummary = async () => {
             return;
         }
 
-        console.error('Film Pasting Data Summary:', error);
+        //console.error('Film Pasting Data Summary:', error);
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchFilmPastingDataSummary",
+            "Failed to fetch Film Pasting data summary."
+        );
     }
 };
 
