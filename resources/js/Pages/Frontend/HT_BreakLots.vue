@@ -1207,7 +1207,13 @@ const getCurrentDataGrid = async () => {
 
 const getModelLists = async () => {
     try{
-        const response = await axios.get(`/api/initial-control-sheets/${mpcsbl.lotNo}/lot-all-model`);
+        const response = await axios.post(
+            '/api/initial-control-sheets/lot-all-model',
+            {
+                lot_no: mpcsbl.lotNo,
+            }
+        );
+
         model_names.value = response.data;
         //console.log('Model lists: ',model_names.value);
     }catch(error){

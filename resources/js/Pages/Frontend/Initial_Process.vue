@@ -201,7 +201,7 @@
                             />
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Coating<span class="text-red-500"> *</span></label>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Coating Frequency<span class="text-red-500"> *</span></label>
                             <input v-model="initial_mpcs.coating" type="number"
                                 class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                         </div>
@@ -2550,7 +2550,9 @@ const saveNormalCase = async () => {
             { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(boxes.map(box => [box, initial_mpcs.magnetPreparedBy || ''])) },
             { rowTitle: 'Box prepared by:', data: Object.fromEntries(boxes.map(box => [box, initial_mpcs.boxPreparedBy || ''])) },
             { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(boxes.map(box => [box, initial_mpcs.rawMaterialCode || ''])) },
-            { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes.map(box => [box, totalQty.value])) }
+            { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes.map(box => [box, totalQty.value])) },
+            { rowTitle: 'BOX WEIGHT', data: Object.fromEntries(boxes.map(box => [box, boxWeight.value[box] || ''])) },
+            { rowTitle: 'BOX WITH MAGNET WEIGHT', data: Object.fromEntries(boxes.map(box => [box, boxWithMagnetWeight.value[box] || ''])) }
         ];
 
         // Payload for Laravel API
@@ -2594,7 +2596,9 @@ const saveExcessCase = async () => {
             { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(boxes.map(box => [box, initial_mpcs.magnetPreparedBy || ''])) },
             { rowTitle: 'Box prepared by:', data: Object.fromEntries(boxes.map(box => [box, initial_mpcs.boxPreparedBy || ''])) },
             { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(boxes.map(box => [box, initial_mpcs.rawMaterialCode || ''])) },
-            { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes.map(box => [box, totalQty.value])) }
+            { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes.map(box => [box, totalQty.value])) },
+            { rowTitle: 'BOX WEIGHT', data: Object.fromEntries(boxes.map(box => [box, boxWeight.value[box] || ''])) },
+            { rowTitle: 'BOX WITH MAGNET WEIGHT', data: Object.fromEntries(boxes.map(box => [box, boxWithMagnetWeight.value[box] || ''])) }
         ];
 
         // Construct JSON structure for excess_data
@@ -2609,7 +2613,9 @@ const saveExcessCase = async () => {
             { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(boxes2.map(box => [box, initial_mpcs.magnetPreparedBy || ''])) },
             { rowTitle: 'Box prepared by:', data: Object.fromEntries(boxes2.map(box => [box, initial_mpcs.boxPreparedBy || ''])) },
             { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(boxes2.map(box => [box, initial_mpcs.rawMaterialCode || ''])) },
-            { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes2.map(box => [box, totalQty.value])) }
+            { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes2.map(box => [box, totalQty.value])) },
+            { rowTitle: 'BOX WEIGHT', data: Object.fromEntries(boxes2.map(box => [box, boxWeightExcess.value[box] || ''])) },
+            { rowTitle: 'BOX WITH MAGNET WEIGHT', data: Object.fromEntries(boxes2.map(box => [box, boxWithMagnetWeightExcess.value[box] || ''])) }
         ];
 
         // Payload for Laravel API
@@ -3205,7 +3211,7 @@ const proceedDuplicateFilmPaste = () => {
 }
 
 const saveToDataBaseFilmPasting = async() => {
-    try{
+    try {
         const payload = {
             model_name: filmPastingInfo.selected_model,
             lot_no: filmPastingInfo.lot_no,
@@ -3224,20 +3230,77 @@ const saveToDataBaseFilmPasting = async() => {
             h_line_parameters: filmPastingInfo.h_line_parameters,
             t_line_parameters: filmPastingInfo.t_line_parameters,
             setter_sand: filmPastingInfo.is_setter_sand,
+            hourly_checking: buildHourlyCheckingPayload()
         };
-
 
         const response = await axios.post(`/api/initial-film-pasting`, payload);
         console.log('Initial Film Pasting saved successfully: ', response.data);
         toast.success('Saved Successfully!');
-
-    }catch(error){
+    } catch (error) {
         console.error('Failed to save initial film pasting data', error);
-    }finally{
+    } finally {
         resetFilmPastingFields();
         showModalFilmPastingPreview.value = false;
     }
-}
+};
+
+const buildHourlyCheckingPayload = () => {
+    const hLine = [];
+    const tLine = [];
+
+    hLineTLineBlocks.value.forEach(block => {
+        const hEntry = {};
+        const tEntry = {};
+
+        block.values.forEach(row => {
+            switch (row.item) {
+                case 'Time Check':
+                    hEntry.time_check = row.hLine ?? null;
+                    tEntry.time_check = row.hLine ?? null;
+                    break;
+
+                case 'Check By':
+                    hEntry.check_by = row.hLine ?? null;
+                    tEntry.check_by = row.hLine ?? null;
+                    break;
+
+                case 'Water Level (mm)':
+                    hEntry.water_level = row.value != null ? Number(row.value.toFixed(2)) : null;
+                    tEntry.water_level = row.value != null ? Number(row.value.toFixed(2)) : null;
+                    break;
+
+                case 'Film Machine Humidity (%)':
+                    hEntry.film_machine_humidity = row.hLine != null ? Number(row.hLine) : null;
+                    tEntry.film_machine_humidity = row.tLine != null ? Number(row.tLine) : null;
+                    break;
+
+                case 'Film Machine Temperature (°C)':
+                    hEntry.film_machine_temperature = row.hLine != null ? Number(row.hLine) : null;
+                    tEntry.film_machine_temperature = row.tLine != null ? Number(row.tLine) : null;
+                    break;
+
+                case 'Sprayer Water Amount':
+                    hEntry.sprayer_water_amount = row.hLine != null ? Number(row.hLine) : null;
+                    tEntry.sprayer_water_amount = row.tLine != null ? Number(row.tLine) : null;
+                    break;
+
+                case 'Dryer Temp Setting (°C)':
+                    hEntry.dryer_temp_setting = row.hLine != null ? parseInt(row.hLine) : null;
+                    tEntry.dryer_temp_setting = row.tLine != null ? parseInt(row.tLine) : null;
+                    break;
+            }
+        });
+
+        hLine.push(hEntry);
+        tLine.push(tEntry);
+    });
+
+    return {
+        h_line: hLine,
+        t_line: tLine
+    };
+};
+
 
 // Fetch on mount
 onMounted( async () => {

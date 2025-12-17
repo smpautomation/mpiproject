@@ -41,6 +41,7 @@ class InitialFilmPastingController extends Controller
             'h_line_parameters' => 'nullable|array',
             't_line_parameters' => 'nullable|array',
             'setter_sand'       => 'nullable|boolean',
+            'hourly_checking' => 'nullable|array',
         ]);
 
         $filmPasting = InitialFilmPasting::create($validated);
@@ -79,6 +80,7 @@ class InitialFilmPastingController extends Controller
             'h_line_parameters' => 'nullable|array',
             't_line_parameters' => 'nullable|array',
             'setter_sand'       => 'nullable|boolean',
+            'hourly_checking' => 'nullable|array',
         ]);
 
         $initialFilmPasting->update($validated);

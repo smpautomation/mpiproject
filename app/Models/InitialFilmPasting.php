@@ -12,6 +12,7 @@ class InitialFilmPasting extends Model
     protected $casts = [
         'h_line_parameters' => 'array',
         't_line_parameters' => 'array',
+        'hourly_checking' => 'array',
         'setter_sand'       => 'boolean',
     ];
 }

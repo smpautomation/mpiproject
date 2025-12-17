@@ -386,7 +386,7 @@ Route::post('/initial-control-sheet/check-duplicate', [InitialControlSheetContro
 
 Route::get('/initial-control-sheets/lot-all', [InitialControlSheetController::class, 'fetchAllLotNumbers']);
 
-Route::get('/initial-control-sheets/{lotno}/lot-all-model', [InitialControlSheetController::class, 'fetchAllLotModels']);
+Route::post('/initial-control-sheets/lot-all-model', [InitialControlSheetController::class, 'fetchAllLotModels']);
 
 Route::get('/initial-control-sheets/{model}/{lotno}/lot-all-data', [InitialControlSheetController::class, 'fetchLotData']);
 

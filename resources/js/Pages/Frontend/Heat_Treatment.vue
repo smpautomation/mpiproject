@@ -2042,7 +2042,13 @@ const getFurnaceLists = async () => {
 
 const getModelLists = async () => {
     try{
-        const response = await axios.get(`/api/initial-control-sheets/${mpcs.lotNo}/lot-all-model`);
+        const response = await axios.post(
+            '/api/initial-control-sheets/lot-all-model',
+            {
+                lot_no: mpcs.lotNo,
+            }
+        );
+
         model_names.value = response.data;
         //console.log('Model lists: ',model_names.value);
     }catch(error){
