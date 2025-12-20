@@ -2571,9 +2571,10 @@ const fetchCoatingDataSummary = async () => {
 
 
         isDataShown.value = true;
-        const response = await axios.get(
-            `/api/initial-coating/${lotNo.value}/${coatingInfo.selectedModel}/fetch-coating-data`
-        );
+        const response = await axios.post('/api/initial-coating/fetch-coating-data', {
+            lot_no: lotNo.value,
+            model_name: coatingInfo.selectedModel
+        });
 
         console.log('Fetched Coating Data: ', response.data);
 
@@ -2696,9 +2697,10 @@ const fetchCoatingData2ndGbdpSummary = async () => {
         }
 
         isDataShown.value = true;
-        const response = await axios.get(
-            `/api/initial-coating/${lotNo.value}/${coatingInfo.selectedModel}/fetch-coating-data`
-        );
+        const response = await axios.post('/api/initial-coating/fetch-coating-data', {
+            lot_no: lotNo.value,
+            model_name: coatingInfo.selectedModel
+        });
 
         console.log('Fetched Coating Data: ', response.data);
 

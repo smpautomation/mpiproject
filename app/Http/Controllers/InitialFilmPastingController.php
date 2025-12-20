@@ -119,10 +119,15 @@ class InitialFilmPastingController extends Controller
         ]);
     }
 
-    public function fetchFilmPasteSummaryData($lotno, $model)
+    public function fetchFilmPasteSummaryData(Request $request)
     {
-        $record = InitialFilmPasting::where('lot_no', $lotno)
-            ->where('model_name', $model)
+        $validated = $request->validate([
+            'lot_no'     => 'required|string|max:50',
+            'model_name' => 'required|string|max:100',
+        ]);
+
+        $record = InitialFilmPasting::where('lot_no', $validated['lot_no'])
+            ->where('model_name', $validated['model_name'])
             ->first();
 
         if (!$record) {
@@ -133,5 +138,4 @@ class InitialFilmPastingController extends Controller
 
         return response()->json($record);
     }
-
 }

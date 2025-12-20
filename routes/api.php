@@ -393,24 +393,30 @@ Route::post(
     [InitialControlSheetController::class, 'fetchLotData']
 );
 
-Route::get('/initial-control-sheets/{model}/{lotno}/lot-total-boxes', [InitialControlSheetController::class, 'fetchTotalBoxes']);
+Route::post(
+    '/initial-control-sheets/lot-total-boxes',
+    [InitialControlSheetController::class, 'fetchTotalBoxes']
+);
 
-Route::get('/initial-control-sheets/fetch-layer-excess-data/{model}/{lotno}', [InitialControlSheetController::class, 'fetchLayerExcessData']);
+Route::post(
+    '/initial-control-sheets/fetch-layer-excess-data',
+    [InitialControlSheetController::class, 'fetchLayerExcessData']
+);
 
 Route::get(
     '/mass-production/{furnace}/{massprod}/excess-existing-layers',
     [ExcessLayersController::class, 'existingExcessLayerList']
 );
 
-Route::get(
-    '/initial-control-sheets/second-validation/{model}/{lotNo}/{mainCount}/{excessCount}',
+Route::post(
+    '/initial-control-sheets/second-validation',
     [InitialControlSheetController::class, 'validateLayers']
 );
 
 Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class, 'checkDuplicateLot']);
-Route::get('/initial-coating/{lotno}/{model}/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
+Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
-Route::get('/initial-film-pasting/{lotno}/{model}/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
+Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
 
 Route::apiResource('mass-production',MassProductionController::class);
 Route::apiResource('excess-layers',ExcessLayersController::class);

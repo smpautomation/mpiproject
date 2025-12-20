@@ -979,9 +979,11 @@ const fetchExistingLayers = async () => {
 
 const fetchFilmPastingDataSummary = async () => {
     try {
-        const response = await axios.get(
-            `/api/initial-film-pasting/${filmPasteLotNo.value}/${filmPasteModel.value}/fetch-film-paste-data`
-        );
+        const response = await axios.post('/api/initial-film-pasting/fetch-film-paste-data', {
+            lot_no: filmPasteLotNo.value,
+            model_name: filmPasteModel.value
+        });
+
 
         console.log('Fetched Film Paste Data:', response.data);
 

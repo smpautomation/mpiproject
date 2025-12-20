@@ -138,62 +138,82 @@ class InitialControlSheetController extends Controller
         ]);
     }
 
-    public function fetchTotalBoxes($modelName, $lotNo)
+    public function fetchTotalBoxes(Request $request)
     {
-        $record = InitialControlSheet::where('model_name', $modelName)
-            ->where('lot_no', $lotNo)
+        $validated = $request->validate([
+            'model_name' => 'required|string|max:100',
+            'lot_no'     => 'required|string|max:50',
+        ]);
+
+        $record = InitialControlSheet::where('model_name', $validated['model_name'])
+            ->where('lot_no', $validated['lot_no'])
             ->select('total_boxes')
             ->first();
 
         return response()->json([
-            'total_boxes' => $record ? $record->total_boxes : null
+            'total_boxes' => $record?->total_boxes ?? null,
         ]);
     }
 
-    public function validateLayers($modelName, $lotNo, $mainCount, $excessCount)
+    public function validateLayers(Request $request)
     {
-        $record = InitialControlSheet::where('model_name', $modelName)
-            ->where('lot_no', $lotNo)
+        $validated = $request->validate([
+            'model_name'   => 'required|string|max:100',
+            'lot_no'       => 'required|string|max:50',
+            'main_count'   => 'required|integer|min:0',
+            'excess_count' => 'required|integer|min:0',
+        ]);
+
+        $record = InitialControlSheet::where('model_name', $validated['model_name'])
+            ->where('lot_no', $validated['lot_no'])
             ->select('layer_data', 'excess_data')
             ->first();
 
         if (!$record) {
             return response()->json([
                 'validated' => false,
-                'message' => 'Record not found.'
-            ]);
+                'message'   => 'Record not found.',
+            ], 404);
         }
 
-        // Ensure layer_data and excess_data are arrays
-        $layerData  = is_array($record->layer_data) ? $record->layer_data : json_decode($record->layer_data, true);
-        $excessData = is_array($record->excess_data) ? $record->excess_data : json_decode($record->excess_data, true);
+        $layerData  = is_array($record->layer_data)
+            ? $record->layer_data
+            : json_decode($record->layer_data, true);
 
-        // Safely extract number of boxes in main layer
+        $excessData = is_array($record->excess_data)
+            ? $record->excess_data
+            : json_decode($record->excess_data, true);
+
         $layerCount = 0;
-        if (!empty($layerData) && isset($layerData[0]['data']) && is_array($layerData[0]['data'])) {
+        if (!empty($layerData[0]['data']) && is_array($layerData[0]['data'])) {
             $layerCount = count($layerData[0]['data']);
         }
 
-        // Safely extract number of boxes in excess layer
         $excessBoxCount = 0;
-        if (!empty($excessData) && isset($excessData[0]['data']) && is_array($excessData[0]['data'])) {
+        if (!empty($excessData[0]['data']) && is_array($excessData[0]['data'])) {
             $excessBoxCount = count($excessData[0]['data']);
         }
 
-        // Compare counts with user-provided values
-        $validated = (intval($mainCount) === $layerCount) && (intval($excessCount) === $excessBoxCount);
+        $isValid =
+            $validated['main_count'] === $layerCount &&
+            $validated['excess_count'] === $excessBoxCount;
 
         return response()->json([
-            'validated'    => $validated,
+            'validated'    => $isValid,
             'layer_count'  => $layerCount,
-            'excess_count' => $excessBoxCount
+            'excess_count' => $excessBoxCount,
         ]);
     }
 
-    public function fetchLayerExcessData($modelName, $lotNo)
+    public function fetchLayerExcessData(Request $request)
     {
-        $record = InitialControlSheet::where('model_name', $modelName)
-            ->where('lot_no', $lotNo)
+        $validated = $request->validate([
+            'model_name' => 'required|string|max:100',
+            'lot_no'     => 'required|string|max:50',
+        ]);
+
+        $record = InitialControlSheet::where('model_name', $validated['model_name'])
+            ->where('lot_no', $validated['lot_no'])
             ->select('layer_data', 'excess_data', 'total_boxes')
             ->first();
 
@@ -202,17 +222,20 @@ class InitialControlSheetController extends Controller
                 'layer_data'  => [],
                 'excess_data' => [],
                 'total_boxes' => 0,
-                'message'     => 'Record not found.'
-            ]);
+                'message'     => 'Record not found.',
+            ], 404);
         }
 
-        $layerData  = is_array($record->layer_data) ? $record->layer_data : json_decode($record->layer_data, true);
-        $excessData = is_array($record->excess_data) ? $record->excess_data : json_decode($record->excess_data, true);
-
         return response()->json([
-            'layer_data'  => $layerData ?? [],
-            'excess_data' => $excessData ?? [],
-            'total_boxes' => $record->total_boxes ?? 0
+            'layer_data'  => is_array($record->layer_data)
+                ? $record->layer_data
+                : json_decode($record->layer_data, true) ?? [],
+
+            'excess_data' => is_array($record->excess_data)
+                ? $record->excess_data
+                : json_decode($record->excess_data, true) ?? [],
+
+            'total_boxes' => $record->total_boxes ?? 0,
         ]);
     }
 

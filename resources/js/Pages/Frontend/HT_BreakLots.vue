@@ -1090,8 +1090,14 @@ const validateData = async () => {
 
     // --- Second validation: call server to check layer/excess boxes ---
     try {
-        const response = await axios.get(
-            `/api/initial-control-sheets/second-validation/${mpcsbl.selectedModel}/${mpcsbl.lotNo}/${mainCount}/${excessCount}`
+        const response = await axios.post(
+            '/api/initial-control-sheets/second-validation',
+            {
+                model_name: mpcsbl.selectedModel,
+                lot_no: mpcsbl.lotNo,
+                main_count: mainCount,
+                excess_count: excessCount,
+            }
         );
 
         if (response.data.validated) {
@@ -1181,7 +1187,10 @@ console.log("Mass Prod: ", mpcsbl.selectedMassProd);
 
 const getTotalBoxes = async () => {
     try{
-        const response = await axios.get(`/api/initial-control-sheets/${mpcsbl.selectedModel}/${mpcsbl.lotNo}/lot-total-boxes`);
+        const response = await axios.post('/api/initial-control-sheets/lot-total-boxes', {
+            model_name: mpcsbl.selectedModel,
+            lot_no: mpcsbl.lotNo
+        });
         //console.log("Total Boxes data: ", response.data);
         const tbox = response.data;
         totalBoxes.value = tbox.total_boxes || 'Loading...';
@@ -1381,8 +1390,12 @@ const fetchAllLotDataBoxDetails = async () => {
     }
 
     try {
-        const response = await axios.get(
-            `/api/initial-control-sheets/fetch-layer-excess-data/${mpcsbl.selectedModel}/${mpcsbl.lotNo}`
+        const response = await axios.post(
+            '/api/initial-control-sheets/fetch-layer-excess-data',
+            {
+                model_name: mpcsbl.selectedModel,
+                lot_no: mpcsbl.lotNo,
+            }
         );
 
         const { layer_data, excess_data, total_boxes } = response.data;

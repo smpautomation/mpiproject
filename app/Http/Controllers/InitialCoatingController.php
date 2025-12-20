@@ -115,10 +115,15 @@ class InitialCoatingController extends Controller
         ]);
     }
 
-    public function fetchCoatingSummaryData($lotno, $model)
+    public function fetchCoatingSummaryData(Request $request)
     {
-        $record = InitialCoating::where('lot_no', $lotno)
-            ->where('model_name', $model)
+        $validated = $request->validate([
+            'lot_no'     => 'required|string|max:50',
+            'model_name' => 'required|string|max:100',
+        ]);
+
+        $record = InitialCoating::where('lot_no', $validated['lot_no'])
+            ->where('model_name', $validated['model_name'])
             ->first();
 
         if (!$record) {

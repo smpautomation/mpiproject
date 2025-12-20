@@ -2069,7 +2069,10 @@ const getModelLists = async () => {
 
 const getTotalBoxes = async () => {
     try{
-        const response = await axios.get(`/api/initial-control-sheets/${mpcs.selectedModel}/${mpcs.lotNo}/lot-total-boxes`);
+        const response = await axios.post('/api/initial-control-sheets/lot-total-boxes', {
+            model_name: mpcs.selectedModel,
+            lot_no: mpcs.lotNo
+        });
         //console.log("Total Boxes data: ", response.data);
         const tbox = response.data;
         totalBoxes.value = tbox.total_boxes || 'Loading...';
