@@ -388,7 +388,10 @@ Route::get('/initial-control-sheets/lot-all', [InitialControlSheetController::cl
 
 Route::post('/initial-control-sheets/lot-all-model', [InitialControlSheetController::class, 'fetchAllLotModels']);
 
-Route::get('/initial-control-sheets/{model}/{lotno}/lot-all-data', [InitialControlSheetController::class, 'fetchLotData']);
+Route::post(
+    '/initial-control-sheets/lot-all-data',
+    [InitialControlSheetController::class, 'fetchLotData']
+);
 
 Route::get('/initial-control-sheets/{model}/{lotno}/lot-total-boxes', [InitialControlSheetController::class, 'fetchTotalBoxes']);
 

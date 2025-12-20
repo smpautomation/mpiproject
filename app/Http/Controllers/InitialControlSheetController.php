@@ -122,14 +122,19 @@ class InitialControlSheetController extends Controller
     }
 
 
-    public function fetchLotData($modelName, $lotNo)
+    public function fetchLotData(Request $request)
     {
-        $sheet = InitialControlSheet::where('model_name', $modelName)
-            ->where('lot_no', $lotNo)
+        $validated = $request->validate([
+            'model_name' => 'required|string|max:100',
+            'lot_no'     => 'required|string|max:50',
+        ]);
+
+        $sheet = InitialControlSheet::where('model_name', $validated['model_name'])
+            ->where('lot_no', $validated['lot_no'])
             ->first();
 
         return response()->json([
-            'data'  => $sheet
+            'data' => $sheet
         ]);
     }
 

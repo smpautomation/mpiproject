@@ -2262,8 +2262,12 @@ const fetchAllLotDataBoxDetails = async () => {
 
     try{
 
-        const response = await axios.get(
-            `/api/initial-control-sheets/${mpcs.selectedModel}/${mpcs.lotNo}/lot-all-data`
+        const response = await axios.post(
+            '/api/initial-control-sheets/lot-all-data',
+            {
+                model_name: mpcs.selectedModel,
+                lot_no: mpcs.lotNo,
+            }
         );
 
         const sheet = response.data?.data;
