@@ -413,6 +413,8 @@ Route::post(
     [InitialControlSheetController::class, 'validateLayers']
 );
 
+Route::get('/monthly-summary', [MassProductionController::class, 'generateMonthlySummary']);
+
 Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class, 'checkDuplicateLot']);
 Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);

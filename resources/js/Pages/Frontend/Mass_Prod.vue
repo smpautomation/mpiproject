@@ -15,32 +15,65 @@
         <!-- Card -->
         <div class="w-full p-8 space-y-6 bg-white border border-gray-200 shadow-xl max-w-7xl rounded-2xl">
 
-            <!-- Search -->
-            <div class="flex items-center justify-between">
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="🔍 Search Mass Prod..."
-                    class="px-4 py-2 text-sm border border-gray-300 rounded-lg shadow-sm w-72 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+            <!-- Filters -->
+            <div class="flex flex-wrap items-end gap-6">
+
+                <!-- Cycle No Search -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-medium text-gray-600">
+                        Cycle No Filter
+                    </label>
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Search cycle no"
+                        class="w-72 px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm
+                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                </div>
+
+                <!-- Estimated Completion Date Range -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-medium text-gray-600">
+                        Estimated Completion Date Range
+                    </label>
+
+                    <div class="flex items-center gap-2">
+                        <input
+                            v-model="dateFrom"
+                            type="date"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm
+                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <span class="text-sm text-gray-500">to</span>
+                        <input
+                            v-model="dateTo"
+                            type="date"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm
+                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+                </div>
+
             </div>
+
 
             <!-- Table -->
             <div class="overflow-x-auto border border-gray-200 rounded-lg shadow">
                 <table class="min-w-full text-sm divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Date</th>
+                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Est. Date Time Finish</th>
                             <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Mass Prod</th>
-                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Furnace</th>
+                            <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Cycle No</th>
                             <th class="px-6 py-3 text-xs font-semibold tracking-wide text-center text-gray-600 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <tr v-for="item in paginatedItems" :key="item.id" class="transition duration-150 hover:bg-gray-50">
-                            <td class="px-6 py-4 text-center text-gray-800">{{ new Date(item.created_at).toLocaleDateString() }}</td>
+                            <td class="px-6 py-4 text-center text-gray-800">{{ item.estimated_completion }}</td>
                             <td class="px-6 py-4 font-semibold text-center text-gray-900">{{ item.mass_prod }}</td>
-                            <td class="px-6 py-4 text-center text-gray-800">{{ item.furnace }}</td>
+                            <td class="px-6 py-4 text-center text-gray-800">{{ item.cycle_no }}</td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex flex-wrap justify-center gap-2">
                                     <button
@@ -91,6 +124,56 @@
                     >
                         Next
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mt-10">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold text-gray-800">Monthly Data Summary</h3>
+                </div>
+
+                <button
+                    @click="downloadCsvMonthlySummary"
+                    class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Excel
+                </button>
+            </div>
+
+            <!-- Selection Section -->
+            <div class="flex flex-wrap gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Month
+                    </label>
+                    <select
+                        v-model="selectedMonth"
+                        class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 cursor-pointer hover:border-gray-400">
+                        <option v-for="(month, index) in months" :key="index" :value="index + 1">
+                            {{ month }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Year
+                    </label>
+                    <select
+                        v-model="selectedYear"
+                        class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 cursor-pointer hover:border-gray-400">
+                        <option v-for="year in years" :key="year" :value="year">
+                            {{ year }}
+                        </option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -227,6 +310,7 @@ import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
 import Modal from '@/Components/Modal.vue'; // adjust path if needed
 import axios from 'axios';
+import * as XLSX from 'xlsx';
 import { useAuth } from '@/Composables/useAuth.js';
 import { useToast } from 'vue-toast-notification';
 const toast = useToast();
@@ -307,6 +391,19 @@ const massProd_furnace = ref();
 const massProd_list = ref([]);
 const furnace_lists = ref([]);
 
+const selectedMonth = ref(new Date().getMonth() + 1); // default current month
+const selectedYear = ref(new Date().getFullYear());   // default current year
+
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const years = ref([]);
+
+const dateFrom = ref('');
+const dateTo = ref('');
+
 const searchQuery = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 5;
@@ -315,7 +412,7 @@ const getMassProdData = async () => {
     try {
         const responseMassProd = await axios.get('/api/mass-production/all-duplicates');
         massProd_list.value = responseMassProd.data;
-        console.log(massProd_list.value);
+        console.log("Mass Prod data list:  ",massProd_list.value);
     } catch (error) {
         console.error('Failed to fetch all mass production data:', error);
         toast.error('Failed to fetch mass production data.');
@@ -355,15 +452,44 @@ const getFurnaceLists = async() => {
 }
 
 const filteredItems = computed(() => {
-    return massProd_list.value.filter((item) =>
-        item.mass_prod.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
+    const q = searchQuery.value.trim().toLowerCase();
+    const from = dateFrom.value;
+    const to = dateTo.value;
+
+    return massProd_list.value.filter(item => {
+
+        /* ---------------- Cycle No filter ---------------- */
+        let cycleMatch = true;
+        if (q) {
+            cycleMatch = item.cycle_no
+                ? item.cycle_no.toLowerCase().includes(q)
+                : false;
+        }
+
+        /* -------- Estimated Completion date filter -------- */
+        let dateMatch = true;
+
+        if (from || to) {
+            // date filter is active → item MUST have a date
+            if (!item.estimated_completion) return false;
+
+            const itemDate = new Date(item.estimated_completion)
+                .toISOString()
+                .split('T')[0];
+
+            if (from && itemDate < from) return false;
+            if (to && itemDate > to) return false;
+        }
+
+        return cycleMatch && dateMatch;
+    });
 });
+
 
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage)
 const endIndex = computed(() => startIndex.value + itemsPerPage)
 const paginatedItems = computed(() =>
-  filteredItems.value.slice(startIndex.value, endIndex.value)
+    filteredItems.value.slice(startIndex.value, endIndex.value)
 );
 
 const nextPage = () => {
@@ -484,12 +610,48 @@ const saveToDatabase = async () => {
     }
 };
 
+const downloadCsvMonthlySummary = async () => {
+    try {
+        const month = selectedMonth.value;
+        const year  = selectedYear.value;
+
+        // basic guard
+        if (!month || !year) return;
+
+        const { data } = await axios.get('/api/monthly-summary', {
+        params: { month, year }
+        });
+
+        if (!Array.isArray(data) || data.length === 0) {
+            const monthName = months[month - 1];
+            toast.warning(`No data available for the month of ${monthName}`);
+            return;
+        }
+
+        // build excel
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook  = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Monthly Summary');
+
+        const filename = `GBDP MPI SYSTEM ${months[month - 1]} HT SUMMARY MONTHLY ${year}.xlsx`;
+        XLSX.writeFile(workbook, filename);
+
+    } catch (error) {
+        console.error('Failed to generate Excel:', error);
+        toast.error('Failed to generate monthly summary');
+    }
+};
+
 
 
 onMounted(async () => {
     await checkAuthentication();
     await getMassProdData();
     await getFurnaceLists();
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 2020; y--) {
+        years.value.push(y);
+    }
 });
 
 </script>

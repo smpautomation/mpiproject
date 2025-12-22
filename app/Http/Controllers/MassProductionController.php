@@ -34,6 +34,7 @@ class MassProductionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'estimated_completion' => 'nullable|date',
             'mass_prod' => [
                 'nullable',
                 'string',
@@ -117,6 +118,7 @@ class MassProductionController extends Controller
 
         // Validate only fields that may be sent in the payload
         $validated = $request->validate([
+            'estimated_completion' => 'nullable|date',
             'mass_prod' => [
                 'required',
                 'string',
@@ -231,6 +233,7 @@ class MassProductionController extends Controller
 
         // Validate incoming data
         $validated = $request->validate([
+            'estimated_completion' => 'nullable|date',
             'furnace' => 'nullable|string',
             'batch_cycle_no' => 'nullable|string',
             'machine_no' => 'nullable|string',
@@ -1122,6 +1125,82 @@ class MassProductionController extends Controller
             return array_slice($letters, $startIndex, $endIndex - $startIndex + 1);
         }
         return [$range]; // Single box
+    }
+
+    public function generateMonthlySummary(Request $request)
+    {
+        $month = $request->input('month'); // 1-12
+        $year  = $request->input('year');  // e.g., 2025
+
+        $records = MassProduction::whereMonth('estimated_completion', $month)
+                                 ->whereYear('estimated_completion', $year)
+                                 ->get();
+
+        if ($records->isEmpty()) {
+            return response()->json([]);
+        }
+
+        $excelData = [];
+
+        $layerKeys = [
+            'layer_1', 'layer_2', 'layer_3', 'layer_4',
+            'layer_5', 'layer_6', 'layer_7', 'layer_8',
+            'layer_9', 'layer_9_5'
+        ];
+
+        $layerLabels = [
+            'layer_1'   => '1st',
+            'layer_2'   => '2nd',
+            'layer_3'   => '3rd',
+            'layer_4'   => '4th',
+            'layer_5'   => '5th',
+            'layer_6'   => '6th',
+            'layer_7'   => '7th',
+            'layer_8'   => '8th',
+            'layer_9'   => '9th',
+            'layer_9_5' => '9.5th',
+        ];
+
+        foreach ($records as $record) {
+            $baseRow = [
+                'MACHINE NO'  => $record->machine_no,
+                'CYCLE NO'    => $record->cycle_no,
+                'PTN'         => $record->pattern_no,
+                'DATE LOAD'   => $record->date_start,
+                'DATE UNLOAD' => $record->date_finished,
+            ];
+
+            foreach ($layerKeys as $layerKey) {
+                if (!empty($record->$layerKey)) {
+                    $layerJson = json_decode($record->$layerKey, true);
+
+                    $modelRow = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'MODEL:');
+                    $lotRow   = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'LT. No.:');
+                    $qtyRow   = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'TOTAL QTY');
+                    $wtRow    = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'WT (KG):');
+
+                    $beforeGbdpWt = $wtRow ? array_sum($wtRow['data']) : 0;
+
+                    $excelData[] = array_merge($baseRow, [
+                        'MODEL NAME'       => $modelRow ? $modelRow['data']['A'] : null,
+                        'LOT'              => $lotRow   ? $lotRow['data']['A']   : null,
+                        'QTY'              => $qtyRow   ? $qtyRow['data']['A']   : null,
+                        'BEFORE GBDP WT'   => $beforeGbdpWt,
+                        'AFTER GBDP WT'    => null, // to calculate later
+                        'LAYER'            => $layerLabels[$layerKey] ?? null,
+                        'EQUIVALENT LOTS'  => null, // to calculate later
+                    ]);
+                }
+            }
+        }
+
+        return $excelData;
+    }
+
+    public function getMonthlySummary(Request $request)
+    {
+        $data = $this->generateMonthlySummary($request);
+        return response()->json($data);
     }
 
 }

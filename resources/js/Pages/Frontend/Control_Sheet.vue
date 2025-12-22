@@ -440,36 +440,69 @@ const highlightableRows = [
 
 const calc_dateTimeFinish = async (patternNo, dateStart, timeStart) => {
     try {
-        // 1️⃣ Fetch the hours for the pattern
+        // Guard 1: required inputs
+        if (!patternNo || !dateStart || !timeStart) {
+            console.warn('Missing required inputs for date calculation.');
+            return;
+        }
+
         const response = await axios.get(`/api/pattern-hours/${patternNo}`);
         const patternHours = response.data.pattern_no_hours;
 
-        if (patternHours == null) {
-            console.error('No hours found for this pattern.');
+        // Guard 2: invalid pattern hours
+        if (patternHours == null || isNaN(patternHours)) {
+            console.error('No valid hours found for this pattern.');
             return;
         }
 
         const startDateTime = new Date(`${dateStart}T${timeStart}`);
 
-        const finishDateTime = new Date(startDateTime.getTime() + patternHours * 60 * 60 * 1000);
+        // Guard 3: invalid date construction
+        if (isNaN(startDateTime.getTime())) {
+            console.error('Invalid start date/time:', dateStart, timeStart);
+            return;
+        }
 
+        const finishDateTime = new Date(
+            startDateTime.getTime() + patternHours * 60 * 60 * 1000
+        );
+
+        // Display (unchanged)
         const formattedFinish = finishDateTime.toLocaleString('en-US', {
-            weekday: 'short', // Wed
+            weekday: 'short',
             year: 'numeric',
-            month: 'short',   // Apr
+            month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: false     // 24-hour format
+            hour12: false
         });
 
         estimated_DateTimeFinish.value = formattedFinish;
 
+        // DB-safe format
+        const mysqlDateTime =
+            finishDateTime.getFullYear() + '-' +
+            String(finishDateTime.getMonth() + 1).padStart(2, '0') + '-' +
+            String(finishDateTime.getDate()).padStart(2, '0') + ' ' +
+            String(finishDateTime.getHours()).padStart(2, '0') + ':' +
+            String(finishDateTime.getMinutes()).padStart(2, '0') + ':' +
+            String(finishDateTime.getSeconds()).padStart(2, '0');
+
+        await axios.patch(
+            `/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}`,
+            { estimated_completion: mysqlDateTime }
+        );
+
     } catch (error) {
-        console.error('Failed to fetch HT graph pattern:', error.response?.data || error.message);
+        console.error(
+            'Failed to calculate/update estimated completion:',
+            error.response?.data || error.message
+        );
     }
 };
+
 
 const tableProperties = {
     borderColor: 'border border-gray-400',

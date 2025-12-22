@@ -2391,6 +2391,8 @@ const fetchAllLotDataBoxDetails = async () => {
         const boxPrepRow    = getRow("Box prepared by:");
         const rawMatRow     = getRow("RAW MATERIAL CODE:");
 
+        console.log("Main Rows Extracted:", { qtyRow, weightRow, boxNoRow });
+
         // --- 2. Extract EXCESS row data (if exists) ---
         let excessQtyRow = {};
         let excessWeightRow = {};
@@ -2403,15 +2405,25 @@ const fetchAllLotDataBoxDetails = async () => {
             excessQtyRow       = getExcessRow("QTY (PCS):");
             excessWeightRow    = getExcessRow("WT (KG):");
             excessBoxNoRow     = getExcessRow("BOX No.:");
+
+            console.log("Excess Rows Extracted:", { excessQtyRow, excessWeightRow, excessBoxNoRow });
+        } else {
+            console.log("No excess data found in sheet.excess_data");
         }
 
         // --- 3. Determine main/excess box keys ---
         const allFoundMain = Object.keys(boxNoRow || {});
         const allFoundExcess = Object.keys(excessBoxNoRow || {});
 
+        console.log("All Main Boxes:", allFoundMain);
+        console.log("All Excess Boxes:", allFoundExcess);
+
         visibleBoxes.value = allFoundMain.slice(0, 10);
         visibleExcessBoxes.value =
             allFoundExcess.length ? allFoundExcess : allFoundMain.slice(10);
+
+        console.log("Visible Main Boxes (first 10):", visibleBoxes.value);
+        console.log("Visible Excess Boxes:", visibleExcessBoxes.value);
 
         // --- 4. Clear reactive maps ---
         qtyValues.value = {};
@@ -2428,16 +2440,28 @@ const fetchAllLotDataBoxDetails = async () => {
             boxNoValues.value[box]     = boxNoRow[box] || '';
         });
 
-        // --- 6. Populate EXCESS box values (from excess rows, not main row) ---
+        console.log("Populated MAIN box values:", {
+            qtyValues: qtyValues.value,
+            weightValues: weightValues.value,
+            boxNoValues: boxNoValues.value
+        });
+
+        // --- 6. Populate EXCESS box values ---
         visibleExcessBoxes.value.forEach(box => {
             qtyValuesExcess.value[box]    = excessQtyRow[box] || '';
             weightValuesExcess.value[box] = excessWeightRow[box] || '';
             boxNoValuesExcess.value[box]  = excessBoxNoRow[box] || '';
         });
 
+        console.log("Populated EXCESS box values:", {
+            qtyValuesExcess: qtyValuesExcess.value,
+            weightValuesExcess: weightValuesExcess.value,
+            boxNoValuesExcess: boxNoValuesExcess.value
+        });
+
         if (mpcs.moreThanTenBoxes && visibleExcessBoxes.value.length) {
             const excessData = getExcessDataRange(visibleExcessBoxes.value); // e.g., "A-E"
-            console.log('Excess Data: ',excessData);
+            console.log('Excess Data Range for API call:', excessData);
             await fetchAvailableLayersForExcessList(excessData);
         }
 
@@ -2452,12 +2476,26 @@ const fetchAllLotDataBoxDetails = async () => {
         mpcs.boxPreparedBy        = boxPrepRow[firstBox] || '';
         mpcs.rawMaterialCode      = rawMatRow[firstBox] || '';
 
+        console.log("Assigned top-level MPCS values:", {
+            selectedModel: mpcs.selectedModel,
+            coatingMCNo: mpcs.coatingMCNo,
+            lotNo: mpcs.lotNo,
+            coating: mpcs.coating,
+            magnetPreparedBy: mpcs.magnetPreparedBy,
+            boxPreparedBy: mpcs.boxPreparedBy,
+            rawMaterialCode: mpcs.rawMaterialCode
+        });
+
         // --- 8. UI end letters ---
         mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
         mpcs.selectedExcessBoxEndList = visibleExcessBoxes.value.at(-1) || null;
 
+        console.log("Selected Box End List:", mpcs.selectedBoxEndList);
+        console.log("Selected Excess Box End List:", mpcs.selectedExcessBoxEndList);
+
         toast.info("Loaded more than 10 boxes data");
         isDataShown.value = true;
+
 
 
     } catch(error) {
