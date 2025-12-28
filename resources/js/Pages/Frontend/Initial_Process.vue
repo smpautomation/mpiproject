@@ -86,7 +86,7 @@
                         <!-- Start Box -->
                         <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">Start Box <span class="text-red-500">*</span></label>
-                        <select v-model="initial_mpcs.selectedBoxStart" class="w-full text-xs border-gray-300 rounded-lg shadow-sm">
+                        <select v-model="initial_mpcs.selectedBoxStart" :disabled="initial_mpcs.moreThanTenBoxes" class="w-full text-xs border-gray-300 rounded-lg shadow-sm">
                             <option v-for="item in allBoxes" :key="item" :value="item">{{ item }}</option>
                         </select>
                         </div>
@@ -94,7 +94,7 @@
                         <!-- End Box -->
                         <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">End Box <span class="text-red-500">*</span></label>
-                        <select v-model="initial_mpcs.selectedBoxEnd" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <select v-model="initial_mpcs.selectedBoxEnd" :disabled="initial_mpcs.moreThanTenBoxes" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option v-for="item in boxesEndList" :key="item" :value="item">{{ item }}</option>
                         </select>
                         </div>
@@ -104,11 +104,14 @@
                             <button
                                 @click="initial_mpcs.moreThanTenBoxes = !initial_mpcs.moreThanTenBoxes"
                                 type="button"
+                                :disabled="!canEnableExcessBoxes"
                                 :class="[
-                                'w-full px-3 py-2 text-xs font-semibold rounded-lg shadow-sm focus:outline-none focus:ring-2',
-                                initial_mpcs.moreThanTenBoxes
-                                    ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 focus:ring-blue-500'
-                                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 focus:ring-gray-400'
+                                    'w-full px-3 py-2 text-xs font-semibold rounded-lg shadow-sm focus:outline-none focus:ring-2 transition',
+                                    !canEnableExcessBoxes
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300'
+                                        : initial_mpcs.moreThanTenBoxes
+                                            ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 focus:ring-blue-500'
+                                            : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 focus:ring-gray-400'
                                 ]"
                             >
                                 {{ initial_mpcs.moreThanTenBoxes ? 'Excess Boxes Enabled' : '> 10 Boxes' }}
@@ -2240,6 +2243,13 @@ const initial_mpcs = reactive({
     coating: 0,
     magnetPreparedBy: '',
     boxPreparedBy: '',
+});
+
+const canEnableExcessBoxes = computed(() => {
+    return (
+        initial_mpcs.selectedBoxStart === 'A' &&
+        initial_mpcs.selectedBoxEnd === 'K'
+    );
 });
 
 const visibleBoxes = computed(() => {
