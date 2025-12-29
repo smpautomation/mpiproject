@@ -2307,7 +2307,7 @@ const userManageLogging = async (logEvent) => {
         const responseUserLogging = await axios.post('/api/userlogs', {
             user: state.user.firstName + " " + state.user.surname,
             event: logEvent,
-            section: 'Heat Treatment',
+            section: 'Initial Process',
         });
 
         //console.log('responseUserLogin-data: ',responseUserLogin.data);
@@ -2323,7 +2323,7 @@ const userErrorLogging = async (details, triggerFunction, title) => {
             title: title,
             details: details,
             trigger_function: triggerFunction,
-            section: 'Heat Treatment',
+            section: 'Initial Process',
         });
 
         //console.log('userErrorLogging-data: ',responseUserLogin.data);
@@ -2338,12 +2338,12 @@ function useSessionStorage(key, state) {
     const saved = sessionStorage.getItem(key)
     if (saved !== null) {
         try {
-        const parsed = JSON.parse(saved)
-        if (typeof state === 'object' && 'value' in state) {
-            state.value = parsed
-        } else {
-            Object.assign(state, parsed)
-        }
+            const parsed = JSON.parse(saved)
+            if (typeof state === 'object' && 'value' in state) {
+                state.value = parsed
+            } else {
+                Object.assign(state, parsed)
+            }
         } catch {
             /* ignore parse errors */
         }
