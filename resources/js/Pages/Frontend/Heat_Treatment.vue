@@ -2767,7 +2767,7 @@ const clearAllAfterSave = () => {
     });
 
 
-    initialFurnaceData.value = null;
+    initialFurnaceData.value = mpcs.selectedFurnace;
 }
 
 const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
@@ -2935,7 +2935,9 @@ const saveToDatabase = async () => {
             console.log('Excess layer saved:', saveExcess.data);
         }
 
-        await uploadGraphs();
+        if(!heatTreatmentInformationDetected.value){
+            await uploadGraphs();
+        }
         toast.success('Data saved successfully!');
         changeData();
 
