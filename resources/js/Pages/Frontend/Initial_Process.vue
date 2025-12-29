@@ -48,6 +48,7 @@
 
             <!-- Navigation -->
             <nav class="flex-1 px-4 space-y-2">
+                <button @click="activeSection = 'overall_summary'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Overall Summary</button>
                 <button @click="activeSection = 'control_sheet'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Control Sheet</button>
                 <button @click="activeSection = 'coating'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Coating Summary</button>
                 <button @click="activeSection = 'film_pasting'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Film Pasting Summary</button>
@@ -61,6 +62,79 @@
             <h1 class="text-lg font-semibold">{{ sectionTitle }}</h1>
             <div class="flex space-x-4">
                 <button @click="Inertia.visit('/')" class="px-3 py-1 rounded bg-cyan-400 hover:bg-cyan-300">Return Home</button>
+            </div>
+        </div>
+
+        <!-- Section Content -->
+        <div v-if="activeSection === 'overall_summary'">
+            <div class="flex flex-row justify-center gap-0">
+                 <div class="max-w-5xl mx-auto space-y-8 p-6 bg-white border border-gray-200 shadow-xl rounded-2xl">
+
+                <!-- Control Sheet -->
+                <section class="space-y-2">
+                <h2 class="text-lg font-semibold border-b pb-1">Control Sheet</h2>
+                <div class="overflow-x-auto border rounded-lg shadow-sm">
+                    <table class="min-w-full text-left">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                        <th class="px-4 py-2 border-b">Model Name</th>
+                        <th class="px-4 py-2 border-b">Lot No</th>
+                        </tr>
+                    </thead>
+                    <tbody class="block max-h-[20rem] overflow-y-auto">
+                        <tr v-for="(item, index) in controlSheetData" :key="index" class="table-row">
+                        <td class="px-4 py-2 border-b">{{ item.model_name }}</td>
+                        <td class="px-4 py-2 border-b">{{ item.lot_no }}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+                </section>
+
+                <!-- Coating Summary -->
+                <section class="space-y-2">
+                <h2 class="text-lg font-semibold border-b pb-1">Coating Summary</h2>
+                <div class="overflow-x-auto border rounded-lg shadow-sm">
+                    <table class="min-w-full text-left">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                        <th class="px-4 py-2 border-b">Model Name</th>
+                        <th class="px-4 py-2 border-b">Lot No</th>
+                        </tr>
+                    </thead>
+                    <tbody class="block max-h-[20rem] overflow-y-auto">
+                        <tr v-for="(item, index) in coatingSummaryData" :key="index" class="table-row">
+                        <td class="px-4 py-2 border-b">{{ item.model_name }}</td>
+                        <td class="px-4 py-2 border-b">{{ item.lot_no }}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+                </section>
+
+                <!-- Film Pasting Summary -->
+                <section class="space-y-2">
+                <h2 class="text-lg font-semibold border-b pb-1">Film Pasting Summary</h2>
+                <div class="overflow-x-auto border rounded-lg shadow-sm">
+                    <table class="min-w-full text-left">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                        <th class="px-4 py-2 border-b">Model Name</th>
+                        <th class="px-4 py-2 border-b">Lot No</th>
+                        </tr>
+                    </thead>
+                    <tbody class="block max-h-[20rem] overflow-y-auto">
+                        <tr v-for="(item, index) in filmPastingSummaryData" :key="index" class="table-row">
+                        <td class="px-4 py-2 border-b">{{ item.model_name }}</td>
+                        <td class="px-4 py-2 border-b">{{ item.lot_no }}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+                </section>
+
+            </div>
+
             </div>
         </div>
 
@@ -2212,6 +2286,10 @@ const showModalPreview = ref(false);
 const showModalDuplicateWarning = ref(false);
 const showModalDuplicatePrevent = ref(false);
 
+const controlSheetData = ref([]);
+const coatingSummaryData = ref([]);
+const filmPastingSummaryData = ref([]);
+
 const activeSection = ref('control_sheet');
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
 const boxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
@@ -2307,6 +2385,7 @@ allBoxes.forEach(box => {
 
 const sectionTitle = computed(() => {
     switch (activeSection.value) {
+        case 'overall_summary': return 'Overall Summary';
         case 'control_sheet': return 'Mass Production Control Sheet';
         case 'coating': return 'Coating Summary';
         case 'film_pasting': return 'Film Pasting Summary';
@@ -2386,6 +2465,36 @@ const numberOfBoxes = computed(() => {
 });
 
 //Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone
+
+const getControlSheetData = async () => {
+    try{
+        const response = await axios.get(`/api/initial_control_sheet`);
+        controlSheetData.value = response.data;
+        console.log('Initial Control Sheet Data ref array: ', controlSheetData.value);
+    }catch(error){
+        console.error('Failed to fetch initial control sheet data');
+    }
+}
+
+const getCoatingSummary = async () => {
+    try{
+        const response = await axios.get(`/api/initial-coating`);
+        coatingSummaryData.value = response.data;
+        console.log('Initial Coating Summary Data ref array: ', coatingSummaryData.value);
+    }catch(error){
+        console.error('Failed to fetch initial coating summary data');
+    }
+}
+
+const getFilmPastingSummary = async () => {
+    try{
+        const response = await axios.get(`/api/initial-film-pasting`);
+        filmPastingSummaryData.value = response.data;
+        console.log('Initial Film Pasting Summary Data ref array: ', filmPastingSummaryData.value);
+    }catch(error){
+        console.error('Failed to fetch initial film pasting summary data');
+    }
+}
 
 const getModelLists = async () => {
     try{
@@ -3315,6 +3424,9 @@ const buildHourlyCheckingPayload = () => {
 // Fetch on mount
 onMounted( async () => {
     await getModelLists();
+    await getControlSheetData();
+    await getCoatingSummary();
+    await getFilmPastingSummary();
 });
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
