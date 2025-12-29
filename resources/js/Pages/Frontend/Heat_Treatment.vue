@@ -2829,7 +2829,7 @@ const finalize = () => {
         // validate HTI fields only if not detected already
         if (!heatTreatmentInformationDetected.value) {
             if (
-                !initialFurnaceData || !hti.cycleNo || !hti.patternNo || !hti.dateStart ||
+                !initialFurnaceData.value || !hti.cycleNo || !hti.patternNo || !hti.dateStart ||
                 !hti.timeStart || !hti.loader ||
                 !hti.unloader || !hti.boxCondition || !hti.boxCover ||
                 !hti.boxArrangement || !hti.encodedBy
