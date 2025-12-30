@@ -70,98 +70,148 @@
             <div class="flex flex-row justify-center gap-0 whitespace-nowrap">
                 <div class="w-full mx-auto px-6 py-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Control Sheet -->
-                    <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
-                        <h2 class="text-center text-xl font-semibold mb-4">Control Sheet</h2>
+                        <!-- Control Sheet -->
+                        <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
+                            <h2 class="text-center text-xl font-semibold mb-4">Control Sheet</h2>
 
-                        <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
-                        <table class="min-w-full table-fixed border-collapse text-center">
-                            <thead class="bg-gray-100 sticky top-0 z-10">
-                            <tr>
-                                <th class="border px-4 py-3">Model Name</th>
-                                <th class="border px-4 py-3">Lot No</th>
-                                <th class="border px-4 py-3">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="item in controlSheetData" :key="item.id">
-                                <td class="border px-4 py-3">{{ item.model_name }}</td>
-                                <td class="border px-4 py-3">{{ item.lot_no }}</td>
-                                <td class="border px-4 py-3">
-                                <button
-                                    @click="openDeleteModal(item.id, 'control')"
-                                    class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
-                                >
-                                    Delete
-                                </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </div>
-                    </section>
+                            <!-- Search -->
+                            <div class="mb-3">
+                                <input
+                                    v-model="controlSheetSearch"
+                                    type="text"
+                                    placeholder="Search Lot No..."
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
 
-                    <!-- Coating Summary -->
-                    <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
-                        <h2 class="text-center text-xl font-semibold mb-4">Coating Summary</h2>
+                            <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
+                                <table class="min-w-full table-fixed border-collapse text-center">
+                                    <thead class="bg-gray-100 sticky top-0 z-10">
+                                        <tr>
+                                            <th class="border px-4 py-3">Model Name</th>
+                                            <th class="border px-4 py-3">Lot No</th>
+                                            <th class="border px-4 py-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in filteredControlSheetData" :key="item.id">
+                                            <td class="border px-4 py-3">{{ item.model_name }}</td>
+                                            <td class="border px-4 py-3">{{ item.lot_no }}</td>
+                                            <td class="border px-4 py-3">
+                                                <button
+                                                    @click="openDeleteModal(item.id, 'control')"
+                                                    class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
 
-                        <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
-                        <table class="min-w-full table-fixed border-collapse text-center">
-                            <thead class="bg-gray-100 sticky top-0 z-10">
-                            <tr>
-                                <th class="border px-4 py-3">Model Name</th>
-                                <th class="border px-4 py-3">Lot No</th>
-                                <th class="border px-4 py-3">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="item in coatingSummaryData" :key="item.id">
-                                <td class="border px-4 py-3">{{ item.model_name }}</td>
-                                <td class="border px-4 py-3">{{ item.lot_no }}</td>
-                                <td class="border px-4 py-3">
-                                <button
-                                    @click="openDeleteModal(item.id, 'coating')"
-                                    class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
-                                >
-                                    Delete
-                                </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </div>
-                    </section>
+                                        <tr v-if="filteredControlSheetData.length === 0">
+                                            <td colspan="3" class="py-6 text-gray-500">
+                                                No matching lot found.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
 
-                    <!-- Film Pasting Summary -->
-                    <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
-                        <h2 class="text-center text-xl font-semibold mb-4">Film Pasting Summary</h2>
+                        <!-- Coating Summary -->
+                        <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
+                            <h2 class="text-center text-xl font-semibold mb-4">Coating Summary</h2>
 
-                        <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
-                        <table class="min-w-full table-fixed border-collapse text-center">
-                            <thead class="bg-gray-100 sticky top-0 z-10">
-                            <tr>
-                                <th class="border px-4 py-3">Model Name</th>
-                                <th class="border px-4 py-3">Lot No</th>
-                                <th class="border px-4 py-3">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="item in filmPastingSummaryData" :key="item.id">
-                                <td class="border px-4 py-3">{{ item.model_name }}</td>
-                                <td class="border px-4 py-3">{{ item.lot_no }}</td>
-                                <td class="border px-4 py-3">
-                                <button
-                                    @click="openDeleteModal(item.id, 'film')"
-                                    class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
-                                >
-                                    Delete
-                                </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </div>
-                    </section>
+                            <!-- Search -->
+                            <div class="mb-3">
+                                <input
+                                    v-model="coatingSummarySearch"
+                                    type="text"
+                                    placeholder="Search Lot No..."
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
+                                <table class="min-w-full table-fixed border-collapse text-center">
+                                    <thead class="bg-gray-100 sticky top-0 z-10">
+                                        <tr>
+                                            <th class="border px-4 py-3">Model Name</th>
+                                            <th class="border px-4 py-3">Lot No</th>
+                                            <th class="border px-4 py-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in filteredCoatingSummaryData" :key="item.id">
+                                            <td class="border px-4 py-3">{{ item.model_name }}</td>
+                                            <td class="border px-4 py-3">{{ item.lot_no }}</td>
+                                            <td class="border px-4 py-3">
+                                                <button
+                                                    @click="openDeleteModal(item.id, 'coating')"
+                                                    class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                        <tr v-if="filteredCoatingSummaryData.length === 0">
+                                            <td colspan="3" class="py-6 text-gray-500">
+                                                No matching lot found.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+
+                        <!-- Film Pasting Summary -->
+                        <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
+                            <h2 class="text-center text-xl font-semibold mb-4">Film Pasting Summary</h2>
+
+                            <!-- Search -->
+                            <div class="mb-3">
+                                <input
+                                    v-model="filmPastingSearch"
+                                    type="text"
+                                    placeholder="Search Lot No..."
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
+                                <table class="min-w-full table-fixed border-collapse text-center">
+                                    <thead class="bg-gray-100 sticky top-0 z-10">
+                                        <tr>
+                                            <th class="border px-4 py-3">Model Name</th>
+                                            <th class="border px-4 py-3">Lot No</th>
+                                            <th class="border px-4 py-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in filteredFilmPastingSummaryData" :key="item.id">
+                                            <td class="border px-4 py-3">{{ item.model_name }}</td>
+                                            <td class="border px-4 py-3">{{ item.lot_no }}</td>
+                                            <td class="border px-4 py-3">
+                                                <button
+                                                    @click="openDeleteModal(item.id, 'film')"
+                                                    class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                        <tr v-if="filteredFilmPastingSummaryData.length === 0">
+                                            <td colspan="3" class="py-6 text-gray-500">
+                                                No matching lot found.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
 
                     </div>
                 </div>
@@ -2369,6 +2419,9 @@ const showDeleteModal = ref(false);
 const controlSheetData = ref([]);
 const coatingSummaryData = ref([]);
 const filmPastingSummaryData = ref([]);
+const controlSheetSearch = ref('');
+const coatingSummarySearch = ref('');
+const filmPastingSearch = ref('');
 
 const activeSection = ref('overall_summary');
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
@@ -2651,6 +2704,39 @@ const confirmDelete = async () => {
 };
 
 // data deletion section END
+
+const filteredControlSheetData = computed(() => {
+    if (!controlSheetSearch.value) return controlSheetData.value;
+
+    return controlSheetData.value.filter(item =>
+        item.lot_no
+            ?.toString()
+            .toLowerCase()
+            .includes(controlSheetSearch.value.toLowerCase())
+    );
+});
+
+const filteredCoatingSummaryData = computed(() => {
+    if (!coatingSummarySearch.value) return coatingSummaryData.value;
+
+    return coatingSummaryData.value.filter(item =>
+        item.lot_no
+            ?.toString()
+            .toLowerCase()
+            .includes(coatingSummarySearch.value.toLowerCase())
+    );
+});
+
+const filteredFilmPastingSummaryData = computed(() => {
+    if (!filmPastingSearch.value) return filmPastingSummaryData.value;
+
+    return filmPastingSummaryData.value.filter(item =>
+        item.lot_no
+            ?.toString()
+            .toLowerCase()
+            .includes(filmPastingSearch.value.toLowerCase())
+    );
+});
 
 const cancelProceed = () => {
     showModalPreview.value = false;
