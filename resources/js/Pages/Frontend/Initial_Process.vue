@@ -68,11 +68,11 @@
         <!-- Section Content -->
         <div v-if="activeSection === 'overall_summary'">
             <div class="flex flex-row justify-center gap-0 whitespace-nowrap">
-                <div class="w-full mx-auto px-6 py-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="w-full px-6 py-8 mx-auto">
+                    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                         <!-- Control Sheet -->
-                        <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
-                            <h2 class="text-center text-xl font-semibold mb-4">Control Sheet</h2>
+                        <section class="flex flex-col p-6 bg-white border border-gray-300 shadow-xl rounded-2xl">
+                            <h2 class="mb-4 text-xl font-semibold text-center">Control Sheet</h2>
 
                             <!-- Search -->
                             <div class="mb-3">
@@ -85,19 +85,19 @@
                             </div>
 
                             <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
-                                <table class="min-w-full table-fixed border-collapse text-center">
-                                    <thead class="bg-gray-100 sticky top-0 z-10">
+                                <table class="min-w-full text-center border-collapse table-fixed">
+                                    <thead class="sticky top-0 z-10 bg-gray-100">
                                         <tr>
-                                            <th class="border px-4 py-3">Model Name</th>
-                                            <th class="border px-4 py-3">Lot No</th>
-                                            <th class="border px-4 py-3">Action</th>
+                                            <th class="px-4 py-3 border">Model Name</th>
+                                            <th class="px-4 py-3 border">Lot No</th>
+                                            <th class="px-4 py-3 border">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in filteredControlSheetData" :key="item.id">
-                                            <td class="border px-4 py-3">{{ item.model_name }}</td>
-                                            <td class="border px-4 py-3">{{ item.lot_no }}</td>
-                                            <td class="border px-4 py-3">
+                                            <td class="px-4 py-3 border">{{ item.model_name }}</td>
+                                            <td class="px-4 py-3 border">{{ item.lot_no }}</td>
+                                            <td class="px-4 py-3 border">
                                                 <button
                                                     @click="openDeleteModal(item.id, 'control')"
                                                     class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
@@ -118,8 +118,8 @@
                         </section>
 
                         <!-- Coating Summary -->
-                        <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
-                            <h2 class="text-center text-xl font-semibold mb-4">Coating Summary</h2>
+                        <section class="flex flex-col p-6 bg-white border border-gray-300 shadow-xl rounded-2xl">
+                            <h2 class="mb-4 text-xl font-semibold text-center">Coating Summary</h2>
 
                             <!-- Search -->
                             <div class="mb-3">
@@ -132,19 +132,19 @@
                             </div>
 
                             <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
-                                <table class="min-w-full table-fixed border-collapse text-center">
-                                    <thead class="bg-gray-100 sticky top-0 z-10">
+                                <table class="min-w-full text-center border-collapse table-fixed">
+                                    <thead class="sticky top-0 z-10 bg-gray-100">
                                         <tr>
-                                            <th class="border px-4 py-3">Model Name</th>
-                                            <th class="border px-4 py-3">Lot No</th>
-                                            <th class="border px-4 py-3">Action</th>
+                                            <th class="px-4 py-3 border">Model Name</th>
+                                            <th class="px-4 py-3 border">Lot No</th>
+                                            <th class="px-4 py-3 border">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in filteredCoatingSummaryData" :key="item.id">
-                                            <td class="border px-4 py-3">{{ item.model_name }}</td>
-                                            <td class="border px-4 py-3">{{ item.lot_no }}</td>
-                                            <td class="border px-4 py-3">
+                                            <td class="px-4 py-3 border">{{ item.model_name }}</td>
+                                            <td class="px-4 py-3 border">{{ item.lot_no }}</td>
+                                            <td class="px-4 py-3 border">
                                                 <button
                                                     @click="openDeleteModal(item.id, 'coating')"
                                                     class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
@@ -166,8 +166,8 @@
 
 
                         <!-- Film Pasting Summary -->
-                        <section class="bg-white border border-gray-300 rounded-2xl shadow-xl p-6 flex flex-col">
-                            <h2 class="text-center text-xl font-semibold mb-4">Film Pasting Summary</h2>
+                        <section class="flex flex-col p-6 bg-white border border-gray-300 shadow-xl rounded-2xl">
+                            <h2 class="mb-4 text-xl font-semibold text-center">Film Pasting Summary</h2>
 
                             <!-- Search -->
                             <div class="mb-3">
@@ -180,19 +180,19 @@
                             </div>
 
                             <div class="flex-1 overflow-y-auto border rounded-lg max-h-[420px]">
-                                <table class="min-w-full table-fixed border-collapse text-center">
-                                    <thead class="bg-gray-100 sticky top-0 z-10">
+                                <table class="min-w-full text-center border-collapse table-fixed">
+                                    <thead class="sticky top-0 z-10 bg-gray-100">
                                         <tr>
-                                            <th class="border px-4 py-3">Model Name</th>
-                                            <th class="border px-4 py-3">Lot No</th>
-                                            <th class="border px-4 py-3">Action</th>
+                                            <th class="px-4 py-3 border">Model Name</th>
+                                            <th class="px-4 py-3 border">Lot No</th>
+                                            <th class="px-4 py-3 border">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in filteredFilmPastingSummaryData" :key="item.id">
-                                            <td class="border px-4 py-3">{{ item.model_name }}</td>
-                                            <td class="border px-4 py-3">{{ item.lot_no }}</td>
-                                            <td class="border px-4 py-3">
+                                            <td class="px-4 py-3 border">{{ item.model_name }}</td>
+                                            <td class="px-4 py-3 border">{{ item.lot_no }}</td>
+                                            <td class="px-4 py-3 border">
                                                 <button
                                                     @click="openDeleteModal(item.id, 'film')"
                                                     class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
@@ -226,7 +226,7 @@
                     <!-- Exit Button -->
                     <button
                         @click="closeDeleteModal"
-                        class="absolute top-4 right-4 text-gray-400 transition hover:text-gray-600"
+                        class="absolute text-gray-400 transition top-4 right-4 hover:text-gray-600"
                         aria-label="Close modal"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
@@ -270,7 +270,7 @@
         <!-- Section Content -->
         <div v-if="activeSection === 'control_sheet'">
             <div class="flex flex-row justify-center gap-0">
-                <div class="max-w-4xl px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12 mr-10">
+                <div class="max-w-4xl px-2 mx-auto mr-10 space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <div class="flex items-center justify-between pb-4 mb-6 border-b-2 border-gray-200">
                         <div class="flex items-center space-x-3">
                             <div class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"></div>
@@ -317,7 +317,7 @@
                                             : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 focus:ring-gray-400'
                                 ]"
                             >
-                                {{ initial_mpcs.moreThanTenBoxes ? 'Excess Boxes Enabled' : '> 10 Boxes' }}
+                                {{ initial_mpcs.moreThanTenBoxes ? 'Click again to cancel' : '> 10 Boxes' }}
                             </button>
                         </div>
 
@@ -738,14 +738,14 @@
             <div class="flex my-10 space-x-4">
                 <button
                     @click="dataValidation"
-                    class="px-4 py-2 bg-teal-600 text-white font-semibold rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                    class="px-4 py-2 font-semibold text-white transition-colors bg-teal-600 rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                     Finalize
                 </button>
 
                 <button
                     @click="clearAll"
-                    class="px-4 py-2 bg-white text-teal-600 font-semibold border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200 transition-colors"
+                    class="px-4 py-2 font-semibold text-teal-600 transition-colors bg-white border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200"
                 >
                     Reset Fields
                 </button>
@@ -928,13 +928,13 @@
                     <div class="flex justify-end w-full mt-6 space-x-3">
                     <button
                         @click="showModalDuplicateWarning = false"
-                        class="px-6 py-2 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                        class="px-6 py-2 font-semibold text-white transition-colors bg-gray-600 rounded-lg hover:bg-gray-700"
                     >
                         Cancel
                     </button>
                     <button
                         @click="proceedDuplicate"
-                        class="px-6 py-2 font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
+                        class="px-6 py-2 font-semibold text-white transition-colors bg-yellow-500 rounded-lg hover:bg-yellow-600"
                     >
                         Proceed
                     </button>
@@ -993,7 +993,7 @@
         <div v-if="activeSection === 'coating'">
             <div class="flex flex-row justify-center gap-0">
                 <div class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
-                    <div class="flex flex-row mb-10 mt-5">
+                    <div class="flex flex-row mt-5 mb-10">
                         <div class="w-full px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                             <h2 class="pb-1 font-bold text-gray-800 border-b text-md">Coating Information</h2>
                             <!-- Group: Selection -->
@@ -1075,13 +1075,13 @@
                                         v-model="coatingInfo.remarks"
                                         @input="coatingInfo.remarks = coatingInfo.remarks.toUpperCase()"
                                         type="text"
-                                        class="w-full text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                         placeholder="Enter remarks here..."
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div class="px-4 ml-10 py-4 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
+                        <div class="px-4 py-4 ml-10 space-y-4 bg-white border border-gray-300 shadow-lg rounded-2xl md:px-8">
                             <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
                                 Additional Slurry
                             </h2>
@@ -1147,7 +1147,7 @@
                             <div class="flex flex-row gap-5 whitespace-nowrap">
                                 <div class="flex flex-col gap-4">
                                     <!-- Multi-line input for pasting multiple coatings -->
-                                    <div class="flex justify-between items-center">
+                                    <div class="flex items-center justify-between">
                                         <span class="text-sm font-medium text-gray-700">Paste Coatings (one per line)</span>
                                         <button
                                             @click="resetCoatingTableOnly"
@@ -1166,7 +1166,7 @@
                                         v-model="coatingsInput"
                                         @input="handlePasteInput"
                                         rows="6"
-                                        class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                                        class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         placeholder="Paste values like:&#10;55.01&#10;59.33&#10;59.03"
                                     ></textarea>
                                     </div>
@@ -1243,15 +1243,15 @@
                     </div>
 
                     <div class="flex flex-row gap-20">
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50 my-10">
+                        <div class="flex-1 px-4 py-3 my-10 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Maximum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMaximum !== null ? coatingMaximum : '-' }}</div>
                         </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50 my-10">
+                        <div class="flex-1 px-4 py-3 my-10 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Minimum</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingMinimum !== null ? coatingMinimum : '-' }}</div>
                         </div>
-                        <div class="flex-1 px-4 py-3 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50 my-10">
+                        <div class="flex-1 px-4 py-3 my-10 text-center border border-gray-300 rounded-lg shadow-inner bg-gray-50">
                             <div class="text-xs font-medium text-gray-500">Average</div>
                             <div class="text-sm font-semibold text-gray-800">{{ coatingAverage != null ? Number(coatingAverage).toFixed(2) : '-' }}</div>
                         </div>
@@ -1260,13 +1260,13 @@
                     <div>
                         <button
                             @click="finalizeCoatingSummary"
-                            class="mr-5 px-4 py-2 bg-teal-600 text-white font-semibold rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                            class="px-4 py-2 mr-5 font-semibold text-white transition-colors bg-teal-600 rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
                         >
                             FINALIZE
                         </button>
                         <button
                             @click="resetCoatingSummaryData"
-                            class="px-4 py-2 bg-white text-teal-600 font-semibold border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200 transition-colors"
+                            class="px-4 py-2 font-semibold text-teal-600 transition-colors bg-white border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200"
                         >
                             Clear All Fields
                         </button>
@@ -1600,13 +1600,13 @@
                             <div class="flex justify-end w-full mt-6 space-x-3">
                             <button
                                 @click="showModalCoatingDuplicateWarning = false"
-                                class="px-6 py-2 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                                class="px-6 py-2 font-semibold text-white transition-colors bg-gray-600 rounded-lg hover:bg-gray-700"
                             >
                                 Cancel
                             </button>
                             <button
                                 @click="proceedDuplicateCoating"
-                                class="px-6 py-2 font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
+                                class="px-6 py-2 font-semibold text-white transition-colors bg-yellow-500 rounded-lg hover:bg-yellow-600"
                             >
                                 Proceed
                             </button>
@@ -1670,7 +1670,7 @@
         <!-- Section Content -->
         <div v-if="activeSection === 'film_pasting'">
             <div class="flex flex-row justify-center gap-0">
-                <div class="w-full px-2 mx-auto space-y-2 mr-10 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
+                <div class="w-full px-2 mx-auto mr-10 space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
                     <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">Film Pasting Information</h2>
                     <div  class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
@@ -1751,33 +1751,33 @@
                     </div>
                 </div>
             </div>
-            <div class="p-6 bg-white rounded-2xl shadow-lg mt-10">
+            <div class="p-6 mt-10 bg-white shadow-lg rounded-2xl">
                 <!-- Header -->
-                <h2 class="mb-6 text-lg font-bold text-gray-800 border-b-2 border-cyan-400 pb-2">
+                <h2 class="pb-2 mb-6 text-lg font-bold text-gray-800 border-b-2 border-cyan-400">
                 HOURLY CHECKING
                 </h2>
 
                 <!-- Horizontal scrollable blocks container -->
-                <div class="flex gap-4 overflow-x-auto pb-2">
+                <div class="flex gap-4 pb-2 overflow-x-auto">
                 <div
                     v-for="(block, index) in hLineTLineBlocks"
                     :key="block.id"
                     class="min-w-[320px] p-4 rounded-xl border border-cyan-300 shadow-sm bg-cyan-50 flex-shrink-0"
                 >
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold text-teal-800">Block {{ index + 1 }}</h3>
                     <div class="space-x-2">
                         <button
                             v-if="index !== 0"
                             @click="removeBlock(block.id)"
-                            class="px-2 py-1 text-xs font-bold text-white bg-red-500 rounded hover:bg-red-600 transition"
+                            class="px-2 py-1 text-xs font-bold text-white transition bg-red-500 rounded hover:bg-red-600"
                         >
                             Remove
                         </button>
                         <button
                             v-if="index === hLineTLineBlocks.length - 1 && hLineTLineBlocks.length < 20"
                             @click="addBlock"
-                            class="px-2 py-1 text-xs font-bold text-white bg-teal-500 rounded hover:bg-teal-600 transition"
+                            class="px-2 py-1 text-xs font-bold text-white transition bg-teal-500 rounded hover:bg-teal-600"
                         >
                             Add Block
                         </button>
@@ -1785,28 +1785,28 @@
                     </div>
 
                     <!-- Table -->
-                    <table class="w-full border-collapse text-xs">
+                    <table class="w-full text-xs border-collapse">
                         <thead>
-                            <tr class="bg-cyan-200 text-teal-800 font-semibold">
-                            <th class="p-2 border border-cyan-300 text-left">ITEMS</th>
-                            <th class="p-2 border border-cyan-300 text-left">H-LINE</th>
-                            <th class="p-2 border border-cyan-300 text-left">T-LINE</th>
+                            <tr class="font-semibold text-teal-800 bg-cyan-200">
+                            <th class="p-2 text-left border border-cyan-300">ITEMS</th>
+                            <th class="p-2 text-left border border-cyan-300">H-LINE</th>
+                            <th class="p-2 text-left border border-cyan-300">T-LINE</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr
                             v-for="(row, i) in block.values"
                             :key="i"
-                            class="hover:bg-cyan-100 transition-colors"
+                            class="transition-colors hover:bg-cyan-100"
                             >
-                            <td class="p-2 border border-cyan-300 font-medium">{{ row.item }}</td>
+                            <td class="p-2 font-medium border border-cyan-300">{{ row.item }}</td>
                             <td class="p-2 border border-cyan-300" :colspan="row.item === 'Water Level (mm)' || row.item === 'Time Check' || row.item === 'Check By' ? 2 : 1">
                             <!-- H-LINE -->
                                 <input
                                     v-if="row.item === 'Time Check'"
                                     v-model="row.hLine"
                                     type="time"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
 
                                 <input
@@ -1814,21 +1814,21 @@
                                     v-model="row.hLine"
                                     @input="row.hLine = row.hLine.toUpperCase()"
                                     type="text"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
 
                                 <input
                                     v-else-if="row.item === 'Water Level (mm)'"
                                     v-model.number="row.value"
                                     type="number"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
 
                                 <input
                                     v-else-if="row.item === 'Dryer Temp Setting (°C)'"
                                     v-model.number="row.hLine"
                                     type="number"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
 
                                 <input
@@ -1837,7 +1837,7 @@
                                     type="number"
                                     step="0.01"
                                     @blur="row.hLine = Number(row.hLine).toFixed(2)"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
                             </td>
                             <td
@@ -1848,7 +1848,7 @@
                                     v-if="row.item === 'Dryer Temp Setting (°C)'"
                                     v-model.number="row.tLine"
                                     type="number"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
 
                                 <input
@@ -1857,7 +1857,7 @@
                                     type="number"
                                     step="0.01"
                                     @blur="row.tLine = Number(row.tLine).toFixed(2)"
-                                    class="w-full text-xs border border-cyan-300 rounded px-2 py-1 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
+                                    class="w-full px-2 py-1 text-xs border rounded border-cyan-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-500"
                                 />
                             </td>
                             </tr>
@@ -1872,7 +1872,7 @@
                         <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">H-Line Parameters</h2>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
-                            <input v-model="filmPastingInfo.h_line_parameters['sprayer_water_amount']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.h_line_parameters['sprayer_water_amount']" disabled type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
@@ -1881,11 +1881,11 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %</label>
-                            <input v-model="filmPastingInfo.h_line_parameters['film_machine_humidity']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.h_line_parameters['film_machine_humidity']" disabled type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature</label>
-                            <input v-model="filmPastingInfo.h_line_parameters['film_machine_temperature']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.h_line_parameters['film_machine_temperature']" disabled type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting (°C)</label>
@@ -1898,7 +1898,7 @@
                         <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">T-Line Parameters</h2>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
-                            <input v-model="filmPastingInfo.t_line_parameters['sprayer_water_amount']" type="number" disabled class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.t_line_parameters['sprayer_water_amount']" type="number" disabled class="w-full text-xs border-gray-300 rounded-lg shadow-sm cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
@@ -1907,11 +1907,11 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity (%)</label>
-                            <input v-model="filmPastingInfo.t_line_parameters['film_machine_humidity']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.t_line_parameters['film_machine_humidity']" disabled type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature (°C)</label>
-                            <input v-model="filmPastingInfo.t_line_parameters['film_machine_temperature']" disabled type="number" class="cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="filmPastingInfo.t_line_parameters['film_machine_temperature']" disabled type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting (°C)</label>
@@ -1954,7 +1954,7 @@
                         <!-- Finalize button (primary) -->
                         <button
                             @click="finalizeFilmPasting"
-                            class="px-4 py-2 bg-teal-600 text-white font-semibold rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                            class="px-4 py-2 font-semibold text-white transition-colors bg-teal-600 rounded shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
                         >
                             Finalize
                         </button>
@@ -1962,7 +1962,7 @@
                         <!-- Reset Fields button (secondary) -->
                         <button
                             @click="resetFilmPastingFields"
-                            class="px-4 py-2 bg-white text-teal-600 font-semibold border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200 transition-colors"
+                            class="px-4 py-2 font-semibold text-teal-600 transition-colors bg-white border border-teal-600 rounded shadow hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-200"
                         >
                             Reset Fields
                         </button>
@@ -1994,80 +1994,80 @@
 
                         <!-- GROUP 1 -->
                         <section>
-                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                            <h2 class="pb-1 mb-4 text-lg font-bold text-gray-800 border-b">
                                 General Information
                             </h2>
 
-                            <table class="w-full border border-gray-300 text-sm">
+                            <table class="w-full text-sm border border-gray-300">
                                 <tbody class="divide-y">
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 w-64 font-medium">Model</th>
+                                        <th class="w-64 p-2 font-medium bg-gray-50">Model</th>
                                         <td class="p-2">{{ filmPastingInfo.selected_model }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 w-64 font-medium">Lot No</th>
+                                        <th class="w-64 p-2 font-medium bg-gray-50">Lot No</th>
                                         <td class="p-2">{{ filmPastingInfo.lot_no }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 w-64 font-medium">Film Pasting Date</th>
+                                        <th class="w-64 p-2 font-medium bg-gray-50">Film Pasting Date</th>
                                         <td class="p-2">{{ filmPastingInfo.film_pasting_date }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Machine No.</th>
+                                        <th class="p-2 font-medium bg-gray-50">Machine No.</th>
                                         <td class="p-2">{{ filmPastingInfo.machine_no }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Total Magnet Weight</th>
+                                        <th class="p-2 font-medium bg-gray-50">Total Magnet Weight</th>
                                         <td class="p-2">{{ filmPastingInfo.total_magnet_weight }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Loader Operator</th>
+                                        <th class="p-2 font-medium bg-gray-50">Loader Operator</th>
                                         <td class="p-2">{{ filmPastingInfo.loader_operator }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Unloader Operator</th>
+                                        <th class="p-2 font-medium bg-gray-50">Unloader Operator</th>
                                         <td class="p-2">{{ filmPastingInfo.unloader_operator }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Checker Operator</th>
+                                        <th class="p-2 font-medium bg-gray-50">Checker Operator</th>
                                         <td class="p-2">{{ filmPastingInfo.checker_operator }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Coating Amount</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Coating Amount</th>
                                         <td class="p-2">{{ filmPastingInfo.film_coating_amount }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Time Start</th>
+                                        <th class="p-2 font-medium bg-gray-50">Time Start</th>
                                         <td class="p-2">{{ filmPastingInfo.time_start }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Time Finished</th>
+                                        <th class="p-2 font-medium bg-gray-50">Time Finished</th>
                                         <td class="p-2">{{ filmPastingInfo.time_finished }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Remarks</th>
+                                        <th class="p-2 font-medium bg-gray-50">Remarks</th>
                                         <td class="p-2">{{ filmPastingInfo.remarks }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Type</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Type</th>
                                         <td class="p-2">{{ filmPastingInfo.film_type }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Class</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Class</th>
                                         <td class="p-2">{{ filmPastingInfo.film_class }}</td>
                                     </tr>
 
@@ -2077,40 +2077,40 @@
 
                         <!-- GROUP 2A -->
                         <section>
-                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                            <h2 class="pb-1 mb-4 text-lg font-bold text-gray-800 border-b">
                                 H-Line Parameters
                             </h2>
 
-                            <table class="w-full border border-gray-300 text-sm">
+                            <table class="w-full text-sm border border-gray-300">
                                 <tbody class="divide-y">
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 w-64 font-medium">Sprayer Water Amount</th>
+                                        <th class="w-64 p-2 font-medium bg-gray-50">Sprayer Water Amount</th>
                                         <td class="p-2">{{ filmPastingInfo.h_line_parameters.sprayer_water_amount }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #1</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Paste Lot #1</th>
                                         <td class="p-2">{{ filmPastingInfo.h_line_parameters['film_paste_lot_no_1'] }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #2</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Paste Lot #2</th>
                                         <td class="p-2">{{ filmPastingInfo.h_line_parameters['film_paste_lot_no_2'] }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Machine Humidity</th>
+                                        <th class="p-2 font-medium bg-gray-50">Machine Humidity</th>
                                         <td class="p-2">{{ filmPastingInfo.h_line_parameters.film_machine_humidity }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Machine Temperature</th>
+                                        <th class="p-2 font-medium bg-gray-50">Machine Temperature</th>
                                         <td class="p-2">{{ filmPastingInfo.h_line_parameters.film_machine_temperature }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Dryer Setting</th>
+                                        <th class="p-2 font-medium bg-gray-50">Dryer Setting</th>
                                         <td class="p-2">{{ filmPastingInfo.h_line_parameters.dryer_temp_setting }}</td>
                                     </tr>
 
@@ -2120,40 +2120,40 @@
 
                         <!-- GROUP 2B -->
                         <section>
-                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                            <h2 class="pb-1 mb-4 text-lg font-bold text-gray-800 border-b">
                                 T-Line Parameters
                             </h2>
 
-                            <table class="w-full border border-gray-300 text-sm">
+                            <table class="w-full text-sm border border-gray-300">
                                 <tbody class="divide-y">
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 w-64 font-medium">Sprayer Water Amount</th>
+                                        <th class="w-64 p-2 font-medium bg-gray-50">Sprayer Water Amount</th>
                                         <td class="p-2">{{ filmPastingInfo.t_line_parameters.sprayer_water_amount }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #1</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Paste Lot #1</th>
                                         <td class="p-2">{{ filmPastingInfo.t_line_parameters['film_paste_lot_no_1'] }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Film Paste Lot #2</th>
+                                        <th class="p-2 font-medium bg-gray-50">Film Paste Lot #2</th>
                                         <td class="p-2">{{ filmPastingInfo.t_line_parameters['film_paste_lot_no_2'] }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Machine Humidity</th>
+                                        <th class="p-2 font-medium bg-gray-50">Machine Humidity</th>
                                         <td class="p-2">{{ filmPastingInfo.t_line_parameters.film_machine_humidity }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Machine Temperature</th>
+                                        <th class="p-2 font-medium bg-gray-50">Machine Temperature</th>
                                         <td class="p-2">{{ filmPastingInfo.t_line_parameters.film_machine_temperature }}</td>
                                     </tr>
 
                                     <tr>
-                                        <th class="bg-gray-50 p-2 font-medium">Dryer Setting</th>
+                                        <th class="p-2 font-medium bg-gray-50">Dryer Setting</th>
                                         <td class="p-2">{{ filmPastingInfo.t_line_parameters.dryer_temp_setting }}</td>
                                     </tr>
 
@@ -2163,14 +2163,14 @@
 
                         <!-- GROUP 3 -->
                         <section>
-                            <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-4">
+                            <h2 class="pb-1 mb-4 text-lg font-bold text-gray-800 border-b">
                                 Additional Settings
                             </h2>
 
-                            <table class="w-full border border-gray-300 text-sm">
+                            <table class="w-full text-sm border border-gray-300">
                                 <tbody class="divide-y">
                                     <tr>
-                                        <th class="bg-gray-50 p-2 w-64 font-medium text-left">Setter Sand</th>
+                                        <th class="w-64 p-2 font-medium text-left bg-gray-50">Setter Sand</th>
                                         <td class="p-2">
                                             {{ filmPastingInfo.is_setter_sand === '1' ? 'Yes' : 'No' }}
                                         </td>
@@ -2179,22 +2179,18 @@
                             </table>
                         </section>
 
-                        <div class="flex justify-end space-x-3 mt-6">
+                        <div class="flex justify-end mt-6 space-x-3">
                             <!-- Cancel -->
                             <button
                                 @click="showModalFilmPastingPreview = false"
-                                class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md
-                                    text-gray-700 bg-white hover:bg-gray-100
-                                    shadow-sm transition">
+                                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100">
                                 Cancel
                             </button>
 
                             <!-- Proceed -->
                             <button
                                 @click="saveToDataBaseFilmPasting"
-                                class="px-4 py-2 text-sm font-semibold rounded-md
-                                    text-white bg-teal-600 hover:bg-teal-700
-                                    shadow-md transition">
+                                class="px-4 py-2 text-sm font-semibold text-white transition bg-teal-600 rounded-md shadow-md hover:bg-teal-700">
                                 Proceed
                             </button>
                         </div>
@@ -2243,13 +2239,13 @@
                     <div class="flex justify-end w-full mt-6 space-x-3">
                     <button
                         @click="showModalFilmPasteDuplicateWarning = false"
-                        class="px-6 py-2 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+                        class="px-6 py-2 font-semibold text-white transition-colors bg-gray-600 rounded-lg hover:bg-gray-700"
                     >
                         Cancel
                     </button>
                     <button
                         @click="proceedDuplicateFilmPaste"
-                        class="px-6 py-2 font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
+                        class="px-6 py-2 font-semibold text-white transition-colors bg-yellow-500 rounded-lg hover:bg-yellow-600"
                     >
                         Proceed
                     </button>
@@ -2744,7 +2740,7 @@ const cancelProceed = () => {
 
 const clearAll = () => {
     // Reset all mpcs fields except box selection
-    const skipKeys = ['selectedBoxStart', 'selectedBoxEnd', 'selectedExcessBoxStart', 'selectedExcessBoxEnd', 'selectedModel'];
+    const skipKeys = ['selectedBoxStart', 'selectedBoxEnd', 'selectedExcessBoxStart', 'selectedExcessBoxEnd', 'selectedModel','moreThanTenBoxes'];
 
     Object.keys(initial_mpcs).forEach(key => {
         if (!skipKeys.includes(key)) {

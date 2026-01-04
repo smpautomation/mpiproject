@@ -48,7 +48,7 @@
 
             <!-- Navigation -->
             <nav class="flex-1 px-4 space-y-2">
-                <button @click="activeSection = 'home'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Dashboard</button>
+                <button @click="activeSection = 'home'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Database</button>
                 <button @click="activeSection = 'errors'" class="w-full px-3 py-2 text-left transition rounded hover:bg-teal-500">Error Logs</button>
             </nav>
         </aside>
@@ -65,27 +65,12 @@
 
         <!-- Section Content -->
         <div v-if="activeSection === 'home'">
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
-            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
-                <div class="text-sm font-medium">Total Tasks</div>
-                <div class="text-2xl font-bold">123</div>
-            </div>
-            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
-                <div class="text-sm font-medium">Active Machines</div>
-                <div class="text-2xl font-bold">45</div>
-            </div>
-            <div class="p-4 text-teal-700 bg-white rounded-lg shadow">
-                <div class="text-sm font-medium">Pending Reports</div>
-                <div class="text-2xl font-bold">7</div>
-            </div>
-            </div>
 
             <!-- Charts & Tables (placeholders) -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div class="p-6 bg-white rounded-lg shadow">
-                <h2 class="mb-4 text-lg font-semibold text-teal-700">Performance Chart</h2>
-                <div class="flex items-center justify-center h-64 rounded-lg bg-cyan-100">[Chart here]</div>
+                <h2 class="mb-4 text-lg font-semibold text-teal-700">Mass Production Table</h2>
+                <div class="flex items-center justify-center h-64 rounded-lg bg-cyan-100">[Data here]</div>
             </div>
 
             <div class="p-6 bg-white rounded-lg shadow">
@@ -152,9 +137,6 @@
     </div>
   </div>
 </td>
-
-
-
                         <td class="px-4 py-2 border">{{ log.trigger_function }}</td>
                         <td class="px-4 py-2 border">{{ log.section }}</td>
                     </tr>
@@ -221,6 +203,14 @@ const formatTimestampUTC = (isoString) => {
     return date.toISOString().replace('T', ' ').split('.')[0]; // "2025-11-18 17:36:53"
 };
 
+const getMassProductionData = async () => {
+    try{
+        const response = axios.get('/api/mass-production');
+        console.log("Mass Production data", response.data)
+    }catch(error){
+        console.error('Failed to fetch Mass production data', error);
+    }
+}
 
 // Fetch on mount
 onMounted( async () => {
