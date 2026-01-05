@@ -7,6 +7,15 @@
                         Insert New Record
                     </button>
                 </div>
+                <div class="flex justify-start w-11/12 mx-auto mb-3 md:w-3/4">
+                    <input
+                        v-model="searchModel"
+                        type="text"
+                        @input="searchModel = searchModel.toUpperCase()"
+                        placeholder="Search model..."
+                        class="w-64 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                    />
+                </div>
                 <div v-if="inspectionDataList.length > 0" class="flex items-center justify-center mb-10 bg-gray-100">
                     <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
                         <thead class="text-white bg-gradient-to-l from-blue-600 to-green-600 ">
@@ -28,7 +37,7 @@
                         </thead>
                         <tbody>
                             <tr
-                                v-for="item in inspectionDataList"
+                                v-for="item in filteredInspectionData"
                                 :key="item.id"
                                 class="text-xs bg-gray-50"
                             >
@@ -217,12 +226,14 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import Papa from 'papaparse';
 import axios from "axios";
 import { useAuth } from '@/Composables/useAuth.js'
+import { useToast } from 'vue-toast-notification';
 
+const toast = useToast();
 const { state } = useAuth();
 
 // Function to check authentication
@@ -273,6 +284,7 @@ const userInspectionLogging = async (logEvent) => {
     }
 }
 
+const searchModel = ref('');
 
 // UI visibility reactive states
 const showMainUI = ref(true);
@@ -300,6 +312,14 @@ const formData = ref({
 
 // Inspection data list fetched from backend
 const inspectionDataList = ref([]);
+
+const filteredInspectionData = computed(() => {
+    if (!searchModel.value) return inspectionDataList.value;
+
+    return inspectionDataList.value.filter(item =>
+        item.model?.toLowerCase().includes(searchModel.value.toLowerCase())
+    );
+});
 
 // Functions to toggle UI
 const insertBtn = () => {
@@ -355,6 +375,14 @@ function convertToUppercase() {
 // Submit form data — POST for new, PATCH for update
 const submitData = async () => {
     try {
+        //Validate first
+        const isDuplicate = await checkDuplicateModel();
+
+        if (isDuplicate) {
+            toast.warning('Model already exists.');
+            return;
+        }
+
         if (isEditMode.value) {
             await axios.patch(
                 `/api/inspectiondata/${currentEditId.value}`,
@@ -487,6 +515,19 @@ const uploadCsv = () => {
         },
     });
 };
+
+const checkDuplicateModel = async() => {
+    try{
+         const response = await axios.post('/api/inspection-data/check-duplicate', {
+            model: formData.value.model
+        });
+
+        return response.data.duplicate === true;
+
+    }catch(error){
+        console.error('Failed to check duplication',error);
+    }
+}
 
 // Load data on mount
 onMounted(async () => {

@@ -80,6 +80,7 @@ Route::post('/layerdata', [LayerDataController::class, 'store']);
 Route::patch('/layerdata/{id}', [LayerDataController::class, 'update']);
 Route::delete('/layerdata/{id}', [LayerDataController::class, 'destroy']);
 
+Route::post('/inspection-data/check-duplicate', [InspectionDataController::class, 'checkDuplicate']);
 Route::get('/inspectiondata', [InspectionDataController::class, 'index']);
 Route::get('/inspectiondata/{id}', [InspectionDataController::class, 'show']);
 Route::post('/inspectiondata', [InspectionDataController::class, 'store']);

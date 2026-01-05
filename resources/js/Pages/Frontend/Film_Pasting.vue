@@ -131,7 +131,7 @@
                             <select
                                 v-model="filmPastingInfo.selectedFurnace"
                                 :disabled="isFilmPasteDataShown"
-                                class="w-full text-xs font-semibold disabled:cursor-not-allowed text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="items in furnace_names" :key="items" :value="items">
                                     {{ items }}
@@ -144,7 +144,7 @@
                             <select
                                 v-model="filmPastingInfo.selected_mass_prod"
                                 :disabled="isFilmPasteDataShown"
-                                class="w-full text-xs font-semibold disabled:cursor-not-allowed text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="items in massProdLists" :key="items" :value="items">
                                     {{ items }}
@@ -157,7 +157,7 @@
                             <select
                                 v-model="filmPastingInfo.selected_layer"
                                 :disabled="isFilmPasteDataShown"
-                                class="w-full text-xs font-semibold disabled:cursor-not-allowed text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
@@ -204,7 +204,7 @@
                             <button
                                 v-else
                                 @click="changeDataFilmPaste"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-yellow-600 hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-yellow-600 rounded-lg shadow-md hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                             >
                                 Cancel
                             </button>
@@ -214,50 +214,50 @@
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Pasting Date<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_pasting_date" type="date" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_pasting_date" type="date" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Machine No<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.machine_no" @input="filmPastingInfo.machine_no = filmPastingInfo.machine_no.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.machine_no" @input="filmPastingInfo.machine_no = filmPastingInfo.machine_no.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.total_magnet_weight" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.total_magnet_weight" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Loader Operator, Unloader Operator, Checker Operator -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Loader Operator<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.loader_operator" @input="filmPastingInfo.loader_operator = filmPastingInfo.loader_operator.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.loader_operator" @input="filmPastingInfo.loader_operator = filmPastingInfo.loader_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Unloader Operator<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.unloader_operator" @input="filmPastingInfo.unloader_operator = filmPastingInfo.unloader_operator.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.unloader_operator" @input="filmPastingInfo.unloader_operator = filmPastingInfo.unloader_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Checker Operator<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.checker_operator" @input="filmPastingInfo.checker_operator = filmPastingInfo.checker_operator.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.checker_operator" @input="filmPastingInfo.checker_operator = filmPastingInfo.checker_operator.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <!-- Group: Film Coating Amount, Time Start, Time Finished -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Coating Amount<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_coating_amount" @input="filmPastingInfo.film_coating_amount = filmPastingInfo.film_coating_amount.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_coating_amount" @input="filmPastingInfo.film_coating_amount = filmPastingInfo.film_coating_amount.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Time Start<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.time_start" type="time" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.time_start" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Time Finished<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.time_finished" type="time" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.time_finished" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                     <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">Remarks<span class="text-red-500"> *</span></label>
-                        <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.remarks" @input="filmPastingInfo.remarks = filmPastingInfo.remarks.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.remarks" @input="filmPastingInfo.remarks = filmPastingInfo.remarks.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
                 <div class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12">
@@ -266,11 +266,11 @@
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Type (Tb or Dy)<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_type" @input="filmPastingInfo.film_type = filmPastingInfo.film_type.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_type" @input="filmPastingInfo.film_type = filmPastingInfo.film_type.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Class<span class="text-red-500"> *</span></label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_class" @input="filmPastingInfo.film_class = filmPastingInfo.film_class.toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.film_class" @input="filmPastingInfo.film_class = filmPastingInfo.film_class.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                 </div>
@@ -281,24 +281,24 @@
                         <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">H-Line Parameters</h2>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['sprayer_water_amount']" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['sprayer_water_amount']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_1']" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_2']" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_1']" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_paste_lot_no_2']" type="text" class="w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_machine_humidity']" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_machine_humidity']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_machine_temperature']" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['film_machine_temperature']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.h_line_parameters['dryer_temp_setting'] = filmPastingInfo.h_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.h_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.h_line_parameters['dryer_temp_setting'] = filmPastingInfo.h_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                 </div>
@@ -307,24 +307,24 @@
                         <h2 class="pb-1 mb-10 font-bold text-gray-800 border-b text-md">T-Line Parameters</h2>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Sprayer Water amount</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['sprayer_water_amount']" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['sprayer_water_amount']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film paste Lot no</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_1']" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_2']" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_1']" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_paste_lot_no_2']" type="text" class="w-full mt-2 text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine Humidity %</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_machine_humidity']" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_machine_humidity']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film machine temperature</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_machine_temperature']" type="number" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['film_machine_temperature']" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Dryer Temp setting</label>
-                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.t_line_parameters['dryer_temp_setting'] = filmPastingInfo.t_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="disabled:cursor-not-allowed disabled:bg-gray-100 w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input :disabled="isFilmPasteDataShown" v-model="filmPastingInfo.t_line_parameters['dryer_temp_setting']" @input="filmPastingInfo.t_line_parameters['dryer_temp_setting'] = filmPastingInfo.t_line_parameters['dryer_temp_setting'].toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm disabled:cursor-not-allowed disabled:bg-gray-100 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
                 </div>

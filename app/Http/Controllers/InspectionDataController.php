@@ -281,4 +281,17 @@ class InspectionDataController extends Controller
             ], 500);
         }
     }
+
+    public function checkDuplicate(Request $request)
+    {
+        $request->validate([
+            'model' => ['required', 'string'],
+        ]);
+
+        $exists = InspectionData::where('model', $request->model)->exists();
+
+        return response()->json([
+            'duplicate' => $exists,
+        ]);
+    }
 }
