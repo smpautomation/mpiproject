@@ -354,9 +354,7 @@
                             <select
                                 v-model="coatingInfo.selectedFurnace"
                                 :disabled="isDataShown"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg
-                                    focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50
-                                    disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in furnace_names" :key="items" :value="items">
                                     {{ items }}
@@ -371,9 +369,7 @@
                             <select
                                 v-model="coatingInfo.selectedMassProd"
                                 :disabled="isDataShown"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg
-                                    focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50
-                                    disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in massProd_names" :key="items" :value="items">
                                     {{ items }}
@@ -388,9 +384,7 @@
                             <select
                                 v-model="coatingInfo.selectedLayer"
                                 :disabled="isDataShown"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg
-                                    focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50
-                                    disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
@@ -443,7 +437,7 @@
                             <button
                                 v-if="isDataShown"
                                 @click="changeData"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-yellow-600 hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-yellow-600 rounded-lg shadow-md hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                             >
                                 Cancel
                             </button>
@@ -680,7 +674,7 @@
             <!-- DIV BELOW (BOTTOM PART) -->
             <div
                 v-if="!activate2ndGBDP"
-                class="flex flex-col items-center bg-white p-6 rounded-xl shadow-2xl w-full overflow-auto pr-12"
+                class="flex flex-col items-center w-full p-6 pr-12 overflow-auto bg-white shadow-2xl rounded-xl"
             >
                 <div class="flex flex-row gap-2">
                     <div>
@@ -961,7 +955,7 @@
             </div>
             <!-- LAST BOTTOM DIV -->
             <div class="flex flex-row gap-20 mt-10 whitespace-nowrap">
-                <div class="bg-gray-900 border border-cyan-600 shadow-lg rounded-3xl px-6 py-6 flex items-center gap-16">
+                <div class="flex items-center gap-16 px-6 py-6 bg-gray-900 border shadow-lg border-cyan-600 rounded-3xl">
                     <!-- Glowing Spinning Cogwheel -->
                     <div class="relative flex-shrink-0 w-12 h-12">
                         <div class="absolute inset-0 rounded-full opacity-100 bg-cyan-400 blur-xl animate-pulse"></div>
@@ -2786,7 +2780,6 @@ const changeData = () => {
     isDataShown.value = false;
         // Reset coatingInfo
     Object.assign(coatingInfo, {
-        selectedModel: '',
         coatingDate: '',
         coatingMachineNo: '',
         slurryLotNo: '',
@@ -2822,10 +2815,6 @@ const changeData = () => {
         { module: "M-05", new: null, homo: null, time: null, liters: null },
         { module: "M-06", new: null, homo: null, time: null, liters: null },
     ];
-
-    lotNo.value = null;
-    lotNo_1stGBDP.value = null;
-
 
     toast.success("All fields cleared.");
 }

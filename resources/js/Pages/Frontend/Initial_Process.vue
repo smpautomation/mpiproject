@@ -2909,6 +2909,9 @@ const saveNormalCase = async () => {
         toast.error('Failed to save normal Control Sheet.');
     } finally {
         showModalPreview.value = false;
+        await getControlSheetData();
+        await getCoatingSummary();
+        await getFilmPastingSummary();
     }
 };
 
@@ -2973,6 +2976,9 @@ const saveExcessCase = async () => {
         toast.error('Failed to save excess Control Sheet.');
     } finally {
         showModalPreview.value = false;
+        await getControlSheetData();
+        await getCoatingSummary();
+        await getFilmPastingSummary();
     }
 };
 
@@ -3256,6 +3262,9 @@ const saveCoatingSummaryToDatabase = async() => {
     }finally{
         resetCoatingSummaryData();
         showCoatingPreview.value = false;
+        await getControlSheetData();
+        await getCoatingSummary();
+        await getFilmPastingSummary();
     }
 }
 
@@ -3574,6 +3583,9 @@ const saveToDataBaseFilmPasting = async() => {
     } finally {
         resetFilmPastingFields();
         showModalFilmPastingPreview.value = false;
+        await getControlSheetData();
+        await getCoatingSummary();
+        await getFilmPastingSummary();
     }
 };
 
