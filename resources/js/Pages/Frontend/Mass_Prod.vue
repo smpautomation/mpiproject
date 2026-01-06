@@ -27,8 +27,7 @@
                         v-model="searchQuery"
                         type="text"
                         placeholder="Search cycle no"
-                        class="w-72 px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm
-                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        class="px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm w-72 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 
@@ -42,15 +41,13 @@
                         <input
                             v-model="dateFrom"
                             type="date"
-                            class="px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm
-                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                         <span class="text-sm text-gray-500">to</span>
                         <input
                             v-model="dateTo"
                             type="date"
-                            class="px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm
-                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
                 </div>
@@ -129,11 +126,14 @@
         </div>
 
         <div class="flex flex-row">
-            <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mt-10 mr-10">
-                Upload HT Mass Pro
-            </div>
+            <!--
+                <div class="max-w-2xl p-6 mt-10 mr-10 bg-white rounded-lg shadow-md">
+                    Upload HT Mass Pro
+                </div>
+            -->
 
-            <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mt-10">
+
+            <div class="max-w-2xl p-6 mt-10 bg-white rounded-lg shadow-md">
                 <!-- Header Section -->
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-3">
@@ -145,7 +145,7 @@
 
                     <button
                         @click="downloadCsvMonthlySummary"
-                        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
+                        class="flex items-center gap-2 px-4 py-2 font-medium text-white transition-colors duration-200 bg-green-600 rounded-lg shadow-sm hover:bg-green-700 hover:shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
@@ -156,7 +156,7 @@
                 <!-- Selection Section -->
                 <div class="flex flex-wrap gap-4">
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-700">
                             Month
                         </label>
                         <select
@@ -169,7 +169,7 @@
                     </div>
 
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-700">
                             Year
                         </label>
                         <select

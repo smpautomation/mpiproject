@@ -640,8 +640,9 @@ For Login form...
   max-width: 400px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: -25.5rem; /* pull it up */
+  margin-top: -25.5rem;
 }
+
 
 .card {
   position: relative;

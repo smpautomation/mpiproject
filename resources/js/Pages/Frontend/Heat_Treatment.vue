@@ -189,7 +189,7 @@
                             <button
                                 v-else
                                 @click="changeData()"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-yellow-600 hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-yellow-600 rounded-lg shadow-md hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                             >
                                 Change Data
                             </button>
@@ -197,9 +197,9 @@
                     </div>
 
                     <!-- Group: Prepared By -->
-                    <div class="grid items-end grid-cols-1 gap-6 md:grid-cols-3 pt-10">
+                    <div class="grid items-end grid-cols-1 gap-6 pt-10 md:grid-cols-3">
                         <div
-                            class="mt-4 w-full px-4 py-3 bg-gray-100 border-l-4 border-cyan-600 rounded-md shadow-sm"
+                            class="w-full px-4 py-3 mt-4 bg-gray-100 border-l-4 rounded-md shadow-sm border-cyan-600"
                         >
                             <p class="text-sm font-semibold text-gray-800">
                                 Detected Total Boxes:
@@ -225,16 +225,16 @@
                         </div>
                     </div>
 
-                    <div class="p-4 rounded-xl shadow-lg border border-gray-300 bg-white">
+                    <div class="p-4 bg-white border border-gray-300 shadow-lg rounded-xl">
 
-                        <h3 class="text-sm font-bold text-gray-800 mb-2 tracking-wide">
+                        <h3 class="mb-2 text-sm font-bold tracking-wide text-gray-800">
                             Manual Layer Allocation
                         </h3>
 
-                        <div class="h-px bg-gray-200 mb-4"></div>
+                        <div class="h-px mb-4 bg-gray-200"></div>
 
                         <p
-                            class="text-xs mb-3 tracking-wide"
+                            class="mb-3 text-xs tracking-wide"
                             :class="(!mpcs.selectedFurnace || !mpcs.selectedMassProd || isDataShown || noMassProdData)
                                 ? 'text-red-600'
                                 : 'text-gray-700'"
@@ -251,13 +251,7 @@
                         <button
                             @click="showBreakLotForm()"
                             :disabled="!mpcs.selectedFurnace || !mpcs.selectedMassProd || isDataShown || noMassProdData"
-                            class="w-full py-3 text-sm font-bold rounded-lg transition-all duration-300
-                                text-white tracking-wide
-                                bg-gradient-to-r from-teal-600 to-blue-600
-                                hover:from-indigo-500 hover:to-cyan-500
-                                hover:shadow-xl hover:scale-105 active:scale-95
-                                disabled:opacity-50 disabled:cursor-not-allowed
-                                disabled:hover:scale-100 disabled:hover:shadow-none"
+                            class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-blue-600 hover:from-indigo-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
                         >
                             Manual Layer Allocation
                         </button>
@@ -566,7 +560,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else class="w-full max-w-4xl mx-auto px-8 py-0 relative overflow-hidden">
+                    <div v-else class="relative w-full max-w-4xl px-8 py-0 mx-auto overflow-hidden">
                          <!-- Animated Background Pattern -->
                         <div class="absolute inset-0 opacity-5">
                             <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -580,38 +574,38 @@
                         </div>
 
                         <!-- Main Card -->
-                        <div class="relative bg-gradient-to-br from-white via-gray-50 to-white border-2 border-gray-200 shadow-2xl rounded-3xl overflow-hidden">
+                        <div class="relative overflow-hidden border-2 border-gray-200 shadow-2xl bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl">
 
                             <!-- Top Gradient Accent -->
                             <div class="h-2 bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-500 bg-[length:200%_100%] animate-gradient-flow"></div>
 
                             <!-- Content Container -->
-                            <div class="px-8 py-10 flex flex-col items-center justify-center space-y-6">
+                            <div class="flex flex-col items-center justify-center px-8 py-10 space-y-6">
 
                             <!-- Animated Icon Container -->
                             <div class="relative">
                                 <!-- Outer rotating ring -->
                                 <div class="absolute inset-0 w-24 h-24 -m-3">
-                                <div class="absolute inset-0 border-3 border-transparent border-t-cyan-400 border-r-teal-400 rounded-full animate-spin-slow"></div>
+                                <div class="absolute inset-0 border-transparent rounded-full border-3 border-t-cyan-400 border-r-teal-400 animate-spin-slow"></div>
                                 </div>
 
                                 <!-- Glowing background -->
                                 <div class="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-2xl blur-xl animate-pulse"></div>
 
                                 <!-- Icon Container -->
-                                <div class="relative w-18 h-18 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl border-2 border-gray-200 shadow-lg flex items-center justify-center group hover:scale-110 transition-transform duration-500">
+                                <div class="relative flex items-center justify-center transition-transform duration-500 border-2 border-gray-200 shadow-lg w-18 h-18 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl group hover:scale-110">
                                 <!-- Inner glow on hover -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-400/0 to-teal-400/0 group-hover:from-cyan-400/30 group-hover:to-teal-400/30 rounded-xl transition-all duration-500"></div>
+                                <div class="absolute inset-0 transition-all duration-500 bg-gradient-to-br from-cyan-400/0 to-teal-400/0 group-hover:from-cyan-400/30 group-hover:to-teal-400/30 rounded-xl"></div>
 
                                 <!-- Main Icon -->
-                                <svg class="relative w-10 h-10 text-gray-400 group-hover:text-cyan-500 transition-colors duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="relative w-10 h-10 text-gray-400 transition-colors duration-500 group-hover:text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                 </svg>
                                 </div>
                             </div>
 
                             <!-- Title Section -->
-                            <div class="text-center space-y-2">
+                            <div class="space-y-2 text-center">
                                 <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800">
                                 No Data Available
                                 </h2>
@@ -624,18 +618,18 @@
 
                             <!-- Description Card -->
                             <div class="max-w-xl">
-                                <div class="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-5 shadow-lg">
+                                <div class="p-5 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-xl">
                                 <div class="flex items-start space-x-4">
                                     <div class="flex-shrink-0 mt-1">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-lg flex items-center justify-center shadow-md">
+                                    <div class="flex items-center justify-center w-8 h-8 rounded-lg shadow-md bg-gradient-to-br from-cyan-500 to-teal-500">
                                         <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
                                     </div>
                                     <div class="flex-1 space-y-2">
-                                    <p class="text-gray-700 text-sm leading-relaxed">
-                                        No heat treatment data has been loaded yet. Click <span class="bg-cyan-600 p-1 rounded-lg font-bold text-white">Show Data</span> button.
+                                    <p class="text-sm leading-relaxed text-gray-700">
+                                        No heat treatment data has been loaded yet. Click <span class="p-1 font-bold text-white rounded-lg bg-cyan-600">Show Data</span> button.
                                     </p>
                                     <div class="space-y-1.5">
                                         <div class="flex items-center space-x-2 text-sm text-gray-600">
@@ -651,7 +645,7 @@
                                         <span>Choose a <span class="font-semibold text-gray-800">Lot Number</span></span>
                                         </div>
                                     </div>
-                                    <p class="text-xs text-gray-500 pt-1 italic">
+                                    <p class="pt-1 text-xs italic text-gray-500">
                                         Once loaded, the table will display all relevant information including main and excess boxes.
                                     </p>
                                     </div>
@@ -660,7 +654,7 @@
                             </div>
 
                             <!-- Decorative Elements -->
-                            <div class="flex items-center justify-center space-x-2 pt-2">
+                            <div class="flex items-center justify-center pt-2 space-x-2">
                                 <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
                                 <div class="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
                                 <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
@@ -689,7 +683,7 @@
                                 can be overwritten.
                             </p>
 
-                            <p class="px-3 py-1 mb-3 text-xs font-medium text-yellow-800 border-l-2 border-yellow-500 pl-2" v-if="!isEditingExpired">
+                            <p class="px-3 py-1 pl-2 mb-3 text-xs font-medium text-yellow-800 border-l-2 border-yellow-500" v-if="!isEditingExpired">
                                 ⚠ Time Start and Date Start can only be edited within 24 hours.
                             </p>
 
@@ -741,8 +735,7 @@
                                         v-model="hti.dateStart"
                                         :disabled="overwriteMode && isEditingExpired"
                                         type="date"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500
-                                            disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                                     />
                                 </div>
 
@@ -754,8 +747,7 @@
                                         v-model="hti.timeStart"
                                         :disabled="overwriteMode && isEditingExpired"
                                         type="time"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500
-                                            disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                                     />
                                 </div>
 
@@ -778,8 +770,8 @@
                                     <input v-model="hti.timeFinish" type="time" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">Unloader<span class="text-red-500"> *</span></label>
-                                    <input v-model="hti.unloader" type="text" :disabled="overwriteMode" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">Unloader</label>
+                                    <input v-model="hti.unloader" type="text" @input="hti.unloader = hti.unloader.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
                                 </div>
                             </div>
                             <div class="flex flex-col">
@@ -1164,7 +1156,7 @@
                             </table>
                             </div>
 
-                            <p class="pb-2 pt-4 text-sm font-semibold text-gray-800 border-b">LT (PCS) - Main Boxes</p>
+                            <p class="pt-4 pb-2 text-sm font-semibold text-gray-800 border-b">LT (PCS) - Main Boxes</p>
                             <div class="overflow-x-auto">
                             <table class="min-w-full text-center border border-collapse border-gray-300">
                                 <thead class="bg-gray-100">
@@ -1217,7 +1209,7 @@
                             </table>
                             </div>
 
-                            <p class="pb-2 pt-4 text-sm font-semibold text-gray-800 border-b">LT (PCS) - Excess Boxes</p>
+                            <p class="pt-4 pb-2 text-sm font-semibold text-gray-800 border-b">LT (PCS) - Excess Boxes</p>
                             <div class="overflow-x-auto">
                             <table class="min-w-full text-center border border-collapse border-gray-300">
                                 <thead class="bg-gray-100">
@@ -2830,8 +2822,7 @@ const finalize = () => {
         if (!heatTreatmentInformationDetected.value) {
             if (
                 !initialFurnaceData.value || !hti.cycleNo || !hti.patternNo || !hti.dateStart ||
-                !hti.timeStart || !hti.loader ||
-                !hti.unloader || !hti.boxCondition || !hti.boxCover ||
+                !hti.timeStart || !hti.loader || !hti.boxCondition || !hti.boxCover ||
                 !hti.boxArrangement || !hti.encodedBy
             ) {
                 toast.error("Please fill in all required Heat Treatment Info fields.");

@@ -2772,6 +2772,22 @@ const clearAll = () => {
         qtyValuesExcess.value[key] = '';
     });
 
+    Object.keys(boxWeight.value).forEach(key => {
+        boxWeight.value[key] = '';
+    });
+
+    Object.keys(boxWithMagnetWeight.value).forEach(key => {
+        boxWithMagnetWeight.value[key] = '';
+    });
+
+    Object.keys(boxWithMagnetWeightExcess.value).forEach(key => {
+        boxWithMagnetWeightExcess.value[key] = '';
+    });
+
+    Object.keys(boxWeightExcess.value).forEach(key => {
+        boxWeightExcess.value[key] = '';
+    });
+
 }
 
 const dataValidation = async() => {
