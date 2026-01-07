@@ -46,7 +46,7 @@
                 GBDP MPI
             </span>
             </span>
-            <span class="block text-sm font-semibold text-gray-600 transition-colors duration-300 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">
+            <span class="block text-sm font-semibold text-gray-600 transition-colors duration-300 dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-300">
             Online System
             </span>
         </div>
@@ -62,9 +62,9 @@
     <ul class="items-center hidden gap-6 font-medium text-gray-700 md:flex dark:text-gray-300">
         <li v-for="item in filteredNavItems" :key="item.label" class="relative group">
             <template v-if="item.children && item.children.length">
-                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 rounded-lg cursor-pointer hover:text-blue-600 hover:bg-blue-50">
+                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-100 transition-all duration-200 rounded-lg cursor-pointer hover:text-blue-600 hover:bg-blue-50">
                     {{ item.label }}
-                    <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:rotate-180 text-gray-500 group-hover:text-blue-600"
+                    <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:rotate-180 text-gray-500 dark:text-gray-300 group-hover:text-blue-600"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
                     </svg>
@@ -80,7 +80,7 @@
             </template>
             <template v-else>
                 <Link :href="route(item.route)"
-                    class="px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 rounded-lg hover:text-blue-600 hover:bg-blue-50">
+                    class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-100 transition-all duration-200 rounded-lg hover:text-blue-600 hover:bg-blue-50">
                     {{ item.label }}
                 </Link>
             </template>
@@ -126,7 +126,7 @@
   </div>
 
     <!-- Mobile Menu -->
-    <ul v-if="mobileOpen" class="p-4 space-y-2 border-t border-gray-200 md:hidden bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+    <ul v-if="mobileOpen" class="p-4 space-y-2 border-t border-gray-200 md:hidden bg-gray-50 dark:bg-gray-100 dark:border-gray-100">
     <li v-for="item in filteredNavItems" :key="item.label">
         <template v-if="item.children && item.children.length">
         <span class="block py-2 font-medium">{{ item.label }}</span>
