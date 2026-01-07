@@ -383,6 +383,8 @@ Route::patch('/mass-production/{furnace}/{massProd}/merge', [MassProductionContr
 
 Route::get('/mass-production/{furnace}/{massprod}/{excessdata}/excess-layers-list', [MassProductionController::class, 'excessLayerList']);
 
+Route::post('/mass-production/grand-total-weight', [MassProductionController::class, 'getGrandTotalWeight']);
+
 Route::post('/initial-control-sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
 
 Route::get('/initial-control-sheets/lot-all', [InitialControlSheetController::class, 'fetchAllLotNumbers']);

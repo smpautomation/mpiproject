@@ -663,7 +663,39 @@
                         </div>
                     </div>
 
+                    <div
+                        v-if="isDataShown"
+                        :class="isGrandTotalLimitReached
+                            ? 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-red-50 to-rose-50 border-red-400 shadow-md shadow-red-300/40'
+                            : 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md shadow-cyan-200/40'
+                        "
+                    >
+                        <div
+                            :class="isGrandTotalLimitReached
+                                ? 'text-[8px] font-semibold tracking-widest uppercase text-red-700'
+                                : 'text-[8px] font-semibold tracking-widest uppercase text-teal-700'
+                            "
+                        >
+                            Expected Grand Total Weight
+                        </div>
 
+                        <div
+                            :class="isGrandTotalLimitReached
+                                ? 'text-xl font-bold leading-none text-red-600'
+                                : 'text-xl font-bold leading-none text-cyan-500'
+                            "
+                        >
+                            {{ grandTotalWeight }}
+                        </div>
+
+                        <!-- Warning text -->
+                        <div
+                            v-if="isGrandTotalLimitReached"
+                            class="text-[8px] font-semibold tracking-wide text-red-700"
+                        >
+                            ⚠ LIMIT EXCEEDED — Max 1425
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -1796,6 +1828,12 @@ const qtyDataMain = ref({});
 // For excess boxes
 const qtyDataExcess = ref({});
 
+const grandTotalWeight = ref();
+const grandTotalLimit = ref(1425);
+const isGrandTotalLimitReached = computed(() => {
+    return Number(grandTotalWeight.value) > grandTotalLimit.value;
+});
+
 const boxNoValues = ref({});
 const weightValues = ref({});
 const qtyValues = ref({});
@@ -1965,6 +2003,45 @@ const get1st2ndGBDPModels = async () => {
             "get1st2ndGBDPModels",
             "Failed to get 1st & 2nd GBDP Models"
         );
+    }
+}
+
+const sumWeightMap = (map, boxes) => {
+    return boxes.reduce((sum, box) => {
+        const v = Number(map[box]);
+        return sum + (isNaN(v) ? 0 : v);
+    }, 0);
+};
+
+const getCurrentMainWeightTotal = () => {
+    return sumWeightMap(weightValues.value, visibleBoxes.value);
+};
+
+const getCurrentExcessWeightTotal = () => {
+    if (!mpcs.moreThanTenBoxes) return 0;
+    return sumWeightMap(weightValuesExcess.value, visibleExcessBoxes.value);
+};
+
+const computeTrueGrandTotal = async () => {
+    const dbTotal = await getGrandTotalWeightData();
+
+    const mainTotal = getCurrentMainWeightTotal();
+    const excessTotal = getCurrentExcessWeightTotal();
+
+    return dbTotal + mainTotal + excessTotal;
+};
+
+const getGrandTotalWeightData = async () => {
+    try{
+        const response = await axios.post('/api/mass-production/grand-total-weight', {
+            mass_prod: mpcs.selectedMassProd,
+            furnace: mpcs.selectedFurnace,
+        });
+
+        return Number(response.data.grand_total) || 0;
+
+    }catch(error){
+        console.error('Failed to get grand total weight data',error);
     }
 }
 
@@ -2210,6 +2287,7 @@ const fetchAllLotNoData = async () => {
         const response = await axios.get('/api/initial-control-sheets/lot-all');
         //console.log(response.data); // All records with lot_no, newest first
         lotNoLists.value = response.data;
+
     } catch (err) {
         console.error('Failed to fetch lot_no data:', err);
     }
@@ -2231,6 +2309,8 @@ const changeData = () => {
     });
 
     isDataShown.value = false;
+
+    grandTotalWeight.value = null;
 };
 
 const getExcessDataRange = (boxes) => {
@@ -2310,6 +2390,7 @@ const fetchAllLotDataBoxDetails = async () => {
             }
 
             toast.info('Data loaded into table');
+            grandTotalWeight.value = await computeTrueGrandTotal();
             isDataShown.value = true;
             return;
         }
@@ -2360,6 +2441,7 @@ const fetchAllLotDataBoxDetails = async () => {
             mpcs.selectedBoxEndList = visibleBoxes.value[visibleBoxes.value.length - 1];
 
             toast.info('Less than 10 boxes, data loaded into table');
+            grandTotalWeight.value = await computeTrueGrandTotal();
             isDataShown.value = true;
             return;
         }
@@ -2486,6 +2568,7 @@ const fetchAllLotDataBoxDetails = async () => {
         console.log("Selected Excess Box End List:", mpcs.selectedExcessBoxEndList);
 
         toast.info("Loaded more than 10 boxes data");
+        grandTotalWeight.value = await computeTrueGrandTotal();
         isDataShown.value = true;
 
 

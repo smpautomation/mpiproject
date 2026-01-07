@@ -1203,4 +1203,67 @@ class MassProductionController extends Controller
         return response()->json($data);
     }
 
+    public function getGrandTotalWeight(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+        ]);
+
+        $record = MassProduction::where('mass_prod', $request->mass_prod)
+            ->where('furnace', $request->furnace)
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'message' => 'Mass production record not found'
+            ], 404);
+        }
+
+        $layers = [
+            'layer_1',
+            'layer_2',
+            'layer_3',
+            'layer_4',
+            'layer_5',
+            'layer_6',
+            'layer_7',
+            'layer_8',
+            'layer_9',
+            'layer_9_5',
+        ];
+
+        $grandTotal = 0;
+
+        foreach ($layers as $layerColumn) {
+            if (empty($record->$layerColumn)) {
+                continue;
+            }
+
+            $layerData = json_decode($record->$layerColumn, true);
+
+            if (!is_array($layerData)) {
+                continue;
+            }
+
+            foreach ($layerData as $row) {
+                if (($row['rowTitle'] ?? '') === 'WT (KG):') {
+                    $weights = $row['data'] ?? [];
+
+                    foreach ($weights as $value) {
+                        $grandTotal += floatval($value);
+                    }
+
+                    break; // no need to scan other rows
+                }
+            }
+        }
+
+        return response()->json([
+            'mass_prod'   => $request->mass_prod,
+            'furnace'     => $request->furnace,
+            'grand_total' => round($grandTotal, 3),
+        ]);
+    }
+
 }
