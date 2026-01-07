@@ -378,11 +378,6 @@ const submitData = async () => {
         //Validate first
         const isDuplicate = await checkDuplicateModel();
 
-        if (isDuplicate) {
-            toast.warning('Model already exists.');
-            return;
-        }
-
         if (isEditMode.value) {
             await axios.patch(
                 `/api/inspectiondata/${currentEditId.value}`,
@@ -392,7 +387,14 @@ const submitData = async () => {
             userInspectionLogging(
                 `has successfully updated existing data specs model ${formData.value.model}`
             );
+
+            toast.success('Model Specs has been edited successfully.');
         } else {
+            if (isDuplicate) {
+                toast.warning('Model already exists.');
+                return;
+            }
+
             await axios.post(
                 "/api/inspectiondata",
                 formData.value
@@ -401,6 +403,7 @@ const submitData = async () => {
             userInspectionLogging(
                 `has successfully inserted new data specs model ${formData.value.model}`
             );
+            toast.success('Model Specs has been registered successfully.');
         }
 
         isEditMode.value = false;
