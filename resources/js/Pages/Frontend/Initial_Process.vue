@@ -2472,32 +2472,41 @@ const visibleExcessBoxes = computed(() => {
 });
 
 const weightValues = computed(() => {
-    const result = {}
+    const result = {};
 
     visibleBoxes.value.forEach(box => {
-        const withMagnet = Number(boxWithMagnetWeight.value[box]) || 0
-        const boxWt = Number(boxWeight.value[box]) || 0
+        const withMagnetRaw = Number(boxWithMagnetWeight.value[box]) || 0;
+        const boxWtRaw = Number(boxWeight.value[box]) || 0;
 
-        const diff = withMagnet - boxWt
-        result[box] = Math.round(diff * 100) / 100   // ← 2 decimals, numeric
+        // integer-safe subtraction
+        const diffInt = Math.round(withMagnetRaw * 1000) - Math.round(boxWtRaw * 1000);
+
+        // convert to decimal with 2 digits safely
+        result[box] = Number((diffInt / 1000).toFixed(2));
     })
 
-    return result
+    return result;
 });
 
+
+
 const weightValuesExcess = computed(() => {
-    const result = {}
+    const result = {};
 
     visibleExcessBoxes.value.forEach(box => {
-        const withMagnet = Number(boxWithMagnetWeightExcess.value[box]) || 0
-        const boxWt = Number(boxWeightExcess.value[box]) || 0
+        const withMagnetRaw = Number(boxWithMagnetWeightExcess.value[box]) || 0;
+        const boxWtRaw = Number(boxWeightExcess.value[box]) || 0;
 
-        const diff = withMagnet - boxWt
-        result[box] = Math.round(diff * 100) / 100   // 2 decimals
-    })
+        // integer-safe subtraction
+        const diffInt = Math.round(withMagnetRaw * 1000) - Math.round(boxWtRaw * 1000);
 
-    return result
+        // convert to decimal with 2 digits safely
+        result[box] = Number((diffInt / 1000).toFixed(2));
+    });
+
+    return result;
 })
+
 
 allBoxes.forEach(box => {
     boxNoValues.value[box] = '';
@@ -3680,6 +3689,10 @@ useSessionStorage('qtyValues',qtyValues);
 useSessionStorage('boxNoValuesExcess',boxNoValuesExcess);
 useSessionStorage('weightValuesExcess',weightValuesExcess);
 useSessionStorage('qtyValuesExcess',qtyValuesExcess);
+useSessionStorage('boxWeight', boxWeight);
+useSessionStorage('boxWithWeight', boxWithMagnetWeight);
+useSessionStorage('boxWeightExcess', boxWeightExcess);
+useSessionStorage('boxWithMagnetWeightExcess', boxWithMagnetWeightExcess);
 
 useSessionStorage("coatingInfo", coatingInfo);
 useSessionStorage("concentrationData", concentrationData);

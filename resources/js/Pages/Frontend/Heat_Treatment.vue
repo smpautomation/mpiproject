@@ -2033,7 +2033,13 @@ const computeTrueGrandTotal = async () => {
     const mainTotal = getCurrentMainWeightTotal();
     const excessTotal = getCurrentExcessWeightTotal();
 
-    return dbTotal + mainTotal + excessTotal;
+    // integer-safe addition
+    const totalInt = Math.round(dbTotal * 1000)
+                   + Math.round(mainTotal * 1000)
+                   + Math.round(excessTotal * 1000);
+
+    // convert back to 2 decimals safely
+    return Number((totalInt / 1000).toFixed(2));
 };
 
 const getGrandTotalWeightData = async () => {
