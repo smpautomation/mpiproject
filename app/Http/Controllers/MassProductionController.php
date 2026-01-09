@@ -1268,11 +1268,17 @@ class MassProductionController extends Controller
 
     public function deleteLayerData(Request $request)
     {
-        $massProd   = $request->massprod;
-        $furnace    = $request->furnace;
-        $layer      = $request->layer;
+        $massProd = $request->massprod;
+        $furnace  = $request->furnace;
+        $layer    = $request->layer;
 
-        // Determine layer column
+        \Log::info('DeleteLayerData called', [
+            'massProd' => $massProd,
+            'furnace'  => $furnace,
+            'layer'    => $layer
+        ]);
+
+        // Determine mass production column
         $column = $layer === '9.5' ? 'layer_9_5' : 'layer_' . $layer;
 
         // --- 1. Fetch the mass production row ---
@@ -1281,51 +1287,90 @@ class MassProductionController extends Controller
                             ->first();
 
         if (!$mp) {
-            return response()->json(['message' => 'Mass Production not found'], 404);
+            \Log::error('Mass production not found', ['massProd' => $massProd, 'furnace' => $furnace]);
+            return response()->json(['success' => false, 'message' => 'Mass Production not found'], 404);
         }
 
-        // --- 2. Get the model in letter "A" ---
+        // --- 2. Decode layer JSON ---
         $layerData = json_decode($mp->$column, true);
-        $modelToRemove = null;
+
+        $targetModel = null;
+        $targetLot   = null;
 
         if (!empty($layerData)) {
             foreach ($layerData as $row) {
                 if ($row['rowTitle'] === 'MODEL:') {
-                    $modelToRemove = $row['data']['A'] ?? null;
-                    break;
+                    $targetModel = $row['data']['A'] ?? null; // Take A as reference for model
+                }
+                if ($row['rowTitle'] === 'LT. No.:') {
+                    $targetLot = $row['data']['A'] ?? null; // Take A as reference for lot
                 }
             }
         }
 
-        // --- 3. Wipe the layer entirely in mass_productions ---
+        // --- 3. Null the mass production layer ---
         $mp->$column = null;
         $mp->save();
 
-        // --- 4. Update excess layers if a model was found ---
-        if ($modelToRemove) {
+        \Log::info('Mass production layer nulled', [
+            'column' => $column,
+            'mass_prod_id' => $mp->id
+        ]);
+
+        // --- 4. Delete matching excess layer rows ---
+        $deletedRows = 0;
+        if ($targetModel && $targetLot) {
             $excessLayers = ExcessLayers::where('mass_prod', $massProd)
                                         ->where('furnace', $furnace)
                                         ->get();
 
-            foreach ($excessLayers as $excess) {
-                $layerDataExcess = json_decode($excess->layer_data, true);
+            \Log::info('Excess layers fetched', ['count' => $excessLayers->count()]);
 
-                foreach ($layerDataExcess as &$row) {
-                    foreach ($row['data'] as $letter => $model) {
-                        if ($model === $modelToRemove) {
-                            unset($row['data'][$letter]);
+            foreach ($excessLayers as $excess) {
+                $layerDataExcess = is_array($excess->layer_data) ? $excess->layer_data : json_decode($excess->layer_data, true);
+
+                $shouldDelete = false;
+
+                foreach ($layerDataExcess as $row) {
+                    if ($row['rowTitle'] === 'MODEL:' && in_array($targetModel, $row['data'], true)) {
+                        // Check if corresponding LT. No. exists in same row_data
+                        foreach ($layerDataExcess as $rowLot) {
+                            if ($rowLot['rowTitle'] === 'LT. No.:' && in_array($targetLot, $rowLot['data'], true)) {
+                                $shouldDelete = true;
+                                break 2; // Found both, no need to continue checking
+                            }
                         }
                     }
                 }
-                unset($row); // break reference
 
-                $excess->layer_data = json_encode($layerDataExcess);
-                $excess->save();
+                if ($shouldDelete) {
+                    $excess->delete();
+                    $deletedRows++;
+                    \Log::info('Excess layer row deleted', [
+                        'excess_id' => $excess->id,
+                        'mass_prod' => $massProd,
+                        'furnace'   => $furnace
+                    ]);
+                }
             }
         }
 
-        return response()->json(['message' => 'Layer deleted successfully']);
+        \Log::info('DeleteLayerData completed', [
+            'mass_prod'   => $massProd,
+            'furnace'     => $furnace,
+            'targetModel' => $targetModel,
+            'targetLot'   => $targetLot,
+            'deletedRows' => $deletedRows
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layer deleted successfully',
+            'deleted_rows' => $deletedRows
+        ]);
     }
+
+
 
 
 

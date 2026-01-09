@@ -197,16 +197,38 @@
                     </div>
 
                     <!-- Group: Prepared By -->
-                    <div v-if="(isExisting || isExisting_2ndGBDP) && !isDataShown" class="grid items-end grid-cols-1 gap-6 md:grid-cols-3">
-                        <div class="mt-5">
+                    <div v-if="(isExisting || isExisting_2ndGBDP) && !isDataShown" class="flex flex-col md:flex-row md:items-start gap-4 whitespace-nowrap">
+                        <div v-if="!isEditingExpired" class="mt-5">
+                            <!-- Clear Layer Button -->
                             <button
                                 @click="deleteLayerData()"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                class="flex-1 px-5 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg shadow-md transition-colors duration-200 hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                             >
-                                Clear Layer Data
+                                Clear Layer {{ mpcs.selectedLayer }} Data
                             </button>
                         </div>
+                        <div v-if="!isEditingExpired" class="mt-5">
+                            <!-- Warning Note -->
+                            <div class="flex-1 flex items-center gap-2 p-2 text-sm text-red-700 bg-red-100 rounded-lg shadow-md border-l-4 border-red-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
+                                </svg>
+                                <span>Important: This action will clear other layers sharing the same lot number, if there are any. ({{ hoursLeftDisplay }})</span>
+                            </div>
+                        </div>
+                        <div v-else class="mt-5">
+                            <!-- Warning Note -->
+                            <div class="flex-1 flex items-center gap-2 p-2 text-sm text-yellow-700 bg-red-100 rounded-lg shadow-md border-l-4 border-yellow-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
+                                </svg>
+                                <span>Layer modifications for this mass production has expired.</span>
+                            </div>
+                        </div>
                     </div>
+
 
 
                     <!-- Group: Prepared By -->
@@ -1798,7 +1820,7 @@ function useSessionStorage(key, state) {
 }
 
 //Dev Controls ----------------- Allow Commands
-const isEditingExpired = ref(false); //This is for Time Start and Date Start ONLYY!!!
+const isEditingExpired = ref(false); //This is for Time Start and Date Start ONLYY!!! (Now for clear layer data button as well)
 
 let intervalId = null;
 
@@ -3058,6 +3080,13 @@ const saveToDatabase = async () => {
     } finally {
         await updateFormatType();
         clearAllAfterSave();
+        await getMassProdData();
+        await fetchExistingLayers();
+        await getFurnaceLists();
+        await getMassProdLists();
+        await fetchAllLotNoData();
+        await getGraphPatterns();
+        await get1st2ndGBDPModels();
     }
 };
 
