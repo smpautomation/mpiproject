@@ -385,6 +385,10 @@ Route::get('/mass-production/{furnace}/{massprod}/{excessdata}/excess-layers-lis
 
 Route::post('/mass-production/grand-total-weight', [MassProductionController::class, 'getGrandTotalWeight']);
 
+Route::post('mass-production/delete-layer-data', [MassProductionController::class, 'deleteLayerData']);
+
+//Insert new route for deletelayerdata
+
 Route::post('/initial-control-sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
 
 Route::get('/initial-control-sheets/lot-all', [InitialControlSheetController::class, 'fetchAllLotNumbers']);

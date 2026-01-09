@@ -197,6 +197,19 @@
                     </div>
 
                     <!-- Group: Prepared By -->
+                    <div v-if="(isExisting || isExisting_2ndGBDP) && !isDataShown" class="grid items-end grid-cols-1 gap-6 md:grid-cols-3">
+                        <div class="mt-5">
+                            <button
+                                @click="deleteLayerData()"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            >
+                                Clear Layer Data
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- Group: Prepared By -->
                     <div class="grid items-end grid-cols-1 gap-6 pt-10 md:grid-cols-3">
                         <div
                             class="w-full px-4 py-3 mt-4 bg-gray-100 border-l-4 rounded-md shadow-sm border-cyan-600"
@@ -3238,6 +3251,26 @@ const second_heat_treatment = () => {
         preserveState: true,
         preserveScroll: true,
     });
+};
+
+const deleteLayerData = async () => {
+    try {
+        const response = await axios.post('/api/mass-production/delete-layer-data', {
+            massprod: mpcs.selectedMassProd,
+            furnace: mpcs.selectedFurnace,
+            layer: mpcs.selectedLayer
+        });
+
+        if (response.data.success) {
+            toast.success(`Layer ${mpcs.selectedLayer} data deleted successfully.`);
+            await fetchExistingLayers();
+        } else {
+            toast.warning('No matching data found.');
+        }
+    } catch (error) {
+        console.error('Failed to delete layer data', error);
+        toast.error('Failed to delete layer data.');
+    }
 };
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
