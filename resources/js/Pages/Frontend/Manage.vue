@@ -331,7 +331,7 @@
                     <p class="px-4 py-2 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-cyan-900/80 to-green-100/40 backdrop-blur-lg">Note: You may now proceed to the <span class="text-2xl font-extrabold text-blue-400">Report</span> section and select <span class="text-2xl font-extrabold text-blue-400"> {{ serialNo }}</span></p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
-                    <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
+                    <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
                         <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
                     </div>
                     <!-- Side Content -->
@@ -2501,6 +2501,7 @@ const renderChart = () => {
                         x: {
                             type: "linear",
                             position: "bottom",
+                            grace: "5%",
                             grid: {
                                 color: "rgba(0, 0, 0, 0.1)",
                             },
@@ -2514,13 +2515,14 @@ const renderChart = () => {
                                 },
                             },
                             ticks: {
-                                stepSize: 2000, // adjust this value
+                                stepSize: 1000, // adjust this value
                                 display: false // disables X-axis labels
                             },
                         },
                         y: {
                             type: "linear",
                             position: "left",
+                            grace: "5%",
                             grid: {
                                 color: "rgba(0, 0, 0, 0.1)",
                             },
@@ -2534,7 +2536,7 @@ const renderChart = () => {
                                 },
                             },
                             ticks: {
-                                stepSize: 2000, // adjust this value
+                                stepSize: 1750, // adjust this value
                                 display: false // disables X-axis labels
                             },
                         },

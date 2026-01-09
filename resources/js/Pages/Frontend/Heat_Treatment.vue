@@ -2661,6 +2661,7 @@ watch(
         }
 
         await fetchExistingLayers(); // this function already sets all flags
+        checkExpiration();
     }
 );
 
