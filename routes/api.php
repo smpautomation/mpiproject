@@ -311,6 +311,7 @@ Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
 Route::get('/pattern-hours/{patternNo}', [HtGraphPatternsController::class, 'getHours']);
+Route::get('htgraph-patterns/related-lists', [HtGraphPatternsController::class, 'getAssociatedPattern']);
 
 Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);
 

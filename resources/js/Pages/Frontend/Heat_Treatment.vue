@@ -2198,14 +2198,21 @@ const getTotalBoxes = async () => {
 }
 
 const getGraphPatterns = async () => {
-    try{
-        const response = await axios.get('/api/ht-graph-patterns/');
-        const patternsList = response.data;
-        graph_patterns.value = patternsList.map(item => item.pattern_no);
-        console.log('Graph Patterns: ',graph_patterns.value);
-    }catch(error){
-        console.error('Error fetching model names', error);
+    try {
+        const response = await axios.get('/api/htgraph-patterns/related-lists', {
+            params: {
+                furnace_no: initialFurnaceData.value,
+            }
+        });
+
+        graph_patterns.value = response.data.patterns;
+
+        console.log('Graph Patterns:', graph_patterns.value);
+
+    } catch (error) {
+        console.error('Error fetching graph patterns', error);
         toast.error('Failed to get graph patterns.');
+
         await userErrorLogging(
             {
                 message: error.message,
@@ -2217,7 +2224,8 @@ const getGraphPatterns = async () => {
             "Failed to get graph patterns"
         );
     }
-}
+};
+
 
 const fetchExistingLayers = async () => {
     if (!mpcs.selectedMassProd) {

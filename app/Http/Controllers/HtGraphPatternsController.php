@@ -223,4 +223,19 @@ class HtGraphPatternsController extends Controller
         ]);
     }
 
+    public function getAssociatedPattern(Request $request)
+    {
+        $request->validate([
+            'furnace_no' => 'required|string',
+        ]);
+
+        $patterns = HtGraphPatterns::where('furnace_no', $request->furnace_no)
+            ->orderBy('pattern_no')
+            ->pluck('pattern_no');
+
+        return response()->json([
+            'patterns' => $patterns,
+        ]);
+    }
+
 }

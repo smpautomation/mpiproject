@@ -61,6 +61,9 @@
                         Pattern {{ pattern.pattern_no }}
                         </p>
                         <p class="text-xs text-gray-500 truncate">
+                        Furnace: {{ pattern.furnace_no }}
+                        </p>
+                        <p class="text-xs text-gray-500 truncate">
                         Encoded by: {{ pattern.encoded_by }}
                         </p>
                         <button
@@ -91,6 +94,7 @@
                     <!-- Pattern Info -->
                     <div class="mb-4 text-center">
                     <p class="text-lg font-semibold text-gray-800">Pattern {{ selectedPattern?.pattern_no }}</p>
+                    <p class="text-sm text-gray-500">Furnace: {{ selectedPattern?.furnace_no }}</p>
                     <p class="text-sm text-gray-500">Encoded by: {{ selectedPattern?.encoded_by }}</p>
                     <p class="text-sm text-gray-500">Hours: {{ selectedPattern?.pattern_no_hours }}</p>
                     </div>
