@@ -366,7 +366,7 @@
                     $chartFile = $nsaChartFilenames[$setNo] ?? null;
                 @endphp
                 @if ($chartFile)
-                    <div style="border: 1px solid #000; width: 480px; height: 360px; margin: 0 auto;">
+                    <div style="border: 1px solid #000; width: 480px; height: 360px; margin: 0 auto; padding-right: 20px; padding-top: 20px;">
                         <img src="{{ public_path('sec_charts/' . $chartFile) }}"
                             alt="Chart Image"
                             style="width: 100%; height: 100%; object-fit: contain;">

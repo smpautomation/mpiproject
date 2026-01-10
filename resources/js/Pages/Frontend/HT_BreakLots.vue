@@ -581,6 +581,7 @@
                             <div class="absolute bottom-0 w-0 h-1 transition-all duration-500 transform -translate-x-1/2 left-1/2 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 group-hover:w-full"></div>
                         </button>
                         <button
+                            v-if="isDataShown"
                             @click="confirmValidate()"
                             class="group relative px-10 py-4 bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 bg-[length:200%_100%] hover:bg-[length:100%_100%] text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-[0_20px_50px_rgba(20,184,166,0.5)] transition-all duration-500 transform hover:scale-105 active:scale-95 overflow-hidden border-2 border-teal-400"
                         >
@@ -1317,6 +1318,8 @@ const resetData = () => {
     validationAttempted.value = false;
     validationPassed.value = false;
 
+    isDataShown.value = false;
+
     // Optionally reset layer inputs if you are storing per-box data
     Object.keys(layerInputs).forEach(layer => {
         Object.keys(layerInputs[layer]).forEach(box => {
@@ -1390,6 +1393,7 @@ const fetchAllLotDataBoxDetails = async () => {
     }
 
     try {
+        isDataShown.value = true;
         const response = await axios.post(
             '/api/initial-control-sheets/fetch-layer-excess-data',
             {

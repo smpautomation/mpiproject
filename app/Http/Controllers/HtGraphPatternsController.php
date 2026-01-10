@@ -6,6 +6,7 @@ use App\Models\HtGraphPatterns;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\QueryException;
 
 class HtGraphPatternsController extends Controller
 {
@@ -24,29 +25,37 @@ class HtGraphPatternsController extends Controller
     {
         try {
             $validated = $request->validate([
-                'pattern_no' => 'required|integer|unique:ht_graph_patterns,pattern_no',
+                'pattern_no' => 'required|integer',
                 'pattern_no_hours' => 'nullable|numeric',
-                'furnace_no' => 'nullable|string|max:255',
+                'furnace_no' => 'required|string|max:255',
                 'encoded_by' => 'nullable|string|max:255',
             ]);
 
             $pattern = HtGraphPatterns::create($validated);
 
             return response()->json([
+                'success' => true,
                 'message' => 'Pattern created successfully.',
                 'data' => $pattern,
             ], 201);
 
         } catch (ValidationException $e) {
-            // If pattern_no already exists, return friendly JSON
-            if (isset($e->errors()['pattern_no'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (QueryException $e) {
+            // MySQL duplicate key error code = 1062
+            if (($e->errorInfo[1] ?? null) == 1062) {
                 return response()->json([
-                    'message' => 'Pattern number already exists.',
-                    'errors' => $e->errors(),
+                    'success' => false,
+                    'message' => 'This pattern number already exists for this furnace.',
                 ], 422);
             }
 
-            throw $e; // re-throw other validation errors
+            throw $e;
         }
     }
 
@@ -137,11 +146,13 @@ class HtGraphPatternsController extends Controller
         // Validate inputs
         $request->validate([
             'pattern_no' => 'required|integer',
+            'furnace_no' => 'required|string|max:255',
             'graph' => 'required|image|mimes:jpeg,jpg,png|max:2048', // max 2MB
         ]);
 
         $file = $request->file('graph');
         $patternNo = $request->input('pattern_no');
+        $furnaceNo = $request->input('furnace_no');
 
         // Ensure public folder exists
         $uploadDir = public_path('htgraph_patterns');
@@ -151,7 +162,10 @@ class HtGraphPatternsController extends Controller
 
         // Extract extension and build filename based on pattern_no
         $extension = $file->getClientOriginalExtension(); // png, jpg, jpeg
-        $filename = "pattern_{$patternNo}.{$extension}";
+        // Safe filename
+        $safeFurnace = preg_replace('/[^A-Za-z0-9_\-]/', '_', $furnaceNo);
+
+        $filename = "pattern_{$patternNo}_{$safeFurnace}.{$extension}";
 
         // Move file directly to public folder
         $file->move($uploadDir, $filename);
@@ -170,7 +184,7 @@ class HtGraphPatternsController extends Controller
             $folder = public_path('htgraph_patterns');
 
             // Scan for files starting with pattern_<pattern_no>
-            $files = glob("$folder/pattern_{$pattern->pattern_no}.{png,jpg,jpeg}", GLOB_BRACE); // matches png, jpg, jpeg
+            $files = glob("$folder/pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{png,jpg,jpeg}", GLOB_BRACE); // matches png, jpg, jpeg
             $url = count($files)
                 ? asset('htgraph_patterns/' . basename($files[0])) . '?t=' . time()
                 : null;

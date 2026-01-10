@@ -157,6 +157,8 @@ class InitialControlSheetController extends Controller
 
     public function validateLayers(Request $request)
     {
+        \Log::info('validateLayers called', ['input' => $request->all()]);
+
         $validated = $request->validate([
             'model_name'   => 'required|string|max:100',
             'lot_no'       => 'required|string|max:50',
@@ -164,12 +166,18 @@ class InitialControlSheetController extends Controller
             'excess_count' => 'required|integer|min:0',
         ]);
 
+        \Log::info('Validation passed', ['validated' => $validated]);
+
         $record = InitialControlSheet::where('model_name', $validated['model_name'])
             ->where('lot_no', $validated['lot_no'])
             ->select('layer_data', 'excess_data')
             ->first();
 
         if (!$record) {
+            \Log::info('Record not found', [
+                'model_name' => $validated['model_name'],
+                'lot_no' => $validated['lot_no']
+            ]);
             return response()->json([
                 'validated' => false,
                 'message'   => 'Record not found.',
@@ -184,19 +192,56 @@ class InitialControlSheetController extends Controller
             ? $record->excess_data
             : json_decode($record->excess_data, true);
 
+        \Log::info('Decoded layer data', ['layer_data' => $layerData]);
+        \Log::info('Decoded excess data', ['excess_data' => $excessData]);
+
+        // Count main layers
         $layerCount = 0;
         if (!empty($layerData[0]['data']) && is_array($layerData[0]['data'])) {
             $layerCount = count($layerData[0]['data']);
         }
 
+        // Count excess boxes, treat null as 0
         $excessBoxCount = 0;
         if (!empty($excessData[0]['data']) && is_array($excessData[0]['data'])) {
             $excessBoxCount = count($excessData[0]['data']);
         }
 
-        $isValid =
-            $validated['main_count'] === $layerCount &&
-            $validated['excess_count'] === $excessBoxCount;
+        \Log::info('Computed counts', [
+            'layerCount' => $layerCount,
+            'excessBoxCount' => $excessBoxCount
+        ]);
+
+        // --- New logic: borrow excess to main if main < actual ---
+        $adjustedMain = $validated['main_count'];
+        $adjustedExcess = $validated['excess_count'];
+
+        if ($adjustedMain < $layerCount) {
+            $needed = $layerCount - $adjustedMain;
+            $borrow = min($needed, $adjustedExcess);
+
+            $adjustedMain += $borrow;
+            $adjustedExcess -= $borrow;
+
+            \Log::info('Adjusted counts after borrowing excess', [
+                'adjustedMain' => $adjustedMain,
+                'adjustedExcess' => $adjustedExcess,
+                'needed' => $needed,
+                'borrowed' => $borrow
+            ]);
+        }
+
+        $isValid = ($adjustedMain === $layerCount) && ($adjustedExcess === $excessBoxCount);
+
+        \Log::info('Validation result', [
+            'isValid' => $isValid,
+            'expected_main' => $validated['main_count'],
+            'expected_excess' => $validated['excess_count'],
+            'adjusted_main' => $adjustedMain,
+            'adjusted_excess' => $adjustedExcess,
+            'actual_main' => $layerCount,
+            'actual_excess' => $excessBoxCount
+        ]);
 
         return response()->json([
             'validated'    => $isValid,
@@ -204,6 +249,7 @@ class InitialControlSheetController extends Controller
             'excess_count' => $excessBoxCount,
         ]);
     }
+
 
     public function fetchLayerExcessData(Request $request)
     {

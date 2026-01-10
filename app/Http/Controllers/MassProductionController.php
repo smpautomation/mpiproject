@@ -333,13 +333,17 @@ class MassProductionController extends Controller
             }
         }
 
-        if ($request->has('pattern_no')) {
+        if ($request->has(['pattern_no', 'furnace_no'])) {
             $patternNo = $request->input('pattern_no');
-            $pattern = \App\Models\HtGraphPatterns::where('pattern_no', $patternNo)->first();
+            $furnaceNo = $request->input('furnace_no');
+
+            $pattern = \App\Models\HtGraphPatterns::where('pattern_no', $patternNo)
+                ->where('furnace_no', $furnaceNo)
+                ->first();
 
             if ($pattern) {
                 $sourceDir = public_path("htgraph_patterns");
-                $files = glob("{$sourceDir}/pattern_{$patternNo}.{png,jpg,jpeg}", GLOB_BRACE);
+                $files = glob("{$sourceDir}/pattern_{$patternNo}_{$furnaceNo}.{png,jpg,jpeg}", GLOB_BRACE);
 
                 if (count($files)) {
                     copy($files[0], "{$baseDir}/standard/graph.png");

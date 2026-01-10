@@ -465,6 +465,7 @@ const uploadGraphFinal = async() => {
     const formData = new FormData();
     formData.append('graph', graph);
     formData.append('pattern_no', patternNo.value);
+    formData.append('furnace_no', selectedFurnace.value);
 
     try {
         const response = await axios.post('/api/ht-graph-patterns/upload-graph', formData, {
@@ -495,16 +496,20 @@ const saveToDatabase = async () => {
         await userManageLogging('created Graph Pattern no: '+ patternNo.value +' Encoded by: ' + encodedBy.value + ' successfully.');
     } catch (error) {
         if (error.response?.status === 422) {
-        const errors = error.response.data.errors;
-            if (errors.pattern_no) {
-                toast.error('This pattern number already exists.');
+            const errors = error.response.data.errors || {};
+
+            if (errors.pattern_no || errors.furnace_no) {
+                toast.error('This Pattern No + Furnace No combination already exists.');
             } else {
                 toast.error('Validation failed. Check input values.');
             }
-        console.log('Validation errors:', errors);
+
+            console.log('Validation errors:', errors);
+        } else if (error.response?.status === 404) {
+            toast.error('Pattern + Furnace combination not found.');
         } else {
-        toast.error('Failed to create Graph Pattern.');
-        console.error(error);
+            toast.error('Failed to create Graph Pattern.');
+            console.error(error);
         }
     } finally {
         await getAllPatterns();

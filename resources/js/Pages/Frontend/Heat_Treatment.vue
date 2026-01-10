@@ -3247,6 +3247,7 @@ const uploadGraphs = async () => {
 
     // Pass patternNo so backend fetches standard graph
     formData.append('pattern_no', hti.patternNo);
+    formData.append('furnace_no', hti.machine_no);
 
     try {
         const response = await axios.post(
