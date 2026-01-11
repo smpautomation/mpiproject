@@ -1096,7 +1096,7 @@
                                                     ? 'SHOW DATA FIRST'
                                                     : isGrandTotalLimitReached
                                                         ? 'LIMIT REACHED'
-                                                        : 'FINALIZE'
+                                                        : 'SUBMIT DATA'
                                     }}
                                 </span>
                             </span>
