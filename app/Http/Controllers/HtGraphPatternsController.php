@@ -160,8 +160,9 @@ class HtGraphPatternsController extends Controller
             mkdir($uploadDir, 0777, true);
         }
 
-        // Extract extension and build filename based on pattern_no
-        $extension = $file->getClientOriginalExtension(); // png, jpg, jpeg
+        // Extract extension and convert to lowercase
+        $extension = strtolower($file->getClientOriginalExtension()); // lowercase only
+
         // Safe filename
         $safeFurnace = preg_replace('/[^A-Za-z0-9_\-]/', '_', $furnaceNo);
 
@@ -177,6 +178,7 @@ class HtGraphPatternsController extends Controller
             'url' => asset("htgraph_patterns/{$filename}"),
         ], 201);
     }
+
 
     public function listGraphs()
     {

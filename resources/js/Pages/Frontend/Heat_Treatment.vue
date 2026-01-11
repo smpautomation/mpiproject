@@ -197,19 +197,19 @@
                     </div>
 
                     <!-- Group: Prepared By -->
-                    <div v-if="(isExisting || isExisting_2ndGBDP) && !isDataShown" class="flex flex-col md:flex-row md:items-start gap-4 whitespace-nowrap">
+                    <div v-if="(isExisting || isExisting_2ndGBDP) && !isDataShown" class="flex flex-col gap-4 md:flex-row md:items-start whitespace-nowrap">
                         <div v-if="!isEditingExpired" class="mt-5">
                             <!-- Clear Layer Button -->
                             <button
                                 @click="deleteLayerData()"
-                                class="flex-1 px-5 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg shadow-md transition-colors duration-200 hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                             >
                                 Clear Layer {{ mpcs.selectedLayer }} Data
                             </button>
                         </div>
                         <div v-if="!isEditingExpired" class="mt-5">
                             <!-- Warning Note -->
-                            <div class="flex-1 flex items-center gap-2 p-2 text-sm text-red-700 bg-red-100 rounded-lg shadow-md border-l-4 border-red-600">
+                            <div class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
@@ -219,7 +219,7 @@
                         </div>
                         <div v-else class="mt-5">
                             <!-- Warning Note -->
-                            <div class="flex-1 flex items-center gap-2 p-2 text-sm text-yellow-700 bg-red-100 rounded-lg shadow-md border-l-4 border-yellow-600">
+                            <div class="flex items-center flex-1 gap-2 p-2 text-sm text-yellow-700 bg-red-100 border-l-4 border-yellow-600 rounded-lg shadow-md">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
@@ -698,39 +698,57 @@
                         </div>
                     </div>
 
-                    <div
-                        v-if="isDataShown"
-                        :class="isGrandTotalLimitReached
-                            ? 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-red-50 to-rose-50 border-red-400 shadow-md shadow-red-300/40'
-                            : 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md shadow-cyan-200/40'
-                        "
-                    >
+                    <div class="flex gap-3">
+                        <!-- Current Grand Total Weight -->
                         <div
-                            :class="isGrandTotalLimitReached
-                                ? 'text-[8px] font-semibold tracking-widest uppercase text-red-700'
-                                : 'text-[8px] font-semibold tracking-widest uppercase text-teal-700'
-                            "
+                            v-if="isDataShown"
+                            class="inline-flex flex-col gap-1 px-5 py-3 border border-gray-300 shadow-md rounded-xl bg-gradient-to-br from-gray-50 to-slate-50 shadow-gray-200/40"
                         >
-                            Expected Grand Total Weight
+                            <div class="text-[8px] font-semibold tracking-widest uppercase text-gray-600">
+                                Current Grand Total Weight
+                            </div>
+
+                            <div class="text-xl font-bold leading-none text-gray-600">
+                                {{ currentTotalWeight }} (Kgs)
+                            </div>
                         </div>
 
                         <div
+                            v-if="isDataShown"
                             :class="isGrandTotalLimitReached
-                                ? 'text-xl font-bold leading-none text-red-600'
-                                : 'text-xl font-bold leading-none text-cyan-500'
+                                ? 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-red-50 to-rose-50 border-red-400 shadow-md shadow-red-300/40'
+                                : 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md shadow-cyan-200/40'
                             "
                         >
-                            {{ grandTotalWeight }}
+                            <div
+                                :class="isGrandTotalLimitReached
+                                    ? 'text-[8px] font-semibold tracking-widest uppercase text-red-700'
+                                    : 'text-[8px] font-semibold tracking-widest uppercase text-teal-700'
+                                "
+                            >
+                                Expected Grand Total Weight
+                            </div>
+
+                            <div
+                                :class="isGrandTotalLimitReached
+                                    ? 'text-xl font-bold leading-none text-red-600'
+                                    : 'text-xl font-bold leading-none text-cyan-500'
+                                "
+                            >
+                                {{ grandTotalWeight }} (Kgs)
+                            </div>
+
+                            <!-- Warning text -->
+                            <div
+                                v-if="isGrandTotalLimitReached"
+                                class="text-[8px] font-semibold tracking-wide text-red-700"
+                            >
+                                ⚠ LIMIT EXCEEDED — Max 1425
+                            </div>
                         </div>
 
-                        <!-- Warning text -->
-                        <div
-                            v-if="isGrandTotalLimitReached"
-                            class="text-[8px] font-semibold tracking-wide text-red-700"
-                        >
-                            ⚠ LIMIT EXCEEDED — Max 1425
-                        </div>
                     </div>
+
 
                 </div>
             </div>
@@ -1869,6 +1887,7 @@ const qtyDataMain = ref({});
 const qtyDataExcess = ref({});
 
 const grandTotalWeight = ref();
+const currentTotalWeight = ref();
 const grandTotalLimit = ref(1425);
 const isGrandTotalLimitReached = computed(() => {
     return Number(grandTotalWeight.value) > grandTotalLimit.value;
@@ -2075,6 +2094,13 @@ const computeTrueGrandTotal = async () => {
 
     // convert back to 2 decimals safely
     return Number((totalInt / 1000).toFixed(2));
+};
+
+const computeCurrentGrandTotal = async () => {
+    const dbTotal = await getGrandTotalWeightData();
+
+    // convert back to 2 decimals safely
+    return dbTotal;
 };
 
 const getGrandTotalWeightData = async () => {
@@ -2445,6 +2471,7 @@ const fetchAllLotDataBoxDetails = async () => {
 
             toast.info('Data loaded into table');
             grandTotalWeight.value = await computeTrueGrandTotal();
+            currentTotalWeight.value = await computeCurrentGrandTotal();
             isDataShown.value = true;
             return;
         }
@@ -2496,6 +2523,7 @@ const fetchAllLotDataBoxDetails = async () => {
 
             toast.info('Less than 10 boxes, data loaded into table');
             grandTotalWeight.value = await computeTrueGrandTotal();
+            currentTotalWeight.value = await computeCurrentGrandTotal();
             isDataShown.value = true;
             return;
         }
@@ -2623,6 +2651,7 @@ const fetchAllLotDataBoxDetails = async () => {
 
         toast.info("Loaded more than 10 boxes data");
         grandTotalWeight.value = await computeTrueGrandTotal();
+        currentTotalWeight.value = await computeCurrentGrandTotal();
         isDataShown.value = true;
 
 
