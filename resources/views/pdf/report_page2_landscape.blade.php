@@ -88,7 +88,7 @@
                 </table>
 
                 <!-- Date -->
-                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $reportDate }}</span></p>
+                <p style="margin: 0; padding-top: 5px; font-size: 12px;"><i style="font-weight: bold;">Date: </i><span>{{ $tpmData->date }}</span></p>
             </td>
 
             <!-- Center: Property Data -->
