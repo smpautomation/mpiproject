@@ -73,7 +73,7 @@
                         <!-- Validation Overlay -->
                         <div
                             v-if="validationPassed"
-                            class="absolute inset-0 z-20 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-lg pointer-events-none"
+                            class="absolute inset-0 z-20 flex items-center justify-center rounded-lg pointer-events-none bg-white/80 backdrop-blur-sm"
                         >
                             <div class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded shadow">
                                 ✅ Data has been validated — grid is locked
@@ -130,8 +130,7 @@
                                                     type="button"
                                                     @click.stop="!validationPassed && selectLayer(layer)"
                                                     :disabled="validationPassed"
-                                                    class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group
-                                                        bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 hover:shadow-md hover:scale-105 active:scale-95"
+                                                    class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 hover:shadow-md hover:scale-105 active:scale-95"
                                                     title="Select all available boxes in this layer"
                                                 >
                                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -142,8 +141,7 @@
                                                     type="button"
                                                     @click.stop="!validationPassed && unselectLayer(layer)"
                                                     :disabled="validationPassed"
-                                                    class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group
-                                                        bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-md hover:scale-105 active:scale-95"
+                                                    class="px-2 py-1 text-xs font-semibold text-white transition-all duration-200 transform rounded-md shadow-sm group bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-md hover:scale-105 active:scale-95"
                                                     title="Unselect all selected boxes in this layer"
                                                 >
                                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -215,12 +213,12 @@
                         </div>
                     </div>
 
-                    <div v-if="state.user && state.user.access_type === 'Automation'" class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm my-10">
+                    <div v-if="state.user && state.user.access_type === 'Automation'" class="p-4 my-10 bg-white border border-gray-200 rounded-lg shadow-sm">
                         <!-- Panel Header -->
-                        <h3 class="text-sm font-bold text-gray-700 mb-3">Selection Summary</h3>
+                        <h3 class="mb-3 text-sm font-bold text-gray-700">Selection Summary</h3>
 
                         <!-- Default system info -->
-                        <div v-if="!selectedCoordinates.length && !layersInvolvedUserPick.length" class="mb-4 text-sm text-gray-500 italic">
+                        <div v-if="!selectedCoordinates.length && !layersInvolvedUserPick.length" class="mb-4 text-sm italic text-gray-500">
                             No selection yet. Please pick boxes from the grid to see the summary.
                         </div>
 
@@ -330,10 +328,10 @@
                             <!-- Divider -->
                             <div class="border-t border-gray-200"></div>
 
-                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 items-start">
+                            <div class="grid items-start grid-cols-1 gap-4 mb-10 md:grid-cols-3">
 
                                 <!-- Total Boxes Card -->
-                                <div class="mt-4 w-full px-4 py-3 bg-gray-50 border-l-4 border-cyan-600 rounded-md shadow-sm flex items-center justify-between gap-2">
+                                <div class="flex items-center justify-between w-full gap-2 px-4 py-3 mt-4 border-l-4 rounded-md shadow-sm bg-gray-50 border-cyan-600">
                                     <div class="flex items-center gap-2">
                                         <!-- Icon -->
                                         <svg class="w-6 h-6 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
@@ -347,18 +345,13 @@
                                 </div>
 
                                 <!-- Buttons Column -->
-                                <div class="mt-4 w-full flex flex-col gap-3">
+                                <div class="flex flex-col w-full gap-3 mt-4">
                                     <!-- Validate Data Button -->
                                     <button
                                         v-if="!validationPassed"
                                         :disabled="!totalBoxes || !selectedCoordinates.length"
                                         @click="validateData()"
-                                        class="w-full px-5 py-3 text-sm font-semibold text-white rounded-lg shadow-md
-                                            bg-gradient-to-r from-cyan-500 to-teal-500
-                                            hover:from-cyan-400 hover:to-teal-400
-                                            active:from-cyan-600 active:to-teal-600
-                                            focus:outline-none focus:ring-2 focus:ring-cyan-300
-                                            flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="flex items-center justify-center w-full gap-2 px-5 py-3 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 active:from-cyan-600 active:to-teal-600 focus:outline-none focus:ring-2 focus:ring-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11H9v4h2V7zm0 6H9v2h2v-2z" clip-rule="evenodd"/>
@@ -370,12 +363,7 @@
                                     <button
                                         v-else
                                         @click="resetData()"
-                                        class="w-full px-5 py-3 text-sm font-semibold text-white rounded-lg shadow-md
-                                            bg-gradient-to-r from-red-500 to-pink-500
-                                            hover:from-red-400 hover:to-pink-400
-                                            active:from-red-600 active:to-pink-600
-                                            focus:outline-none focus:ring-2 focus:ring-red-300
-                                            flex items-center justify-center gap-2 transition-all duration-200"
+                                        class="flex items-center justify-center w-full gap-2 px-5 py-3 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-400 hover:to-pink-400 active:from-red-600 active:to-pink-600 focus:outline-none focus:ring-2 focus:ring-red-300"
                                     >
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -384,7 +372,7 @@
                                     </button>
 
                                     <!-- Warning Message -->
-                                    <p v-if="validationAttempted && !validationPassed" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                                    <p v-if="validationAttempted && !validationPassed" class="flex items-center gap-1 mt-1 text-xs text-red-500">
                                         <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M8.257 3.099c.366-.756 1.42-.756 1.786 0l6.518 13.462c.36.745-.08 1.639-.893 1.639H2.632c-.813 0-1.253-.894-.893-1.639L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-1-1V7a1 1 0 112 0v3a1 1 0 01-1 1z" clip-rule="evenodd"/>
                                         </svg>
@@ -393,16 +381,12 @@
                                 </div>
 
                                 <!-- Show Data Button Column -->
-                                <div class="mt-4 w-full">
+                                <div class="w-full mt-4">
                                     <button
                                         v-if="validationPassed"
+                                        :disabled="isDataShown"
                                         @click="fetchAllLotDataBoxDetails()"
-                                        class="w-full px-5 py-3 text-sm font-semibold text-white rounded-lg shadow-md
-                                            bg-gradient-to-r from-teal-500 to-cyan-500
-                                            hover:from-teal-400 hover:to-cyan-400
-                                            active:from-teal-600 active:to-cyan-600
-                                            focus:outline-none focus:ring-2 focus:ring-teal-300
-                                            flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="flex items-center justify-center w-full gap-2 px-5 py-3 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 active:from-teal-600 active:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-teal-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11H9v4h2V7zm0 6H9v2h2v-2z"/>
@@ -410,6 +394,57 @@
                                         Show Data
                                     </button>
                                 </div>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <!-- Current Grand Total Weight -->
+                                <div
+                                    v-if="isDataShown"
+                                    class="inline-flex flex-col gap-1 px-5 py-3 border border-gray-300 shadow-md rounded-xl bg-gradient-to-br from-gray-50 to-slate-50 shadow-gray-200/40"
+                                >
+                                    <div class="text-[8px] font-semibold tracking-widest uppercase text-gray-600">
+                                        Current Grand Total Weight
+                                    </div>
+
+                                    <div class="text-xl font-bold leading-none text-gray-600">
+                                        {{ currentGrandTotal }} (Kgs)
+                                    </div>
+                                </div>
+
+                                <div
+                                    v-if="isDataShown"
+                                    :class="isGrandTotalLimitReached
+                                        ? 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-red-50 to-rose-50 border-red-400 shadow-md shadow-red-300/40'
+                                        : 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md shadow-cyan-200/40'
+                                    "
+                                >
+                                    <div
+                                        :class="isGrandTotalLimitReached
+                                            ? 'text-[8px] font-semibold tracking-widest uppercase text-red-700'
+                                            : 'text-[8px] font-semibold tracking-widest uppercase text-teal-700'
+                                        "
+                                    >
+                                        Expected Grand Total Weight
+                                    </div>
+
+                                    <div
+                                        :class="isGrandTotalLimitReached
+                                            ? 'text-xl font-bold leading-none text-red-600'
+                                            : 'text-xl font-bold leading-none text-cyan-500'
+                                        "
+                                    >
+                                        {{ expectedTotalWeight }} (Kgs)
+                                    </div>
+
+                                    <!-- Warning text -->
+                                    <div
+                                        v-if="isGrandTotalLimitReached"
+                                        class="text-[8px] font-semibold tracking-wide text-red-700"
+                                    >
+                                        ⚠ LIMIT EXCEEDED — Max 1425
+                                    </div>
+                                </div>
+
                             </div>
 
 
@@ -581,7 +616,7 @@
                             <div class="absolute bottom-0 w-0 h-1 transition-all duration-500 transform -translate-x-1/2 left-1/2 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 group-hover:w-full"></div>
                         </button>
                         <button
-                            v-if="isDataShown"
+                            v-if="isDataShown && !isGrandTotalLimitReached"
                             @click="confirmValidate()"
                             class="group relative px-10 py-4 bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 bg-[length:200%_100%] hover:bg-[length:100%_100%] text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-[0_20px_50px_rgba(20,184,166,0.5)] transition-all duration-500 transform hover:scale-105 active:scale-95 overflow-hidden border-2 border-teal-400"
                         >
@@ -731,18 +766,18 @@
                         <p class="text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
                     <div v-for="layer in layersInvolvedUserPick" :key="layer">
                         <div v-if="layer !== firstLayerSelected">
-                            <h2 class="text-lg font-bold mt-8 mb-2">
+                            <h2 class="mt-8 mb-2 text-lg font-bold">
                                 Layer {{ layer }}
                             </h2>
 
                             <table class="w-full text-xs border">
                                 <thead>
                                     <tr class="bg-gray-100">
-                                        <th class="border px-2 py-1">Field</th>
+                                        <th class="px-2 py-1 border">Field</th>
                                         <th
                                             v-for="box in previewBoxes(layer)"
                                             :key="box"
-                                            class="border px-2 py-1 text-center"
+                                            class="px-2 py-1 text-center border"
                                         >{{ box }}</th>
                                     </tr>
                                 </thead>
@@ -750,88 +785,88 @@
                                 <tbody>
                                     <!-- MODEL -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Model:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Model:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box" class="px-2 py-1 text-center border">
                                             {{ mpcsbl.selectedModel }}
                                         </td>
                                     </tr>
 
                                     <!-- COATING MC NO -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Coating M/C No:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Coating M/C No:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box" class="px-2 py-1 text-center border">
                                             {{ mpcsbl.coatingMCNo }}
                                         </td>
                                     </tr>
 
                                     <!-- LOT NO -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Lot No:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Lot No:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box" class="px-2 py-1 text-center border">
                                             {{ mpcsbl.lotNo }}
                                         </td>
                                     </tr>
 
                                     <!-- QTY -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Qty (PCS):</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'q'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Qty (PCS):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'q'" class="px-2 py-1 text-center border">
                                             {{ layerInputs[layer][box]?.qty }}
                                         </td>
                                     </tr>
 
                                     <!-- HT -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">HT (PCS):</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'ht'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">HT (PCS):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'ht'" class="px-2 py-1 text-center border">
                                             {{ layerInputs[layer][box]?.ht }}
                                         </td>
                                     </tr>
 
                                     <!-- LT -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">LT (PCS):</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'lt'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">LT (PCS):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'lt'" class="px-2 py-1 text-center border">
                                             {{ layerInputs[layer][box]?.lt }}
                                         </td>
                                     </tr>
 
                                     <!-- WEIGHT -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">WT (KG):</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'wt'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">WT (KG):</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'wt'" class="px-2 py-1 text-center border">
                                             {{ layerInputs[layer][box]?.weight }}
                                         </td>
                                     </tr>
 
                                     <!-- BOX NO -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Box No.:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'bn'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Box No.:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'bn'" class="px-2 py-1 text-center border">
                                             {{ layerInputs[layer][box]?.boxNo }}
                                         </td>
                                     </tr>
 
                                     <!-- COATING -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Coating:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'ct'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Coating:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'ct'" class="px-2 py-1 text-center border">
                                             {{ mpcsbl.coating }}
                                         </td>
                                     </tr>
 
                                     <!-- MAGNET PREPARED BY -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Magnet Prepared By:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'mpb'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Magnet Prepared By:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'mpb'" class="px-2 py-1 text-center border">
                                             {{ mpcsbl.magnetPreparedBy }}
                                         </td>
                                     </tr>
 
                                     <!-- BOX PREPARED BY -->
                                     <tr>
-                                        <td class="border px-2 py-1 bg-gray-50 font-medium whitespace-nowrap">Box Prepared By:</td>
-                                        <td v-for="box in previewBoxes(layer)" :key="box + 'bpb'" class="border px-2 py-1 text-center">
+                                        <td class="px-2 py-1 font-medium border bg-gray-50 whitespace-nowrap">Box Prepared By:</td>
+                                        <td v-for="box in previewBoxes(layer)" :key="box + 'bpb'" class="px-2 py-1 text-center border">
                                             {{ mpcsbl.boxPreparedBy }}
                                         </td>
                                     </tr>
@@ -959,6 +994,12 @@ const validationAttempted = ref(false); // to track if validation has been attem
 const layers = ref([9, 8, 7, 6, 5, 4, 3, 2, 1]);
 const boxes = ['A','B','C','D','E','F','G','H','J','K'];
 const currentGridData = ref();
+const currentGrandTotal = ref();
+const expectedTotalWeight = ref();
+const grandTotalLimit = ref(1425);
+const isGrandTotalLimitReached = computed(() => {
+    return Number(expectedTotalWeight.value) > grandTotalLimit.value;
+});
 
 // Holds selected coordinates (e.g. ['9B','8D','6F'])
 const selectedCoordinates = ref([]);
@@ -1255,6 +1296,19 @@ const fetchAllLotNoData = async () => {
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 
+const getGrandTotalWeightData = async () => {
+    try{
+        const response = await axios.post('/api/mass-production/grand-total-weight', {
+            mass_prod: mpcsbl.selectedMassProd,
+            furnace: mpcsbl.selectedFurnace,
+        });
+
+        return Number(response.data.grand_total) || 0;
+
+    }catch(error){
+        console.error('Failed to get grand total weight data',error);
+    }
+}
 
 // Check if a coordinate already has data
 const isCoordinateOccupied = (layer, box) => {
@@ -1464,6 +1518,24 @@ const fetchAllLotDataBoxDetails = async () => {
                 };
             });
         });
+
+        currentGrandTotal.value = await getGrandTotalWeightData();
+
+        // ---- Helper to sum the weights in a data array ----
+        const sumWeightRow = (dataArray) => {
+            if (!dataArray?.length) return 0;
+
+            const weightRow = dataArray.find(r => normalizeTitle(r.rowTitle).includes('wt'));
+            if (!weightRow) return 0;
+
+            return Object.values(weightRow.data).reduce((sum, val) => sum + (Number(val) || 0), 0);
+        };
+
+        // ---- Compute total weights ----
+        const totalMainWeight = sumWeightRow(layer_data);
+        const totalExcessWeight = sumWeightRow(excess_data);
+
+        expectedTotalWeight.value = totalMainWeight + totalExcessWeight + currentGrandTotal.value;
 
         toast.success('Box details fetched successfully');
     } catch (error) {

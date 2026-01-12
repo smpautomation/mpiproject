@@ -2096,13 +2096,6 @@ const computeTrueGrandTotal = async () => {
     return Number((totalInt / 1000).toFixed(2));
 };
 
-const computeCurrentGrandTotal = async () => {
-    const dbTotal = await getGrandTotalWeightData();
-
-    // convert back to 2 decimals safely
-    return dbTotal;
-};
-
 const getGrandTotalWeightData = async () => {
     try{
         const response = await axios.post('/api/mass-production/grand-total-weight', {
@@ -2471,7 +2464,7 @@ const fetchAllLotDataBoxDetails = async () => {
 
             toast.info('Data loaded into table');
             grandTotalWeight.value = await computeTrueGrandTotal();
-            currentTotalWeight.value = await computeCurrentGrandTotal();
+            currentTotalWeight.value = await getGrandTotalWeightData();
             isDataShown.value = true;
             return;
         }
@@ -2523,7 +2516,7 @@ const fetchAllLotDataBoxDetails = async () => {
 
             toast.info('Less than 10 boxes, data loaded into table');
             grandTotalWeight.value = await computeTrueGrandTotal();
-            currentTotalWeight.value = await computeCurrentGrandTotal();
+            currentTotalWeight.value = await getGrandTotalWeightData();
             isDataShown.value = true;
             return;
         }
@@ -2651,7 +2644,7 @@ const fetchAllLotDataBoxDetails = async () => {
 
         toast.info("Loaded more than 10 boxes data");
         grandTotalWeight.value = await computeTrueGrandTotal();
-        currentTotalWeight.value = await computeCurrentGrandTotal();
+        currentTotalWeight.value = await getGrandTotalWeightData();
         isDataShown.value = true;
 
 
