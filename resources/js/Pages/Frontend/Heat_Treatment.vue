@@ -1944,6 +1944,7 @@ watch(
     [() => mpcs.selectedMassProd, () => mpcs.selectedFurnace],
     async ([newMassProd, newFurnace], [oldMassProd, oldFurnace]) => {
         await getMassProdData();
+        await getGraphPatterns();
     }
 );
 
