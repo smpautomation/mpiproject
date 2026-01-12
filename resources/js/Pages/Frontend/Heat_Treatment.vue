@@ -2649,8 +2649,6 @@ const fetchAllLotDataBoxDetails = async () => {
         currentTotalWeight.value = await getGrandTotalWeightData();
         isDataShown.value = true;
 
-
-
     } catch(error) {
         toast.error('Failed to fetch initial process data via lot number and model');
         console.log(error);

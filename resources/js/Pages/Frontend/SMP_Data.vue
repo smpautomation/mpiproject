@@ -379,7 +379,7 @@ const getMassProdData = async () => { //Function for getting the current selecte
     }
     try {
         const response = await axios.get(`/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}/smp-data`);
-        //console.log('Mass Production Data:', response.data);
+        console.log('Mass Production Data:', response.data);
         massProdData.value = response.data;
         if(massProdData.value.format_type == 'Film Pasting'){
             filmPastingFormat.value = true;
