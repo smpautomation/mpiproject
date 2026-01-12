@@ -2232,6 +2232,7 @@ const getGraphPatterns = async () => {
     } catch (error) {
         console.error('Error fetching graph patterns', error);
         toast.error('Failed to get graph patterns.');
+        graph_patterns.value = null;
 
         await userErrorLogging(
             {
