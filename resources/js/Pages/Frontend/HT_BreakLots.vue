@@ -1519,7 +1519,7 @@ const fetchAllLotDataBoxDetails = async () => {
             });
         });
 
-        currentGrandTotal.value = await getGrandTotalWeightData();
+        currentGrandTotal.value = Number((await getGrandTotalWeightData()).toFixed(2));
 
         // ---- Helper to sum the weights in a data array ----
         const sumWeightRow = (dataArray) => {
@@ -1535,7 +1535,9 @@ const fetchAllLotDataBoxDetails = async () => {
         const totalMainWeight = sumWeightRow(layer_data);
         const totalExcessWeight = sumWeightRow(excess_data);
 
-        expectedTotalWeight.value = totalMainWeight + totalExcessWeight + currentGrandTotal.value;
+        // ---- Combine and round ----
+        expectedTotalWeight.value = Number((totalMainWeight + totalExcessWeight + currentGrandTotal.value).toFixed(2));
+
 
         toast.success('Box details fetched successfully');
     } catch (error) {
