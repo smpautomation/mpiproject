@@ -1148,9 +1148,10 @@
 
                         <!-- APPLY 1ST 2ND GBDP Button -->
                         <button
-                        @click="second_heat_treatment()"
-                        :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected) || isExisting_2ndGBDP"
-                        class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 hover:shadow-orange-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-600 disabled:hover:to-amber-600 overflow-hidden"
+                            v-if="!overwriteMode"
+                            @click="second_heat_treatment()"
+                            :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected) || isExisting_2ndGBDP"
+                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 hover:shadow-orange-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-600 disabled:hover:to-amber-600 overflow-hidden"
                         >
                         <div class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
                         <span class="relative flex items-center justify-center space-x-2">
@@ -1163,8 +1164,9 @@
 
                         <!-- GRAPH PATTERNS Button -->
                         <button
-                        @click="Inertia.visit('ht_graph_patterns')"
-                        class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 hover:shadow-emerald-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400 focus:ring-opacity-50 overflow-hidden"
+                            v-if="!overwriteMode"
+                            @click="Inertia.visit('ht_graph_patterns')"
+                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 hover:shadow-emerald-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400 focus:ring-opacity-50 overflow-hidden"
                         >
                         <div class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
                         <span class="relative flex items-center justify-center space-x-2">
@@ -1178,6 +1180,7 @@
                         <!-- CLEAR ALL Button -->
                         <button
                         @click="clearAll()"
+                        v-if="!overwriteMode"
                         class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-slate-600 to-gray-700 hover:from-slate-500 hover:to-gray-600 hover:shadow-gray-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50 overflow-hidden"
                         >
                         <div class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
@@ -3152,6 +3155,9 @@ const formatLayerDataForDatabase = (boxes, isExcess = false) => {
 const cancelOverwrite = () => {
     overwriteMode.value = false;
     heatTreatmentInformationDetected.value = false;
+    mpcs.selectedFurnace = null;
+    mpcs.selectedMassProd = null;
+    mpcs.selectedLayer = null;
     clearAllAfterSave();
 }
 
@@ -3201,6 +3207,7 @@ const overwriteDatabase = async () => {
             await userManageLogging('overwritten '+ mpcs.selectedMassProd +' Control Sheet Layer: ' + mpcs.selectedLayer + ' successfully.');
         }
         showModalCreate.value = false;
+        heatTreatmentInformationDetected.value = false;
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to overwrite data. Please try again.');
@@ -3264,7 +3271,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
 }
 
 const uploadGraphs = async () => {
-    if (!mpcs.selectedMassProd) return;
+    if (!mpcs.selectedMassProd || !mpcs.selectedFurnace) return;
 
     const formData = new FormData();
 
@@ -3277,7 +3284,9 @@ const uploadGraphs = async () => {
 
     // Pass patternNo so backend fetches standard graph
     formData.append('pattern_no', hti.patternNo);
-    formData.append('furnace_no', hti.machine_no);
+    formData.append('furnace_no', hti.machine_no ?? mpcs.selectedFurnace);
+
+    console.log("Furnace: ", mpcs.selectedFurnace, " Mass Prod: ", mpcs.selectedMassProd);
 
     try {
         const response = await axios.post(
@@ -3291,7 +3300,7 @@ const uploadGraphs = async () => {
         toast.success('Graphs uploaded successfully!');
     } catch (error) {
         console.error('Error uploading graphs:', error);
-        toast.error('Failed to upload graphs. Please try again.');
+        toast.error('Failed to upload graphs. Please try again. Furnace: ', mpcs.selectedFurnace , 'Mass prod: ', mpcs.selectedMassProd);
         await userErrorLogging(
             {
                 message: error.message,

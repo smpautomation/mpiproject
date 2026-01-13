@@ -337,16 +337,45 @@ class MassProductionController extends Controller
             $patternNo = $request->input('pattern_no');
             $furnaceNo = $request->input('furnace_no');
 
+            \Log::info('Attempting to fetch HT graph pattern', [
+                'pattern_no' => $patternNo,
+                'furnace_no' => $furnaceNo
+            ]);
+
             $pattern = \App\Models\HtGraphPatterns::where('pattern_no', $patternNo)
                 ->where('furnace_no', $furnaceNo)
                 ->first();
 
-            if ($pattern) {
+            if (!$pattern) {
+                \Log::warning('No HT graph pattern found', [
+                    'pattern_no' => $patternNo,
+                    'furnace_no' => $furnaceNo
+                ]);
+            } else {
                 $sourceDir = public_path("htgraph_patterns");
+                \Log::info('Looking for pattern files in directory', ['sourceDir' => $sourceDir]);
+
                 $files = glob("{$sourceDir}/pattern_{$patternNo}_{$furnaceNo}.{png,jpg,jpeg}", GLOB_BRACE);
 
-                if (count($files)) {
-                    copy($files[0], "{$baseDir}/standard/graph.png");
+                if (count($files) === 0) {
+                    \Log::warning('No pattern files found matching glob', [
+                        'glob' => "{$sourceDir}/pattern_{$patternNo}_{$furnaceNo}.{png,jpg,jpeg}"
+                    ]);
+                } else {
+                    \Log::info('Pattern files found', ['files' => $files]);
+                    $destination = "{$baseDir}/standard/graph.png";
+
+                    if (copy($files[0], $destination)) {
+                        \Log::info('Standard graph copied successfully', [
+                            'source' => $files[0],
+                            'destination' => $destination
+                        ]);
+                    } else {
+                        \Log::error('Failed to copy standard graph', [
+                            'source' => $files[0],
+                            'destination' => $destination
+                        ]);
+                    }
                 }
             }
         }
