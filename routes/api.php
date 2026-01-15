@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HtMassProDataController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TPMDataController;
 use App\Http\Controllers\FurnaceDataController;
@@ -307,6 +308,9 @@ Route::patch('/mass-production/{furnace}/{massprod}', [MassProductionController:
 Route::post('/mass-production/{furnace}/{massprod}/upload-graphs', [MassProductionController::class, 'uploadGraphs']);
 
 Route::get('/reports/{serial}/generate-and-save', [BackEndPdfController::class, 'apiGenerateAndSave']);
+
+Route::post('/upload-htmasspro-excel', [HtMassProDataController::class, 'upload']);
+Route::get('/check-latest-masspro-upload', [HtMassProDataController::class, 'checkLatestUpload']);
 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);

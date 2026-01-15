@@ -125,63 +125,203 @@
             </div>
         </div>
 
-        <div class="flex flex-row">
-            <!--
-                <div class="max-w-2xl p-6 mt-10 mr-10 bg-white rounded-lg shadow-md">
-                    Upload HT Mass Pro
-                </div>
-            -->
+        <!-- Modern HT Mass Pro Dashboard - Compact Version -->
+        <div class="flex flex-row gap-10">
 
+            <!-- Upload Card -->
+            <div class="max-w-2xl mx-auto p-8 mt-10 bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-cyan-500 relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-cyan-100 to-teal-100 rounded-full -mr-20 -mt-20 opacity-50"></div>
 
-            <div class="max-w-2xl p-6 mt-10 bg-white rounded-lg shadow-md">
-                <!-- Header Section -->
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <!-- Header -->
+                <div class="relative flex items-center gap-3 mb-8">
+                    <div class="p-3 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
-                        <h3 class="text-lg font-semibold text-gray-800">Monthly Data Summary</h3>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">
+                            Upload HT Mass Pro
+                        </h3>
+                        <p class="text-slate-500 text-sm">Import your production data</p>
+                    </div>
+                </div>
+
+                <form @submit.prevent="submitExcelUpload" class="relative space-y-6">
+                    <!-- File Input -->
+                    <div class="space-y-2">
+                        <label for="file" class="block text-sm font-bold text-slate-700 uppercase tracking-wide">
+                            Excel File
+                        </label>
+                        <input
+                            id="file"
+                            type="file"
+                            accept=".xlsx,.xls,.csv"
+                            @change="handleExcelFile"
+                            class="block w-full text-slate-700 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-cyan-500 file:to-teal-500 file:text-white hover:file:from-cyan-600 hover:file:to-teal-600 file:cursor-pointer file:transition-all file:duration-300 file:shadow-md hover:file:shadow-lg border-2 border-dashed border-slate-300 hover:border-cyan-400 rounded-xl p-3 transition-all duration-300 cursor-pointer bg-slate-50 hover:bg-cyan-50/50"
+                        />
+                        <div class="flex items-start gap-2 p-3 bg-cyan-50 border-l-4 border-cyan-400 rounded-lg">
+                            <svg class="w-4 h-4 text-cyan-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-xs text-cyan-800">
+                                Select your Excel file (.xlsx). Make sure it is not password-protected.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button with Loader -->
+                    <button
+                        type="submit"
+                        :disabled="isUploadLoading"
+                        class="w-full relative group bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white font-bold rounded-xl px-6 py-3.5 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        <!-- Loader -->
+                        <svg v-if="isUploadLoading" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+
+                        <!-- Button Text -->
+                        <span class="relative flex items-center justify-center gap-2">
+                            <svg v-if="!isUploadLoading" class="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <span>{{ isUploadLoading ? 'Uploading...' : 'Upload File' }}</span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Monthly Summary Card -->
+            <div class="max-w-2xl mx-auto p-8 mt-10 bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-teal-500 relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full -mr-20 -mt-20 opacity-50"></div>
+
+                <!-- Header Section -->
+                <div class="relative flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                                Monthly Summary
+                            </h3>
+                            <p class="text-slate-500 text-sm">Generate reports</p>
+                        </div>
                     </div>
 
                     <button
                         @click="downloadCsvMonthlySummary"
-                        class="flex items-center gap-2 px-4 py-2 font-medium text-white transition-colors duration-200 bg-green-600 rounded-lg shadow-sm hover:bg-green-700 hover:shadow-md">
+                        class="flex items-center gap-2 px-4 py-2.5 font-semibold text-white transition-all duration-300 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Download Excel
+                        Download
                     </button>
                 </div>
 
+                <!-- Latest Upload Highlight -->
+                <div class="relative mb-6 p-4 rounded-xl shadow-sm"
+                    :class="latestUploadDate && latestUploadCode
+                            ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-l-4 border-teal-500'
+                            : 'bg-gray-100 border-l-4 border-gray-400'">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5" :class="latestUploadDate && latestUploadCode ? 'text-teal-600' : 'text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    :d="latestUploadDate && latestUploadCode
+                                        ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                                        : 'M6 18L18 6M6 6l12 12'" />
+                            </svg>
+                            <span :class="latestUploadDate && latestUploadCode ? 'text-teal-800 font-bold' : 'text-gray-600 font-medium'" class="text-sm">
+                                Latest Upload
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <template v-if="latestUploadDate && latestUploadCode">
+                                <span class="bg-white text-teal-700 font-semibold px-3 py-1.5 rounded-lg shadow-sm border border-teal-200 text-sm">
+                                    {{ latestUploadDate }}
+                                </span>
+                                <span class="bg-white text-cyan-700 font-semibold px-3 py-1.5 rounded-lg shadow-sm border border-cyan-200 text-sm">
+                                    {{ latestUploadCode }}
+                                </span>
+                            </template>
+
+                            <template v-else>
+                                <span class="text-gray-500 italic text-sm">No upload data available yet</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- Selection Section -->
-                <div class="flex flex-wrap gap-4">
+                <div class="relative flex flex-wrap gap-4 mb-4">
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block mb-2 text-sm font-medium text-gray-700">
+                        <label class="mb-2 text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                             Month
                         </label>
-                        <select
-                            v-model="selectedMonth"
-                            class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 cursor-pointer hover:border-gray-400">
-                            <option v-for="(month, index) in months" :key="index" :value="index + 1">
-                                {{ month }}
-                            </option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                v-model="selectedMonth"
+                                class="w-full appearance-none px-4 py-2.5 bg-white border-2 border-slate-200 hover:border-cyan-400 focus:border-cyan-500 rounded-lg focus:ring-2 focus:ring-cyan-100 transition-all duration-300 cursor-pointer text-slate-700 font-semibold shadow-sm hover:shadow-md">
+                                <option v-for="(month, index) in months" :key="index" :value="index + 1">
+                                    {{ month }}
+                                </option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block mb-2 text-sm font-medium text-gray-700">
+                        <label class="block mb-2 text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             Year
                         </label>
-                        <select
-                            v-model="selectedYear"
-                            class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 cursor-pointer hover:border-gray-400">
-                            <option v-for="year in years" :key="year" :value="year">
-                                {{ year }}
-                            </option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                v-model="selectedYear"
+                                class="w-full appearance-none px-4 py-2.5 bg-white border-2 border-slate-200 hover:border-teal-400 focus:border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-100 transition-all duration-300 cursor-pointer text-slate-700 font-semibold shadow-sm hover:shadow-md">
+                                <option v-for="year in years" :key="year" :value="year">
+                                    {{ year }}
+                                </option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Info Text -->
+                <div class="relative flex items-start gap-2 p-3 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-lg border-l-4 border-cyan-400">
+                    <svg class="w-4 h-4 text-cyan-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-xs text-cyan-800 leading-relaxed">
+                        Select the month and year to generate the summary. Download the Excel after reviewing.
+                    </p>
+                </div>
             </div>
+
         </div>
 
         <!-- Modal -->
@@ -387,6 +527,11 @@ const userErrorLogging = async (details, triggerFunction, title) => {
     }
 }
 
+const isUploadLoading = ref(false);
+
+const latestUploadCode = ref(null);
+const latestUploadDate = ref(null);
+
 const showModalCreate = ref(false);
 const showConfirmation = ref(false);
 const loadingState = ref(false);
@@ -413,6 +558,35 @@ const dateTo = ref('');
 const searchQuery = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 5;
+
+const excelFile = ref(null)
+
+// Handle file selection
+function handleExcelFile(e) {
+    excelFile.value = e.target.files[0] || null;
+}
+
+// Submit handler
+const submitExcelUpload = async () => {
+    if (!excelFile.value) return toast.error('Please select an Excel file');
+
+    const formData = new FormData();
+    formData.append('file', excelFile.value);
+
+    try {
+        isUploadLoading.value = true;
+        const res = await axios.post('/api/upload-htmasspro-excel', formData);
+        toast.success(res.data.message || 'Upload successful');
+        await checkLatestUpload();
+    } catch (err) {
+        console.error(err);
+        const msg = err.response?.data?.message || 'Upload failed';
+        toast.error(msg);
+    } finally {
+        isUploadLoading.value = false;
+    }
+}
+
 
 const getMassProdData = async () => {
     try {
@@ -616,6 +790,26 @@ const saveToDatabase = async () => {
     }
 };
 
+const checkLatestUpload = async () => {
+    try {
+        const { data } = await axios.get('/api/check-latest-masspro-upload');
+
+        if (data?.data) {
+            latestUploadDate.value = data.data.upload_date || 'N/A';
+            latestUploadCode.value = data.data.upload_code || 'N/A';
+        } else {
+            latestUploadDate.value = 'N/A';
+            latestUploadCode.value = 'N/A';
+        }
+
+    } catch (error) {
+        console.error('Failed to fetch the latest mass prod upload', error);
+        latestUploadDate.value = 'N/A';
+        latestUploadCode.value = 'N/A';
+        toast.error('Failed to fetch the latest mass prod upload');
+    }
+};
+
 const downloadCsvMonthlySummary = async () => {
     try {
         const month = selectedMonth.value;
@@ -654,6 +848,7 @@ onMounted(async () => {
     await checkAuthentication();
     await getMassProdData();
     await getFurnaceLists();
+    await checkLatestUpload();
     const currentYear = new Date().getFullYear();
     for (let y = currentYear; y >= 2020; y--) {
         years.value.push(y);

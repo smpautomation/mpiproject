@@ -8,6 +8,7 @@ use App\Models\GbdpSecondHeatTreatment;
 use App\Models\FilmPastingData;
 use App\Models\Coating;
 use App\Models\TPMData;
+use App\Models\HtMassProData;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\SmpData;
@@ -1166,8 +1167,8 @@ class MassProductionController extends Controller
         $year  = $request->input('year');  // e.g., 2025
 
         $records = MassProduction::whereMonth('estimated_completion', $month)
-                                 ->whereYear('estimated_completion', $year)
-                                 ->get();
+                                ->whereYear('estimated_completion', $year)
+                                ->get();
 
         if ($records->isEmpty()) {
             return response()->json([]);
@@ -1214,14 +1215,30 @@ class MassProductionController extends Controller
 
                     $beforeGbdpWt = $wtRow ? array_sum($wtRow['data']) : 0;
 
+                    $modelName = $modelRow ? $modelRow['data']['A'] : null;
+
+                    // Lookup HT Mass Pro Data for this model
+                    $htData = HtMassProData::where('model_name', $modelName)->latest('id')->first();
+
+                    $productWeight = $htData ? $htData->product_weight : 0;
+                    $secondSl      = $htData ? $htData->{'2nd_sl'} : 0;
+                    $htQty         = $htData ? $htData->qty : 0;
+                    $qty           = $qtyRow ? $qtyRow['data']['A'] : 0;
+
+                    // AFTER GBDP WT calculation
+                    $afterGbdpWt = ($qty * $productWeight * $secondSl) / 1_000_000;
+
+                    // EQUIVALENT LOTS calculation
+                    $equivalentLots = $qty * $htQty;
+
                     $excelData[] = array_merge($baseRow, [
-                        'MODEL NAME'       => $modelRow ? $modelRow['data']['A'] : null,
-                        'LOT'              => $lotRow   ? $lotRow['data']['A']   : null,
-                        'QTY'              => $qtyRow   ? $qtyRow['data']['A']   : null,
+                        'MODEL NAME'       => $modelName,
+                        'LOT'              => $lotRow   ? $lotRow['data']['A'] : null,
+                        'QTY'              => $qty,
                         'BEFORE GBDP WT'   => $beforeGbdpWt,
-                        'AFTER GBDP WT'    => null, // to calculate later
+                        'AFTER GBDP WT'    => $afterGbdpWt,
                         'LAYER'            => $layerLabels[$layerKey] ?? null,
-                        'EQUIVALENT LOTS'  => null, // to calculate later
+                        'EQUIVALENT LOTS'  => $equivalentLots,
                     ]);
                 }
             }
@@ -1229,6 +1246,7 @@ class MassProductionController extends Controller
 
         return $excelData;
     }
+
 
     public function getMonthlySummary(Request $request)
     {
