@@ -2278,7 +2278,7 @@
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }
                 if(ngiHciHk.value > 0) {
-                    rejectOKNG.value.push("HciHk " + hold + "  ");
+                    rejectOKNG.value.push("iHciHk " + hold + "  ");
                     addRejectLotRemarks(lotHold);
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }

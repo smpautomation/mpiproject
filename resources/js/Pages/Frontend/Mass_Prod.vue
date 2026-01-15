@@ -128,90 +128,84 @@
         <!-- Modern HT Mass Pro Dashboard - Compact Version -->
         <div class="flex flex-row gap-10">
 
-            <!-- Upload Card -->
-            <div class="max-w-2xl mx-auto p-8 mt-10 bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-cyan-500 relative overflow-hidden">
-                <!-- Decorative Elements -->
-                <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-cyan-100 to-teal-100 rounded-full -mr-20 -mt-20 opacity-50"></div>
-
-                <!-- Header -->
-                <div class="relative flex items-center gap-3 mb-8">
-                    <div class="p-3 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl shadow-lg">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">
-                            Upload HT Mass Pro
-                        </h3>
-                        <p class="text-slate-500 text-sm">Import your production data</p>
-                    </div>
-                </div>
-
-                <form @submit.prevent="submitExcelUpload" class="relative space-y-6">
-                    <!-- File Input -->
-                    <div class="space-y-2">
-                        <label for="file" class="block text-sm font-bold text-slate-700 uppercase tracking-wide">
-                            Excel File
-                        </label>
-                        <input
-                            id="file"
-                            type="file"
-                            accept=".xlsx,.xls,.csv"
-                            @change="handleExcelFile"
-                            class="block w-full text-slate-700 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-cyan-500 file:to-teal-500 file:text-white hover:file:from-cyan-600 hover:file:to-teal-600 file:cursor-pointer file:transition-all file:duration-300 file:shadow-md hover:file:shadow-lg border-2 border-dashed border-slate-300 hover:border-cyan-400 rounded-xl p-3 transition-all duration-300 cursor-pointer bg-slate-50 hover:bg-cyan-50/50"
-                        />
-                        <div class="flex items-start gap-2 p-3 bg-cyan-50 border-l-4 border-cyan-400 rounded-lg">
-                            <svg class="w-4 h-4 text-cyan-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <!--
+                <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 shadow-xl rounded-2xl hover:shadow-2xl border-cyan-500">
+                    <div class="absolute top-0 right-0 w-40 h-40 -mt-20 -mr-20 rounded-full opacity-50 bg-gradient-to-br from-cyan-100 to-teal-100"></div>
+                    <div class="relative flex items-center gap-3 mb-8">
+                        <div class="p-3 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            <p class="text-xs text-cyan-800">
-                                Select your Excel file (.xlsx). Make sure it is not password-protected.
-                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text">
+                                Upload HT Mass Pro
+                            </h3>
+                            <p class="text-sm text-slate-500">Import your production data</p>
                         </div>
                     </div>
 
-                    <!-- Submit Button with Loader -->
-                    <button
-                        type="submit"
-                        :disabled="isUploadLoading"
-                        class="w-full relative group bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white font-bold rounded-xl px-6 py-3.5 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                        <!-- Loader -->
-                        <svg v-if="isUploadLoading" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                        </svg>
+                    <form @submit.prevent="submitExcelUpload" class="relative space-y-6">
+                        <div class="space-y-2">
+                            <label for="file" class="block text-sm font-bold tracking-wide uppercase text-slate-700">
+                                Excel File
+                            </label>
+                            <input
+                                id="file"
+                                type="file"
+                                accept=".xlsx,.xls,.csv"
+                                @change="handleExcelFile"
+                                class="block w-full text-slate-700 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-cyan-500 file:to-teal-500 file:text-white hover:file:from-cyan-600 hover:file:to-teal-600 file:cursor-pointer file:transition-all file:duration-300 file:shadow-md hover:file:shadow-lg border-2 border-dashed border-slate-300 hover:border-cyan-400 rounded-xl p-3 transition-all duration-300 cursor-pointer bg-slate-50 hover:bg-cyan-50/50"
+                            />
+                            <div class="flex items-start gap-2 p-3 border-l-4 rounded-lg bg-cyan-50 border-cyan-400">
+                                <svg class="w-4 h-4 text-cyan-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="text-xs text-cyan-800">
+                                    Select your Excel file (.xlsx). Make sure it is not password-protected.
+                                </p>
+                            </div>
+                        </div>
 
-                        <!-- Button Text -->
-                        <span class="relative flex items-center justify-center gap-2">
-                            <svg v-if="!isUploadLoading" class="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        <button
+                            type="submit"
+                            :disabled="isUploadLoading"
+                            class="w-full relative group bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white font-bold rounded-xl px-6 py-3.5 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            <svg v-if="isUploadLoading" class="absolute w-5 h-5 text-white -translate-y-1/2 left-4 top-1/2 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                             </svg>
-                            <span>{{ isUploadLoading ? 'Uploading...' : 'Upload File' }}</span>
-                        </span>
-                    </button>
-                </form>
-            </div>
+
+                            <span class="relative flex items-center justify-center gap-2">
+                                <svg v-if="!isUploadLoading" class="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                <span>{{ isUploadLoading ? 'Uploading...' : 'Upload File' }}</span>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            -->
 
             <!-- Monthly Summary Card -->
-            <div class="max-w-2xl mx-auto p-8 mt-10 bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-teal-500 relative overflow-hidden">
+            <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 border-teal-500 shadow-xl rounded-2xl hover:shadow-2xl">
                 <!-- Decorative Elements -->
-                <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full -mr-20 -mt-20 opacity-50"></div>
+                <div class="absolute top-0 right-0 w-40 h-40 -mt-20 -mr-20 rounded-full opacity-50 bg-gradient-to-br from-teal-100 to-cyan-100"></div>
 
                 <!-- Header Section -->
                 <div class="relative flex items-center justify-between mb-6">
                     <div class="flex items-center gap-3">
-                        <div class="p-3 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl shadow-lg">
+                        <div class="p-3 shadow-lg bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                            <h3 class="text-2xl font-bold text-transparent bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text">
                                 Monthly Summary
                             </h3>
-                            <p class="text-slate-500 text-sm">Generate reports</p>
+                            <p class="text-sm text-slate-500">Generate reports</p>
                         </div>
                     </div>
 
@@ -226,12 +220,12 @@
                 </div>
 
                 <!-- Latest Upload Highlight -->
-                <div class="relative mb-6 p-4 rounded-xl shadow-sm"
+                <div class="relative p-4 mb-6 shadow-sm rounded-xl"
                     :class="latestUploadDate && latestUploadCode
                             ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-l-4 border-teal-500'
                             : 'bg-gray-100 border-l-4 border-gray-400'">
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5" :class="latestUploadDate && latestUploadCode ? 'text-teal-600' : 'text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -240,7 +234,7 @@
                                         : 'M6 18L18 6M6 6l12 12'" />
                             </svg>
                             <span :class="latestUploadDate && latestUploadCode ? 'text-teal-800 font-bold' : 'text-gray-600 font-medium'" class="text-sm">
-                                Latest Upload
+                                Latest HT Mass Pro Upload
                             </span>
                         </div>
 
@@ -255,7 +249,7 @@
                             </template>
 
                             <template v-else>
-                                <span class="text-gray-500 italic text-sm">No upload data available yet</span>
+                                <span class="text-sm italic text-gray-500">No upload data available yet</span>
                             </template>
                         </div>
                     </div>
@@ -312,11 +306,11 @@
                 </div>
 
                 <!-- Info Text -->
-                <div class="relative flex items-start gap-2 p-3 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-lg border-l-4 border-cyan-400">
+                <div class="relative flex items-start gap-2 p-3 border-l-4 rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-400">
                     <svg class="w-4 h-4 text-cyan-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p class="text-xs text-cyan-800 leading-relaxed">
+                    <p class="text-xs leading-relaxed text-cyan-800">
                         Select the month and year to generate the summary. Download the Excel after reviewing.
                     </p>
                 </div>
@@ -683,6 +677,10 @@ const prevPage = () => {
     currentPage.value--
   }
 }
+
+watch([searchQuery, dateFrom, dateTo], () => {
+    currentPage.value = 1;
+});
 
 const viewControlSheet = (massprod, furnace) => {
     Inertia.visit('/control_sheet',{
