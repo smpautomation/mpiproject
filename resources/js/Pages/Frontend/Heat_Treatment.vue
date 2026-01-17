@@ -198,7 +198,7 @@
 
                     <!-- Group: Prepared By -->
                     <div v-if="(isExisting || isExisting_2ndGBDP) && !isDataShown" class="flex flex-col gap-4 md:flex-row md:items-start whitespace-nowrap">
-                        <div v-if="!isEditingExpired" class="mt-5">
+                        <div v-if="!isEditingExpired || (state.user && state.user.access_type == 'Automation')" class="mt-5">
                             <!-- Clear Layer Button -->
                             <button
                                 @click="deleteLayerData()"

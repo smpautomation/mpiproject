@@ -85,10 +85,10 @@ class TxtExportService
                             $rowData['MODEL_NAME'] = $data;
                             break;
                         case 'coatingmcno':
-                            $rowData['COATING_MC_NO'] = $data;
+                            $rowData['COATING_MC_NO'] = $this->normalizeCoatingMcNo($data);
                             break;
                         case 'ltno':
-                            $rowData['LOT_NO'] = $data;
+                            $rowData['LOT_NO'] = $this->normalizeLotNo($data);
                             break;
                         case 'qty(pcs)':
                             $rowData['QTY'] = $data;
@@ -155,6 +155,58 @@ class TxtExportService
         return "";
     }
 
+    private function normalizeCoatingMcNo($value)
+    {
+        if (!$value) return '0';
+
+        $value = strtoupper(trim($value));
+
+        // Match: letters + optional dash + numbers
+        if (preg_match('/^([A-Z]+)-?(\d+)$/', $value, $m)) {
+            $prefix = $m[1];
+            $number = str_pad($m[2], 3, '0', STR_PAD_LEFT);
+
+            return $prefix . $number;
+        }
+
+        // Fallback: just remove dash
+        return str_replace('-', '', $value);
+    }
+
+    private function extractLeadingNumber($value)
+    {
+        if (preg_match('/(\d+)/', $value, $m)) {
+            return (int) $m[1];
+        }
+
+        return null;
+    }
+
+    private function normalizeLotNo($value)
+    {
+        if (!$value) return '0';
+
+        $value = trim($value);
+
+        // If no slash, return as-is
+        if (!str_contains($value, '/')) {
+            return $value;
+        }
+
+        [$a, $b] = explode('/', $value, 2);
+
+        // Extract numeric part for comparison
+        $numA = $this->extractLeadingNumber($a);
+        $numB = $this->extractLeadingNumber($b);
+
+        // If can't parse, fallback
+        if ($numA === null || $numB === null) {
+            return $a; // safe fallback
+        }
+
+        return $numA <= $numB ? trim($a) : trim($b);
+    }
+
 
     public function exportData2(string $furnace_no, string $massPro)
     {
@@ -204,7 +256,7 @@ class TxtExportService
             $reportData = $layerSerial ? ReportData::where('tpm_data_serial', $layerSerial)->first() : null;
             $coating = $layerSerial ? Coating::where('mass_prod', $massPro)->where('layer', $layerKey === 'T' ? 9.5 : $layerKey)->first() : null;
 
-            // dd($layerKey, $layerSerial, $tpmRow, $reportData, $coating);
+            //dd($layerKey, $layerSerial, $tpmRow, $reportData, $coating);
 
             // Extract model, material, qty from JSON
             $modelCodeValue = '0';
@@ -298,10 +350,10 @@ class TxtExportService
             return 'No data found.';
         }
 
-        // Clean furnace_no (remove hyphen if any)
+        // Clean furnace_no
         $furnace_no = str_replace('-', '', $furnace_no);
 
-        // Step 2: Fetch TPM data with relations and mass_prod filter
+        // Step 2: Fetch TPM data
         $tpmData = TpmData::with('remark', 'category')
             ->where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
             ->where('date', $dateToGet)
@@ -312,67 +364,92 @@ class TxtExportService
             return 'No data found.';
         }
 
-        $firstItem = $tpmData->first();
-
-        // Excluded fields from base attributes
-        $excludeFields = [
-            'id','created_at','updated_at','serial_no','x','y','furnace_id',
-            'temperature','data_status','order_no','Density','HRX','MRX','HRY','MRY',
-            'IHKA','MRA','IHKB','MRB','IHKC','MRC','HR','HRO'
-        ];
-
-        $baseAttributes = collect($firstItem->getAttributes())
-            ->except($excludeFields)
-            ->keys();
-
-        $remarkAttributes = $firstItem->remark
-            ? collect($firstItem->remark->getAttributes())
-                ->except(['id','created_at','updated_at'])
-                ->keys()
-            : collect();
-
-        $fixedFront = [
-            'layer_no','lot_no','date','code_no','type','press_1','press_2',
-            'machine_no','sintering_furnace_no','furnace_no','zone','pass_no','hd5'
-        ];
-
-        $customOrder = [
-            'Br','Br_remarks','iHc','iHc_remarks','iHk','iHk_remarks',
-            'BHMax','BHMax_remarks','iHr95','iHr95_remarks','iHr98','iHr98_remarks',
-            'iHkiHc','iHkiHc_remarks','Br4pai','Br4pai_remarks','bHc','bHc_remarks',
-            'Squareness','Squareness_remarks','4paiId','4paiId_remarks',
-            '4paiIs','4paiIs_remarks','4paiIa','4paiIa_remarks','Tracer'
-        ];
-
-        $allKeys = collect($baseAttributes)
-            ->map(fn($key) => [$key, "{$key}_remarks"])
-            ->flatten()
-            ->merge($remarkAttributes)
-            ->unique()
-            ->values()
-            ->all();
-
-        $headersFixed = $fixedFront;
-        $headersCustom = array_intersect($customOrder, $allKeys);
-        $headers = array_merge($headersFixed, $headersCustom);
-
-        // Group data by layer_no
-        $groupedByLayer = $tpmData->groupBy(fn($item) => (float) $item->layer_no);
-
-        // --- hd5 support: load MassProduction for layer_serial lookup ---
+        // --- hd5 support ---
         $massProdData = MassProduction::where('mass_prod', $massPro)->first();
         if (!$massProdData) {
             return 'Mass production data not found.';
         }
 
+        $cycleNo = $massProdData->cycle_no ?? '0';
+
+        // Group data by layer_no
+        $groupedByLayer = $tpmData->groupBy(fn($item) => (float) $item->layer_no);
+
+        /*
+        |--------------------------------------------------------------------------
+        | EXPORT SCHEMA — THIS DEFINES THE FILE FORMAT
+        |--------------------------------------------------------------------------
+        */
+        $schema = [
+
+            // ---- FIXED FRONT ----
+            'LAYER' => fn($item, $ctx) => $ctx['layer'],
+            'DATE'     => fn($item) => $item->date ?? '0',
+            'MODEL_CODE'  => fn($item) => $item->code_no ?? '0',
+            'MATERIAL_GRADE'     => fn($item) => $item->type ?? '0',
+            'LOT_NO'  => fn($item) => $item->press_1 ?? '0',
+            'MC_NO' => fn($item) => $item->machine_no ?? '0',
+            'FURNACE_MC_NO' => fn($item) => $item->sintering_furnace_no ?? '0',
+            'CYCLE_NO' => fn($item) => $cycleNo,
+            'COATING_MC_NO' => fn($item) => $item->furnace_no ?? '0',
+            'ZONE' => fn($item) => $item->zone ?? '0',
+            'PASS_NO' => fn($item) => $item->pass_no ?? '0',
+            'HD5' => fn($item, $ctx) => $ctx['hd5'] ?? '0',
+
+            // ---- CUSTOM ORDER ----
+            'BR' => fn($item) => $item->Br ?? '0',
+            'BR_REMARKS' => fn($item) => $item->remark->Br_remarks ?? '0',
+
+            'IHC' => fn($item) => $item->iHc ?? '0',
+            'IHC_REMARKS' => fn($item) => $item->remark->iHc_remarks ?? '0',
+
+            'IHK' => fn($item) => $item->iHk ?? '0',
+            'IHK_REMARKS' => fn($item) => $item->remark->iHk_remarks ?? '0',
+
+            'BHMAX' => fn($item) => $item->BHMax ?? '0',
+            'BHMAX_REMARKS' => fn($item) => $item->remark->BHMax_remarks ?? '0',
+
+            'IHR95' => fn($item) => $item->iHr95 ?? '0',
+            'IHR95_REMARKS' => fn($item) => $item->remark->iHr95_remarks ?? '0',
+
+            'IHR98' => fn($item) => $item->iHr98 ?? '0',
+            'IHR98_REMARKS' => fn($item) => $item->remark->iHr98_remarks ?? '0',
+
+            'IHKIHC' => fn($item) => $item->iHkiHc ?? '0',
+            'IHKIHC_REMARKS' => fn($item) => $item->remark->iHkiHc_remarks ?? '0',
+
+            'BR4PAI' => fn($item) => $item->Br4pai ?? '0',
+            'BR4PAI_REMARKS' => fn($item) => $item->remark->Br4pai_remarks ?? '0',
+
+            'BHC' => fn($item) => $item->bHc ?? '0',
+            'BHC_REMARKS' => fn($item) => $item->remark->bHc_remarks ?? '0',
+
+            'SQUARENESS' => fn($item) => $item->Squareness ?? '0',
+            'SQUARENESS_REMARKS' => fn($item) => $item->remark->Squareness_remarks ?? '0',
+
+            '4PAIID' => fn($item) => $item->{'4paiId'} ?? '0',
+            '4PAIID_REMARKS' => fn($item) => $item->remark->{'4paiId_remarks'} ?? '0',
+
+            '4PAIIS' => fn($item) => $item->{'4paiIs'} ?? '0',
+            '4PAIIS_REMARKS' => fn($item) => $item->remark->{'4paiIs_remarks'} ?? '0',
+
+            '4PAIIA' => fn($item) => $item->{'4paiIa'} ?? '0',
+            '4PAIIA_REMARKS' => fn($item) => $item->remark->{'4paiIa_remarks'} ?? '0',
+
+            'TRACER' => fn($item) => $item->Tracer ?? '0',
+        ];
+
+        $headers = array_keys($schema);
+
         $lines = [];
-        $lines[] = implode(',', $headers); // Header
+        $lines[] = implode(',', $headers);
 
         $layerOrder = ['1','2','3','4','5','6','7','8','9','T'];
 
         foreach ($layerOrder as $layer) {
             $layerFilter = $layer === 'T' ? 9.5 : (float)$layer;
-            // --- hd5 lookup for this layer ---
+
+            // --- hd5 lookup ---
             $serialColumn = 'layer_' . str_replace('.', '_', $layerFilter) . '_serial';
             $layerSerial = $massProdData->$serialColumn ?? null;
 
@@ -384,61 +461,38 @@ class TxtExportService
                     $hd5Value = $decodedBh['data'] ?? '0';
                 }
             }
+
             $rowsForLayer = $groupedByLayer[$layerFilter] ?? collect();
 
             if ($rowsForLayer->isEmpty()) {
-                // Default row for missing layer
-                $defaultRow = [];
-                foreach ($headers as $header) {
-                    if ($header === 'layer_no') {
-                        $defaultRow[] = $layer;
-                    } else {
-                        $defaultRow[] = '0';
-                    }
+                $row = [];
+                foreach ($schema as $header => $resolver) {
+                    $row[] = $header === 'layer_no' ? $layer : '0';
                 }
-                $lines[] = implode(',', $defaultRow);
+                $lines[] = implode(',', $row);
                 continue;
             }
 
             foreach ($rowsForLayer as $item) {
-                $remark = $item->remark;
+                $context = [
+                    'layer' => $layer,
+                    'hd5' => $hd5Value,
+                ];
+
                 $row = [];
 
-                $row[] = $layer; // Layer_no as string including T
-
-                $lot_no = trim(($item->press_1 ?? '') . ' ' . ($item->press_2 ?? '') . ' ' . ($item->machine_no ?? ''));
-                $row[] = $lot_no;
-
-                foreach ($headers as $column) {
-                    if (in_array($column, ['layer_no','lot_no'])) continue;
-
-                    // hd5 must come from ReportData->data_bh_info (already fetched into $hd5Value)
-                    if ($column === 'hd5') {
-                        $row[] = $this->convertToString($hd5Value);
-                        continue;
-                    }
-
-                    if (isset($item->$column)) {
-                        $row[] = $this->convertToString($item->$column ?? '0');
-                    } elseif ($remark && property_exists($remark, $column)) {
-                        $row[] = $this->convertToString($remark->$column ?? '0');
-                    } else {
-                        $row[] = '0';
-                    }
-                }
-
-                // Escape values
-                $escapedRow = array_map(function($value) {
+                foreach ($schema as $resolver) {
+                    $value = $resolver($item, $context);
                     $value = $this->convertToString($value);
                     $value = str_replace(["\r","\n"], [' ',' '], $value);
-                    return str_contains($value, ',') ? "\"$value\"" : $value;
-                }, $row);
+                    $row[] = str_contains($value, ',') ? "\"$value\"" : $value;
+                }
 
-                $lines[] = implode(',', $escapedRow);
+                $lines[] = implode(',', $row);
             }
         }
 
-        //dd($lines);
+        dd($lines);
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
@@ -450,6 +504,7 @@ class TxtExportService
 
         return "";
     }
+
 
     public function exportData4(string $furnace_no, string $massPro)
     {

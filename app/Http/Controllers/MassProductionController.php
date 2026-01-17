@@ -433,13 +433,29 @@ class MassProductionController extends Controller
             ], 404);
         }
 
-        foreach ($layerData as $row) {
-            if (($row['rowTitle'] ?? null) === 'MODEL:') {
+        foreach ($layerData as $index => $row) {
+            Log::info("Inspecting row #{$index}", $row);
+
+            $rowTitle = $row['rowTitle'] ?? null;
+            Log::info("Row title: {$rowTitle}");
+
+            if ($rowTitle === 'MODEL:') {
+                $modelValue = $row['data']['A'] ?? null;
+
+                // fallback to B if A is null or empty
+                if (empty($modelValue)) {
+                    $modelValue = $row['data']['B'] ?? null;
+                }
+
+                Log::info("MODEL found. Value: ", ['model' => $modelValue]);
+
                 return response()->json([
-                    'model' => $row['data']['A'] ?? null,
+                    'model' => $modelValue,
                 ]);
             }
         }
+
+        Log::warning("No MODEL row found in layer data", $layerData);
 
         return response()->json([
             'message' => "MODEL row not found in Layer {$layerNumber}.",

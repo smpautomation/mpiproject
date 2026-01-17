@@ -127,8 +127,6 @@
 
         <!-- Modern HT Mass Pro Dashboard - Compact Version -->
         <div class="flex flex-row gap-10">
-
-            <!--
                 <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 shadow-xl rounded-2xl hover:shadow-2xl border-cyan-500">
                     <div class="absolute top-0 right-0 w-40 h-40 -mt-20 -mr-20 rounded-full opacity-50 bg-gradient-to-br from-cyan-100 to-teal-100"></div>
                     <div class="relative flex items-center gap-3 mb-8">
@@ -186,7 +184,6 @@
                         </button>
                     </form>
                 </div>
-            -->
 
             <!-- Monthly Summary Card -->
             <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 border-teal-500 shadow-xl rounded-2xl hover:shadow-2xl">
@@ -282,7 +279,7 @@
                     </div>
 
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block mb-2 text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                        <label class="mb-2 text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>

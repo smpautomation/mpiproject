@@ -2176,9 +2176,9 @@ const getSelectedMassProdData = async () => {
         const response = await axios.get(`/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layer/${coatingInfo.selectedLayer}/layer-no`);
         const massProdLayerData = response.data.layer_data;
         console.log('Mass Prod layer data: ', massProdLayerData);
-        coatingInfo.selectedModel = massProdLayerData[0].data['A'];
+        coatingInfo.selectedModel = massProdLayerData[0].data['A'] || massProdLayerData[0].data['B'] || null;
         coatingInfo.coatingMachineNo = massProdLayerData[1].data['A'];
-        lotNo.value = massProdLayerData[2].data['A'];
+        lotNo.value = massProdLayerData[2].data['A'] || massProdLayerData[2].data['B'] || null;
         const data = massProdLayerData[7]?.data || {};
         const total = Object.values(data)
         .filter(v => typeof v === 'number' && !isNaN(v))
