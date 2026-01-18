@@ -1231,7 +1231,10 @@ class MassProductionController extends Controller
 
                     $beforeGbdpWt = $wtRow ? array_sum($wtRow['data']) : 0;
 
-                    $modelName = $modelRow ? $modelRow['data']['A'] : null;
+                    // SAFE ACCESS: fallback from A → B
+                    $modelName = $modelRow ? ($modelRow['data']['A'] ?? $modelRow['data']['B'] ?? null) : null;
+                    $lot       = $lotRow   ? ($lotRow['data']['A']   ?? $lotRow['data']['B']   ?? null) : null;
+                    $qty       = $qtyRow   ? ($qtyRow['data']['A']   ?? $qtyRow['data']['B']   ?? 0)    : 0;
 
                     // Lookup HT Mass Pro Data for this model
                     $htData = HtMassProData::where('model_name', $modelName)->latest('id')->first();
@@ -1239,7 +1242,6 @@ class MassProductionController extends Controller
                     $productWeight = $htData ? $htData->product_weight : 0;
                     $secondSl      = $htData ? $htData->{'2nd_sl'} : 0;
                     $htQty         = $htData ? $htData->qty : 0;
-                    $qty           = $qtyRow ? $qtyRow['data']['A'] : 0;
 
                     // AFTER GBDP WT calculation
                     $afterGbdpWt = ($qty * $productWeight * $secondSl) / 1_000_000;
@@ -1249,7 +1251,7 @@ class MassProductionController extends Controller
 
                     $excelData[] = array_merge($baseRow, [
                         'MODEL NAME'       => $modelName,
-                        'LOT'              => $lotRow   ? $lotRow['data']['A'] : null,
+                        'LOT'              => $lot,
                         'QTY'              => $qty,
                         'BEFORE GBDP WT'   => $beforeGbdpWt,
                         'AFTER GBDP WT'    => $afterGbdpWt,

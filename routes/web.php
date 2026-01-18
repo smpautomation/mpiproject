@@ -147,7 +147,7 @@ Route::post('/upload-chart', [ChartUploadController::class, 'store']);
 Route::post('/upload-chart-sec', [ChartUploadController::class, 'storeSecondary']);
 
 Route::get('/debug-export', function () {
-    return app(\App\Services\TxtExportService::class)->exportData3('K40', '934TH');
+    return app(\App\Services\TxtExportService::class)->exportData1('K40', '934TH');
 });
 
 

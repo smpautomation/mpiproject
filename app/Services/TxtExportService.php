@@ -6,6 +6,7 @@ use App\Models\TPMData; //Before: App\Models\TpmData
 use App\Models\MassProduction;
 use App\Models\ReportData;
 use App\Models\Coating;
+use App\Models\GbdpSecondCoating;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
@@ -62,14 +63,15 @@ class TxtExportService
             // Step 5: Build per-box rows
             foreach ($boxes as $area) {
                 $rowData = [
-                    'MODEL_NAME' => '0',
-                    'COATING_MC_NO' => '0',
-                    'LOT_NO' => '0',
-                    'QTY' => '0',
-                    'COATING' => '0',
-                    'WT' => '0',
-                    'BOX_NO' => '0',
-                    'MODEL_CODE' => $modelCode,
+                    'MODEL_NAME'      => '0',
+                    'COATING_MC_NO'   => '0',
+                    'LOT_NO'          => '0',
+                    'MC_NO'           => '0',  // <-- added here
+                    'QTY'             => '0',
+                    'COATING'         => '0',
+                    'WT'              => '0',
+                    'BOX_NO'          => '0',
+                    'MODEL_CODE'      => $modelCode,
                     'RAW_MATERIAL_CODE' => '0',
                 ];
 
@@ -89,6 +91,7 @@ class TxtExportService
                             break;
                         case 'ltno':
                             $rowData['LOT_NO'] = $this->normalizeLotNo($data);
+                            $rowData['MC_NO']  = $this->extractMcNo($data); // <-- new column right after LOT_NO
                             break;
                         case 'qty(pcs)':
                             $rowData['QTY'] = $data;
@@ -139,10 +142,10 @@ class TxtExportService
         }
 
         // Step 7: Format into lines and save
-        $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
+        $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,MC_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
         $lines = collect($finalRows)->map(fn($row) => implode(',', $row))->prepend($header);
 
-        //dd($lines->toArray()); // commented out
+        dd($lines->toArray()); // commented out
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
@@ -173,13 +176,21 @@ class TxtExportService
         return str_replace('-', '', $value);
     }
 
-    private function extractLeadingNumber($value)
+    private function extractMcNo($value)
     {
-        if (preg_match('/(\d+)/', $value, $m)) {
-            return (int) $m[1];
+        if (!$value) return '0';
+
+        // Grab everything after the hyphen, if exists
+        if (str_contains($value, '-')) {
+            [$before, $after] = explode('-', $value, 2);
+
+            // Keep only digits from the hyphen part
+            $mc = preg_replace('/\D/', '', $after);
+
+            return $mc !== '' ? $mc : '0';
         }
 
-        return null;
+        return '0';
     }
 
     private function normalizeLotNo($value)
@@ -188,24 +199,27 @@ class TxtExportService
 
         $value = trim($value);
 
-        // If no slash, return as-is
+        // Remove everything after dash: 421/543-3 -> 421/543
+        $value = preg_replace('/-.*/', '', $value);
+
+        // If no slash, just return what's left
         if (!str_contains($value, '/')) {
             return $value;
         }
 
         [$a, $b] = explode('/', $value, 2);
 
-        // Extract numeric part for comparison
-        $numA = $this->extractLeadingNumber($a);
-        $numB = $this->extractLeadingNumber($b);
+        // Keep only digits
+        $a = preg_replace('/\D/', '', $a);
+        $b = preg_replace('/\D/', '', $b);
 
-        // If can't parse, fallback
-        if ($numA === null || $numB === null) {
-            return $a; // safe fallback
+        if ($a === '' || $b === '') {
+            return $a !== '' ? $a : ($b !== '' ? $b : '0');
         }
 
-        return $numA <= $numB ? trim($a) : trim($b);
+        return ((int)$a <= (int)$b) ? $a : $b;
     }
+
 
 
     public function exportData2(string $furnace_no, string $massPro)
@@ -230,8 +244,12 @@ class TxtExportService
             return 'No TPM data found.';
         }
 
+        $normalizedFurnace = $this->normalizeFurnaceCode($furnace_no);
+
         // Step 3: Fetch MassProduction record
-        $massProd = MassProduction::where('mass_prod', $massPro)->first();
+        $massProd = MassProduction::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->first();
         if (!$massProd) {
             return 'No MassProduction data found.';
         }
@@ -254,44 +272,90 @@ class TxtExportService
             // Fetch TPM + Report + Coating data using the serial
             $tpmRow = $layerSerial ? TpmData::where('serial_no', $layerSerial)->first() : null;
             $reportData = $layerSerial ? ReportData::where('tpm_data_serial', $layerSerial)->first() : null;
-            $coating = $layerSerial ? Coating::where('mass_prod', $massPro)->where('layer', $layerKey === 'T' ? 9.5 : $layerKey)->first() : null;
+
+            $layerNo = $layerKey === 'T' ? 9.5 : $layerKey;
+
+            $layerNoStr = (string) $layerNo; // force string
+
+            Log::info('[COATING] Primary lookup start', [
+                'furnace' => $furnace_no,
+                'mass_prod' => $massPro,
+                'layer' => $layerNoStr,
+            ]);
+
+            $coating = Coating::where('furnace', $normalizedFurnace)
+                ->where('mass_prod', $massPro)
+                ->where('layer', $layerNoStr)
+                ->first();
+
+            if (!$coating) {
+                Log::warning('[COATING] Primary lookup MISS. Trying second coating fallback...', [
+                    'normalized_furnace' => $normalizedFurnace,
+                    'mass_prod' => $massPro,
+                    'layer' => $layerNoStr,
+                ]);
+
+                $coating = $this->getSecondCoatingFallback($normalizedFurnace, $massPro, $layerNoStr);
+
+                if ($coating) {
+                    Log::info('[COATING] Fallback HIT', [
+                        'source' => 'gbdp_second_coating',
+                    ]);
+                } else {
+                    Log::error('[COATING] Fallback MISS. No coating data found at all.', [
+                        'furnace' => $normalizedFurnace,
+                        'mass_prod' => $massPro,
+                        'layer' => $layerNoStr,
+                    ]);
+                }
+            }
+
+
 
             //dd($layerKey, $layerSerial, $tpmRow, $reportData, $coating);
 
             // Extract model, material, qty from JSON
-            $modelCodeValue = '0';
             $rawMaterialCode = '0';
             $totalQty = 0;
 
             foreach ($massLayerData as $item) {
                 $title = strtolower($item['rowTitle'] ?? '');
-                $value = $item['data']['A'] ?? null; // Simplified: only first column or adjust as needed
+                $value = $item['data']['A'] ?? null;
+                if (empty($value)) {
+                    $value = $item['data']['B'] ?? null;
+                }
 
-                if (str_contains($title, 'model')) {
-                    $modelCodeValue = $value ?? '0';
-                } elseif (str_contains($title, 'raw material')) {
+                if (str_contains($title, 'raw material')) {
                     $rawMaterialCode = $value ?? '0';
-                } elseif (str_contains($title, 'total qty') || str_contains($title, 'qty')) {
+                } elseif (str_contains($title, 'total qty')) {
                     $totalQty = $value ?? 0;
                 }
             }
 
-            if ($layerSerial && $tpmRow) {
+            if ($tpmRow || $coating) {
                 $outputRows[] = [
                     $layerKey,
-                    $tpmRow->code_no ?? $modelCodeValue,
+                    $tpmRow->code_no ?? '',
                     $tpmRow->raw_material_code ?? $rawMaterialCode,
                     $totalQty,
                     $coating?->date ?? '',
-                    $coating?->machine_no ?? '',
+                    $coating?->machine_no
+                        ? str_replace('-', '0', $coating->machine_no)
+                        : '',
                     $coating?->min_tb_content ?? 0,
                     $coating?->total_magnet_weight ?? 0,
                     $coating?->maximum ?? 0,
                     $coating?->minimum ?? 0,
                     $coating?->average ?? 0,
-                    $massProd?->furnace ?? '',
-                    $massProd?->cycle_no ?? '',
-                    $massProd?->batch_cycle_no ?? '',
+                    $massProd?->furnace
+                        ? str_replace('-', '0', $massProd->furnace)
+                        : '',
+                    $massProd?->cycle_no
+                        ? ltrim(substr($massProd->cycle_no, strpos($massProd->cycle_no, '-') + 1), ' ')
+                        : '',
+                    $massProd?->batch_cycle_no
+                        ? preg_replace('/\D+/', '', $massProd->batch_cycle_no)
+                        : '',
                     $massProd?->pattern_no ?? '',
                     $massProd?->date_start ?? '',
                     $massProd?->date_finished ?? '',
@@ -313,11 +377,11 @@ class TxtExportService
         // Step 5: Define headers (non-negotiable)
         $header = [
             'LAYER', 'MODEL_CODE', 'RAW_MATERIAL_CODE', 'TOTAL_QUANTITY',
-            'COATING_DATE', 'COATING_MACHINE_NO', 'MIN_TB_CONTENT', 'TOTAL_MAGNET_WEIGHT',
+            'COATING_DATE', 'COATING_MC_NO', 'MIN_TB_CONTENT', 'TOTAL_MAGNET_WEIGHT',
             'COATING_MAX', 'COATING_MIN', 'COATING_AVE',
-            'FURNACE_MACHINE_NO', 'CYCLE_NO', 'BATCH_CYCLE_NO', 'PATTERN',
+            'FURNACE_MC_NO', 'CYCLE_NO', 'BATCH_CYCLE_NO', 'PATTERN',
             'DATE_START', 'DATE_FINISH',
-            'LENGTH', 'WIDTH', 'THICKNESS', 'MATERIAL GRADE'
+            'LENGTH', 'WIDTH', 'THICKNESS', 'MATERIAL_GRADE'
         ];
 
         // Step 6: Prepare lines
@@ -338,6 +402,85 @@ class TxtExportService
 
         return "";
     }
+
+    private function normalizeFurnaceCode($furnace)
+    {
+        // K40 -> K-40
+        if (preg_match('/^([A-Z])(\d+)$/', $furnace, $m)) {
+            return $m[1] . '-' . $m[2];
+        }
+
+        return $furnace; // already normalized or unknown format
+    }
+
+    private function getSecondCoatingFallback($furnace, $massProd, $layerNo)
+    {
+        Log::info('[2ND COATING] Lookup start', [
+            'furnace' => $furnace,
+            'mass_prod' => $massProd,
+            'layer' => (string)$layerNo,
+        ]);
+
+        $row = GbdpSecondCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->where('layer', (string)$layerNo)
+            ->first();
+
+        if (!$row) {
+            Log::warning('[2ND COATING] Row NOT FOUND', [
+                'furnace' => $furnace,
+                'mass_prod' => $massProd,
+                'layer' => (string)$layerNo,
+            ]);
+            return null;
+        }
+
+        Log::info('[2ND COATING] Row FOUND', [
+            'id' => $row->id ?? null,
+        ]);
+
+        Log::info('[2ND COATING] Raw coating_info_2ndgbdp', [
+            'type' => gettype($row->coating_info_2ndgbdp),
+            'value' => $row->coating_info_2ndgbdp,
+        ]);
+
+        if (empty($row->coating_info_2ndgbdp)) {
+            Log::error('[2ND COATING] coating_info_2ndgbdp IS EMPTY');
+            return null;
+        }
+
+        $data = $row->coating_info_2ndgbdp;
+
+        if (is_array($data) && array_is_list($data)) {
+            Log::warning('[2ND COATING] Data is list, unwrapping first element');
+            $data = $data[0] ?? null;
+        }
+
+        Log::info('[2ND COATING] Normalized data', [
+            'type' => gettype($data),
+            'value' => $data,
+        ]);
+
+        if (!is_array($data)) {
+            Log::error('[2ND COATING] Data is NOT array after normalize');
+            return null;
+        }
+
+        $normalized = [
+            'date' => $data['date'] ?? null,
+            'machine_no' => $data['machine_no'] ?? null,
+            'min_tb_content' => $data['min_tb_content'] ?? null,
+            'total_magnet_weight' => $data['total_magnet_weight'] ?? null,
+            'maximum' => $data['maximum'] ?? null,
+            'minimum' => $data['minimum'] ?? null,
+            'average' => $data['average'] ?? null,
+        ];
+
+        Log::info('[2ND COATING] Final mapped object', $normalized);
+
+        return (object) $normalized;
+    }
+
 
     public function exportData3(string $furnace_no, string $massPro)
     {
@@ -389,9 +532,17 @@ class TxtExportService
             'MATERIAL_GRADE'     => fn($item) => $item->type ?? '0',
             'LOT_NO'  => fn($item) => $item->press_1 ?? '0',
             'MC_NO' => fn($item) => $item->machine_no ?? '0',
-            'FURNACE_MC_NO' => fn($item) => $item->sintering_furnace_no ?? '0',
-            'CYCLE_NO' => fn($item) => $cycleNo,
-            'COATING_MC_NO' => fn($item) => $item->furnace_no ?? '0',
+            'FURNACE_MC_NO' => fn($item) =>
+                $item->sintering_furnace_no
+                    ? substr(explode('-', $item->sintering_furnace_no)[0], 0, 1)
+                    . '0'
+                    . substr(explode('-', $item->sintering_furnace_no)[0], 1)
+                    : '0',
+            'CYCLE_NO' => fn($item) => ltrim(explode('-', $cycleNo)[1] ?? '0', '0'),
+            'COATING_MC_NO' => fn($item) =>
+                $item->furnace_no
+                    ? str_replace('-', '0', $item->furnace_no)
+                    : '0',
             'ZONE' => fn($item) => $item->zone ?? '0',
             'PASS_NO' => fn($item) => $item->pass_no ?? '0',
             'HD5' => fn($item, $ctx) => $ctx['hd5'] ?? '0',
@@ -492,7 +643,7 @@ class TxtExportService
             }
         }
 
-        dd($lines);
+        //dd($lines);
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {

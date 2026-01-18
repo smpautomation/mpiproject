@@ -1864,6 +1864,10 @@ const clearAll = () => {
 const clearAllTransition = () => {
     // Reset coatingInfo
     Object.assign(coatingInfo, {
+        selectedFurnace: '',
+        selectedMassProd: '',
+        selectedLayer: null,
+        selectedModel: '',
         coatingDate: '',
         coatingMachineNo: '',
         slurryLotNo: '',
@@ -2088,6 +2092,7 @@ const saveToDatabase_1st2ndgbdp = async() => {
         showModalSubmit.value = false;
         await getCompletedLayers();
         await getCompletedLayers_1st_2nd_gbdp();
+        isDataShown.value = false;
     }
 }
 
