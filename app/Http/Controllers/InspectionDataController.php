@@ -11,21 +11,23 @@ class InspectionDataController extends Controller
 {
     public function index(Request $request)
     {
-        try{
-            $inspectionData = InspectionData::all();
+        try {
+            $inspectionData = InspectionData::orderBy('model', 'asc')->get();
+
             return response()->json([
-                'status' => true,
+                'status'  => true,
                 'message' => 'Inspection Data fetched successfully',
-                'data'=> $inspectionData
+                'data'    => $inspectionData
             ], 200);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'message'=> "Inspection Data could not be fetched",
-                "error"=> $e->getMessage()
+                'status'  => false,
+                'message' => 'Inspection Data could not be fetched',
+                'error'   => $e->getMessage()
             ], 500);
         }
     }
+
     public function show($id)
     {
         try{
