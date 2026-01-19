@@ -145,7 +145,7 @@ class TxtExportService
         $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,MC_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
         $lines = collect($finalRows)->map(fn($row) => implode(',', $row))->prepend($header);
 
-        dd($lines->toArray()); // commented out
+        //dd($lines->toArray()); // commented out
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
