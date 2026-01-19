@@ -295,4 +295,46 @@ class ReportDataController extends Controller
 
         return response()->json(['data' => $flattened->values()]);
     }
+
+    public function getRejectsData(Request $request)
+    {
+        $serial = $request->query('serial');
+
+        if (!$serial) {
+            return response()->json([
+                'status' => false,
+                'data' => [],
+                'message' => 'Missing serial',
+            ]);
+        }
+
+        $row = ReportData::where('tpm_data_serial', $serial)->first();
+
+        if (!$row || empty($row->note_reason_reject)) {
+            return response()->json([
+                'status' => true,
+                'data' => [],
+            ]);
+        }
+
+        $decoded = json_decode($row->note_reason_reject, true);
+
+        if (!is_array($decoded)) {
+            return response()->json([
+                'status' => true,
+                'data' => [],
+            ]);
+        }
+
+        // Remove leading "- " only
+        $cleaned = array_map(fn($r) => ltrim($r, "- "), $decoded);
+
+        return response()->json([
+            'status' => true,
+            'data' => $cleaned,
+        ]);
+    }
+
+
+
 }

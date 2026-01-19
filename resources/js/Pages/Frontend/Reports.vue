@@ -1250,7 +1250,7 @@
                     </button>
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
                     <button
-                        @click="sec_additional_redirect(currentSerialSelected, selectedMassProd, selectedLayer)"
+                        @click="sec_additional_redirect(currentSerialSelected, selectedMassProd, selectedLayer, selectedFurnace)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                         Apply Additional
@@ -3421,12 +3421,12 @@ const finalizeReport = async (serial, isFinalized) => {
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, '_blank');
 };
 
-const sec_additional_redirect = (sec_serial, sec_massprod, sec_layer) => {
+const sec_additional_redirect = (sec_serial, sec_massprod, sec_layer, sec_furnace) => {
     try {
         //console.log('Navigating to report with serial:', sec_serial);
         Inertia.visit('/sec_additional', {
             method: 'get',
-            data: { sec_serialParam: sec_serial, sec_massProd: sec_massprod, sec_layer: sec_layer },
+            data: { sec_serialParam: sec_serial, sec_massProd: sec_massprod, sec_layer: sec_layer, sec_furnace: sec_furnace },
             preserveState: true,
             preserveScroll: true,
             onError: (errors) => {

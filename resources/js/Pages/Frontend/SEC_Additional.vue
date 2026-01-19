@@ -9,6 +9,7 @@
             <div v-if="toggleManageForm" class="z-10 flex flex-col items-center justify-center shadow-xl rounded-xl w-[1000px] h-[450px] border-4 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-lg mt-20">
                 <div class="flex flex-row">
                     <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Serial: {{ currentSerialSelected }}</p>
+                    <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Furnace: {{ currentFurnaceSelected }}</p>
                     <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Mass Prod: {{ currentMassProdSelected }}</p>
                     <p v-show="showSerialNo" class="flex flex-row mb-10 ml-10 font-extrabold text-white">Layer: {{ currentLayerSelected }}</p>
                 </div>
@@ -269,7 +270,7 @@
                 </div>
                 <!-- Loading Indicator -->
                 <DotsLoader v-if="showCsvLoading" />
-                <p v-if="mias_factorCsvError" class="text-red-500 font-extrabold font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
+                <p v-if="mias_factorCsvError" class="font-extrabold text-red-500 font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
                 <div>
                     <div v-show="showProceed3" class="flex flex-col items-center justify-center">
                         <p class="text-lg font-extrabold text-white animate-pulse">ALL DATA HAS BEEN PROCESSED SUCCESSFULLY!</p>
@@ -291,7 +292,7 @@
                     <p class="px-4 py-2 ml-10 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-blue-600/80 to-blue-600/40 backdrop-blur-lg">Set #: {{ highest_setNo }} </p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
-                    <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center border-2 border-blue-900 justify-center">
+                    <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
                         <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
                     </div>
                     <!-- Side Content -->
@@ -429,7 +430,10 @@ import { Inertia } from '@inertiajs/inertia';
 import Papa from 'papaparse';
 import axios from 'axios';
 import DotsLoader from '@/Components/DotsLoader.vue';
-import { useAuth } from '@/Composables/useAuth.js'
+import { useAuth } from '@/Composables/useAuth.js';
+import { useToast } from 'vue-toast-notification';
+
+const toast = useToast();
 
 const { state } = useAuth();
 
@@ -468,6 +472,37 @@ const checkAuthentication = async () => {
 };
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
+
+    const userManageLogging = async (logEvent) => {
+        try{
+            const responseUserLogging = await axios.post('/api/userlogs', {
+                user: state.user.firstName + " " + state.user.surname,
+                event: logEvent,
+                section: 'SEC Additional',
+            });
+
+            //console.log('responseUserLogin-data: ',responseUserLogin.data);
+        }catch(error){
+            console.error('userManageLogging post request failed: ',error);
+        }
+    }
+
+    const userErrorLogging = async (details, triggerFunction, title) => {
+        try{
+            const response = await axios.post('/api/error-logs', {
+                user: state.user.firstName + " " + state.user.surname,
+                title: title,
+                details: details,
+                trigger_function: triggerFunction,
+                section: 'SEC Additional',
+            });
+
+            //console.log('userErrorLogging-data: ',responseUserLogin.data);
+        }catch(error){
+            console.error('userErrorLogging post request failed: ',error);
+        }
+    }
+
 
 // UI Control Variables
 const showSerialNo = ref(true);
@@ -534,6 +569,7 @@ const mias_factorCsvError = ref(false);
 const currentSerialSelected = ref('');
 const currentMassProdSelected = ref('');
 const currentLayerSelected = ref('');
+const currentFurnaceSelected = ref('');
 const dataReady = ref(false); // Flag to track if data is ready
 const myChartCanvas = ref(null); // Ref for the canvas
 
@@ -570,12 +606,14 @@ const mias_factorData = async (factor, mias) => {
 const props = defineProps({
     sec_serialParam: String,  // Expecting the serialParam to be a string
     sec_massProd: String,
-    sec_layer: String
+    sec_layer: String,
+    sec_furnace: String
 });
 
 currentSerialSelected.value = props.sec_serialParam;
 currentLayerSelected.value = props.sec_layer;
 currentMassProdSelected.value = props.sec_massProd;
+currentFurnaceSelected.value = props.sec_furnace;
 //console.log('Serial Param check: ',currentSerialSelected.value);
 //console.log('Mass Prod Param check: ',currentMassProdSelected.value);
 //console.log('Layer Param check: ',currentLayerSelected.value);
@@ -591,7 +629,7 @@ const fetchLayerModelAndLotno = async () => {
 
         try {
             const responseModel = await axios.get(
-                `/api/mass-productions/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/model`
+                `/api/mass-production/${currentFurnaceSelected.value}/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/model`
             );
             model = responseModel.data.model;
             jhCurveActualModel.value = model;
@@ -603,7 +641,7 @@ const fetchLayerModelAndLotno = async () => {
 
         try {
             const responseLotno = await axios.get(
-                `/api/mass-productions/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/lotno`
+                `/api/mass-production/${currentFurnaceSelected.value}/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/lotno`
             );
             lotno = responseLotno.data.lotno;
             jhCurveLotNo.value = lotno;
@@ -1337,6 +1375,7 @@ const showAllData = async () => {
         layerTableRowLoading.value = true;
         showProceed3.value = false;
         toggleManageForm.value = false;
+        myChartCanvas.value = null;
         try {
             showProceed3.value = false;
             toggleManageForm.value = false;
@@ -1801,154 +1840,133 @@ const generateColor = (index) => {
     return colors[index % colors.length];
 };
 
+const exportChartAsImage = () => {
+    if (!myChartCanvas.value) return;
+
+    const imageData = myChartCanvas.value.toDataURL("image/png");
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch("/upload-chart-sec", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrfToken || "",
+        },
+        body: JSON.stringify({
+            image: imageData,
+            filename: `sec_chart_${currentSerialSelected.value}.png`
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        //console.log("Chart image saved at:", data.path);
+    })
+    .catch(err => console.error("Chart upload failed:", err));
+};
+
+
 const renderChart = () => {
-    // Ensure myChartCanvas is not null
     if (!myChartCanvas.value) {
         console.error("Canvas element is not available.");
         return;
     }
-    // Ensure the canvas is accessible
-    //console.log("Rendering chart with canvas:", myChartCanvas.value);
 
-    // Ensure datasets are available before creating the chart
-    //console.log("Datasets available for chart:", datasets.value);
+    if (!dataReady.value) {
+        console.error("Chart cannot be rendered: Data not ready.");
+        return;
+    }
 
-    if (dataReady.value && myChartCanvas.value) {
-        const ctx = myChartCanvas.value.getContext("2d");
+    const ctx = myChartCanvas.value.getContext("2d");
+    if (!ctx) {
+        console.error("Failed to get 2D context for canvas.");
+        return;
+    }
 
-        // Check if the context is obtained
-        if (!ctx) {
-            console.error("Failed to get 2D context for canvas.");
-            return;
-        }
+    const x_offset = 2000;
+    const y_offset = 1700;
 
-        //console.log("2D Context obtained, proceeding to render the chart.");
+    const chartDatasets = datasets.value.map((dataset, index) => ({
+        label: `Dataset ${index + 1}`,
+        data: dataset.xAxis.map((x, i) => ({
+            x: x + index * x_offset,
+            y: (dataset.yAxis[i] || 0) - index * y_offset,
+        })),
+        borderColor: dataset.color,
+        borderWidth: 2,
+        fill: false,
+        pointBackgroundColor: dataset.color,
+        pointBorderColor: dataset.color,
+    }));
 
-        //new updated offset 5/5/2025
-        const x_offset = 2000;
-        const y_offset = 1700;
-
-        //Previous offset
-        //const x_offset = 2000;
-        //const y_offset = 1700;
-
-        const chartDatasets = datasets.value.map((dataset, index) => {
-            return {
-                label: `Dataset ${index + 1}`,
-                data: dataset.xAxis.map((x, i) => ({
-                    x: x + index * x_offset,
-                    y: (dataset.yAxis[i] || 0) - index * y_offset,
+    try {
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                datasets: chartDatasets.map(dataset => ({
+                    ...dataset,
+                    pointRadius: 0,
+                    tension: 0.6,
                 })),
-                borderColor: dataset.color,
-                borderWidth: 2,
-                fill: false,
-                pointBackgroundColor: dataset.color,
-                pointBorderColor: dataset.color,
-            };
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart",
+                    onComplete: () => {
+                        exportChartAsImage(); // ✅ export immediately after chart finishes rendering
+                    },
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `Value: ${context.raw.y}`,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        type: "linear",
+                        position: "bottom",
+                        grace: "5%",
+                        grid: { color: "rgba(0, 0, 0, 0.1)" },
+                        title: {
+                            display: true,
+                            text: "←  kOe  →",
+                            color: "#333",
+                            font: { size: 14, weight: "bold" },
+                        },
+                        ticks: { stepSize: 850, display: false },
+                    },
+                    y: {
+                        type: "linear",
+                        position: "left",
+                        grace: "5%",
+                        grid: { color: "rgba(0, 0, 0, 0.1)" },
+                        title: {
+                            display: true,
+                            text: "←  kG  →",
+                            color: "#333",
+                            font: { size: 14, weight: "bold" },
+                        },
+                        ticks: { stepSize: 1750, display: false },
+                    },
+                },
+            },
         });
-
-        //console.log("Final Chart Datasets:", chartDatasets);
-
-        try {
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    datasets: chartDatasets.map(dataset => ({
-                        ...dataset,
-                        pointRadius: 0,
-                        tension: 0.6,
-                    })),
-                },
-                options: {
-                    responsive: true,
-                    animation: {
-                        duration: 1000,
-                        easing: "easeOutQuart",
-                    },
-                    plugins: {
-                        legend: {
-                            display: false, // hides the legend completely
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => `Value: ${context.raw.y}`,
-                            },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            type: "linear",
-                            position: "bottom",
-                            grid: {
-                                color: "rgba(0, 0, 0, 0.1)",
-                            },
-                            title: {
-                                display: true,
-                                text: "←  kOe  →",
-                                color: "#333",
-                                font: {
-                                    size: 14,  // Increase font size
-                                    weight: "bold", // Make it bold
-                                },
-                            },
-                            ticks: {
-                                stepSize: 2000, // adjust this value
-                                display: false // disables X-axis labels
-
-                            },
-                        },
-                        y: {
-                            type: "linear",
-                            position: "left",
-                            grid: {
-                                color: "rgba(0, 0, 0, 0.1)",
-                            },
-                            title: {
-                                display: true,
-                                text: "←  kG  →",
-                                color: "#333",
-                                font: {
-                                    size: 14,  // Increase font size
-                                    weight: "bold", // Make it bold
-                                },
-                            },
-                            ticks: {
-                                stepSize: 2000, // adjust this value
-                                display: false // disables X-axis labels
-                            },
-                        },
-                    },
-                },
-            });
-            setTimeout(() => {
-                const canvas = myChartCanvas.value;
-                const imageData = canvas.toDataURL("image/png");
-
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-                fetch("/upload-chart-sec", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken || "",
-                    },
-                    body: JSON.stringify({
-                        image: imageData,
-                        filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Chart image saved at:", data.path);
-                    // Optional: store this filename in a hidden input or use it to trigger PDF render
-                })
-                .catch(err => console.error("Chart upload failed:", err));
-            }, 1000); // Give Chart.js time to fully render
-        } catch (error) {
-            console.error("Error initializing Chart.js:", error);
-        }
-    } else {
-        console.error("Chart cannot be rendered: Missing data or canvas context.");
+    } catch (error) {
+        console.error("Error initializing Chart.js:", error);
+        userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchDataCreateGraph",
+            "Error fetching graph data"
+        );
     }
 };
 

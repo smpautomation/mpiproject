@@ -329,6 +329,8 @@ Route::get('/approve-list-checked', [ReportDataController::class, 'getViewListCh
 
 Route::get('/approve-list-prepared', [ReportDataController::class, 'getViewListPrepared']);
 
+Route::get('/fetch-reject', [ReportDataController::class, 'getRejectsData']);
+
 Route::get('/mass-production-monitoring/{furnace}/{massprod}', [MassProductionController::class, 'massProductionMonitoring']);
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',

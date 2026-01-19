@@ -414,6 +414,7 @@ const updatePattern = async () => {
         toast.success('Pattern updated successfully');
         showModalEdit.value = false;
         console.log("Success: ", updateResponse.data);
+        await userManageLogging('edited Graph Pattern no: '+ patternNo.value +' Encoded by: ' + encodedBy.value + ' successfully.');
     } catch (error) {
         toast.error('Failed to update pattern');
         console.error(error.response?.data || error);

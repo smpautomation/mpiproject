@@ -147,11 +147,13 @@ class FrontendController extends Controller
         $serial = $request->input('sec_serialParam');
         $massProd = $request->input('sec_massProd');
         $layer = $request->input('sec_layer');
+        $furnace = $request->input('sec_furnace');
 
         return Inertia::render('Frontend/SEC_Additional', [
             'sec_serialParam' => $serial,
             'sec_massProd' => $massProd,
-            'sec_layer' => $layer
+            'sec_layer' => $layer,
+            'sec_furnace' => $furnace
         ]);
     }
 

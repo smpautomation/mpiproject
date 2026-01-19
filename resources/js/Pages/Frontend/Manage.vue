@@ -352,7 +352,18 @@
                             <p>
                                 Lot # {{ jhCurveLotNo }}
                             </p>
+                            <p class="font-semibold text-red-600">
+                                <template v-if="fetchNoteReasonForReject && fetchNoteReasonForReject.length">
+                                    {{ fetchNoteReasonForReject.join(' , ') }}
+                                </template>
+                                <template v-else>
+                                    <span class="text-xs italic text-gray-400">
+                                    Reject remarks will appear here once the report data has been saved, if any exist.
+                                    </span>
+                                </template>
+                            </p>
                         </div>
+
                     </div>
                 </div>
 
@@ -818,6 +829,8 @@
     const showCsvLoading = ref(false);
     const showProceed2_massprod_confirmation = ref(false);
 
+    const fetchNoteReasonForReject = ref();
+
     const dataReady = ref(false); // Flag to track if data is ready
     const myChartCanvas = ref(null); // Ref for the canvas
 
@@ -918,6 +931,28 @@
             );
         }
     };
+
+    const fetchRejectFromReportData = async () => {
+        try {
+            const response = await axios.get('/api/fetch-reject', {
+                params: {
+                    serial: serialNo.value
+                }
+            });
+
+            if (response.data?.status) {
+                fetchNoteReasonForReject.value = response.data.data;
+            } else {
+                fetchNoteReasonForReject.value = [];
+            }
+
+        } catch (error) {
+            console.error('Failed to fetch reject remarks from report data', error);
+            fetchNoteReasonForReject.value = [];
+        }
+    };
+
+
 
     const fetchLayerModelAndLotno = async () => {
         console.log('Entering fetchLayerModelAndLotno function | MassProd: ', selectedMassProd.value ,' Layer: ', currentLayerNo.value);
@@ -1728,8 +1763,23 @@
 
                 const rawDate = rowCell.value[0]; // The raw date from rowCell.value[0]
 
-                // Check if the date is in a valid format and reformat it to YYYY-MM-DD
-                const formattedDate = new Date(rawDate).toISOString().split('T')[0];  // Converts to 'YYYY-MM-DD' format
+                let formattedDate;
+
+                if (rawDate instanceof Date) {
+                    const d = rawDate;
+                    formattedDate = [
+                        d.getFullYear(),
+                        String(d.getMonth() + 1).padStart(2, "0"),
+                        String(d.getDate()).padStart(2, "0")
+                    ].join("-");
+                } else {
+                    const d = new Date(rawDate);
+                    formattedDate = [
+                        d.getFullYear(),
+                        String(d.getMonth() + 1).padStart(2, "0"),
+                        String(d.getDate()).padStart(2, "0")
+                    ].join("-");
+                }
 
                 const layerData = {
                     "date": formattedDate,
@@ -2318,6 +2368,7 @@
             //await autoRenameFurnace();
             await updateMassProductionTable();
             await saveToTpmCategory();
+            await fetchRejectFromReportData();
             if (!fromAnotherPage) {
                 await userManageLogging(
                     'created ' + serialNo.value + ' data successfully | Model : ' + jhCurveActualModel.value
