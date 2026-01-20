@@ -25,6 +25,14 @@
                             }"
                         ></span>
                         <h3 class="text-lg font-medium text-gray-300">Manage Roles</h3>
+                        <div>
+                            <input
+                                v-model="users_searchQuery"
+                                type="text"
+                                placeholder="Search name or employee ID..."
+                                class="w-[14rem] px-3 py-1 text-sm text-white bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            />
+                        </div>
                     </div>
                     <div class="p-4 space-y-2">
                     <div class="overflow-auto max-h-64">
@@ -42,7 +50,7 @@
                         </thead>
                             <tbody>
                             <tr
-                                v-for="user in users"
+                                v-for="user in filteredUsers"
                                 :key="user.employee_id"
                                 class="border-b border-gray-600"
                             >
@@ -269,6 +277,7 @@ const getToday = () => {
 };
 
 const users = ref([]);
+const users_searchQuery = ref('');
 const editingUser = ref(null);
 const tempRole = ref("");
 const allUserLogs = ref([]);
@@ -357,6 +366,21 @@ const fetchAllLogs = async () => {
         console.error('Failed to fetch logs:', error);
     }
 }
+
+const filteredUsers = computed(() => {
+    if (!users_searchQuery.value) return users.value;
+
+    const q = users_searchQuery.value.toLowerCase();
+
+    return users.value.filter(u => {
+        return (
+            (u.firstName ?? '').toLowerCase().includes(q) ||
+            (u.surname ?? '').toLowerCase().includes(q) ||
+            (u.employee_id ?? '').toLowerCase().includes(q)
+        );
+    });
+});
+
 
 // Computed: filtered and sorted logs
 const filteredLogs = computed(() => {

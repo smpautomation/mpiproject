@@ -88,7 +88,7 @@
     <div class="table-block">
         <div class="table-row">
             <div class="table-cell" style="font-weight: bold;">Model: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold; font-size: 9px;">{{ $controlModel['A'] }}</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold; font-size: 9px;">{{ $controlModel['A'] ?? $controlModel['B'] ?? null }}</span></div>
             <div class="table-cell" style="font-weight: bold;">Partial No: </div>
             <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $heatTreatmentData->partial_no }}</span></div>
         </div>
@@ -96,7 +96,7 @@
             <div class="table-cell" style="font-weight: bold;">MATERIAL CODE: </div>
             <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $reportData->material_code }}</span></div>
             <div class="table-cell" style="font-weight: bold;">TOTAL QUANTITY: </div>
-            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $controlTotalQty['A'] }}</span></div>
+            <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold;">{{ $controlTotalQty['A'] ?? $controlTotalQty['B'] ?? null }}</span></div>
         </div>
     </div>
 

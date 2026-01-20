@@ -324,11 +324,11 @@
                     </p>
 
                     <p style="margin: 0 0 4px;">
-                        <span>{{ $controlModel['A'] }}</span> ( {{ $tpmData->code_no }} )
+                        <span>{{ $controlModel['A'] ?? $controlModel['B'] ?? null }}</span> ( {{ $tpmData->code_no }} )
                     </p>
 
                     <p style="margin: 0 0 4px;">
-                        Lot # {{ $controlLotNo['A'] }}
+                        Lot # {{ $controlLotNo['A'] ?? $controlLotNo['B'] ?? null }}
                     </p>
 
                     @if (!empty($noteReasonsSorted))

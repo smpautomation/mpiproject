@@ -1400,7 +1400,6 @@ const showAllData = async () => {
         layerTableRowLoading.value = true;
         showProceed3.value = false;
         toggleManageForm.value = false;
-        myChartCanvas.value = null;
         try {
             showProceed3.value = false;
             toggleManageForm.value = false;
@@ -1892,30 +1891,6 @@ const generateColor = (index) => {
     return colors[index % colors.length];
 };
 
-const exportChartAsImage = () => {
-    if (!myChartCanvas.value) return;
-
-    const imageData = myChartCanvas.value.toDataURL("image/png");
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-    fetch("/upload-chart-sec", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": csrfToken || "",
-        },
-        body: JSON.stringify({
-            image: imageData,
-            filename: `sec_chart_${currentSerialSelected.value}.png`
-        }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        //console.log("Chart image saved at:", data.path);
-    })
-    .catch(err => console.error("Chart upload failed:", err));
-};
-
 
 const renderChart = () => {
     if (!myChartCanvas.value) {
@@ -1965,12 +1940,11 @@ const renderChart = () => {
                 animation: {
                     duration: 1000,
                     easing: "easeOutQuart",
-                    onComplete: () => {
-                        exportChartAsImage(); // ✅ export immediately after chart finishes rendering
-                    },
                 },
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: false,
+                    },
                     tooltip: {
                         callbacks: {
                             label: (context) => `Value: ${context.raw.y}`,
@@ -1989,7 +1963,7 @@ const renderChart = () => {
                             color: "#333",
                             font: { size: 14, weight: "bold" },
                         },
-                        ticks: { stepSize: 850, display: false },
+                        ticks: { stepSize: 1000, display: false },
                     },
                     y: {
                         type: "linear",
@@ -2007,6 +1981,30 @@ const renderChart = () => {
                 },
             },
         });
+
+        setTimeout(() => {
+            const canvas = myChartCanvas.value;
+            const imageData = canvas.toDataURL("image/png");
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+            fetch("/upload-chart-sec", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken || "",
+                },
+                body: JSON.stringify({
+                    image: imageData,
+                    filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // File saved successfully
+            })
+            .catch(err => console.error("Chart upload failed:", err));
+        }, 1000); // Wait for chart to render fully
     } catch (error) {
         console.error("Error initializing Chart.js:", error);
         userErrorLogging(

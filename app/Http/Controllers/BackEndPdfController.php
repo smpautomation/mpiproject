@@ -481,7 +481,9 @@ class BackEndPdfController extends Controller
 
         $massProd = $massprod ?? 'unknown';
         $furnace = str_replace('-', '', $massProdData->furnace);
-        $rawFilename = "({$reportData->smp_judgement}) {$cs_model['A']} Lot No {$cs_lt_no['A']}";
+        $cs_model_final = $cs_model['A'] ?? $cs_model['B'] ?? null;
+        $cs_lt_no_final = $cs_lt_no['A'] ?? $cs_lt_no['B'] ?? null;
+        $rawFilename = "({$reportData->smp_judgement}) {$cs_model_final} Lot No {$cs_lt_no_final}";
         //dd($rawFilename);
 
         $savedPath = $this->saveMergedPdf($massprod, $rawFilename, $mergedPdf, $furnace);
