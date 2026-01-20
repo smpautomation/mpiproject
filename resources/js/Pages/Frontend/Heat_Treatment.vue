@@ -2372,6 +2372,7 @@ const fetchAllLotNoData = async () => {
 };
 
 const changeData = () => {
+
     const preserveKeys = [
         'selectedFurnace',
         'selectedMassProd',
@@ -3093,6 +3094,7 @@ const saveToDatabase = async () => {
             await uploadGraphs();
         }
         toast.success('Data saved successfully!');
+        await updateFormatType();
         changeData();
 
         const logMsg = !heatTreatmentInformationDetected.value
@@ -3112,7 +3114,6 @@ const saveToDatabase = async () => {
             payload: error.response?.data ?? null,
         }, "saveToDatabase", "Failed to save data. Please try again.");
     } finally {
-        await updateFormatType();
         clearAllAfterSave();
         await getMassProdData();
         await fetchExistingLayers();
@@ -3257,6 +3258,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
+        toast.error('Failed to update format type');
         await userErrorLogging(
             {
                 message: error.message,
@@ -3334,6 +3336,7 @@ const deleteLayerData = async () => {
         if (response.data.success) {
             toast.success(`Layer ${mpcs.selectedLayer} data deleted successfully.`);
             await fetchExistingLayers();
+            await userManageLogging(`has removed Layer ${mpcs.selectedLayer} data from ${mpcs.selectedMassProd} | ${mpcs.selectedFurnace} successfully.`);
         } else {
             toast.warning('No matching data found.');
         }
