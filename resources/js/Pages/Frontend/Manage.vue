@@ -307,20 +307,25 @@
                     <div class="flex justify-center">
                         <button
                             @click="proceedToGraphConfirmation()"
-                            :disabled="isDataExisting"
+                            :disabled="!isModelLotNoVerified || isDataExisting"
                             :class="[
                                 'px-8 py-3 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 flex items-center',
-                                isDataExisting
+                                (!isModelLotNoVerified || isDataExisting)
                                     ? 'bg-red-600 text-white cursor-not-allowed opacity-70 focus:ring-red-500'
                                     : 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:from-teal-600 hover:to-cyan-600 focus:ring-teal-500'
                             ]"
                         >
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
-                            <span>{{ isDataExisting ? 'Duplicate Detected' : 'Generate Graph' }}</span>
+                            <span>
+                                <!-- Priority: no model/lot → special label -->
+                                {{ !isModelLotNoVerified ? 'No Model and Lot No Detected' : (isDataExisting ? 'Duplicate Detected' : 'Generate Graph') }}
+                            </span>
                         </button>
                     </div>
+
                 </div>
                 <DotsLoader v-show="showCsvLoading" />
                 <p v-if="mias_factorCsvError" class="font-extrabold text-red-500 font-lg">Error: Data in the uploaded Property Data csv file does not exist in the Mias Factor Data list.</p>
@@ -861,6 +866,10 @@
         }
     }
 
+    const isModelLotNoVerified = computed(() => {
+        return Boolean(jhCurveActualModel.value && jhCurveLotNo.value);
+    });
+
     // Data fetching zone ------ Data fetching zone
 
     const getMassProdLists = async () => {
@@ -955,47 +964,50 @@
 
 
     const fetchLayerModelAndLotno = async () => {
-        console.log('Entering fetchLayerModelAndLotno function | MassProd: ', selectedMassProd.value ,' Layer: ', currentLayerNo.value);
-        if (!selectedMassProd.value || !currentLayerNo.value) {
+        console.log(
+            'Entering fetchLayerModelAndLotno function | MassProd: ',
+            selectedMassProd.value,
+            'Furnace: ',
+            selectedFurnace.value,
+            ' Layer: ',
+            currentLayerNo.value
+        );
+
+        if (!selectedMassProd.value || !selectedFurnace.value || !currentLayerNo.value) {
             console.warn("MassProd or Layer not selected yet.");
             return;
         }
 
-        let model = null;
-        let lotno = null;
-
         try {
-            const responseModel = await axios.get(
-                `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer/${currentLayerNo.value}/model`
-            );
-            model = responseModel.data.model;
+            const [responseModel, responseLotno] = await Promise.all([
+                axios.get('/api/mass-production/get-layer-model', {
+                    params: {
+                        furnace: selectedFurnace.value,
+                        massprod: selectedMassProd.value,
+                        layer: currentLayerNo.value,
+                    }
+                }),
+                axios.get('/api/mass-production/get-layer-lotno', {
+                    params: {
+                        furnace: selectedFurnace.value,
+                        massprod: selectedMassProd.value,
+                        layer: currentLayerNo.value,
+                    }
+                })
+            ]);
+
+            const model = responseModel.data.model;
+            const lotno = responseLotno.data.lotno;
+
             jhCurveActualModel.value = model;
-            //console.log("Model:", jhCurveActualModel.value);
-        } catch (error) {
-            console.error("Error fetching layer model:", error);
-            toast.error('Failed to fetch model data for this layer.');
-            await userErrorLogging(
-                {
-                    message: error.message,
-                    code: error.code ?? null,
-                    response: error.response?.data ?? null,
-                    payload: error.response?.data ?? null,
-                },
-                "fetchLayerModelAndLotno",
-                "Error fetching layer model"
-            );
-        }
-
-        try {
-            const responseLotno = await axios.get(
-                `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer/${currentLayerNo.value}/lotno`
-            );
-            lotno = responseLotno.data.lotno;
             jhCurveLotNo.value = lotno;
-            //console.log("Lot No:", jhCurveLotNo.value);
+
+            return { model, lotno };
+
         } catch (error) {
-            console.error("Error fetching layer lotno:", error);
-            toast.error('Failed to fetch lotno data for this layer.');
+            console.error("Error fetching layer model or lotno:", error);
+            toast.error('Failed to fetch layer data.');
+
             await userErrorLogging(
                 {
                     message: error.message,
@@ -1004,12 +1016,11 @@
                     payload: error.response?.data ?? null,
                 },
                 "fetchLayerModelAndLotno",
-                "Error fetching layer lotno"
+                "Error fetching layer model/lotno"
             );
         }
-
-        return { model, lotno };
     };
+
 
     const fetchMiasFactor = async () => {
         try{

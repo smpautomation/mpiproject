@@ -338,7 +338,7 @@ class MassProductionController extends Controller
             $patternNo = $request->input('pattern_no');
             $furnaceNo = $request->input('furnace_no');
 
-            \Log::info('Attempting to fetch HT graph pattern', [
+            Log::info('Attempting to fetch HT graph pattern', [
                 'pattern_no' => $patternNo,
                 'furnace_no' => $furnaceNo
             ]);
@@ -348,31 +348,31 @@ class MassProductionController extends Controller
                 ->first();
 
             if (!$pattern) {
-                \Log::warning('No HT graph pattern found', [
+                Log::warning('No HT graph pattern found', [
                     'pattern_no' => $patternNo,
                     'furnace_no' => $furnaceNo
                 ]);
             } else {
                 $sourceDir = public_path("htgraph_patterns");
-                \Log::info('Looking for pattern files in directory', ['sourceDir' => $sourceDir]);
+                Log::info('Looking for pattern files in directory', ['sourceDir' => $sourceDir]);
 
                 $files = glob("{$sourceDir}/pattern_{$patternNo}_{$furnaceNo}.{png,jpg,jpeg}", GLOB_BRACE);
 
                 if (count($files) === 0) {
-                    \Log::warning('No pattern files found matching glob', [
+                    Log::warning('No pattern files found matching glob', [
                         'glob' => "{$sourceDir}/pattern_{$patternNo}_{$furnaceNo}.{png,jpg,jpeg}"
                     ]);
                 } else {
-                    \Log::info('Pattern files found', ['files' => $files]);
+                    Log::info('Pattern files found', ['files' => $files]);
                     $destination = "{$baseDir}/standard/graph.png";
 
                     if (copy($files[0], $destination)) {
-                        \Log::info('Standard graph copied successfully', [
+                        Log::info('Standard graph copied successfully', [
                             'source' => $files[0],
                             'destination' => $destination
                         ]);
                     } else {
-                        \Log::error('Failed to copy standard graph', [
+                        Log::error('Failed to copy standard graph', [
                             'source' => $files[0],
                             'destination' => $destination
                         ]);
@@ -387,8 +387,18 @@ class MassProductionController extends Controller
     }
 
 
-    public function getLayerModel($furnace, $massprod, $layerNumber)
+    public function getLayerModel(Request $request)
     {
+        $request->validate([
+            'furnace' => 'required',
+            'massprod' => 'required',
+            'layer' => 'required',
+        ]);
+
+        $furnace = $request->query('furnace');
+        $massprod = $request->query('massprod');
+        $layerNumber = $request->query('layer');
+
         $record = MassProduction::where('furnace', $furnace)
             ->where('mass_prod', $massprod)
             ->first();
@@ -402,24 +412,10 @@ class MassProductionController extends Controller
         // Normalize layer number (e.g., 9.5 → layer_9_5)
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
-        if (!$record) {
-            return response()->json([
-                'message' => "No record found for furnace '{$furnace}' and mass production '{$massprod}'"
-            ], 404);
-        }
-
         Log::info('Record fetched: ', $record->toArray());
         Log::info('Layer column: ' . $layerColumn);
 
         if (!isset($record->$layerColumn)) {
-            return response()->json([
-                'message' => "No valid data in Layer {$layerNumber}.",
-            ], 404);
-        }
-
-        $layerData = json_decode($record->$layerColumn, true);
-
-        if (empty($layerData) || !is_array($layerData)) {
             return response()->json([
                 'message' => "No valid data in Layer {$layerNumber}.",
             ], 404);
@@ -462,8 +458,20 @@ class MassProductionController extends Controller
         ], 404);
     }
 
-    public function getLayerLotno($furnace, $massprod, $layerNumber)
+    public function getLayerLotno(Request $request)
     {
+
+        //dd("getLayerLotno HIT");
+        $request->validate([
+            'furnace' => 'required',
+            'massprod' => 'required',
+            'layer' => 'required',
+        ]);
+
+        $furnace = $request->query('furnace');
+        $massprod = $request->query('massprod');
+        $layerNumber = $request->query('layer');
+
         $record = MassProduction::where('furnace', $furnace)
             ->where('mass_prod', $massprod)
             ->first();
@@ -478,7 +486,7 @@ class MassProductionController extends Controller
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
         // Check if the layer column exists and is not null
-        if (!isset($record->$layerColumn) || $record->$layerColumn === null) {
+         if (!isset($record->$layerColumn)) {
             return response()->json([
                 'message' => "Layer {$layerNumber} not found for this record.",
             ], 404);
@@ -494,9 +502,14 @@ class MassProductionController extends Controller
 
         // Search for row with "LT. No.:"
         foreach ($layerData as $row) {
-            if (($row['rowTitle'] ?? null) === 'LT. No.:') {
+             if (($row['rowTitle'] ?? null) === 'LT. No.:') {
+                $lotnoValue = $row['data']['A'] ?? null;
+                if (empty($lotnoValue)) {
+                    $lotnoValue = $row['data']['B'] ?? null;
+                }
+                Log::info("LT. No. found. Value: ", ['lotno' => $lotnoValue]);
                 return response()->json([
-                    'lotno' => $row['data']['A'] ?? null,
+                    'lotno' => $lotnoValue,
                 ]);
             }
         }

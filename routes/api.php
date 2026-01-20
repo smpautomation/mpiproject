@@ -166,6 +166,8 @@ Route::post('/send-takefu-email', function(Request $request) {
 
     // Append hardcoded recipients
     $emailList[] = 'automation2@smp.com.ph';
+    $emailList[] = 'automation3@smp.com.ph';
+    $emailList[] = 'edzel@smp.com.ph';
     $emailList[] = 'automation5@smp.com.ph';
     $emailList[] = 'myke@smp.com.ph';
 
@@ -335,11 +337,12 @@ Route::get('/mass-production-monitoring/{furnace}/{massprod}', [MassProductionCo
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
     //[MassProductionController::class, 'getLayerModel']);
-Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}/model', [MassProductionController::class, 'getLayerModel']);
+Route::get('/mass-production/get-layer-model', [MassProductionController::class, 'getLayerModel']);
+
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
 //[MassProductionController::class, 'getLayerLotno']);
-Route::get('/mass-production/{furnace}/{massprod}/layer/{layerNumber}/lotno', [MassProductionController::class, 'getLayerLotno']);
+Route::get('/mass-production/get-layer-lotno', [MassProductionController::class, 'getLayerLotno']);
 
 //Route::get(
 //    '/mass-productions/{massprod}/completed-layers',
