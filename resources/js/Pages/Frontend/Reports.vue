@@ -2385,7 +2385,8 @@ const getControlSheetData = async () => {
     try{
         const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
         const controlSheet = response.data.layer_data;
-        reportTotalQuantity.value = controlSheet[12].data.A;
+        reportTotalQuantity.value = controlSheet[12].data.A ?? controlSheet[12].data.B ?? 0;
+
         //console.log('reportTotalQuantity: ', reportTotalQuantity.value);
 
     }catch(error){
@@ -2431,7 +2432,8 @@ const fetchAllData = async () => {
         tpmDataQuantity.value = modelData.length;
         //console.log('TPM TOTAL -> ',tpmDataQuantity.value);
         const responseControlSheet = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
-        const getActualModel = responseControlSheet.data.layer_data[0].data.A;
+        const getActualModel = responseControlSheet.data.layer_data[0].data.A ?? responseControlSheet.data.layer_data[0].data.B ?? null;
+
         getTpmModel.value = modelData;
 
         fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");
