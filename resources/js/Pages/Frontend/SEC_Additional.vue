@@ -619,40 +619,62 @@ currentFurnaceSelected.value = props.sec_furnace;
 //console.log('Layer Param check: ',currentLayerSelected.value);
 
 const fetchLayerModelAndLotno = async () => {
-        if (!currentMassProdSelected.value || !currentLayerSelected.value) {
-            console.warn("MassProd or Layer not selected yet.");
-            return;
-        }
+    console.log(
+        'Entering fetchLayerModelAndLotno function | MassProd: ',
+        currentMassProdSelected.value,
+        'Furnace: ',
+        currentFurnaceSelected.value,
+        ' Layer: ',
+        currentLayerSelected.value
+    );
 
-        let model = null;
-        let lotno = null;
+    if (!currentMassProdSelected.value || !currentFurnaceSelected.value || !currentLayerSelected.value) {
+        console.warn("MassProd or Layer not selected yet.");
+        return;
+    }
 
-        try {
-            const responseModel = await axios.get(
-                `/api/mass-production/${currentFurnaceSelected.value}/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/model`
-            );
-            model = responseModel.data.model;
-            jhCurveActualModel.value = model;
-            console.log("Model:", jhCurveActualModel.value);
-        } catch (error) {
-            console.error("Error fetching layer model:", error);
-            toast.error('Failed to fetch model data for this layer.');
-        }
+    try {
+        const [responseModel, responseLotno] = await Promise.all([
+            axios.get('/api/mass-production/get-layer-model', {
+                params: {
+                    furnace: currentFurnaceSelected.value,
+                    massprod: currentMassProdSelected.value,
+                    layer: currentLayerSelected.value,
+                }
+            }),
+            axios.get('/api/mass-production/get-layer-lotno', {
+                params: {
+                    furnace: currentFurnaceSelected.value,
+                    massprod: currentMassProdSelected.value,
+                    layer: currentLayerSelected.value,
+                }
+            })
+        ]);
 
-        try {
-            const responseLotno = await axios.get(
-                `/api/mass-production/${currentFurnaceSelected.value}/${currentMassProdSelected.value}/layer/${currentLayerSelected.value}/lotno`
-            );
-            lotno = responseLotno.data.lotno;
-            jhCurveLotNo.value = lotno;
-            console.log("Lot No:", jhCurveLotNo.value);
-        } catch (error) {
-            console.error("Error fetching layer lotno:", error);
-            toast.error('Failed to fetch lotno data for this layer.');
-        }
+        const model = responseModel.data.model;
+        const lotno = responseLotno.data.lotno;
+
+        jhCurveActualModel.value = model;
+        jhCurveLotNo.value = lotno;
 
         return { model, lotno };
-    };
+
+    } catch (error) {
+        console.error("Error fetching layer model or lotno:", error);
+        toast.error('Failed to fetch layer data.');
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchLayerModelAndLotno",
+            "Error fetching layer model/lotno"
+        );
+    }
+};
 
 // Store the file list when the input changes
 const storeFileList = (event) => {
@@ -1124,6 +1146,9 @@ const saveToDatabase = async () => {
                 const layerData = {
                     "date": formattedDate,
                     "serial_no": currentSerialSelected.value,
+                    "furnace": currentFurnaceSelected.value,
+                    "mass_prod": currentMassProdSelected.value,
+                    "layer_no": currentLayerSelected.value,
                     "set_no": highest_setNo.value,
                     "code_no": rowCell.value[1],
                     "order_no": rowCell.value[2],
@@ -1768,11 +1793,38 @@ const fetchDataCreateGraph = async () => {
 
         const allData = tableRows;
 
+        const compareZone = (a, b) => { //Sorting ensures the plotted lines in graph is in order (proper sequence based on zone column)
+            const parse = (zone) => {
+                const match = zone.match(/^(\d+)([A-Z]+)(\d+)$/i);
+                if (!match) return { n1: 0, s: zone, n2: 0 };
+
+                return {
+                    n1: parseInt(match[1], 10),   // first number
+                    s: match[2],                  // letters
+                    n2: parseInt(match[3], 10),   // last number
+                };
+            };
+
+            const A = parse(a.zone);
+            const B = parse(b.zone);
+
+            // 1) compare first number
+            if (A.n1 !== B.n1) return A.n1 - B.n1;
+
+            // 2) compare letters
+            if (A.s !== B.s) return A.s.localeCompare(B.s);
+
+            // 3) compare last number
+            return A.n2 - B.n2;
+        };
+
         if (Array.isArray(allData) && allData.length > 0) {
             // Step 1: Find the highest set_no
             const maxSetNo = Math.max(...allData.map(item => item.set_no));
             // Step 2: Filter the data to only those with the highest set_no
-            filteredNSADataForGraph.value = allData.filter(item => item.set_no === maxSetNo);
+            filteredNSADataForGraph.value = allData
+                .filter(item => item.set_no === maxSetNo)
+                .sort(compareZone);
             //console.log('Filtered data with highest set_no:', filteredNSADataForGraph.value);
         } else {
             //console.log('No data found or data is not an array.');
@@ -1983,7 +2035,7 @@ const autoDeleteNullData = async () => {
         const nsaForDelete_IDs = [];
 
         nsadata.forEach((row, idx) => {
-            const { id, furnace_id, layer_no, ...otherFields } = row;
+            const { id, layer_no, ...otherFields } = row;
             const nullFields = Object.keys(otherFields).filter(key => otherFields[key] === null);
 
             if (nullFields.length > 0) {

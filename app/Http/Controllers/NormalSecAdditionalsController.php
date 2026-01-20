@@ -148,7 +148,8 @@ class NormalSecAdditionalsController extends Controller
                 'HRO' => $request->input('HRO', null),
                 'x' => $request->input('x', null),
                 'y' => $request->input('y', null),
-                'furnace_id' => $request->input('furnace_id', null),
+                'furnace' => $request->input('furnace', null),
+                'mass_prod' => $request->input('mass_prod', null),
                 'layer_no' => $request->input('layer_no', null),
                 'temperature' => $request->input('temperature', null),
                 'data_status' => $request->input('data_status', null)
