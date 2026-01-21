@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('layer_code')->nullable();
             $table->json('coating_info_1stgbdp')->nullable();
             $table->json('coating_info_2ndgbdp')->nullable();
-            $table->json('coating_info_1stgbdp')->nullable();
+            $table->json('coating_data_1stgbdp')->nullable();
             $table->json('coating_data_2ndgbdp')->nullable();
         });
     }
