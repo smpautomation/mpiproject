@@ -142,53 +142,83 @@
             </div>
 
             <!-- Logs Panel -->
-            <div class="w-full max-w-4xl p-6 bg-gray-700 shadow-lg rounded-2xl">
+            <div class="w-full max-w-5xl p-6 bg-gray-700 shadow-lg rounded-2xl">
                 <div>
                     <!-- Filters Section -->
-                    <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
-                    <!-- Search Logs -->
-                    <input
-                        type="text"
-                        placeholder="Search logs..."
-                        v-model="searchQuery"
-                        class="flex-grow px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div class="flex flex-wrap items-end gap-4">
 
-                    <!-- Filter by User -->
-                    <select
-                        v-model="selectedUser"
-                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">All Users</option>
-                        <option v-for="user in uniqueUsers" :key="user" :value="user">{{ user }}</option>
-                    </select>
+                        <!-- Search -->
+                        <div class="flex flex-col flex-grow gap-1">
+                            <span class="text-xs text-gray-400">Search</span>
+                            <input
+                                type="text"
+                                placeholder="Search logs..."
+                                v-model="searchQuery"
+                                class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
 
-                    <!-- Filter by Section -->
-                    <select
-                        v-model="selectedSection"
-                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">All Section</option>
-                        <option v-for="section in uniqueSections" :key="section" :value="section">{{ section }}</option>
-                    </select>
+                        <!-- User -->
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs text-gray-400">User</span>
+                            <select
+                                v-model="selectedUser"
+                                class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">All Users</option>
+                                <option v-for="user in uniqueUsers" :key="user" :value="user">{{ user }}</option>
+                            </select>
+                        </div>
 
-                    <!-- Sort Logs -->
-                    <select
-                        v-model="sortOrder"
-                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">Sort by</option>
-                        <option value="newest">Newest</option>
-                        <option value="oldest">Oldest</option>
-                    </select>
+                        <!-- Section -->
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs text-gray-400">Section</span>
+                            <select
+                                v-model="selectedSection"
+                                class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">All Section</option>
+                                <option v-for="section in uniqueSections" :key="section" :value="section">{{ section }}</option>
+                            </select>
+                        </div>
 
-                    <!-- Filter by Date -->
-                    <input
-                        type="date"
-                        v-model="selectedDate"
-                        class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                        <!-- Sort -->
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs text-gray-400">Sort</span>
+                            <select
+                                v-model="sortOrder"
+                                class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">None</option>
+                                <option value="newest">Newest</option>
+                                <option value="oldest">Oldest</option>
+                            </select>
+                        </div>
+
+                        <!-- Start Date -->
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs text-gray-400">From</span>
+                            <input
+                                type="date"
+                                v-model="startDate"
+                                :max="startMax"
+                                class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs text-gray-400">To</span>
+                            <input
+                                type="date"
+                                v-model="endDate"
+                                :min="endMin"
+                                class="px-4 py-2 text-sm text-gray-200 bg-gray-600 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+
                     </div>
+
 
                     <!-- Logs Section -->
                     <div class="mt-4 space-y-2 overflow-auto max-h-64">
@@ -285,9 +315,39 @@ const searchQuery = ref('');
 const selectedUser = ref('');
 const selectedSection = ref('');
 const sortOrder = ref('');
-const selectedDate = ref(getToday());
 const uniqueUsers = ref([]);
 const uniqueSections = ref([]);
+const startDate = ref(null);
+const endDate = ref(null);
+
+// Set default: yesterday → tomorrow
+const today = new Date();
+
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+
+const toISODate = (d) => d.toISOString().slice(0, 10);
+
+startDate.value = toISODate(yesterday);
+endDate.value = toISODate(tomorrow);
+
+const shiftDate = (dateStr, days) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0, 10);
+};
+
+const startMax = computed(() => {
+    return endDate.value ? shiftDate(endDate.value, -1) : "";
+});
+
+const endMin = computed(() => {
+    return startDate.value ? shiftDate(startDate.value, 1) : "";
+});
 
 //just for fixing stamp
 const reportData = ref([]);
@@ -312,6 +372,7 @@ const formatDate = (isoString) => {
     timeZone: 'Asia/Manila'  // Set your timezone here
   });
 };
+
 
 const saveRole = async (user) => {
   try {
@@ -390,8 +451,8 @@ const filteredLogs = computed(() => {
     if (searchQuery.value.trim()) {
         const query = searchQuery.value.toLowerCase()
         logs = logs.filter(log =>
-        (log.event?.toLowerCase().includes(query)) ||
-        (log.user?.toLowerCase().includes(query))
+            (log.event?.toLowerCase().includes(query)) ||
+            (log.user?.toLowerCase().includes(query))
         );
     }
 
@@ -405,13 +466,24 @@ const filteredLogs = computed(() => {
         logs = logs.filter(log => log.section === selectedSection.value);
     }
 
-    // Filter by selected date (exact date match)
-    if (selectedDate.value) {
+    // Filter by date range
+    if (startDate.value || endDate.value) {
         logs = logs.filter(log => {
-        if (!log.created_at) return false;
-            const date = new Date(log.created_at.replace(' ', 'T')) // convert to ISO format
-            const localDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-            return localDate === selectedDate.value
+            if (!log.created_at) return false;
+
+            const logDate = new Date(log.created_at.replace(' ', 'T'));
+
+            const start = startDate.value ? new Date(startDate.value) : null;
+            const end = endDate.value ? new Date(endDate.value) : null;
+
+            if (start && end) {
+                return logDate >= start && logDate <= end;
+            } else if (start) {
+                return logDate >= start;
+            } else if (end) {
+                return logDate <= end;
+            }
+            return true;
         });
     }
 

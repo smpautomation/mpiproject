@@ -2351,11 +2351,15 @@ const fetchAvailableLayers = async () => {
     }
 };
 
-const fetchLayerModel = async (furnace, massProd, layerNumber) => {
+const fetchLayerModel = async () => {
     try {
-        const response = await axios.get(
-            `/api/mass-production/${furnace}/${massProd}/layer/${layerNumber}/model`
-        );
+        const response = await axios.get('/api/mass-production/get-layer-model', {
+                                    params: {
+                                        furnace: coatingInfo.selectedFurnace,
+                                        massprod: coatingInfo.selectedMassProd,
+                                        layer: coatingInfo.selectedLayer,
+                                    }
+                                });
         console.log("Fetched Model: ", response.data.model);
         fetchedModelValue.value = response.data.model;
         console.log("Activation: ", activate2ndGBDP.value);

@@ -258,7 +258,7 @@ const userManageLogging = async (logEvent) => {
             section: '2nd Gbdp Models',
         });
 
-        //console.log('responseUserLogin-data: ',responseUserLogin.data);
+        console.log('responseUserLogin-data: ',responseUserLogging.data);
     }catch(error){
         console.error('userManageLogging post request failed: ',error);
     }
