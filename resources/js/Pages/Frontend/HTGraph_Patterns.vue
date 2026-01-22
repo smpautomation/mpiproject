@@ -439,7 +439,7 @@ const handleEditGraph = (event) => {
 }
 
 const submitForm = () => {
-    if(selectedFurnace.value == null || patternNo.value == null || selectedFurnace == '' || patternNo.value == 0 || uploadedGraph.value == null || encodedBy.value == null){
+    if(selectedFurnace.value == null || patternNo.value == null || patternNo.value == 0 || uploadedGraph.value == null || encodedBy.value == null){
         toast.warning('Please fill up all the fields.')
         uploadedGraph.value = null;
         return;

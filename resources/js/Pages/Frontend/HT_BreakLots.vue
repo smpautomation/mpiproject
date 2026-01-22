@@ -945,7 +945,7 @@ const userManageLogging = async (logEvent) => {
         const responseUserLogging = await axios.post('/api/userlogs', {
             user: state.user.firstName + " " + state.user.surname,
             event: logEvent,
-            section: 'Heat Treatment',
+            section: 'HT Breaklots',
         });
 
         //console.log('responseUserLogin-data: ',responseUserLogin.data);
@@ -953,6 +953,23 @@ const userManageLogging = async (logEvent) => {
         console.error('userManageLogging post request failed: ',error);
     }
 }
+
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try{
+        const response = await axios.post('/api/error-logs', {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: 'HT Breaklots',
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    }catch(error){
+        console.error('userErrorLogging post request failed: ',error);
+    }
+}
+
 
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
@@ -1436,8 +1453,32 @@ const formatLayerDataForDatabase = (layer) => {
     ];
 };
 
-const changeData = () => {
+const updateFormatType = async () => { // Update format type of Mass Productions Table
+    const layerKey = firstLayerSelected.value === '9.5' ? 'layer_9_5_format_type' : `layer_${firstLayerSelected.value}_format_type`;
 
+    const dataPayload = {
+        furnace: mpcs.selectedFurnace,
+        mass_prod: mpcs.selectedMassProd,
+        [layerKey]: 'Normal',
+    }
+
+    try{
+        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
+        console.log('Response Update: ', responseUpdate.data);
+    }catch(error){
+        console.log('Failed to update format type');
+        toast.error('Failed to update format type');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "updateFormatType",
+            "Failed to update format type"
+        );
+    }
 }
 
 const fetchAllLotDataBoxDetails = async () => {
@@ -1591,15 +1632,15 @@ const saveToDatabase = async () => {
 
             console.log(`Excess layer ${layer} merged:`, excessSaveRes.data);
         }
-
+        toast.success('Saved Successfully!');
+        await userManageLogging(`has successfully created Layer ${firstLayerSelected.value} | ${mpcsbl.selectedFurnace} - ${mpcsbl.selectedMassProd}`)
+        await updateFormatType();
+        showConfirmationPanel.value = false;
+        resetData();
+        Inertia.visit('/heat_treatment');
     } catch (err) {
         console.error('Save failed:', err);
         toast.error('Database save failed!');
-    } finally {
-        showConfirmationPanel.value = false;
-        resetData();
-        toast.success('Saved Successfully!');
-        Inertia.visit('/heat_treatment');
     }
 };
 

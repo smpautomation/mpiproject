@@ -666,14 +666,13 @@ const saveToDatabase = async () => {
         const response = await axios.post(`/api/second_heat_treatment`, dataPayload);
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
+        await updateFormatType();
         showModalCreate.value = false;
         await userManageLogging('created 2nd Gbdp HT Data for Mass Prod: '+ selectedMassProd.value +' Layer: ' + selectedLayer.value + ' successfully.');
         clearAll(); // Clear all fields after successful save
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
-    } finally {
-        await updateFormatType();
     }
 };
 

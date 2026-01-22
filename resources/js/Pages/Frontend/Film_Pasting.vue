@@ -712,7 +712,7 @@ const saveToDatabase = async () => {
         const response = await axios.post('/api/film-pasting-data', payload);
         console.log(response.data);
         toast.success('Data successfully saved.')
-
+        await updateFormatType();
     }catch(error){
         toast.error('Failed to save film pasting data');
         await userErrorLogging(
@@ -729,7 +729,6 @@ const saveToDatabase = async () => {
         showModalSubmit.value = false;
         isFilmPasteDataShown.value = false;
         await getCompletedLayers();
-        await updateFormatType();
         await fetchAvailableLayers();
         await fetchExistingLayers();
         clearAll();
