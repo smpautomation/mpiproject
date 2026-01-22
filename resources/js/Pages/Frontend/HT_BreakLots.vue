@@ -1463,7 +1463,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
     }
 
     try{
-        const responseUpdate = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
+        const responseUpdate = await axios.patch(`/api/mass-production/${mpcsbl.selectedFurnace}/${mpcsbl.selectedMassProd}`, dataPayload);
         console.log('Response Update: ', responseUpdate.data);
     }catch(error){
         console.log('Failed to update format type');
