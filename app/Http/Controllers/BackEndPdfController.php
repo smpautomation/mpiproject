@@ -317,6 +317,29 @@ class BackEndPdfController extends Controller
             ->get()
             ->keyBy('nsa_set'); // now keyed by set number
 
+        //Refactor: Sort the data by zone column --- 1/23/2026
+        foreach ($nsaGroups as $setNo => $rows) {
+            $nsaGroups[$setNo] = $rows->sort(function ($a, $b) {
+                $parse = function($zone) {
+                    if (preg_match('/^(\d+)([A-Z]+)(\d+)$/i', $zone, $matches)) {
+                        return [
+                            'n1' => (int)$matches[1],
+                            'letters' => $matches[2],
+                            'n2' => (int)$matches[3],
+                        ];
+                    }
+                    return ['n1' => 0, 'letters' => $zone, 'n2' => 0];
+                };
+
+                $A = $parse($a->zone ?? '');
+                $B = $parse($b->zone ?? '');
+
+                if ($A['n1'] !== $B['n1']) return $A['n1'] <=> $B['n1'];
+                if ($A['letters'] !== $B['letters']) return strcmp($A['letters'], $B['letters']);
+                return $A['n2'] <=> $B['n2'];
+            })->values(); // reset keys
+        }
+
         // Directly assign aggregates from DB, no computation
         $nsaAggregates = [];
         // --- NSA chart filenames setup ---

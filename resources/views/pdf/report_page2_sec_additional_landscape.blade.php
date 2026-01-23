@@ -187,43 +187,96 @@
             <tr>
                 <td style="{{ $tdStyle }}">{{ $item->zone ?? '' }}</td>
                 <td style="{{ $tdStyle }}">{{ $item->Br ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->Br_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->Br_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHc ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHc_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->iHc_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHk ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHk_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->iHk_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->BHMax ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->BHMax_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->BHMax_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHr95 ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHr95_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->iHr95_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHr98 ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHr98_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->iHr98_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->iHkiHc ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->iHkiHc_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->iHkiHc_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->Br4pai ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->Br4pai_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->Br4pai_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->bHc ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->bHc_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->bHc_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
                 <td style="{{ $tdStyle }}">{{ $item->Squareness ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->Squareness_remarks ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->Squareness_remarks ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
-                <td style="{{ $tdStyle }}">{{ $item->{"4paiIa"} ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->{"4paiIa_remarks"} ?? '' }}</td>
+                <td style="{{ $tdStyle }}">{{ $item->{'4paiIa'} ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->{'4paiIa_remarks'} ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
-                <td style="{{ $tdStyle }}">{{ $item->{"4paiId"} ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->{"4paiId_remarks"} ?? '' }}</td>
+                <td style="{{ $tdStyle }}">{{ $item->{'4paiId'} ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->{'4paiId_remarks'} ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
 
-                <td style="{{ $tdStyle }}">{{ $item->{"4paiIs"} ?? '' }}</td>
-                <td style="{{ $tdStyleRem }}">{{ $item->remark->{"4paiIs_remarks"} ?? '' }}</td>
+                <td style="{{ $tdStyle }}">{{ $item->{'4paiIs'} ?? '' }}</td>
+                <td style="{{ $tdStyleRem }}">
+                    @if(($item->remark->{'4paiIs_remarks'} ?? 0) == 1)
+                        <span style="color:red;font-weight:bold;">E</span>
+                    @endif
+                </td>
+
 
                 <td style="{{ $tdStyle }}">{{ $item->temperature ?? '' }}</td>
                 <td style="{{ $tdStyle }}">{{ $item->data_status ?? '' }}</td>
