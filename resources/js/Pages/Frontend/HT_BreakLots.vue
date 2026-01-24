@@ -1457,8 +1457,8 @@ const updateFormatType = async () => { // Update format type of Mass Productions
     const layerKey = firstLayerSelected.value === '9.5' ? 'layer_9_5_format_type' : `layer_${firstLayerSelected.value}_format_type`;
 
     const dataPayload = {
-        furnace: mpcs.selectedFurnace,
-        mass_prod: mpcs.selectedMassProd,
+        furnace: mpcsbl.selectedFurnace,
+        mass_prod: mpcsbl.selectedMassProd,
         [layerKey]: 'Normal',
     }
 
