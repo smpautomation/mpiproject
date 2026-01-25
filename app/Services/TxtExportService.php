@@ -239,24 +239,14 @@ class TxtExportService
 
     public function exportData2(string $furnace_no, string $massPro)
     {
-        // Step 1: Get the latest TPM date for this furnace + mass prod
-        $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
+        $formattedFurnace = preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no);
+        // Fetch all TPM data for this furnace + mass production
+        $tpmData = TpmData::where('furnace', 'LIKE', "{$formattedFurnace}%")
             ->where('mass_prod', $massPro)
-            ->orderBy('date', 'desc')
-            ->value('date');
-
-        if (!$dateToGet) {
-            return 'No TPM data found for this furnace and mass production.';
-        }
-
-        // Step 2: Fetch all TPM data for that date and furnace
-        $tpmData = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
-            ->where('mass_prod', $massPro)
-            ->where('date', $dateToGet)
             ->get();
 
         if ($tpmData->isEmpty()) {
-            return 'No TPM data found.';
+            return 'No TPM data found for this furnace and mass production.';
         }
 
         $normalizedFurnace = $this->normalizeFurnaceCode($furnace_no);
