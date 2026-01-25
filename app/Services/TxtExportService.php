@@ -499,23 +499,12 @@ class TxtExportService
 
     public function exportData3(string $furnace_no, string $massPro)
     {
-        // Step 1: Get the latest date
-        $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
-            ->where('mass_prod', $massPro)
-            ->orderBy('date', 'desc')
-            ->value('date');
+        $formattedFurnace = preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no);
+        //dump($formattedFurnace);
 
-        if (!$dateToGet) {
-            return 'No data found.';
-        }
-
-        // Clean furnace_no
-        $furnace_no = str_replace('-', '', $furnace_no);
-
-        // Step 2: Fetch TPM data
+        // Fetch TPM data by mass_prod and furnace only
         $tpmData = TpmData::with('remark', 'category')
-            ->where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
-            ->where('date', $dateToGet)
+            ->where('furnace', 'LIKE', "{$formattedFurnace}")
             ->where('mass_prod', $massPro)
             ->get();
 
@@ -524,8 +513,6 @@ class TxtExportService
         }
 
         // --- hd5 support ---
-        $formattedFurnace = preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no);
-
         $massProdData = MassProduction::where('mass_prod', $massPro)
             ->where('furnace', $formattedFurnace)
             ->first();
@@ -537,7 +524,7 @@ class TxtExportService
         $cycleNo = $massProdData->cycle_no ?? '0';
 
         // Group data by layer_no
-        $groupedByLayer = $tpmData->groupBy(fn($item) => trim((string)$item->layer_no));
+        $groupedByLayer = $tpmData->groupBy(fn($item) => (string) $item->layer_no);
 
         /*
         |--------------------------------------------------------------------------
@@ -620,7 +607,7 @@ class TxtExportService
 
         foreach ($layerOrder as $layer) {
             // Determine the numeric value for queries
-            $layerFilter = $layer === 'T' ? '9.5' : $layer;
+            $layerFilter = $layer === 'T' ? '9.5' : (string) $layer;
 
             // Determine the display value
             $layerDisplay = $layer === 'T' ? 'T' : $layer;
