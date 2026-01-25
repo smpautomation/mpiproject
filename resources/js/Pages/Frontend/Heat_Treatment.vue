@@ -1906,6 +1906,7 @@ const weightValuesExcess = ref({});
 const qtyValuesExcess = ref({});
 const htValuesExcess = ref({});
 const ltValuesExcess = ref({});
+const rawMaterialCodeValues = ref({});
 
 allBoxes.forEach(box => {
     boxNoValues.value[box] = '';
@@ -1917,7 +1918,8 @@ allBoxes.forEach(box => {
     weightValuesExcess.value[box] = '';
     qtyValuesExcess.value[box] = '';
     htValuesExcess.value[box] = '';
-    ltValuesExcess.value[box]= '';
+    ltValuesExcess.value[box] = '';
+    rawMaterialCodeValues.value[box] = '';
 });
 
 // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!! // MASS PRODUCTION VARIABLES //!!!!!!!!!!!!!!!!
@@ -2463,6 +2465,9 @@ const fetchAllLotDataBoxDetails = async () => {
                 Object.keys(ltValues.value).forEach(box => {
                     if (!visibleBoxes.value.includes(box)) ltValues.value[box] = '';
                 });
+                Object.keys(rawMaterialCodeValues.value).forEach(box => {
+                    if (!visibleBoxes.value.includes(box)) rawMaterialCodeValues.value[box] = '';
+                });
 
                 // Adjust end box for UI
                 mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
@@ -2489,6 +2494,7 @@ const fetchAllLotDataBoxDetails = async () => {
             const lotRow      = getRow("LT. No.:");
             const magnetRow   = getRow("Magnet prepared by:");
             const boxPrepRow  = getRow("Box prepared by:");
+            const rawMatRow   = getRow("RAW MATERIAL CODE:");
 
             // Only the keys that exist (less than 10)
             visibleBoxes.value = Object.keys(boxNoRow || {}).filter(k => boxNoRow[k] !== "" && boxNoRow[k] !== null);
@@ -2507,6 +2513,7 @@ const fetchAllLotDataBoxDetails = async () => {
                 boxNoValues.value[box]  = boxNoRow[box] || '';
                 htValues.value[box]     = '';
                 ltValues.value[box]     = '';
+                rawMaterialCodeValues.value[box] = rawMatRow[box] || '';
             });
 
             // Top-level MPCS
@@ -2552,6 +2559,7 @@ const fetchAllLotDataBoxDetails = async () => {
         let excessQtyRow = {};
         let excessWeightRow = {};
         let excessBoxNoRow = {};
+        let excessRawMatRow = {}; // <-- add this
 
         if (sheet.excess_data && Array.isArray(sheet.excess_data) && sheet.excess_data.length) {
             const getExcessRow = (title) =>
@@ -2560,11 +2568,18 @@ const fetchAllLotDataBoxDetails = async () => {
             excessQtyRow       = getExcessRow("QTY (PCS):");
             excessWeightRow    = getExcessRow("WT (KG):");
             excessBoxNoRow     = getExcessRow("BOX No.:");
+            excessRawMatRow    = getExcessRow("RAW MATERIAL CODE:"); // <-- add this
 
-            console.log("Excess Rows Extracted:", { excessQtyRow, excessWeightRow, excessBoxNoRow });
+            console.log("Excess Rows Extracted:", {
+                excessQtyRow,
+                excessWeightRow,
+                excessBoxNoRow,
+                excessRawMatRow // <-- log it too
+            });
         } else {
             console.log("No excess data found in sheet.excess_data");
         }
+
 
         // --- 3. Determine main/excess box keys ---
         const allFoundMain = Object.keys(boxNoRow || {});
@@ -2587,12 +2602,14 @@ const fetchAllLotDataBoxDetails = async () => {
         qtyValuesExcess.value = {};
         weightValuesExcess.value = {};
         boxNoValuesExcess.value = {};
+        rawMaterialCodeValues.value = {};
 
         // --- 5. Populate MAIN box values ---
         visibleBoxes.value.forEach(box => {
             qtyValues.value[box]       = qtyRow[box] || '';
             weightValues.value[box]    = weightRow[box] || '';
             boxNoValues.value[box]     = boxNoRow[box] || '';
+            rawMaterialCodeValues.value[box] = rawMatRow[box] || '';
         });
 
         console.log("Populated MAIN box values:", {
@@ -2606,6 +2623,7 @@ const fetchAllLotDataBoxDetails = async () => {
             qtyValuesExcess.value[box]    = excessQtyRow[box] || '';
             weightValuesExcess.value[box] = excessWeightRow[box] || '';
             boxNoValuesExcess.value[box]  = excessBoxNoRow[box] || '';
+            rawMaterialCodeValues.value[box]  = excessRawMatRow?.[box] || ''; // if excess raw materials exist
         });
 
         console.log("Populated EXCESS box values:", {
@@ -2718,9 +2736,12 @@ watch(
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 
 const loadNormalBoxData = (layerData) => {
+    //console.log("=== loadNormalBoxData START ===");
+    //console.log("Raw layerData:", layerData);
 
     const getRow = (title) => layerData.find(r => r.rowTitle === title)?.data || {};
 
+    // --- 1️⃣ Extract all rows ---
     const model       = getRow("MODEL:");
     const coatingMC   = getRow("COATING M/C No.:");
     const lotNumber   = getRow("LT. No.:");
@@ -2730,21 +2751,31 @@ const loadNormalBoxData = (layerData) => {
     const boxNoRow    = getRow("BOX No.:");
     const magnetRow   = getRow("Magnet prepared by:");
     const boxPrepRow  = getRow("Box prepared by:");
+    const rawMatRow   = getRow("RAW MATERIAL CODE:");
 
-    // --- 1. Determine visible boxes ---
+    /*console.log("Extracted rows:", {
+        model, coatingMC, lotNumber, qtyRow, coatingRow, weightRow, boxNoRow, magnetRow, boxPrepRow, rawMatRow
+    });*/
+
+    // --- 2️⃣ Determine visible boxes ---
     let allBoxes = Object.keys(boxNoRow).filter(key => boxNoRow[key] !== '' && boxNoRow[key] !== null);
+    //console.log("All boxes before 9.5 filter:", allBoxes);
 
-    // --- 2. Apply 9.5 layer filter if needed ---
+    // --- 3️⃣ Apply 9.5 layer filter if needed ---
     if (isLayerNinePointFive.value && mpcs.nineHalfSet) {
         const set1 = ['A','C','E','G','J'];
         const set2 = ['B','D','F','H','K'];
         allBoxes = mpcs.nineHalfSet === 'SET1' ? set1 : set2;
+        //console.log("9.5 layer filter applied, allowed boxes:", allBoxes);
     }
 
     visibleBoxes.value = allBoxes;
+    //console.log("Visible boxes after filter:", visibleBoxes.value);
 
-    // --- 3. Assign top-level MPCS fields ---
-    const firstBox = visibleBoxes.value[0];
+    // --- 4️⃣ Assign top-level MPCS fields ---
+    const firstBox = visibleBoxes.value[0] || null;
+    if (!firstBox) console.warn("No first box found! visibleBoxes is empty.");
+
     mpcs.selectedModel      = model[firstBox] || "";
     mpcs.coatingMCNo        = coatingMC[firstBox] || "";
     mpcs.lotNo              = lotNumber[firstBox] || "";
@@ -2753,17 +2784,38 @@ const loadNormalBoxData = (layerData) => {
     mpcs.boxPreparedBy      = boxPrepRow[firstBox] || "";
     mpcs.selectedBoxEndList = visibleBoxes.value[visibleBoxes.value.length - 1] || firstBox;
 
-    // --- 4. Populate reactive maps for each visible box ---
+    /*console.log("Top-level MPCS assigned:", {
+        selectedModel: mpcs.selectedModel,
+        coatingMCNo: mpcs.coatingMCNo,
+        lotNo: mpcs.lotNo,
+        coating: mpcs.coating,
+        magnetPreparedBy: mpcs.magnetPreparedBy,
+        boxPreparedBy: mpcs.boxPreparedBy,
+        selectedBoxEndList: mpcs.selectedBoxEndList
+    });*/
+
+    // --- 5️⃣ Populate reactive maps for each visible box ---
     visibleBoxes.value.forEach(box => {
         qtyValues.value[box]    = qtyRow[box] || "";
         weightValues.value[box] = weightRow[box] || "";
         boxNoValues.value[box]  = boxNoRow[box] || "";
+        rawMaterialCodeValues.value[box] = rawMatRow[box] || "";
     });
 
-    // --- 5. Set first and last quantities for UI/logic ---
-    const lastBox = visibleBoxes.value[visibleBoxes.value.length - 1];
-    mpcs.qty      = qtyRow[firstBox] || 0;
-    mpcs.qty_lastBox = qtyRow[lastBox] || 0;
+    /*console.log("Reactive maps populated:", {
+        qtyValues: qtyValues.value,
+        weightValues: weightValues.value,
+        boxNoValues: boxNoValues.value,
+        rawMaterialCodeValues: rawMaterialCodeValues.value
+    });*/
+
+    // --- 6️⃣ Set first and last quantities for UI/logic ---
+    const lastBox = visibleBoxes.value[visibleBoxes.value.length - 1] || firstBox;
+    mpcs.qty          = qtyRow[firstBox] || 0;
+    mpcs.qty_lastBox  = qtyRow[lastBox] || 0;
+
+    //console.log("First and last box quantities:", { firstBox, qtyFirst: mpcs.qty, lastBox, qtyLast: mpcs.qty_lastBox });
+    //console.log("=== loadNormalBoxData END ===");
 };
 
 
@@ -3037,6 +3089,7 @@ const saveToDatabase = async () => {
         // Filter only boxes that exist in visibleBoxes
         mainBoxes = mainBoxes.filter(box => visibleBoxes.value.includes(box));
     }
+    console.log('RAW MATERIAL CODE values', rawMaterialCodeValues.value);
 
     // --- 2️⃣ Prepare main layer payload ---
     const mainLayerPayload = formatLayerDataForDatabase(mainBoxes, false);
@@ -3148,7 +3201,7 @@ const formatLayerDataForDatabase = (boxes, isExcess = false) => {
         { rowTitle: 'BOX No.:', data: Object.fromEntries(boxes.map(box => [box, boxNoMap[box] || ''])) },
         { rowTitle: 'Magnet prepared by:', data: Object.fromEntries(boxes.map(box => [box, mpcs.magnetPreparedBy || ''])) },
         { rowTitle: 'Box prepared by:', data: Object.fromEntries(boxes.map(box => [box, mpcs.boxPreparedBy || ''])) },
-        { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(boxes.map(box => [box, mpcs.rawMaterialCode || ''])) },
+        { rowTitle: 'RAW MATERIAL CODE:', data: Object.fromEntries(boxes.map(box => [box, rawMaterialCodeValues.value[box] || ''])) },
         { rowTitle: 'TOTAL QTY', data: Object.fromEntries(boxes.map(box => [box, totalQty])) }
     ];
 };

@@ -1524,6 +1524,7 @@ const fetchAllLotDataBoxDetails = async () => {
                 else if (title.includes('coating')) mpcsbl.coating = value;
                 else if (title.includes('magnetpreparedby')) mpcsbl.magnetPreparedBy = value;
                 else if (title.includes('boxpreparedby')) mpcsbl.boxPreparedBy = value;
+                else if (title.includes('rawmaterialcode')) mpcsbl.rawMaterialCode = value;
             });
         }
 
@@ -1545,15 +1546,19 @@ const fetchAllLotDataBoxDetails = async () => {
                 const qtyRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('qty'));
                 const weightRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('wt'));
                 const boxNoRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('box'));
+                const rawMatRow = sourceRows.find(r => normalizeTitle(r.rowTitle).includes('rawmaterial'));
 
                 const qtyValue = qtyRow ? Object.values(qtyRow.data)[i] ?? 0 : 0;
                 const weightValue = weightRow ? Object.values(weightRow.data)[i] ?? 0 : 0;
                 const boxNoValue = boxNoRow ? Object.values(boxNoRow.data)[i] ?? '' : '';
+                const rawMatValue = rawMatRow ? Object.values(rawMatRow.data)[i] ?? '' : '';
+
 
                 layerInputs[layer][box] = {
                     qty: qtyValue,
                     weight: weightValue,
                     boxNo: boxNoValue,
+                    rawMaterialCode: rawMatValue,
                     ht: layerInputs[layer]?.[box]?.ht ?? '',
                     lt: layerInputs[layer]?.[box]?.lt ?? ''
                 };
@@ -1578,7 +1583,6 @@ const fetchAllLotDataBoxDetails = async () => {
 
         // ---- Combine and round ----
         expectedTotalWeight.value = Number((totalMainWeight + totalExcessWeight + currentGrandTotal.value).toFixed(2));
-
 
         toast.success('Box details fetched successfully');
     } catch (error) {

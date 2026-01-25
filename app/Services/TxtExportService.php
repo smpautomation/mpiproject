@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\TPMData; //Before: App\Models\TpmData
 use App\Models\MassProduction;
+use App\Models\ExcessLayers;
 use App\Models\ReportData;
 use App\Models\Coating;
 use App\Models\GbdpSecondCoating;
@@ -32,18 +33,32 @@ class TxtExportService
         }
 
         // Step 3: Prepare layer/area structure
-        $layers = [1,2,3,4,5,6,7,8,9,9.5]; // include 9.5 as final layer
+        $layers = range(1, 10);
 
         $outputRows = [];
         $allBoxes = []; // will collect all boxes across layers
 
         foreach ($layers as $layerKey) {
             // Handle 9.5 column naming
-            $layerColumn = 'layer_' . str_replace('.', '_', $layerKey);
-            $serialColumn = 'layer_' . str_replace('.', '_', $layerKey) . '_serial';
+            if ($layerKey == 10) {
+                $layerColumn = 'layer_9_5';
+                $serialColumn = 'layer_9_5_serial';
+            } else {
+                $layerColumn = 'layer_' . $layerKey;
+                $serialColumn = 'layer_' . $layerKey . '_serial';
+            }
 
             $layerData = json_decode($massProdData->$layerColumn, true);
             $layerSerial = $massProdData->$serialColumn;
+
+            if (empty($layerData)) {
+                $excess = ExcessLayers::where('furnace', preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no))
+                       ->where('mass_prod', $massPro)
+                       ->where('layer', $layerKey)
+                       ->value('layer_data');
+                //dump($layerKey, $excess);
+                $layerData = $excess ?? [];
+            }
 
             // Get model code from TPM data using the serial number
             $tpmRow = TPMData::where('serial_no', $layerSerial)->first();
@@ -66,7 +81,7 @@ class TxtExportService
                     'MODEL_NAME'      => '0',
                     'COATING_MC_NO'   => '0',
                     'LOT_NO'          => '0',
-                    'MC_NO'           => '0',  // <-- added here
+                    'MC_NO'           => '0',
                     'QTY'             => '0',
                     'COATING'         => '0',
                     'WT'              => '0',
@@ -129,6 +144,7 @@ class TxtExportService
                     'MODEL_NAME' => 0,
                     'COATING_MC_NO' => 0,
                     'LOT_NO' => 0,
+                    'MC_NO' => 0,
                     'QTY' => 0,
                     'COATING' => 0,
                     'WT' => 0,
@@ -144,7 +160,6 @@ class TxtExportService
         // Step 7: Format into lines and save
         $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,MC_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
         $lines = collect($finalRows)->map(fn($row) => implode(',', $row))->prepend($header);
-
         //dd($lines->toArray()); // commented out
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
@@ -486,6 +501,7 @@ class TxtExportService
     {
         // Step 1: Get the latest date
         $dateToGet = TpmData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
+            ->where('mass_prod', $massPro)
             ->orderBy('date', 'desc')
             ->value('date');
 
@@ -508,7 +524,12 @@ class TxtExportService
         }
 
         // --- hd5 support ---
-        $massProdData = MassProduction::where('mass_prod', $massPro)->first();
+        $formattedFurnace = preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no);
+
+        $massProdData = MassProduction::where('mass_prod', $massPro)
+            ->where('furnace', $formattedFurnace)
+            ->first();
+
         if (!$massProdData) {
             return 'Mass production data not found.';
         }
@@ -516,7 +537,7 @@ class TxtExportService
         $cycleNo = $massProdData->cycle_no ?? '0';
 
         // Group data by layer_no
-        $groupedByLayer = $tpmData->groupBy(fn($item) => (float) $item->layer_no);
+        $groupedByLayer = $tpmData->groupBy(fn($item) => trim((string)$item->layer_no));
 
         /*
         |--------------------------------------------------------------------------
@@ -598,7 +619,11 @@ class TxtExportService
         $layerOrder = ['1','2','3','4','5','6','7','8','9','T'];
 
         foreach ($layerOrder as $layer) {
-            $layerFilter = $layer === 'T' ? 9.5 : (float)$layer;
+            // Determine the numeric value for queries
+            $layerFilter = $layer === 'T' ? '9.5' : $layer;
+
+            // Determine the display value
+            $layerDisplay = $layer === 'T' ? 'T' : $layer;
 
             // --- hd5 lookup ---
             $serialColumn = 'layer_' . str_replace('.', '_', $layerFilter) . '_serial';
@@ -618,7 +643,7 @@ class TxtExportService
             if ($rowsForLayer->isEmpty()) {
                 $row = [];
                 foreach ($schema as $header => $resolver) {
-                    $row[] = $header === 'layer_no' ? $layer : '0';
+                    $row[] = $header === 'layer_no' ? $layerDisplay : '0';
                 }
                 $lines[] = implode(',', $row);
                 continue;
@@ -626,7 +651,7 @@ class TxtExportService
 
             foreach ($rowsForLayer as $item) {
                 $context = [
-                    'layer' => $layer,
+                    'layer' => $layerDisplay,
                     'hd5' => $hd5Value,
                 ];
 

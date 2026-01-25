@@ -381,7 +381,10 @@
                             <input
                                 v-model="initial_mpcs.qty"
                                 type="number"
+                                step="1"
+                                min="0"
                                 :disabled="manualQtyMode"
+                                @input="initial_mpcs.qty = Math.trunc(initial_mpcs.qty || 0)"
                                 :class="[
                                     'w-full text-xs border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500',
                                     manualQtyMode
@@ -397,7 +400,10 @@
                             <input
                                 v-model="initial_mpcs.qty_lastBox"
                                 type="number"
+                                step="1"
+                                min="0"
                                 :disabled="manualQtyMode"
+                                @input="initial_mpcs.qty_lastBox = Math.trunc(initial_mpcs.qty_lastBox || 0)"
                                 :class="[
                                     'w-full text-xs border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500',
                                     manualQtyMode
@@ -696,6 +702,9 @@
                                 <input
                                     v-model="qtyValues[box]"
                                     type="number"
+                                    step="1"
+                                    min="0"
+                                    @input="qtyValues[box] = Math.trunc(qtyValues[box] || 0)"
                                     class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </td>
@@ -725,6 +734,9 @@
                                 <input
                                 v-model="qtyValuesExcess[box]"
                                 type="number"
+                                step="1"
+                                min="0"
+                                @input="qtyValuesExcess[box] = Math.trunc(qtyValuesExcess[box] || 0)"
                                 class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </td>
@@ -2926,7 +2938,7 @@ const saveNormalCase = async () => {
 
         // POST to your API
         const response = await axios.post('/api/initial_control_sheet', payload);
-        //console.log('Normal case saved:', response.data);
+        console.log('Normal case saved:', response.data);
         toast.success('Normal Control Sheet saved successfully.');
         clearAll(); // reset form
     } catch (err) {

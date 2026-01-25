@@ -7,6 +7,7 @@ use iio\libmergepdf\Merger;
 use App\Models\ReportData;
 use App\Models\Coating;
 use App\Models\MassProduction;
+use App\Models\ExcessLayers;
 use App\Models\GbdpSecondCoating;
 use App\Models\GbdpSecondHeatTreatment;
 use App\Models\FilmPastingData;
@@ -144,12 +145,17 @@ class BackEndPdfController extends Controller
 
         $massprod = $tpmData->mass_prod;
         $layer = $tpmData->layer_no;
+        $furnace = $tpmData->furnace;
 
-        $massProdData = MassProduction::where('mass_prod', $massprod)->first();
+        $massProdData = MassProduction::query()
+            ->where('mass_prod', $massprod)
+            ->where('furnace', $furnace)
+            ->first();
+
         if (!$massProdData) {
             return response()->json([
                 'status' => false,
-                'message' => "MassProduction record not found for mass_prod: {$massprod}"
+                'message' => "MassProduction record not found for mass_prod: {$massprod} and furnace: {$furnace}"
             ], 404);
         }
 
@@ -191,9 +197,51 @@ class BackEndPdfController extends Controller
             ${"cs_{$key}"} = $value;
         }
 
+        // ================= EXCESS LAYER LOT SCAN =================
+        $controlLotNoExcess = [];
+
+        $cs_lt_no_final = $cs_lt_no['A'] ?? $cs_lt_no['B'] ?? null;
+
+        if ($cs_lt_no_final) {
+
+            $excessLayers = ExcessLayers::where('mass_prod', $massprod)
+                ->where('furnace', $massProdData->furnace)
+                ->where('layer', '!=', $layer)
+                ->orderBy('layer')
+                ->get();
+
+            foreach ($excessLayers as $excess) {
+
+                $layerData = $excess->layer_data;
+                if (!is_array($layerData)) continue;
+
+                foreach ($layerData as $row) {
+
+                    if (trim($row['rowTitle']) === 'LT. No.:') {
+
+                        $rowMap = [];
+
+                        foreach ($row['data'] as $box => $lotNo) {
+                            if ((string)$lotNo === (string)$cs_lt_no_final) {
+                                $rowMap[$box] = $lotNo; // actual LOT NO
+                            }
+                        }
+
+                        if (!empty($rowMap)) {
+                            $controlLotNoExcess[$excess->layer] = $rowMap;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+
         //Coating data --------------- Coating data --------------- Coating data --------------- Coating data
         $coatingData = Coating::where('mass_prod', $massprod)
             ->where('layer', $layer)
+            ->where('furnace', $furnace)
             ->first();
 
 
@@ -206,6 +254,7 @@ class BackEndPdfController extends Controller
 
         $filmPastingData = FilmPastingData::where('mass_prod', $massprod)
             ->where('layer', $layer)
+            ->where('furnace', $furnace)
             ->first();
 
         $filmPastingHLineValues = $filmPastingData->h_line_parameters ?? null;
@@ -217,6 +266,7 @@ class BackEndPdfController extends Controller
 
         $secondGbdpCoatingData = GbdpSecondCoating::where('mass_prod', $massprod)
             ->where('layer', $layer)
+            ->where('furnace', $furnace)
             ->first();
 
         /*$secondGbdpHTData = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
@@ -399,6 +449,7 @@ class BackEndPdfController extends Controller
             'controlModel' => $cs_model,
             'controlCoatingMCNo' => $cs_coating_m_c_no,
             'controlLotNo' => $cs_lt_no,
+            'controlLotNoExcess' => $controlLotNoExcess,
             'controlQty' => $cs_qty_pcs,
             'controlHt' => $cs_ht_pcs,
             'controlLt' => $cs_lt_pcs,

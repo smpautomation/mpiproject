@@ -391,13 +391,6 @@
                             {{ isExists ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
                         </button>
 
-                        <!-- Cancel -->
-                        <button
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-50"
-                        >
-                            CANCEL
-                        </button>
-
                         <!-- Clear All -->
                         <button
                             @click="clearAll()"

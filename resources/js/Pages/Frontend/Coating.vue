@@ -996,13 +996,6 @@
                             {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DUPLICATE DETECTED' : 'SUBMIT') }}
                         </button>
 
-                        <!-- Cancel -->
-                        <button
-                            class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-50"
-                        >
-                            CANCEL
-                        </button>
-
                         <!-- Clear All -->
                         <button
                             v-if="!activate2ndGBDP"
@@ -1864,8 +1857,6 @@ const clearAll = () => {
 const clearAllTransition = () => {
     // Reset coatingInfo
     Object.assign(coatingInfo, {
-        selectedFurnace: '',
-        selectedMassProd: '',
         selectedLayer: null,
         selectedModel: '',
         coatingDate: '',
@@ -1998,10 +1989,11 @@ const saveToDatabase = async() => {
         console.log('Saved Successfully: ', response.data);
         toast.success('Saved Successfully');
         await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
+        isDataShown.value = false;
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
-        clearAll();
+        clearAllTransition();
         showModalFinalize.value = false;
     }
 }
@@ -2085,6 +2077,7 @@ const saveToDatabase_1st2ndgbdp = async() => {
         toast.success('1st and 2nd GBDP Data Saved Successfully');
         console.log(response.data);
         await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
+        isDataShown.value = false;
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{

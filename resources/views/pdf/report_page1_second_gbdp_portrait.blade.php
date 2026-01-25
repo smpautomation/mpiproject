@@ -419,47 +419,63 @@
 
             <!-- Column 3: Table -->
             <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px;">
-                 <table class="print-table">Add commentMore actions
-                        <thead>
-                            <tr>
-                                <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
-                            </tr>
-                            <tr>
-                                <th colspan="2">BOX No.</th>
-                                <th>A</th>
-                                <th>B</th>
-                                <th>C</th>
-                                <th>D</th>
-                                <th>E</th>
-                                <th>F</th>
-                                <th>G</th>
-                                <th>H</th>
-                                <th>J</th>
-                                <th>K</th>
-                                @if (isset($controlLotNo['L']) && $controlLotNo['L'])
-                                    <th>L</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="margin: 0px; padding: 0px;">No. of Layer</td>
-                                <td>{{ $layer }}</td>
-                                <td>{{ $controlLotNo['A'] ?? null }}</td>
-                                <td>{{ $controlLotNo['B'] ?? null }}</td>
-                                <td>{{ $controlLotNo['C'] ?? null }}</td>
-                                <td>{{ $controlLotNo['D'] ?? null }}</td>
-                                <td>{{ $controlLotNo['E'] ?? null }}</td>
-                                <td>{{ $controlLotNo['F'] ?? null }}</td>
-                                <td>{{ $controlLotNo['G'] ?? null }}</td>
-                                <td>{{ $controlLotNo['H'] ?? null }}</td>
-                                <td>{{ $controlLotNo['J'] ?? null }}</td>
-                                <td>{{ $controlLotNo['K'] ?? null }}</td>
-                                @if (isset($controlLotNo['L']) && $controlLotNo['L'])
-                                     <td>{{ $controlLotNo['L'] ?? null }}</td>
-                                @endif
-                            </tr>
-                    </table>
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2">BOX No.</th>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>D</th>
+                            <th>E</th>
+                            <th>F</th>
+                            <th>G</th>
+                            <th>H</th>
+                            <th>J</th>
+                            <th>K</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- Main layer row --}}
+                        <tr>
+                            <td style="margin: 0px; padding: 0px;">No. of Layer</td>
+                            <td>{{ $layer }}</td>
+                            <td>{{ $controlLotNo['A'] ?? null }}</td>
+                            <td>{{ $controlLotNo['B'] ?? null }}</td>
+                            <td>{{ $controlLotNo['C'] ?? null }}</td>
+                            <td>{{ $controlLotNo['D'] ?? null }}</td>
+                            <td>{{ $controlLotNo['E'] ?? null }}</td>
+                            <td>{{ $controlLotNo['F'] ?? null }}</td>
+                            <td>{{ $controlLotNo['G'] ?? null }}</td>
+                            <td>{{ $controlLotNo['H'] ?? null }}</td>
+                            <td>{{ $controlLotNo['J'] ?? null }}</td>
+                            <td>{{ $controlLotNo['K'] ?? null }}</td>
+                        </tr>
+
+                        {{-- Excess layer rows --}}
+                        @if(!empty($controlLotNoExcess))
+                            @foreach($controlLotNoExcess as $excessLayerNo => $letters)
+                                <tr>
+                                    <td style="margin: 0px; padding: 0px;"></td>
+                                    <td>{{ $excessLayerNo }}</td>
+                                    <td>{{ $letters['A'] ?? null }}</td>
+                                    <td>{{ $letters['B'] ?? null }}</td>
+                                    <td>{{ $letters['C'] ?? null }}</td>
+                                    <td>{{ $letters['D'] ?? null }}</td>
+                                    <td>{{ $letters['E'] ?? null }}</td>
+                                    <td>{{ $letters['F'] ?? null }}</td>
+                                    <td>{{ $letters['G'] ?? null }}</td>
+                                    <td>{{ $letters['H'] ?? null }}</td>
+                                    <td>{{ $letters['J'] ?? null }}</td>
+                                    <td>{{ $letters['K'] ?? null }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
