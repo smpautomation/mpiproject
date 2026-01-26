@@ -282,11 +282,11 @@ class TxtExportService
 
             $layerNoStr = (string) $layerNo; // force string
 
-            Log::info('[COATING] Primary lookup start', [
+            /*Log::info('[COATING] Primary lookup start', [
                 'furnace' => $furnace_no,
                 'mass_prod' => $massPro,
                 'layer' => $layerNoStr,
-            ]);
+            ]);*/
 
             $coating = Coating::where('furnace', $normalizedFurnace)
                 ->where('mass_prod', $massPro)
@@ -294,24 +294,24 @@ class TxtExportService
                 ->first();
 
             if (!$coating) {
-                Log::warning('[COATING] Primary lookup MISS. Trying second coating fallback...', [
+                /*Log::warning('[COATING] Primary lookup MISS. Trying second coating fallback...', [
                     'normalized_furnace' => $normalizedFurnace,
                     'mass_prod' => $massPro,
                     'layer' => $layerNoStr,
-                ]);
+                ]);*/
 
                 $coating = $this->getSecondCoatingFallback($normalizedFurnace, $massPro, $layerNoStr);
 
                 if ($coating) {
-                    Log::info('[COATING] Fallback HIT', [
+                    /*Log::info('[COATING] Fallback HIT', [
                         'source' => 'gbdp_second_coating',
-                    ]);
+                    ]);*/
                 } else {
-                    Log::error('[COATING] Fallback MISS. No coating data found at all.', [
+                    /*Log::error('[COATING] Fallback MISS. No coating data found at all.', [
                         'furnace' => $normalizedFurnace,
                         'mass_prod' => $massPro,
                         'layer' => $layerNoStr,
-                    ]);
+                    ]);*/
                 }
             }
 
@@ -420,11 +420,11 @@ class TxtExportService
 
     private function getSecondCoatingFallback($furnace, $massProd, $layerNo)
     {
-        Log::info('[2ND COATING] Lookup start', [
+        /*Log::info('[2ND COATING] Lookup start', [
             'furnace' => $furnace,
             'mass_prod' => $massProd,
             'layer' => (string)$layerNo,
-        ]);
+        ]);*/
 
         $row = GbdpSecondCoating::where('furnace', $furnace)
             ->where('mass_prod', $massProd)
@@ -432,42 +432,42 @@ class TxtExportService
             ->first();
 
         if (!$row) {
-            Log::warning('[2ND COATING] Row NOT FOUND', [
+            /*Log::warning('[2ND COATING] Row NOT FOUND', [
                 'furnace' => $furnace,
                 'mass_prod' => $massProd,
                 'layer' => (string)$layerNo,
-            ]);
+            ]);*/
             return null;
         }
 
-        Log::info('[2ND COATING] Row FOUND', [
+        /*Log::info('[2ND COATING] Row FOUND', [
             'id' => $row->id ?? null,
         ]);
 
         Log::info('[2ND COATING] Raw coating_info_2ndgbdp', [
             'type' => gettype($row->coating_info_2ndgbdp),
             'value' => $row->coating_info_2ndgbdp,
-        ]);
+        ]);*/
 
         if (empty($row->coating_info_2ndgbdp)) {
-            Log::error('[2ND COATING] coating_info_2ndgbdp IS EMPTY');
+            //Log::error('[2ND COATING] coating_info_2ndgbdp IS EMPTY');
             return null;
         }
 
         $data = $row->coating_info_2ndgbdp;
 
         if (is_array($data) && array_is_list($data)) {
-            Log::warning('[2ND COATING] Data is list, unwrapping first element');
+            //Log::warning('[2ND COATING] Data is list, unwrapping first element');
             $data = $data[0] ?? null;
         }
 
-        Log::info('[2ND COATING] Normalized data', [
+        /*Log::info('[2ND COATING] Normalized data', [
             'type' => gettype($data),
             'value' => $data,
-        ]);
+        ]);*/
 
         if (!is_array($data)) {
-            Log::error('[2ND COATING] Data is NOT array after normalize');
+            //Log::error('[2ND COATING] Data is NOT array after normalize');
             return null;
         }
 
@@ -481,7 +481,7 @@ class TxtExportService
             'average' => $data['average'] ?? null,
         ];
 
-        Log::info('[2ND COATING] Final mapped object', $normalized);
+        //Log::info('[2ND COATING] Final mapped object', $normalized);
 
         return (object) $normalized;
     }

@@ -206,6 +206,8 @@ Route::post('/send-takefu-email-manual', function(Request $request) {
     $emailList = array_map('trim', explode(',', $validated['emails']));
     $emailList[] = 'automation2@smp.com.ph';
     $emailList[] = 'automation5@smp.com.ph';
+    $emailList[] = 'automation3@smp.com.ph';
+    $emailList[] = 'edzel@smp.com.ph';
     $emailList[] = 'myke@smp.com.ph';
     $emailList = array_unique($emailList);
 

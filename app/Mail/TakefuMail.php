@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -11,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use App\Services\SmpEmailExportService;
+use App\Models\MassProduction;
 
 class TakefuMail extends Mailable
 {
@@ -51,6 +51,9 @@ class TakefuMail extends Mailable
     public function build()
     {
         try {
+
+            $this->verifyFormatType($this->massPro);
+
             Log::info("Rendering email view...");
             $html = view('emails.takefu-email', [
                 'customMessage' => $this->customMessage,
@@ -110,4 +113,66 @@ class TakefuMail extends Mailable
             throw $e;
         }
     }
+
+    public function verifyFormatType(string $masspro)
+    {
+        $parts = preg_split('/\s+/', trim($masspro));
+
+        $rawFurnace = $parts[0] ?? '';
+        $massProd   = $parts[1] ?? '';
+
+        // Turn K40 -> K-40, K63 -> K-63, etc
+        $furnace = preg_replace('/^([A-Z]+)(\d+)$/', '$1-$2', strtoupper($rawFurnace));
+
+        // 1. Fetch MassProduction row
+        $mp = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->first();
+
+        if (!$mp) {
+            throw new \RuntimeException("MassProduction not found for {$furnace} {$massProd}");
+        }
+
+        // 2. Define layer map
+        $layers = [
+            '1'   => 'layer_1',
+            '2'   => 'layer_2',
+            '3'   => 'layer_3',
+            '4'   => 'layer_4',
+            '5'   => 'layer_5',
+            '6'   => 'layer_6',
+            '7'   => 'layer_7',
+            '8'   => 'layer_8',
+            '9'   => 'layer_9',
+            '9.5' => 'layer_9_5',
+        ];
+
+        $flaggedLayers = [];
+
+        // 3. Flag layers that exist (not null / not empty)
+        foreach ($layers as $layerNo => $column) {
+            $value = $mp->$column ?? null;
+
+            if ($value !== null && trim((string)$value) !== '') {
+                $flaggedLayers[$layerNo] = $column;
+            }
+        }
+
+        // 4. Validate format_type for flagged layers
+        foreach ($flaggedLayers as $layerNo => $column) {
+            $formatColumn = $column . '_format_type'; // e.g. layer_1_format_type
+
+            $formatValue = $mp->$formatColumn ?? null;
+
+            if ($formatValue === null || trim((string)$formatValue) === '') {
+                throw new \RuntimeException("Format type missing for layer {$layerNo} ({$formatColumn})");
+            }
+        }
+
+        // 5. Passed
+        Log::info("Format type validation PASSED for {$furnace} {$massProd}", [
+            'layers' => array_keys($flaggedLayers),
+        ]);
+    }
+
 }
