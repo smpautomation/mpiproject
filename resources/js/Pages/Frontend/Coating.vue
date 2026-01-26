@@ -393,18 +393,25 @@
                         </div>
                     </div>
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                         <!-- Lot Number -->
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">
                                 Lot no<span class="text-red-500"> *</span>
                             </label>
-                            <input
-                                v-model="lotNo"
-                                type="text"
-                                disabled
-                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
-                            />
+                            <!-- Lot Number -->
+                            <div>
+                                <select
+                                    v-model="lotNo"
+                                    disabled
+                                    class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option v-if="lotNoLists.length === 0" value="" disabled>No lots available</option>
+                                    <option v-for="lot in lotNoLists" :key="lot" :value="lot">
+                                        {{ lot }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                         <!-- Model -->
                         <div>
@@ -417,6 +424,22 @@
                                 disabled
                                 class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
                             />
+                        </div>
+                        <div class="flex items-end">
+                            <button
+                                v-if="!isAdditionalMode"
+                                @click="triggerAdditional"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-teal-600 rounded-lg shadow-md hover:bg-teal-500 active:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            >
+                                Additional
+                            </button>
+                            <button
+                                v-else
+                                @click="isAdditionalMode = false"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            >
+                                Cancel
+                            </button>
                         </div>
                         <!-- Button (wrapped for alignment) -->
                         <div class="flex items-end">
@@ -1544,6 +1567,7 @@ const isExists = ref(false);
 const isExists_2ndGBDP = ref(false);
 const isModelMissing = ref(false);
 const isDataShown = ref(false);
+const isAdditionalMode = ref(false);
 //Toggle Control
 
 const massProd_names = ref([]);
@@ -1554,6 +1578,7 @@ const existingLayers_2ndGBDP = ref([]);
 const available_layers = ref([]);
 const completedLayers = ref([]);
 const completedLayers_1st_2nd_gbdp = ref([]);
+const lotNoLists = ref([]);
 const lotNo = ref();
 const lotNo_1stGBDP = ref();
 const firstSecondGBDP_models = ref([]);
@@ -1916,6 +1941,17 @@ const clearAllTransition = () => {
     toast.success("All fields cleared.");
 };
 
+const triggerAdditional = () => {
+    isAdditionalMode.value = true;
+}
+
+const getAdditionalModel = async() => {
+    try{
+        const response = axios.get('');
+    }catch(error){
+        console.error('Failed to get associated model to this lot');
+    }
+}
 
 const saveToDatabase = async() => {
 
@@ -1959,9 +1995,9 @@ const saveToDatabase = async() => {
         checker_operator: coatingInfo.checkerOperator,
         time_start: coatingInfo.timeStart,
         time_finish: coatingInfo.timeFinished,
-        average: coatingAverage.value,
-        maximum: coatingMaximum.value,
-        minimum: coatingMinimum.value,
+        average: parseFloat(coatingAverage.value.toFixed(2)),
+        maximum: parseFloat(coatingMaximum.value.toFixed(2)),
+        minimum: parseFloat(coatingMinimum.value.toFixed(2)),
         remarks: coatingInfo.remarks,
         coating_data: {
             "Coating Amount Data": coatingAmountData,
@@ -2043,9 +2079,9 @@ const saveToDatabase_1st2ndgbdp = async() => {
                 slurry_lot_no: coatingInfo_1stgbdp.slurryLotNo,
                 min_tb_content: coatingInfo_1stgbdp.minTbContent,
                 total_magnet_weight: coatingInfo_1stgbdp.totalMagnetWeight.toString(),
-                average: coatingAverage_1stgbdp.value,
-                maximum: coatingMaximum_1stgbdp.value,
-                minimum: coatingMinimum_1stgbdp.value,
+                average: parseFloat(coatingAverage_1stgbdp.value.toFixed(2)),
+                maximum: parseFloat(coatingMaximum_1stgbdp.value.toFixed(2)),
+                minimum: parseFloat(coatingMinimum_1stgbdp.value.toFixed(2)),
                 remarks: coatingInfo_1stgbdp.remarks,
             },
             coating_info_2ndgbdp: {
@@ -2056,9 +2092,9 @@ const saveToDatabase_1st2ndgbdp = async() => {
                 slurry_lot_no: coatingInfo.slurryLotNo,
                 min_tb_content: coatingInfo.minTbContent,
                 total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
-                average: coatingAverage_2ndgbdp.value,
-                maximum: coatingMaximum_2ndgbdp.value,
-                minimum: coatingMinimum_2ndgbdp.value,
+                average: parseFloat(coatingAverage_2ndgbdp.value.toFixed(2)),
+                maximum: parseFloat(coatingMaximum_2ndgbdp.value.toFixed(2)),
+                minimum: parseFloat(coatingMinimum_2ndgbdp.value.toFixed(2)),
                 remarks: coatingInfo.remarks,
             },
             coating_data_1stgbdp: {
@@ -2175,14 +2211,9 @@ const getSelectedMassProdData = async () => {
         const massProdLayerData = response.data.layer_data;
         console.log('Mass Prod layer data: ', massProdLayerData);
         coatingInfo.selectedModel = massProdLayerData[0].data['A'] || massProdLayerData[0].data['B'] || null;
-        coatingInfo.coatingMachineNo = massProdLayerData[1].data['A'];
-        lotNo.value = massProdLayerData[2].data['A'] || massProdLayerData[2].data['B'] || null;
-        const data = massProdLayerData[7]?.data || {};
-        const total = Object.values(data)
-        .filter(v => typeof v === 'number' && !isNaN(v))
-        .reduce((sum, v) => sum + v, 0);
-
-        coatingInfo.totalMagnetWeight = total.toFixed(2); // round to 2 decimals if needed
+        lotNoLists.value = response.data.layer_lot_lists;
+        lotNo.value = lotNoLists.value[0] || null; // fallback if array is empty
+        console.log('Mass Prod layer lot no lists: ', lotNoLists.value);
         console.log('success response getSelectedMassProdData: ', coatingInfo.totalMagnetWeight);
     }catch(error){
         console.error('Failed to getSelectedMassProdData: ',error);

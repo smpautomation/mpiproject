@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class BreaklotCoating extends Model
 {
-    //
+    protected $table = "breaklot_coatings";
+    protected $guarded = [];
 }

@@ -1031,7 +1031,7 @@
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Sample Quantity (pcs)<span class="text-red-500"> *</span></label>
-                                    <input v-model="coatingInfo.sampleQuantity" type="number" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                                    <input v-model="coatingInfo.sampleQuantity" type="number" step="1" min="0" @input="coatingInfo.sampleQuantity = Math.trunc(coatingInfo.sampleQuantity || 0)" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-xs font-medium text-gray-700">Total Magnet Weight (KG)<span class="text-red-500"> *</span></label>
@@ -1670,6 +1670,68 @@
                             </div>
                         </div>
                     </Modal>
+
+                    <Modal :show="showEmptyDataWarning" @close="showEmptyDataWarning = false">
+                        <div
+                            class="relative flex flex-col items-start bg-white border-l-8 border-yellow-500 p-6 rounded-xl shadow-lg max-w-[95vw] max-h-[90vh] overflow-auto"
+                        >
+                            <!-- Exit Button -->
+                            <button
+                                @click="showEmptyDataWarning = false"
+                                class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                                aria-label="Close modal"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <!-- Header -->
+                            <div class="flex items-center mb-4 space-x-3">
+                                <svg class="w-10 h-10 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <h2 class="text-2xl font-bold text-yellow-600">
+                                    Empty Data Warning
+                                </h2>
+                            </div>
+
+                            <!-- Body -->
+                            <p class="text-base leading-relaxed text-gray-700">
+                                The following datasets are completely empty:
+                            </p>
+                            <ul class="pl-6 mt-2 text-gray-700 list-disc">
+                                <li v-for="context in emptyDataContexts" :key="context.type" class="font-semibold text-yellow-700">
+                                    {{ context.label }}
+                                </li>
+                            </ul>
+
+                            <p class="mt-4 text-gray-700">
+                                You can proceed, but leaving them empty may result in incomplete or unusable records.
+                            </p>
+
+                            <!-- Buttons -->
+                            <div class="flex justify-end w-full mt-6 space-x-3">
+                                <button
+                                    @click="showEmptyDataWarning = false"
+                                    class="px-6 py-2 font-semibold text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
+                                >
+                                    Go Back
+                                </button>
+
+                                <button
+                                    @click="proceedFinalizeEvenEmpty"
+                                    class="px-6 py-2 font-semibold text-white transition-colors bg-yellow-500 rounded-lg hover:bg-yellow-600"
+                                >
+                                    Proceed Anyway
+                                </button>
+                            </div>
+                        </div>
+                    </Modal>
+
 
                 </div>
             </div>
@@ -2422,7 +2484,10 @@ const manualQtyMode = ref(false);
 const showModalPreview = ref(false);
 const showModalDuplicateWarning = ref(false);
 const showModalDuplicatePrevent = ref(false);
+const showModalEmptyConcentrationWarning = ref(false);
 const showDeleteModal = ref(false);
+const showEmptyDataWarning = ref(false);
+const emptyDataContexts = ref([]);
 
 const controlSheetData = ref([]);
 const coatingSummaryData = ref([]);
@@ -3190,16 +3255,67 @@ const finalizeCoatingSummary = async () => {
         !coatingInfo.checkerOperator ||
         !coatingInfo.timeStart ||
         !coatingInfo.timeFinished ||
-        !coatingInfo.remarks || !coatingLotNo.value
+        !coatingInfo.remarks ||
+        !coatingLotNo.value
     ) {
-        //console.log('Coating Table: ', coatingValues.value);
         toast.error("Please fill in all required Coating Info fields.");
         return;
     }
 
+     // Reset previous empty context
+    emptyDataContexts.value = [];
+
+    // Check concentrationData
+    if (isArrayCompletelyEmpty(concentrationData.value.flat().map(v => ({ value: v })), ['value'])) {
+        emptyDataContexts.value.push({
+            type: 'concentration',
+            label: 'Concentration Data'
+        });
+    }
+
+    // Check additionalSlurry
+    if (isArrayCompletelyEmpty(additionalSlurry.value, ['new','homo','time','liters'])) {
+        emptyDataContexts.value.push({
+            type: 'additionalSlurry',
+            label: 'Additional Slurry Data'
+        });
+    }
+
+    const coatingAmountData = coatingsTable.value.map(row => ({ no: row.no, coating: row.coating }));
+    if (isArrayCompletelyEmpty(coatingAmountData, ['coating'])) {
+        emptyDataContexts.value.push({
+            type: 'coatingsTable',
+            label: 'Coating Amount Data'
+        });
+    }
+
+    // If any are empty, show modal
+    if (emptyDataContexts.value.length > 0) {
+        showEmptyDataWarning.value = true;
+        return;
+    }
+
+    // Proceed normally
     await coatingLotValidation();
 
 };
+
+const proceedFinalizeEvenEmpty = async () => {
+    showModalEmptyConcentrationWarning.value = false;
+    await coatingLotValidation();
+};
+
+const isArrayCompletelyEmpty = (arr, keys = []) => {
+  return !arr.some(item => {
+    if (keys.length) {
+      // check only specified keys
+      return keys.some(k => item[k] !== null && item[k] !== '' && !isNaN(item[k]));
+    }
+    // check all values
+    return Object.values(item).some(v => v !== null && v !== '' && !isNaN(v));
+  });
+};
+
 
 const coatingLotValidation = async() => {
     try{

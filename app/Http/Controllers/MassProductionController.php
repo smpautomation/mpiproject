@@ -869,9 +869,47 @@ class MassProductionController extends Controller
             ], 404);
         }
 
+        $layerLotLists = [];
+
+        foreach ($layerData as $row) {
+            if (($row['rowTitle'] ?? '') === 'LT. No.:') {
+                $lots = $row['data'] ?? [];
+
+                if (is_array($lots)) {
+                    // keep only unique values, reindex
+                    $layerLotLists = array_values(array_unique(array_filter($lots)));
+                }
+                break;
+            }
+        }
+
+        $layerModelLists = [];
+
+        foreach ($layerData as $row) {
+            if (($row['rowTitle'] ?? '') === 'MODEL:') {
+                $models = $row['data'] ?? [];
+
+                if (is_array($models)) {
+                    // keep only unique values, reindex
+                    $layerModelLists = array_values(array_unique(array_filter($models)));
+                }
+                break;
+            }
+        }
+
+        $layerLotModelPairs = [];
+
+        $length = min(count($layerLotLists), count($layerModelLists));
+
+        for ($i = 0; $i < $length; $i++) {
+            $layerLotModelPairs[$layerLotLists[$i]] = $layerModelLists[$i];
+        }
+
         return response()->json([
             'layer_column' => $layerColumn,
             'layer_data'   => $layerData,
+            'layer_lot_lists'  => $layerLotLists,
+            'lot_pairs' => $layerLotModelPairs,
         ]);
     }
 
@@ -1354,7 +1392,7 @@ class MassProductionController extends Controller
         $furnace  = $request->furnace;
         $layer    = $request->layer;
 
-        \Log::info('DeleteLayerData called', [
+        Log::info('DeleteLayerData called', [
             'massProd' => $massProd,
             'furnace'  => $furnace,
             'layer'    => $layer
@@ -1369,7 +1407,7 @@ class MassProductionController extends Controller
                             ->first();
 
         if (!$mp) {
-            \Log::error('Mass production not found', ['massProd' => $massProd, 'furnace' => $furnace]);
+            Log::error('Mass production not found', ['massProd' => $massProd, 'furnace' => $furnace]);
             return response()->json(['success' => false, 'message' => 'Mass Production not found'], 404);
         }
 
@@ -1394,7 +1432,7 @@ class MassProductionController extends Controller
         $mp->$column = null;
         $mp->save();
 
-        \Log::info('Mass production layer nulled', [
+        Log::info('Mass production layer nulled', [
             'column' => $column,
             'mass_prod_id' => $mp->id
         ]);
@@ -1406,7 +1444,7 @@ class MassProductionController extends Controller
                                         ->where('furnace', $furnace)
                                         ->get();
 
-            \Log::info('Excess layers fetched', ['count' => $excessLayers->count()]);
+            Log::info('Excess layers fetched', ['count' => $excessLayers->count()]);
 
             foreach ($excessLayers as $excess) {
                 $layerDataExcess = is_array($excess->layer_data) ? $excess->layer_data : json_decode($excess->layer_data, true);
@@ -1428,7 +1466,7 @@ class MassProductionController extends Controller
                 if ($shouldDelete) {
                     $excess->delete();
                     $deletedRows++;
-                    \Log::info('Excess layer row deleted', [
+                    Log::info('Excess layer row deleted', [
                         'excess_id' => $excess->id,
                         'mass_prod' => $massProd,
                         'furnace'   => $furnace
@@ -1437,7 +1475,7 @@ class MassProductionController extends Controller
             }
         }
 
-        \Log::info('DeleteLayerData completed', [
+        Log::info('DeleteLayerData completed', [
             'mass_prod'   => $massProd,
             'furnace'     => $furnace,
             'targetModel' => $targetModel,
@@ -1452,9 +1490,13 @@ class MassProductionController extends Controller
         ]);
     }
 
-
-
-
-
-
+    public function getAssociatedModel(Request $request)
+    {
+        $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+            'layer'     => 'required|string',
+            'lot_no'    => 'required|string',
+        ]);
+    }
 }
