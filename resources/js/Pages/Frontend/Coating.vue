@@ -393,7 +393,7 @@
                         </div>
                     </div>
                     <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <!-- Lot Number -->
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">
@@ -425,7 +425,9 @@
                                 class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
-                        <div class="flex items-end">
+
+                            <!--
+                            <div class="flex items-end">
                             <button
                                 v-if="!isAdditionalMode"
                                 @click="triggerAdditional"
@@ -440,7 +442,9 @@
                             >
                                 Cancel
                             </button>
-                        </div>
+                            </div>
+                            -->
+
                         <!-- Button (wrapped for alignment) -->
                         <div class="flex items-end">
                             <button

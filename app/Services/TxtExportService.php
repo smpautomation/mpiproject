@@ -525,7 +525,7 @@ class TxtExportService
 
             // ---- FIXED FRONT ----
             'LAYER' => fn($item, $ctx) => $ctx['layer'],
-            'DATE'     => fn($item) => $item->date ?? '0',
+            'DATE_INSP'     => fn($item) => $item->date ?? '0',
             'MODEL_CODE'  => fn($item) => $item->code_no ?? '0',
             'MATERIAL_GRADE'     => fn($item) => $item->type ?? '0',
             'LOT_NO'  => fn($item) => $item->press_1 ?? '0',
@@ -645,7 +645,7 @@ class TxtExportService
             }
         }
 
-        //dd($lines);
+        dd($lines);
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
