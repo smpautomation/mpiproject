@@ -101,19 +101,24 @@ class BackEndPdfController extends Controller
         // === SORTED NOTE REASON LOGIC ===
         $noteReasonRaw = json_decode($reportData->note_reason_reject ?? '[]', true);
 
-        // If it's just a plain string (like a line of text), fallback to array
+        // Fallback if not an array (plain text)
         if (!is_array($noteReasonRaw)) {
             $noteReasonRaw = explode("\n", $reportData->note_reason_reject);
             $noteReasonRaw = array_filter(array_map('trim', $noteReasonRaw));
         }
 
-        // Define custom priority order (lower number = higher priority)
+        // Define extended priority order (lower number = higher priority)
         $priorityOrder = [
-            "- N.G Br-4PIa" => 1,
-            "- N.G iHc"     => 2,
-            "- N.G Hr95"    => 3,
-            "- N.G Hr98"    => 4,
-            // fallback/default is 99
+            '- LOW BR'                    => 1,
+            '- HIGH BR'                   => 1,
+            '- N.G iHc'                   => 2,
+            '- iHc Below Target+500 Oe'   => 2,
+            '- N.G iHk'                   => 3,
+            '- N.G Hr95'                  => 4,
+            '- N.G Hr98'                  => 5,
+            '- N.G iHc-iHk'               => 6,
+            '- N.G Br-4PIa'               => 7,
+            '- N.G bHc'                   => 8,
         ];
 
         // Sort using priority
