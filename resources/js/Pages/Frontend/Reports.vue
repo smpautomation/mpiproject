@@ -1535,7 +1535,7 @@ const isLoading = ref(true);
 
 // variables for models with special instructions
 
-const MODELS_SHOW_VT_DATA = ref([]) ;
+const MODELS_SHOW_VT_DATA = ref([]);
 const MODELS_1X1X1_NO_CORNER = ref([]);
 const MODELS_SHOW_CPK = ref([]);
 const MODELS_SHOW_GX = ref([]);
