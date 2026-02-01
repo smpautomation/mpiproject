@@ -138,7 +138,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col items-center space-y-6">
-                        <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto mb-5 ml-10 overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl">
+                        <div v-show="showUploadTPMFiles" class="max-w-lg mx-auto ml-10 overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl">
                             <!-- Header -->
                             <div class="px-6 py-4 bg-gradient-to-r from-cyan-600 to-teal-600">
                                 <div class="flex items-center justify-between">
@@ -227,7 +227,66 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="w-[370px] ml-10 p-4 mx-auto space-y-2 text-white shadow-md bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl text-center">
+                        <div
+                            v-if="lotNoLists.length > 1"
+                            class="w-[380px] ml-10 p-5 mx-auto space-y-4 text-white shadow-lg
+                                bg-gradient-to-br from-cyan-500 to-teal-600 rounded-2xl text-center"
+                        >
+                            <!-- SET -->
+                            <div class="text-xs font-semibold tracking-widest uppercase opacity-90">
+                                Select Set
+                            </div>
+                            <select
+                                v-model="selectedLayerCode"
+                                class="w-full px-3 py-2 text-sm font-bold text-gray-800 bg-white rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                            >
+                                <option value="" disabled>
+                                    Choose a set
+                                </option>
+                                <option
+                                    v-for="code in layerCodeLists"
+                                    :key="code"
+                                    :value="code"
+                                >
+                                    Set {{ code }}
+                                </option>
+                            </select>
+
+                            <!-- Divider -->
+                            <div class="h-px bg-white/30"></div>
+
+                            <!-- Model -->
+                            <div class="text-xs font-semibold tracking-widest uppercase opacity-90">
+                                Model
+                            </div>
+                            <div class="text-lg font-bold">
+                                <template v-if="additionalModel">
+                                    {{ additionalModel }}
+                                </template>
+                                <template v-else>
+                                    <span class="text-sm font-normal text-white/70">
+                                        Awaiting set selection
+                                    </span>
+                                </template>
+                            </div>
+
+                            <!-- Lot No -->
+                            <div class="text-xs font-semibold tracking-widest uppercase opacity-90">
+                                Lot No
+                            </div>
+                            <div class="text-lg font-bold">
+                                <template v-if="additionalLot">
+                                    {{ additionalLot }}
+                                </template>
+                                <template v-else>
+                                    <span class="text-sm font-normal text-white/70">
+                                        Awaiting set selection
+                                    </span>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div v-else class="w-[370px] ml-10 p-4 mx-auto space-y-2 text-white shadow-md bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl text-center">
                             <!-- Model -->
                             <div class="text-sm font-medium tracking-wide uppercase opacity-80">
                                 Model
@@ -259,7 +318,7 @@
 
                 </div>
                 <div>
-                    <div class="flex flex-col items-center justify-center max-w-lg p-8 mx-auto mb-12 bg-white border border-teal-200 shadow-xl rounded-xl">
+                    <div class="flex flex-col items-center justify-center max-w-lg p-8 mx-auto mt-5 mb-12 bg-white border border-teal-200 shadow-xl rounded-xl">
                         <!-- Upload Section Title -->
                         <div class="flex items-center mb-6">
                             <div class="p-3 mr-3 rounded-full bg-gradient-to-r from-teal-100 to-cyan-100">
@@ -307,10 +366,19 @@
                     <div class="flex justify-center">
                         <button
                             @click="proceedToGraphConfirmation()"
-                            :disabled="!isModelLotNoVerified || isDataExisting"
+                            :disabled="(
+                                // safe check for lotNoLists
+                                (lotNoLists?.length || 0) > 1
+                                    ? !additionalModel || !additionalLot || isAdditionalExisting
+                                    : !isModelLotNoVerified || isDataExisting
+                            )"
                             :class="[
                                 'px-8 py-3 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 flex items-center',
-                                (!isModelLotNoVerified || isDataExisting)
+                                (
+                                    (lotNoLists?.length || 0) > 1
+                                        ? !additionalModel || !additionalLot || isAdditionalExisting
+                                        : !isModelLotNoVerified || isDataExisting
+                                )
                                     ? 'bg-red-600 text-white cursor-not-allowed opacity-70 focus:ring-red-500'
                                     : 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:from-teal-600 hover:to-cyan-600 focus:ring-teal-500'
                             ]"
@@ -320,10 +388,21 @@
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                             <span>
-                                <!-- Priority: no model/lot → special label -->
-                                {{ !isModelLotNoVerified ? 'No Model and Lot No Detected' : (isDataExisting ? 'Duplicate Detected' : 'Generate Graph') }}
+                                {{
+                                    (lotNoLists?.length || 0) > 1
+                                        ? (!additionalModel || !additionalLot
+                                            ? 'No Set / Model / Lot Selected'
+                                            : (isAdditionalExisting ? 'This set already exists in the system' : 'Generate Graph')
+                                        )
+                                        : (!isModelLotNoVerified
+                                            ? 'No Model and Lot No Detected'
+                                            : (isDataExisting ? 'This data already exists in the system' : 'Generate Graph')
+                                        )
+                                }}
                             </span>
                         </button>
+
+
                     </div>
 
                 </div>
@@ -825,14 +904,18 @@
     //New Variables
     const selectedFurnace = ref();
     const selectedMassProd = ref();
+    const selectedLayerCode = ref();
     const furnace_names = ref([]);
     const massProd_names = ref([]);
     const isDataExisting = ref(false);
     const available_layers = ref([]);
+    const lotNoLists = ref([]);
+    const sets = ref({})
 
     //UI VISIBILITY variables...
     const mias_factorCsvError = ref(false);
     const showGraphProceedConfirmation = ref(false);
+    const isAdditionalExisting = ref(false);
 
     const showGraphAndTables = ref(false);
     const showLoadingForGraphAndTables = ref(false);
@@ -895,6 +978,30 @@
 
     const isModelLotNoVerified = computed(() => {
         return Boolean(jhCurveActualModel.value && jhCurveLotNo.value);
+    });
+
+    const layerCodeLists = computed(() => {
+        return Object.keys(sets.value)
+    });
+
+    const selectedSet = computed(() => {
+        return sets.value[selectedLayerCode.value] || null;
+    });
+
+    const additionalModel = computed(() => {
+        if (!selectedSet.value) return '';
+
+        return selectedSet.value.type === 'initial'
+            ? selectedSet.value.initial_model
+            : selectedSet.value.model;
+    });
+
+    const additionalLot = computed(() => {
+        if (!selectedSet.value) return '';
+
+        return selectedSet.value.type === 'initial'
+            ? selectedSet.value.initial_lot
+            : selectedSet.value.lot_no;
     });
 
     // Data fetching zone ------ Data fetching zone
@@ -984,6 +1091,16 @@
 
         } catch (error) {
             console.error('Failed to fetch reject remarks from report data', error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchRejectFromReportData",
+                "Failed to fetch reject remarks from report data"
+            );
             fetchNoteReasonForReject.value = [];
         }
     };
@@ -1032,7 +1149,7 @@
             return { model, lotno };
 
         } catch (error) {
-            console.error("Error fetching layer model or lotno:", error);
+            //console.error("Error fetching layer model or lotno:", error);
             toast.error('Failed to fetch layer data.');
 
             await userErrorLogging(
@@ -1056,7 +1173,7 @@
             propData_factorEmp.value = massProd.factor_emp;
             propData_miasEmp.value = massProd.mias_emp;
         }catch(error){
-            console.log('Failed to get Mias & Factor Employee');
+            //console.log('Failed to get Mias & Factor Employee');
             await userErrorLogging(
                 {
                     message: error.message,
@@ -1069,6 +1186,56 @@
             );
         }
     }
+
+    const getSelectedMassProdData = async () => {
+        try{
+            const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer/${currentLayerNo.value}/layer-no`);
+            const massProdLayerData = response.data.layer_data;
+            console.log('Mass Prod layer data: ', massProdLayerData);
+            lotNoLists.value = response.data.layer_lot_lists;
+        }catch(error){
+            //console.error('Failed to getSelectedMassProdData: ',error);
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "getSelectedMassProdData",
+                "Failed to getSelectedMassProdData"
+            );
+        }
+    }
+
+    const fetchAllSets = async () => {
+        try{
+            const { data } = await axios.get('/api/breaklot-initial-lots/show-all', {
+                params: {
+                    mass_prod: selectedMassProd.value,
+                    furnace: selectedFurnace.value,
+                    layer: currentLayerNo.value,
+                }
+            });
+
+            sets.value = data.sets || {};
+            selectedLayerCode.value = ''; // reset
+
+        }catch(error){
+            //console.error('Failed to fetch all sets for additional lots');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "fetchAllSets",
+                "Failed to fetch all sets for additional lots"
+            );
+        }
+    }
+
 
     const checkExisting = async () => {
         try {
@@ -1092,8 +1259,44 @@
         }
     }
 
+    const checkExistingAdditional = async () => {
+        try {
+            const response = await axios.get('/api/breaklot-coating/check-existing-tpm', {
+                params: {
+                    mass_prod: selectedMassProd.value,
+                    furnace: selectedFurnace.value,
+                    layer: currentLayerNo.value,
+                    lot_no: additionalLot.value,
+                }
+            });
 
-    // Watcher go back ggggg
+            //console.log('Result: ', response.data);
+
+            // Update reactive state
+            isAdditionalExisting.value = response.data.exists;
+
+            if (isAdditionalExisting.value) {
+                toast.warning('This data already exists in the system.');
+            }
+
+        } catch (error) {
+            //console.error('Failed to check existing additionals', error);
+            toast.error('Failed to verify Lot Number.');
+            await userErrorLogging(
+                {
+                    message: error.message,
+                    code: error.code ?? null,
+                    response: error.response?.data ?? null,
+                    payload: error.response?.data ?? null,
+                },
+                "checkExistingAdditional",
+                "Failed to check existing additionals"
+            );
+        }
+    };
+
+
+    // Watcher
     watch([selectedMassProd, currentLayerNo], async ([newProd, newLayer]) => {
         if (newProd && newLayer) {
             //console.log(`Watcher triggered → MassProd: ${newProd}, Layer: ${newLayer}`);
@@ -1103,9 +1306,24 @@
         }
     });
 
+    // Watcher go back
+    watch([selectedMassProd, currentLayerNo, selectedFurnace], async ([newProd, newLayer, newFurnace]) => {
+        if (newProd && newLayer && newFurnace) {
+            await getSelectedMassProdData();
+            await fetchAllSets();
+            //console.log("Fetched values:", { model, lotno });
+        }
+    });
+
     watch(selectedMassProd, async (newVal, oldVal) => {
         if (newVal) {
             await fetchAvailableLayers();
+        }
+    });
+
+    watch(selectedLayerCode, async (newVal, oldVal) => {
+        if (newVal) {
+            await checkExistingAdditional();
         }
     });
 
@@ -1708,6 +1926,10 @@
     };
 
     const saveToDatabase = async () => {
+        if (lotNoLists.value.length > 1 && selectedSet.value) {
+            jhCurveLotNo.value = additionalLot.value
+            jhCurveActualModel.value = additionalModel.value
+        }
         await generateSerialNumber();
         //showUploadData.value = false;
         // Sort the files alphabetically by their name

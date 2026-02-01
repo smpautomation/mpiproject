@@ -1019,7 +1019,6 @@
                             <input
                                 v-model="reportRemarks"
                                 type="text"
-                                @input="reportRemarks = reportRemarks.toUpperCase()"
                                 class="px-2 py-1 text-sm transition duration-200 ease-in-out bg-transparent bg-white border border-white rounded-md hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white"
                             />
                         </div>
@@ -2411,6 +2410,7 @@ const fetchAllData = async () => {
 
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
         let TPM_Data = responseTpm.data.data[0];
+        let tpmCat = TPM_Data.category;
         selectedMassProd.value = TPM_Data.mass_prod;
         selectedFurnace.value = TPM_Data.furnace;
         selectedLayer.value = TPM_Data.layer_no;
@@ -2431,17 +2431,15 @@ const fetchAllData = async () => {
         tpmData.value = rawData;
         tpmDataQuantity.value = modelData.length;
         //console.log('TPM TOTAL -> ',tpmDataQuantity.value);
-        const responseControlSheet = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
-        const getActualModel = responseControlSheet.data.layer_data[0].data.A ?? responseControlSheet.data.layer_data[0].data.B ?? null;
+        //const responseControlSheet = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`);
 
         getTpmModel.value = modelData;
 
         fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");
-        jhCurveActualModel.value = getActualModel;
+        jhCurveActualModel.value = tpmCat.actual_model;
         fetchActualModel.value = jhCurveActualModel.value;
         await getControlSheetData();
         setJudgmentFlags(modelData);
-        //ggggg
         await resolveFurnaceAndLayer(modelData[0]);
 
         parseAggregates(rawData);

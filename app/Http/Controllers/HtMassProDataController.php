@@ -51,14 +51,14 @@ class HtMassProDataController extends Controller
 
     public function upload(Request $request)
     {
-        \Log::info('Upload attempt', [
+        /*Log::info('Upload attempt', [
             'all_request'       => $request->all(),
             'file_present'      => $request->hasFile('file'),
             'file_class'        => $request->file('file') ? get_class($request->file('file')) : null,
             'file_original_name'=> optional($request->file('file'))->getClientOriginalName(),
             'file_mime'         => optional($request->file('file'))->getMimeType(),
             'file_extension'    => optional($request->file('file'))->getClientOriginalExtension(),
-        ]);
+        ]);*/
 
         // 1. Validate
         $request->validate([
@@ -103,16 +103,16 @@ class HtMassProDataController extends Controller
             ]);
 
         } catch (SpreadsheetException $e) {
-            \Log::error('Spreadsheet read error', ['error' => $e->getMessage()]);
+            /*Log::error('Spreadsheet read error', ['error' => $e->getMessage()]);
             return response()->json([
                 'message' => 'Failed to read Excel: ' . $e->getMessage()
-            ], 422);
+            ], 422);*/
 
         } catch (\Exception $e) {
-            \Log::error('Excel upload failed', ['error' => $e->getMessage()]);
+            /*Log::error('Excel upload failed', ['error' => $e->getMessage()]);
             return response()->json([
                 'message' => 'Upload failed: ' . $e->getMessage()
-            ], 500);
+            ], 500);*/
         }
     }
 

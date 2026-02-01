@@ -67,7 +67,7 @@ class AuthController extends Controller
         ]);
 
         // Log the validated input
-        Log::info('Validated input: ', $validated);
+        //Log::info('Validated input: ', $validated);
 
         // List of employee IDs that get Automation access
         $automationIds = [
@@ -75,12 +75,12 @@ class AuthController extends Controller
             '005452', '006644', '006645', '006374', '006545',
             '006731', '006571'
         ];
-        Log::info('Automation IDs: ' . implode(', ', $automationIds));
+        //Log::info('Automation IDs: ' . implode(', ', $automationIds));
 
         $itadaniSan_id = [
             '005009'
         ];
-        Log::info('ItadaniSan IDs: ' . implode(', ', $itadaniSan_id));
+        //Log::info('ItadaniSan IDs: ' . implode(', ', $itadaniSan_id));
 
         $rizzaEndaya_id = [
             '002202'
@@ -108,35 +108,35 @@ class AuthController extends Controller
         $userAccess = null;
 
         // Log the employee_id being checked
-        Log::info('Checking employee_id: ' . $validated['employee_id']);
+        //Log::info('Checking employee_id: ' . $validated['employee_id']);
 
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $automationIds, true)) {
             $userAccess = 'Automation';
-            Log::info('Employee ID matched Automation IDs. Setting access_type to "Automation".');
+            //Log::info('Employee ID matched Automation IDs. Setting access_type to "Automation".');
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $itadaniSan_id, true)) {
             $userAccess = 'Final Approver';
-            Log::info('Employee ID matched ItadaniSan ID. Setting access_type to "Final Approver".');
+            //Log::info('Employee ID matched ItadaniSan ID. Setting access_type to "Final Approver".');
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $rizzaEndaya_id, true)) {
             $userAccess = 'Proxy Approver';
-            Log::info('Employee ID matched Ms Rizza ID. Setting access_type to "Proxy Approver".');
+            //Log::info('Employee ID matched Ms Rizza ID. Setting access_type to "Proxy Approver".');
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $checkedByApprovers_id, true)) {
             $userAccess = 'Checking Approver';
-            Log::info('Employee ID matched Checking approver IDs. Setting access_type to "Checking Approver".');
+            //Log::info('Employee ID matched Checking approver IDs. Setting access_type to "Checking Approver".');
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $preparedByApprovers_id, true)) {
             $userAccess = 'Preparation Approver';
-            Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Preparation Approver".');
+            //Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Preparation Approver".');
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $heatTreatmentUsers_id, true)) {
             $userAccess = 'Heat Treatment';
-            Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Heat Treatment".');
+            //Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Heat Treatment".');
         }
         if (isset($validated['employee_id']) && in_array($validated['employee_id'], $coatingUsers_id, true)) {
             $userAccess = 'Coating';
-            Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Coating".');
+            //Log::info('Employee ID matched Preparation approver IDs. Setting access_type to "Coating".');
         }
 
         $user = User::create([
@@ -151,7 +151,7 @@ class AuthController extends Controller
         ]);
 
         // Log the created user's data
-        Log::info('User created: ', $user->toArray());
+        //Log::info('User created: ', $user->toArray());
 
         $token = $user->createToken('api-token', [], now()->addMinutes(config('sanctum.expiration')));
 

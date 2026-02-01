@@ -130,8 +130,8 @@
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Furnace Name <span class="text-red-500">*</span></label>
                             <select
                                 v-model="filmPastingInfo.selectedFurnace"
-                                :disabled="isFilmPasteDataShown"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                :disabled="isFilmPasteDataShown || isAdditionalMode"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed disabled:bg-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="items in furnace_names" :key="items" :value="items">
                                     {{ items }}
@@ -143,8 +143,8 @@
                             <label class="block mb-1 text-xs font-semibold text-gray-800">Mass Prod. Name <span class="text-red-500">*</span></label>
                             <select
                                 v-model="filmPastingInfo.selected_mass_prod"
-                                :disabled="isFilmPasteDataShown"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                :disabled="isFilmPasteDataShown || isAdditionalMode"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed disabled:bg-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="items in massProdLists" :key="items" :value="items">
                                     {{ items }}
@@ -156,8 +156,8 @@
                             <label class="block mb-1 text-xs font-medium text-gray-700">Layer<span class="text-red-500"> *</span></label>
                             <select
                                 v-model="filmPastingInfo.selected_layer"
-                                :disabled="isFilmPasteDataShown"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                :disabled="isFilmPasteDataShown || isAdditionalMode"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg disabled:cursor-not-allowed disabled:bg-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
                             >
                                 <option v-for="items in available_layers" :key="items" :value="items">
                                     {{ items }}
@@ -167,18 +167,25 @@
 
                     </div>
 
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div
+                        class="grid grid-cols-1 gap-6"
+                        :class="(lotNoLists.length > 1  && isInitialLotSaved) ? 'md:grid-cols-4' : 'md:grid-cols-3'"
+                    >
                         <!-- Lot Number -->
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">
                                 Lot no<span class="text-red-500"> *</span>
                             </label>
-                            <input
+                            <select
                                 v-model="filmPasteLotNo"
-                                type="text"
-                                disabled
-                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
-                            />
+                                :disabled="!isAdditionalMode"
+                                class="w-full text-xs border-4 border-orange-400 rounded-lg shadow-sm disabled:border disabled:border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option v-if="lotNoLists.length === 0" value="" disabled>No lots available</option>
+                                <option v-for="lot in lotNoLists" :key="lot" :value="lot">
+                                    {{ lot }}
+                                </option>
+                            </select>
                         </div>
                         <!-- Model -->
                         <div>
@@ -192,12 +199,32 @@
                                 class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
+
+                        <div v-if="lotNoLists.length > 1 && isInitialLotSaved" class="flex items-end">
+                            <button
+                                v-if="!isAdditionalMode"
+                                @click="triggerAdditional"
+                                :disabled="isFilmPasteDataShown"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-teal-600 rounded-lg shadow-md cursor-not-allowed disabled:bg-gray-400 hover:bg-teal-500 active:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            >
+                                Change Lot
+                            </button>
+                            <button
+                                v-else
+                                @click="isAdditionalMode = false"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-orange-600 rounded-lg shadow-md hover:bg-orange-500 active:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                            >
+                                Set New Lot
+                            </button>
+                        </div>
+
                         <!-- Button (wrapped for alignment) -->
                         <div class="flex items-end">
                             <button
                                 v-if="!isFilmPasteDataShown"
                                 @click="fetchFilmPastingDataSummary"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                :disabled="isAdditionalMode"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md cursor-not-allowed disabled:bg-gray-400 bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                             >
                                 Show Data
                             </button>
@@ -209,6 +236,9 @@
                                 Cancel
                             </button>
                         </div>
+                        <p v-if="isAdditionalMode" class="mb-10 text-xs text-gray-600 whitespace-nowrap">
+                            <strong>Instruction:</strong> Select the appropriate lot number, then confirm your selection by clicking the <strong class="text-orange-600">Set New Lot</strong> button.
+                        </p>
                     </div>
                     <!-- Group: Film Pasting Date, Machine No, Total Magnet Weight -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -379,7 +409,7 @@
                     <div class="flex w-full gap-10">
                         <!-- Finalize -->
                         <button
-                            @click="submit()"
+                            @click="submit"
                             :disabled="isExists"
                             :class="[
                                 'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
@@ -388,7 +418,21 @@
                                 : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'
                             ]"
                             >
-                            {{ isExists ? 'DUPLICATE DETECTED' : 'SUBMIT' }}
+                            {{ isExists ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT' }}
+                        </button>
+
+                         <button
+                            v-if="canSubmitAdditional && !isAdditionalMode"
+                            @click="submit"
+                            :disabled="isAdditionalExisting"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                isAdditionalExisting
+                                    ? 'bg-gradient-to-r from-gray-400 to-slate-500 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                            ]"
+                        >
+                            {{ isAdditionalExisting ? 'THIS ADDTNL LOT ALREADY EXISTS' : 'SUBMIT ADDTNL' }}
                         </button>
 
                         <!-- Clear All -->
@@ -482,17 +526,29 @@
                         class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-all duration-200 transform hover:scale-[0.98] flex items-center justify-center space-x-2">
                         Cancel
                         </button>
-
                         <button
-                        @click="saveToDatabase()"
-                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
-                        <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
-                        <span class="relative flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            <span>⚠️ Submit Now</span>
-                        </span>
+                            v-if="isExists && lotNoLists.length > 1"
+                            @click="addtnl_saveToDatabase()"
+                            class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                            <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+                            <span class="relative flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>⚠️ Submit Now (Addtnl)</span>
+                            </span>
+                        </button>
+                        <button
+                            v-else
+                            @click="saveToDatabase()"
+                            class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                            <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+                            <span class="relative flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>⚠️ Submit Now</span>
+                            </span>
                         </button>
                     </div>
                     </div>
@@ -596,6 +652,9 @@ function useSessionStorage(key, state) {
 const bypassValidation = ref();
 const showModalSubmit = ref();
 const isFilmPasteDataShown = ref();
+const isAdditionalMode = ref(false);
+const isInitialLotSaved = ref(false);
+const isAdditionalExisting = ref(false);
 
 // Toggle variable ---------- Toggle Variable END
 
@@ -607,6 +666,9 @@ const available_layers = ref([]);
 const completedLayers = ref([]);
 const massProdLists = ref([]);
 const furnace_names = ref([]);
+const lotNoLists = ref([]);
+
+const currentInitialLot = ref();
 
 const filmPasteModel = ref();
 const filmPasteLotNo = ref();
@@ -646,6 +708,12 @@ const filmPastingInfo = reactive({
     is_setter_sand: false,
 });
 
+const canSubmitAdditional = computed(() => {
+    return (
+        isExists.value && lotNoLists.value.length > 1 && currentInitialLot.value != filmPasteLotNo.value
+    );
+});
+
 // General Variables --------- General Variables END
 
 
@@ -678,6 +746,144 @@ const submit = async () => {
 
     showModalSubmit.value = true;
 }
+
+const checkInitialLot = async () => {
+    try{
+
+        const payload = {
+            mass_prod: filmPastingInfo.selected_mass_prod,
+            furnace: filmPastingInfo.selectedFurnace,
+            layer: filmPastingInfo.selected_layer,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (check.data.exists) {
+            isInitialLotSaved.value = true;
+            currentInitialLot.value = check.data.initial_lot;
+        } else {
+            isInitialLotSaved.value = false;
+            currentInitialLot.value = null;
+        }
+
+    }catch(error){
+        console.error('Failed to check initial lot', error);
+        isInitialLotSaved.value = false;
+    }
+}
+
+const saveInitialLot = async () => {
+    try {
+        const payload = {
+            mass_prod: filmPastingInfo.selected_mass_prod,
+            furnace: filmPastingInfo.selectedFurnace,
+            layer: filmPastingInfo.selected_layer,
+            initial_lot: filmPasteLotNo.value,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (check.data.exists) {
+            // notify user here — hard stop
+            isInitialLotSaved.value = true;
+            return;
+        }
+
+        await axios.post('/api/breaklot-initial-lots', payload);
+
+    } catch (error) {
+        console.error('Failed to save initial lot', error);
+    }
+};
+
+const addtnl_saveToDatabase = async () => {
+    try{
+
+        //generate layer code
+        let layerCode = '';
+        try {
+            const res = await axios.get('/api/breaklot-coating/generate-layer-code', {
+                params: {
+                    furnace: filmPastingInfo.selectedFurnace,
+                    mass_prod: filmPastingInfo.selected_mass_prod,
+                    layer: filmPastingInfo.selected_layer
+                }
+            });
+            layerCode = res.data.layer_code;
+        } catch (error) {
+            toast.error('Failed to generate Layer Code.');
+            console.error(error);
+            return;
+        }
+
+        const payload = {
+            furnace: filmPastingInfo.selectedFurnace,
+            mass_prod: filmPastingInfo.selected_mass_prod,
+            layer: String(filmPastingInfo.selected_layer),
+            layer_code: layerCode,
+            lot_no: filmPasteLotNo.value,
+            model: filmPasteModel.value,
+            date: filmPastingInfo.film_pasting_date,
+            machine_no: filmPastingInfo.machine_no,
+            total_magnet_weight: filmPastingInfo.total_magnet_weight,
+            loader_operator: filmPastingInfo.loader_operator,
+            unloader_operator: filmPastingInfo.unloader_operator,
+            checker_operator: filmPastingInfo.checker_operator,
+            film_coating_amount: filmPastingInfo.film_coating_amount,
+            time_start: filmPastingInfo.time_start.slice(0,5),
+            time_finished: filmPastingInfo.time_finished.slice(0,5),
+            remarks: filmPastingInfo.remarks,
+            film_type: filmPastingInfo.film_type,
+            film_class: filmPastingInfo.film_class,
+            h_line_parameters: filmPastingInfo.h_line_parameters,
+            t_line_parameters: filmPastingInfo.t_line_parameters,
+            setter_sand: filmPastingInfo.is_setter_sand === '1' ? true : false,
+        };
+
+        const response = await axios.post('/api/break-lot-filmpasting', payload);
+        console.log(response.data);
+        toast.success('Data successfully saved.')
+        await updateFormatType();
+    }catch(error){
+        toast.error('Failed to save additional film pasting data');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "saveToDatabase",
+            "Failed to save additional film pasting data"
+        );
+    }finally{
+        showModalSubmit.value = false;
+        isFilmPasteDataShown.value = false;
+        await getCompletedLayers();
+        await fetchAvailableLayers();
+        await fetchExistingLayers();
+        clearAll();
+    }
+};
+
 
 const saveToDatabase = async () => {
     try{
@@ -789,6 +995,20 @@ const clearAll = () => {
     });
 };
 
+const triggerAdditional = () => {
+    if (!filmPastingInfo.selectedFurnace || !filmPastingInfo.selected_mass_prod || !filmPastingInfo.selected_layer) {
+        const missingFields = [];
+
+        if (!filmPastingInfo.selectedFurnace) missingFields.push('Furnace');
+        if (!filmPastingInfo.selected_mass_prod) missingFields.push('Mass Production');
+        if (!filmPastingInfo.selected_layer) missingFields.push('Layer');
+
+        toast.warning(`Please select: ${missingFields.join(', ')}`);
+        return;
+    }
+    isAdditionalMode.value = true;
+}
+
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
@@ -838,8 +1058,9 @@ const getSelectedMassProdData = async() => {
         const response = await axios.get(`/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/layer/${filmPastingInfo.selected_layer}/layer-no`);
         const massProdLayerData = response.data.layer_data;
         console.log('Mass Prod layer data: ', massProdLayerData);
-        filmPasteModel.value = massProdLayerData[0].data['A'];
-        filmPasteLotNo.value = massProdLayerData[2].data['A'];
+        filmPasteModel.value = massProdLayerData[0].data['A'] || massProdLayerData[0].data['B'] || null;
+        lotNoLists.value = response.data.layer_lot_lists;
+        filmPasteLotNo.value = lotNoLists.value[0] || null;
 
         console.log('success response getSelectedMassProdData: ', massProdLayerData);
     }catch(error){
@@ -898,6 +1119,48 @@ const getCompletedLayers = async () => {
             "getCompletedLayers",
             "Failed to fetch layers"
         );
+    }
+};
+
+const getAdditionalModel = async () => {
+    try {
+        const response = await axios.get('/api/mass-production/get-associated-model', {
+            params: {
+                mass_prod: filmPastingInfo.selected_mass_prod,
+                furnace: filmPastingInfo.selectedFurnace,
+                layer: filmPastingInfo.selected_layer,
+                lot_no: filmPasteLotNo.value,
+            }
+        });
+
+        filmPasteModel.value = response.data.model;
+
+    } catch (error) {
+        console.error('Failed to get associated model to this lot', error);
+    }
+};
+
+const checkExistingAdditional = async () => {
+    try {
+        const response = await axios.get('/api/breaklot-coating/check-existing', {
+            params: {
+                mass_prod: filmPastingInfo.selected_mass_prod,
+                furnace: filmPastingInfo.selectedFurnace,
+                layer: filmPastingInfo.selected_layer,
+                lot_no: filmPasteLotNo.value,
+            }
+        });
+
+        // Update reactive state
+        isAdditionalExisting.value = response.data.exists;
+
+        if (isAdditionalExisting.value) {
+            toast.warning('This Lot Number already exists.');
+        }
+
+    } catch (error) {
+        console.error('Failed to check existing additionals', error);
+        toast.error('Failed to verify Lot Number.');
     }
 };
 
@@ -1100,11 +1363,19 @@ watch(
             await fetchAvailableLayers();
             await fetchExistingLayers();
             await getSelectedMassProdData();
+            await checkInitialLot();
         } else {
             completedLayers.value = []; // reset if furnace or mass_prod is cleared
         }
     }
 );
+
+watch(filmPasteLotNo, async (lot) => {
+    if (!lot) return;
+    await getAdditionalModel();
+    await checkExistingAdditional();
+});
+
 
 // Watch zone -------- Watch Zone END
 

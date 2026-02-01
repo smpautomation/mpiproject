@@ -26,6 +26,10 @@ use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
 use App\Http\Controllers\BackEndPdfController;
+use App\Http\Controllers\BreaklotCoatingController;
+use App\Http\Controllers\BreaklotFilmpastingController;
+use App\Http\Controllers\BreaklotInitialLotController;
+use App\Http\Controllers\BreaklotSecondCoatingController;
 use App\Http\Controllers\ExcessLayersController;
 use App\Http\Controllers\FilmPastingDataController;
 use App\Http\Controllers\GbdpSecondCoatingController;
@@ -383,6 +387,8 @@ Route::get('/mass-production/{furnace}/{massprod}/layer-by-serial/{serial}', [Ma
 //);
 Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}/layer-no', [MassProductionController::class, 'getLayerDataByLayerNo']);
 
+Route::get('/mass-production/get-associated-model', [MassProductionController::class, 'getAssociatedModel']);
+
 Route::get('/mass-production/{furnace}/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
 
 Route::get('/break-lot-monitoring/{furnace}/{massprod}', [MassProductionController::class, 'breakLotMonitoring']);
@@ -432,6 +438,20 @@ Route::post(
     [InitialControlSheetController::class, 'validateLayers']
 );
 
+Route::get(
+    'breaklot-initial-lots/exists',
+    [BreaklotInitialLotController::class, 'exists']
+);
+
+Route::get(
+    'breaklot-initial-lots/show-all',
+    [BreaklotInitialLotController::class, 'showAllAdditional']
+);
+
+Route::get('breaklot-coating/generate-layer-code', [BreaklotCoatingController::class, 'generateLayerCode']);
+Route::get('breaklot-coating/check-existing', [BreaklotCoatingController::class, 'checkExisting']);
+Route::get('breaklot-coating/check-existing-tpm', [BreaklotCoatingController::class, 'checkExistingForTpm']);
+
 Route::get('/monthly-summary', [MassProductionController::class, 'generateMonthlySummary']);
 
 Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class, 'checkDuplicateLot']);
@@ -440,6 +460,10 @@ Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingControll
 Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
 
 Route::apiResource('mass-production',MassProductionController::class);
+Route::apiResource('break-lot-coating', BreaklotCoatingController::class);
+Route::apiResource('break-lot-second-coating', BreaklotSecondCoatingController::class);
+Route::apiResource('break-lot-filmpasting', BreaklotFilmpastingController::class);
+Route::apiResource('breaklot-initial-lots', BreaklotInitialLotController::class);
 Route::apiResource('excess-layers',ExcessLayersController::class);
 Route::apiResource('error-logs', ErrorLogsController::class);
 Route::apiResource('initial_control_sheet', InitialControlSheetController::class);

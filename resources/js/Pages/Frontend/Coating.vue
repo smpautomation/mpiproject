@@ -353,7 +353,7 @@
                             </label>
                             <select
                                 v-model="coatingInfo.selectedFurnace"
-                                :disabled="isDataShown"
+                                :disabled="isDataShown || isAdditionalMode"
                                 class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in furnace_names" :key="items" :value="items">
@@ -368,7 +368,7 @@
                             </label>
                             <select
                                 v-model="coatingInfo.selectedMassProd"
-                                :disabled="isDataShown"
+                                :disabled="isDataShown || isAdditionalMode"
                                 class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in massProd_names" :key="items" :value="items">
@@ -383,7 +383,7 @@
                             </label>
                             <select
                                 v-model="coatingInfo.selectedLayer"
-                                :disabled="isDataShown"
+                                :disabled="isDataShown || isAdditionalMode"
                                 class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed"
                             >
                                 <option v-for="items in available_layers" :key="items" :value="items">
@@ -395,7 +395,7 @@
                     <!-- Group: Selection -->
                     <div
                         class="grid grid-cols-1 gap-6"
-                        :class="lotNoLists.length > 1 ? 'md:grid-cols-4' : 'md:grid-cols-3'"
+                        :class="(lotNoLists.length > 1  && isInitialLotSaved) ? 'md:grid-cols-4' : 'md:grid-cols-3'"
                     >
                         <!-- Lot Number -->
                         <div>
@@ -406,8 +406,8 @@
                             <div>
                                 <select
                                     v-model="lotNo"
-                                    disabled
-                                    class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    :disabled="!isAdditionalMode"
+                                    class="w-full text-xs border-4 border-orange-400 rounded-lg shadow-sm disabled:border-gray-300 disabled:border focus:ring-blue-500 focus:border-blue-500"
                                 >
                                     <option v-if="lotNoLists.length === 0" value="" disabled>No lots available</option>
                                     <option v-for="lot in lotNoLists" :key="lot" :value="lot">
@@ -428,20 +428,21 @@
                                 class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
-                        <div v-if="lotNoLists.length > 1" class="flex items-end">
+                        <div v-if="lotNoLists.length > 1 && isInitialLotSaved" class="flex items-end">
                             <button
                                 v-if="!isAdditionalMode"
                                 @click="triggerAdditional"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-teal-600 rounded-lg shadow-md hover:bg-teal-500 active:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                                :disabled="isDataShown"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-teal-600 rounded-lg shadow-md cursor-not-allowed disabled:bg-gray-400 hover:bg-teal-500 active:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
                             >
-                                Additional
+                                Change Lot
                             </button>
                             <button
                                 v-else
                                 @click="isAdditionalMode = false"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-orange-600 rounded-lg shadow-md hover:bg-orange-500 active:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
                             >
-                                Cancel
+                                Set New Lot
                             </button>
                         </div>
 
@@ -450,14 +451,16 @@
                             <button
                                 v-if="activate2ndGBDP && !isDataShown"
                                 @click="fetchCoatingData2ndGbdpSummary"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                :disabled="isAdditionalMode"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md cursor-not-allowed disabled:bg-gray-400 bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                             >
                                 Show Data
                             </button>
                             <button
                                 v-if="!activate2ndGBDP && !isDataShown"
                                 @click="fetchCoatingDataSummary"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                :disabled="isAdditionalMode"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md cursor-not-allowed disabled:bg-gray-400 bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                             >
                                 Show Data
                             </button>
@@ -469,6 +472,9 @@
                                 Cancel
                             </button>
                         </div>
+                        <p v-if="isAdditionalMode" class="text-xs text-gray-600 whitespace-nowrap">
+                            <strong>Instruction:</strong> Select the appropriate lot number, then confirm your selection by clicking the <strong class="text-orange-600">Set New Lot</strong> button.
+                        </p>
                     </div>
                     <!-- Group: Selection -->
                     <div v-if="activate2ndGBDP" class="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -1006,11 +1012,11 @@
                                 ? 'bg-red-600 hover:bg-red-700 focus:ring-red-400 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'"
                         >
-                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists ? 'DUPLICATE DETECTED' : 'FINALIZE') }}
+                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT') }}
                         </button>
 
                         <button
-                            v-else
+                            v-else-if="!canSubmitAdditional"
                             @click="finalize_1st2ndGbdp"
                             :disabled="isExists_2ndGBDP || coatingNoMassProdData"
                             :class="[
@@ -1020,7 +1026,35 @@
                                     : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
                             ]"
                         >
-                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DUPLICATE DETECTED' : 'SUBMIT') }}
+                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT') }}
+                        </button>
+
+                        <button
+                            v-if="canSubmitAdditional && !isAdditionalMode && !activate2ndGBDP"
+                            @click="finalize"
+                            :disabled="isAdditionalExisting"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                isAdditionalExisting
+                                    ? 'bg-gradient-to-r from-gray-400 to-slate-500 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                            ]"
+                        >
+                            {{ isAdditionalExisting ? 'THIS ADDTNL LOT ALREADY EXISTS' : 'SUBMIT ADDTNL' }}
+                        </button>
+
+                        <button
+                            v-else-if="canSubmitAdditional && !isAdditionalMode"
+                            @click="finalize_1st2ndGbdp"
+                            :disabled="isAdditionalExisting"
+                            :class="[
+                                'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                isAdditionalExisting
+                                    ? 'bg-gradient-to-r from-gray-400 to-slate-500 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                            ]"
+                        >
+                            {{ isAdditionalExisting ? 'THIS ADDTNL LOT ALREADY EXISTS' : 'SUBMIT ADDTNL (Double)' }}
                         </button>
 
                         <!-- Clear All -->
@@ -1126,16 +1160,31 @@
                         </button>
 
                         <button
-                        @click="saveToDatabase_1st2ndgbdp()"
-                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
-                        <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
-                        <span class="relative flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            <span>⚠️ Submit Now</span>
-                        </span>
+                            v-if="(isExists || isExists_2ndGBDP) && lotNoLists.length > 1"
+                            @click="addtnl_saveToDatabase_1st2ndgbdp()"
+                            class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                            <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+                            <span class="relative flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>⚠️ Submit Now (Addtnl)</span>
+                            </span>
                         </button>
+
+                        <button
+                            v-else
+                            @click="saveToDatabase_1st2ndgbdp()"
+                            class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                            <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+                            <span class="relative flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>⚠️ Submit Now</span>
+                            </span>
+                        </button>
+
                     </div>
                     </div>
                     <!-- Bottom accent line -->
@@ -1443,6 +1492,14 @@
                             Cancel
                         </button>
                         <button
+                            v-if="(isExists || isExists_2ndGBDP) && lotNoLists.length > 1 && !activate2ndGBDP"
+                            @click="addtnl_saveToDatabase"
+                            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        >
+                            Proceed (Addtnl)
+                        </button>
+                        <button
+                            v-else
                             @click="saveToDatabase"
                             class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                         >
@@ -1572,8 +1629,11 @@ const isExists_2ndGBDP = ref(false);
 const isModelMissing = ref(false);
 const isDataShown = ref(false);
 const isAdditionalMode = ref(false);
+const isInitialLotSaved = ref(false);
+const isAdditionalExisting = ref(false);
 //Toggle Control
 
+const currentInitialLot = ref();
 const massProd_names = ref([]);
 const furnace_names = ref([]);
 const layers = ref(['1','2','3','4','5','6','7','8','9','9.5']);
@@ -1744,7 +1804,13 @@ const hasRows31to35 = computed(() => {
     )
 })
 
-
+const canSubmitAdditional = computed(() => {
+    return (
+        (isExists.value || isExists_2ndGBDP.value) &&
+        lotNoLists.value.length > 1 &&
+        currentInitialLot.value != lotNo.value
+    );
+});
 
 // Modules
 const modules = ["M-01", "M-02", "M-03", "M-04", "M-05", "M-06", "M-06"];
@@ -1946,14 +2012,338 @@ const clearAllTransition = () => {
 };
 
 const triggerAdditional = () => {
+    if (!coatingInfo.selectedFurnace || !coatingInfo.selectedMassProd || !coatingInfo.selectedLayer) {
+        const missingFields = [];
+
+        if (!coatingInfo.selectedFurnace) missingFields.push('Furnace');
+        if (!coatingInfo.selectedMassProd) missingFields.push('Mass Production');
+        if (!coatingInfo.selectedLayer) missingFields.push('Layer');
+
+        toast.warning(`Please select: ${missingFields.join(', ')}`);
+        return;
+    }
     isAdditionalMode.value = true;
 }
 
-const getAdditionalModel = async() => {
+const getAdditionalModel = async () => {
+    try {
+        const response = await axios.get('/api/mass-production/get-associated-model', {
+            params: {
+                mass_prod: coatingInfo.selectedMassProd,
+                furnace: coatingInfo.selectedFurnace,
+                layer: coatingInfo.selectedLayer,
+                lot_no: lotNo.value,
+            }
+        });
+
+        coatingInfo.selectedModel = response.data.model;
+
+    } catch (error) {
+        console.error('Failed to get associated model to this lot', error);
+    }
+};
+
+const checkExistingAdditional = async () => {
+    try {
+        const response = await axios.get('/api/breaklot-coating/check-existing', {
+            params: {
+                mass_prod: coatingInfo.selectedMassProd,
+                furnace: coatingInfo.selectedFurnace,
+                layer: coatingInfo.selectedLayer,
+                lot_no: lotNo.value,
+            }
+        });
+
+        // Update reactive state
+        isAdditionalExisting.value = response.data.exists;
+
+        if (isAdditionalExisting.value) {
+            toast.warning('This Lot Number already exists.');
+        }
+
+    } catch (error) {
+        console.error('Failed to check existing additionals', error);
+        toast.error('Failed to verify Lot Number.');
+    }
+};
+
+const checkInitialLot = async () => {
     try{
-        const response = axios.get('');
+
+        const payload = {
+            mass_prod: coatingInfo.selectedMassProd,
+            furnace: coatingInfo.selectedFurnace,
+            layer: coatingInfo.selectedLayer,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (check.data.exists) {
+            isInitialLotSaved.value = true;
+            currentInitialLot.value = check.data.initial_lot;
+        } else {
+            isInitialLotSaved.value = false;
+            currentInitialLot.value = null;
+        }
+
     }catch(error){
-        console.error('Failed to get associated model to this lot');
+        console.error('Failed to check initial lot', error);
+        isInitialLotSaved.value = false;
+    }
+}
+
+const saveInitialLot = async () => {
+    try {
+        const payload = {
+            mass_prod: coatingInfo.selectedMassProd,
+            furnace: coatingInfo.selectedFurnace,
+            layer: coatingInfo.selectedLayer,
+            initial_lot: lotNo.value,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (check.data.exists) {
+            // notify user here — hard stop
+            isInitialLotSaved.value = true;
+            return;
+        }
+
+        await axios.post('/api/breaklot-initial-lots', payload);
+
+    } catch (error) {
+        console.error('Failed to save initial lot', error);
+    }
+};
+
+const addtnl_saveToDatabase = async() => {
+    // Flatten coatingsTable
+    const coatingAmountData = coatingsTable.value.map(row => ({
+        no: row.no,
+        coating: row.coating
+    }));
+
+    // Flatten concentrationData
+    const concentrationAmountData = ranges.map((range, i) => ({
+        range,
+        modules: modules.map((module, j) => ({
+            module,
+            value: concentrationData.value[i][j]
+        }))
+    }));
+
+    // Flatten additionalSlurry
+    const additionalSlurryAmountData = additionalSlurry.value.map(item => ({
+        module: item.module,
+        new: item.new,
+        homo: item.homo,
+        time: item.time,
+        liters: item.liters
+    }));
+
+    //generate layer code
+    let layerCode = '';
+    try {
+        const res = await axios.get('/api/breaklot-coating/generate-layer-code', {
+            params: {
+                furnace: coatingInfo.selectedFurnace,
+                mass_prod: coatingInfo.selectedMassProd,
+                layer: coatingInfo.selectedLayer
+            }
+        });
+        layerCode = res.data.layer_code;
+    } catch (error) {
+        toast.error('Failed to generate Layer Code.');
+        console.error(error);
+        return;
+    }
+
+    // Final payload
+    const coatingDataPayload = {
+        furnace: coatingInfo.selectedFurnace,
+        mass_prod: coatingInfo.selectedMassProd,
+        layer: coatingInfo.selectedLayer,
+        layer_code: layerCode,
+        lot_no: lotNo.value,
+        model: coatingInfo.selectedModel,
+        date: coatingInfo.coatingDate,
+        machine_no: coatingInfo.coatingMachineNo,
+        slurry_lot_no: coatingInfo.slurryLotNo,
+        sample_qty: coatingInfo.sampleQuantity.toString(),
+        min_tb_content: coatingInfo.minTbContent,
+        total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
+        loader_operator: coatingInfo.loaderOperator,
+        unloader_operator: coatingInfo.unloaderOperator,
+        checker_operator: coatingInfo.checkerOperator,
+        time_start: coatingInfo.timeStart,
+        time_finish: coatingInfo.timeFinished,
+        average: parseFloat(coatingAverage.value.toFixed(2)),
+        maximum: parseFloat(coatingMaximum.value.toFixed(2)),
+        minimum: parseFloat(coatingMinimum.value.toFixed(2)),
+        remarks: coatingInfo.remarks,
+        coating_data: {
+            "Coating Amount Data": coatingAmountData,
+            "Concentration Data": concentrationAmountData,
+            "Additional Slurry Data": additionalSlurryAmountData,
+            "Lot no": lotNo.value
+        }
+    };
+
+    console.log('Coating Data Payload: ', coatingDataPayload);
+    /*
+    const exists = await checkExisting(
+        coatingInfo.selectedFurnace,
+        coatingInfo.selectedMassProd,
+        coatingInfo.selectedLayer
+    );
+
+    if (exists) {
+        toast.error("Record already exists for this Mass Prod and Layer.");
+        return;
+    }
+    */
+
+    try{
+        const response = await axios.post('/api/break-lot-coating', coatingDataPayload);
+        console.log('Saved Successfully: ', response.data);
+        toast.success('Saved Successfully');
+        await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
+        isDataShown.value = false;
+    }catch(error){
+        toast.error('Failed to save additional to database. ',error);
+    }finally{
+        clearAllTransition();
+        showModalFinalize.value = false;
+    }
+
+}
+
+const addtnl_saveToDatabase_1st2ndgbdp = async() => {
+
+    // Flatten coatingsTable
+    const coatingAmountData_1stgbdp = coatingsTable_1stgbdp.value.map(row => ({
+        no: row.no,
+        coating: row.coating
+    }));
+
+    // Flatten concentrationData
+    const concentrationAmountData_1stgbdp = ranges_1stgbdp.map((range, i) => ({
+        range,
+        modules: modules.map((module, j) => ({
+            module,
+            value: concentrationData_1stGBDP.value[i][j]
+        }))
+    }));
+
+    // Flatten coatingsTable
+    const coatingAmountData_2ndgbdp = coatingsTable_2ndgbdp.value.map(row => ({
+        no: row.no,
+        coating: row.coating
+    }));
+
+    // Flatten concentrationData
+    const concentrationAmountData_2ndgbdp = ranges_2ndgbdp.map((range, i) => ({
+        range,
+        modules: modules.map((module, j) => ({
+            module,
+            value: concentrationData_2ndGBDP.value[i][j]
+        }))
+    }));
+
+    //generate layer code
+    let layerCode = '';
+    try {
+        const res = await axios.get('/api/breaklot-coating/generate-layer-code', {
+            params: {
+                furnace: coatingInfo.selectedFurnace,
+                mass_prod: coatingInfo.selectedMassProd,
+                layer: coatingInfo.selectedLayer
+            }
+        });
+        layerCode = res.data.layer_code;
+    } catch (error) {
+        toast.error('Failed to generate Layer Code.');
+        console.error(error);
+        return;
+    }
+
+    try{
+        const payload = {
+            furnace: coatingInfo.selectedFurnace,
+            mass_prod: coatingInfo.selectedMassProd,
+            layer: coatingInfo.selectedLayer,
+            layer_code: layerCode,
+            lot_no: lotNo.value,
+            model: coatingInfo.selectedModel,
+            coating_info_1stgbdp: {
+                mass_prod: selectedMassProd_fetch.value,
+                layer: selectedLayer_fetch.value,
+                date: coatingInfo_1stgbdp.coatingDate,
+                machine_no: coatingInfo_1stgbdp.coatingMachineNo,
+                slurry_lot_no: coatingInfo_1stgbdp.slurryLotNo,
+                min_tb_content: coatingInfo_1stgbdp.minTbContent,
+                total_magnet_weight: coatingInfo_1stgbdp.totalMagnetWeight.toString(),
+                average: parseFloat(coatingAverage_1stgbdp.value.toFixed(2)),
+                maximum: parseFloat(coatingMaximum_1stgbdp.value.toFixed(2)),
+                minimum: parseFloat(coatingMinimum_1stgbdp.value.toFixed(2)),
+                remarks: coatingInfo_1stgbdp.remarks,
+            },
+            coating_info_2ndgbdp: {
+                mass_prod: coatingInfo.selectedMassProd,
+                layer: coatingInfo.layer,
+                date: coatingInfo.coatingDate,
+                machine_no: coatingInfo.coatingMachineNo,
+                slurry_lot_no: coatingInfo.slurryLotNo,
+                min_tb_content: coatingInfo.minTbContent,
+                total_magnet_weight: coatingInfo.totalMagnetWeight.toString(),
+                average: parseFloat(coatingAverage_2ndgbdp.value.toFixed(2)),
+                maximum: parseFloat(coatingMaximum_2ndgbdp.value.toFixed(2)),
+                minimum: parseFloat(coatingMinimum_2ndgbdp.value.toFixed(2)),
+                remarks: coatingInfo.remarks,
+            },
+            coating_data_1stgbdp: {
+                "Coating Amount Data": coatingAmountData_1stgbdp,
+                "Concentration Data": concentrationAmountData_1stgbdp,
+                "Lot no": lotNo_1stGBDP.value
+            },
+            coating_data_2ndgbdp: {
+                "Coating Amount Data": coatingAmountData_2ndgbdp,
+                "Concentration Data": concentrationAmountData_2ndgbdp,
+                "Lot no": lotNo.value
+            },
+        }
+
+        const response = await axios.post(`/api/break-lot-second-coating`, payload);
+        toast.success('1st and 2nd GBDP Data Saved Successfully');
+        console.log(response.data);
+        await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
+        isDataShown.value = false;
+    }catch(error){
+        toast.error('Failed to save to database. ',error);
+    }finally{
+        clearAllTransition();
+        showModalSubmit.value = false;
+        await getCompletedLayers();
+        await getCompletedLayers_1st_2nd_gbdp();
+        isDataShown.value = false;
     }
 }
 
@@ -2028,6 +2418,9 @@ const saveToDatabase = async() => {
         const response = await axios.post('/api/coating-data', coatingDataPayload);
         console.log('Saved Successfully: ', response.data);
         toast.success('Saved Successfully');
+        if(lotNoLists.value.length > 1){
+            await saveInitialLot();
+        }
         await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
         isDataShown.value = false;
     }catch(error){
@@ -2115,6 +2508,9 @@ const saveToDatabase_1st2ndgbdp = async() => {
 
         const response = await axios.post(`/api/gbdp-second-coating`, payload);
         toast.success('1st and 2nd GBDP Data Saved Successfully');
+        if(lotNoLists.value.length > 1){
+            await saveInitialLot();
+        }
         console.log(response.data);
         await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
         isDataShown.value = false;
@@ -2414,6 +2810,13 @@ const fetchLayerModel = async () => {
     }
 };
 
+watch(lotNo, async (lot) => {
+    if (!lot) return;
+    await getAdditionalModel();
+    await checkExistingAdditional();
+});
+
+
 watch(
     () => [coatingInfo.selectedFurnace, coatingInfo.selectedMassProd, coatingInfo.selectedLayer],
     ([furnace, mp, layer]) => {
@@ -2440,6 +2843,7 @@ watch(
         // Fetch existing layers whenever any value changes
         await fetchExistingLayers();
         await getSelectedMassProdData();
+        await checkInitialLot();
 
         console.log(
             `Selected Furnace: ${newFurnace}, MassProd: ${newMassProd}, Layer: ${newLayer}, ` +
@@ -2449,7 +2853,7 @@ watch(
 );
 
 const activate2ndGBDP = computed(() => {
-    const model = fetchedModelValue.value;
+    const model = coatingInfo.selectedModel;
     console.log("Recomputing GBDP check for model:", model);
     if (!model) return false;
     return firstSecondGBDP_models.value.includes(model.trim());

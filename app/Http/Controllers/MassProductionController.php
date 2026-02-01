@@ -1492,11 +1492,99 @@ class MassProductionController extends Controller
 
     public function getAssociatedModel(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'mass_prod' => 'required|string',
             'furnace'   => 'required|string',
             'layer'     => 'required|string',
             'lot_no'    => 'required|string',
         ]);
+
+        $mass_prod = trim($validated['mass_prod']);
+        $furnace   = trim($validated['furnace']);
+        $layer     = trim($validated['layer']);
+        $lot_no    = trim($validated['lot_no']);
+
+        $massProduction = MassProduction::where('mass_prod', $mass_prod)
+            ->where('furnace', $furnace)
+            ->first();
+
+        if (!$massProduction) {
+            return response()->json(['message' => 'Mass production not found'], 404);
+        }
+
+        // Map layer number to column
+        $layerMap = [
+            '1'   => 'layer_1',
+            '2'   => 'layer_2',
+            '3'   => 'layer_3',
+            '4'   => 'layer_4',
+            '5'   => 'layer_5',
+            '6'   => 'layer_6',
+            '7'   => 'layer_7',
+            '8'   => 'layer_8',
+            '9'   => 'layer_9',
+            '9.5' => 'layer_9_5',
+        ];
+
+        if (!isset($layerMap[$layer])) {
+            return response()->json(['message' => 'Invalid layer'], 400);
+        }
+
+        $layerColumn = $layerMap[$layer];
+
+        if (empty($massProduction->$layerColumn)) {
+            return response()->json(['message' => 'Layer data is empty'], 404);
+        }
+
+        $layerData = json_decode($massProduction->$layerColumn, true);
+
+        if (!is_array($layerData)) {
+            return response()->json(['message' => 'Invalid layer JSON'], 500);
+        }
+
+        // Find LT. No. row and MODEL row
+        $ltRow = null;
+        $modelRow = null;
+
+        foreach ($layerData as $row) {
+            if (($row['rowTitle'] ?? '') === 'LT. No.:') {
+                $ltRow = $row;
+            }
+            if (($row['rowTitle'] ?? '') === 'MODEL:') {
+                $modelRow = $row;
+            }
+        }
+
+        if (!$ltRow || !$modelRow) {
+            return response()->json(['message' => 'Required rows not found in layer data'], 404);
+        }
+
+        // Find which letter (A, B, C, etc) matches the lot number
+        $foundKey = null;
+
+        foreach (($ltRow['data'] ?? []) as $key => $value) {
+            if ((string)$value === (string)$lot_no) {
+                $foundKey = $key;
+                break;
+            }
+        }
+
+        if (!$foundKey) {
+            return response()->json(['message' => 'Lot number not found in this layer'], 404);
+        }
+
+        // Get model using same letter key
+        $model = $modelRow['data'][$foundKey] ?? null;
+
+        if (!$model) {
+            return response()->json(['message' => 'Model not found for matched lot key'], 404);
+        }
+
+        return response()->json([
+            'lot_no' => $lot_no,
+            'key'    => $foundKey,
+            'model'  => $model,
+        ]);
     }
+
 }

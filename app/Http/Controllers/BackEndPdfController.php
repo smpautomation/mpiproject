@@ -23,6 +23,10 @@ use App\Models\GxModel;
 use App\Models\TtmncModel;
 use App\Models\BhModel;
 use App\Models\RobModel;
+use App\Models\BreaklotCoating;
+use App\Models\BreaklotInitialLot;
+use App\Models\BreaklotSecondCoating;
+use App\Models\BreaklotFilmpasting;
 
 class BackEndPdfController extends Controller
 {
@@ -151,6 +155,8 @@ class BackEndPdfController extends Controller
         $massprod = $tpmData->mass_prod;
         $layer = $tpmData->layer_no;
         $furnace = $tpmData->furnace;
+        $addtnlModel = $tpmCategories->actual_model;
+        $addtnlLot = $tpmCategories->jhcurve_lotno;
 
         $massProdData = MassProduction::query()
             ->where('mass_prod', $massprod)
@@ -179,6 +185,105 @@ class BackEndPdfController extends Controller
             ], 404);
         }
 
+        // Check if there is a matching Initial Lot
+        $initialLotExists = BreaklotInitialLot::where([
+            'mass_prod' => $massprod,
+            'furnace'   => $furnace,
+            'layer'     => $layer,
+        ])->exists();
+            /*
+        if ($initialLotExists) {
+            // Only proceed if initial lot exists
+            if (BreaklotCoating::where([
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->exists()) {
+                $gbdp_report_format_type = 'Normal';
+            } elseif (BreaklotSecondCoating::where([
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->exists()) {
+                $gbdp_report_format_type = '1st and 2nd Gbdp';
+            } elseif (BreaklotFilmpasting::where([
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->exists()) {
+                $gbdp_report_format_type = 'Film Pasting';
+            }
+        }*/
+
+        $debug = [
+            'input' => [
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ],
+            'initial_lot_exists' => $initialLotExists,
+            'matches' => [
+                'coating'        => false,
+                'second_coating' => false,
+                'film_pasting'   => false,
+            ],
+            'final_format_type' => null,
+        ];
+
+        if ($initialLotExists) {
+
+            $debug['matches']['coating'] = BreaklotCoating::where([
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->exists();
+
+            if ($debug['matches']['coating']) {
+                $gbdp_report_format_type = 'Normal';
+            } else {
+
+                $debug['matches']['second_coating'] = BreaklotSecondCoating::where([
+                    'mass_prod' => $massprod,
+                    'furnace'   => $furnace,
+                    'layer'     => $layer,
+                    'model'     => $addtnlModel,
+                    'lot_no'    => $addtnlLot,
+                ])->exists();
+
+                if ($debug['matches']['second_coating']) {
+                    $gbdp_report_format_type = '1st and 2nd Gbdp';
+                } else {
+
+                    $debug['matches']['film_pasting'] = BreaklotFilmpasting::where([
+                        'mass_prod' => $massprod,
+                        'furnace'   => $furnace,
+                        'layer'     => $layer,
+                        'model'     => $addtnlModel,
+                        'lot_no'    => $addtnlLot,
+                    ])->exists();
+
+                    if ($debug['matches']['film_pasting']) {
+                        $gbdp_report_format_type = 'Film Pasting';
+                    }
+                }
+            }
+        }
+
+        $debug['final_format_type'] = $gbdp_report_format_type;
+
+        //dd($debug);
+
+
         // Decode JSON string
         $controlSheetArray = json_decode($control_sheet_data, true);
         if (!$controlSheetArray) {
@@ -200,6 +305,21 @@ class BackEndPdfController extends Controller
         // Create variables dynamically
         foreach ($cs as $key => $value) {
             ${"cs_{$key}"} = $value;
+        }
+
+        if (isset($cs_lt_no) && is_array($cs_lt_no)) { //Removes rogue lot numbers...
+            $cs_lt_no = array_filter($cs_lt_no, function ($lot) use ($addtnlLot) {
+                return $lot === $addtnlLot;
+            });
+        }
+
+        if (isset($cs_lt_no) && is_array($cs_lt_no) && isset($cs_total_qty) && is_array($cs_total_qty)) { //Precise total qty
+            $matchingLetters = array_keys($cs_lt_no);
+
+            if (!empty($matchingLetters) && isset($cs_total_qty) && is_array($cs_total_qty)) {
+                $firstMatchingLetter = $matchingLetters[0];
+                $cs_total_qty = $cs_total_qty[$firstMatchingLetter] ?? null;
+            }
         }
 
         // ================= EXCESS LAYER LOT SCAN =================
@@ -244,11 +364,21 @@ class BackEndPdfController extends Controller
 
 
         //Coating data --------------- Coating data --------------- Coating data --------------- Coating data
-        $coatingData = Coating::where('mass_prod', $massprod)
-            ->where('layer', $layer)
-            ->where('furnace', $furnace)
-            ->first();
-
+        if ($initialLotExists) {
+            $coatingData = BreaklotCoating::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->first();
+        } else {
+            $coatingData = Coating::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+            ])->first();
+        }
 
         $coatingDataJson = $coatingData->coating_data ?? null;
         $coatingDataValues = json_decode($coatingDataJson, true);
@@ -257,10 +387,21 @@ class BackEndPdfController extends Controller
 
         //Film Pasting --------------- Film Pasting --------------- Film Pasting --------------- Film Pasting
 
-        $filmPastingData = FilmPastingData::where('mass_prod', $massprod)
-            ->where('layer', $layer)
-            ->where('furnace', $furnace)
-            ->first();
+        if ($initialLotExists) {
+            $filmPastingData = BreaklotFilmpasting::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->first();
+        } else {
+            $filmPastingData = FilmPastingData::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+            ])->first();
+        }
 
         $filmPastingHLineValues = $filmPastingData->h_line_parameters ?? null;
         $filmPastingTLineValues = $filmPastingData->t_line_parameters ?? null;
@@ -269,10 +410,21 @@ class BackEndPdfController extends Controller
 
         //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp
 
-        $secondGbdpCoatingData = GbdpSecondCoating::where('mass_prod', $massprod)
-            ->where('layer', $layer)
-            ->where('furnace', $furnace)
-            ->first();
+       if ($initialLotExists) {
+            $secondGbdpCoatingData = BreaklotSecondCoating::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->first();
+        } else {
+            $secondGbdpCoatingData = GbdpSecondCoating::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+            ])->first();
+        }
 
         /*$secondGbdpHTData = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
             ->where('layer', $layer)
@@ -428,6 +580,7 @@ class BackEndPdfController extends Controller
         //dd($nsaChartFilenames);
         //dd($nsaAggregateMaximum);
 
+
         //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals End
 
         $data = [
@@ -560,8 +713,15 @@ class BackEndPdfController extends Controller
 
         $massProd = $massprod ?? 'unknown';
         $furnace = str_replace('-', '', $massProdData->furnace);
-        $cs_model_final = $cs_model['A'] ?? $cs_model['B'] ?? null;
-        $cs_lt_no_final = $cs_lt_no['A'] ?? $cs_lt_no['B'] ?? null;
+        if ($initialLotExists) {
+            // Use selected SET (additional) values
+            $cs_model_final = $addtnlModel;
+            $cs_lt_no_final = $addtnlLot;
+        } else {
+            // Default behavior (A → B fallback)
+            $cs_model_final = $cs_model['A'] ?? $cs_model['B'] ?? null;
+            $cs_lt_no_final = $cs_lt_no['A'] ?? $cs_lt_no['B'] ?? null;
+        }
         $rawFilename = "({$reportData->smp_judgement}) {$cs_model_final} Lot No {$cs_lt_no_final}";
         //dd($rawFilename);
 

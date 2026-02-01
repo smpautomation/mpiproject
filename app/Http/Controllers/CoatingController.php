@@ -84,7 +84,7 @@ class CoatingController extends Controller
 
         $coating->update($validated);
 
-        Log::info('Manually patched coating serial', ['serial' => $coating->serial]);
+        //Log::info('Manually patched coating serial', ['serial' => $coating->serial]);
 
         return response()->json($coating);
     }

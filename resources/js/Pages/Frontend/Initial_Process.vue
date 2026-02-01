@@ -3302,6 +3302,7 @@ const finalizeCoatingSummary = async () => {
 
 const proceedFinalizeEvenEmpty = async () => {
     showModalEmptyConcentrationWarning.value = false;
+    showEmptyDataWarning.value = false;
     await coatingLotValidation();
 };
 
