@@ -751,17 +751,17 @@ class BackEndPdfController extends Controller
         $length = strlen(trim($name));
 
         return match (true) {
-            $length <= 4  => '17px',
-            $length === 5 => '16px',
-            $length === 6 => '15px',
-            $length === 7 => '14px',
-            $length === 8 => '13px',
-            $length === 9 => '12px',
-            $length === 10 => '11px',
-            $length === 11 => '10px',
-            $length === 12 => '9px',
-            $length === 13 => '8px',
-            default       => '9px',
+            $length <= 4  => '15px',
+            $length === 5 => '14px',
+            $length === 6 => '13px',
+            $length === 7 => '12px',
+            $length === 8 => '11px',
+            $length === 9 => '10px',
+            $length === 10 => '9px',
+            $length === 11 => '8px',
+            $length === 12 => '7px',
+            $length === 13 => '6px',
+            default       => '7px',
         };
     }
 
