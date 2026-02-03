@@ -1392,11 +1392,11 @@ class MassProductionController extends Controller
         $furnace  = $request->furnace;
         $layer    = $request->layer;
 
-        Log::info('DeleteLayerData called', [
+        /*Log::info('DeleteLayerData called', [
             'massProd' => $massProd,
             'furnace'  => $furnace,
             'layer'    => $layer
-        ]);
+        ]);*/
 
         // Determine mass production column
         $column = $layer === '9.5' ? 'layer_9_5' : 'layer_' . $layer;
@@ -1432,10 +1432,10 @@ class MassProductionController extends Controller
         $mp->$column = null;
         $mp->save();
 
-        Log::info('Mass production layer nulled', [
+        /*Log::info('Mass production layer nulled', [
             'column' => $column,
             'mass_prod_id' => $mp->id
-        ]);
+        ]);*/
 
         // --- 4. Delete matching excess layer rows ---
         $deletedRows = 0;
@@ -1444,7 +1444,7 @@ class MassProductionController extends Controller
                                         ->where('furnace', $furnace)
                                         ->get();
 
-            Log::info('Excess layers fetched', ['count' => $excessLayers->count()]);
+            //Log::info('Excess layers fetched', ['count' => $excessLayers->count()]);
 
             foreach ($excessLayers as $excess) {
                 $layerDataExcess = is_array($excess->layer_data) ? $excess->layer_data : json_decode($excess->layer_data, true);
@@ -1466,22 +1466,22 @@ class MassProductionController extends Controller
                 if ($shouldDelete) {
                     $excess->delete();
                     $deletedRows++;
-                    Log::info('Excess layer row deleted', [
+                    /*Log::info('Excess layer row deleted', [
                         'excess_id' => $excess->id,
                         'mass_prod' => $massProd,
                         'furnace'   => $furnace
-                    ]);
+                    ]);*/
                 }
             }
         }
 
-        Log::info('DeleteLayerData completed', [
+        /*Log::info('DeleteLayerData completed', [
             'mass_prod'   => $massProd,
             'furnace'     => $furnace,
             'targetModel' => $targetModel,
             'targetLot'   => $targetLot,
             'deletedRows' => $deletedRows
-        ]);
+        ]);*/
 
         return response()->json([
             'success' => true,

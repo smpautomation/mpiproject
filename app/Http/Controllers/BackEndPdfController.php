@@ -186,11 +186,22 @@ class BackEndPdfController extends Controller
         }
 
         // Check if there is a matching Initial Lot
-        $initialLotExists = BreaklotInitialLot::where([
-            'mass_prod' => $massprod,
-            'furnace'   => $furnace,
-            'layer'     => $layer,
-        ])->exists();
+        $initialLotExists =
+            BreaklotCoating::where([
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->exists()
+            ||
+            BreaklotSecondCoating::where([
+                'mass_prod' => $massprod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->exists();
             /*
         if ($initialLotExists) {
             // Only proceed if initial lot exists

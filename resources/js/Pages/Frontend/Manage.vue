@@ -789,6 +789,44 @@
                 <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
                 </div>
             </Modal>
+            <Modal :show="showMiasFactorError" @close="handleMiasFactorModalClose">
+                <div class="relative">
+
+                    <!-- Header with alarming gradient -->
+                    <div class="relative px-6 py-6 text-white bg-gradient-to-r from-red-600 via-orange-600 to-red-700 rounded-t-xl">
+                    <!-- Icon -->
+                    <div class="flex items-center justify-center w-12 h-12 mb-2 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.68-1.36 3.445 0l7.097 12.624c.75 1.334-.213 2.977-1.723 2.977H2.883c-1.51 0-2.473-1.643-1.723-2.977L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 7v4a1 1 0 001.993.117L11 11V7a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="text-xl font-bold text-center">Critical Verification Required</h2>
+                    </div>
+
+                    <!-- Main content -->
+                    <div class="px-6 py-6 space-y-4 text-center border border-red-300 bg-red-50 rounded-b-xl">
+                    <p class="text-lg font-semibold text-red-800">
+                        ⚠️ Please double-check the MIAS and Factor employee numbers at CSV file before uploading.
+                        Errors here can cause serious data issues.
+                    </p>
+
+                    <p class="text-sm text-red-700">
+                        Ensure the information is accurate. Only continue once you are confident.
+                    </p>
+
+                    <!-- Single action button -->
+                    <button
+                        @click="handleMiasFactorModalClose"
+                        class="px-6 py-3 mt-4 font-bold text-white transition-all duration-200 bg-red-600 shadow-lg hover:bg-red-700 rounded-xl"
+                    >
+                        Okay
+                    </button>
+                    </div>
+
+                </div>
+            </Modal>
         </div>
     </Frontend>
 </template>
@@ -916,6 +954,7 @@
     const mias_factorCsvError = ref(false);
     const showGraphProceedConfirmation = ref(false);
     const isAdditionalExisting = ref(false);
+    const showMiasFactorError = ref(false);
 
     const showGraphAndTables = ref(false);
     const showLoadingForGraphAndTables = ref(false);
@@ -1330,6 +1369,11 @@
 
     // Data fetching zone ------ Data fetching zone END
 
+    const handleMiasFactorModalClose = () => {
+        showMiasFactorError.value = false;
+        Inertia.visit('/manage');
+    }
+
     const mias_factorData = async (factor, mias) => {
         //console.log("🔄 Starting mias_factorData with:", { factor, mias });
 
@@ -1364,7 +1408,9 @@
         } else {
             mias_factorCsvError.value = true;
             //console.error(`❌ Factor ID "${factor}" not found in either employee_no or mias_no fields.`);
-            throw new Error(`Factor ID "${factor}" not found.`);
+            showMiasFactorError.value = true;
+            await nextTick();
+            return;
         }
 
         // Step 3: MIAS check
@@ -1376,7 +1422,9 @@
         } else {
             mias_factorCsvError.value = true;
             //console.error(`❌ MIAS ID "${mias}" not found in either employee_no or mias_no fields.`);
-            throw new Error(`MIAS ID "${mias}" not found.`);
+            showMiasFactorError.value = true;
+            await nextTick();
+            return;
         }
 
         //console.log("✅ Completed mias_factorData successfully.");

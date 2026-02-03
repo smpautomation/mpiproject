@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\BreaklotCoating;
+use App\Models\BreaklotSecondCoating;
 use App\Models\TPMData; //Before: App\Models\TpmData
+use App\Models\TPMDataCategory;
 use App\Models\MassProduction;
 use App\Models\ExcessLayers;
 use App\Models\ReportData;
@@ -106,7 +109,7 @@ class TxtExportService
                             break;
                         case 'ltno':
                             $rowData['LOT_NO'] = $this->normalizeLotNo($data);
-                            $rowData['MC_NO']  = $this->extractMcNo($data); // <-- new column right after LOT_NO
+                            $rowData['MC_NO']  = $this->extractMcNo($data);
                             break;
                         case 'qty(pcs)':
                             $rowData['QTY'] = $data;
@@ -118,7 +121,7 @@ class TxtExportService
                             $rowData['WT'] = $data;
                             break;
                         case 'boxno':
-                            $rowData['BOX_NO'] = $data;
+                            $rowData['BOX_NO'] = str_replace(' ', '', $data);
                             break;
                         case 'rawmaterialcode':
                             $rowData['RAW_MATERIAL_CODE'] = $data;
@@ -259,9 +262,75 @@ class TxtExportService
             return 'No MassProduction data found.';
         }
 
+        $breaklotCoating = BreaklotCoating::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [
+                    $item->layer => [
+                        'model' => $item->model,
+                        'lot_no' => $item->lot_no,
+                    ]
+                ];
+            });
+        //dump($breaklotCoating);
+
+        $breaklotSecondCoating = BreaklotSecondCoating::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [
+                    $item->layer => [
+                        'model' => $item->model,
+                        'lot_no' => $item->lot_no,
+                    ]
+                ];
+            });
+        //dump($breaklotSecondCoating);
+
+        $additionalKeyPairs = $breaklotCoating->merge($breaklotSecondCoating)->toArray();
+        //dump($additionalKeyPairs);
+
+
         // Step 4: Define layers (T first, then 9 → 1)
         $layerKeys = ['T', 9, 8, 7, 6, 5, 4, 3, 2, 1];
+
+        $additionalLayerKeys = [];
+
+        if ($breaklotCoating->isNotEmpty() || $breaklotSecondCoating->isNotEmpty()) {
+
+            // Get all found layers
+            $foundLayers = array_merge(
+                array_keys($breaklotCoating->toArray()),
+                array_keys($breaklotSecondCoating->toArray())
+            );
+
+            // Keep only distinct layers
+            $additionalLayerKeys = array_values(array_unique($foundLayers));
+
+            // Insert found layers into $layerKeys immediately after their original
+            $newLayerKeys = [];
+
+            foreach ($layerKeys as $layer) {
+                $newLayerKeys[] = $layer;
+
+                foreach ($foundLayers as $found) {
+                    if ((string)$found === (string)$layer) {
+                        $newLayerKeys[] = $found;
+                    }
+                }
+            }
+
+            $layerKeys = $newLayerKeys;
+        }
+
+        //dump($layerKeys, $isAdditionalMode, $additionalLayerKeys);
+
         $outputRows = [];
+
+        $remainingKeyPairs = $additionalKeyPairs;
+
+        $processedStandardLayers = [];
 
         foreach ($layerKeys as $layerKey) {
             // Handle 9.5 → T
@@ -274,9 +343,68 @@ class TxtExportService
 
             $massLayerData = $layerJson ? json_decode($layerJson, true) : [];
 
-            // Fetch TPM + Report + Coating data using the serial
-            $tpmRow = $layerSerial ? TpmData::where('serial_no', $layerSerial)->first() : null;
-            $reportData = $layerSerial ? ReportData::where('tpm_data_serial', $layerSerial)->first() : null;
+            if (!in_array($layerKey, $processedStandardLayers)) {
+                // Case 1: Standard layer, not yet processed
+                dump("Standard layer processing for {$layerKey}");
+                $tpmRow = $layerSerial
+                    ? TpmData::where('serial_no', $layerSerial)->first()
+                    : null;
+                $reportData = $layerSerial
+                    ? ReportData::where('tpm_data_serial', $layerSerial)->first()
+                    : null;
+
+                if (!$tpmRow) dump("No TPM data found for standard layer {$layerKey}");
+
+            } elseif (in_array($layerKey, $additionalLayerKeys) && !empty($remainingKeyPairs)) {
+                // Case 2: Additional layer with remaining keyPairs
+                dump("Additional layer processing for {$layerKey}");
+                $tpmRow = null;
+                $reportData = null;
+
+                foreach ($remainingKeyPairs as $index => $entry) {
+                    $model = $entry['model'] ?? null;
+                    $lotNo = $entry['lot_no'] ?? null;
+
+                    dump("Trying keyPair #{$index} for layer {$layerKey}", ['model' => $model, 'lot_no' => $lotNo]);
+
+                    // Fetch all serials for this furnace/mass_prod/layer
+                    $layerSerials = TpmData::where('furnace', $normalizedFurnace)
+                        ->where('mass_prod', $massPro)
+                        ->where('layer_no', $layerKey)
+                        ->pluck('serial_no');
+
+                    foreach ($layerSerials as $serial) {
+                        $category = TPMDataCategory::where('tpm_data_serial', $serial)
+                            ->where('actual_model', $model)
+                            ->where('jhcurve_lotno', $lotNo)
+                            ->first();
+
+                        if ($category) {
+                            // Found matching serial
+                            $tpmRow = TpmData::where('serial_no', $serial)->first();
+                            $reportData = ReportData::where('tpm_data_serial', $serial)->first();
+
+                            dump("Found matching TPM & Report for layer {$layerKey} with keyPair #{$index}", [
+                                'serial' => $serial,
+                                'tpmRow' => $tpmRow?->toArray(),
+                                'reportData' => $reportData?->toArray()
+                            ]);
+
+                            // Remove this keyPair so it won't be reused
+                            //unset($remainingKeyPairs[$index]);
+                            break 2; // stop both loops: keyPair loop + serial loop
+                        }
+                    }
+
+                    dump("No matching TPM found for keyPair #{$index}");
+                }
+
+            } else {
+                // Case 3: Layer already processed or no remaining keyPairs
+                dump("Skipping layer {$layerKey}: already processed or no keyPairs left");
+                $tpmRow = null;
+                $reportData = null;
+            }
 
             $layerNo = $layerKey === 'T' ? 9.5 : $layerKey;
 
@@ -288,31 +416,75 @@ class TxtExportService
                 'layer' => $layerNoStr,
             ]);*/
 
-            $coating = Coating::where('furnace', $normalizedFurnace)
-                ->where('mass_prod', $massPro)
-                ->where('layer', $layerNoStr)
-                ->first();
+            if (!in_array($layerKey, $processedStandardLayers)) {
+                // First occurrence → use standard Coating + fallback
+                $coating = Coating::where('furnace', $normalizedFurnace)
+                    ->where('mass_prod', $massPro)
+                    ->where('layer', $layerNoStr)
+                    ->first();
 
-            if (!$coating) {
-                /*Log::warning('[COATING] Primary lookup MISS. Trying second coating fallback...', [
-                    'normalized_furnace' => $normalizedFurnace,
-                    'mass_prod' => $massPro,
-                    'layer' => $layerNoStr,
-                ]);*/
+                if (!$coating) {
+                    //dump("Primary Coating not found for layer {$layerNoStr}, trying fallback...");
+                    $coating = $this->getSecondCoatingFallback($normalizedFurnace, $massPro, $layerNoStr);
 
-                $coating = $this->getSecondCoatingFallback($normalizedFurnace, $massPro, $layerNoStr);
-
-                if ($coating) {
-                    /*Log::info('[COATING] Fallback HIT', [
-                        'source' => 'gbdp_second_coating',
-                    ]);*/
+                    if ($coating) {
+                        //dump("Fallback HIT for layer {$layerNoStr}", $coating->toArray());
+                    } else {
+                        //dump("Fallback MISS for layer {$layerNoStr}");
+                    }
                 } else {
-                    /*Log::error('[COATING] Fallback MISS. No coating data found at all.', [
-                        'furnace' => $normalizedFurnace,
-                        'mass_prod' => $massPro,
-                        'layer' => $layerNoStr,
-                    ]);*/
+                    //dump("Found standard Coating for layer {$layerNoStr}", $coating->toArray());
                 }
+
+                // Mark this layer as processed
+                $processedStandardLayers[] = $layerKey;
+
+            } elseif (in_array($layerKey, $additionalLayerKeys) && !empty($remainingKeyPairs)) {
+                // Subsequent occurrences → use additionalKeyPairs logic
+                //dump("=== Start additional layer loop for layer {$layerKey} ===");
+                //dump('Remaining keyPairs before loop:', $remainingKeyPairs);
+
+                $coating = null;
+
+                foreach ($remainingKeyPairs as $index => $entry) {
+                    $model = $entry['model'] ?? null;
+                    $lotNo = $entry['lot_no'] ?? null;
+
+                    //dump("Trying keyPair #{$index}", ['model' => $model, 'lot_no' => $lotNo]);
+
+                    // Try primary coating first
+                    $coating = BreaklotCoating::where('furnace', $normalizedFurnace)
+                        ->where('mass_prod', $massPro)
+                        ->where('layer', $layerKey)
+                        ->where('model', $model)
+                        ->where('lot_no', $lotNo)
+                        ->first();
+
+                     // Refactored fallback using helper
+                    if (!$coating) {
+                        $coating = $this->getSecondCoatingFallbackByKeyPair(
+                            $normalizedFurnace,
+                            $massPro,
+                            $layerKey,
+                            $model,
+                            $lotNo
+                        );
+                    }
+
+                    if ($coating) {
+                        //dump("Found coating for layer {$layerKey} using keyPair #{$index}", (array)$coating);
+
+                        // Remove this keyPair so it won't be reused
+                        unset($remainingKeyPairs[$index]);
+                        //dump('Remaining keyPairs after removing used one:', $remainingKeyPairs);
+
+                        break; // Stop looping over keyPairs for this layer
+                    } else {
+                        //dump("No coating found for keyPair #{$index}");
+                    }
+                }
+
+                //dump("=== End additional layer loop for layer {$layerKey} ===");
             }
 
 
@@ -486,6 +658,63 @@ class TxtExportService
         return (object) $normalized;
     }
 
+    private function getSecondCoatingFallbackByKeyPair($furnace, $massProd, $layerNo, $model, $lotNo)
+    {
+        $row = BreaklotSecondCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->where('layer', $layerNo)
+            ->where('model', $model)
+            ->where('lot_no', $lotNo)
+            ->first();
+
+        if (!$row) {
+            //dump("[2ND COATING] Row NOT FOUND for layer {$layerNo}, model {$model}, lot {$lotNo}");
+            return null;
+        }
+
+        $data = $row->coating_info_2ndgbdp ?? null;
+
+        if (empty($data)) {
+            //dump("[2ND COATING] coating_info_2ndgbdp IS EMPTY for layer {$layerNo}, model {$model}, lot {$lotNo}");
+            return null;
+        }
+
+        // Decode JSON if it's a string
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                //dump("[2ND COATING] JSON decode failed for layer {$layerNo}, model {$model}, lot {$lotNo}", json_last_error_msg(), $data);
+                return null;
+            }
+        }
+
+        // If it's a list (array with numeric keys), unwrap the first element
+        if (is_array($data) && array_is_list($data)) {
+            $data = $data[0] ?? null;
+        }
+
+        if (!is_array($data)) {
+            //dump("[2ND COATING] Data is NOT array after normalization for layer {$layerNo}, model {$model}, lot {$lotNo}", $data);
+            return null;
+        }
+
+        $normalized = [
+            'date' => $data['date'] ?? null,
+            'machine_no' => $data['machine_no'] ?? null,
+            'min_tb_content' => $data['min_tb_content'] ?? null,
+            'total_magnet_weight' => $data['total_magnet_weight'] ?? null,
+            'maximum' => $data['maximum'] ?? null,
+            'minimum' => $data['minimum'] ?? null,
+            'average' => $data['average'] ?? null,
+        ];
+
+        //dump("[2ND COATING] Normalized data for layer {$layerNo}, model {$model}, lot {$lotNo}", $normalized);
+
+        return (object) $normalized;
+    }
+
+
 
     public function exportData3(string $furnace_no, string $massPro)
     {
@@ -645,7 +874,7 @@ class TxtExportService
             }
         }
 
-        //dd($lines);
+        dd($lines);
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {

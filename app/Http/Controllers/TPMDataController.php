@@ -46,7 +46,7 @@ class TPMDataController extends Controller
                             ->groupBy('tpm_data_serial');
                 $reportData = ReportData::whereIn('tpm_data_serial', $latestSerials)
                             ->orderByDesc('created_at')
-                            ->select('tpm_data_serial', 'updated_at', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname', 'is_finalized', 'coating_completed', 'heat_treatment_completed')
+                            ->select('tpm_data_serial', 'updated_at', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname', 'is_finalized', 'coating_completed', 'heat_treatment_completed', 'is_emailed')
                             ->get()
                             ->groupBy('tpm_data_serial');
                 $grouped = [];

@@ -357,7 +357,12 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Coating M/C No.<span class="text-red-500"> *</span></label>
-                            <input v-model="initial_mpcs.coatingMCNo" type="text" @input="initial_mpcs.coatingMCNo = initial_mpcs.coatingMCNo.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input
+                                v-model="initial_mpcs.coatingMCNo"
+                                type="text"
+                                @input="formatCoatingMCNo"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Raw Material Code<span class="text-red-500"> *</span></label>
@@ -468,10 +473,10 @@
                             <tr>
                             <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
                                 <input
-                                v-model="boxNoValues[box]"
-                                @input="boxNoValues[box] = boxNoValues[box].toUpperCase()"
-                                type="text"
-                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    v-model="boxNoValues[box]"
+                                    @input="boxNoValues[box] = boxNoValues[box].toUpperCase().replace(/\s+/g, '')"
+                                    type="text"
+                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </td>
                             </tr>
@@ -872,6 +877,16 @@
                         </tr>
                         </tbody>
                     </table>
+                    </div>
+
+                    <!-- ======= TOTAL SUMMARY ======= -->
+                    <div class="flex justify-end gap-6 px-5 py-2 mt-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <p class="text-sm font-medium text-gray-700">
+                            Total Qty: <span class="font-bold text-gray-900">{{ totalQty }}</span>
+                        </p>
+                        <p class="text-sm font-medium text-gray-700">
+                            Total WT (KG): <span class="font-bold text-gray-900">{{ totalWt }}</span>
+                        </p>
                     </div>
 
                     <!-- ACTIONS -->
@@ -2672,12 +2687,68 @@ const totalQty = computed(() => {
     return mainTotal + excessTotal;
 });
 
+const totalWt = computed(() => {
+    const mainTotal = Object.values(weightValues.value).reduce((acc, val) => acc + Number(val || 0), 0);
+    const excessTotal = Object.values(weightValuesExcess.value).reduce((acc, val) => acc + Number(val || 0), 0);
+    return Number((mainTotal + excessTotal).toFixed(2)); // keep 2 decimals like your per-box weights
+});
+
 const numberOfBoxes = computed(() => {
     if (initial_mpcs.moreThanTenBoxes) {
         return visibleBoxes.value.length + visibleExcessBoxes.value.length;
     }
     return visibleBoxes.value.length;
 });
+
+const formatCoatingMCNo = () => {
+    let val = initial_mpcs.coatingMCNo
+        .toUpperCase()
+        .replace(/[^A-Z0-9-]/g, '');
+
+    // Block numeric-first input
+    if (/^\d/.test(val)) {
+        initial_mpcs.coatingMCNo = '';
+        return;
+    }
+
+    // Auto-expand F → FP
+    if (val === 'F') {
+        initial_mpcs.coatingMCNo = 'FP';
+        return;
+    }
+
+    // Allow clean prefixes
+    if (val === 'C' || val === 'FP') {
+        initial_mpcs.coatingMCNo = val;
+        return;
+    }
+
+    // Strict structure
+    const match = val.match(/^(C|FP)\-?(\d{0,3})$/);
+    if (!match) return;
+
+    const prefix = match[1];
+    const numRaw = match[2];
+
+    if (!numRaw) {
+        initial_mpcs.coatingMCNo = prefix;
+        return;
+    }
+
+    const num = parseInt(numRaw, 10);
+
+    if (num < 1) {
+        initial_mpcs.coatingMCNo = `${prefix}-01`;
+        return;
+    }
+
+    if (num > 99) {
+        initial_mpcs.coatingMCNo = `${prefix}-99`;
+        return;
+    }
+
+    initial_mpcs.coatingMCNo = `${prefix}-${String(num).padStart(2, '0')}`;
+};
 
 //Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone
 

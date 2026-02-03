@@ -78,7 +78,7 @@ class SmpDataService
                 : [];
 
             $rowData = [
-                'MPI_Date' => '',
+                'MPI_Date' => $reportData->date_emailed ?? '',
                 'Pulse_Tracer_Machine' => $tpmData[0]->Tracer ?? '',
                 'Furnace_Cycle_No' => $massProdData->cycle_no,
                 'Mass_Production' => $massProdData->mass_prod,

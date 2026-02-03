@@ -27,13 +27,13 @@ class ChartUploadController extends Controller
         $savePath = $dir . '/' . $filename;
 
         // Log what’s happening
-        Log::info('Checking file existence:', [
+        /*Log::info('Checking file existence:', [
             'savePath' => $savePath,
             'exists' => file_exists($savePath) ? 'yes' : 'no'
-        ]);
+        ]);*/
 
         if (file_exists($savePath)) {
-            Log::info('Skipped saving — file already exists');
+            //Log::info('Skipped saving — file already exists');
             return response()->json([
                 'message' => 'File already exists',
                 'path' => "charts/{$filename}"
@@ -41,7 +41,7 @@ class ChartUploadController extends Controller
         }
 
         file_put_contents($savePath, base64_decode($base64));
-        Log::info('File saved successfully:', ['path' => $savePath]);
+        //Log::info('File saved successfully:', ['path' => $savePath]);
 
         return response()->json([
             'message' => 'File saved successfully',

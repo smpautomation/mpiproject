@@ -473,12 +473,25 @@ const confirmationApprove = async () => {
         for (const serial of selectedRows.value) {
             try {
                 await axios.get(`/api/reports/${encodeURIComponent(serial)}/generate-and-save`);
-                console.log(`✅ PDF generated and saved for serial: ${serial}`);
+                //console.log(`✅ PDF generated and saved for serial: ${serial}`);
             } catch (pdfErr) {
-                console.error(`❌ PDF generation failed for serial ${serial}`, pdfErr);
+                //console.error(`❌ PDF generation failed for serial ${serial}`, pdfErr);
                 await rollbackApproval(); // ⬅ safe undo
                 throw pdfErr; // bubble up to outer catch
             }
+        }
+
+        // 2a. Send emails
+        try {
+            await axios.post('/api/notify-email', {
+                serial: selectedRows.value,
+                emails: 'edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph',
+                //emails: 'qa_trainingp8@smp.com.ph, qa-mpiengr@smp.com.ph, rizza@smp.com.ph, p7_mpi_ahi@smp.com.ph, mpi-engr.p8@smp.com.ph, edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph',
+            });
+            //console.log("Emails sent successfully");
+        } catch (emailErr) {
+            //console.error("❌ Failed to send emails", emailErr);
+            showBlockedNotification("Emails could not be sent. Please try again later.");
         }
 
         // 3. Finalize report
@@ -501,7 +514,6 @@ const confirmationApprove = async () => {
         showApproveButton.value = true;
     }
 };
-
 
 
 

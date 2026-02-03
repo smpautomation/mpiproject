@@ -698,6 +698,23 @@
                         </div>
                     </div>
 
+                    <!-- ===== TOTAL SUMMARY ===== -->
+                    <div v-if="isDataShown" class="flex justify-end gap-8 px-4 py-3 mt-4 border border-gray-300 rounded-lg bg-gray-50">
+                        <div class="text-sm font-medium text-gray-700">
+                            Total Qty:
+                            <span class="ml-1 font-bold text-gray-900">
+                                {{ totalQty }}
+                            </span>
+                        </div>
+
+                        <div class="text-sm font-medium text-gray-700">
+                            Total WT (KG):
+                            <span class="ml-1 font-bold text-gray-900">
+                                {{ totalWt }}
+                            </span>
+                        </div>
+                    </div>
+
                     <div class="flex gap-3">
                         <!-- Current Grand Total Weight -->
                         <div
@@ -2101,6 +2118,40 @@ const computeTrueGrandTotal = async () => {
     // convert back to 2 decimals safely
     return Number((totalInt / 1000).toFixed(2));
 };
+
+// ===== TOTAL QTY =====
+const totalQty = computed(() => {
+    const mainTotal = visibleBoxes.value.reduce(
+        (sum, box) => sum + Number(qtyValues.value[box] || 0),
+        0
+    );
+
+    const excessTotal = mpcs.moreThanTenBoxes
+        ? visibleExcessBoxes.value.reduce(
+            (sum, box) => sum + Number(qtyValuesExcess.value[box] || 0),
+            0
+        )
+        : 0;
+
+    return mainTotal + excessTotal;
+});
+
+// ===== TOTAL WT (KG) =====
+const totalWt = computed(() => {
+    const mainTotal = visibleBoxes.value.reduce(
+        (sum, box) => sum + Number(weightValues.value[box] || 0),
+        0
+    );
+
+    const excessTotal = mpcs.moreThanTenBoxes
+        ? visibleExcessBoxes.value.reduce(
+            (sum, box) => sum + Number(weightValuesExcess.value[box] || 0),
+            0
+        )
+        : 0;
+
+    return Number((mainTotal + excessTotal).toFixed(2));
+});
 
 const getGrandTotalWeightData = async () => {
     try{

@@ -48,11 +48,14 @@ use App\Models\InitialFilmPasting;
 use Illuminate\Support\Facades\Route;
 use App\Mail\TakefuMail;
 use App\Mail\RouteMail;
+use App\Mail\NotifyEmail_Mail;
 use App\Models\ExcessLayers;
 use App\Models\GbdpSecondCoating;
 use App\Models\MassProduction;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
@@ -160,23 +163,22 @@ Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
 Route::post('/send-takefu-email', function(Request $request) {
 
+    // 1️⃣ Validate
     $validated = $request->validate([
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
         'massPro' => 'required|string',
     ]);
 
+    // 2️⃣ Prepare email list
     $emailList = array_map('trim', explode(',', $validated['emails']));
-
-    // Append hardcoded recipients
-    $emailList[] = 'automation2@smp.com.ph';
-    $emailList[] = 'automation3@smp.com.ph';
-    $emailList[] = 'edzel@smp.com.ph';
-    $emailList[] = 'automation5@smp.com.ph';
-    $emailList[] = 'myke@smp.com.ph';
-
-    // Optionally remove duplicates (not required, but clean)
-    $emailList = array_unique($emailList);
+    $emailList = array_unique(array_merge($emailList, [
+        'automation2@smp.com.ph',
+        'automation3@smp.com.ph',
+        'edzel@smp.com.ph',
+        'automation5@smp.com.ph',
+        'myke@smp.com.ph'
+    ]));
 
     $customMessage = strip_tags($validated['message'] ?? '', '<p><br><b><i><strong><em><ul><ol><li>');
 
@@ -184,7 +186,43 @@ Route::post('/send-takefu-email', function(Request $request) {
 
     try {
         Mail::to($emailList)->send(new TakefuMail($validated['massPro'], $customMessage));
+
         Log::info('Mail sent successfully');
+
+        // --- Transform massPro into furnace & massprod ---
+        // Example: "K40 214TH" → furnace: "K-40", massprod: "214TH"
+        $parts = explode(' ', $validated['massPro'], 2);
+        $furnace = isset($parts[0]) ? preg_replace('/(\d+)/', '-$1', $parts[0]) : null;
+        $massprod = $parts[1] ?? null;
+
+        if (!$furnace || !$massprod) {
+            Log::warning("Could not parse massPro '{$validated['massPro']}' into furnace/massprod");
+        } else {
+
+            // --- Fetch serial_no from TPMData ---
+            $serials = DB::table('tpm_data')
+                ->where('furnace', $furnace)
+                ->where('mass_prod', $massprod)
+                ->pluck('serial_no')
+                ->unique();
+
+            if ($serials->isEmpty()) {
+                Log::warning("No TPMData found for furnace '{$furnace}' and mass_prod '{$massprod}'");
+            } else {
+
+                // --- Update ReportData where tpm_data_serial in serials AND is_finalized = 1 ---
+                DB::table('report_data')
+                    ->whereIn('tpm_data_serial', $serials)
+                    ->where('is_finalized', 1)
+                    ->update([
+                        'is_emailed' => 1,
+                        'date_emailed' => Carbon::now(),
+                    ]);
+
+                Log::info("Updated ReportData for " . $serials->count() . " serials");
+            }
+        }
+
     } catch (\Throwable $e) {
         Log::error('Mail sending failed: ' . $e->getMessage());
         Log::error($e->getTraceAsString());
@@ -270,6 +308,18 @@ Route::post('/route-email', function (Request $request) {
     $emailList = array_map('trim', explode(',', $validated['emails']));
     Mail::to($emailList)->send(new RouteMail( $validated['serial']));
     return redirect()->route('approval')->with('success', 'Emails sent successfully!');
+});
+
+Route::post('/notify-email', function (Request $request) {
+    $validated = $request->validate([
+        'serial' => 'required|array',
+        'emails' => 'required|string'
+    ]);
+
+    $emailList = array_map('trim', explode(',', $validated['emails']));
+    Mail::to($emailList)->send(new NotifyEmail_Mail($validated['serial']));
+
+    return response()->json(['message' => 'Emails sent successfully!']);
 });
 
 Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUpload']);
