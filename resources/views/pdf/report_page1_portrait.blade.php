@@ -1076,14 +1076,14 @@
                                             <div style="position: relative; width: 100%; height: 60px;">
                                                 {{-- Adjusted template position --}}
                                                 <img src="{{ public_path('photo/template.png') }}"
-                                                    style="position: absolute; top: -6px; left: 0; width: 100%; height: 70px;"
+                                                    style="position: absolute; top: -6px; left: 6px; width: 85%; height: 65px;"
                                                     alt="Stamp Overlay">
 
                                                 <div style="
                                                     position: relative;
                                                     font-weight: bold;
                                                     color: #dc2626;
-                                                    font-size: 13px;
+                                                    font-size: 12px;
                                                     line-height: 1.2;
                                                     text-align: center;
                                                 ">
@@ -1139,14 +1139,14 @@
                                             <div style="position: relative; width: 100%; height: 60px;">
                                                 {{-- Adjusted template position --}}
                                                 <img src="{{ public_path('photo/template.png') }}"
-                                                    style="position: absolute; top: -6px; left: 0; width: 100%; height: 70px;"
+                                                    style="position: absolute; top: -6px; left: 6px; width: 85%; height: 65px;"
                                                     alt="Stamp Overlay">
 
                                                 <div style="
                                                     position: relative;
                                                     font-weight: bold;
                                                     color: #dc2626;
-                                                    font-size: 13px;
+                                                    font-size: 12px;
                                                     line-height: 1.2;
                                                     text-align: center;
                                                 ">
@@ -1198,14 +1198,14 @@
                                             <div style="position: relative; width: 100%; height: 60px;">
                                                 {{-- Adjusted template position --}}
                                                 <img src="{{ public_path('photo/template.png') }}"
-                                                    style="position: absolute; top: -6px; left: 0; width: 100%; height: 70px;"
+                                                    style="position: absolute; top: -6px; left: 6px; width: 85%; height: 65px;"
                                                     alt="Stamp Overlay">
 
                                                 <div style="
                                                     position: relative;
                                                     font-weight: bold;
                                                     color: #dc2626;
-                                                    font-size: 13px;
+                                                    font-size: 12px;
                                                     line-height: 1.2;
                                                     text-align: center;
                                                 ">
