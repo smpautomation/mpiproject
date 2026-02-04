@@ -1587,4 +1587,184 @@ class MassProductionController extends Controller
         ]);
     }
 
+    public function getAllLotStatusPreview(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+        ]);
+
+        $mass_prod = trim($validated['mass_prod']);
+        $furnace   = trim($validated['furnace']);
+
+        $massProduction = MassProduction::where('mass_prod', $mass_prod)
+            ->where('furnace', $furnace)
+            ->first();
+
+        if (!$massProduction) {
+            return response()->json(['message' => 'Mass production not found'], 404);
+        }
+
+        $layers = ['1','2','3','4','5','6','7','8','9','9.5'];
+
+        $finalLots = [];
+        $assignedBoxes = [];          // existing behavior
+        $mainBoxLayerMap = [];        // 🔹 NEW: [lotKey][box] => layer
+
+        foreach ($layers as $layer) {
+            $column = $layer === '9.5' ? 'layer_9_5' : 'layer_' . $layer;
+
+            // 1. Load main layer data
+            $massProdRaw  = $massProduction->{$column} ?? null;
+            $massProdData = is_array($massProdRaw)
+                ? $massProdRaw
+                : json_decode($massProdRaw, true);
+
+            $boxes = !empty($massProdData)
+                ? $this->extractBoxes($massProdData)
+                : [];
+
+            // 2. Load excess layer data
+            $excess = ExcessLayers::where([
+                'mass_prod' => $mass_prod,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+            ])->first();
+
+            $excessBoxes = [];
+            if ($excess && !empty($excess->layer_data)) {
+                $excessData = is_array($excess->layer_data)
+                    ? $excess->layer_data
+                    : json_decode($excess->layer_data, true);
+
+                if (!empty($excessData)) {
+                    $excessBoxes = $this->extractBoxes($excessData);
+                }
+            }
+
+            // 3. ORIGINAL behavior: merge everything
+            $allBoxes = array_merge($boxes, $excessBoxes);
+
+            foreach ($allBoxes as $box => $data) {
+                if (empty($data['model']) || empty($data['lt_no'])) continue;
+
+                $lotKey = $data['model'] . '|' . $data['lt_no'];
+
+                if (!isset($finalLots[$lotKey])) {
+                    $finalLots[$lotKey] = [
+                        'model'        => $data['model'],
+                        'lt_no'        => $data['lt_no'],
+                        'total_qty'    => 0,
+                        'total_wt'     => 0,
+                        'layers'       => [], // filled later
+                        'main_boxes'   => [],
+                        'excess_boxes' => [],
+                    ];
+                    $assignedBoxes[$lotKey] = [];
+                    $mainBoxLayerMap[$lotKey] = [];
+                }
+
+                // ✅ DO NOT TOUCH (totals)
+                $finalLots[$lotKey]['total_qty'] += (int) ($data['qty'] ?? 0);
+                $finalLots[$lotKey]['total_wt']  += (float) ($data['wt'] ?? 0);
+
+                // ✅ DO NOT TOUCH (box assignment)
+                if (!in_array($box, $assignedBoxes[$lotKey])) {
+                    $finalLots[$lotKey]['main_boxes'][$box] = true;
+                    $assignedBoxes[$lotKey][] = $box;
+
+                    // 🔹 RECORD where this MAIN box truly came from
+                    $mainBoxLayerMap[$lotKey][$box] = $layer;
+
+                } else {
+                    $finalLots[$lotKey]['excess_boxes'][$box] = true;
+                }
+            }
+        }
+
+        /**
+         * 🔹 FINAL PASS: compute layers purely from MAIN boxes
+         * Excess boxes are ignored completely here.
+         */
+        foreach ($finalLots as $lotKey => &$lot) {
+            if (!empty($mainBoxLayerMap[$lotKey])) {
+                $layersUsed = array_unique(array_values($mainBoxLayerMap[$lotKey]));
+                sort($layersUsed); // optional, keeps UI stable
+                $lot['layers'] = $layersUsed;
+            }
+        }
+
+        // Normalize output for Vue
+        $response = collect($finalLots)->map(function ($lot) {
+            return [
+                'model'        => $lot['model'],
+                'lt_no'        => $lot['lt_no'],
+                'total_qty'    => $lot['total_qty'],
+                'total_wt'     => $lot['total_wt'],
+                'layers'       => $lot['layers'],          // ✅ now 100% correct
+                'main_boxes'   => array_keys($lot['main_boxes']),
+                'excess_boxes' => array_keys($lot['excess_boxes']),
+            ];
+        })->values();
+
+        return response()->json($response);
+    }
+
+
+    /**
+     * Extracts boxes from JSON layer data
+     */
+    private function extractBoxes(array $rows): array
+    {
+        $boxes = [];
+        $map = [
+            'MODEL:'     => 'model',
+            'LT. No.:'   => 'lt_no',
+            'QTY (PCS):' => 'qty',
+            'WT (KG):'   => 'wt',
+        ];
+
+        foreach ($rows as $row) {
+            if (!isset($map[$row['rowTitle']])) continue;
+
+            $field = $map[$row['rowTitle']];
+            foreach ($row['data'] as $box => $value) {
+                $boxes[$box][$field] = $value;
+            }
+        }
+
+        return $boxes;
+    }
+
+    private function extractLotRows(array $layerData, string $layer)
+    {
+        $map = [];
+
+        $modelRow = collect($layerData)->firstWhere('rowTitle', 'MODEL:');
+        $lotRow   = collect($layerData)->firstWhere('rowTitle', 'LT. No.:');
+        $qtyRow   = collect($layerData)->firstWhere('rowTitle', 'QTY (PCS):');
+        $wtRow    = collect($layerData)->firstWhere('rowTitle', 'WT (KG):');
+        $boxRow   = collect($layerData)->firstWhere('rowTitle', 'BOX No.:');
+
+        if (!$modelRow || !$lotRow) return [];
+
+        foreach ($modelRow['data'] as $letter => $model) {
+            $lot = $lotRow['data'][$letter] ?? null;
+            if (!$model || !$lot) continue;
+
+            $key = "{$model}|{$lot}";
+
+            $map[$key] = [
+                'model'      => $model,
+                'lt_no'      => $lot,
+                'total_qty'  => (float) ($qtyRow['data'][$letter] ?? 0),
+                'total_wt'   => (float) ($wtRow['data'][$letter] ?? 0),
+                'layers'     => [$layer],
+                'boxes'      => array_filter([$boxRow['data'][$letter] ?? null]),
+            ];
+        }
+
+        return $map;
+    }
+
 }

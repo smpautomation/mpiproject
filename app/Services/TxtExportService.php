@@ -874,7 +874,7 @@ class TxtExportService
             }
         }
 
-        dd($lines);
+        //dd($lines);
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {

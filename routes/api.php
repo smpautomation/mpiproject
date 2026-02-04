@@ -400,6 +400,8 @@ Route::get('/mass-production/get-layer-model', [MassProductionController::class,
 //[MassProductionController::class, 'getLayerLotno']);
 Route::get('/mass-production/get-layer-lotno', [MassProductionController::class, 'getLayerLotno']);
 
+Route::get('/mass-production/get-all-data-per-lot', [MassProductionController::class, 'getAllLotStatusPreview']);
+
 //Route::get(
 //    '/mass-productions/{massprod}/completed-layers',
 //    [MassProductionController::class, 'getAllHTCompletedLayers']

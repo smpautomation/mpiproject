@@ -1526,7 +1526,7 @@
     // Reset the file input manually
     const csv_fileInput = document.getElementById('csv-file-upload')
         if (csv_fileInput) {
-            csv_fileInput.value = ''
+            csv_fileInput.value = '';
         }
     }
 

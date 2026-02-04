@@ -197,6 +197,7 @@
                             {{ estimated_DateTimeFinish || 'Calculating...' }}
                         </p>
                     </div>
+
                     <div class="flex flex-row justify-end mt-3">
                         <button
                             @click="exportToExcel"
@@ -220,6 +221,91 @@
                             </svg>
                             Back to Mass Production Lists
                         </button>
+                    </div>
+                    <div class="mt-20 overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl">
+                        <table class="min-w-full text-sm divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">#</th>
+                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Model</th>
+                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Lot No</th>
+                                    <th class="px-4 py-3 font-semibold text-right text-gray-600">Total Qty</th>
+                                    <th class="px-4 py-3 font-semibold text-right text-gray-600">Total WT (KG)</th>
+                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Layers</th>
+                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Boxes</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-100">
+                                <tr v-if="lotRows.length === 0">
+                                    <td colspan="7" class="px-4 py-8 italic text-center text-gray-500">
+                                        No lot data found for this mass production
+                                    </td>
+                                </tr>
+
+                                <tr
+                                    v-for="(row, index) in lotRows"
+                                    :key="`${row.model}-${row.lt_no}`"
+                                    class="transition hover:bg-gray-50"
+                                >
+                                    <td class="px-4 py-3 text-gray-500">
+                                        {{ index + 1 }}
+                                    </td>
+
+                                    <td class="px-4 py-3 font-medium text-gray-900">
+                                        {{ row.model }}
+                                    </td>
+
+                                    <td class="px-4 py-3 text-gray-700">
+                                        {{ row.lt_no }}
+                                    </td>
+
+                                    <td class="px-4 py-3 text-right text-gray-800 tabular-nums">
+                                        {{ row.total_qty.toLocaleString() }}
+                                    </td>
+
+                                    <td class="px-4 py-3 text-right text-gray-800 tabular-nums">
+                                        {{ row.total_wt.toFixed(2) }}
+                                    </td>
+
+                                    <td class="px-4 py-3 text-gray-700">
+                                        <span
+                                            v-for="layer in row.layers"
+                                            :key="layer"
+                                            class="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 mr-1 text-xs font-medium text-blue-700"
+                                        >
+                                            {{ layer }}
+                                        </span>
+                                    </td>
+
+                                    <td class="px-4 py-3 space-y-1 text-gray-700">
+                                        <!-- Main boxes -->
+                                        <div v-if="row.main_boxes && row.main_boxes.length">
+                                            <span class="text-xs font-semibold text-gray-500">Main:</span>
+                                            <span
+                                                v-for="box in row.main_boxes"
+                                                :key="box"
+                                                class="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 mr-1 text-xs font-medium text-gray-700"
+                                            >
+                                                {{ box }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Excess boxes -->
+                                        <div v-if="row.excess_boxes && row.excess_boxes.length">
+                                            <span class="text-xs font-semibold text-gray-500">Excess:</span>
+                                            <span
+                                                v-for="box in row.excess_boxes"
+                                                :key="box"
+                                                class="inline-flex items-center rounded-md bg-yellow-100 px-2 py-0.5 mr-1 text-xs font-medium text-yellow-800"
+                                            >
+                                                {{ box }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -304,6 +390,7 @@ const highlightColors = [
 
 const estimated_DateTimeFinish = ref();
 const massProd_list = ref([]);
+const lotRows = ref([]);
 const redirectedMassPro = ref();
 const redirectedFurnace = ref();
 const errMsg = ref();
@@ -780,10 +867,31 @@ const getTotalMpiQty = (qty) => {
 
 // GETTING TOTALS END
 
+const getPerLotData = async () => {
+    try {
+        const response = await axios.get(
+            '/api/mass-production/get-all-data-per-lot',
+            {
+                params: {
+                    mass_prod: redirectedMassPro.value,
+                    furnace: redirectedFurnace.value,
+                }
+            }
+        );
+
+        lotRows.value = response.data; // 👈 store for table
+        console.log('All Data per lot:', lotRows.value);
+
+    } catch (error) {
+        console.error('Failed to get control sheet lot per data', error);
+    }
+};
+
 onMounted(async()=>{
     const massPro = redirectedMassPro.value;
     const furnace = redirectedFurnace.value;
     getMassProdData(massPro, furnace);
+    await getPerLotData();
 });
 
 const exportToExcel = () => {
