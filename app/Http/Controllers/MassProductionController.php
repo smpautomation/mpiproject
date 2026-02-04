@@ -1608,13 +1608,12 @@ class MassProductionController extends Controller
         $layers = ['1','2','3','4','5','6','7','8','9','9.5'];
 
         $finalLots = [];
-        $assignedBoxes = [];          // existing behavior
-        $mainBoxLayerMap = [];        // 🔹 NEW: [lotKey][box] => layer
+        $assignedBoxes = [];
+        $mainBoxLayerMap = [];
 
         foreach ($layers as $layer) {
             $column = $layer === '9.5' ? 'layer_9_5' : 'layer_' . $layer;
 
-            // 1. Load main layer data
             $massProdRaw  = $massProduction->{$column} ?? null;
             $massProdData = is_array($massProdRaw)
                 ? $massProdRaw
@@ -1664,16 +1663,13 @@ class MassProductionController extends Controller
                     $mainBoxLayerMap[$lotKey] = [];
                 }
 
-                // ✅ DO NOT TOUCH (totals)
                 $finalLots[$lotKey]['total_qty'] += (int) ($data['qty'] ?? 0);
                 $finalLots[$lotKey]['total_wt']  += (float) ($data['wt'] ?? 0);
 
-                // ✅ DO NOT TOUCH (box assignment)
                 if (!in_array($box, $assignedBoxes[$lotKey])) {
                     $finalLots[$lotKey]['main_boxes'][$box] = true;
                     $assignedBoxes[$lotKey][] = $box;
 
-                    // 🔹 RECORD where this MAIN box truly came from
                     $mainBoxLayerMap[$lotKey][$box] = $layer;
 
                 } else {
@@ -1682,10 +1678,7 @@ class MassProductionController extends Controller
             }
         }
 
-        /**
-         * 🔹 FINAL PASS: compute layers purely from MAIN boxes
-         * Excess boxes are ignored completely here.
-         */
+
         foreach ($finalLots as $lotKey => &$lot) {
             if (!empty($mainBoxLayerMap[$lotKey])) {
                 $layersUsed = array_unique(array_values($mainBoxLayerMap[$lotKey]));
@@ -1701,7 +1694,7 @@ class MassProductionController extends Controller
                 'lt_no'        => $lot['lt_no'],
                 'total_qty'    => $lot['total_qty'],
                 'total_wt'     => $lot['total_wt'],
-                'layers'       => $lot['layers'],          // ✅ now 100% correct
+                'layers'       => $lot['layers'],
                 'main_boxes'   => array_keys($lot['main_boxes']),
                 'excess_boxes' => array_keys($lot['excess_boxes']),
             ];
@@ -1766,5 +1759,4 @@ class MassProductionController extends Controller
 
         return $map;
     }
-
 }
