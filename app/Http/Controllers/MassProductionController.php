@@ -1230,26 +1230,18 @@ class MassProductionController extends Controller
 
     public function generateMonthlySummary(Request $request)
     {
-        $month = $request->input('month'); // 1-12
-        $year  = $request->input('year');  // e.g., 2025
+        $month = $request->input('month');
+        $year  = $request->input('year');
 
         $records = MassProduction::whereMonth('estimated_completion', $month)
-                                ->whereYear('estimated_completion', $year)
-                                ->get();
+            ->whereYear('estimated_completion', $year)
+            ->get();
 
         if ($records->isEmpty()) {
             return response()->json([]);
         }
 
-        $excelData = [];
-
         $layerKeys = [
-            'layer_1', 'layer_2', 'layer_3', 'layer_4',
-            'layer_5', 'layer_6', 'layer_7', 'layer_8',
-            'layer_9', 'layer_9_5'
-        ];
-
-        $layerLabels = [
             'layer_1'   => '1st',
             'layer_2'   => '2nd',
             'layer_3'   => '3rd',
@@ -1262,7 +1254,21 @@ class MassProductionController extends Controller
             'layer_9_5' => '9.5th',
         ];
 
+        /**
+         * Final accumulator:
+         * [
+         *   "MODEL|LOT" => [
+         *      base fields...
+         *      qty
+         *      wt
+         *      layers[]
+         *   ]
+         * ]
+         */
+        $summary = [];
+
         foreach ($records as $record) {
+
             $baseRow = [
                 'MACHINE NO'  => $record->machine_no,
                 'CYCLE NO'    => $record->cycle_no,
@@ -1271,51 +1277,132 @@ class MassProductionController extends Controller
                 'DATE UNLOAD' => $record->date_finished,
             ];
 
-            foreach ($layerKeys as $layerKey) {
-                if (!empty($record->$layerKey)) {
-                    $layerJson = json_decode($record->$layerKey, true);
+            /**
+             * ----------------------------
+             * MASS PRODUCTION LAYERS
+             * ----------------------------
+             */
+            foreach ($layerKeys as $layerKey => $layerLabel) {
 
-                    $modelRow = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'MODEL:');
-                    $lotRow   = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'LT. No.:');
-                    $qtyRow   = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'TOTAL QTY');
-                    $wtRow    = collect($layerJson)->first(fn($r) => $r['rowTitle'] === 'WT (KG):');
+                if (empty($record->$layerKey)) {
+                    continue;
+                }
 
-                    $beforeGbdpWt = $wtRow ? array_sum($wtRow['data']) : 0;
+                $rows = collect($this->decodeJson($record->$layerKey))->keyBy('rowTitle');
 
-                    // SAFE ACCESS: fallback from A → B
-                    $modelName = $modelRow ? ($modelRow['data']['A'] ?? $modelRow['data']['B'] ?? null) : null;
-                    $lot       = $lotRow   ? ($lotRow['data']['A']   ?? $lotRow['data']['B']   ?? null) : null;
-                    $qty       = $qtyRow   ? ($qtyRow['data']['A']   ?? $qtyRow['data']['B']   ?? 0)    : 0;
+                $models = $rows['MODEL:']['data'] ?? [];
+                $lots   = $rows['LT. No.:']['data'] ?? [];
+                $qtys   = $rows['QTY (PCS):']['data'] ?? [];
+                $wts    = $rows['WT (KG):']['data'] ?? [];
 
-                    // Lookup HT Mass Pro Data for this model
-                    $htData = HtMassProData::where('model_name', $modelName)->latest('id')->first();
+                foreach ($models as $letter => $model) {
+                    $lot = $lots[$letter] ?? null;
+                    if (!$model || !$lot) {
+                        continue;
+                    }
 
-                    $productWeight = $htData ? $htData->product_weight : 0;
-                    $secondSl      = $htData ? $htData->{'2nd_sl'} : 0;
-                    $htQty         = $htData ? $htData->qty : 0;
+                    $key = "{$model}|{$lot}";
 
-                    // AFTER GBDP WT calculation
-                    $afterGbdpWt = ($qty * $productWeight * $secondSl) / 1_000_000;
+                    if (!isset($summary[$key])) {
+                        $summary[$key] = array_merge($baseRow, [
+                            'MODEL NAME'      => $model,
+                            'LOT'             => $lot,
+                            'QTY'             => 0,
+                            'BEFORE GBDP WT'  => 0,
+                            'LAYERS'          => [],
+                        ]);
+                    }
 
-                    // EQUIVALENT LOTS calculation
-                    $equivalentLots = $qty * $htQty;
-
-                    $excelData[] = array_merge($baseRow, [
-                        'MODEL NAME'       => $modelName,
-                        'LOT'              => $lot,
-                        'QTY'              => $qty,
-                        'BEFORE GBDP WT'   => $beforeGbdpWt,
-                        'AFTER GBDP WT'    => $afterGbdpWt,
-                        'LAYER'            => $layerLabels[$layerKey] ?? null,
-                        'EQUIVALENT LOTS'  => $equivalentLots,
-                    ]);
+                    $summary[$key]['QTY'] += (int) ($qtys[$letter] ?? 0);
+                    $summary[$key]['BEFORE GBDP WT'] += (float) ($wts[$letter] ?? 0);
+                    $summary[$key]['LAYERS'][$layerLabel] = true;
                 }
             }
+
+            /**
+             * ----------------------------
+             * EXCESS LAYERS (NO LAYER TAG)
+             * ----------------------------
+             */
+            $excessLayers = ExcessLayers::where('mass_prod', $record->mass_prod)
+                ->where('furnace', $record->furnace)
+                ->get();
+
+            foreach ($excessLayers as $excess) {
+
+                $rows = collect($this->decodeJson($excess->layer_data))->keyBy('rowTitle');
+
+                $models = $rows['MODEL:']['data'] ?? [];
+                $lots   = $rows['LT. No.:']['data'] ?? [];
+                $qtys   = $rows['QTY (PCS):']['data'] ?? [];
+                $wts    = $rows['WT (KG):']['data'] ?? [];
+
+                foreach ($models as $letter => $model) {
+                    $lot = $lots[$letter] ?? null;
+                    if (!$model || !$lot) {
+                        continue;
+                    }
+
+                    $key = "{$model}|{$lot}";
+
+                    if (!isset($summary[$key])) {
+                        $summary[$key] = array_merge($baseRow, [
+                            'MODEL NAME'      => $model,
+                            'LOT'             => $lot,
+                            'QTY'             => 0,
+                            'BEFORE GBDP WT'  => 0,
+                            'LAYERS'          => [],
+                        ]);
+                    }
+
+                    $summary[$key]['QTY'] += (int) ($qtys[$letter] ?? 0);
+                    $summary[$key]['BEFORE GBDP WT'] += (float) ($wts[$letter] ?? 0);
+                }
+            }
+        }
+
+        /**
+         * ----------------------------
+         * FINAL CALCULATIONS (UNCHANGED)
+         * ----------------------------
+         */
+        $excelData = [];
+
+        foreach ($summary as $row) {
+
+            $htData = HtMassProData::where('model_name', $row['MODEL NAME'])
+                ->latest('id')
+                ->first();
+
+            $productWeight = $htData?->product_weight ?? 0;
+            $secondSl      = $htData?->{'2nd_sl'} ?? 0;
+            $htQty         = $htData?->qty ?? 0;
+
+            $afterGbdpWt = ($row['QTY'] * $productWeight * $secondSl) / 1_000_000;
+            $equivalentLots = $row['QTY'] * $htQty;
+
+            $excelData[] = array_merge($row, [
+                'AFTER GBDP WT'   => $afterGbdpWt,
+                'EQUIVALENT LOTS'=> $equivalentLots,
+                'LAYER'          => implode(', ', array_keys($row['LAYERS'])),
+            ]);
         }
 
         return $excelData;
     }
 
+    private function decodeJson($value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (is_string($value) && $value !== '') {
+            return json_decode($value, true) ?? [];
+        }
+
+        return [];
+    }
 
     public function getMonthlySummary(Request $request)
     {
