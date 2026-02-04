@@ -2649,34 +2649,34 @@ watch(manualQtyMode, (val) => {
   }
 });
 
-// For MAIN table
-const qtyDataMain = computed(() => {
-  const data = {};
-  visibleBoxes.value.forEach((box, index) => {
-    data[box] = manualQtyMode.value
-      ? qtyValues.value[box]
-      : initial_mpcs.moreThanTenBoxes
-        ? initial_mpcs.qty             // main boxes never get lastBox if excess exists
-        : index === visibleBoxes.value.length - 1
-          ? initial_mpcs.qty_lastBox
-          : initial_mpcs.qty;
-  });
-  return data;
-});
+    // For MAIN table
+    const qtyDataMain = computed(() => {
+    const data = {};
+    visibleBoxes.value.forEach((box, index) => {
+        data[box] = manualQtyMode.value
+        ? qtyValues.value[box]
+        : initial_mpcs.moreThanTenBoxes
+            ? initial_mpcs.qty             // main boxes never get lastBox if excess exists
+            : index === visibleBoxes.value.length - 1
+            ? initial_mpcs.qty_lastBox
+            : initial_mpcs.qty;
+    });
+    return data;
+    });
 
-// For EXCESS table
-const qtyDataExcess = computed(() => {
-  if (!initial_mpcs.moreThanTenBoxes) return {};
+    // For EXCESS table
+    const qtyDataExcess = computed(() => {
+    if (!initial_mpcs.moreThanTenBoxes) return {};
 
-  const data = {};
-  visibleExcessBoxes.value.forEach((box, index) => {
-    data[box] = manualQtyMode.value
-      ? qtyValuesExcess.value[box]
-      : index === visibleExcessBoxes.value.length - 1
-        ? initial_mpcs.qty_lastBox    // last box of excess
-        : initial_mpcs.qty;
-  });
-  return data;
+    const data = {};
+    visibleExcessBoxes.value.forEach((box, index) => {
+        data[box] = manualQtyMode.value
+        ? qtyValuesExcess.value[box]
+        : index === visibleExcessBoxes.value.length - 1
+            ? initial_mpcs.qty_lastBox    // last box of excess
+            : initial_mpcs.qty;
+    });
+    return data;
 });
 
 

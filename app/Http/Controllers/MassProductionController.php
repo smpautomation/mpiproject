@@ -1079,7 +1079,7 @@ class MassProductionController extends Controller
                     }
                 }
             } else {
-                // Entire layer empty → all boxes are available
+                /// Entire layer empty → all boxes are available
                 $availableBoxes = $boxLetters;
             }
 

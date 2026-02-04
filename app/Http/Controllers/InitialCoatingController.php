@@ -12,7 +12,28 @@ class InitialCoatingController extends Controller
      */
     public function index()
     {
-        return response()->json(InitialCoating::all());
+        try {
+            $data = InitialCoating::all();
+
+            logger()->info('InitialCoating index success', [
+                'count' => $data->count(),
+            ]);
+
+            return response()->json($data);
+
+        } catch (\Throwable $e) {
+
+            logger()->error('InitialCoating index failed', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+                'trace'   => collect($e->getTrace())->take(5),
+            ]);
+
+            return response()->json([
+                'message' => 'Failed to fetch initial coating data'
+            ], 500);
+        }
     }
 
     /**
