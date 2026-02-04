@@ -1682,7 +1682,7 @@ class MassProductionController extends Controller
         foreach ($finalLots as $lotKey => &$lot) {
             if (!empty($mainBoxLayerMap[$lotKey])) {
                 $layersUsed = array_unique(array_values($mainBoxLayerMap[$lotKey]));
-                sort($layersUsed); // optional, keeps UI stable
+                sort($layersUsed);
                 $lot['layers'] = $layersUsed;
             }
         }
