@@ -1061,7 +1061,6 @@
                             :disabled="
                                 noMassProdData ||
                                 isExisting ||
-                                isExisting_2ndGBDP ||
                                 isExistingExcess ||
                                 !isDataShown ||
                                 isGrandTotalLimitReached
