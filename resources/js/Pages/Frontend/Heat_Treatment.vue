@@ -1068,7 +1068,7 @@
                             :class="[
                                 'group relative w-full py-3.5 text-sm font-bold transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
 
-                                (noMassProdData || isExisting || isExisting_2ndGBDP || isExistingExcess || !isDataShown || isGrandTotalLimitReached)
+                                (noMassProdData || isExisting || isExistingExcess || !isDataShown || isGrandTotalLimitReached)
                                     ? 'bg-gradient-to-r from-red-600 to-red-700 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
                                     : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 focus:ring-cyan-400 text-white hover:shadow-teal-500/60 hover:shadow-2xl hover:scale-105 active:scale-95'
                             ]"
@@ -1078,7 +1078,6 @@
                                 v-if="!(
                                     noMassProdData ||
                                     isExisting ||
-                                    isExisting_2ndGBDP ||
                                     isExistingExcess ||
                                     !isDataShown ||
                                     isGrandTotalLimitReached
@@ -1093,7 +1092,6 @@
                                     v-if="
                                         noMassProdData ||
                                         isExisting ||
-                                        isExisting_2ndGBDP ||
                                         isExistingExcess ||
                                         !isDataShown ||
                                         isGrandTotalLimitReached
@@ -1137,7 +1135,7 @@
 
                             <!-- Pulse for disabled -->
                             <div
-                                v-if="noMassProdData || isExisting || isExisting_2ndGBDP || isExistingExcess || !isDataShown || isGrandTotalLimitReached"
+                                v-if="noMassProdData || isExisting || isExistingExcess || !isDataShown || isGrandTotalLimitReached"
                                 class="absolute inset-0 bg-red-400 opacity-10 animate-pulse">
                             </div>
                         </button>
