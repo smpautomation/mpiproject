@@ -345,7 +345,7 @@ class TxtExportService
 
             if (!in_array($layerKey, $processedStandardLayers)) {
                 // Case 1: Standard layer, not yet processed
-                dump("Standard layer processing for {$layerKey}");
+                //dump("Standard layer processing for {$layerKey}");
                 $tpmRow = $layerSerial
                     ? TpmData::where('serial_no', $layerSerial)->first()
                     : null;
@@ -353,11 +353,11 @@ class TxtExportService
                     ? ReportData::where('tpm_data_serial', $layerSerial)->first()
                     : null;
 
-                if (!$tpmRow) dump("No TPM data found for standard layer {$layerKey}");
+                //if (!$tpmRow) //dump("No TPM data found for standard layer {$layerKey}");
 
             } elseif (in_array($layerKey, $additionalLayerKeys) && !empty($remainingKeyPairs)) {
                 // Case 2: Additional layer with remaining keyPairs
-                dump("Additional layer processing for {$layerKey}");
+                //dump("Additional layer processing for {$layerKey}");
                 $tpmRow = null;
                 $reportData = null;
 
@@ -365,7 +365,7 @@ class TxtExportService
                     $model = $entry['model'] ?? null;
                     $lotNo = $entry['lot_no'] ?? null;
 
-                    dump("Trying keyPair #{$index} for layer {$layerKey}", ['model' => $model, 'lot_no' => $lotNo]);
+                    //dump("Trying keyPair #{$index} for layer {$layerKey}", ['model' => $model, 'lot_no' => $lotNo]);
 
                     // Fetch all serials for this furnace/mass_prod/layer
                     $layerSerials = TpmData::where('furnace', $normalizedFurnace)
@@ -384,11 +384,11 @@ class TxtExportService
                             $tpmRow = TpmData::where('serial_no', $serial)->first();
                             $reportData = ReportData::where('tpm_data_serial', $serial)->first();
 
-                            dump("Found matching TPM & Report for layer {$layerKey} with keyPair #{$index}", [
+                            /*dump("Found matching TPM & Report for layer {$layerKey} with keyPair #{$index}", [
                                 'serial' => $serial,
                                 'tpmRow' => $tpmRow?->toArray(),
                                 'reportData' => $reportData?->toArray()
-                            ]);
+                            ]);*/
 
                             // Remove this keyPair so it won't be reused
                             //unset($remainingKeyPairs[$index]);
@@ -396,12 +396,12 @@ class TxtExportService
                         }
                     }
 
-                    dump("No matching TPM found for keyPair #{$index}");
+                    //dump("No matching TPM found for keyPair #{$index}");
                 }
 
             } else {
                 // Case 3: Layer already processed or no remaining keyPairs
-                dump("Skipping layer {$layerKey}: already processed or no keyPairs left");
+                //dump("Skipping layer {$layerKey}: already processed or no keyPairs left");
                 $tpmRow = null;
                 $reportData = null;
             }
