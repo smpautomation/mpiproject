@@ -2768,7 +2768,7 @@ const getCoatingSummary = async () => {
         coatingSummaryData.value = response.data;
         console.log('Initial Coating Summary Data ref array: ', coatingSummaryData.value);
     }catch(error){
-        console.error('Failed to fetch initial coating summary data');
+        console.error('Failed to fetch initial coating summary data', error);
     }
 }
 
