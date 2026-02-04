@@ -1710,14 +1710,16 @@ class MassProductionController extends Controller
                 ? $this->extractBoxes($massProdData)
                 : [];
 
-            // 2. Load excess layer data
+            // -------------------------
+            // Only add ExcessBoxes for QTY/WT, not layers
+            // -------------------------
+            $excessBoxes = [];
             $excess = ExcessLayers::where([
                 'mass_prod' => $mass_prod,
                 'furnace'   => $furnace,
                 'layer'     => $layer,
             ])->first();
 
-            $excessBoxes = [];
             if ($excess && !empty($excess->layer_data)) {
                 $excessData = is_array($excess->layer_data)
                     ? $excess->layer_data
@@ -1728,7 +1730,7 @@ class MassProductionController extends Controller
                 }
             }
 
-            // 3. ORIGINAL behavior: merge everything
+            // Merge boxes only for QTY/WT, layers come from massProduction only
             $allBoxes = array_merge($boxes, $excessBoxes);
 
             foreach ($allBoxes as $box => $data) {
@@ -1742,7 +1744,7 @@ class MassProductionController extends Controller
                         'lt_no'        => $data['lt_no'],
                         'total_qty'    => 0,
                         'total_wt'     => 0,
-                        'layers'       => [], // filled later
+                        'layers'       => [], // only from MassProduction
                         'main_boxes'   => [],
                         'excess_boxes' => [],
                     ];
@@ -1757,15 +1759,17 @@ class MassProductionController extends Controller
                     $finalLots[$lotKey]['main_boxes'][$box] = true;
                     $assignedBoxes[$lotKey][] = $box;
 
-                    $mainBoxLayerMap[$lotKey][$box] = $layer;
-
+                    // ONLY record layers from MassProduction table
+                    if (isset($boxes[$box])) {
+                        $mainBoxLayerMap[$lotKey][$box] = $layer;
+                    }
                 } else {
                     $finalLots[$lotKey]['excess_boxes'][$box] = true;
                 }
             }
         }
 
-
+        // Finalize layers per lot
         foreach ($finalLots as $lotKey => &$lot) {
             if (!empty($mainBoxLayerMap[$lotKey])) {
                 $layersUsed = array_unique(array_values($mainBoxLayerMap[$lotKey]));
@@ -1781,7 +1785,7 @@ class MassProductionController extends Controller
                 'lt_no'        => $lot['lt_no'],
                 'total_qty'    => $lot['total_qty'],
                 'total_wt'     => $lot['total_wt'],
-                'layers'       => $lot['layers'],
+                'layers'       => $lot['layers'], // ONLY MassProduction layers
                 'main_boxes'   => array_keys($lot['main_boxes']),
                 'excess_boxes' => array_keys($lot['excess_boxes']),
             ];
@@ -1789,6 +1793,7 @@ class MassProductionController extends Controller
 
         return response()->json($response);
     }
+
 
 
     /**
