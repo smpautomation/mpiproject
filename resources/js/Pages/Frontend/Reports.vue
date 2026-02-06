@@ -2287,10 +2287,20 @@ const checkSpecialJudgement = async () => {
     const fetchAllCPKIHC = responseGetCPKIHCData.data;
     MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
     //console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
-    const responseGetGXData = await axios.get('/api/gx-models');
+
+    /*const responseGetGXData = await axios.get('/api/gx-models');
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
-    console.log('GX MODELS: ',MODELS_SHOW_GX.value);
+    console.log('GX MODELS: ',MODELS_SHOW_GX.value);*/
+    try {
+        const responseGetGXData = await axios.get('/api/gx-models');
+        const fetchAllGX = responseGetGXData.data || [];
+        MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
+        console.log('GX MODELS: ', MODELS_SHOW_GX.value);
+    } catch (err) {
+        console.error('Failed to fetch GX models:', err);
+        MODELS_SHOW_GX.value = [];
+    }
     const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
     const fetchAllTTMNC = responseGetTTMNCData.data;
     MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
