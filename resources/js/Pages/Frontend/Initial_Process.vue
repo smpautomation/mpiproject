@@ -59,9 +59,35 @@
         <main class="flex-1 p-6">
         <!-- Topbar -->
         <div class="flex items-center justify-between p-4 mb-6 text-white rounded-lg shadow bg-cyan-500">
+
+            <!-- Section Title -->
             <h1 class="text-lg font-semibold">{{ sectionTitle }}</h1>
-            <div class="flex space-x-4">
-                <button @click="Inertia.visit('/')" class="px-3 py-1 rounded bg-cyan-400 hover:bg-cyan-300">Return Home</button>
+
+            <!-- Right-hand controls -->
+            <div class="flex items-center space-x-4">
+
+                <!-- Authenticated User Panel -->
+                <div v-if="state.isAuthenticated && state.user"
+                    class="flex items-center px-3 py-1 space-x-3 rounded-full shadow-sm bg-cyan-400 bg-opacity-20 backdrop-blur-sm">
+
+                    <!-- Avatar -->
+                    <div class="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500">
+                        {{ state.user.firstName.charAt(0).toUpperCase() }}
+                    </div>
+
+                    <!-- Name + Access -->
+                    <div class="flex flex-col leading-tight text-white">
+                        <span class="truncate max-w-[6rem]">{{ state.user.firstName }}</span>
+                        <span class="text-xs text-blue-200 truncate max-w-[6rem]">({{ state.user.access_type }})</span>
+                    </div>
+
+                    <!-- Return Home Button -->
+                    <button @click="Inertia.visit('/')"
+                            class="px-3 py-1 text-xs font-semibold transition-colors duration-200 bg-blue-400 rounded-full hover:bg-blue-500">
+                        Return Home
+                    </button>
+                </div>
+
             </div>
         </div>
 
@@ -275,10 +301,24 @@
                         <div class="flex items-center space-x-3">
                             <div class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"></div>
                             <div>
-                            <h2 class="text-xl font-bold text-gray-900">Mass Production Control Sheet</h2>
-                             <p class="text-sm text-gray-500">Fill up all details below. Fields with <span class="font-semibold text-red-500">*</span> are required</p>
+                                <h2 class="text-xl font-bold text-gray-900">Mass Production Control Sheet</h2>
+                                <p class="text-sm text-gray-500">
+                                    Fill up all details below. Fields with
+                                    <span class="font-semibold text-red-500">*</span> are required
+                                </p>
                             </div>
                         </div>
+
+                        <button
+                            @click="Inertia.visit('/inspection')"
+                            class="flex items-center px-5 py-2 space-x-2 text-white transition-all duration-200 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Add New Model</span>
+                        </button>
                     </div>
 
                     <!-- Group: Box Selection -->
@@ -454,141 +494,199 @@
                     </div>
                 </div>
 
-                <div class="max-w-4xl px-8 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12">
+                <div class="max-w-4xl px-6 py-6 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl">
 
                     <!-- BOX No. table -->
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                    <p class="pb-1 text-[11px] font-semibold text-gray-800 border-b">
                         BOX No. <span class="text-gray-300">(example: UBP85172)</span><span class="text-red-500"> *</span>
                     </p>
+
                     <div class="overflow-x-auto">
-                        <table class="min-w-full text-center border border-collapse border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                {{ box }}
-                            </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                <input
-                                    v-model="boxNoValues[box]"
-                                    @input="boxNoValues[box] = boxNoValues[box].toUpperCase().replace(/\s+/g, '')"
-                                    type="text"
-                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
+                        <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        {{ box }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        <input
+                                            v-model="boxNoValues[box]"
+                                            @input="boxNoValues[box] = boxNoValues[box].toUpperCase().replace(/\s+/g, '')"
+                                            type="text"
+                                            class="w-full px-1 py-[2px] text-[10px] border border-gray-300 rounded-sm
+                                                focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
 
                     <!-- Weight table -->
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                        Weight <span class="text-gray-300">(KG)</span><span class="text-red-500"> *</span><span class="text-gray-300">Enter the Box Weight and Box with Magnet Weight to calculate the resulting value.</span>
+                    <p class="pb-1 text-[11px] font-semibold text-gray-800 border-b">
+                        Weight <span class="text-gray-300">(KG)</span>
+                        <span class="text-red-500"> *</span>
+                        <span class="text-gray-300">
+                            Enter the Box Weight and Box with Magnet Weight to calculate the resulting value.
+                        </span>
                     </p>
+
                     <div class="overflow-x-auto">
-                        <table class="min-w-full text-center border border-collapse border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                {{ box }}
-                            </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                <input
-                                    :value="weightValues[box]"
-                                    type="number"
-                                    disabled
-                                    class="w-full px-2 py-1 text-xs bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
+                        <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        {{ box }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        <input
+                                            :value="weightValues[box]"
+                                            type="number"
+                                            disabled
+                                            class="w-full px-1 py-[2px] text-[10px]
+                                                bg-gray-100 border border-gray-300 rounded-sm
+                                                cursor-not-allowed"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
 
-                    <!-- Weight table -->
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                        Box Weight<span class="text-red-500"> *</span>
+                    <!-- Box Weight table -->
+                    <p class="pb-1 text-[11px] font-semibold text-gray-800 border-b">
+                        Box Weight <span class="text-red-500"> *</span>
                     </p>
+
                     <div class="overflow-x-auto">
-                        <table class="min-w-full text-center border border-collapse border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                {{ box }}
-                            </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                <input
-                                v-model="boxWeight[box]"
-                                type="number"
-                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
+                        <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        {{ box }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        <input
+                                            v-model="boxWeight[box]"
+                                            type="number"
+                                            class="w-full px-1 py-[2px] text-[10px]
+                                                border border-gray-300 rounded-sm
+                                                focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
 
-                    <!-- Weight table -->
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                    <!-- Box with Magnet Weight table -->
+                    <p class="pb-1 text-[11px] font-semibold text-gray-800 border-b">
                         Box with Magnet Weight <span class="text-red-500"> *</span>
                     </p>
+
                     <div class="overflow-x-auto">
-                        <table class="min-w-full text-center border border-collapse border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                            <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                {{ box }}
-                            </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                <input
-                                v-model="boxWithMagnetWeight[box]"
-                                type="number"
-                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
+                        <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        {{ box }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td
+                                        v-for="box in visibleBoxes"
+                                        :key="box"
+                                        class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                    >
+                                        <input
+                                            v-model="boxWithMagnetWeight[box]"
+                                            type="number"
+                                            class="w-full px-1 py-[2px] text-[10px]
+                                                border border-gray-300 rounded-sm
+                                                focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
 
                     <!-- Excess Boxes Section -->
                     <div v-if="initial_mpcs.moreThanTenBoxes" class="mt-8">
-                        <!-- BOX No. table -->
-                        <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
+                        <!-- Excess BOX No. table -->
+                        <p class="pb-1 text-[11px] font-semibold text-gray-800 border-b">
                             Excess BOX No. <span class="text-gray-300">(example: UBP85172)</span>
                         </p>
+
                         <div class="overflow-x-auto">
-                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                            <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                        <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                        <th
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             {{ box }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                        <td
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             <input
                                                 v-model="boxNoValuesExcess[box]"
-                                                @input="boxNoValuesExcess[box] = boxNoValuesExcess[box].toUpperCase()"
+                                                @input="boxNoValuesExcess[box] = boxNoValuesExcess[box].toUpperCase().replace(/\s+/g, '')"
                                                 type="text"
-                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                class="w-full px-1 py-[2px] text-[10px]
+                                                    border border-gray-300 rounded-sm
+                                                    focus:outline-none focus:ring-1 focus:ring-blue-400"
                                             />
                                         </td>
                                     </tr>
@@ -596,27 +694,38 @@
                             </table>
                         </div>
 
-                        <!-- Weight table -->
-                        <p class="pb-2 mt-4 text-sm font-semibold text-gray-800 border-b">
+                        <!-- Excess Weight table -->
+                        <p class="pb-1 mt-3 text-[11px] font-semibold text-gray-800 border-b">
                             Excess Weight <span class="text-gray-300">(KG)</span>
                         </p>
+
                         <div class="overflow-x-auto">
-                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                            <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                        <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                        <th
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             {{ box }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                        <td
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             <input
                                                 :value="weightValuesExcess[box]"
                                                 type="number"
                                                 disabled
-                                                class="w-full px-2 py-1 text-xs bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
+                                                class="w-full px-1 py-[2px] text-[10px]
+                                                    bg-gray-100 border border-gray-300 rounded-sm
+                                                    cursor-not-allowed focus:outline-none"
                                             />
                                         </td>
                                     </tr>
@@ -624,26 +733,37 @@
                             </table>
                         </div>
 
-                        <!-- Weight table -->
-                        <p class="pb-2 mt-4 text-sm font-semibold text-gray-800 border-b">
+                        <!-- Excess Box Weight table -->
+                        <p class="pb-1 mt-3 text-[11px] font-semibold text-gray-800 border-b">
                             Excess Box Weight
                         </p>
+
                         <div class="overflow-x-auto">
-                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                            <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                        <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                        <th
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             {{ box }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                        <td
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             <input
                                                 v-model="boxWeightExcess[box]"
                                                 type="number"
-                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                class="w-full px-1 py-[2px] text-[10px]
+                                                    border border-gray-300 rounded-sm
+                                                    focus:outline-none focus:ring-1 focus:ring-blue-400"
                                             />
                                         </td>
                                     </tr>
@@ -651,26 +771,37 @@
                             </table>
                         </div>
 
-                        <!-- Weight table -->
-                        <p class="pb-2 mt-4 text-sm font-semibold text-gray-800 border-b">
+                        <!-- Excess Box with Magnet Weight table -->
+                        <p class="pb-1 mt-3 text-[11px] font-semibold text-gray-800 border-b">
                             Excess Box with Magnet Weight
                         </p>
+
                         <div class="overflow-x-auto">
-                            <table class="min-w-full text-center border border-collapse border-gray-300">
+                            <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                        <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
+                                        <th
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             {{ box }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
+                                        <td
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
                                             <input
                                                 v-model="boxWithMagnetWeightExcess[box]"
                                                 type="number"
-                                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                class="w-full px-1 py-[2px] text-[10px]
+                                                    border border-gray-300 rounded-sm
+                                                    focus:outline-none focus:ring-1 focus:ring-blue-400"
                                             />
                                         </td>
                                     </tr>
@@ -689,66 +820,90 @@
 
                     <!-- Main Boxes Manual Qty -->
                     <div v-if="manualQtyMode" class="mt-6">
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                        Quantity (PCS) per Box - Main
-                    </p>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-center border border-collapse border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th v-for="box in visibleBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                    {{ box }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td v-for="box in visibleBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                <input
-                                    v-model="qtyValues[box]"
-                                    type="number"
-                                    step="1"
-                                    min="0"
-                                    @input="qtyValues[box] = Math.trunc(qtyValues[box] || 0)"
-                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
-                        </table>
-                    </div>
+                        <!-- Quantity (PCS) per Box - Main table -->
+                        <p class="pb-1 mt-3 text-[11px] font-semibold text-gray-800 border-b">
+                            Quantity (PCS) per Box - Main
+                        </p>
+
+                        <div class="overflow-x-auto">
+                            <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th
+                                            v-for="box in visibleBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
+                                            {{ box }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td
+                                            v-for="box in visibleBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
+                                            <input
+                                                v-model="qtyValues[box]"
+                                                type="number"
+                                                step="1"
+                                                min="0"
+                                                @input="qtyValues[box] = Math.trunc(qtyValues[box] || 0)"
+                                                class="w-full px-1 py-[2px] text-[10px]
+                                                    border border-gray-300 rounded-sm
+                                                    focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <!-- Excess Boxes Manual Qty -->
                     <div v-if="manualQtyMode && initial_mpcs.moreThanTenBoxes" class="mt-6">
-                    <p class="pb-2 text-sm font-semibold text-gray-800 border-b">
-                        Quantity (PCS) per Box - Excess
-                    </p>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-center border border-collapse border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th v-for="box in visibleExcessBoxes" :key="box" class="px-4 py-2 text-xs border border-gray-300">
-                                    {{ box }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td v-for="box in visibleExcessBoxes" :key="box" class="px-2 py-1 border border-gray-300">
-                                <input
-                                v-model="qtyValuesExcess[box]"
-                                type="number"
-                                step="1"
-                                min="0"
-                                @input="qtyValuesExcess[box] = Math.trunc(qtyValuesExcess[box] || 0)"
-                                class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </td>
-                            </tr>
-                        </tbody>
-                        </table>
-                    </div>
+                        <!-- Quantity (PCS) per Box - Excess table -->
+                        <p class="pb-1 mt-3 text-[11px] font-semibold text-gray-800 border-b">
+                            Quantity (PCS) per Box - Excess
+                        </p>
+
+                        <div class="overflow-x-auto">
+                            <table class="text-center border border-collapse border-gray-300 min-w-max text-[10px]">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
+                                            {{ box }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td
+                                            v-for="box in visibleExcessBoxes"
+                                            :key="box"
+                                            class="px-0.5 py-0.5 border border-gray-300 w-[5rem] min-w-[3rem]"
+                                        >
+                                            <input
+                                                v-model="qtyValuesExcess[box]"
+                                                type="number"
+                                                step="1"
+                                                min="0"
+                                                @input="qtyValuesExcess[box] = Math.trunc(qtyValuesExcess[box] || 0)"
+                                                class="w-full px-1 py-[2px] text-[10px]
+                                                    border border-gray-300 rounded-sm
+                                                    focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -814,6 +969,8 @@
                             { title: 'Lot No:', data: initial_mpcs.lotNo },
                             { title: 'Qty (PCS):', data: qtyDataMain },
                             { title: 'WT (KG):', data: weightValues },
+                            { title: 'Box Weight:', data: boxWeight },
+                            { title: 'Box with Magnet Weight:', data: boxWithMagnetWeight },
                             { title: 'Box No.:', data: boxNoValues },
                             { title: 'Coating:', data: initial_mpcs.coating },
                             { title: 'Magnet Prepared By:', data: initial_mpcs.magnetPreparedBy },
@@ -859,6 +1016,8 @@
                             { title: 'Lot No:', data: initial_mpcs.lotNo },
                             { title: 'Qty (PCS):', data: qtyDataExcess },
                             { title: 'WT (KG):', data: weightValuesExcess },
+                            { title: 'Box Weight:', data: boxWeightExcess },
+                            { title: 'Box with Magnet Weight:', data: boxWithMagnetWeightExcess },
                             { title: 'Box No.:', data: boxNoValuesExcess },
                             { title: 'Coating:', data: initial_mpcs.coating },
                             { title: 'Magnet Prepared By:', data: initial_mpcs.magnetPreparedBy },
@@ -2567,38 +2726,49 @@ const weightValues = computed(() => {
     const result = {};
 
     visibleBoxes.value.forEach(box => {
-        const withMagnetRaw = Number(boxWithMagnetWeight.value[box]) || 0;
-        const boxWtRaw = Number(boxWeight.value[box]) || 0;
+        const withMagnetRaw = parseFloat(boxWithMagnetWeight.value[box]) || 0;
+        const boxWtRaw = parseFloat(boxWeight.value[box]) || 0;
 
-        // integer-safe subtraction
-        const diffInt = Math.round(withMagnetRaw * 1000) - Math.round(boxWtRaw * 1000);
+        const diff = withMagnetRaw - boxWtRaw;
 
-        // convert to decimal with 2 digits safely
-        result[box] = Number((diffInt / 1000).toFixed(2));
-    })
+        // use roundToTwo for consistent 2-decimal rounding
+        result[box] = roundToTwo(diff);
+
+        // optional debug log
+        //console.log(`${box}: withMagnet=${withMagnetRaw}, box=${boxWtRaw}, diff=${diff}, rounded=${result[box]}`);
+    });
 
     return result;
 });
-
 
 
 const weightValuesExcess = computed(() => {
     const result = {};
 
     visibleExcessBoxes.value.forEach(box => {
-        const withMagnetRaw = Number(boxWithMagnetWeightExcess.value[box]) || 0;
-        const boxWtRaw = Number(boxWeightExcess.value[box]) || 0;
+        const withMagnetRaw = parseFloat(boxWithMagnetWeightExcess.value[box]) || 0;
+        const boxWtRaw = parseFloat(boxWeightExcess.value[box]) || 0;
 
-        // integer-safe subtraction
-        const diffInt = Math.round(withMagnetRaw * 1000) - Math.round(boxWtRaw * 1000);
+        //console.log(`[${box}] Raw inputs: withMagnet=${boxWithMagnetWeightExcess.value[box]} (${withMagnetRaw}), boxWeight=${boxWeightExcess.value[box]} (${boxWtRaw})`);
 
-        // convert to decimal with 2 digits safely
-        result[box] = Number((diffInt / 1000).toFixed(2));
+        const diffRaw = withMagnetRaw - boxWtRaw;
+        //console.log(`[${box}] Raw diff:`, diffRaw);
+
+        // safe 2-digit rounding
+        const rounded = roundToTwo(diffRaw);
+        //console.log(`[${box}] Rounded diff:`, rounded);
+
+        result[box] = rounded;
     });
 
     return result;
-})
+});
 
+const roundToTwo = (num) => {
+    const rounded = Math.round((num + Number.EPSILON) * 100) / 100;
+    //console.log(`roundToTwo(${num}) = ${rounded}`);
+    return rounded;
+};
 
 allBoxes.forEach(box => {
     boxNoValues.value[box] = '';
@@ -2756,7 +2926,7 @@ const getControlSheetData = async () => {
     try{
         const response = await axios.get(`/api/initial_control_sheet`);
         controlSheetData.value = response.data;
-        console.log('Initial Control Sheet Data ref array: ', controlSheetData.value);
+        //console.log('Initial Control Sheet Data ref array: ', controlSheetData.value);
     }catch(error){
         console.error('Failed to fetch initial control sheet data');
     }
@@ -2766,7 +2936,7 @@ const getCoatingSummary = async () => {
     try{
         const response = await axios.get(`/api/initial-coating`);
         coatingSummaryData.value = response.data;
-        console.log('Initial Coating Summary Data ref array: ', coatingSummaryData.value);
+        //console.log('Initial Coating Summary Data ref array: ', coatingSummaryData.value);
     }catch(error){
         console.error('Failed to fetch initial coating summary data', error);
     }
@@ -2776,7 +2946,7 @@ const getFilmPastingSummary = async () => {
     try{
         const response = await axios.get(`/api/initial-film-pasting`);
         filmPastingSummaryData.value = response.data;
-        console.log('Initial Film Pasting Summary Data ref array: ', filmPastingSummaryData.value);
+        //console.log('Initial Film Pasting Summary Data ref array: ', filmPastingSummaryData.value);
     }catch(error){
         console.error('Failed to fetch initial film pasting summary data');
     }
@@ -2829,24 +2999,39 @@ const confirmDelete = async () => {
 
     try {
         if (type === 'control') {
-            await axios.delete(`/api/initial_control_sheet/${id}`);
+            const response = await axios.delete(`/api/initial_control_sheet/${id}`);
+            const deleted = response.data.deletedData;
+
             controlSheetData.value = controlSheetData.value.filter(i => i.id !== id);
             toast.info('Data Deleted Successfully');
-            await userManageLogging(`deleted Control Sheet Data Id = ${id}`);
+
+            await userManageLogging(
+                `has deleted Control Sheet: Model: ${deleted.model_name}, Lot: ${deleted.lot_no}`
+            );
         }
 
         if (type === 'coating') {
-            await axios.delete(`/api/initial-coating/${id}`);
+            const response = await axios.delete(`/api/initial-coating/${id}`);
+            const deleted = response.data.deletedData;
+
             coatingSummaryData.value = coatingSummaryData.value.filter(i => i.id !== id);
             toast.info('Data Deleted Successfully');
-            await userManageLogging(`deleted Coating Summary Data Id = ${id}`);
+
+            await userManageLogging(
+                `has deleted Coating Summary: Model: ${deleted.model_name}, Lot: ${deleted.lot_no}`
+            );
         }
 
         if (type === 'film') {
-            await axios.delete(`/api/initial-film-pasting/${id}`);
+            const response = await axios.delete(`/api/initial-film-pasting/${id}`);
+            const deleted = response.data.deletedData;
+
             filmPastingSummaryData.value = filmPastingSummaryData.value.filter(i => i.id !== id);
             toast.info('Data Deleted Successfully');
-            await userManageLogging(`deleted Film Pasting Summary Data Id = ${id}`);
+
+            await userManageLogging(
+                `has deleted Film Pasting Summary: Model: ${deleted.model_name}, Lot: ${deleted.lot_no}`
+            );
         }
 
     } catch (error) {
@@ -3874,6 +4059,10 @@ const buildHourlyCheckingPayload = () => {
 
 // Fetch on mount
 onMounted( async () => {
+    const isAuthenticated = await checkAuthentication();
+    if (!isAuthenticated) {
+        return; // Stop execution if not authenticated
+    }
     await getModelLists();
     await getControlSheetData();
     await getCoatingSummary();

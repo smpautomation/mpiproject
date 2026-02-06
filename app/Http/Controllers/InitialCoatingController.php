@@ -96,8 +96,23 @@ class InitialCoatingController extends Controller
      */
     public function destroy(InitialCoating $initialCoating)
     {
+        // 1. Grab details before deleting
+        $modelName = $initialCoating->model_name ?? 'Unknown';
+        $lotNo     = $initialCoating->lot_no ?? 'Unknown';
+        $id        = $initialCoating->id;
+
+        // 2. Delete record
         $initialCoating->delete();
-        return response()->json(['message' => 'Initial coating deleted successfully.']);
+
+        // 3. Return deleted info
+        return response()->json([
+            'message'     => 'Initial coating deleted successfully.',
+            'deletedData' => [
+                'id'         => $id,
+                'model_name' => $modelName,
+                'lot_no'     => $lotNo,
+            ],
+        ]);
     }
 
     public function checkDuplicateLot(Request $request)

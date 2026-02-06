@@ -73,9 +73,23 @@ class InitialControlSheetController extends Controller
      */
     public function destroy(InitialControlSheet $initialControlSheet)
     {
+        // 1. Grab the info you want before deleting
+        $modelName = $initialControlSheet->model_name ?? 'Unknown';
+        $lotNo     = $initialControlSheet->lot_no ?? 'Unknown';
+        $id        = $initialControlSheet->id;
+
+        // 2. Delete the record
         $initialControlSheet->delete();
 
-        return response()->json(['message' => 'Deleted'], 200);
+        // 3. Return the deleted info so frontend can log properly
+        return response()->json([
+            'message'     => 'Deleted',
+            'deletedData' => [
+                'id'         => $id,
+                'model_name' => $modelName,
+                'lot_no'     => $lotNo,
+            ],
+        ], 200);
     }
 
     public function checkDuplicateLot(Request $request)

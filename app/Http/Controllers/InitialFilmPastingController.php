@@ -93,9 +93,23 @@ class InitialFilmPastingController extends Controller
      */
     public function destroy(InitialFilmPasting $initialFilmPasting)
     {
+        // 1. Grab details before deleting
+        $modelName = $initialFilmPasting->model_name ?? 'Unknown';
+        $lotNo     = $initialFilmPasting->lot_no ?? 'Unknown';
+        $id        = $initialFilmPasting->id;
+
+        // 2. Delete the record
         $initialFilmPasting->delete();
 
-        return response()->json(['message' => 'Deleted'], 200);
+        // 3. Return deleted info
+        return response()->json([
+            'message'     => 'Film Pasting Summary deleted successfully.',
+            'deletedData' => [
+                'id'         => $id,
+                'model_name' => $modelName,
+                'lot_no'     => $lotNo,
+            ],
+        ]);
     }
 
     public function checkDuplicateLot(Request $request)
