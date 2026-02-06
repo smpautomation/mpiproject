@@ -2279,54 +2279,94 @@ const generateReport = async () => {
 
 const checkSpecialJudgement = async () => {
     console.log('Entered Special Judgement function');
-    const responseGetVTData = await axios.get('/api/vt-models');
-    const fetchAllVT = responseGetVTData.data;
-    MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
-    //console.log('VT MODELS: ',MODELS_SHOW_VT_DATA.value);
-    const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
-    const fetchAllCPKIHC = responseGetCPKIHCData.data;
-    MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
-    //console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
 
-    /*const responseGetGXData = await axios.get('/api/gx-models');
-    const fetchAllGX = responseGetGXData.data;
-    MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
-    console.log('GX MODELS: ',MODELS_SHOW_GX.value);*/
+    // --- VT Models ---
     try {
+        console.log('Fetching VT models...');
+        const responseGetVTData = await axios.get('/api/vt-models');
+        console.log('VT fetch result:', responseGetVTData);
+        const fetchAllVT = responseGetVTData.data || [];
+        MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
+        console.log('VT Models:', MODELS_SHOW_VT_DATA.value);
+    } catch (err) {
+        console.error('Failed to fetch VT models:', err);
+        MODELS_SHOW_VT_DATA.value = [];
+    }
+
+    // --- CPK Models ---
+    try {
+        console.log('Fetching CPK models...');
+        const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
+        console.log('CPK fetch result:', responseGetCPKIHCData);
+        const fetchAllCPKIHC = responseGetCPKIHCData.data || [];
+        MODELS_SHOW_CPK.value = fetchAllCPKIHC.map(item => item.model_name);
+        console.log('CPK Models:', MODELS_SHOW_CPK.value);
+    } catch (err) {
+        console.error('Failed to fetch CPK models:', err);
+        MODELS_SHOW_CPK.value = [];
+    }
+
+    // --- GX Models ---
+    try {
+        console.log('Fetching GX models...');
         const responseGetGXData = await axios.get('/api/gx-models');
+        console.log('GX fetch result:', responseGetGXData);
         const fetchAllGX = responseGetGXData.data || [];
         MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
-        console.log('GX MODELS: ', MODELS_SHOW_GX.value);
+        console.log('GX Models:', MODELS_SHOW_GX.value);
     } catch (err) {
         console.error('Failed to fetch GX models:', err);
         MODELS_SHOW_GX.value = [];
     }
-    const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
-    const fetchAllTTMNC = responseGetTTMNCData.data;
-    MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
-    //console.log('TTMNC MODELS: ',MODELS_1X1X1_NO_CORNER.value);
-    const responseGetBHData = await axios.get('/api/bh-models');
-    const fetchAllBH = responseGetBHData.data;
-    MODELS_SHOW_BH.value = fetchAllBH.map(item => item.model_name);
-    //console.log('BH MODELS: ',MODELS_SHOW_BH.value);
-    const responseGetROBData = await axios.get('/api/rob-models');
-    const fetchAllROB = responseGetROBData.data;
-    MODELS_SHOW_ROB.value = fetchAllROB.map(item => item.model_name);
-    //console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
 
+    // --- TTM Models ---
+    try {
+        console.log('Fetching TTMNC models...');
+        const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
+        console.log('TTMNC fetch result:', responseGetTTMNCData);
+        const fetchAllTTMNC = responseGetTTMNCData.data || [];
+        MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
+        console.log('TTMNC Models:', MODELS_1X1X1_NO_CORNER.value);
+    } catch (err) {
+        console.error('Failed to fetch TTMNC models:', err);
+        MODELS_1X1X1_NO_CORNER.value = [];
+    }
+
+    // --- BH Models ---
+    try {
+        console.log('Fetching BH models...');
+        const responseGetBHData = await axios.get('/api/bh-models');
+        console.log('BH fetch result:', responseGetBHData);
+        const fetchAllBH = responseGetBHData.data || [];
+        MODELS_SHOW_BH.value = fetchAllBH.map(item => item.model_name);
+        console.log('BH Models:', MODELS_SHOW_BH.value);
+    } catch (err) {
+        console.error('Failed to fetch BH models:', err);
+        MODELS_SHOW_BH.value = [];
+    }
+
+    // --- ROB Models ---
+    try {
+        console.log('Fetching ROB models...');
+        const responseGetROBData = await axios.get('/api/rob-models');
+        console.log('ROB fetch result:', responseGetROBData);
+        const fetchAllROB = responseGetROBData.data || [];
+        MODELS_SHOW_ROB.value = fetchAllROB.map(item => item.model_name);
+        console.log('ROB Models:', MODELS_SHOW_ROB.value);
+    } catch (err) {
+        console.error('Failed to fetch ROB models:', err);
+        MODELS_SHOW_ROB.value = [];
+    }
+
+    // --- Logic Section (unchanged) ---
     const model = jhCurveActualModel.value;
-
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
-    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
+    isTTM_model.value = model.includes("TTM");
     if (!hasNGihc) return;
 
-    // === Logic Blocks ===
-    //console.log('--- Logic Evaluation Start ---');
-    console.log('Model:', model);
-    //console.log('VT Sample Qty:', reportVT_samplesQty.value);
-    //console.log('BH Sample Qty:', reportBH_sampleQty.value);
+    console.log('Evaluating logic for model:', model);
 
-    // VT Data
+    // VT Logic
     if (MODELS_SHOW_VT_DATA.value.includes(model) && reportVT_samplesQty.value > 0) {
         showVTData.value = true;
         showVTData_default.value = false;
@@ -2337,45 +2377,30 @@ const checkSpecialJudgement = async () => {
         console.log('[VT] Showing default VT layout (sample qty = 0)');
     }
 
-    // BH Data
+    // BH Logic
     if (MODELS_SHOW_BH.value.includes(model) && reportBH_sampleQty.value > 0) {
         showBHData.value = true;
         showBHData_default.value = false;
-        //console.log('[BH] Showing BH Data (sample qty > 0)');
+        console.log('[BH] Showing BH Data (sample qty > 0)');
     } else if (MODELS_SHOW_BH.value.includes(model)) {
         showBHData.value = false;
         showBHData_default.value = true;
-        //console.log('[BH] Showing default BH layout (sample qty = 0)');
+        console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
-    // 1x1x1 Data (TTM)
+    // TTM Logic
     if (model.includes("TTM")) {
         show1x1x1Data_withoutCorner.value = true;
         show1x1x1Data_Corner.value = true;
-        //console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
-
         if (MODELS_1X1X1_NO_CORNER.value.includes(model)) {
             show1x1x1Data_Corner.value = false;
-            //console.log('[TTM] Corner data disabled for this model');
         }
     }
 
     // Flags
-    if (MODELS_SHOW_CPK.value.includes(model)) {
-        showCpkFrom_iHc.value = true;
-        //console.log('[CPK] CPK enabled');
-    }
-    if (MODELS_SHOW_GX.value.includes(model)) {
-        showGX.value = true;
-        console.log('[GX] GX enabled');
-    }
-    if (MODELS_SHOW_ROB.value.includes(model)) {
-        showROB.value = true;
-        //console.log('[ROB] ROB enabled');
-    }
-
-    //console.log('--- Logic Evaluation End ---');
-
+    showCpkFrom_iHc.value = MODELS_SHOW_CPK.value.includes(model);
+    showGX.value       = MODELS_SHOW_GX.value.includes(model);
+    showROB.value      = MODELS_SHOW_ROB.value.includes(model);
 };
 
 const autoCheckRemarks = () => {
