@@ -3444,6 +3444,16 @@ const deleteLayerData = async () => {
     } catch (error) {
         console.error('Failed to delete layer data', error);
         toast.error('Failed to delete layer data.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "deleteLayerData",
+            "Failed to delete layer data."
+        );
     }
 };
 

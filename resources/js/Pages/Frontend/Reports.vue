@@ -2290,7 +2290,7 @@ const checkSpecialJudgement = async () => {
     const responseGetGXData = await axios.get('/api/gx-models');
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map(item => item.model_name);
-    //console.log('GX MODELS: ',MODELS_SHOW_GX.value);
+    console.log('GX MODELS: ',MODELS_SHOW_GX.value);
     const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
     const fetchAllTTMNC = responseGetTTMNCData.data;
     MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map(item => item.model_name);
@@ -2312,7 +2312,7 @@ const checkSpecialJudgement = async () => {
 
     // === Logic Blocks ===
     //console.log('--- Logic Evaluation Start ---');
-    //console.log('Model:', model);
+    console.log('Model:', model);
     //console.log('VT Sample Qty:', reportVT_samplesQty.value);
     //console.log('BH Sample Qty:', reportBH_sampleQty.value);
 
@@ -2357,7 +2357,7 @@ const checkSpecialJudgement = async () => {
     }
     if (MODELS_SHOW_GX.value.includes(model)) {
         showGX.value = true;
-        //console.log('[GX] GX enabled');
+        console.log('[GX] GX enabled');
     }
     if (MODELS_SHOW_ROB.value.includes(model)) {
         showROB.value = true;

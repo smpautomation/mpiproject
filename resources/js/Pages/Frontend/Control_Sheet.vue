@@ -400,7 +400,7 @@ const controlSheet_props = defineProps({
 });
 redirectedMassPro.value = controlSheet_props.massProd;
 redirectedFurnace.value = controlSheet_props.furnace;
-console.log(redirectedMassPro.value);
+//console.log(redirectedMassPro.value);
 
 const ltNoMatrix = computed(() => {
     const map = {};
