@@ -2278,7 +2278,7 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-    //console.log('Entered Special Judgement function');
+    console.log('Entered Special Judgement function');
     const responseGetVTData = await axios.get('/api/vt-models');
     const fetchAllVT = responseGetVTData.data;
     MODELS_SHOW_VT_DATA.value = fetchAllVT.map(item => item.model_name);
@@ -2838,7 +2838,7 @@ const showReportData = async () => {
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
 
-        //console.log('Entering Evalation for Reject reasons...');
+        console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
