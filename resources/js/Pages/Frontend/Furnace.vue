@@ -3,25 +3,53 @@
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 space-y-8 bg-gradient-to-b from-gray-50 to-gray-100">
 
             <!-- Header -->
-            <div class="flex flex-col items-center space-y-3">
-            <!-- Icon -->
-            <div class="flex items-center justify-center w-16 h-16 rounded-full shadow-lg bg-gradient-to-tr from-red-500 to-orange-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 2c.5 1.5 1.5 3 3 4.5s2 3.5 2 5.5c0 3.5-2.5 6-5 8.5-2.5-2.5-5-5-5-8.5 0-2 .5-3.5 2-5.5S11.5 3.5 12 2z" />
-                </svg>
+            <div class="flex flex-col items-center space-y-4">
+                <!-- Icon with glow effect -->
+                <div class="relative flex items-center justify-center w-20 h-20 transition-transform duration-300 transform shadow-2xl rounded-2xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 hover:scale-105">
+                    <div class="absolute inset-0 opacity-50 bg-gradient-to-br from-red-400 to-orange-400 rounded-2xl blur-xl animate-pulse"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="relative w-10 h-10 text-white drop-shadow-lg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M12 2c.5 1.5 1.5 3 3 4.5s2 3.5 2 5.5c0 3.5-2.5 6-5 8.5-2.5-2.5-5-5-5-8.5 0-2 .5-3.5 2-5.5S11.5 3.5 12 2z" />
+                    </svg>
+                </div>
+
+                <!-- Title with gradient -->
+                <div class="space-y-2 text-center">
+                    <h1 class="text-4xl font-extrabold tracking-tight text-transparent bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 bg-clip-text">
+                    Furnace Records
+                    </h1>
+                    <p class="max-w-xl text-base text-gray-600">
+                    View all created furnaces with their creation date and encoder details.
+                    </p>
+                </div>
             </div>
 
-            <!-- Title -->
-            <h1 class="text-3xl font-bold tracking-tight text-gray-800">
-                Furnace Records
-            </h1>
-            <p class="text-sm text-gray-500">
-                View all created furnaces with their creation date and encoder details.
-            </p>
+            <!-- Attention / Warning -->
+            <div class="relative w-full max-w-3xl mt-6 overflow-hidden border-2 border-red-200 shadow-lg rounded-xl bg-gradient-to-r from-red-50 to-orange-50">
+                <!-- Animated border glow -->
+                <div class="absolute inset-0 bg-gradient-to-r from-red-400 to-orange-400 opacity-20 animate-pulse"></div>
+
+                <div class="relative flex items-start p-5 border-l-4 border-red-600">
+                    <!-- Icon with background -->
+                    <div class="flex-shrink-0 p-2 mr-4 bg-red-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                    </svg>
+                    </div>
+
+                    <div class="flex-1 text-sm text-red-900">
+                    <p class="flex items-center gap-2 mb-2 text-base font-bold">
+                        <span class="inline-block w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
+                        Before adding a new furnace:
+                    </p>
+                    <ul class="ml-6 space-y-2 list-disc marker:text-red-600">
+                        <li class="leading-relaxed"><span class="font-semibold">Check if the furnace name already exists</span></li>
+                        <li class="leading-relaxed"><span class="font-semibold">Use the search bar below</span> to verify first</li>
+                        <li class="leading-relaxed">Duplicate furnace names are <span class="font-semibold text-red-700">not allowed</span></li>
+                    </ul>
+                    </div>
+                </div>
             </div>
-
-
 
             <!-- Action Bar -->
             <div class="flex justify-between w-full max-w-5xl">
