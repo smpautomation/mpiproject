@@ -11,7 +11,7 @@
                     <table class="w-full border border-collapse border-gray-300 rounded-lg shadow-sm table-auto">
                         <thead class="text-sm text-white uppercase bg-gradient-to-r from-cyan-600 to-teal-600">
                             <tr class="text-[10px]">
-                                <th rowspan="2" class="px-1 text-center border border-gray-300">MPI Date <br> (E-mail sending)</th>
+                                <th rowspan="2" class="px-1 text-center border border-gray-300">MPI Date</th>
                                 <th rowspan="2" class="px-1 text-center border border-gray-300">Pulse Tracer <br> Machine</th>
                                 <th rowspan="2" class="px-1 text-center border border-gray-300">Furnace <br> Cycle No.</th>
                                 <th rowspan="2" class="px-1 text-center border border-gray-300">Mass <br> Production</th>

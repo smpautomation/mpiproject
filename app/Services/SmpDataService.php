@@ -77,8 +77,14 @@ class SmpDataService
                 ? json_decode($reportData->magnetic_property_data, true)
                 : [];
 
+            $remarksRaw = $reportData?->note_reason_reject;
+            // If it's JSON, decode it
+            $remarksDecoded = is_string($remarksRaw)
+                ? json_decode($remarksRaw, true)
+                : $remarksRaw;
+
             $rowData = [
-                'MPI_Date' => $reportData->date_emailed ?? '',
+                'MPI_Date' => $tpmData[0]->date ?? '',
                 'Pulse_Tracer_Machine' => $tpmData[0]->Tracer ?? '',
                 'Furnace_Cycle_No' => $massProdData->cycle_no,
                 'Mass_Production' => $massProdData->mass_prod,
@@ -95,7 +101,9 @@ class SmpDataService
                 'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? '' : '',
                 'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? '' : '',
                 'iHc_Ave' => $tpmAggregate && $tpmAggregate->average ? json_decode($tpmAggregate->average, true)['iHc'] ?? '' : '',
-                'Remarks' => $smpData->remarks ?? '',
+                'Remarks' => is_array($remarksDecoded)
+                    ? implode("\n", $remarksDecoded)
+                    : ($remarksDecoded ?? ''),
                 'Status' => $reportData->smp_judgement ?? '',
                 'HT_Trouble' => $massProdData->current_pattern === 'PASS' ? 'NO' : 'YES',
                 'Special_Instruction' => $smpData->special_instruction ?? ''

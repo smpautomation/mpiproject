@@ -10,6 +10,17 @@
       />
         <div class="flex flex-row items-center space-x-4 align-middle">
 
+            <label>Furnace: </label>
+            <!-- Status Filter -->
+            <select v-model="selectedFurnace" class="w-[200px] p-2 border rounded shadow-sm">
+                <!--option value="COATING_PENDING">Coating Pending</!--option>
+                <option-- value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option-->
+                <option value="">All</option> <!-- new line -->
+                <option v-for="item in furnace_lists" :key="item" :value="item">
+                    {{ item }}
+                </option>
+            </select>
+
             <label>Mass Prod: </label>
             <!-- Status Filter -->
             <select v-model="selectedMassProd" class="w-[200px] p-2 border rounded shadow-sm">
@@ -73,12 +84,12 @@
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.tpm[0].mass_prod || "NO DATA" }}
+                        {{ item.tpm[0].mass_prod || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                    {{ item.tpm[0].layer_no || "NO DATA" }}
+                        {{ item.tpm[0].layer_no || "NO DATA" }}
                     </div>
                 </td>
                 <td class="p-[1px]">
@@ -120,14 +131,14 @@
                     <div
                         class="px-2 py-1 text-sm font-medium text-center rounded-sm"
                         :class="{
-                        'bg-green-100 text-green-800': item.report[0]?.is_emailed,
-                        'bg-blue-100 text-blue-800': item.report[0]?.is_finalized && !item.report[0]?.is_emailed,
-                        'bg-yellow-100 text-yellow-800': !item.report[0]?.is_finalized && !item.report[0]?.is_emailed
+                            'bg-green-100 text-green-800': item.report[0]?.is_emailed,
+                            'bg-blue-100 text-blue-800': item.report[0]?.is_finalized && !item.report[0]?.is_emailed,
+                            'bg-yellow-100 text-yellow-800': !item.report[0]?.is_finalized && !item.report[0]?.is_emailed
                         }"
                     >
                         {{
-                        item.report[0]?.is_emailed ? 'EMAIL SENT' :
-                        (item.report[0]?.is_finalized ? 'READY FOR EMAIL' : 'PENDING')
+                            item.report[0]?.is_emailed ? 'EMAIL SENT' :
+                            (item.report[0]?.is_finalized ? 'READY FOR EMAIL' : 'PENDING')
                         }}
                     </div>
                 </td>
@@ -169,7 +180,7 @@
                                     transition-all duration-150
                                     focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
                             >
-                            Cancel
+                                Cancel
                             </button>
                             </template>
                             <template v-else>
@@ -259,6 +270,32 @@ const checkAuthentication = async () => {
     }
 };
 
+function useSessionStorage(key, state) {
+    // Load existing session value
+    const saved = sessionStorage.getItem(key)
+    if (saved !== null) {
+        try {
+            const parsed = JSON.parse(saved)
+            if (typeof state === 'object' && 'value' in state) {
+                state.value = parsed
+            } else {
+                Object.assign(state, parsed)
+            }
+        } catch {
+        /* ignore parse errors */
+        }
+    }
+
+    // Watch and persist changes
+    watch(
+        state,
+        (val) => {
+        sessionStorage.setItem(key, JSON.stringify(val))
+        },
+        { deep: true }
+    )
+}
+
 const formatDate = (isoString) => {
     if (!isoString) return null;
     const date = new Date(isoString);
@@ -305,7 +342,9 @@ const totalPages = ref(0);
 const maxPagesAllowed = ref(20);
 const confirmDeleteFor = ref(null);
 const massProd_names = ref([]);
+const furnace_lists = ref([]);
 const selectedMassProd = ref('');
+const selectedFurnace = ref('');
 
 // Fetch data
 const viewAllSerialedLayers = async () => {
@@ -324,6 +363,18 @@ const viewAllSerialedLayers = async () => {
   }
 };
 
+const getFurnaceLists = async() => {
+    try{
+        const response = await axios.get('/api/furnace-data');
+        const furnaceData = response.data;
+        furnace_lists.value = furnaceData.map(item => item.furnace_name);
+        console.log("Furnace Lists: ", furnace_lists.value);
+    }catch(error){
+        console.error('Failed to fetch furnace data lists: ',error);
+        toast.error('Furnace Data List error.');
+    }
+}
+
 const getMassProdLists = async () => {
     try{
         const response = await axios.get('/api/mass-production/');
@@ -336,10 +387,15 @@ const getMassProdLists = async () => {
     }
 }
 
+useSessionStorage("selectedMassProd", selectedMassProd);
+useSessionStorage("selectedFurnace", selectedFurnace);
+useSessionStorage("statusFilter", statusFilter);
+
 onMounted(async ()=>{
     await checkAuthentication();
     await viewAllSerialedLayers();
     await getMassProdLists();
+    await getFurnaceLists();
 });
 
 // Search + filter
@@ -347,6 +403,7 @@ const filteredData = computed(() => {
   const query = searchQuery.value.toLowerCase();
   const status = statusFilter.value;
   const massProd = selectedMassProd.value;
+  const furnace = selectedFurnace.value
 
   return tpmData.value.filter(item => {
     const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
@@ -391,8 +448,10 @@ const filteredData = computed(() => {
     // ✅ Use the first tpm entry safely
     const matchesMassProd = !massProd || tpm.mass_prod === massProd;
 
+    const matchesFurnace = !furnace || tpm.furnace === furnace;
+
     // ✅ You forgot to include matchesMassProd in the return
-    return matchesQuery && matchesStatus && matchesMassProd;
+    return matchesQuery && matchesStatus && matchesMassProd && matchesFurnace;
   });
 });
 
