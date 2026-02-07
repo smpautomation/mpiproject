@@ -311,17 +311,29 @@ const submitForm = () => {
 
 const saveToDatabase = async () => {
     loadingState.value = true;
+
     try {
-        const response = await axios.post('/api/furnace-data',{
+        const response = await axios.post('/api/furnace-data', {
             furnace_name: furnaceNo.value,
             encoded_by: encodedBy.value,
         });
-        console.log('Saved To Database: ', response.data);
+
+        console.log('Saved To Database:', response.data);
         toast.success('Saved Successfully');
-        await userManageLogging('created Furnace: '+ furnaceNo.value +' Encoded by: ' + encodedBy.value + ' successfully.');
+
+        await userManageLogging(
+            'created Furnace: ' + furnaceNo.value + ' Encoded by: ' + encodedBy.value + ' successfully.'
+        );
+
     } catch (error) {
-        console.error("Failed to save to database", error);
-        toast.error('Data not saved successfully');
+        console.error('Failed to save to database', error);
+
+        if (error.response?.status === 422) {
+            toast.warning('Duplicate furnace name detected.');
+        } else {
+            toast.error('Data not saved successfully');
+        }
+
     } finally {
         loadingState.value = false;
         showModalCreate.value = false;

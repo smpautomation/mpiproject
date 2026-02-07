@@ -428,6 +428,7 @@
                                 class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
+
                         <div v-if="lotNoLists.length > 1 && isInitialLotSaved" class="flex items-end">
                             <button
                                 v-if="!isAdditionalMode"

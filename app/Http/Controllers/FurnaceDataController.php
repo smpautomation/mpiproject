@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FurnaceData;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class FurnaceDataController extends Controller
 {
@@ -15,9 +16,16 @@ class FurnaceDataController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'furnace_name' => 'required|string|max:255',
-            'description'  => 'nullable|string|max:255',
-            'encoded_by' => 'nullable|string|max:255'
+            'furnace_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('furnace_data', 'furnace_name'),
+            ],
+            'description' => 'nullable|string|max:255',
+            'encoded_by'  => 'nullable|string|max:255',
+        ], [
+            'furnace_name.unique' => 'Duplicate detected. This furnace name already exists.',
         ]);
 
         return FurnaceData::create($validated);
