@@ -355,21 +355,27 @@ const resetAllField = () => {
 
 // Convert input fields to uppercase for specific keys
 function convertToUppercase() {
-  const fields = [
-    'model',
-    'material_grade',
-    'br',
-    'ihc',
-    'ihk',
-    'mpi_sample',
-    'encoded_by',
-  ];
+    const fields = [
+        'model',
+        'material_grade',
+        'br',
+        'ihc',
+        'ihk',
+        'mpi_sample',
+        'encoded_by',
+    ];
 
-  fields.forEach(field => {
-    if (formData.value[field] && typeof formData.value[field] === 'string') {
-      formData.value[field] = formData.value[field].toUpperCase();
-    }
-  });
+    fields.forEach(field => {
+        if (formData.value[field] && typeof formData.value[field] === 'string') {
+        let value = formData.value[field].toUpperCase();
+
+        if (field === 'model') {
+            value = value.replace(/-/g, '');
+        }
+
+        formData.value[field] = value;
+        }
+    });
 }
 
 // Submit form data — POST for new, PATCH for update
