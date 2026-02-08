@@ -206,32 +206,26 @@ class BreaklotCoatingController extends Controller
             'lot_no'    => 'required|string',
         ]);
 
-        // 1. Find TPM data
-        $tpmData = TPMData::where([
-            'mass_prod' => $validated['mass_prod'],
-            'layer_no'     => $validated['layer'],
-            'furnace'   => $validated['furnace'],
-        ])->first();
+        // 1. Get all serial numbers linked to the lot
+        $serialNumbers = TPMDataCategory::where('jhcurve_lotno', $validated['lot_no'])
+            ->pluck('tpm_data_serial');
 
-        if (!$tpmData) {
+        if ($serialNumbers->isEmpty()) {
             return response()->json([
                 'exists' => false,
-                'reason' => 'TPMData not found',
+                'reason' => 'No serials found for lot',
             ]);
         }
-        //dd($tpmData);
 
-        // 2. Extract serial number
-        $serialNo = (int) $tpmData->serial_no;
-
-        // 3. Find TPM category using serial_no (+ lot check if needed)
-        $categoryExists = TPMDataCategory::where('tpm_data_serial', $serialNo)
-            ->where('jhcurve_lotno', $validated['lot_no'])
+        // 2. Check if any serial matches TPMData constraints
+        $exists = TPMData::whereIn('serial_no', $serialNumbers)
+            ->where('mass_prod', $validated['mass_prod'])
+            ->where('furnace', $validated['furnace'])
+            ->where('layer_no', $validated['layer'])
             ->exists();
 
         return response()->json([
-            'exists'     => $categoryExists,
-            'serial_no'  => $serialNo,
+            'exists' => $exists,
         ]);
     }
 
