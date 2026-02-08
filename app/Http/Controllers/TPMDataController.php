@@ -32,7 +32,7 @@ class TPMDataController extends Controller
                 $latestSerials = TPMData::select('serial_no')
                             ->groupBy('serial_no')
                             ->orderByRaw('MAX(created_at) DESC')
-                            ->limit(100)
+                            ->limit(300)
                             ->pluck('serial_no');
                 $tpmData = TPMData::whereIn('serial_no', $latestSerials)
                             ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace', 'mass_prod', 'layer_no')
@@ -50,9 +50,9 @@ class TPMDataController extends Controller
                             ->get()
                             ->groupBy('tpm_data_serial');
                 $grouped = [];
-                $tpmDataAll = TPMData::latest()->limit(100)->get();
-                $aggregateFunctions = TPMDataAggregateFunctions::latest()->limit(100)->get();
-                $remarks = TPMDataRemark::latest()->limit(100)->get();
+                $tpmDataAll = TPMData::latest()->limit(300)->get();
+                $aggregateFunctions = TPMDataAggregateFunctions::latest()->limit(300)->get();
+                $remarks = TPMDataRemark::latest()->limit(300)->get();
                 foreach ($latestSerials as $serial) {
                     $grouped[$serial] = [
                         'tpm' => $tpmData[$serial] ?? collect(),

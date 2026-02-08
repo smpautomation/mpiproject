@@ -1299,8 +1299,301 @@
                     <span class="mx-8">This report has already been finalized.</span>
                     </div>
                 </div>
-            </div>
+                <div class="flex flex-col mt-10">
+                    <div class="flex flex-row justify-center mt-5 space-x-4">
+                        <div
+                            class="w-[600px] h-[460px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                        >
+                            <img
+                                v-if="currentSerialSelected"
+                                :src="`/charts/chart_${currentSerialSelected}.png`"
+                                alt="Chart"
+                                class="object-contain w-full h-full"
+                                style="transform: scale(1); transform-origin: top left;"
+                            />
+                        </div>
+                        <!-- Side Content -->
+                        <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                            <div class="flex flex-col items-start space-y-2">
+                                <p>
+                                    SMP Lot (
+                                    <span>{{ selectedMassProd }}</span>
+                                    Mass Production )
+                                </p>
+                                <p>
+                                    Furnace Cycle No. : {{ propD_cycleNo }}
+                                </p>
+                                <p>
+                                    <span>{{ jhCurveActualModel }}</span>
+                                    ( {{ propD_codeNo }} )
+                                </p>
+                                <p>
+                                    Lot # {{ jhCurveLotNo }}
+                                </p>
+                                <p class="font-semibold text-red-600">
+                                    <template v-if="propD_rejectReasons && propD_rejectReasons.length">
+                                        <span
+                                            v-for="(note, index) in sortedNotes"
+                                            :key="index"
+                                            class="font-semibold text-red-700 opacity-100"
+                                        >
+                                            {{ note }}
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        <span class="text-xs italic text-gray-400">
+                                        Reject remarks will appear here once the report data has been saved, if any exist.
+                                        </span>
+                                    </template>
+                                </p>
+                            </div>
 
+                        </div>
+                    </div>
+                    <div class="p-6 mt-4 mb-10 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
+                        <div class="mb-4">
+                            <p class="text-center">PROPERTY DATA</p>
+                        </div>
+                        <div class="flex flex-row justify-center">
+                            <p class="mr-10">Mias. Employee: <span>{{ propD_miasEmp }}</span> </p>
+                            <p>Factor Employee: <span>{{ propD_factorEmp }}</span></p>
+                        </div>
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="flex flex-row items-start justify-center">
+                                <div class="flex flex-row flex-[3] mb-10 shadow-2xl">
+                                    <div class="min-w-[700px]">
+                                        <table class="border border-gray-300 table-auto rounded-xl">
+                                            <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                                <tr>
+                                                    <th v-for="tableLayerColumnHeader in tableLayerColumnHeaders"
+                                                        :key="tableLayerColumnHeader.name"
+                                                        :colspan="tableLayerColumnHeader.colspan"
+                                                        class="px-[2px] py-[3px] text-[10px] font-medium text-center border border-white">
+                                                        {{ tableLayerColumnHeader.name }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white">
+                                            <tr
+                                                v-for="item in propD_tpmData"
+                                                :key="item.id"
+                                                class="border-b hover:bg-gray-50"
+                                            >
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.date }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.code_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.order_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.type }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_2 }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.machine_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.sintering_furnace_no }}</td>
+                                                <td class="whitespace-nowrap px-[0px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.furnace_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.zone }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.pass_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br }}</td>
+                                                <td v-if="item.remark.Br_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHc }}</td>
+                                                <td v-if="item.remark.iHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHc_remarks == 0 ? '' : item.remark.iHc_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHk }}</td>
+                                                <td v-if="item.remark.iHk_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHk_remarks == 0 ? '' : item.remark.iHk_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.BHMax }}</td>
+                                                <td v-if="item.remark.BHMax_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.BHMax_remarks == 0 ? '' : item.remark.BHMax_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr95 }}</td>
+                                                <td v-if="item.remark.iHr95_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr98 }}</td>
+                                                <td v-if="item.remark.iHr98_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr98_remarks == 0 ? '' : item.remark.iHr98_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHkiHc }}</td>
+                                                <td v-if="item.remark.iHkiHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHkiHc_remarks == 0 ? '' : item.remark.iHkiHc_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br4pai }}</td>
+                                                <td v-if="item.remark.Br4pai_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br4pai_remarks == 0 ? '' : item.remark.Br4pai_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.bHc }}</td>
+                                                <td v-if="item.remark.bHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.bHc_remarks == 0 ? '' : item.remark.bHc_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Squareness }}</td>
+                                                <td v-if="item.remark.Squareness_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Squareness_remarks == 0 ? '' : item.remark.Squareness_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiId'] }}</td>
+                                                <td v-if="item.remark['4paiId_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiId_remarks'] == 0 ? '' : item.remark['4paiId_remarks'] }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIs'] }}</td>
+                                                <td v-if="item.remark['4paiIs_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIs_remarks'] == 0 ? '' : item.remark['4paiIs_remarks'] }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIa'] }}</td>
+                                                <td v-if="item.remark['4paiIa_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIa_remarks'] == 0 ? '' : item.remark['4paiIa_remarks'] }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Tracer }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row flex-[1]"> <!-- DIV 2 -->
+                                    <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                        <thead class="text-white bg-blue-400">
+                                            <tr>
+                                                <th class="px-[3px] py-[3px] text-[10px] font-extrabold text-center border border-white">Sample&nbsp;with&nbsp;Variance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white">
+                                            <tr v-for="(variance, index) in sampleWithVariances" :key="index">
+                                                <td class="px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                    {{ variance }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="flex flex-row flex-[1]"> <!-- DIV 2 -->
+                                    <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                        <thead class="text-white bg-blue-400">
+                                            <tr>
+                                                <th class="px-[3px] py-[3px] text-[10px] font-extrabold text-center border border-white">Temp</th>
+                                                <th class="px-[3px] py-[3px] text-[10px] font-extrabold text-center border border-white">Data&nbsp;Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white">
+                                            <tr
+                                                v-for="item in propD_tpmData"
+                                                :key="item.id"
+                                                class="border-b hover:bg-gray-50"
+                                            >
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.temperature }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.data_status }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-row"> <!-- DIV 5 -->
+                                <div class="mb-16">
+                                    <table class="border border-gray-300 rounded-lg shadow-2xl table-auto">
+                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                            <tr>
+                                                <th v-for="secondTableLayerColumnHeader in secondTableLayerColumnHeaders" :key="secondTableLayerColumnHeader.name" class="px-[3px] py-[2px] text-[12px] font-medium text-center">{{ secondTableLayerColumnHeader.name }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-blue-700">AVERAGE</td>
+                                                <td v-for="(aggAveValue, index) in aggAveValues" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                    {{ aggAveValue.value }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-blue-700">MAXIMUM</td>
+                                                <td v-for="(aggMaxValue, index) in aggMaxValues" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                    {{ aggMaxValue.value }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-blue-700">MINIMUM</td>
+                                                <td v-for="(aggMinValue, index) in aggMinValues" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                    {{ aggMinValue.value }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-[2px] py-[2px] text-[12px] font-extrabold text-center text-white bg-red-800">NG&#160;COUNTER</td>
+                                                <td v-for="(ngCount, index) in aggNGCounts" :key="index" class="px-[4px] py-[2px] text-[10px] text-center text-gray-700 border border-blue-500">
+                                                    {{ ngCount }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="flex flex-col items-center justify-center p-4 mb-4 ml-6 space-y-3 text-sm bg-blue-200 rounded-lg shadow-md"> <!-- DIV 6 -->
+
+                                    <!-- Header -->
+                                    <div>
+                                        <p class="px-4 py-1 text-xs font-bold text-white bg-blue-900 rounded-md shadow">Data Results:</p>
+                                    </div>
+
+                                    <div class="w-[600px] h-[50px] px-4 py-2 bg-white rounded-2xl text-xs space-y-1">
+                                        <p class="flex gap-1 font-bold whitespace-nowrap">
+                                            <span
+                                                v-for="(rejectOKNGlist, index) in rejectOKNG"
+                                                :key="index"
+                                                :class="adjustColor_rejectOKNG(rejectOKNGlist)"
+                                            >
+                                                {{ rejectOKNGlist }}
+                                            </span>
+                                        </p>
+                                        <p class="whitespace-nowrap">
+                                            <span :class="adjustColor_rejectInstructions">
+                                                {{ rejectInstruction }}
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Additional Info Row -->
+                                    <div class="flex items-stretch justify-center w-full space-x-2">
+
+                                        <!-- iHc Remarks -->
+                                        <div class="flex flex-col items-center justify-center w-1/2 px-4 py-2 text-center bg-white rounded-2xl">
+                                        <p class="text-xs font-semibold">
+                                            <span :class="adjustColor_rejectiHc">{{ rejectiHcRemarks }}</span>
+                                        </p>
+                                        <p class="text-sm font-bold">
+                                            <span :class="adjustColor_iHcValue">{{ getHighestSampleVariance }}</span>
+                                        </p>
+                                        </div>
+
+                                        <!-- Lot Remarks -->
+                                        <div class="flex flex-wrap items-center justify-center w-1/2 px-4 py-2 text-xs font-bold bg-white rounded-2xl">
+                                        <span
+                                            v-for="(rejectLotRemarksList, index) in rejectLotRemarks"
+                                            :key="index"
+                                            :class="adjustColor_rejectLotRemarks(rejectLotRemarksList)"
+                                        >
+                                            {{ rejectLotRemarksList }}
+                                        </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div v-if="isSecAdditional"> -->
+                    <div>
+                        TEST
+                        <div class="flex flex-row justify-center mt-5 space-x-4">
+                            <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
+                                <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
+                            </div>
+                            <!-- Side Content -->
+                            <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                                <div class="flex flex-col items-start space-y-2">
+                                    <p>
+                                        SMP Lot (
+                                        <span>{{ selectedMassProd }}</span>
+                                        Mass Production )
+                                    </p>
+                                    <p>
+                                        Furnace Cycle No. : {{ secAdd_propD_jhCurveFurnaceName }}
+                                    </p>
+                                    <p>
+                                        <span>{{ secAdd_propD_jhCurveModel }}</span>
+                                        ( {{ secAdd_propD_codeNo }} )
+                                    </p>
+                                    <p>
+                                        Lot # {{ secAdd_propD_jhCurveLotNo }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
       </div>
     </Frontend>
@@ -1313,9 +1606,11 @@ import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
 import Modal from '@/Components/Modal.vue' // adjust path if needed
+import { useToast } from 'vue-toast-notification';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js';
 
+const toast = useToast();
 const { state } = useAuth();
 
 // Function to check authentication
@@ -1447,6 +1742,7 @@ const isFromApproval_checked = ref(false);
 const isFromApproval_prepared = ref(false);
 const backToApproval = ref(false);
 const isFromViewList = ref(false);
+const isSecAdditional = ref(false);
 
 const reportStatusReminder = ref(false);
 const report_isFinalized = ref(false);
@@ -1698,12 +1994,12 @@ const reportSMPJudgement = ref('');
 const modifiedSMPJudgement = ref('');
 // Immediate watch
 watch(
-  reportSMPJudgement,
-  (newVal, oldVal) => {
-    //console.log('reportSMPJudgement changed:', oldVal, '→', newVal);
-    // Add your reactive logic here
-  },
-  { immediate: true } // Triggers on component mount
+    reportSMPJudgement,
+    (newVal, oldVal) => {
+        //console.log('reportSMPJudgement changed:', oldVal, '→', newVal);
+        // Add your reactive logic here
+    },
+    { immediate: true } // Triggers on component mount
 );
 const reportExistingSMPJudgement = ref(null);
 const reportPreparedByDate = ref(null);
@@ -1803,9 +2099,11 @@ const tpmData_ihr98Min = ref('');
 const tpmData_tracerNo = ref('');
 
 const jhCurveActualModel = ref('');
+const jhCurveLotNo = ref('');
 
 const fetchMaterialCode = ref('');
 const fetchActualModel = ref('');
+
 //remarks checking
 const getAllBrNG = ref('');
 const getAlliHcNG = ref('');
@@ -1830,6 +2128,343 @@ const heatTreatmentCompleted = ref(false);
 const selectedFurnace = ref();
 const selectedMassProd = ref();
 const selectedLayer = ref();
+
+const propD_tpmData = ref([]);
+const propD_cycleNo = ref();
+const propD_codeNo = ref();
+const propD_rejectReasons = ref();
+const propD_miasEmp = ref();
+const propD_factorEmp = ref();
+
+const secAdd_propD_nsaData = ref([]);
+const secAdd_propD_cycleNo = ref();
+const secAdd_propD_codeNo = ref();
+const secAdd_propD_rejectReasons = ref();
+const secAdd_propD_miasEmp = ref();
+const secAdd_propD_factorEmp = ref();
+const filteredAggregateID = ref();
+const nsaData_aggID = ref();
+const secAdd_propD_jhCurveFurnaceName = ref();
+const secAdd_propD_jhCurveModel = ref();
+const secAdd_propD_jhCurveLotNo = ref();
+
+const highest_setNo = ref(1);
+
+const ok = "Status OK";
+const reject = "REJECT, N.G";
+const hold = "HOLD, N.G";
+const within = "within internal specs";
+
+const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
+const noRejIns = "No reject instructions";
+
+const lotReject = "THIS LOT IS REJECT";
+const lotPass = "THIS LOT IS PASS";
+const lotHold = "THIS LOT IS HOLD";
+
+const iHcOK = "iHc variance OK";
+const iHcNG = "Process right side with iHc variance more than 1500 Oe";
+
+const rejectOKNG = ref([]);
+const rejectInstruction = ref(null);
+const rejectLotRemarks = ref([]);
+const rejectiHcRemarks = ref(null);
+
+const sampleWithVariances = ref([]);
+const getHighestSampleVariance = ref();
+
+//Variables for ave max min ng counter
+
+const aveBr = ref(null);
+const aveiHc = ref(null);
+const aveiHk = ref(null);
+const aveBHMax = ref(null);
+const aveiHr95 = ref(null);
+const aveiHr98 = ref(null);
+const aveiHciHk = ref(null);
+const aveBr4pai = ref(null);
+const avebHc = ref(null);
+const aveSquareness = ref(null);
+const ave4paild = ref(null);
+const ave4pails = ref(null);
+const ave4paila = ref(null);
+const minBr = ref(null);
+const miniHc = ref(null);
+const miniHk = ref(null);
+const minBHMax = ref(null);
+const miniHr95 = ref(null);
+const miniHr98 = ref(null);
+const miniHciHk = ref(null);
+const minBr4pai = ref(null);
+const minbHc = ref(null);
+const minSquareness = ref(null);
+const min4paild = ref(null);
+const min4pails = ref(null);
+const min4paila = ref(null);
+const maxBr = ref(null);
+const maxiHc = ref(null);
+const maxiHk = ref(null);
+const maxBHMax = ref(null);
+const maxiHr95 = ref(null);
+const maxiHr98 = ref(null);
+const maxiHciHk = ref(null);
+const maxBr4pai = ref(null);
+const maxbHc = ref(null);
+const maxSquareness = ref(null);
+const max4paild = ref(null);
+const max4pails = ref(null);
+const max4paila = ref(null);
+const ngBr = ref(null);
+const ngiHc = ref(null);
+const ngiHk = ref(null);
+const ngBHMax = ref(null);
+const ngiHr95 = ref(null);
+const ngiHr98 = ref(null);
+const ngiHciHk = ref(null);
+const ngBr4pai = ref(null);
+const ngbHc = ref(null);
+const ngSquareness = ref(null);
+const ng4paild = ref(null);
+const ng4pails = ref(null);
+const ng4paila = ref(null);
+
+// Grouping variables into arrays
+const aggAveValues = ref([
+    aveBr,
+    aveiHc,
+    aveiHk,
+    aveBHMax,
+    aveiHr95,
+    aveiHr98,
+    aveiHciHk,
+    aveBr4pai,
+    avebHc,
+    aveSquareness,
+    ave4paild,
+    ave4pails,
+    ave4paila,
+]);
+
+const aggMaxValues = ref([
+    maxBr,
+    maxiHc,
+    maxiHk,
+    maxBHMax,
+    maxiHr95,
+    maxiHr98,
+    maxiHciHk,
+    maxBr4pai,
+    maxbHc,
+    maxSquareness,
+    max4paild,
+    max4pails,
+    max4paila,
+]);
+
+const aggMinValues = ref([
+    minBr,
+    miniHc,
+    miniHk,
+    minBHMax,
+    miniHr95,
+    miniHr98,
+    miniHciHk,
+    minBr4pai,
+    minbHc,
+    minSquareness,
+    min4paild,
+    min4pails,
+    min4paila,
+]);
+
+const aggNGCounts = ref([
+    ngBr,
+    ngiHc,
+    ngiHk,
+    ngBHMax,
+    ngiHr95,
+    ngiHr98,
+    ngiHciHk,
+    ngBr4pai,
+    ngbHc,
+    ngSquareness,
+    ng4paild,
+    ng4pails,
+    ng4paila,
+]);
+
+const getAllIDValues = ref([]);
+
+// Variables for aggregate
+
+const getAllBrValues = ref([]);
+const getAllBrRemarks = ref([]);
+const getAlliHcValues = ref([]);
+const getAlliHcRemarks = ref([]);
+const getAlliHkValues = ref([]);
+const getAlliHkRemarks = ref([]);
+const getAllBHMaxValues = ref([]);
+const getAllBHMaxRemarks = ref([]);
+const getAlliHr95Values = ref([]);
+const getAlliHr95Remarks = ref([]);
+const getAlliHr98Values = ref([]);
+const getAlliHr98Remarks = ref([]);
+const getAlliHciHkValues = ref([]);
+const getAlliHciHkRemarks = ref([]);
+const getAllBr4paiValues = ref([]);
+const getAllBr4paiRemarks = ref([]);
+const getAllbHcValues = ref([]);
+const getAllbHcRemarks = ref([]);
+const getAllSquarenessValues = ref([]);
+const getAllSquarenessRemarks = ref([]);
+const getAll4paildValues = ref([]);
+const getAll4paildRemarks = ref([]);
+const getAll4pailsValues = ref([]);
+const getAll4pailsRemarks = ref([]);
+const getAll4pailaValues = ref([]);
+const getAll4pailaRemarks = ref([]);
+
+const tableLayerColumnHeaders = ref([
+    {name: 'Date', colspan: 1},
+    {name: 'Code\u00A0No', colspan: 1},
+    {name: 'Order\u00A0No', colspan: 1},
+    {name: 'Type', colspan: 1},
+    {name: 'Lot\u00A0No', colspan: 1},
+    {name: ' ', colspan: 1},
+    {name: ' ', colspan: 1},
+    {name: 'Furnace\u00A0No', colspan: 1},
+    {name: 'Coating\u00A0No', colspan: 1},
+    {name: 'Zone', colspan: 1},
+    {name: 'Pass\u00A0No', colspan: 1},
+    {name: 'Br', colspan: 2},
+    {name: 'iHc', colspan: 2},
+    {name: 'iHk', colspan: 2},
+    {name: 'BHMax', colspan: 2},
+    {name: 'Hr95', colspan: 2},
+    {name: 'Hr98', colspan: 2},
+    {name: 'iHciHk', colspan: 2},
+    {name: 'Br4pai', colspan: 2},
+    {name: 'bHc', colspan: 2},
+    {name: 'Squareness', colspan: 2},
+    {name: '4paild', colspan: 2},
+    {name: '4pails', colspan: 2},
+    {name: '4paila', colspan: 2},
+    {name: 'Tracer', colspan: 1},
+]);
+
+ //2nd table cell data dynamic
+const secondTableLayerColumnHeaders = ref([
+    {name: '', colspan: 1},
+    {name: 'Br', colspan: 1},
+    {name: 'iHc', colspan: 1},
+    {name: 'iHk', colspan: 1},
+    {name: 'BHMax', colspan: 1},
+    {name: 'iHr95', colspan: 1},
+    {name: 'iHr98', colspan: 1},
+    {name: 'iHciHk', colspan: 1},
+    {name: 'Br4pai', colspan: 1},
+    {name: 'bHc', colspan: 1},
+    {name: 'Squareness', colspan: 1},
+    {name: '4paild', colspan: 1},
+    {name: '4pails', colspan: 1},
+    {name: '4paila', colspan: 1},
+]);
+
+ //Variables for ave max min ng counter
+
+const secAdd_aveBr = ref(null);
+const secAdd_aveiHc = ref(null);
+const secAdd_aveiHk = ref(null);
+const secAdd_aveBHMax = ref(null);
+const secAdd_aveiHr95 = ref(null);
+const secAdd_aveiHr98 = ref(null);
+const secAdd_aveiHciHk = ref(null);
+const secAdd_aveBr4pai = ref(null);
+const secAdd_avebHc = ref(null);
+const secAdd_aveSquareness = ref(null);
+const secAdd_ave4paild = ref(null);
+const secAdd_ave4pails = ref(null);
+const secAdd_ave4paila = ref(null);
+const secAdd_minBr = ref(null);
+const secAdd_miniHc = ref(null);
+const secAdd_miniHk = ref(null);
+const secAdd_minBHMax = ref(null);
+const secAdd_miniHr95 = ref(null);
+const secAdd_miniHr98 = ref(null);
+const secAdd_miniHciHk = ref(null);
+const secAdd_minBr4pai = ref(null);
+const secAdd_minbHc = ref(null);
+const secAdd_minSquareness = ref(null);
+const secAdd_min4paild = ref(null);
+const secAdd_min4pails = ref(null);
+const secAdd_min4paila = ref(null);
+const secAdd_maxBr = ref(null);
+const secAdd_maxiHc = ref(null);
+const secAdd_maxiHk = ref(null);
+const secAdd_maxBHMax = ref(null);
+const secAdd_maxiHr95 = ref(null);
+const secAdd_maxiHr98 = ref(null);
+const secAdd_maxiHciHk = ref(null);
+const secAdd_maxBr4pai = ref(null);
+const secAdd_maxbHc = ref(null);
+const secAdd_maxSquareness = ref(null);
+const secAdd_max4paild = ref(null);
+const secAdd_max4pails = ref(null);
+const secAdd_max4paila = ref(null);
+const secAdd_ngBr = ref(null);
+const secAdd_ngiHc = ref(null);
+const secAdd_ngiHk = ref(null);
+const secAdd_ngBHMax = ref(null);
+const secAdd_ngiHr95 = ref(null);
+const secAdd_ngiHr98 = ref(null);
+const secAdd_ngiHciHk = ref(null);
+const secAdd_ngBr4pai = ref(null);
+const secAdd_ngbHc = ref(null);
+const secAdd_ngSquareness = ref(null);
+const secAdd_ng4paild = ref(null);
+const secAdd_ng4pails = ref(null);
+const secAdd_ng4paila = ref(null);
+
+//Variables for ave max min ng counter end
+
+
+//UI Dynamic Color adjustments
+
+const adjustColor_rejectOKNG = (arrayString_OKNG) => {
+    //console.log(arrayString_OKNG); // Log the value to see what it is
+    if (arrayString_OKNG && arrayString_OKNG.includes) {
+        return arrayString_OKNG.includes("Status OK") ? "text-green-500" : "text-red-500";
+    }
+    return "text-yellow-500"; // or any fallback class
+}
+
+const adjustColor_rejectLotRemarks = (arrayString_lotRem) => {
+    return arrayString_lotRem.includes("THIS LOT IS PASS") ? "text-green-600" : "text-red-500";
+}
+
+const adjustColor_rejectInstructions = computed(() => {
+    // Check if rejectInstruction is not null and is a string before calling includes
+    return rejectInstruction.value && rejectInstruction.value.includes("No reject instructions")
+        ? "text-blue-600"
+        : "text-green-500";
+});
+
+const adjustColor_rejectiHc = computed(() => {
+    // Check if rejectiHcRemarks is not null and is a string before calling includes
+    return rejectiHcRemarks.value && rejectiHcRemarks.value.includes("iHc variance OK")
+        ? "text-blue-600"
+        : "text-red-500";
+});
+
+const adjustColor_iHcValue = computed(() => {
+    if(getHighestSampleVariance.value <= 1500){
+        return "text-blue-500";
+    }else{
+        return "text-red-500";
+    }
+});
+
+//UI Dynamic Color adjustments end
 
 const massProd_qty = ref('');
 const massProd_WT = ref('');
@@ -2410,10 +3045,14 @@ const fetchAllData = async () => {
 
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
         let TPM_Data = responseTpm.data.data[0];
+        let TPM_Data2 = responseTpm.data.data;
         let tpmCat = TPM_Data.category;
         selectedMassProd.value = TPM_Data.mass_prod;
         selectedFurnace.value = TPM_Data.furnace;
         selectedLayer.value = TPM_Data.layer_no;
+        propD_tpmData.value = TPM_Data2;
+        propD_cycleNo.value = TPM_Data.sintering_furnace_no;
+        propD_codeNo.value = TPM_Data.code_no;
         //console.log("Mass Prod number: ", selectedMassProd.value, " Layer no: ", selectedLayer.value);
         // Unwrap nested array if exists
         let rawData = responseTpm.data?.[0];
@@ -2438,6 +3077,8 @@ const fetchAllData = async () => {
         fetchMaterialCode.value = modelData[0].code_no || throwError("Missing material code.");
         jhCurveActualModel.value = tpmCat.actual_model;
         fetchActualModel.value = jhCurveActualModel.value;
+        jhCurveLotNo.value = tpmCat.jhcurve_lotno;
+        //propD_miasEmp.value = tomCat.
         await getControlSheetData();
         setJudgmentFlags(modelData);
         await resolveFurnaceAndLayer(modelData[0]);
@@ -2446,6 +3087,256 @@ const fetchAllData = async () => {
 
         const modelMatched = await matchInspectionModel(fetchActualModel.value);
         if (!modelMatched) return;
+
+        // Extract individual values from tpmData for aggregate
+        getAllIDValues.value = propD_tpmData.value.map(item => item.id);
+        getAllBrValues.value = propD_tpmData.value.map(item => item.Br || null);
+        getAllBrRemarks.value = propD_tpmData.value.map(item => item.remark.Br_remarks || null);
+        getAlliHcValues.value = propD_tpmData.value.map(item => item.iHc || null);
+        getAlliHcRemarks.value = propD_tpmData.value.map(item => item.remark.iHc_remarks || null);
+        getAlliHkValues.value = propD_tpmData.value.map(item => item.iHk || null);
+        getAlliHkRemarks.value = propD_tpmData.value.map(item => item.remark.iHk_remarks || null);
+        getAllBHMaxValues.value = propD_tpmData.value.map(item => item.BHMax || null);
+        getAllBHMaxRemarks.value = propD_tpmData.value.map(item => item.remark.BHMax_remarks || null);
+        getAlliHr95Values.value = propD_tpmData.value.map(item => item.iHr95 || null);
+        getAlliHr95Remarks.value = propD_tpmData.value.map(item => item.remark.iHr95_remarks || null);
+        getAlliHr98Values.value = propD_tpmData.value.map(item => item.iHr98 || null);
+        getAlliHr98Remarks.value = propD_tpmData.value.map(item => item.remark.iHr98_remarks || null);
+        getAlliHciHkValues.value = propD_tpmData.value.map(item => item.iHkiHc || null);
+        getAlliHciHkRemarks.value = propD_tpmData.value.map(item => item.remark.iHkiHc_remarks || null);
+        getAllBr4paiValues.value = propD_tpmData.value.map(item => item.Br4pai || null);
+        getAllBr4paiRemarks.value = propD_tpmData.value.map(item => item.remark.Br4pai_remarks || null);
+        getAllbHcValues.value = propD_tpmData.value.map(item => item.bHc || null);
+        getAllbHcRemarks.value = propD_tpmData.value.map(item => item.remark.bHc_remarks || null);
+        getAllSquarenessValues.value = propD_tpmData.value.map(item => item.Squareness || null);
+        getAllSquarenessRemarks.value = propD_tpmData.value.map(item => item.remark.Squareness_remarks || null);
+        getAll4paildValues.value = propD_tpmData.value.map(item => item["4paiId"] || null);
+        getAll4paildRemarks.value = propD_tpmData.value.map(item => item.remark["4paiId_remarks"] || null);
+        getAll4pailsValues.value = propD_tpmData.value.map(item => item["4paiIs"] || null);
+        getAll4pailsRemarks.value = propD_tpmData.value.map(item => item.remark["4paiIs_remarks"] || null);
+        getAll4pailaValues.value = propD_tpmData.value.map(item => item["4paiIa"] || null);
+        getAll4pailaRemarks.value = propD_tpmData.value.map(item => item.remark["4paiIa_remarks"] || null);
+
+        //console.log('gettheIDs: ', getAllIDValues.value);
+        //console.log('tpmRemarks: ', tpmRemarks.value);
+
+        //get average function
+        const calculateAverage = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return 0
+            if (numbers.length === 0) return 0;
+
+            // Calculate the sum and divide by the count
+            const sum = numbers.reduce((total, value) => total + value, 0);
+            const average = sum / numbers.length;
+
+            // Check the maximum number of decimals present in the input
+            const maxDecimals = Math.max(
+                ...numbers.map(value => {
+                    const parts = value.toString().split(".");
+                    return parts[1] ? parts[1].length : 0; // Length of the decimal part
+                })
+            );
+
+            // Round the average to match the maximum number of decimals in the input
+            const factor = Math.pow(10, maxDecimals);
+            return Math.round(average * factor) / factor;
+        };
+        //get maximum function
+        const getMaxValue = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return null
+            if (numbers.length === 0) return null;
+
+            // Return the highest value using Math.max
+            return Math.max(...numbers);
+        };
+        //get minimum function
+        const getMinValue = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return null
+            if (numbers.length === 0) return null;
+
+            // Return the lowest value using Math.min
+            return Math.min(...numbers);
+        };
+        //get Sample with Variance data
+        const calculateVariance = (numericStringsArray, maxValue) => {
+            // Convert the array of numeric strings to numbers
+            const numbers = numericStringsArray
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+            // Subtract each value from maxValue and return the resulting array
+            return numbers.map(num => maxValue - num);
+        };
+
+        // Function to sum up all the data in an array
+        const calculateSum = (numericStringsArray) => {
+            // Convert the array of numeric strings to numbers
+            const numbers = numericStringsArray
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+            // Sum up all the valid numbers in the array
+            return numbers.reduce((sum, num) => sum + num, 0);
+        };
+
+
+        //average values
+        aveBr.value = calculateAverage(getAllBrValues.value);
+        aveiHc.value = calculateAverage(getAlliHcValues.value);
+        aveiHk.value = calculateAverage(getAlliHkValues.value);
+        aveBHMax.value = calculateAverage(getAllBHMaxValues.value);
+        aveiHr95.value = calculateAverage(getAlliHr95Values.value);
+        aveiHr98.value = calculateAverage(getAlliHr98Values.value);
+        aveiHciHk.value = calculateAverage(getAlliHciHkValues.value);
+        aveBr4pai.value = calculateAverage(getAllBr4paiValues.value);
+        avebHc.value = calculateAverage(getAllbHcValues.value);
+        aveSquareness.value = calculateAverage(getAllSquarenessValues.value);
+        ave4paild.value = calculateAverage(getAll4paildValues.value);
+        ave4pails.value = calculateAverage(getAll4pailsValues.value);
+        ave4paila.value = calculateAverage(getAll4pailaValues.value);
+
+        //console.log("iHciHk average value: ", aveiHciHk.value);
+
+        // Minimum values
+        minBr.value = getMinValue(getAllBrValues.value);
+        miniHc.value = getMinValue(getAlliHcValues.value);
+        miniHk.value = getMinValue(getAlliHkValues.value);
+        minBHMax.value = getMinValue(getAllBHMaxValues.value);
+        miniHr95.value = getMinValue(getAlliHr95Values.value);
+        miniHr98.value = getMinValue(getAlliHr98Values.value);
+        miniHciHk.value = getMinValue(getAlliHciHkValues.value);
+        minBr4pai.value = getMinValue(getAllBr4paiValues.value);
+        minbHc.value = getMinValue(getAllbHcValues.value);
+        minSquareness.value = getMinValue(getAllSquarenessValues.value);
+        min4paild.value = getMinValue(getAll4paildValues.value);
+        min4pails.value = getMinValue(getAll4pailsValues.value);
+        min4paila.value = getMinValue(getAll4pailaValues.value);
+
+        // Maximum values
+        maxBr.value = getMaxValue(getAllBrValues.value);
+        maxiHc.value = getMaxValue(getAlliHcValues.value);
+        maxiHk.value = getMaxValue(getAlliHkValues.value);
+        maxBHMax.value = getMaxValue(getAllBHMaxValues.value);
+        maxiHr95.value = getMaxValue(getAlliHr95Values.value);
+        maxiHr98.value = getMaxValue(getAlliHr98Values.value);
+        maxiHciHk.value = getMaxValue(getAlliHciHkValues.value);
+        maxBr4pai.value = getMaxValue(getAllBr4paiValues.value);
+        maxbHc.value = getMaxValue(getAllbHcValues.value);
+        maxSquareness.value = getMaxValue(getAllSquarenessValues.value);
+        max4paild.value = getMaxValue(getAll4paildValues.value);
+        max4pails.value = getMaxValue(getAll4pailsValues.value);
+        max4paila.value = getMaxValue(getAll4pailaValues.value);
+
+        //NG count values
+        ngBr.value = calculateSum(getAllBrRemarks.value);
+        ngiHc.value = calculateSum(getAlliHcRemarks.value);
+        ngiHk.value = calculateSum(getAlliHkRemarks.value);
+        ngBHMax.value = calculateSum(getAllBHMaxRemarks.value);
+        ngiHr95.value = calculateSum(getAlliHr95Remarks.value);
+        ngiHr98.value = calculateSum(getAlliHr98Remarks.value);
+        ngiHciHk.value = calculateSum(getAlliHciHkRemarks.value);
+        ngBr4pai.value = calculateSum(getAllBr4paiRemarks.value);
+        ngbHc.value = calculateSum(getAllbHcRemarks.value);
+        ngSquareness.value = calculateSum(getAllSquarenessRemarks.value);
+        ng4paild.value = calculateSum(getAll4paildRemarks.value);
+        ng4pails.value = calculateSum(getAll4pailsRemarks.value);
+        ng4paila.value = calculateSum(getAll4pailaRemarks.value);
+
+        sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
+
+        // Convert each item in sampleWithVariances to a string
+        const sampleWithVariancesAsString = sampleWithVariances.value.map(String);
+        //Getting the highest sample with variances (iHc Variance)
+        getHighestSampleVariance.value = getMaxValue(sampleWithVariancesAsString);
+
+        //Conditions for NG remarks
+
+        const addRejectLotRemarks = (lotRemarks) => {
+            if(!rejectLotRemarks.value.includes(lotRemarks + "  ")){
+                rejectLotRemarks.value.push(lotRemarks + "  ");
+            }
+        }
+
+        if(getHighestSampleVariance.value <= 1500){
+            rejectiHcRemarks.value = iHcOK;
+        }else{
+            rejectiHcRemarks.value = iHcNG;
+        }
+
+        if(ngBr.value == 0 && ngiHc.value == 0 && ngiHk.value == 0 && ngBHMax.value == 0 && ngiHr95.value == 0 && ngiHr98.value == 0 && ngiHciHk.value == 0 && ngBr4pai.value == 0 && ngbHc.value == 0){
+            rejectOKNG.value.push(ok);
+            addRejectLotRemarks(lotPass);
+            rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotReject + "  ");
+            rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotHold + "  ");
+            rejectInstruction.value = noRejIns;
+        }else{
+
+            if(ngBr.value > 0){
+                rejectOKNG.value.push("Br " + within + "  ");
+                addRejectLotRemarks(lotPass);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotReject + "  ");
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotHold + "  ");
+            }
+            if(ngiHc.value > 0) {
+                rejectOKNG.value.push("iHc " + reject + "  ");
+                addRejectLotRemarks(lotReject);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                rejectInstruction.value = perform;
+            }
+            if(ngiHk.value > 0) {
+                rejectOKNG.value.push("iHk " + reject + "  ");
+                addRejectLotRemarks(lotReject);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+                rejectInstruction.value = perform;
+            }
+            if(ngBHMax.value > 0) {
+                rejectOKNG.value.push("BHMax " + reject + "  ");
+                addRejectLotRemarks(lotReject);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+            }
+            if(ngiHr95.value > 0) {
+                rejectOKNG.value.push("Hr95 " + hold + "  ");
+                addRejectLotRemarks(lotHold);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+            }
+            if(ngiHr98.value > 0) {
+                rejectOKNG.value.push("Hr98 " + hold + "  ");
+                addRejectLotRemarks(lotHold);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+            }
+            if(ngiHciHk.value > 0) {
+                rejectOKNG.value.push("iHciHk " + hold + "  ");
+                addRejectLotRemarks(lotHold);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+            }
+            if(ngBr4pai.value > 0) {
+                rejectOKNG.value.push("Br4pai " + hold + "  ");
+                addRejectLotRemarks(lotHold);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+            }
+            if(ngbHc.value > 0) {
+                rejectOKNG.value.push("bHc " + hold + "  ");
+                addRejectLotRemarks(lotHold);
+                rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
+            }
+        }
+
+        await getSecHighestSetValue();
 
         // Build the patch data object
         const repData = {
@@ -2497,6 +3388,237 @@ const fetchAllData = async () => {
         showNotification2("Data is incomplete for this serial. Please rerun the data.");
         exitReport();
         throw new Error("fetchAllData returned empty or invalid payload");
+    }
+};
+
+const getSecHighestSetValue = async() => {
+    try{
+        const responseCheckNsa = await axios.get("/api/nsadata");
+        //console.log('response check NSA: ',responseCheckNsa.data.data);
+        const nsaData = responseCheckNsa.data.data["NSAData"] || [];
+        console.log('NSA data: ',nsaData);
+        const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
+        console.log('NSA data filtered by serial: ',nsafilteredData);
+
+        if(nsafilteredData.length > 0) {
+            const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
+            highest_setNo.value = maxSetNo;
+        } else {
+            console.warn('No matching NSA data for this serial number.');
+        }
+
+        console.log('Highest set value: ', highest_setNo.value);
+        await nsa_showData();
+
+    }catch(error){
+        console.warn("404 No data detected or another error check here -> ",error)
+    }
+}
+
+const nsaData = ref([]);
+const nsa_combinedData = ref([]);
+
+const nsa_showData = async() => {
+
+    try {
+        const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + highest_setNo.value); // Adjust this URL to your API endpoint
+        console.log('responseNSARemarks - API Response showallData:', responseNSARemarks.data);
+        //gg
+        console.log('Serial No value = ', currentSerialSelected.value);
+
+        // Extract arrays from the response
+        nsaData.value = responseNSARemarks.data.data || [];
+        console.log('showAllData nsa data: ',nsaData.value);
+        const getAggregateID = responseNSARemarks.data[0];
+        //console.log("Data for getting aggregate ID: ",getAggregateID);
+        const filteredAggregateID_first = getAggregateID.filter(item => item.nsa_serial == currentSerialSelected.value);
+        //console.log("Filtered aggregate with serial_no:", filteredAggregateID.value);
+        filteredAggregateID.value = filteredAggregateID_first.filter(item => item.nsa_set == highest_setNo.value);
+        //console.log("Filtered aggregate with set_no:", filteredAggregateID.value);
+        nsaData_aggID.value = filteredAggregateID.value[0].id;
+        //console.log("aggregate ID to be patched: ",nsaData_aggID.value);
+        //const nsaRemarks = response.data.data["remarks"] || [];
+        //console.log('showAllData nsa remarks: ',nsaRemarks);
+
+        // Combine the arrays
+        nsa_combinedData.value = nsaData.value;
+        //console.log('Combined Data: ', combinedData.value);
+
+        secAdd_propD_jhCurveFurnaceName.value = nsaData.value[0].sintering_furnace_no || "No data found";
+        secAdd_propD_jhCurveModel.value = nsaData.value[0].code_no || "No data found";
+
+        // Extract individual values from nsaData for aggregate
+        getAllIDValues.value = nsa_combinedData.value.map(item => item.id);
+        getAllBrValues.value = nsa_combinedData.value.map(item => item.Br || null);
+        getAllBrRemarks.value = nsa_combinedData.value.map(item => item.remark.Br_remarks || null);
+        getAlliHcValues.value = nsa_combinedData.value.map(item => item.iHc || null);
+        getAlliHcRemarks.value = nsa_combinedData.value.map(item => item.remark.iHc_remarks || null);
+        getAlliHkValues.value = nsa_combinedData.value.map(item => item.iHk || null);
+        getAlliHkRemarks.value = nsa_combinedData.value.map(item => item.remark.iHk_remarks || null);
+        getAllBHMaxValues.value = nsa_combinedData.value.map(item => item.BHMax || null);
+        getAllBHMaxRemarks.value = nsa_combinedData.value.map(item => item.remark.BHMax_remarks || null);
+        getAlliHr95Values.value = nsa_combinedData.value.map(item => item.iHr95 || null);
+        getAlliHr95Remarks.value = nsa_combinedData.value.map(item => item.remark.iHr95_remarks || null);
+        getAlliHr98Values.value = nsa_combinedData.value.map(item => item.iHr98 || null);
+        getAlliHr98Remarks.value = nsa_combinedData.value.map(item => item.remark.iHr98_remarks || null);
+        getAlliHciHkValues.value = nsa_combinedData.value.map(item => item.iHkiHc || null);
+        getAlliHciHkRemarks.value = nsa_combinedData.value.map(item => item.remark.iHkiHc_remarks || null);
+        getAllBr4paiValues.value = nsa_combinedData.value.map(item => item.Br4pai || null);
+        getAllBr4paiRemarks.value = nsa_combinedData.value.map(item => item.remark.Br4pai_remarks || null);
+        getAllbHcValues.value = nsa_combinedData.value.map(item => item.bHc || null);
+        getAllbHcRemarks.value = nsa_combinedData.value.map(item => item.remark.bHc_remarks || null);
+        getAllSquarenessValues.value = nsa_combinedData.value.map(item => item.Squareness || null);
+        getAllSquarenessRemarks.value = nsa_combinedData.value.map(item => item.remark.Squareness_remarks || null);
+        getAll4paildValues.value = nsa_combinedData.value.map(item => item["4paiId"] || null);
+        getAll4paildRemarks.value = nsa_combinedData.value.map(item => item.remark["4paiId_remarks"] || null);
+        getAll4pailsValues.value = nsa_combinedData.value.map(item => item["4paiIs"] || null);
+        getAll4pailsRemarks.value = nsa_combinedData.value.map(item => item.remark["4paiIs_remarks"] || null);
+        getAll4pailaValues.value = nsa_combinedData.value.map(item => item["4paiIa"] || null);
+        getAll4pailaRemarks.value = nsa_combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
+
+        //console.log('gettheIDs: ', getAllIDValues.value);
+        //console.log('tpmRemarks: ', tpmRemarks.value);
+
+        //get average function
+        const calculateAverage = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return 0
+            if (numbers.length === 0) return 0;
+
+            // Calculate the sum and divide by the count
+            const sum = numbers.reduce((total, value) => total + value, 0);
+            const average = sum / numbers.length;
+
+            // Check the maximum number of decimals present in the input
+            const maxDecimals = Math.max(
+                ...numbers.map(value => {
+                    const parts = value.toString().split(".");
+                    return parts[1] ? parts[1].length : 0; // Length of the decimal part
+                })
+            );
+
+            // Round the average to match the maximum number of decimals in the input
+            const factor = Math.pow(10, maxDecimals);
+            return Math.round(average * factor) / factor;
+        };
+        //get maximum function
+        const getMaxValue = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return null
+            if (numbers.length === 0) return null;
+
+            // Return the highest value using Math.max
+            return Math.max(...numbers);
+        };
+        //get minimum function
+        const getMinValue = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return null
+            if (numbers.length === 0) return null;
+
+            // Return the lowest value using Math.min
+            return Math.min(...numbers);
+        };
+        //get Sample with Variance data
+        const calculateVariance = (numericStringsArray, maxValue) => {
+            // Convert the array of numeric strings to numbers
+            const numbers = numericStringsArray
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+            // Subtract each value from maxValue and return the resulting array
+            return numbers.map(num => maxValue - num);
+        };
+
+        // Function to sum up all the data in an array
+        const calculateSum = (numericStringsArray) => {
+            // Convert the array of numeric strings to numbers
+            const numbers = numericStringsArray
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+            // Sum up all the valid numbers in the array
+            return numbers.reduce((sum, num) => sum + num, 0);
+        };
+
+
+        //average values
+        aveBr.value = calculateAverage(getAllBrValues.value);
+        aveiHc.value = calculateAverage(getAlliHcValues.value);
+        aveiHk.value = calculateAverage(getAlliHkValues.value);
+        aveBHMax.value = calculateAverage(getAllBHMaxValues.value);
+        aveiHr95.value = calculateAverage(getAlliHr95Values.value);
+        aveiHr98.value = calculateAverage(getAlliHr98Values.value);
+        aveiHciHk.value = calculateAverage(getAlliHciHkValues.value);
+        aveBr4pai.value = calculateAverage(getAllBr4paiValues.value);
+        avebHc.value = calculateAverage(getAllbHcValues.value);
+        aveSquareness.value = calculateAverage(getAllSquarenessValues.value);
+        ave4paild.value = calculateAverage(getAll4paildValues.value);
+        ave4pails.value = calculateAverage(getAll4pailsValues.value);
+        ave4paila.value = calculateAverage(getAll4pailaValues.value);
+
+        //console.log("iHciHk average value: ", aveiHciHk.value);
+
+        // Minimum values
+        minBr.value = getMinValue(getAllBrValues.value);
+        miniHc.value = getMinValue(getAlliHcValues.value);
+        miniHk.value = getMinValue(getAlliHkValues.value);
+        minBHMax.value = getMinValue(getAllBHMaxValues.value);
+        miniHr95.value = getMinValue(getAlliHr95Values.value);
+        miniHr98.value = getMinValue(getAlliHr98Values.value);
+        miniHciHk.value = getMinValue(getAlliHciHkValues.value);
+        minBr4pai.value = getMinValue(getAllBr4paiValues.value);
+        minbHc.value = getMinValue(getAllbHcValues.value);
+        minSquareness.value = getMinValue(getAllSquarenessValues.value);
+        min4paild.value = getMinValue(getAll4paildValues.value);
+        min4pails.value = getMinValue(getAll4pailsValues.value);
+        min4paila.value = getMinValue(getAll4pailaValues.value);
+
+        // Maximum values
+        maxBr.value = getMaxValue(getAllBrValues.value);
+        maxiHc.value = getMaxValue(getAlliHcValues.value);
+        maxiHk.value = getMaxValue(getAlliHkValues.value);
+        maxBHMax.value = getMaxValue(getAllBHMaxValues.value);
+        maxiHr95.value = getMaxValue(getAlliHr95Values.value);
+        maxiHr98.value = getMaxValue(getAlliHr98Values.value);
+        maxiHciHk.value = getMaxValue(getAlliHciHkValues.value);
+        maxBr4pai.value = getMaxValue(getAllBr4paiValues.value);
+        maxbHc.value = getMaxValue(getAllbHcValues.value);
+        maxSquareness.value = getMaxValue(getAllSquarenessValues.value);
+        max4paild.value = getMaxValue(getAll4paildValues.value);
+        max4pails.value = getMaxValue(getAll4pailsValues.value);
+        max4paila.value = getMaxValue(getAll4pailaValues.value);
+
+        //NG count values
+        ngBr.value = calculateSum(getAllBrRemarks.value);
+        ngiHc.value = calculateSum(getAlliHcRemarks.value);
+        ngiHk.value = calculateSum(getAlliHkRemarks.value);
+        ngBHMax.value = calculateSum(getAllBHMaxRemarks.value);
+        ngiHr95.value = calculateSum(getAlliHr95Remarks.value);
+        ngiHr98.value = calculateSum(getAlliHr98Remarks.value);
+        ngiHciHk.value = calculateSum(getAlliHciHkRemarks.value);
+        ngBr4pai.value = calculateSum(getAllBr4paiRemarks.value);
+        ngbHc.value = calculateSum(getAllbHcRemarks.value);
+        ngSquareness.value = calculateSum(getAllSquarenessRemarks.value);
+        ng4paild.value = calculateSum(getAll4paildRemarks.value);
+        ng4pails.value = calculateSum(getAll4pailsRemarks.value);
+        ng4paila.value = calculateSum(getAll4pailaRemarks.value);
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return;
     }
 };
 
@@ -2707,7 +3829,7 @@ const showReportData = async () => {
 
         const noteRejectReasons = JSON.parse(filterBySerial[0].note_reason_reject);
         //console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
-
+        propD_rejectReasons.value = noteRejectReasons;
         if (noteRejectReasons && Array.isArray(noteRejectReasons)) {
             noteReasonForReject.value = []; // Clear existing values
             noteRejectReasons.forEach(reason => {
