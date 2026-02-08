@@ -1204,6 +1204,37 @@
         }
     };
 
+    const fetchMiasFactor_category = async () => {
+        try {
+            const responseTPM = await axios.get(`/api/tpmdata?serial=${serialNo.value}`);
+
+            const tpmCat = responseTPM.data?.data?.[0]?.category;
+
+            if (
+                !tpmCat ||
+                tpmCat.factor_emp == null ||
+                tpmCat.mias_emp == null
+                ) {
+                await fetchMiasFactor();
+                return;
+            }
+
+            propData_factorEmp.value = tpmCat.factor_emp;
+            propData_miasEmp.value = tpmCat.mias_emp;
+
+        } catch (error) {
+            await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchMiasFactor_category",
+            "Failed to get Mias & Factor Employee"
+            );
+        }
+    };
 
     const fetchMiasFactor = async () => {
         try{
@@ -1309,7 +1340,7 @@
                 }
             });
 
-            //console.log('Result: ', response.data);
+            console.log('Result: ', response.data, additionalLot.value);
 
             // Update reactive state
             isAdditionalExisting.value = response.data.exists;
@@ -1554,7 +1585,8 @@
             // 👇 Run them all at once
             const patchResults = await Promise.all(patchPromises);
             //console.log('All patch results:', patchResults);
-
+            await updateMassProductionTable();
+            await saveToTpmCategory();
         } catch (error) {
             //console.error("Something went wrong in mergeTempToTPM:", error);
             await userErrorLogging(
@@ -2285,13 +2317,15 @@
             const responsePatchCategory = await axios.patch(`/api/updatecategory/${serialNo.value}`,{
                     actual_model: jhCurveActualModel.value,
                     jhcurve_lotno: jhCurveLotNo.value,
+                    mias_emp: propData_miasEmp.value,
+                    factor_emp: propData_factorEmp.value,
                     massprod_name: selectedMassProd.value,
                 });
-                //console.log("API PATCHED category: ",responsePatchCategory);
+                console.log("API PATCHED category: ",responsePatchCategory);
 
 
         }catch(error){
-            //console.error("Error fetching API Response saveToNsaCategory:", error);
+            console.error("Error fetching API Response saveToTpmCategory:", error);
             await userErrorLogging(
                 {
                     message: error.message,
@@ -2300,7 +2334,7 @@
                     payload: error.response?.data ?? null,
                 },
                 "saveToTpmCategory",
-                "Error fetching API Response saveToNsaCategory"
+                "Error fetching API Response saveToTpmCategory"
             );
         }
     }
@@ -2674,8 +2708,6 @@
             showProceed3.value = false;
             toggleManageForm.value = false;
             //await autoRenameFurnace();
-            await updateMassProductionTable();
-            await saveToTpmCategory();
             await fetchRejectFromReportData();
             if (!fromAnotherPage) {
                 await userManageLogging(
@@ -2982,7 +3014,7 @@ const renderChart = () => {
             showGraphAndTables.value = true;
             showUploadData.value = false;
             //console.log("Showdiv graphs ",showGraphAndTables.value);
-            await fetchMiasFactor();
+            await fetchMiasFactor_category();
             await fetchLayerModelAndLotno();
             await showAllData();
             //console.log('serialParam is provided, skipping fetchSerial.');

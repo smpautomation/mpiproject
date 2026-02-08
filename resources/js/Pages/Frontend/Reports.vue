@@ -1244,9 +1244,9 @@
                     <button v-if="(!approvedByPerson_firstName && state.user ) && (state.user.access_type === 'Preparation Approver' || state.user.access_type === 'Checking Approver' || state.user.access_type === 'Hybrid Approver' || state.user.access_type === 'Bypass Approver' || state.user.access_type === 'Proxy Approver' || state.user.access_type === 'Automation')" @click="saveReport" class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95">
                         {{ reportExistingSMPJudgement !== null ? 'OVERWRITE' : 'SAVE' }}
                     </button>
-                    <button @click="viewPropertyData(currentSerialSelected, selectedMassProd, selectedLayer, currentFurnaceName)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
+                    <!--button @click="viewPropertyData(currentSerialSelected, selectedMassProd, selectedLayer, currentFurnaceName)" class="px-6 py-4 mt-4 ml-5 font-extrabold text-blue-700 transition duration-300 ease-in-out transform border border-blue-700 shadow-xl hover:text-white rounded-xl hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 active:scale-95">
                         View Property Data
-                    </button>
+                    </!--button-->
                     <!-- Apply Data 1x1x1 Button (New Styled Button) -->
                     <button
                         @click="sec_additional_redirect(currentSerialSelected, selectedMassProd, selectedLayer, selectedFurnace)"
@@ -1302,7 +1302,7 @@
                 <div class="flex flex-col mt-10">
                     <div class="flex flex-row justify-center mt-5 space-x-4">
                         <div
-                            class="w-[600px] h-[460px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                            class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
                         >
                             <img
                                 v-if="currentSerialSelected"
@@ -1313,7 +1313,7 @@
                             />
                         </div>
                         <!-- Side Content -->
-                        <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                        <div class="w-[350px] h-[420px] bg-gray-50 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
                             <div class="flex flex-col items-start space-y-2">
                                 <p>
                                     SMP Lot (
@@ -1556,15 +1556,12 @@
                                             {{ rejectLotRemarksList }}
                                         </span>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- <div v-if="isSecAdditional"> -->
-                    <div>
-                        TEST
+                    <div v-if="isSecAdditional">
                         <div class="flex flex-row justify-center mt-5 space-x-4">
                             <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
                                 <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
@@ -3337,6 +3334,7 @@ const fetchAllData = async () => {
         }
 
         await getSecHighestSetValue();
+        await fetchMiasFactor_category();
 
         // Build the patch data object
         const repData = {
@@ -3391,6 +3389,60 @@ const fetchAllData = async () => {
     }
 };
 
+const fetchMiasFactor_category = async () => {
+    try {
+        const responseTPM = await axios.get(`/api/tpmdata?serial=${currentSerialSelected.value}`);
+
+        const tpmCat = responseTPM.data?.data?.[0]?.category;
+
+        if (
+            !tpmCat ||
+            tpmCat.factor_emp == null ||
+            tpmCat.mias_emp == null
+            ) {
+            await fetchMiasFactor();
+            return;
+        }
+
+        propD_factorEmp.value = tpmCat.factor_emp;
+        propD_miasEmp.value = tpmCat.mias_emp;
+
+    } catch (error) {
+        await userErrorLogging(
+        {
+            message: error.message,
+            code: error.code ?? null,
+            response: error.response?.data ?? null,
+            payload: error.response?.data ?? null,
+        },
+        "fetchMiasFactor_category",
+        "Failed to get Mias & Factor Employee"
+        );
+    }
+};
+
+const fetchMiasFactor = async () => {
+    try{
+        const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`);
+        const massProd = response.data;
+        propD_factorEmp.value = massProd.factor_emp;
+        propD_miasEmp.value = massProd.mias_emp;
+    }catch(error){
+        //console.log('Failed to get Mias & Factor Employee');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "fetchMiasFactor",
+            "Failed to get Mias & Factor Employee"
+        );
+    }
+}
+
+
 const getSecHighestSetValue = async() => {
     try{
         const responseCheckNsa = await axios.get("/api/nsadata");
@@ -3403,7 +3455,11 @@ const getSecHighestSetValue = async() => {
         if(nsafilteredData.length > 0) {
             const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
             highest_setNo.value = maxSetNo;
+            //isSecAdditional.value = true;
+            //toast.info('SEC additional data is detected in this report');
         } else {
+            isSecAdditional.value = false;
+            //toast.warning('No SEC additional data detected in this report');
             console.warn('No matching NSA data for this serial number.');
         }
 
@@ -4233,13 +4289,13 @@ if(ipAddress.value === '127.0.0.1'){
 //console.log('Serial Param in Reports.vue:', props.serialParam); // You can use this for debugging
 
 const viewPropertyData = (serial, massprod, layer, furnace) => {
-  //console.log('Navigating to manage with serial:', serial);
-  Inertia.visit('/manage', {
-    method: 'get',
-    data: { manageSerialParam: serial, manageMassProd: massprod, manageLayer: layer, manageFurnace: furnace },   // Passing the serialParam here
-    preserveState: true,
-    preserveScroll: true,
-  });
+    //console.log('Navigating to manage with serial:', serial);
+    Inertia.visit('/manage', {
+        method: 'get',
+        data: { manageSerialParam: serial, manageMassProd: massprod, manageLayer: layer, manageFurnace: furnace },   // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 const preparedByStamp = async () => {
