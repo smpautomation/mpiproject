@@ -3455,11 +3455,11 @@ const getSecHighestSetValue = async() => {
         if(nsafilteredData.length > 0) {
             const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
             highest_setNo.value = maxSetNo;
-            //isSecAdditional.value = true;
-            //toast.info('SEC additional data is detected in this report');
+            isSecAdditional.value = true;
+            toast.info('SEC additional data is detected in this report');
         } else {
             isSecAdditional.value = false;
-            //toast.warning('No SEC additional data detected in this report');
+            toast.warning('No SEC additional data detected in this report');
             console.warn('No matching NSA data for this serial number.');
         }
 
