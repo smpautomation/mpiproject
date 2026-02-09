@@ -1084,7 +1084,7 @@
                         }">
                         </span>
                     </p>
-                    <div v-if="state.user && (state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation')" class="flex flex-row items-center justify-center mt-2">
+                    <div v-if="state.user && (state.user.access_type == 'Proxy Approver' || state.user.access_type == 'Automation' || state.user.change_judgement_access == 'yes')" class="flex flex-row items-center justify-center mt-2">
                         <label class="mr-2 text-xs">Change Judgement: </label>
                         <select v-model="modifiedSMPJudgement" class="text-blue-700 input text-xs w-[100px] h-[35px]" required>
                             <option disabled value="" selected>Change Judgement</option>

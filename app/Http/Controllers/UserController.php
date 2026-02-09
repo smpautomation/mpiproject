@@ -48,6 +48,7 @@ class UserController extends Controller
             'employee_id' => 'nullable|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'access_type' => 'nullable|string|max:255',
+            'change_judgement_access' => 'nullable|string|max:255'
         ]);
 
         $user = User::create([
@@ -59,6 +60,7 @@ class UserController extends Controller
             'employee_id' => $validated['employee_id'] ?? null,
             'password' => Hash::make($validated['password']),
             'access_type' => $validated['access_type'] ?? null,
+            'change_judgement_access' => $validated['change_judgement_access'] ?? null,
         ]);
 
         return response()->json([
@@ -88,9 +90,10 @@ class UserController extends Controller
             'employee_id' => 'nullable|string|max:255|unique:users,employee_id,' . $user->id,
             'password' => 'sometimes|required|string|min:8|confirmed',
             'access_type' => 'sometimes|required|string|max:255',
+            'change_judgement_access' => 'sometimes|in:yes,no'
         ]);
 
-        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type'] as $field) {
+        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type','change_judgement_access'] as $field) {
             if (isset($validated[$field])) {
                 $user->$field = $validated[$field];
             }

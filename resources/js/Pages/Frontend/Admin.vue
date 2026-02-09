@@ -35,86 +35,114 @@
                         </div>
                     </div>
                     <div class="p-4 space-y-2">
-                    <div class="overflow-auto max-h-64">
-                        <table class="w-full text-sm text-left text-gray-300">
-                        <thead class="text-gray-400 uppercase bg-gray-700">
-                            <tr>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">First&nbsp;Name</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Last&nbsp;Name</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Username</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Employee&nbsp;ID</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Plant</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Access&nbsp;Type</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Actions</th>
-                            </tr>
-                        </thead>
-                            <tbody>
-                            <tr
-                                v-for="user in filteredUsers"
-                                :key="user.employee_id"
-                                class="border-b border-gray-600"
-                            >
-                                <td class="px-4 py-2">{{ user.firstName }}</td> <!-- Correct -->
-                                <td class="px-4 py-2">{{ user.surname }}</td> <!-- Corrected -->
-                                <td class="px-4 py-2">{{ user.username }}</td>
-                                <td class="px-4 py-2">{{ user.employee_id }}</td>
-                                <td class="px-4 py-2">{{ user.plant }}</td>
+                   <div class="overflow-auto border border-gray-700 rounded-lg max-h-64">
+                        <table class="w-full text-sm text-left text-gray-300 border-collapse">
+                            <thead class="sticky top-0 z-10 text-center text-gray-400 uppercase bg-gray-700">
+                                <tr class="text-xs">
+                                    <th class="px-1 py-3 whitespace-nowrap">First&nbsp;Name</th>
+                                    <th class="px-1 py-3 whitespace-nowrap">Last&nbsp;Name</th>
+                                    <th class="px-1 py-3 whitespace-nowrap">Username</th>
+                                    <th class="px-1 py-3 whitespace-nowrap">Employee&nbsp;ID</th>
+                                    <th class="px-1 py-3 whitespace-nowrap">Plant</th>
+                                    <th class="px-1 py-3 whitespace-nowrap">Access&nbsp;Type</th>
+                                    <th class="px-1 py-3 whitespace-nowrap">Role</th>
+                                    <th v-if="state.user.access_type && state.user.access_type === 'Automation'" class="px-1 py-3 text-center whitespace-nowrap">
+                                        Change&nbsp;Judgement
+                                    </th>
+                                </tr>
+                            </thead>
 
-                                <td class="px-4 py-2">
-                                <span v-if="editingUser !== user.employee_id">
-                                    {{ user.access_type }}
-                                </span>
-                                <select
-                                    v-else
-                                    v-model="tempRole"
-                                    class="px-3 py-1 text-sm text-gray-800 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            <tbody class="divide-y divide-gray-700">
+                                <tr
+                                    v-for="user in filteredUsers"
+                                    :key="user.employee_id"
+                                    class="text-xs text-center transition-colors duration-150 hover:bg-gray-700/40"
                                 >
-                                    <option value="Basic User">Basic User</option>
-                                    <option value="Checking Approver">Checking Approver</option>
-                                    <option value="Preparation Approver">Preparation Approver</option>
-                                    <option value="Proxy Approver">Proxy Approver</option>
-                                    <option value="Coating">Coating</option>
-                                    <option value="Heat Treatment">Heat Treatment</option>
-                                    <!-- hidden for now
+                                    <td class="px-1 py-2 whitespace-nowrap">{{ user.firstName }}</td>
+                                    <td class="px-1 py-2 whitespace-nowrap">{{ user.surname }}</td>
+                                    <td class="px-1 py-2 whitespace-nowrap">{{ user.username }}</td>
+                                    <td class="px-1 py-2 whitespace-nowrap">{{ user.employee_id }}</td>
+                                    <td class="px-1 py-2 whitespace-nowrap">{{ user.plant }}</td>
 
-                                    <option value="Hybrid Approver">Hybrid Approver</option>
-                                    <option value="Bypass Approver">Bypass Approver</option>
+                                    <td class="px-1 py-2 whitespace-nowrap">
+                                        <span v-if="editingUser !== user.employee_id">
+                                            {{ user.access_type }}
+                                        </span>
 
-                                    -->
-                                </select>
-                                </td>
+                                        <select
+                                            v-else
+                                            v-model="tempRole"
+                                            class="w-full px-3 py-1 text-sm text-gray-800 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="Basic User">Basic User</option>
+                                            <option value="Checking Approver">Checking Approver</option>
+                                            <option value="Preparation Approver">Preparation Approver</option>
+                                            <option value="Proxy Approver">Proxy Approver</option>
+                                            <option value="Coating">Coating</option>
+                                            <option value="Heat Treatment">Heat Treatment</option>
+                                        </select>
+                                    </td>
 
-                                <td class="px-4 py-2">
-                                <button
-                                    v-if="editingUser !== user.employee_id"
-                                    @click="startEditing(user)"
-                                    :class="[
-                                        'px-3 py-1 text-sm font-medium rounded-lg',
-                                        (user.access_type === 'Automation' || user.access_type === 'Final Approver')
-                                        ? 'bg-yellow-500 text-white cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600',
-                                    ]"
-                                    :disabled="user.access_type === 'Automation' || user.access_type === 'Final Approver'"
-                                >
-                                    {{ (user.access_type === 'Automation' || user.access_type === 'Final Approver') ? 'Restricted' : 'Change Role' }}
-                                </button>
+                                    <td class="px-1 py-2 whitespace-nowrap">
+                                        <button
+                                            v-if="editingUser !== user.employee_id"
+                                            @click="startEditing(user)"
+                                            :class="[
+                                                'px-3 py-1 text-xs font-medium rounded-md transition',
+                                                (user.access_type === 'Automation' || user.access_type === 'Final Approver')
+                                                    ? 'bg-yellow-500 text-white opacity-60 cursor-not-allowed'
+                                                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                                            ]"
+                                            :disabled="user.access_type === 'Automation' || user.access_type === 'Final Approver'"
+                                        >
+                                            {{ (user.access_type === 'Automation' || user.access_type === 'Final Approver')
+                                                ? 'Restricted'
+                                                : 'Change Role'
+                                            }}
+                                        </button>
 
-                                <div v-else class="space-x-2 whitespace-nowrap">
-                                    <button
-                                    @click="saveRole(user)"
-                                    class="px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
-                                    >
-                                    Save
-                                    </button>
-                                    <button
-                                    @click="cancelEditing"
-                                    class="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
-                                    >
-                                    Cancel
-                                    </button>
-                                </div>
-                                </td>
-                            </tr>
+                                        <div v-else class="flex gap-2">
+                                            <button
+                                                @click="saveRole(user)"
+                                                class="px-3 py-1 text-sm font-medium text-white transition bg-green-600 rounded-md hover:bg-green-700"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                @click="cancelEditing"
+                                                class="px-3 py-1 text-sm font-medium text-white transition bg-red-600 rounded-md hover:bg-red-700"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td v-if="state.user && state.user.access_type === 'Automation'" class="flex justify-center gap-1 px-1 py-2 text-center whitespace-nowrap">
+                                        <!-- Allow button -->
+                                        <button
+                                            @click="allowChangeJudgement(user)"
+                                            :class="[
+                                                'px-3 py-1 text-xs font-semibold rounded-md transition focus:outline-none focus:ring-2',
+                                                user.change_judgement_access === 'yes'
+                                                    ? 'bg-gray-500 text-white cursor-not-allowed focus:ring-gray-400'
+                                                    : 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-400'
+                                            ]"
+                                            :disabled="user.change_judgement_access === 'yes'"
+                                        >
+                                            {{ user.change_judgement_access === 'yes' ? 'Access Granted' : 'Allow' }}
+                                        </button>
+
+                                        <!-- Revoke button -->
+                                        <button
+                                            v-if="user.change_judgement_access === 'yes'"
+                                            @click="revokeChangeJudgement(user)"
+                                            class="px-3 py-1 text-xs font-semibold text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                            :disabled="user.change_judgement_access !== 'yes'"
+                                        >
+                                            Revoke
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -375,24 +403,64 @@ const formatDate = (isoString) => {
 
 
 const saveRole = async (user) => {
-  try {
-    const response = await axios.put(`/api/users/${user.id}`, {
-        access_type: tempRole.value
-    });
+    try {
+        const response = await axios.put(`/api/users/${user.id}`, {
+            access_type: tempRole.value
+        });
 
-    //console.log(`Response from server:`, response.data);
+        //console.log(`Response from server:`, response.data);
 
-    // Update the user's role in the local state if the update succeeds
-    user.access_type = tempRole.value;
-    editingUser.value = null;
-    tempRole.value = "";
+        // Update the user's role in the local state if the update succeeds
+        user.access_type = tempRole.value;
+        editingUser.value = null;
+        tempRole.value = "";
 
-    //console.log(`Role for ${user.username} updated to: ${user.access_type}`);
-    await userAdminLogging(`Updated role for ${user.firstName} ${user.surname} to: ${user.access_type}`);
-  } catch (error) {
-    console.error(`Error updating role for ${user.username}:`, error);
-    // Optional: Add error handling logic, e.g., show a toast notification
-  }
+        //console.log(`Role for ${user.username} updated to: ${user.access_type}`);
+        await userAdminLogging(`Updated role for ${user.firstName} ${user.surname} to: ${user.access_type}`);
+    } catch (error) {
+        console.error(`Error updating role for ${user.username}:`, error);
+        // Optional: Add error handling logic, e.g., show a toast notification
+    }
+};
+
+const allowChangeJudgement = async (user) => {
+    try {
+        const response = await axios.put(`/api/users/${user.id}`, {
+            change_judgement_access: 'yes'
+        });
+
+        // Update local state immediately
+        user.change_judgement_access = 'yes';
+
+        await userAdminLogging(
+            `Granted change judgement access to ${user.firstName} ${user.surname}`
+        );
+    } catch (error) {
+        console.error(
+            `Error granting change judgement access for ${user.username}:`,
+            error
+        );
+    }
+};
+
+const revokeChangeJudgement = async (user) => {
+    try {
+        await axios.put(`/api/users/${user.id}`, {
+            change_judgement_access: 'no'
+        });
+
+        // Update local state immediately
+        user.change_judgement_access = 'no';
+
+        await userAdminLogging(
+            `Revoked change judgement access for ${user.firstName} ${user.surname}`
+        );
+    } catch (error) {
+        console.error(
+            `Error revoking change judgement access for ${user.username}:`,
+            error
+        );
+    }
 };
 
 const formatTime = (date) => {
