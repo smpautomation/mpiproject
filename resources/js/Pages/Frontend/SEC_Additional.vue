@@ -1344,6 +1344,7 @@ const checkTPMCategory = async () => {
             jhcurve_lotno: jhCurveLotNo.value,
             massprod_name: currentMassProdSelected.value,
         });
+
         //console.log("API PATCHED category: ",responsePatchCategory);
     }catch(error){
         console.error("Error fetching for checkTPMCategory-data: ",error);
@@ -1379,7 +1380,7 @@ const saveToNsaCategory = async () => {
                 jhcurve_lotno: jhCurveLotNo.value,
                 massprod_name: currentMassProdSelected.value,
             });
-            console.log("API PATCHED category: ",responsePatchCategory);
+        console.log("API PATCHED category: ",responsePatchCategory);
 
         const responsePatchNSAData = await axios.patch(`/api/nsadataupdatemiasfactor/`, {
             serial_no: currentSerialSelected.value,

@@ -1562,12 +1562,19 @@
                         </div>
                     </div>
                     <div v-if="isSecAdditional">
+                        <p class="text-2xl font-bold text-center">SEC ADDITIONAL SECTION</p>
                         <div class="flex flex-row justify-center mt-5 space-x-4">
-                            <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
-                                <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
+                            <div class="w-[600px] h-[480px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
+                                <img
+                                    v-if="currentSerialSelected"
+                                    :src="`/sec_charts/chart_${currentSerialSelected}_set${current_setNo}.png`"
+                                    alt="Chart"
+                                    class="object-contain w-full h-full"
+                                    style="transform: scale(1); transform-origin: top left;"
+                                />
                             </div>
                             <!-- Side Content -->
-                            <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                            <div class="w-[350px] h-[420px] bg-gray-50 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
                                 <div class="flex flex-col items-start space-y-2">
                                     <p>
                                         SMP Lot (
@@ -1584,6 +1591,86 @@
                                     <p>
                                         Lot # {{ secAdd_propD_jhCurveLotNo }}
                                     </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="isSecAdditional" class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="flex flex-row items-start justify-center">
+                                <div class="flex flex-row shadow-2xl">
+                                    <div class="min-w-[700px]">
+                                        <table class="border border-gray-300 table-auto rounded-xl">
+                                            <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                                <tr>
+                                                    <th v-for="tableLayerColumnHeader in nsa_tableLayerColumnHeaders"
+                                                        :key="tableLayerColumnHeader.name"
+                                                        :colspan="tableLayerColumnHeader.colspan"
+                                                        class="px-[4.8px] py-[3px] text-sm font-medium text-center border border-white">
+                                                        {{ tableLayerColumnHeader.name }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white">
+                                            <tr
+                                                v-for="item in nsa_combinedData"
+                                                :key="item.id"
+                                                class="border-b hover:bg-gray-50"
+                                            >
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.date }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.code_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.order_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.type }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.sintering_furnace_no }}</td>
+                                                <td class="whitespace-nowrap px-[0px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.furnace_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.zone }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.pass_no }}</td>
+                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br }}</td>
+                                                <td v-if="item.remark.Br_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHc }}</td>
+                                                <td v-if="item.remark.iHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHc_remarks == 0 ? '' : item.remark.iHc_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHk }}</td>
+                                                <td v-if="item.remark.iHk_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHk_remarks == 0 ? '' : item.remark.iHk_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.BHMax }}</td>
+                                                <td v-if="item.remark.BHMax_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.BHMax_remarks == 0 ? '' : item.remark.BHMax_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr95 }}</td>
+                                                <td v-if="item.remark.iHr95_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr98 }}</td>
+                                                <td v-if="item.remark.iHr98_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr98_remarks == 0 ? '' : item.remark.iHr98_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHkiHc }}</td>
+                                                <td v-if="item.remark.iHkiHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHkiHc_remarks == 0 ? '' : item.remark.iHkiHc_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br4pai }}</td>
+                                                <td v-if="item.remark.Br4pai_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br4pai_remarks == 0 ? '' : item.remark.Br4pai_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.bHc }}</td>
+                                                <td v-if="item.remark.bHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.bHc_remarks == 0 ? '' : item.remark.bHc_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Squareness }}</td>
+                                                <td v-if="item.remark.Squareness_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Squareness_remarks == 0 ? '' : item.remark.Squareness_remarks }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiId'] }}</td>
+                                                <td v-if="item.remark['4paiId_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiId_remarks'] == 0 ? '' : item.remark['4paiId_remarks'] }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIs'] }}</td>
+                                                <td v-if="item.remark['4paiIs_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIs_remarks'] == 0 ? '' : item.remark['4paiIs_remarks'] }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIa'] }}</td>
+                                                <td v-if="item.remark['4paiIa_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
+                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIa_remarks'] == 0 ? '' : item.remark['4paiIa_remarks'] }}</td>
+                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Tracer }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2145,7 +2232,7 @@ const secAdd_propD_jhCurveFurnaceName = ref();
 const secAdd_propD_jhCurveModel = ref();
 const secAdd_propD_jhCurveLotNo = ref();
 
-const highest_setNo = ref(1);
+const current_setNo = ref(1);
 
 const ok = "Status OK";
 const reject = "REJECT, N.G";
@@ -2367,7 +2454,33 @@ const secondTableLayerColumnHeaders = ref([
     {name: '4paila', colspan: 1},
 ]);
 
- //Variables for ave max min ng counter
+const nsa_tableLayerColumnHeaders = ref([
+    {name: 'Date', colspan: 1},
+    {name: 'Code\u00A0No', colspan: 1},
+    {name: 'Order\u00A0No', colspan: 1},
+    {name: 'Type', colspan: 1},
+    {name: 'Lot\u00A0No', colspan: 1},
+    {name: 'Furnace\u00A0No', colspan: 1},
+    {name: 'Coating\u00A0No', colspan: 1},
+    {name: 'Zone', colspan: 1},
+    {name: 'Pass\u00A0No', colspan: 1},
+    {name: 'Br', colspan: 2},
+    {name: 'iHc', colspan: 2},
+    {name: 'iHk', colspan: 2},
+    {name: 'BHMax', colspan: 2},
+    {name: 'Hr95', colspan: 2},
+    {name: 'Hr98', colspan: 2},
+    {name: 'iHciHk', colspan: 2},
+    {name: 'Br4pai', colspan: 2},
+    {name: 'bHc', colspan: 2},
+    {name: 'Squareness', colspan: 2},
+    {name: '4paild', colspan: 2},
+    {name: '4pails', colspan: 2},
+    {name: '4paila', colspan: 2},
+    {name: 'Tracer', colspan: 1},
+]);
+
+//Variables for ave max min ng counter
 
 const secAdd_aveBr = ref(null);
 const secAdd_aveiHc = ref(null);
@@ -3454,16 +3567,16 @@ const getSecHighestSetValue = async() => {
 
         if(nsafilteredData.length > 0) {
             const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
-            highest_setNo.value = maxSetNo;
+            current_setNo.value = maxSetNo;
             //isSecAdditional.value = true;
-            //toast.info('SEC additional data is detected in this report');
+            toast.info('SEC additional data is detected in this report');
         } else {
             isSecAdditional.value = false;
-            //toast.warning('No SEC additional data detected in this report');
+            toast.warning('No SEC additional data detected in this report');
             console.warn('No matching NSA data for this serial number.');
         }
 
-        console.log('Highest set value: ', highest_setNo.value);
+        console.log('Highest set value: ', current_setNo.value);
         await nsa_showData();
 
     }catch(error){
@@ -3477,7 +3590,7 @@ const nsa_combinedData = ref([]);
 const nsa_showData = async() => {
 
     try {
-        const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + highest_setNo.value); // Adjust this URL to your API endpoint
+        const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + current_setNo.value); // Adjust this URL to your API endpoint
         console.log('responseNSARemarks - API Response showallData:', responseNSARemarks.data);
         //gg
         console.log('Serial No value = ', currentSerialSelected.value);
@@ -3489,7 +3602,7 @@ const nsa_showData = async() => {
         //console.log("Data for getting aggregate ID: ",getAggregateID);
         const filteredAggregateID_first = getAggregateID.filter(item => item.nsa_serial == currentSerialSelected.value);
         //console.log("Filtered aggregate with serial_no:", filteredAggregateID.value);
-        filteredAggregateID.value = filteredAggregateID_first.filter(item => item.nsa_set == highest_setNo.value);
+        filteredAggregateID.value = filteredAggregateID_first.filter(item => item.nsa_set == current_setNo.value);
         //console.log("Filtered aggregate with set_no:", filteredAggregateID.value);
         nsaData_aggID.value = filteredAggregateID.value[0].id;
         //console.log("aggregate ID to be patched: ",nsaData_aggID.value);
