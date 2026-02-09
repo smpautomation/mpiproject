@@ -391,7 +391,7 @@ class BackEndPdfController extends Controller
             ])->first();
         }
 
-        $coatingDataJson = $coatingData->coating_data ?? null;
+        $coatingDataJson = $coatingData?->coating_data ?? null;
         $coatingDataValues = json_decode($coatingDataJson, true);
 
         //Coating data --------------- Coating data --------------- Coating data --------------- Coating data End
@@ -414,8 +414,8 @@ class BackEndPdfController extends Controller
             ])->first();
         }
 
-        $filmPastingHLineValues = $filmPastingData->h_line_parameters ?? null;
-        $filmPastingTLineValues = $filmPastingData->t_line_parameters ?? null;
+        $filmPastingHLineValues = $filmPastingData?->h_line_parameters ?? null;
+        $filmPastingTLineValues = $filmPastingData?->t_line_parameters ?? null;
 
         //Film Pasting --------------- Film Pasting --------------- Film Pasting --------------- Film Pasting End
 
