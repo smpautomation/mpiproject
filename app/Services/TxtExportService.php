@@ -182,6 +182,10 @@ class TxtExportService
 
         $value = strtoupper(trim($value));
 
+        if (str_starts_with($value, 'FP')) {
+            $value = 'F' . substr($value, 2);
+        }
+
         // Match: letters + optional dash + numbers
         if (preg_match('/^([A-Z]+)-?(\d+)$/', $value, $m)) {
             $prefix = $m[1];
@@ -517,8 +521,11 @@ class TxtExportService
                     $totalQty,
                     $coating?->date ?? '',
                     $coating?->machine_no
-                        ? str_replace('-', '0', $coating->machine_no)
-                        : '',
+                        ? str_replace(
+                            '-',
+                            '0',
+                            preg_replace('/^FP/i', 'F', $coating->machine_no)
+                        ) : '',
                     $coating?->min_tb_content ?? 0,
                     $coating?->total_magnet_weight ?? 0,
                     $coating?->maximum ?? 0,
@@ -766,9 +773,13 @@ class TxtExportService
                     . substr(explode('-', $item->sintering_furnace_no)[0], 1)
                     : '0',
             'CYCLE_NO' => fn($item) => ltrim(explode('-', $cycleNo)[1] ?? '0', '0'),
-            'COATING_MC_NO' => fn($item) =>
+            'COATING_MC_NO' => fn ($item) =>
                 $item->furnace_no
-                    ? str_replace('-', '0', $item->furnace_no)
+                    ? str_replace(
+                        '-',
+                        '0',
+                        preg_replace('/^FP/i', 'F', $item->furnace_no)
+                    )
                     : '0',
             'ZONE' => fn($item) => $item->zone ?? '0',
             'PASS_NO' => fn($item) => $item->pass_no ?? '0',
@@ -874,7 +885,7 @@ class TxtExportService
             }
         }
 
-        //dd($lines);
+        dd($lines);
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
