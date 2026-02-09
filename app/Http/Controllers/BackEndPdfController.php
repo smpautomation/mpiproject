@@ -713,10 +713,20 @@ class BackEndPdfController extends Controller
 
         // Conditionally add secondary landscape page if NSA data exists
         if ($nsaData) {
-            $secLandscape = Pdf::loadView('pdf.report_page2_sec_additional_landscape', $data)
-                ->setPaper('a4', 'landscape')
-                ->output();
-            $merger->addRaw($secLandscape);
+            foreach ($nsaGroups->chunk(2) as $chunkSets) { // chunk size = 3 sets at a time
+                $chunkData = $data;
+                $chunkData['nsaGroups'] = $chunkSets;
+
+                $secLandscapeChunk = Pdf::loadView('pdf.report_page2_sec_additional_landscape', $chunkData)
+                    ->setPaper('a4', 'landscape')
+                    ->output();
+
+                $merger->addRaw($secLandscapeChunk);
+
+                // Free memory immediately
+                unset($secLandscapeChunk, $chunkData);
+                gc_collect_cycles();
+            }
         }
 
 
