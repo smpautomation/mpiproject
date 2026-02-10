@@ -1607,6 +1607,7 @@
                                     <p>Furnace Cycle No.: {{ secAdd_propD_jhCurveFurnaceName }}</p>
                                     <p><span>{{ jhCurveActualModel }}</span> ({{ secAdd_propD_jhCurveCodeNo }})</p>
                                     <p>Lot #: {{ jhCurveLotNo }}</p>
+                                    <p class="font-bold text-blue-600">{{ secAdd_propD_jhCurveRemarks }}</p>
                                 </div>
                             </div>
                         </div>
@@ -2229,8 +2230,7 @@ const filteredAggregateID = ref();
 const nsaData_aggID = ref();
 const secAdd_propD_jhCurveFurnaceName = ref();
 const secAdd_propD_jhCurveCodeNo = ref();
-const secAdd_propD_jhCurveActualModel = ref();
-const secAdd_propD_jhCurveLotNo = ref();
+const secAdd_propD_jhCurveRemarks = ref();
 
 const current_setNo = ref(1);
 
@@ -3667,8 +3667,9 @@ const nsa_showData = async (setNo = current_setNo.value) => {
         nsaData_aggID.value = filteredAggregateID.value[0]?.id || null;
 
         // Fill the prop values for display
-        secAdd_propD_jhCurveFurnaceName.value = setData[0]?.sintering_furnace_no || "No data found";
-        secAdd_propD_jhCurveCodeNo.value = setData[0]?.code_no || "No data found";
+        secAdd_propD_jhCurveFurnaceName.value = setData[0]?.sintering_furnace_no ?? "No data found";
+        secAdd_propD_jhCurveCodeNo.value = setData[0]?.code_no ?? "No data found";
+        secAdd_propD_jhCurveRemarks.value = setData[0]?.set_name ?? "";
 
         // Map all the individual arrays for averages, max, min, etc.
         getAllIDValues.value = setData.map(item => item.id);
