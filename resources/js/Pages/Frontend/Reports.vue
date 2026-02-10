@@ -1575,7 +1575,7 @@
                                 id="setSelect"
                                 v-model.number="current_setNo"
                                 @change="nsa_showData(current_setNo)"
-                                class="px-2 py-1 border border-gray-400 rounded"
+                                class="px-2 w-[6rem] py-1 border border-gray-400 rounded"
                             >
                                 <option
                                     v-for="setNo in availableSetNumbers"
@@ -1605,8 +1605,8 @@
                                 <div class="flex flex-col space-y-2">
                                     <p>SMP Lot (<span>{{ selectedMassProd }}</span>) Mass Production</p>
                                     <p>Furnace Cycle No.: {{ secAdd_propD_jhCurveFurnaceName }}</p>
-                                    <p><span>{{ secAdd_propD_jhCurveModel }}</span> ({{ secAdd_propD_codeNo }})</p>
-                                    <p>Lot #: {{ secAdd_propD_jhCurveLotNo }}</p>
+                                    <p><span>{{ jhCurveActualModel }}</span> ({{ secAdd_propD_jhCurveCodeNo }})</p>
+                                    <p>Lot #: {{ jhCurveLotNo }}</p>
                                 </div>
                             </div>
                         </div>
@@ -2228,7 +2228,8 @@ const secAdd_propD_factorEmp = ref();
 const filteredAggregateID = ref();
 const nsaData_aggID = ref();
 const secAdd_propD_jhCurveFurnaceName = ref();
-const secAdd_propD_jhCurveModel = ref();
+const secAdd_propD_jhCurveCodeNo = ref();
+const secAdd_propD_jhCurveActualModel = ref();
 const secAdd_propD_jhCurveLotNo = ref();
 
 const current_setNo = ref(1);
@@ -2807,25 +2808,25 @@ watch(
 watch(
     [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement, showGX, reportGX_iHcAverage, reportGX_iHcMaximum],
     () => {
-        console.log('Watch triggered for GX iHc evaluation');
-        console.log('showGX:', showGX.value);
-        console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
-        console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
+        //console.log('Watch triggered for GX iHc evaluation');
+        ///console.log('showGX:', showGX.value);
+        //console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
+        //console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
 
         if ((noteReasonForReject.value.includes('- N.G iHc') || specialModelsForGxFormat.value.includes(jhCurveActualModel.value)) && showGX.value === true &&
             reportGX_iHcMinimum.value !== null && reportGX_iHcStandard.value !== null) {
             if (reportGX_iHcMinimum.value < reportGX_iHcStandard.value) {
-                    console.log('GX iHc minimum is below standard — setting NG/REJECT');
+                    //console.log('GX iHc minimum is below standard — setting NG/REJECT');
                     reportSMPJudgement.value = 'REJECT';
             }else if(specialModelsForGxFormat.value.includes(jhCurveActualModel.value)){
-                    console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+                    //console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
                     reportSMPJudgement.value = 'PASSED';
             } else {
-                    console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+                    //console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
                     reportSMPJudgement.value = 'HOLD';
             }
         } else {
-            console.log('GX display not active — skipping GX iHc check');
+            //console.log('GX display not active — skipping GX iHc check');
         }
     },
     { immediate: true }
@@ -3592,17 +3593,11 @@ const availableSetNumbers = ref([]); // To know which sets exist for the serial
 
 const getSecAllSetsData = async () => {
     try {
-        const response = await axios.get("/api/nsadata");
+        // Fetch all sets available for the current serial
+        const response = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value);
         const allNsaData = response.data.data["NSAData"] || [];
-        console.log("Raw NSAData:", allNsaData);
-        // Filter by current serial
-        const filteredBySerial = allNsaData.filter(
-            item => item.serial_no == currentSerialSelected.value
-        );
 
-        console.log("Filtered by serial_no:", filteredBySerial);
-
-        if (filteredBySerial.length === 0) {
+        if (!allNsaData.length) {
             isSecAdditional.value = false;
             toast.warning("No SEC additional data detected for this serial number");
             secDataBySet.value = {};
@@ -3610,11 +3605,11 @@ const getSecAllSetsData = async () => {
             return;
         }
 
-        //isSecAdditional.value = true;
+        isSecAdditional.value = true;
         toast.info("SEC additional data is detected in this report");
 
-        // Group by set_no
-        const grouped = filteredBySerial.reduce((acc, item) => {
+        // Group by set_no to build available set selector
+        const grouped = allNsaData.reduce((acc, item) => {
             if (!acc[item.set_no]) acc[item.set_no] = [];
             acc[item.set_no].push(item);
             return acc;
@@ -3623,28 +3618,33 @@ const getSecAllSetsData = async () => {
         secDataBySet.value = grouped;
         availableSetNumbers.value = Object.keys(grouped)
             .map(Number)
-            .sort((a, b) => a - b); // sorted ascending
+            .sort((a, b) => a - b);
 
-        // Set current_setNo to the highest set by default (preserve previous behavior)
+        // Default to highest set
         current_setNo.value = Math.max(...availableSetNumbers.value);
 
-        // Call existing function to load the data for that set
-        await nsa_showData();
+        // Load data for that set via API
+        await nsa_showData(current_setNo.value);
 
     } catch (error) {
         console.warn("Error fetching SEC data ->", error);
         secDataBySet.value = {};
         availableSetNumbers.value = [];
+        isSecAdditional.value = false;
     }
 };
+
 
 const nsaData = ref([]);
 const nsa_combinedData = ref([]);
 
 const nsa_showData = async (setNo = current_setNo.value) => {
     try {
-        // Pull the data from the grouped object
-        const setData = secDataBySet.value[setNo] || [];
+        // Fetch only the data for current serial and set
+        const response = await axios.get(
+            `/api/nsadata?serial=${currentSerialSelected.value}&set=${setNo}`
+        );
+        const setData = response.data.data["NSAData"] || [];
 
         if (!setData.length) {
             console.warn(`No data found for serial ${currentSerialSelected.value} and set ${setNo}`);
@@ -3656,7 +3656,9 @@ const nsa_showData = async (setNo = current_setNo.value) => {
         nsaData.value = setData;
         nsa_combinedData.value = setData;
 
-        console.log('DEGUG setData: ', setData);
+        const nsaCat = setData[0].category;
+
+        console.log('DEGUG setData: ', nsaCat);
 
         // Extract aggregate ID as before
         filteredAggregateID.value = setData.filter(
@@ -3666,7 +3668,7 @@ const nsa_showData = async (setNo = current_setNo.value) => {
 
         // Fill the prop values for display
         secAdd_propD_jhCurveFurnaceName.value = setData[0]?.sintering_furnace_no || "No data found";
-        secAdd_propD_jhCurveModel.value = setData[0]?.code_no || "No data found";
+        secAdd_propD_jhCurveCodeNo.value = setData[0]?.code_no || "No data found";
 
         // Map all the individual arrays for averages, max, min, etc.
         getAllIDValues.value = setData.map(item => item.id);
