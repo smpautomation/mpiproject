@@ -2408,6 +2408,37 @@ const getAll4pailsRemarks = ref([]);
 const getAll4pailaValues = ref([]);
 const getAll4pailaRemarks = ref([]);
 
+const nsa_getAllIDValues = ref([]);
+
+// Variables for aggregate
+
+const nsa_getAllBrValues = ref([]);
+const nsa_getAllBrRemarks = ref([]);
+const nsa_getAlliHcValues = ref([]);
+const nsa_getAlliHcRemarks = ref([]);
+const nsa_getAlliHkValues = ref([]);
+const nsa_getAlliHkRemarks = ref([]);
+const nsa_getAllBHMaxValues = ref([]);
+const nsa_getAllBHMaxRemarks = ref([]);
+const nsa_getAlliHr95Values = ref([]);
+const nsa_getAlliHr95Remarks = ref([]);
+const nsa_getAlliHr98Values = ref([]);
+const nsa_getAlliHr98Remarks = ref([]);
+const nsa_getAlliHciHkValues = ref([]);
+const nsa_getAlliHciHkRemarks = ref([]);
+const nsa_getAllBr4paiValues = ref([]);
+const nsa_getAllBr4paiRemarks = ref([]);
+const nsa_getAllbHcValues = ref([]);
+const nsa_getAllbHcRemarks = ref([]);
+const nsa_getAllSquarenessValues = ref([]);
+const nsa_getAllSquarenessRemarks = ref([]);
+const nsa_getAll4paildValues = ref([]);
+const nsa_getAll4paildRemarks = ref([]);
+const nsa_getAll4pailsValues = ref([]);
+const nsa_getAll4pailsRemarks = ref([]);
+const nsa_getAll4pailaValues = ref([]);
+const nsa_getAll4pailaRemarks = ref([]);
+
 const tableLayerColumnHeaders = ref([
     {name: 'Date', colspan: 1},
     {name: 'Code\u00A0No', colspan: 1},
@@ -3605,7 +3636,7 @@ const getSecAllSetsData = async () => {
             return;
         }
 
-        //isSecAdditional.value = true;
+        isSecAdditional.value = true;
         toast.info("SEC additional data is detected in this report");
 
         // Group by set_no to build available set selector
@@ -3672,33 +3703,33 @@ const nsa_showData = async (setNo = current_setNo.value) => {
         secAdd_propD_jhCurveRemarks.value = setData[0]?.set_name ?? "";
 
         // Map all the individual arrays for averages, max, min, etc.
-        getAllIDValues.value = setData.map(item => item.id);
-        getAllBrValues.value = setData.map(item => item.Br || null);
-        getAllBrRemarks.value = setData.map(item => item.remark?.Br_remarks ?? null);
-        getAlliHcValues.value = setData.map(item => item.iHc || null);
-        getAlliHcRemarks.value = setData.map(item => item.remark?.iHc_remarks ?? null);
-        getAlliHkValues.value = setData.map(item => item.iHk || null);
-        getAlliHkRemarks.value = setData.map(item => item.remark?.iHk_remarks ?? null);
-        getAllBHMaxValues.value = setData.map(item => item.BHMax || null);
-        getAllBHMaxRemarks.value = setData.map(item => item.remark?.BHMax_remarks ?? null);
-        getAlliHr95Values.value = setData.map(item => item.iHr95 || null);
-        getAlliHr95Remarks.value = setData.map(item => item.remark?.iHr95_remarks ?? null);
-        getAlliHr98Values.value = setData.map(item => item.iHr98 || null);
-        getAlliHr98Remarks.value = setData.map(item => item.remark?.iHr98_remarks ?? null);
-        getAlliHciHkValues.value = setData.map(item => item.iHkiHc || null);
-        getAlliHciHkRemarks.value = setData.map(item => item.remark?.iHkiHc_remarks ?? null);
-        getAllBr4paiValues.value = setData.map(item => item.Br4pai || null);
-        getAllBr4paiRemarks.value = setData.map(item => item.remark?.Br4pai_remarks ?? null);
-        getAllbHcValues.value = setData.map(item => item.bHc || null);
-        getAllbHcRemarks.value = setData.map(item => item.remark?.bHc_remarks ?? null);
-        getAllSquarenessValues.value = setData.map(item => item.Squareness ?? null);
-        getAllSquarenessRemarks.value = setData.map(item => item.remark?.Squareness_remarks ?? null);
-        getAll4paildValues.value = setData.map(item => item["4paiId"] || null);
-        getAll4paildRemarks.value = setData.map(item => item.remark?.["4paiId_remarks"] ?? null);
-        getAll4pailsValues.value = setData.map(item => item["4paiIs"] || null);
-        getAll4pailsRemarks.value = setData.map(item => item.remark?.["4paiIs_remarks"] ?? null);
-        getAll4pailaValues.value = setData.map(item => item["4paiIa"] || null);
-        getAll4pailaRemarks.value = setData.map(item => item.remark?.["4paiIa_remarks"] ?? null);
+        nsa_getAllIDValues.value = setData.map(item => item.id);
+        nsa_getAllBrValues.value = setData.map(item => item.Br || null);
+        nsa_getAllBrRemarks.value = setData.map(item => item.remark?.Br_remarks ?? null);
+        nsa_getAlliHcValues.value = setData.map(item => item.iHc || null);
+        nsa_getAlliHcRemarks.value = setData.map(item => item.remark?.iHc_remarks ?? null);
+        nsa_getAlliHkValues.value = setData.map(item => item.iHk || null);
+        nsa_getAlliHkRemarks.value = setData.map(item => item.remark?.iHk_remarks ?? null);
+        nsa_getAllBHMaxValues.value = setData.map(item => item.BHMax || null);
+        nsa_getAllBHMaxRemarks.value = setData.map(item => item.remark?.BHMax_remarks ?? null);
+        nsa_getAlliHr95Values.value = setData.map(item => item.iHr95 || null);
+        nsa_getAlliHr95Remarks.value = setData.map(item => item.remark?.iHr95_remarks ?? null);
+        nsa_getAlliHr98Values.value = setData.map(item => item.iHr98 || null);
+        nsa_getAlliHr98Remarks.value = setData.map(item => item.remark?.iHr98_remarks ?? null);
+        nsa_getAlliHciHkValues.value = setData.map(item => item.iHkiHc || null);
+        nsa_getAlliHciHkRemarks.value = setData.map(item => item.remark?.iHkiHc_remarks ?? null);
+        nsa_getAllBr4paiValues.value = setData.map(item => item.Br4pai || null);
+        nsa_getAllBr4paiRemarks.value = setData.map(item => item.remark?.Br4pai_remarks ?? null);
+        nsa_getAllbHcValues.value = setData.map(item => item.bHc || null);
+        nsa_getAllbHcRemarks.value = setData.map(item => item.remark?.bHc_remarks ?? null);
+        nsa_getAllSquarenessValues.value = setData.map(item => item.Squareness ?? null);
+        nsa_getAllSquarenessRemarks.value = setData.map(item => item.remark?.Squareness_remarks ?? null);
+        nsa_getAll4paildValues.value = setData.map(item => item["4paiId"] || null);
+        nsa_getAll4paildRemarks.value = setData.map(item => item.remark?.["4paiId_remarks"] ?? null);
+        nsa_getAll4pailsValues.value = setData.map(item => item["4paiIs"] || null);
+        nsa_getAll4pailsRemarks.value = setData.map(item => item.remark?.["4paiIs_remarks"] ?? null);
+        nsa_getAll4pailaValues.value = setData.map(item => item["4paiIa"] || null);
+        nsa_getAll4pailaRemarks.value = setData.map(item => item.remark?.["4paiIa_remarks"] ?? null);
 
         //get average function
         const calculateAverage = (array) => {
