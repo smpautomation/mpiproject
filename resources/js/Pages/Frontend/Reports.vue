@@ -1561,10 +1561,36 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="isSecAdditional">
+
+
+
+                    <div v-if="isSecAdditional" class="space-y-4">
+                        <!-- Section Header -->
                         <p class="text-2xl font-bold text-center">SEC ADDITIONAL SECTION</p>
-                        <div class="flex flex-row justify-center mt-5 space-x-4">
-                            <div class="w-[600px] h-[480px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
+
+                        <!-- Set Selector -->
+                        <div class="flex items-center justify-center space-x-2">
+                            <label for="setSelect" class="font-medium">Select Set:</label>
+                            <select
+                                id="setSelect"
+                                v-model.number="current_setNo"
+                                @change="nsa_showData(current_setNo)"
+                                class="px-2 py-1 border border-gray-400 rounded"
+                            >
+                                <option
+                                    v-for="setNo in availableSetNumbers"
+                                    :key="setNo"
+                                    :value="setNo"
+                                >
+                                    Set {{ setNo }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Chart and Side Info -->
+                        <div class="flex justify-center mt-5 space-x-4">
+                            <!-- Chart -->
+                            <div class="w-[600px] h-[480px] bg-gray-50 rounded-xl flex items-center justify-center pr-5 border-2 border-blue-900">
                                 <img
                                     v-if="currentSerialSelected"
                                     :src="`/sec_charts/chart_${currentSerialSelected}_set${current_setNo}.png`"
@@ -1573,108 +1599,87 @@
                                     style="transform: scale(1); transform-origin: top left;"
                                 />
                             </div>
+
                             <!-- Side Content -->
-                            <div class="w-[350px] h-[420px] bg-gray-50 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
-                                <div class="flex flex-col items-start space-y-2">
-                                    <p>
-                                        SMP Lot (
-                                        <span>{{ selectedMassProd }}</span>
-                                        Mass Production )
-                                    </p>
-                                    <p>
-                                        Furnace Cycle No. : {{ secAdd_propD_jhCurveFurnaceName }}
-                                    </p>
-                                    <p>
-                                        <span>{{ secAdd_propD_jhCurveModel }}</span>
-                                        ( {{ secAdd_propD_codeNo }} )
-                                    </p>
-                                    <p>
-                                        Lot # {{ secAdd_propD_jhCurveLotNo }}
-                                    </p>
+                            <div class="w-[350px] h-[420px] bg-gray-50 rounded-xl border-2 border-blue-900 flex flex-col justify-start p-4">
+                                <div class="flex flex-col space-y-2">
+                                    <p>SMP Lot (<span>{{ selectedMassProd }}</span>) Mass Production</p>
+                                    <p>Furnace Cycle No.: {{ secAdd_propD_jhCurveFurnaceName }}</p>
+                                    <p><span>{{ secAdd_propD_jhCurveModel }}</span> ({{ secAdd_propD_codeNo }})</p>
+                                    <p>Lot #: {{ secAdd_propD_jhCurveLotNo }}</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div v-if="isSecAdditional" class="p-6 mt-4 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
-                        <div class="flex flex-col items-center justify-center">
-                            <div class="flex flex-row items-start justify-center">
-                                <div class="flex flex-row shadow-2xl">
-                                    <div class="min-w-[700px]">
-                                        <table class="border border-gray-300 table-auto rounded-xl">
-                                            <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
-                                                <tr>
-                                                    <th v-for="tableLayerColumnHeader in nsa_tableLayerColumnHeaders"
-                                                        :key="tableLayerColumnHeader.name"
-                                                        :colspan="tableLayerColumnHeader.colspan"
-                                                        class="px-[4.8px] py-[3px] text-sm font-medium text-center border border-white">
-                                                        {{ tableLayerColumnHeader.name }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white">
+                        <!-- Data Table -->
+                        <div class="p-6 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50">
+                            <div class="flex justify-center">
+                                <div class="min-w-[700px] shadow-2xl">
+                                    <table class="border border-gray-300 table-auto rounded-xl">
+                                        <!-- Table Header -->
+                                        <thead class="text-white bg-gradient-to-r from-blue-700 to-blue-400">
+                                            <tr>
+                                                <th
+                                                    v-for="header in nsa_tableLayerColumnHeaders"
+                                                    :key="header.name"
+                                                    :colspan="header.colspan"
+                                                    class="px-[4.8px] py-[3px] text-sm font-medium text-center border border-white"
+                                                >
+                                                    {{ header.name }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+                                        <!-- Table Body -->
+                                        <tbody class="bg-white">
                                             <tr
                                                 v-for="item in nsa_combinedData"
                                                 :key="item.id"
                                                 class="border-b hover:bg-gray-50"
                                             >
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.date }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.code_no }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.order_no }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.type }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.sintering_furnace_no }}</td>
-                                                <td class="whitespace-nowrap px-[0px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.furnace_no }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.zone }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.pass_no }}</td>
-                                                <td class="whitespace-nowrap px-[3px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br }}</td>
-                                                <td v-if="item.remark.Br_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br_remarks == '0' ? '' : item.remark.Br_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHc }}</td>
-                                                <td v-if="item.remark.iHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHc_remarks == 0 ? '' : item.remark.iHc_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHk }}</td>
-                                                <td v-if="item.remark.iHk_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHk_remarks == 0 ? '' : item.remark.iHk_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.BHMax }}</td>
-                                                <td v-if="item.remark.BHMax_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.BHMax_remarks == 0 ? '' : item.remark.BHMax_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr95 }}</td>
-                                                <td v-if="item.remark.iHr95_remarks == '1'" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr95_remarks == '0' ? '' : item.remark.iHr95_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHr98 }}</td>
-                                                <td v-if="item.remark.iHr98_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHr98_remarks == 0 ? '' : item.remark.iHr98_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.iHkiHc }}</td>
-                                                <td v-if="item.remark.iHkiHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.iHkiHc_remarks == 0 ? '' : item.remark.iHkiHc_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Br4pai }}</td>
-                                                <td v-if="item.remark.Br4pai_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Br4pai_remarks == 0 ? '' : item.remark.Br4pai_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.bHc }}</td>
-                                                <td v-if="item.remark.bHc_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.bHc_remarks == 0 ? '' : item.remark.bHc_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Squareness }}</td>
-                                                <td v-if="item.remark.Squareness_remarks == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark.Squareness_remarks == 0 ? '' : item.remark.Squareness_remarks }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiId'] }}</td>
-                                                <td v-if="item.remark['4paiId_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiId_remarks'] == 0 ? '' : item.remark['4paiId_remarks'] }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIs'] }}</td>
-                                                <td v-if="item.remark['4paiIs_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIs_remarks'] == 0 ? '' : item.remark['4paiIs_remarks'] }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item['4paiIa'] }}</td>
-                                                <td v-if="item.remark['4paiIa_remarks'] == 1" class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 bg-red-500 text-white">E</td>
-                                                <td v-else class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center border border-blue-500 text-gray-700">{{ item.remark['4paiIa_remarks'] == 0 ? '' : item.remark['4paiIa_remarks'] }}</td>
-                                                <td class="whitespace-nowrap px-[2px] py-[3px] text-[10px] text-center text-gray-700 border border-blue-500">{{ item.Tracer }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.date }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.code_no }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.order_no }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.type }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.press_1 }} {{ item.press_2 }} {{ item.machine_no }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.sintering_furnace_no }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[0px] py-[3px]">{{ item.furnace_no }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.zone }}</td>
+                                                <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.pass_no }}</td>
+
+                                                <!-- Repeat for all measured properties with conditional E -->
+                                                <template v-for="prop in [
+                                                    'Br', 'iHc', 'iHk', 'BHMax', 'iHr95', 'iHr98', 'iHkiHc',
+                                                    'Br4pai', 'bHc', 'Squareness', '4paiId', '4paiIs', '4paiIa', 'Tracer'
+                                                ]">
+                                                    <td class="text-center text-[10px] border border-blue-500 px-[2px] py-[3px]">{{ item[prop] }}</td>
+                                                    <td
+                                                        v-if="item.remark && (item.remark[prop + '_remarks'] == 1 || item.remark[prop + '_remarks'] == '1')"
+                                                        class="text-center text-[10px] border border-blue-500 px-[2px] py-[3px] bg-red-500 text-white"
+                                                    >
+                                                        E
+                                                    </td>
+                                                    <td
+                                                        v-else
+                                                        class="text-center text-[10px] border border-blue-500 px-[2px] py-[3px]"
+                                                    >
+                                                        {{ item.remark ? (item.remark[prop + '_remarks'] == 0 || item.remark[prop + '_remarks'] == '0' ? '' : item.remark[prop + '_remarks']) : '' }}
+                                                    </td>
+                                                </template>
                                             </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
+
+
+
+
+
 
                 </div>
             </div>
@@ -3100,7 +3105,7 @@ const checkSpecialJudgement = async () => {
         showCpkFrom_iHc.value = true;
         //console.log('[CPK] CPK enabled');
     }
-    if (MODELS_SHOW_GX.value.includes(model)) {
+    if (MODELS_SHOW_GX.value.includes(model) || model.includes("ROB0C79G")) {
         showGX.value = true;
         console.log('[GX] GX enabled');
     }
@@ -3446,7 +3451,7 @@ const fetchAllData = async () => {
             }
         }
 
-        await getSecHighestSetValue();
+        await getSecAllSetsData();
         await fetchMiasFactor_category();
 
         // Build the patch data object
@@ -3556,19 +3561,19 @@ const fetchMiasFactor = async () => {
 }
 
 
-const getSecHighestSetValue = async() => {
+/*const getSecHighestSetValue = async() => {
     try{
         const responseCheckNsa = await axios.get("/api/nsadata");
         //console.log('response check NSA: ',responseCheckNsa.data.data);
         const nsaData = responseCheckNsa.data.data["NSAData"] || [];
-        console.log('NSA data: ',nsaData);
+        //console.log('NSA data: ',nsaData);
         const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-        console.log('NSA data filtered by serial: ',nsafilteredData);
+        //console.log('NSA data filtered by serial: ',nsafilteredData);
 
         if(nsafilteredData.length > 0) {
             const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
             current_setNo.value = maxSetNo;
-            //isSecAdditional.value = true;
+            isSecAdditional.value = true;
             toast.info('SEC additional data is detected in this report');
         } else {
             isSecAdditional.value = false;
@@ -3582,12 +3587,261 @@ const getSecHighestSetValue = async() => {
     }catch(error){
         console.warn("404 No data detected or another error check here -> ",error)
     }
-}
+}*/
+
+const secDataBySet = ref({}); // { set_no: [array of items] }
+const availableSetNumbers = ref([]); // To know which sets exist for the serial
+
+const getSecAllSetsData = async () => {
+    try {
+        const response = await axios.get("/api/nsadata");
+        const allNsaData = response.data.data["NSAData"] || [];
+        console.log("Raw NSAData:", allNsaData);
+        // Filter by current serial
+        const filteredBySerial = allNsaData.filter(
+            item => item.serial_no == currentSerialSelected.value
+        );
+
+        console.log("Filtered by serial_no:", filteredBySerial);
+
+        if (filteredBySerial.length === 0) {
+            isSecAdditional.value = false;
+            toast.warning("No SEC additional data detected for this serial number");
+            secDataBySet.value = {};
+            availableSetNumbers.value = [];
+            return;
+        }
+
+        //isSecAdditional.value = true;
+        toast.info("SEC additional data is detected in this report");
+
+        // Group by set_no
+        const grouped = filteredBySerial.reduce((acc, item) => {
+            if (!acc[item.set_no]) acc[item.set_no] = [];
+            acc[item.set_no].push(item);
+            return acc;
+        }, {});
+
+        secDataBySet.value = grouped;
+        availableSetNumbers.value = Object.keys(grouped)
+            .map(Number)
+            .sort((a, b) => a - b); // sorted ascending
+
+        // Set current_setNo to the highest set by default (preserve previous behavior)
+        current_setNo.value = Math.max(...availableSetNumbers.value);
+
+        // Call existing function to load the data for that set
+        await nsa_showData();
+
+    } catch (error) {
+        console.warn("Error fetching SEC data ->", error);
+        secDataBySet.value = {};
+        availableSetNumbers.value = [];
+    }
+};
 
 const nsaData = ref([]);
 const nsa_combinedData = ref([]);
 
-const nsa_showData = async() => {
+const nsa_showData = async (setNo = current_setNo.value) => {
+    try {
+        // Pull the data from the grouped object
+        const setData = secDataBySet.value[setNo] || [];
+
+        if (!setData.length) {
+            console.warn(`No data found for serial ${currentSerialSelected.value} and set ${setNo}`);
+            nsaData.value = [];
+            nsa_combinedData.value = [];
+            return;
+        }
+
+        nsaData.value = setData;
+        nsa_combinedData.value = setData;
+
+        console.log('DEGUG setData: ', setData);
+
+        // Extract aggregate ID as before
+        filteredAggregateID.value = setData.filter(
+            item => item.nsa_serial == currentSerialSelected.value && item.nsa_set == setNo
+        );
+        nsaData_aggID.value = filteredAggregateID.value[0]?.id || null;
+
+        // Fill the prop values for display
+        secAdd_propD_jhCurveFurnaceName.value = setData[0]?.sintering_furnace_no || "No data found";
+        secAdd_propD_jhCurveModel.value = setData[0]?.code_no || "No data found";
+
+        // Map all the individual arrays for averages, max, min, etc.
+        getAllIDValues.value = setData.map(item => item.id);
+        getAllBrValues.value = setData.map(item => item.Br || null);
+        getAllBrRemarks.value = setData.map(item => item.remark?.Br_remarks ?? null);
+        getAlliHcValues.value = setData.map(item => item.iHc || null);
+        getAlliHcRemarks.value = setData.map(item => item.remark?.iHc_remarks ?? null);
+        getAlliHkValues.value = setData.map(item => item.iHk || null);
+        getAlliHkRemarks.value = setData.map(item => item.remark?.iHk_remarks ?? null);
+        getAllBHMaxValues.value = setData.map(item => item.BHMax || null);
+        getAllBHMaxRemarks.value = setData.map(item => item.remark?.BHMax_remarks ?? null);
+        getAlliHr95Values.value = setData.map(item => item.iHr95 || null);
+        getAlliHr95Remarks.value = setData.map(item => item.remark?.iHr95_remarks ?? null);
+        getAlliHr98Values.value = setData.map(item => item.iHr98 || null);
+        getAlliHr98Remarks.value = setData.map(item => item.remark?.iHr98_remarks ?? null);
+        getAlliHciHkValues.value = setData.map(item => item.iHkiHc || null);
+        getAlliHciHkRemarks.value = setData.map(item => item.remark?.iHkiHc_remarks ?? null);
+        getAllBr4paiValues.value = setData.map(item => item.Br4pai || null);
+        getAllBr4paiRemarks.value = setData.map(item => item.remark?.Br4pai_remarks ?? null);
+        getAllbHcValues.value = setData.map(item => item.bHc || null);
+        getAllbHcRemarks.value = setData.map(item => item.remark?.bHc_remarks ?? null);
+        getAllSquarenessValues.value = setData.map(item => item.Squareness ?? null);
+        getAllSquarenessRemarks.value = setData.map(item => item.remark?.Squareness_remarks ?? null);
+        getAll4paildValues.value = setData.map(item => item["4paiId"] || null);
+        getAll4paildRemarks.value = setData.map(item => item.remark?.["4paiId_remarks"] ?? null);
+        getAll4pailsValues.value = setData.map(item => item["4paiIs"] || null);
+        getAll4pailsRemarks.value = setData.map(item => item.remark?.["4paiIs_remarks"] ?? null);
+        getAll4pailaValues.value = setData.map(item => item["4paiIa"] || null);
+        getAll4pailaRemarks.value = setData.map(item => item.remark?.["4paiIa_remarks"] ?? null);
+
+        //get average function
+        const calculateAverage = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return 0
+            if (numbers.length === 0) return 0;
+
+            // Calculate the sum and divide by the count
+            const sum = numbers.reduce((total, value) => total + value, 0);
+            const average = sum / numbers.length;
+
+            // Check the maximum number of decimals present in the input
+            const maxDecimals = Math.max(
+                ...numbers.map(value => {
+                    const parts = value.toString().split(".");
+                    return parts[1] ? parts[1].length : 0; // Length of the decimal part
+                })
+            );
+
+            // Round the average to match the maximum number of decimals in the input
+            const factor = Math.pow(10, maxDecimals);
+            return Math.round(average * factor) / factor;
+        };
+        //get maximum function
+        const getMaxValue = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return null
+            if (numbers.length === 0) return null;
+
+            // Return the highest value using Math.max
+            return Math.max(...numbers);
+        };
+        //get minimum function
+        const getMinValue = (array) => {
+            // Convert numeric strings to numbers and filter out invalid values
+            const numbers = array
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
+
+            // If no valid numbers, return null
+            if (numbers.length === 0) return null;
+
+            // Return the lowest value using Math.min
+            return Math.min(...numbers);
+        };
+        //get Sample with Variance data
+        const calculateVariance = (numericStringsArray, maxValue) => {
+            // Convert the array of numeric strings to numbers
+            const numbers = numericStringsArray
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+            // Subtract each value from maxValue and return the resulting array
+            return numbers.map(num => maxValue - num);
+        };
+
+        // Function to sum up all the data in an array
+        const calculateSum = (numericStringsArray) => {
+            // Convert the array of numeric strings to numbers
+            const numbers = numericStringsArray
+                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
+                .filter(value => !isNaN(value)); // Filter out invalid numbers
+
+            // Sum up all the valid numbers in the array
+            return numbers.reduce((sum, num) => sum + num, 0);
+        };
+
+
+        //average values
+        aveBr.value = calculateAverage(getAllBrValues.value);
+        aveiHc.value = calculateAverage(getAlliHcValues.value);
+        aveiHk.value = calculateAverage(getAlliHkValues.value);
+        aveBHMax.value = calculateAverage(getAllBHMaxValues.value);
+        aveiHr95.value = calculateAverage(getAlliHr95Values.value);
+        aveiHr98.value = calculateAverage(getAlliHr98Values.value);
+        aveiHciHk.value = calculateAverage(getAlliHciHkValues.value);
+        aveBr4pai.value = calculateAverage(getAllBr4paiValues.value);
+        avebHc.value = calculateAverage(getAllbHcValues.value);
+        aveSquareness.value = calculateAverage(getAllSquarenessValues.value);
+        ave4paild.value = calculateAverage(getAll4paildValues.value);
+        ave4pails.value = calculateAverage(getAll4pailsValues.value);
+        ave4paila.value = calculateAverage(getAll4pailaValues.value);
+
+        //console.log("iHciHk average value: ", aveiHciHk.value);
+
+        // Minimum values
+        minBr.value = getMinValue(getAllBrValues.value);
+        miniHc.value = getMinValue(getAlliHcValues.value);
+        miniHk.value = getMinValue(getAlliHkValues.value);
+        minBHMax.value = getMinValue(getAllBHMaxValues.value);
+        miniHr95.value = getMinValue(getAlliHr95Values.value);
+        miniHr98.value = getMinValue(getAlliHr98Values.value);
+        miniHciHk.value = getMinValue(getAlliHciHkValues.value);
+        minBr4pai.value = getMinValue(getAllBr4paiValues.value);
+        minbHc.value = getMinValue(getAllbHcValues.value);
+        minSquareness.value = getMinValue(getAllSquarenessValues.value);
+        min4paild.value = getMinValue(getAll4paildValues.value);
+        min4pails.value = getMinValue(getAll4pailsValues.value);
+        min4paila.value = getMinValue(getAll4pailaValues.value);
+
+        // Maximum values
+        maxBr.value = getMaxValue(getAllBrValues.value);
+        maxiHc.value = getMaxValue(getAlliHcValues.value);
+        maxiHk.value = getMaxValue(getAlliHkValues.value);
+        maxBHMax.value = getMaxValue(getAllBHMaxValues.value);
+        maxiHr95.value = getMaxValue(getAlliHr95Values.value);
+        maxiHr98.value = getMaxValue(getAlliHr98Values.value);
+        maxiHciHk.value = getMaxValue(getAlliHciHkValues.value);
+        maxBr4pai.value = getMaxValue(getAllBr4paiValues.value);
+        maxbHc.value = getMaxValue(getAllbHcValues.value);
+        maxSquareness.value = getMaxValue(getAllSquarenessValues.value);
+        max4paild.value = getMaxValue(getAll4paildValues.value);
+        max4pails.value = getMaxValue(getAll4pailsValues.value);
+        max4paila.value = getMaxValue(getAll4pailaValues.value);
+
+        //NG count values
+        ngBr.value = calculateSum(getAllBrRemarks.value);
+        ngiHc.value = calculateSum(getAlliHcRemarks.value);
+        ngiHk.value = calculateSum(getAlliHkRemarks.value);
+        ngBHMax.value = calculateSum(getAllBHMaxRemarks.value);
+        ngiHr95.value = calculateSum(getAlliHr95Remarks.value);
+        ngiHr98.value = calculateSum(getAlliHr98Remarks.value);
+        ngiHciHk.value = calculateSum(getAlliHciHkRemarks.value);
+        ngBr4pai.value = calculateSum(getAllBr4paiRemarks.value);
+        ngbHc.value = calculateSum(getAllbHcRemarks.value);
+        ngSquareness.value = calculateSum(getAllSquarenessRemarks.value);
+        ng4paild.value = calculateSum(getAll4paildRemarks.value);
+        ng4pails.value = calculateSum(getAll4pailsRemarks.value);
+        ng4paila.value = calculateSum(getAll4pailaRemarks.value);
+
+    } catch (error) {
+        console.error("Error loading set data:", error);
+    }
+};
+
+/*const test_nsa_showData = async() => {
 
     try {
         const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + current_setNo.value); // Adjust this URL to your API endpoint
@@ -3789,7 +4043,9 @@ const nsa_showData = async() => {
         console.error('Error fetching data:', error);
         return;
     }
-};
+};*/
+
+
 
 // SUPPORT FUNCTIONS
 
@@ -4770,6 +5026,7 @@ const backToApprovalFunction_prepared = () => {
 onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
+    //await test_nsa_showData();
     if (props.serialParam && props.fromApproval || props.serialParam && props.fromApproval_checked || props.serialParam && props.fromApproval_prepared || props.fromViewList) {
         await checkAuthentication();
         await checkApprovalStates();

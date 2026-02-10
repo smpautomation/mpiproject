@@ -8,6 +8,7 @@ use App\Models\NSACategory;
 use App\Models\NSARemark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class NormalSecAdditionalsController extends Controller
 {
@@ -16,12 +17,25 @@ class NormalSecAdditionalsController extends Controller
         $set_no = $request->query('set');
         $report = $request->query('report');
 
+        Log::info('NSA index called', [
+            'serial_no' => $serial_no,
+            'set_no' => $set_no,
+            'report' => $report
+        ]);
+
         if (!$serial_no) {
             try {
                 $nsaData = NormalSecAdditionals::all();
                 $remarks = NSARemark::all();
                 $aggregateFunctions = NSAAggregateFunctions::all();
                 $nsaCategory = NSACategory::all();
+
+                Log::info('NSA default fetch', [
+                    'NSAData_count' => $nsaData->count(),
+                    'remarks_count' => $remarks->count(),
+                    'aggregateFunctions_count' => $aggregateFunctions->count(),
+                    'nsaCategory_count' => $nsaCategory->count()
+                ]);
 
                 return response()->json([
                     'status' => true,
@@ -34,6 +48,11 @@ class NormalSecAdditionalsController extends Controller
                     ]
                 ], 200);
             } catch (\Exception $e) {
+                Log::error('Error retrieving default NSA Data', [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
                 return response()->json([
                     'status' => false,
                     'message' => 'Error retrieving NSA Data',
@@ -48,22 +67,50 @@ class NormalSecAdditionalsController extends Controller
                                     ->orderBy('zone', 'asc')
                                     ->get();
 
+                Log::info('NSA serial fetch', [
+                    'NSAData_count' => $nsaData->count(),
+                    'serial_no' => $serial_no,
+                    'set_no' => $set_no
+                ]);
+
                 if (!$nsaData->isEmpty()) {
                     $NSAAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $serial_no)->get();
                     $nsaCategory = NSACategory::all();
 
+                    Log::info('NSA data found', [
+                        'NSAData_count' => $nsaData->count(),
+                        'NSAAggregateFunctions_count' => $NSAAggregateFunctions->count(),
+                        'nsaCategory_count' => $nsaCategory->count()
+                    ]);
+
                     return response()->json([
                         'status' => true,
                         'message' => 'NSA data found successfully',
-                        'data' => $nsaData, $NSAAggregateFunctions
+                        'data' => [
+                            'NSAData' => $nsaData,
+                            'NSAAggregateFunctions' => $NSAAggregateFunctions,
+                            'nsaCategory' => $nsaCategory
+                        ]
                     ], 200);
                 } else {
+                    Log::warning('NSA data not found', [
+                        'serial_no' => $serial_no,
+                        'set_no' => $set_no
+                    ]);
+
                     return response()->json([
                         'status' => false,
                         'message' => 'NSA data not found for this serial number.'
                     ], 404);
                 }
             } catch (\Exception $e) {
+                Log::error('Error retrieving NSA Data by serial', [
+                    'serial_no' => $serial_no,
+                    'set_no' => $set_no,
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
                 return response()->json([
                     'status' => false,
                     'message' => 'An error occurred while retrieving NSA data',
@@ -277,11 +324,11 @@ class NormalSecAdditionalsController extends Controller
 
             $inputData = $request->except(['serial_no', 'set_no']);
 
-            \Log::info("Attempting NSA update", [
+            /*Log::info("Attempting NSA update", [
                 'serial_no' => $serialNo,
                 'set_no' => $setNo,
                 'payload' => $inputData,
-            ]);
+            ]);*/
 
             $affectedRows = NormalSecAdditionals::where('serial_no', $serialNo)
                 ->where('set_no', $setNo)

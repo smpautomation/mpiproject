@@ -129,7 +129,7 @@
                                             ]"
                                             :disabled="user.change_judgement_access === 'yes'"
                                         >
-                                            {{ user.change_judgement_access === 'yes' ? 'Access Granted' : 'Allow' }}
+                                            {{ user.change_judgement_access === 'yes' ? 'Access Granted' : 'Allow Access' }}
                                         </button>
 
                                         <!-- Revoke button -->
