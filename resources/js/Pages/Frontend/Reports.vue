@@ -3605,7 +3605,7 @@ const getSecAllSetsData = async () => {
             return;
         }
 
-        isSecAdditional.value = true;
+        //isSecAdditional.value = true;
         toast.info("SEC additional data is detected in this report");
 
         // Group by set_no to build available set selector
