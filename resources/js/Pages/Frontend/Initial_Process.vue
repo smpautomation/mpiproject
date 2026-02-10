@@ -306,19 +306,11 @@
                                     Fill up all details below. Fields with
                                     <span class="font-semibold text-red-500">*</span> are required
                                 </p>
+                                <p class="px-3 py-1 mt-1 text-sm text-yellow-700 bg-yellow-100 rounded-md">
+                                    ⚠️ If you need to add a new model, please coordinate with the QA MPI Department and request them to add it officially.
+                                </p>
                             </div>
                         </div>
-
-                        <button
-                            @click="Inertia.visit('/inspection')"
-                            class="flex items-center px-5 py-2 space-x-2 text-white transition-all duration-200 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span>Add New Model</span>
-                        </button>
                     </div>
 
                     <!-- Group: Box Selection -->
@@ -406,7 +398,12 @@
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Raw Material Code<span class="text-red-500"> *</span></label>
-                            <input v-model="initial_mpcs.rawMaterialCode" type="text" @input="initial_mpcs.rawMaterialCode = initial_mpcs.rawMaterialCode.toUpperCase()" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <input v-model="initial_mpcs.rawMaterialCode" type="text"
+                                @input="initial_mpcs.rawMaterialCode = initial_mpcs.rawMaterialCode
+                                    .toUpperCase()
+                                    .slice(0, 8)"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
                     </div>
 
@@ -523,7 +520,14 @@
                                     >
                                         <input
                                             v-model="boxNoValues[box]"
-                                            @input="boxNoValues[box] = boxNoValues[box].toUpperCase().replace(/\s+/g, '')"
+                                            @input="(() => {
+                                                let v = boxNoValues[box].toUpperCase().replace(/\s+/g, '');
+
+                                                const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
+                                                const numbers = v.slice(3).replace(/[^0-9]/g, '');
+
+                                                boxNoValues[box] = (letters + numbers).slice(0, 8);
+                                            })()"
                                             type="text"
                                             class="w-full px-1 py-[2px] text-[10px] border border-gray-300 rounded-sm
                                                 focus:outline-none focus:ring-1 focus:ring-blue-400"
@@ -682,7 +686,14 @@
                                         >
                                             <input
                                                 v-model="boxNoValuesExcess[box]"
-                                                @input="boxNoValuesExcess[box] = boxNoValuesExcess[box].toUpperCase().replace(/\s+/g, '')"
+                                                @input="(() => {
+                                                    let v = boxNoValuesExcess[box].toUpperCase().replace(/\s+/g, '');
+
+                                                    const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
+                                                    const numbers = v.slice(3).replace(/[^0-9]/g, '');
+
+                                                    boxNoValuesExcess[box] = (letters + numbers).slice(0, 8);
+                                                })()"
                                                 type="text"
                                                 class="w-full px-1 py-[2px] text-[10px]
                                                     border border-gray-300 rounded-sm
@@ -2920,6 +2931,7 @@ const formatCoatingMCNo = () => {
     initial_mpcs.coatingMCNo = `${prefix}-${String(num).padStart(2, '0')}`;
 };
 
+
 //Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone
 
 const getControlSheetData = async () => {
@@ -3150,6 +3162,10 @@ const dataValidation = async() => {
             toast.error(`${item.name} is required.`);
             return;
         }
+        if (item.name === 'Raw Material Code' && item.field.length < 8) {
+            toast.warning('Raw Material Code must be 8 characters.');
+            return;
+        }
     }
 
     // Check main boxes for empty Qty, WT, Box No
@@ -3164,6 +3180,10 @@ const dataValidation = async() => {
         }
         if (!boxNoValues.value[box]) {
             toast.error(`Box No for main box ${box} is required.`);
+            return;
+        }
+        if (boxNoValues.value[box].length < 8) {
+            toast.warning(`Box No for main box ${box} must be at least 8 characters.`);
             return;
         }
     }
@@ -3181,6 +3201,10 @@ const dataValidation = async() => {
             }
             if (!boxNoValuesExcess.value[box]) {
                 toast.error(`Box No for excess box ${box} is required.`);
+                return;
+            }
+            if (boxNoValuesExcess.value[box].length < 8) {
+                toast.warning(`Box No for excess box ${box} must be at least 8 characters.`);
                 return;
             }
         }

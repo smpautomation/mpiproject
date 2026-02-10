@@ -62,7 +62,7 @@
     <ul class="items-center hidden gap-6 font-medium text-gray-700 md:flex dark:text-gray-300">
         <li v-for="item in filteredNavItems" :key="item.label" class="relative group">
             <template v-if="item.children && item.children.length">
-                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-100 transition-all duration-200 rounded-lg cursor-pointer hover:text-blue-600 hover:bg-blue-50">
+                <span class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 rounded-lg cursor-pointer dark:text-gray-100 hover:text-blue-600 hover:bg-blue-50">
                     {{ item.label }}
                     <svg class="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:rotate-180 text-gray-500 dark:text-gray-300 group-hover:text-blue-600"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@
             </template>
             <template v-else>
                 <Link :href="route(item.route)"
-                    class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-100 transition-all duration-200 rounded-lg hover:text-blue-600 hover:bg-blue-50">
+                    class="px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 rounded-lg dark:text-gray-100 hover:text-blue-600 hover:bg-blue-50">
                     {{ item.label }}
                 </Link>
             </template>
@@ -192,7 +192,7 @@ const navItems = [
         label: 'Options',
         access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver','Coating','Heat Treatment'],
         children: [
-            { label: 'Inspection', route: 'inspection', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Coating','Heat Treatment'] },
+            { label: 'Inspection', route: 'inspection', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver'] },
             { label: 'View List', route: 'viewList', access: ['Automation','Preparation Approver','Checking Approver','Proxy Approver','Final Approver'] },
             { label: 'Approval', route: 'approval', access: ['Automation','Final Approver','Proxy Approver'] },
             { label: 'Approval', route: 'approval_prepared', access: ['Preparation Approver'] },
