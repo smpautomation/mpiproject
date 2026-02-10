@@ -468,14 +468,14 @@
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportBrVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td :rowspan="(noteReasonForReject.includes('- N.G iHc') || jhCurveActualModel === 'ROB0C79G') && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">iHc (Oe)</td>
+                                    <td :rowspan="(noteReasonForReject.includes('- N.G iHc') || specialModelsForGxFormat.includes(jhCurveActualModel)) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">iHc (Oe)</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GM </span>{{ inspectioniHcStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihcMinimum }}</td>
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHcVariance }}</td>
                                 </tr>
-                                <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc') || jhCurveActualModel === 'ROB0C79G')" class="text-center">
+                                <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc') || specialModelsForGxFormat.includes(jhCurveActualModel))" class="text-center">
                                     <td class="text-blue-600 border-4 border-white "><span v-if="showGX">GX </span>
                                         <input type="number" v-model="reportGX_iHcStandard" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -496,14 +496,14 @@
                                     <td class="text-blue-600 border-4 border-white ">{{ reportGX_iHcVariance }}</td>
                                 </tr>
                                 <tr class="text-center">
-                                    <td :rowspan="(noteReasonForReject.includes('- N.G iHc') || jhCurveActualModel === 'ROB0C79G') && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">iHk (Oe)</td>
+                                    <td :rowspan="(noteReasonForReject.includes('- N.G iHc') || specialModelsForGxFormat.includes(jhCurveActualModel)) && showGX ? 2 : 1" class="px-4 py-2 text-blue-600 border-4 border-white whitespace-nowrap">iHk (Oe)</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GM </span>{{ inspectioniHkStandard }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkAverage }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMaximum }}</td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportihkMinimum }}</td>
                                     <td colspan="2" class="px-4 py-2 text-blue-600 border-4 border-white">{{ reportiHkVariance }}</td>
                                 </tr>
-                                <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc') || jhCurveActualModel === 'ROB0C79G')" class="text-center">
+                                <tr v-if="showGX && (noteReasonForReject.includes('- N.G iHc') || specialModelsForGxFormat.includes(jhCurveActualModel))" class="text-center">
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><span v-if="showGX">GX </span> - - - - - </td>
                                     <td class="px-4 py-2 text-blue-600 border-4 border-white"><input type="number" v-model="reportGX_iHkAverage" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -2542,6 +2542,7 @@ const secAdd_ng4paila = ref(null);
 
 //Variables for ave max min ng counter end
 
+const specialModelsForGxFormat = ref(['ROB0C79G']); //ROB MODEL SPECIAL GX
 
 //UI Dynamic Color adjustments
 
@@ -2810,27 +2811,30 @@ watch(
 
 //FOR GX - models
 watch(
-  [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement, showGX, reportGX_iHcAverage, reportGX_iHcMaximum],
-  () => {
-    //console.log('Watch triggered for GX iHc evaluation');
-    //console.log('showGX:', showGX.value);
-    //console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
-    //console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
+    [reportGX_iHcMinimum, reportGX_iHcStandard, reportSMPJudgement, showGX, reportGX_iHcAverage, reportGX_iHcMaximum],
+    () => {
+        console.log('Watch triggered for GX iHc evaluation');
+        console.log('showGX:', showGX.value);
+        console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
+        console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
 
-    if ((noteReasonForReject.value.includes('- N.G iHc') || jhCurveActualModel.value === 'ROB0C79G') && showGX.value === true &&
-    reportGX_iHcMinimum.value !== null && reportGX_iHcStandard.value !== null) {
-      if (reportGX_iHcMinimum.value < reportGX_iHcStandard.value) {
-        //console.log('GX iHc minimum is below standard — setting NG/REJECT');
-        reportSMPJudgement.value = 'REJECT';
-      } else {
-        //console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
-        reportSMPJudgement.value = 'HOLD';
-      }
-    } else {
-      //console.log('GX display not active — skipping GX iHc check');
-    }
-  },
-  { immediate: true }
+        if ((noteReasonForReject.value.includes('- N.G iHc') || specialModelsForGxFormat.value.includes(jhCurveActualModel.value)) && showGX.value === true &&
+            reportGX_iHcMinimum.value !== null && reportGX_iHcStandard.value !== null) {
+            if (reportGX_iHcMinimum.value < reportGX_iHcStandard.value) {
+                    console.log('GX iHc minimum is below standard — setting NG/REJECT');
+                    reportSMPJudgement.value = 'REJECT';
+            }else if(specialModelsForGxFormat.value.includes(jhCurveActualModel.value)){
+                    console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+                    reportSMPJudgement.value = 'PASSED';
+            } else {
+                    console.log('GX iHc minimum meets or exceeds standard — setting OK/HOLD');
+                    reportSMPJudgement.value = 'HOLD';
+            }
+        } else {
+            console.log('GX display not active — skipping GX iHc check');
+        }
+    },
+    { immediate: true }
 );
 
 // FOR BH - models
@@ -3105,7 +3109,7 @@ const checkSpecialJudgement = async () => {
         showCpkFrom_iHc.value = true;
         //console.log('[CPK] CPK enabled');
     }
-    if (MODELS_SHOW_GX.value.includes(model) || model.includes("ROB0C79G")) {
+    if (MODELS_SHOW_GX.value.includes(model) || specialModelsForGxFormat.value.includes(model)) {
         showGX.value = true;
         console.log('[GX] GX enabled');
     }
