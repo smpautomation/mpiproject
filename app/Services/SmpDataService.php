@@ -93,7 +93,7 @@ class SmpDataService
                 'Lot_No' => $getRowData('LT. No.:')['A'] ?? $getRowData('LT. No.:')['B'] ?? '',
                 'Layer' => $layerOrdinal,
                 'Batches' => count($tpmData),
-                'Total_Lot_Qty' => $getRowData('TOTAL QTY')['A'] ?? '',
+                'Total_Lot_Qty' => $getRowData('TOTAL QTY')['A'] ?? $getRowData('TOTAL QTY')['B'] ?? '',
                 'Date' => $coating->date ?? '',
                 'M_C' => $coating->machine_no ?? '',
                 'Magnet_Weight' => $coating->total_magnet_weight ?? '',
