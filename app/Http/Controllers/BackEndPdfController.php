@@ -481,6 +481,7 @@ class BackEndPdfController extends Controller
         $model = $tpmCategories->actual_model ?? '';
         $noteReasons = $noteReasonRaw;
 
+        $MODELS_SPECIAL_ROB_FOR_GX = ['ROB0C79G'];
         $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
         $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_GX      = GxModel::pluck('model_name')->toArray();
@@ -492,7 +493,7 @@ class BackEndPdfController extends Controller
         $hasNGihc        = in_array('- N.G iHc', $noteReasons);
 
         $showCpkFrom_iHc = $hasNGihc && in_array($model, $MODELS_SHOW_CPK);
-        $showGX          = $hasNGihc && in_array($model, $MODELS_SHOW_GX);
+        $showGX          = ($hasNGihc && in_array($model, $MODELS_SHOW_GX)) || in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
         $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
 
         $showVTData         = false; // default to false
