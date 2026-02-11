@@ -29,6 +29,7 @@ class BreaklotInitialLotController extends Controller
             'furnace'     => 'nullable|string',
             'layer'       => 'nullable|string',
             'initial_lot' => 'nullable|string',
+            'initial_model' => 'nullable|string',
         ]);
 
         $record = BreaklotInitialLot::create($validated);
@@ -54,6 +55,7 @@ class BreaklotInitialLotController extends Controller
             'furnace'     => 'sometimes|nullable|string',
             'layer'       => 'sometimes|nullable|string',
             'initial_lot' => 'sometimes|nullable|string',
+            'initial_model' => 'sometimes|nullable|string',
         ]);
 
         $breaklotInitialLot->update($validated);

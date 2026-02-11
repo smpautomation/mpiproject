@@ -2109,6 +2109,7 @@ const saveInitialLot = async () => {
             furnace: coatingInfo.selectedFurnace,
             layer: coatingInfo.selectedLayer,
             initial_lot: lotNo.value,
+            initial_model: coatingInfo.selectedModel,
         };
 
         const check = await axios.get(
@@ -2228,6 +2229,7 @@ const addtnl_saveToDatabase = async() => {
         toast.success('Saved Successfully');
         await userManageLogging('created Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
         isDataShown.value = false;
+        isInitialLotSaved.value = false;
     }catch(error){
         toast.error('Failed to save additional to database. ',error);
     }finally{
@@ -2337,6 +2339,7 @@ const addtnl_saveToDatabase_1st2ndgbdp = async() => {
         console.log(response.data);
         await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
         isDataShown.value = false;
+        isInitialLotSaved.value = false;
     }catch(error){
         toast.error('Failed to save to database. ',error);
     }finally{
