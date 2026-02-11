@@ -1,13 +1,13 @@
 <template>
   <Frontend>
     <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
-      <!-- Search Box -->
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search model name or lot no..."
-        class="w-full max-w-md p-2 border rounded shadow-sm"
-      />
+        <!-- Search Box -->
+        <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search model name or lot no..."
+            class="w-full max-w-md p-2 border rounded shadow-sm"
+        />
         <div class="flex flex-row items-center space-x-4 align-middle">
 
             <label>Furnace: </label>
@@ -45,12 +45,28 @@
                 <option-- value="HEAT_TREATMENT_PENDING">Heat Treatment Pending</option-->
             </select>
 
+            <label>Date From:</label>
+            <input
+                type="date"
+                v-model="vl_dateFrom"
+                :max="vl_dateTo"
+                class="w-[180px] p-2 border rounded shadow-sm"
+            />
+
+            <label>Date To:</label>
+            <input
+                type="date"
+                v-model="vl_dateTo"
+                :min="vl_dateFrom"
+                class="w-[180px] p-2 border rounded shadow-sm"
+            />
+
         </div>
 
-        <!-- No Data -->
-        <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
-                No matching data found.
-        </div>
+    <!-- No Data -->
+    <div v-if="filteredData.length === 0" class="text-lg font-semibold text-gray-500">
+            No matching data found.
+    </div>
 
       <!-- Table -->
       <div v-else class="w-full overflow-x-auto">
@@ -333,6 +349,26 @@ const viewReport = (serial) => {
     });
 };
 
+const today = new Date();
+
+// Helper to format date as YYYY-MM-DD without converting to UTC
+const formatDateForInput = (date) => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0'); // months 0-11
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+// First day of last month
+const firstDayLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+
+// Last day of current month
+const lastDayCurrentMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+// Reactive refs for your date inputs
+const vl_dateFrom = ref(formatDateForInput(firstDayLastMonth));
+const vl_dateTo = ref(formatDateForInput(lastDayCurrentMonth));
+
 const tpmData = ref([]);
 const searchQuery = ref('');
 const currentPage = ref(1);
@@ -390,6 +426,8 @@ const getMassProdLists = async () => {
 useSessionStorage("selectedMassProd", selectedMassProd);
 useSessionStorage("selectedFurnace", selectedFurnace);
 useSessionStorage("statusFilter", statusFilter);
+useSessionStorage("vl_dateFrom", vl_dateFrom);
+useSessionStorage("vl_dateTo", vl_dateTo);
 
 onMounted(async ()=>{
     await checkAuthentication();
@@ -400,68 +438,92 @@ onMounted(async ()=>{
 
 // Search + filter
 const filteredData = computed(() => {
-  const query = searchQuery.value.toLowerCase();
-  const status = statusFilter.value;
-  const massProd = selectedMassProd.value;
-  const furnace = selectedFurnace.value
+    const query = searchQuery.value.toLowerCase();
+    const status = statusFilter.value;
+    const massProd = selectedMassProd.value;
+    const furnace = selectedFurnace.value;
+    const from = vl_dateFrom.value;
+    const to = vl_dateTo.value;
 
-  return tpmData.value.filter(item => {
-    const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
-    const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
-    const matchesQuery = !query || model.includes(query) || lot.includes(query);
+    return tpmData.value.filter(item => {
+        const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
+        const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
+        const matchesQuery = !query || model.includes(query) || lot.includes(query);
 
-    const tpm = item.tpm?.[0] || {};
-    const report = item.report?.[0] || {};
+        const tpm = item.tpm?.[0] || {};
+        const report = item.report?.[0] || {};
 
-    const isEmpty = (val) =>
-      val === null ||
-      val === undefined ||
-      (typeof val === 'string' && (val.trim() === '' || val === 'null'));
+        const isEmpty = (val) =>
+        val === null ||
+        val === undefined ||
+        (typeof val === 'string' && (val.trim() === '' || val === 'null'));
 
-    let matchesStatus = true;
+        let matchesStatus = true;
 
-    if (status === 'COMPLETED') {
-      matchesStatus = !isEmpty(report.approved_by_firstname);
-    } else if (status === 'PENDING') {
-      matchesStatus = isEmpty(report.approved_by_firstname) &&
-                     !isEmpty(report.prepared_by_firstname) &&
-                     !isEmpty(report.checked_by_firstname);
-    } else if (status === 'PREPARED_PENDING') {
-      matchesStatus = isEmpty(report.prepared_by_firstname) &&
-                     isEmpty(report.checked_by_firstname) &&
-                     isEmpty(report.approved_by_firstname);
-    } else if (status === 'CHECKED_PENDING') {
-      matchesStatus = isEmpty(report.checked_by_firstname) &&
-                     isEmpty(report.approved_by_firstname) &&
-                     !isEmpty(report.prepared_by_firstname);
-    } else if (status === 'FINALIZED_PENDING') {
-      matchesStatus = !report.is_finalized &&
-                     !isEmpty(report.prepared_by_firstname) &&
-                     !isEmpty(report.checked_by_firstname) &&
-                     !isEmpty(report.approved_by_firstname);
-    } else if (status === 'COATING_PENDING') {
-      matchesStatus = report.coating_completed == false;
-    } else if (status === 'HEAT_TREATMENT_PENDING') {
-      matchesStatus = report.heat_treatment_completed == false;
-    }
+        if (status === 'COMPLETED') {
+        matchesStatus = !isEmpty(report.approved_by_firstname);
+        } else if (status === 'PENDING') {
+        matchesStatus = isEmpty(report.approved_by_firstname) &&
+                        !isEmpty(report.prepared_by_firstname) &&
+                        !isEmpty(report.checked_by_firstname);
+        } else if (status === 'PREPARED_PENDING') {
+        matchesStatus = isEmpty(report.prepared_by_firstname) &&
+                        isEmpty(report.checked_by_firstname) &&
+                        isEmpty(report.approved_by_firstname);
+        } else if (status === 'CHECKED_PENDING') {
+        matchesStatus = isEmpty(report.checked_by_firstname) &&
+                        isEmpty(report.approved_by_firstname) &&
+                        !isEmpty(report.prepared_by_firstname);
+        } else if (status === 'FINALIZED_PENDING') {
+        matchesStatus = !report.is_finalized &&
+                        !isEmpty(report.prepared_by_firstname) &&
+                        !isEmpty(report.checked_by_firstname) &&
+                        !isEmpty(report.approved_by_firstname);
+        } else if (status === 'COATING_PENDING') {
+        matchesStatus = report.coating_completed == false;
+        } else if (status === 'HEAT_TREATMENT_PENDING') {
+        matchesStatus = report.heat_treatment_completed == false;
+        }
 
-    // ✅ Use the first tpm entry safely
-    const matchesMassProd = !massProd || tpm.mass_prod === massProd;
+        const matchesMassProd = !massProd || tpm.mass_prod === massProd;
+        const matchesFurnace = !furnace || tpm.furnace === furnace;
 
-    const matchesFurnace = !furnace || tpm.furnace === furnace;
+        let matchesDate = true;
+        if (from || to) {
+            const recordDate = report.updated_at;
+            if (!recordDate) {
+                //console.log('Record skipped: no updated_at', item);
+                return false;
+            }
 
-    // ✅ You forgot to include matchesMassProd in the return
-    return matchesQuery && matchesStatus && matchesMassProd && matchesFurnace;
-  });
+            const recordDateStr = recordDate.split(' ')[0];
+
+            if (from && recordDateStr < from) {
+                matchesDate = false;
+                //console.log(`Record skipped: date ${recordDateStr} < from ${from}`, item);
+            }
+            if (to && recordDateStr > to) {
+                matchesDate = false;
+                //console.log(`Record skipped: date ${recordDateStr} > to ${to}`, item);
+            }
+        }
+
+        return matchesQuery &&
+            matchesStatus &&
+            matchesMassProd &&
+            matchesFurnace &&
+            matchesDate;
+    });
 });
+
 
 watch(statusFilter, val => console.log('[Filter Selected]:', val));
 
 const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const paginated = filteredData.value.slice(start, start + itemsPerPage);
-  //console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
-  return paginated;
+    const start = (currentPage.value - 1) * itemsPerPage;
+    const paginated = filteredData.value.slice(start, start + itemsPerPage);
+    //console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
+    return paginated;
 });
 
 const nextPage = () => {

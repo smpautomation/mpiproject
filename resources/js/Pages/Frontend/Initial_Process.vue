@@ -528,7 +528,7 @@
 
                                                 // boxNoValues[box] = (letters + numbers).slice(0, 8);
 
-                                                boxNoValues[box] = v.slice(0, 10);
+                                                boxNoValues[box] = v.slice(0, 11);
                                             })()"
                                             type="text"
                                             class="w-full px-1 py-[2px] text-[10px] border border-gray-300 rounded-sm
@@ -691,10 +691,12 @@
                                                 @input="(() => {
                                                     let v = boxNoValuesExcess[box].toUpperCase().replace(/\s+/g, '');
 
-                                                    const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
-                                                    const numbers = v.slice(3).replace(/[^0-9]/g, '');
+                                                    // const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
+                                                    // const numbers = v.slice(3).replace(/[^0-9]/g, '');
 
-                                                    boxNoValuesExcess[box] = (letters + numbers).slice(0, 8);
+                                                    // boxNoValuesExcess[box] = (letters + numbers).slice(0, 8);
+
+                                                    boxNoValuesExcess[box] = v.slice(0, 11);
                                                 })()"
                                                 type="text"
                                                 class="w-full px-1 py-[2px] text-[10px]
