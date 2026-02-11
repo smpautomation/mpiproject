@@ -523,10 +523,12 @@
                                             @input="(() => {
                                                 let v = boxNoValues[box].toUpperCase().replace(/\s+/g, '');
 
-                                                const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
-                                                const numbers = v.slice(3).replace(/[^0-9]/g, '');
+                                                // const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
+                                                // const numbers = v.slice(3).replace(/[^0-9]/g, '');
 
-                                                boxNoValues[box] = (letters + numbers).slice(0, 8);
+                                                // boxNoValues[box] = (letters + numbers).slice(0, 8);
+
+                                                boxNoValues[box] = v.slice(0, 8);
                                             })()"
                                             type="text"
                                             class="w-full px-1 py-[2px] text-[10px] border border-gray-300 rounded-sm
