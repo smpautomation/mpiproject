@@ -3184,10 +3184,10 @@ const dataValidation = async() => {
             toast.error(`Box No for main box ${box} is required.`);
             return;
         }
-        if (boxNoValues.value[box].length < 8) {
-            toast.warning(`Box No for main box ${box} must be at least 8 characters.`);
-            return;
-        }
+        //if (boxNoValues.value[box].length < 8) {
+        //    toast.warning(`Box No for main box ${box} must be at least 8 characters.`);
+        //    return;
+        //}
     }
 
     // Check excess boxes if moreThanTenBoxes
