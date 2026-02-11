@@ -528,7 +528,7 @@
 
                                                 // boxNoValues[box] = (letters + numbers).slice(0, 8);
 
-                                                boxNoValues[box] = v.slice(0, 8);
+                                                boxNoValues[box] = v.slice(0, 10);
                                             })()"
                                             type="text"
                                             class="w-full px-1 py-[2px] text-[10px] border border-gray-300 rounded-sm
@@ -3164,10 +3164,10 @@ const dataValidation = async() => {
             toast.error(`${item.name} is required.`);
             return;
         }
-        if (item.name === 'Raw Material Code' && item.field.length < 8) {
-            toast.warning('Raw Material Code must be 8 characters.');
-            return;
-        }
+        // if (item.name === 'Raw Material Code' && item.field.length < 8) {
+        //     toast.warning('Raw Material Code must be 8 characters.');
+        //     return;
+        // }
     }
 
     // Check main boxes for empty Qty, WT, Box No
