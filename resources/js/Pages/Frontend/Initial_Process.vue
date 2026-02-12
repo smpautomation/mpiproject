@@ -3313,6 +3313,57 @@ const validateBoxes = async() => {
         }
     });
 
+    visibleExcessBoxes.value.forEach(box => {
+        const value_excess = boxNoValuesExcess.value[box].toUpperCase().trim();
+        if (!value_excess) return; // skip empty boxes
+
+        // --- K-box validation ---
+        if (value_excess.startsWith('K')) {
+            if (!/^K\d{3,5}$/.test(value_excess)) {
+                if (/[^0-9K]/.test(value_excess)) {
+                    warnings.push(`Excess Box ${box}: K-box should only have K at the start and numbers afterwards.`);
+                }
+                if (value_excess.length < 4 || value_excess.length > 6) {
+                    warnings.push(`Excess Box ${box}: K-box must be 4–6 characters long. Current length: ${value_excess.length}`);
+                }
+            }
+        }
+        // --- UB-box validation ---
+        else if (value_excess.startsWith('UB') && !value_excess.startsWith('UBP7') && !value_excess.startsWith('UBP8')) {
+            const rest = value.slice(2);
+            if (!/^\d+$/.test(rest)) {
+                warnings.push(`Excess Box ${box}: UB-box should have only UB at the start followed by numbers.`);
+            }
+            if (value_excess.length < 5 || value_excess.length > 9) {
+                warnings.push(`Excess Box ${box}: UB-box must be 5–9 characters long. Current length: ${value_excess.length}`);
+            }
+        }
+        // --- UBP7-box validation ---
+        else if (value_excess.startsWith('UBP7')) {
+            const rest = value_excess.slice(4);
+            if (!/^\d+$/.test(rest)) {
+                warnings.push(`Excess Box ${box}: UBP7-box should have only UBP7 at the start followed by numbers.`);
+            }
+            if (value_excess.length < 8 || value_excess.length > 11) {
+                warnings.push(`Excess Box ${box}: UBP7-box must be 8–11 characters long. Current length: ${value_excess.length}`);
+            }
+        }
+        // --- UBP8-box validation ---
+        else if (value_excess.startsWith('UBP8')) {
+            const rest = value_excess.slice(4);
+            if (!/^\d+$/.test(rest)) {
+                warnings.push(`Excess Box ${box}: UBP8-box should have only UBP8 at the start followed by numbers.`);
+            }
+            if (value_excess.length !== 8) {
+                warnings.push(`Excess Box ${box}: UBP8-box must be exactly 8 characters long. Current length: ${value_excess.length}`);
+            }
+        }
+        // --- Unknown box type ---
+        else {
+            warnings.push(`Excess Box ${box}: This box is not recognized by the system. Are you sure you want to use this format?`);
+        }
+    });
+
     //console.log('Warnings :', warnings.length > 0);
 
     if (warnings.length > 0) {
