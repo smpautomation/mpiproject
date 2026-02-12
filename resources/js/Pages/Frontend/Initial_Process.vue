@@ -3330,7 +3330,7 @@ const validateBoxes = async() => {
         }
         // --- UB-box validation ---
         else if (value_excess.startsWith('UB') && !value_excess.startsWith('UBP7') && !value_excess.startsWith('UBP8')) {
-            const rest = value.slice(2);
+            const rest = value_excess.slice(2);
             if (!/^\d+$/.test(rest)) {
                 warnings.push(`Excess Box ${box}: UB-box should have only UB at the start followed by numbers.`);
             }
