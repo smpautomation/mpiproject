@@ -3207,10 +3207,10 @@ const dataValidation = async() => {
                 toast.error(`Box No for excess box ${box} is required.`);
                 return;
             }
-            if (boxNoValuesExcess.value[box].length < 8) {
-                toast.warning(`Box No for excess box ${box} must be at least 8 characters.`);
-                return;
-            }
+            // if (boxNoValuesExcess.value[box].length < 8) {
+            //     toast.warning(`Box No for excess box ${box} must be at least 8 characters.`);
+            //     return;
+            // }
         }
     }
 
