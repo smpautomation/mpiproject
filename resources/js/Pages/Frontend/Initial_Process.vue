@@ -523,10 +523,6 @@
                                             @input="(() => {
                                                 let v = boxNoValues[box].toUpperCase().replace(/\s+/g, '');
 
-                                                // const letters = v.slice(0, 3).replace(/[^A-Z]/g, '');
-                                                // const numbers = v.slice(3).replace(/[^0-9]/g, '');
-
-                                                // boxNoValues[box] = (letters + numbers).slice(0, 8);
 
                                                 boxNoValues[box] = v.slice(0, 11);
                                             })()"
@@ -937,6 +933,30 @@
                     Reset Fields
                 </button>
             </div>
+            <div v-if="state.user && state.user.access_type === 'Automation'" class="flex items-center gap-4 p-4 border border-gray-200 shadow-sm bg-gray-50 rounded-xl w-fit">
+                <!-- Label Section -->
+                <div class="flex flex-col">
+                    <span class="text-sm font-semibold text-gray-800">
+                        Strict Validation
+                    </span>
+                    <span class="text-xs text-gray-500">
+                        Automation only
+                    </span>
+                </div>
+
+                 <!-- Toggle Switch -->
+                <button
+                    @click="toggleStrictValidation"
+                    class="relative inline-flex items-center transition-colors duration-300 rounded-full h-7 w-14 focus:outline-none"
+                    :class="isStrictValidation ? 'bg-green-600' : 'bg-gray-300'"
+                >
+                    <span
+                    class="inline-block w-5 h-5 transition-transform duration-300 transform bg-white rounded-full shadow-md"
+                    :class="isStrictValidation ? 'translate-x-7' : 'translate-x-1'"
+                    ></span>
+                </button>
+
+            </div>
 
             <Modal :show="showModalPreview" @close="showModalPreview = false">
                 <div
@@ -1187,6 +1207,57 @@
                 </div>
             </div>
             </Modal>
+
+            <Modal :show="boxValidationModal.show" @close="boxValidationModal.show = false">
+                <div class="relative flex flex-col items-start bg-white border-l-8 border-red-600 p-6 rounded-xl shadow-lg max-w-[95vw] max-h-[90vh] overflow-auto">
+                    <!-- Close Button -->
+                    <button
+                        @click="boxValidationModal.show = false"
+                        class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-gray-600"
+                        aria-label="Close modal"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <!-- Header -->
+                    <div class="flex items-center mb-4 space-x-3">
+                        <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.213 3.02-1.742 3.02H3.48c-1.53 0-2.492-1.687-1.742-3.02L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-7a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <h2 class="text-2xl font-bold text-red-700">Box No Format Warning</h2>
+                    </div>
+
+                    <!-- Warning Messages -->
+                    <div class="space-y-2">
+                        <p v-for="(msg, i) in boxValidationModal.messages" :key="i" class="text-base leading-relaxed text-gray-700">
+                            {{ msg }}
+                        </p>
+                    </div>
+
+                    <!-- Close Button -->
+                    <div class="flex justify-end w-full gap-5 mt-6">
+                        <button
+                            v-if="!isStrictValidation"
+                            @click="proceedBoxValidation"
+                            class="px-6 py-2 font-semibold text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
+                        >
+                            I am sure! (Proceed)
+                        </button>
+                        <button
+                            @click="boxValidationModal.show = false"
+                            class="px-6 py-2 font-semibold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
+                        >
+                            Go back and double check
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
 
         </div>
 
@@ -2569,7 +2640,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed, reactive, watch } from "vue";
+import { onMounted, ref, computed, reactive, watch, nextTick } from "vue";
 import { Inertia } from '@inertiajs/inertia';
 import Modal from '@/Components/Modal.vue'
 import { useToast } from 'vue-toast-notification';
@@ -2669,6 +2740,8 @@ function useSessionStorage(key, state) {
 }
 
 //Toggle variables
+const isStrictValidation = ref(false);
+const boxValidationModal = ref({ show: false, messages: [] });
 const manualQtyMode = ref(false);
 const showModalPreview = ref(false);
 const showModalDuplicateWarning = ref(false);
@@ -2935,6 +3008,23 @@ const formatCoatingMCNo = () => {
     initial_mpcs.coatingMCNo = `${prefix}-${String(num).padStart(2, '0')}`;
 };
 
+const toggleStrictValidation = async () => {
+    // Optimistically toggle UI
+    isStrictValidation.value = !isStrictValidation.value;
+
+    try {
+        // Update backend
+        await axios.put(`/api/dev-button-controls/1`, {
+            is_strict_val_ip_cs: isStrictValidation.value
+        });
+    } catch (error) {
+        console.error('Failed to update strict validation:', error);
+
+        // Rollback UI on failure
+        isStrictValidation.value = !isStrictValidation.value;
+    }
+}
+
 
 //Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone ------- Data fetching zone
 
@@ -2987,6 +3077,19 @@ const getModelLists = async () => {
             "getModelLists",
             "Failed to get the model names"
         );
+    }
+}
+
+const getDevControlsData = async () => {
+    try {
+        const response = await axios.get('/api/dev-button-controls');
+
+        // Assuming you only have one record
+        const control = response.data[0];
+        isStrictValidation.value = control.is_strict_val_ip_cs;
+
+    } catch (error) {
+        console.error('Failed to fetch dev button controls:', error);
     }
 }
 
@@ -3148,6 +3251,82 @@ const clearAll = () => {
 
 }
 
+const proceedBoxValidation = async() => {
+    boxValidationModal.value.show = false;
+    boxValidationModal.value.warning = [];
+    await lotNoValidation();
+}
+
+
+const validateBoxes = async() => {
+    //console.log("Entered validateBoxes");
+    const warnings = [];
+
+    visibleBoxes.value.forEach(box => {
+        const value = boxNoValues.value[box].toUpperCase().trim();
+        if (!value) return; // skip empty boxes
+
+        // --- K-box validation ---
+        if (value.startsWith('K')) {
+            if (!/^K\d{3,5}$/.test(value)) {
+                if (/[^0-9K]/.test(value)) {
+                    warnings.push(`Box ${box}: K-box should only have K at the start and numbers afterwards.`);
+                }
+                if (value.length < 4 || value.length > 6) {
+                    warnings.push(`Box ${box}: K-box must be 4–6 characters long. Current length: ${value.length}`);
+                }
+            }
+        }
+        // --- UB-box validation ---
+        else if (value.startsWith('UB') && !value.startsWith('UBP7') && !value.startsWith('UBP8')) {
+            const rest = value.slice(2);
+            if (!/^\d+$/.test(rest)) {
+                warnings.push(`Box ${box}: UB-box should have only UB at the start followed by numbers.`);
+            }
+            if (value.length < 5 || value.length > 9) {
+                warnings.push(`Box ${box}: UB-box must be 5–9 characters long. Current length: ${value.length}`);
+            }
+        }
+        // --- UBP7-box validation ---
+        else if (value.startsWith('UBP7')) {
+            const rest = value.slice(4);
+            if (!/^\d+$/.test(rest)) {
+                warnings.push(`Box ${box}: UBP7-box should have only UBP7 at the start followed by numbers.`);
+            }
+            if (value.length < 8 || value.length > 11) {
+                warnings.push(`Box ${box}: UBP7-box must be 8–11 characters long. Current length: ${value.length}`);
+            }
+        }
+        // --- UBP8-box validation ---
+        else if (value.startsWith('UBP8')) {
+            const rest = value.slice(4);
+            if (!/^\d+$/.test(rest)) {
+                warnings.push(`Box ${box}: UBP8-box should have only UBP8 at the start followed by numbers.`);
+            }
+            if (value.length !== 8) {
+                warnings.push(`Box ${box}: UBP8-box must be exactly 8 characters long. Current length: ${value.length}`);
+            }
+        }
+        // --- Unknown box type ---
+        else {
+            warnings.push(`Box ${box}: This box is not recognized by the system. Are you sure you want to use this format?`);
+        }
+    });
+
+    //console.log('Warnings :', warnings.length > 0);
+
+    if (warnings.length > 0) {
+        boxValidationModal.value.messages = warnings;
+        await nextTick();       // ensure Vue updates
+        boxValidationModal.value.show = true;
+        //console.log('Modal: ', boxValidationModal.value.show);
+    } else {
+        await lotNoValidation();
+    }
+};
+
+
+
 const dataValidation = async() => {
     // Check required main fields
     const requiredMainFields = [
@@ -3214,8 +3393,7 @@ const dataValidation = async() => {
         }
     }
 
-    // All checks passed → open modal
-    await lotNoValidation();
+    await validateBoxes();
 };
 
 const proceedDuplicate = () => {
@@ -3853,7 +4031,6 @@ const tLineAverages = computed(() => {
     return avg;
 });
 
-
 // --------------------------
 // Watch computed averages and update filmPastingInfo
 // --------------------------
@@ -4095,6 +4272,7 @@ onMounted( async () => {
     await getControlSheetData();
     await getCoatingSummary();
     await getFilmPastingSummary();
+    await getDevControlsData();
 });
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session

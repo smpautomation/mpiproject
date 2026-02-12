@@ -36,6 +36,7 @@ use App\Http\Controllers\GbdpSecondCoatingController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
 use App\Http\Controllers\SecondGBDPController;
+use App\Http\Controllers\DevButtonControlsController;
 use App\Http\Controllers\SecondGbdpModelsController;
 use App\Http\Controllers\GbdpSecondHeatTreatmentController;
 use App\Http\Controllers\SmpDataController;
@@ -326,6 +327,7 @@ Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUp
 
 Route::post('/mias-factor/bulk-upload', [MiasFactorController::class, 'bulkUpload']);
 
+Route::apiResource('dev-button-controls', DevButtonControlsController::class);
 Route::apiResource('mias-factor', MiasFactorController::class);
 Route::apiResource('vt-models',VtModelController::class);
 Route::apiResource('cpk-ihc-models',CpkIhcModelController::class);
