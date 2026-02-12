@@ -3166,10 +3166,10 @@ const dataValidation = async() => {
             toast.error(`${item.name} is required.`);
             return;
         }
-        // if (item.name === 'Raw Material Code' && item.field.length < 8) {
-        //     toast.warning('Raw Material Code must be 8 characters.');
-        //     return;
-        // }
+        if (item.name === 'Raw Material Code' && item.field.length < 7) {
+            toast.warning('Raw Material Code must be atleast 7 characters.');
+            return;
+        }
     }
 
     // Check main boxes for empty Qty, WT, Box No
@@ -3186,10 +3186,10 @@ const dataValidation = async() => {
             toast.error(`Box No for main box ${box} is required.`);
             return;
         }
-        //if (boxNoValues.value[box].length < 8) {
-        //    toast.warning(`Box No for main box ${box} must be at least 8 characters.`);
-        //    return;
-        //}
+        if (boxNoValues.value[box].length < 4) {
+            toast.warning(`Box No for main box ${box} must be at least 4 characters.`);
+            return;
+        }
     }
 
     // Check excess boxes if moreThanTenBoxes
@@ -3207,10 +3207,10 @@ const dataValidation = async() => {
                 toast.error(`Box No for excess box ${box} is required.`);
                 return;
             }
-            // if (boxNoValuesExcess.value[box].length < 8) {
-            //     toast.warning(`Box No for excess box ${box} must be at least 8 characters.`);
-            //     return;
-            // }
+            if (boxNoValuesExcess.value[box].length < 4) {
+                 toast.warning(`Box No for excess box ${box} must be at least 4 characters.`);
+                 return;
+            }
         }
     }
 
