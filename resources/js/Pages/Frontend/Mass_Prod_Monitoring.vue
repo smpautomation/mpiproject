@@ -57,25 +57,35 @@
                         <div class="flex items-center gap-2 mb-4">
                             <h3 class="text-lg font-bold text-gray-800">{{ mpc.mass_prod }}</h3>
                             <span class="px-3 py-1 text-xs font-semibold text-teal-700 border border-teal-200 rounded-full bg-gradient-to-r from-teal-100 to-cyan-100">
-                                {{ mpc.layers.length }} Layers
+                                A total of {{ mpc.numberOfLotsWithData }} Lots detected in this mass production
                             </span>
                         </div>
 
                         <div class="space-y-3">
                             <div
                                 v-for="(layer, index) in mpc.layers"
-                                :key="index"
+                                :key="index + '-' + layer.model + '-' + layer.lot_no"
                                 class="p-4 transition-all duration-200 border border-gray-200 rounded-lg bg-gray-50 hover:border-cyan-300 hover:shadow-md"
                             >
                                 <!-- Layer Header -->
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-3">
                                         <div class="flex items-center justify-center w-10 h-10 font-bold text-white rounded-lg shadow-sm bg-gradient-to-br from-teal-500 to-cyan-500">
-                                            {{ index }}
+                                            {{ layer.layer_no }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-semibold text-gray-800">Layer {{ index }}</p>
+                                            <p class="text-sm font-semibold text-gray-800">
+                                                Layer {{ layer.layer_no }}
+                                                <span v-if="layer.lot_type === 'main'" class="text-xs font-medium text-teal-700">(Main Lot)</span>
+                                                <span v-if="layer.lot_type === 'additional'" class="text-xs font-medium text-cyan-700">(Additional Lot)</span>
+                                            </p>
                                             <p class="text-xs text-gray-500">Type: <span class="font-medium text-gray-700">{{ layer.type || '—' }}</span></p>
+                                            <p class="text-xs text-gray-500">
+                                                Model: <span class="font-medium text-gray-700">{{ layer.model || '—' }}</span>
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                Lot No: <span class="font-medium text-gray-700">{{ layer.lot_no || '—' }}</span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -103,12 +113,12 @@
                                     <div
                                         :class="[
                                             'relative px-4 py-3 rounded-lg text-center font-semibold text-sm transition-all duration-200 border-2',
-                                            (layer.coating_completed || layer.film_pasting_completed)
+                                            layer.coating_completed
                                                 ? 'bg-teal-500 border-teal-600 text-white shadow-md'
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
                                     >
-                                        <div v-if="layer.coating_completed || layer.film_pasting_completed" class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2">
+                                        <div v-if="layer.coating_completed" class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2">
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                             </svg>
@@ -240,7 +250,17 @@ const getMassProductionStatus = async () => {
     try {
         const response = await axios.get(`/api/mass-production-monitoring/${selectedFurnace.value}/${selectedMassProd.value}`);
         if(response.data.success) {
-            massProductionData.value = response.data.data; // should be a single mass prod data
+            massProductionData.value = response.data.data;
+
+            // Compute total lots for each mass production
+            massProductionData.value.forEach(mpc => {
+                const lotsSet = new Set();
+                mpc.layers.forEach(layer => {
+                    if(layer.lot_no) lotsSet.add(layer.lot_no);
+                });
+                mpc.numberOfLotsWithData = lotsSet.size;
+            });
+
         } else {
             massProductionData.value = [];
             toast.error('Failed to load mass production data.');
@@ -251,7 +271,6 @@ const getMassProductionStatus = async () => {
         toast.error('Error fetching mass production data.');
     }
 };
-
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 

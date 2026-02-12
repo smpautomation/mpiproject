@@ -1396,32 +1396,43 @@ const saveToNsaCategory = async () => {
 }
 
     // Function to fetch data from the API
-const showAllData = async () => {
+    const showAllData = async () => {
         showLoadingForGraphAndTables.value = true;
         layerTableRowLoading.value = true;
         showProceed3.value = false;
         toggleManageForm.value = false;
+
         try {
             showProceed3.value = false;
             toggleManageForm.value = false;
-            const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + highest_setNo.value); // Adjust this URL to your API endpoint
-            //console.log('responseNSARemarks - API Response showallData:', responseNSARemarks.data);
-            //gg
-            //console.log('Serial No value = ', currentSerialSelected.value);
 
-            // Extract arrays from the response
-            nsaData.value = responseNSARemarks.data.data || [];
-            //console.log('showAllData nsa data: ',nsaData);
-            const getAggregateID = responseNSARemarks.data[0];
-            //console.log("Data for getting aggregate ID: ",getAggregateID);
-            const filteredAggregateID_first = getAggregateID.filter(item => item.nsa_serial == currentSerialSelected.value);
-            //console.log("Filtered aggregate with serial_no:", filteredAggregateID.value);
-            filteredAggregateID.value = filteredAggregateID_first.filter(item => item.nsa_set == highest_setNo.value);
-            //console.log("Filtered aggregate with set_no:", filteredAggregateID.value);
-            nsaData_aggID.value = filteredAggregateID.value[0].id;
-            //console.log("aggregate ID to be patched: ",nsaData_aggID.value);
-            //const nsaRemarks = response.data.data["remarks"] || [];
-            //console.log('showAllData nsa remarks: ',nsaRemarks);
+            // Fetch data from API
+            const responseNSARemarks = await axios.get(
+                "/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + highest_setNo.value
+            );
+
+            // Ensure the structure matches the controller
+            const responseData = responseNSARemarks.data.data || {};
+
+            // Assign NSAData safely
+            nsaData.value = responseData.NSAData || [];
+
+            // Assign aggregateFunctions safely
+            const aggregateFunctionsArray = responseData.aggregateFunctions || [];
+
+            // Filter aggregate functions for current serial and set
+            const filteredAggregateID_first = aggregateFunctionsArray.filter(
+                item => item.nsa_serial === Number(currentSerialSelected.value)
+            );
+            filteredAggregateID.value = filteredAggregateID_first.filter(
+                item => item.nsa_set === highest_setNo.value
+            );
+
+            console.log(typeof aggregateFunctionsArray[0].nsa_serial, typeof currentSerialSelected.value);
+            console.log(typeof aggregateFunctionsArray[0].nsa_set, typeof highest_setNo.value);
+
+            // Safe access to aggregate ID
+            nsaData_aggID.value = filteredAggregateID.value[0]?.id || null;
 
             await checkTPMCategory();
 
@@ -1664,8 +1675,8 @@ const showAllData = async () => {
                 })
             };
 
-            //console.log('Aggregate Data:', aggregateData);
-            //console.log('Aggregate ID for patch:', nsaData_aggID.value)
+            console.log('Aggregate Data:', aggregateData);
+            console.log('Aggregate ID for patch:', nsaData_aggID.value)
             await sendAggData(aggregateData, nsaData_aggID.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);

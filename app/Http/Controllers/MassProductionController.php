@@ -8,10 +8,12 @@ use App\Models\GbdpSecondHeatTreatment;
 use App\Models\FilmPastingData;
 use App\Models\Coating;
 use App\Models\TPMData;
+use App\Models\TPMDataCategory;
 use App\Models\HtMassProData;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\SmpData;
+use App\Models\BreaklotInitialLot;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotSecondCoating;
 use App\Models\BreaklotFilmpasting;
@@ -951,74 +953,121 @@ class MassProductionController extends Controller
 
         $layers = [];
 
-        // Layers 1 to 9
+        // Helper: extract unique model + lot from JSON
+        $extractModelLot = function ($layer_json) {
+            $models = [];
+            $lots = [];
+
+            if ($layer_json) {
+                $layerData = json_decode($layer_json, true);
+                if ($layerData) {
+                    foreach ($layerData as $row) {
+                        if ($row['rowTitle'] === 'MODEL:') {
+                            $models = array_unique(array_values($row['data']));
+                        }
+                        if ($row['rowTitle'] === 'LT. No.:') {
+                            $lots = array_unique(array_values($row['data']));
+                        }
+                    }
+                }
+            }
+
+            return [
+                'models' => $models,
+                'lots' => $lots,
+            ];
+        };
+
+        // Process one layer (normal or breaklot)
+        $processLayer = function ($layer_json, $layer_no, $layer_type) use ($furnace, $massprod, &$layers, $extractModelLot) {
+            $modelLot = $extractModelLot($layer_json);
+            $uniqueCount = count($modelLot['models']);
+
+            $isBreaklot = $uniqueCount > 1 || count($modelLot['lots']) > 1;
+
+            if (!$isBreaklot) {
+                // Normal layer
+                $layerStatus = [
+                    'layer_no' => $layer_no,
+                    'lot_type' => 'normal',
+                    'type' => $layer_type,
+                    'model' => $modelLot['models'][0] ?? null,
+                    'lot_no' => $modelLot['lots'][0] ?? null,
+                    'heat_treatment_completed' => !empty($layer_json),
+                    'coating_completed' => Coating::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
+                    'mpi_completed' => TPMDataCategory::where('actual_model', $modelLot['models'][0] ?? null)
+                        ->where('jhcurve_lotno', $modelLot['lots'][0] ?? null)
+                        ->where('massprod_name', $massprod)
+                        ->exists(),
+                ];
+
+                $layers[] = $layerStatus;
+                return;
+            }
+
+            // Breaklot scenario
+            // 1️⃣ Main lot from BreaklotInitialLot
+            $mainLot = BreaklotInitialLot::where('furnace', $furnace)
+                ->where('mass_prod', $massprod)
+                ->where('layer', $layer_no)
+                ->first();
+
+            if ($mainLot) {
+                $layers[] = [
+                    'layer_no' => $layer_no,
+                    'lot_type' => 'main',
+                    'type' => $layer_type,
+                    'model' => $mainLot->initial_model,
+                    'lot_no' => $mainLot->initial_lot,
+                    'heat_treatment_completed' => !empty($layer_json),
+                    'coating_completed' => true,
+                    'mpi_completed' => TPMDataCategory::where('actual_model', $mainLot->initial_model)
+                        ->where('jhcurve_lotno', $mainLot->initial_lot)
+                        ->where('massprod_name', $massprod)
+                        ->exists(),
+                ];
+            }
+
+            // 2️⃣ Additional lots
+            $additionalTables = [BreaklotCoating::class, BreaklotSecondCoating::class, BreaklotFilmpasting::class];
+            foreach ($additionalTables as $table) {
+                $additionalLots = $table::where('furnace', $furnace)
+                    ->where('mass_prod', $massprod)
+                    ->where('layer', $layer_no)
+                    ->get();
+
+                foreach ($additionalLots as $lot) {
+                    $layers[] = [
+                        'layer_no' => $layer_no,
+                        'lot_type' => 'additional',
+                        'type' => $layer_type,
+                        'model' => $lot->model,
+                        'lot_no' => $lot->lot_no,
+                        'heat_treatment_completed' => !empty($layer_json),
+                        'coating_completed' => true,
+                        'mpi_completed' => TPMDataCategory::where('actual_model', $lot->model)
+                            ->where('jhcurve_lotno', $lot->lot_no)
+                            ->where('massprod_name', $massprod)
+                            ->exists(),
+                    ];
+                }
+            }
+        };
+
+        // Layers 1–9
         for ($i = 1; $i <= 9; $i++) {
             $layer_json = $prod->{'layer_'.$i};
             $layer_type = $prod->{'layer_'.$i.'_format_type'};
-
-            $layerStatus = [
-                'type' => $layer_type,
-                'heat_treatment_completed' => false,
-                'coating_completed' => false,
-                'mpi_completed' => false,
-            ];
-
-            if ($layer_type === 'Normal') {
-                $layerStatus['heat_treatment_completed'] = !empty($layer_json);
-                $layerStatus['coating_completed'] = Coating::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer', $i)
-                    ->exists();
-                $layerStatus['mpi_completed'] = TPMData::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer_no', $i)
-                    ->exists();
-
-            } elseif ($layer_type === '1st and 2nd GBDP') {
-                $layerStatus['heat_treatment_completed'] = GbdpSecondHeatTreatment::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer', $i)
-                    ->exists();
-                $layerStatus['coating_completed'] = GbdpSecondCoating::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer', $i)
-                    ->exists();
-                $layerStatus['mpi_completed'] = TPMData::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer_no', $i)
-                    ->exists();
-
-            } elseif ($layer_type === 'Film Pasting') {
-                $layerStatus['heat_treatment_completed'] = !empty($layer_json);
-                $layerStatus['coating_completed'] = FilmPastingData::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer', $i)
-                    ->exists();
-                $layerStatus['mpi_completed'] = TPMData::where('furnace', $furnace)
-                    ->where('mass_prod', $prod->mass_prod)
-                    ->where('layer_no', $i)
-                    ->exists();
-            }
-
-            $layers[$i] = $layerStatus;
+            $processLayer($layer_json, $i, $layer_type);
         }
 
         // Layer 9.5
         $layer_9_5_json = $prod->layer_9_5;
         $layer_9_5_type = $prod->layer_9_5_format_type;
-
-        $layers['9.5'] = [
-            'type' => $layer_9_5_type,
-            'heat_treatment_completed' => !empty($layer_9_5_json),
-            'coating_completed' => Coating::where('furnace', $furnace)
-                ->where('mass_prod', $prod->mass_prod)
-                ->where('layer', '9.5')
-                ->exists(),
-            'mpi_completed' => TPMData::where('furnace', $furnace)
-                ->where('mass_prod', $prod->mass_prod)
-                ->where('layer_no', '9.5')
-                ->exists(),
-        ];
+        $processLayer($layer_9_5_json, '9.5', $layer_9_5_type);
 
         return response()->json([
             'success' => true,
