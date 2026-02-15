@@ -121,7 +121,8 @@ class TxtExportService
                             $rowData['WT'] = $data;
                             break;
                         case 'boxno':
-                            $rowData['BOX_NO'] = str_replace(' ', '', $data);
+                            $cleanBoxNo = str_replace(' ', '', $data);
+                            $rowData['BOX_NO'] = str_pad($cleanBoxNo ?: '0', 11, '0', STR_PAD_LEFT);
                             break;
                         case 'rawmaterialcode':
                             $rowData['RAW_MATERIAL_CODE'] = $data;

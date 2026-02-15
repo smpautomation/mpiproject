@@ -2538,6 +2538,7 @@ const fetchAllLotDataBoxDetails = async () => {
             const boxNoRow    = getRow("BOX No.:");
 
             const modelRow    = getRow("MODEL:");
+            const coatingMC   = getRow("COATING M/C No.:");
             const coatingRow  = getRow("COATING:");
             const lotRow      = getRow("LT. No.:");
             const magnetRow   = getRow("Magnet prepared by:");
@@ -2567,7 +2568,7 @@ const fetchAllLotDataBoxDetails = async () => {
             // Top-level MPCS
             const firstBox = visibleBoxes.value[0];
             mpcs.selectedModel       = modelRow[firstBox] || '';
-            mpcs.coatingMCNo         = coatingRow[firstBox] || '';
+            mpcs.coatingMCNo         = coatingMC[firstBox] || '';
             mpcs.lotNo               = lotRow[firstBox] || '';
             mpcs.coating             = coatingRow[firstBox] || 0;
             mpcs.magnetPreparedBy    = magnetRow[firstBox] || '';
@@ -2595,6 +2596,7 @@ const fetchAllLotDataBoxDetails = async () => {
         const weightRow     = getRow("WT (KG):");
         const boxNoRow      = getRow("BOX No.:");
         const modelRow      = getRow("MODEL:");
+        const coatingMC   = getRow("COATING M/C No.:");
         const coatingRow    = getRow("COATING:");
         const lotRow        = getRow("LT. No.:");
         const magnetRow     = getRow("Magnet prepared by:");
@@ -2690,7 +2692,7 @@ const fetchAllLotDataBoxDetails = async () => {
         const firstBox = visibleBoxes.value[0];
 
         mpcs.selectedModel        = modelRow[firstBox] || '';
-        mpcs.coatingMCNo          = coatingRow[firstBox] || '';
+        mpcs.coatingMCNo          = coatingMC[firstBox] || '';
         mpcs.lotNo                = lotRow[firstBox] || '';
         mpcs.coating              = coatingRow[firstBox] || 0;
         mpcs.magnetPreparedBy     = magnetRow[firstBox] || '';
