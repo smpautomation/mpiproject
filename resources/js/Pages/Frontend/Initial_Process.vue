@@ -527,6 +527,7 @@
                                                 boxNoValues[box] = v.slice(0, 11);
                                             })()"
                                             type="text"
+                                            required
                                             class="w-full px-1 py-[2px] text-[10px] border border-gray-300 rounded-sm
                                                 focus:outline-none focus:ring-1 focus:ring-blue-400"
                                         />
@@ -3412,6 +3413,14 @@ const dataValidation = async() => {
             toast.error(`Weight for main box ${box} is required.`);
             return;
         }
+        if (!boxWeight.value[box]) {
+            toast.error(`Box Weight for main box ${box} is required.`);
+            return;
+        }
+        if (!boxWithMagnetWeight.value[box]) {
+            toast.error(`Box with Magnet Weight for main box ${box} is required.`);
+            return;
+        }
         if (!boxNoValues.value[box]) {
             toast.error(`Box No for main box ${box} is required.`);
             return;
@@ -3435,6 +3444,14 @@ const dataValidation = async() => {
             }
             if (!boxNoValuesExcess.value[box]) {
                 toast.error(`Box No for excess box ${box} is required.`);
+                return;
+            }
+            if (!boxWeightExcess.value[box]) {
+                toast.error(`Box Weight for excess box ${box} is required.`);
+                return;
+            }
+            if (!boxWithMagnetWeightExcess.value[box]) {
+                toast.error(`Box with Magnet Weight for excess box ${box} is required.`);
                 return;
             }
             if (boxNoValuesExcess.value[box].length < 4) {
