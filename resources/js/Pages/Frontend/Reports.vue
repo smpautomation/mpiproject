@@ -3452,13 +3452,13 @@ const fetchAllData = async () => {
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
             }
             if(ngiHr95.value > 0) {
-                noteReasonForReject.value.push('- N.G Hr95');
+                //noteReasonForReject.value.push('- N.G Hr95');
                 rejectOKNG.value.push("Hr95 " + hold + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
             }
             if(ngiHr98.value > 0) {
-                noteReasonForReject.value.push('- N.G Hr98');
+                //noteReasonForReject.value.push('- N.G Hr98');
                 rejectOKNG.value.push("Hr98 " + hold + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
