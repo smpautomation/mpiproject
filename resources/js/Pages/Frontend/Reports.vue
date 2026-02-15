@@ -1649,10 +1649,7 @@
                                                 <td class="text-center text-[10px] border border-blue-500 px-[3px] py-[3px]">{{ item.pass_no }}</td>
 
                                                 <!-- Repeat for all measured properties with conditional E -->
-                                                <template v-for="prop in [
-                                                    'Br', 'iHc', 'iHk', 'BHMax', 'iHr95', 'iHr98', 'iHkiHc',
-                                                    'Br4pai', 'bHc', 'Squareness', '4paiId', '4paiIs', '4paiIa', 'Tracer'
-                                                ]">
+                                                <template v-for="prop in propsList" :key="prop">
                                                     <td class="text-center text-[10px] border border-blue-500 px-[2px] py-[3px]">{{ item[prop] }}</td>
                                                     <td
                                                         v-if="item.remark && (item.remark[prop + '_remarks'] == 1 || item.remark[prop + '_remarks'] == '1')"
@@ -3455,11 +3452,13 @@ const fetchAllData = async () => {
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
             }
             if(ngiHr95.value > 0) {
+                noteReasonForReject.value.push('- N.G Hr95');
                 rejectOKNG.value.push("Hr95 " + hold + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
             }
             if(ngiHr98.value > 0) {
+                noteReasonForReject.value.push('- N.G Hr98');
                 rejectOKNG.value.push("Hr98 " + hold + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
@@ -3668,6 +3667,11 @@ const getSecAllSetsData = async () => {
 
 const nsaData = ref([]);
 const nsa_combinedData = ref([]);
+
+const propsList = [
+    'Br', 'iHc', 'iHk', 'BHMax', 'iHr95', 'iHr98', 'iHkiHc',
+    'Br4pai', 'bHc', 'Squareness', '4paiId', '4paiIs', '4paiIa', 'Tracer'
+];
 
 const nsa_showData = async (setNo = current_setNo.value) => {
     try {
