@@ -3401,6 +3401,12 @@ const dataValidation = async() => {
             toast.warning('Raw Material Code must be atleast 7 characters.');
             return;
         }
+        if (isStrictValidation.value){
+            if (item.name === 'Raw Material Code' && item.field.length !== 7) {
+                toast.warning('Raw Material Code must be exactly 7 characters.');
+                return;
+            }
+        }
     }
 
     // Check main boxes for empty Qty, WT, Box No
