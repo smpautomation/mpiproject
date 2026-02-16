@@ -269,6 +269,21 @@ Route::post('/send-takefu-email-manual', function(Request $request) {
     return response()->json(['message' => 'Email sent successfully'], 200);
 });
 
+if (app()->environment('local')) {
+
+    Route::get('/preview-takefu-email', function () {
+
+        $customMessage = '
+            Dear Obata-san, Good day po! Please see attached MPI Sheets for approval. Thank you po Jhen
+        ';
+
+        $massPro = 'K40 214TH';
+
+        return view('emails.takefu-email', compact('customMessage', 'massPro'));
+    });
+
+}
+
 Route::get('/files/{massPro}', function (Request $request, $massPro) {
     $directory = public_path("files/{$massPro}");
 

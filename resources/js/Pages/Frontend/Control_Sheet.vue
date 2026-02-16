@@ -83,12 +83,14 @@
 
                             <!-- Data Cells -->
                             <td
-                                v-for="letter in controlSheet_headerLetters"
+                                v-for="letter in visibleHeaderLetters(layer, rowIndex)"
                                 :key="letter"
+                                :rowspan="emptyColumns[layer][letter] ? controlSheet_rowTitles.length : 1"
                                 :class="[borderColor, cellPaddings, 'text-center', getCellClass(layer, row.rowTitle, letter)]"
-                                >
-                                {{ row.data[letter] }}
+                            >
+                                {{ emptyColumns[layer][letter] ? 'EMPTY' : row.data[letter] }}
                             </td>
+
                             <!-- Final 3 total cells (only show once per layer, at last row) -->
                             <template v-if="rowIndex === 0">
                               <td
@@ -666,6 +668,30 @@ for (const layer of controlSheet_layers.value) {
     return { rowTitle, data };
   });
 }
+
+const emptyColumns = computed(() => {
+  const result = {};
+  for (const layer of controlSheet_layers.value) {
+    const layerRows = controlSheet_dataMatrix.value[layer];
+    const ltRow = layerRows.find(r => r.rowTitle === 'LT. No.:');
+    if (!ltRow) continue;
+
+    result[layer] = {};
+    for (const letter of controlSheet_headerLetters.value) {
+      result[layer][letter] = !ltRow.data[letter]; // true if empty
+    }
+  }
+  return result;
+});
+
+const visibleHeaderLetters = (layer, rowIndex) => {
+  return controlSheet_headerLetters.value.filter(letter => {
+    // If the column is empty and this is not the first row, skip it
+    if (emptyColumns.value[layer][letter] && rowIndex > 0) return false;
+    return true;
+  });
+};
+
 //console.log(controlSheet_dataMatrix.value);
 
 const setDataMatrixValue = (layer, rowTitle, letter, value) => {
@@ -895,99 +921,124 @@ onMounted(async()=>{
 });
 
 const exportToExcel = () => {
-  const sheetData = []
+    const sheetData = [];
+    let excelRow = 1; // Starts after header (0-based index in XLSX)
+    const merges = [];
 
-  // 1. Header
-  sheetData.push([
-    'LAYER',
-    'ROW TITLE',
-    ...controlSheet_headerLetters.value,
-    'TOTAL WT(KG)',
-    'TOTAL QTY(PCS)',
-    'MPI SAMPLE QTY'
-  ])
+    // 1. Header
+    sheetData.push([
+        'LAYER',
+        'ROW TITLE',
+        ...controlSheet_headerLetters.value,
+        'TOTAL WT(KG)',
+        'TOTAL QTY(PCS)',
+        'MPI SAMPLE QTY'
+    ]);
 
-  // 2. Body rows by layer
-  for (const layer of controlSheet_layers.value) {
-    const rows = controlSheet_dataMatrix.value[layer];
+    // 2. Body rows by layer
+    for (const layer of controlSheet_layers.value) {
+        const rows = controlSheet_dataMatrix.value[layer];
 
-    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-      const row = rows[rowIndex];
-      const rowData = [];
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+            const row = rows[rowIndex];
+            const rowData = [];
 
-      rowData.push(rowIndex === 0 ? layer : '');
-      rowData.push(row.rowTitle);
+            rowData.push(rowIndex === 0 ? layer : '');
+            rowData.push(row.rowTitle);
 
-      for (const letter of controlSheet_headerLetters.value) {
-        rowData.push(row.data[letter] ?? '')
-      }
+            // Loop over letters
+            for (let colIndex = 0; colIndex < controlSheet_headerLetters.value.length; colIndex++) {
+                const letter = controlSheet_headerLetters.value[colIndex];
 
-      if (rowIndex === 0) {
-        rowData.push(
-          getTotalWtForLayer(layer),
-          getTotalQtyForLayer(layer),
-          '' // MPI SAMPLE QTY placeholder
-        )
-      } else {
-        rowData.push('', '', '');
-      }
+                if (emptyColumns.value[layer][letter]) {
+                    if (rowIndex === 0) {
+                        // Put "EMPTY" on the first row
+                        rowData.push('EMPTY');
 
-      sheetData.push(rowData);
+                        // Add merge for this empty column spanning all rows of this layer
+                        merges.push({
+                            s: { r: excelRow, c: 2 + colIndex }, // +2: LAYER + ROW TITLE
+                            e: { r: excelRow + rows.length - 1, c: 2 + colIndex }
+                        });
+                    } else {
+                        // Empty cells for merged area
+                        rowData.push('');
+                    }
+                } else {
+                    rowData.push(row.data[letter] ?? '');
+                }
+            }
+
+            // Totals columns
+            if (rowIndex === 0) {
+                rowData.push(
+                    getTotalWtForLayer(layer),
+                    getTotalQtyForLayer(layer),
+                    '' // MPI SAMPLE QTY placeholder
+                );
+            } else {
+                rowData.push('', '', '');
+            }
+
+            sheetData.push(rowData);
+            excelRow++; // Move to next Excel row
+        }
     }
-  }
 
-  // 3. Grand total row
-  sheetData.push([
-    '', '', '', '', '', '', '', '', '', '', '', '',
-    'GRAND TOTAL',
-    totalWt.value,
-    totalQty.value,
-    ''
-  ]);
+    // 3. Grand total row
+    sheetData.push([
+        '', '', '', '', '', '', '', '', '', '', '', '',
+        'GRAND TOTAL',
+        totalWt.value,
+        totalQty.value,
+        ''
+    ]);
 
-  // 4. Create worksheet and workbook
-  const ws = XLSX.utils.aoa_to_sheet(sheetData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'MASS PRO');
+    // 4. Create worksheet and workbook
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws['!merges'] = merges; // Apply empty column merges
 
-  const htWs = generateHeatTreatmentInfoSheet();
-  XLSX.utils.book_append_sheet(wb, htWs, 'Heat Treatment Info');
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'MASS PRO');
 
-  // 5. Download
-  XLSX.writeFile(wb, `${redirectedMassPro.value}_MASS_PRODUCTION.xlsx`);
-}
+    const htWs = generateHeatTreatmentInfoSheet();
+    XLSX.utils.book_append_sheet(wb, htWs, 'Heat Treatment Info');
 
-const generateHeatTreatmentInfoSheet = () => {
-  const info = controlSheet_ht_info_values.value
+    // 5. Download
+    XLSX.writeFile(wb, `${redirectedMassPro.value}_MASS_PRODUCTION.xlsx`);
+};
 
-  const rows = [
-    ['BATCH CYCLE No.', info.batchCycleNo],
-    ['MACHINE No.', info.machineNo],
-    ['CYCLE No.', info.cycleNo],
-    ['PATTERN No.', info.patternNo],
-    ['Cycle Pattern', info.cyclePattern],
-    ['Current Pattern', info.currentPattern],
+    const generateHeatTreatmentInfoSheet = () => {
+        const info = controlSheet_ht_info_values.value
 
-    ['DATE START', info.dateStart],
-    ['TIME START', info.timeStart],
-    ['LOADER', info.loader],
+        const rows = [
+            ['BATCH CYCLE No.', info.batchCycleNo],
+            ['MACHINE No.', info.machineNo],
+            ['CYCLE No.', info.cycleNo],
+            ['PATTERN No.', info.patternNo],
+            ['Cycle Pattern', info.cyclePattern],
+            ['Current Pattern', info.currentPattern],
 
-    ['DATE FINISHED', info.dateFinished],
-    ['TIME FINISHED', info.timeFinished],
-    ['UNLOADER', info.unloader],
+            ['DATE START', info.dateStart],
+            ['TIME START', info.timeStart],
+            ['LOADER', info.loader],
 
-    ['BOX CONDITION', info.boxCondition],
-    ['BOX COVER', info.boxCover],
-    ['BOX ARRANGEMENT', info.boxArrangement],
-    ['ENCODED BY', info.encodedBy],
+            ['DATE FINISHED', info.dateFinished],
+            ['TIME FINISHED', info.timeFinished],
+            ['UNLOADER', info.unloader],
 
-    ['REMARKS 1', info.remarks1],
-    ['REMARKS 2', info.remarks2],
-    ['REMARKS 3', info.remarks3],
-  ]
+            ['BOX CONDITION', info.boxCondition],
+            ['BOX COVER', info.boxCover],
+            ['BOX ARRANGEMENT', info.boxArrangement],
+            ['ENCODED BY', info.encodedBy],
 
-  return XLSX.utils.aoa_to_sheet(rows)
-}
+            ['REMARKS 1', info.remarks1],
+            ['REMARKS 2', info.remarks2],
+            ['REMARKS 3', info.remarks3],
+        ]
+
+        return XLSX.utils.aoa_to_sheet(rows)
+    }
 
 
 </script>
