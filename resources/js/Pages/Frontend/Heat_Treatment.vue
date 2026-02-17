@@ -250,7 +250,7 @@
                                 Apply HT and LT
                             </button>
                         </div>
-                        <div v-if="isDataShown && mpcs.moreThanTenBoxes">
+                        <div v-if="isDataShown && (mpcs.moreThanTenBoxes || mpcs.breakLotMode)">
                             <label class="block mb-1 text-xs font-medium text-gray-700">Excess Layer<span class="text-red-500"> *</span></label>
                             <select v-model="mpcs.selectedExcessLayer" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
                             <option v-for="item in excessLayers" :key="item" :value="item">
@@ -298,7 +298,7 @@
                 <div v-if="!overwriteMode" class="w-full px-8 py-8 ml-10 mr-5 space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12">
 
                     <div v-if="isDataShown">
-                        <div v-if="!mpcs.moreThanTenBoxes" class="w-full px-5">
+                        <div v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode" class="w-full px-5">
                             <table class="min-w-full text-xs border border-collapse border-gray-200">
                                 <thead class="bg-gray-100">
                                     <tr>
@@ -1365,7 +1365,7 @@
 
                     <p class="mb-6 text-lg font-bold text-gray-800">Please review your inputs <span class="text-red-700">carefully</span> before submitting.</p>
 
-                    <div v-if="!mpcs.moreThanTenBoxes" class="w-full px-5">
+                    <div v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode" class="w-full px-5">
                         <table class="min-w-full text-xs border border-collapse border-gray-200">
                             <thead class="bg-gray-100">
                                 <tr>
@@ -1956,6 +1956,7 @@ const mpcs = reactive({
     boxPreparedBy: '',
     nineHalfSet: '', // 'SET1' for A,C,E,G,J | 'SET2' for B,D,F,H,K
     moreThanTenBoxes: false,
+    breakLotMode: false,
 });
 
 // Watch for changes to selectedMassProd
@@ -2097,7 +2098,7 @@ const getCurrentMainWeightTotal = () => {
 };
 
 const getCurrentExcessWeightTotal = () => {
-    if (!mpcs.moreThanTenBoxes) return 0;
+    if (!mpcs.moreThanTenBoxes && !mpcs.breakLotMode) return 0;
     return sumWeightMap(weightValuesExcess.value, visibleExcessBoxes.value);
 };
 
@@ -2123,7 +2124,7 @@ const totalQty = computed(() => {
         0
     );
 
-    const excessTotal = mpcs.moreThanTenBoxes
+    const excessTotal = mpcs.moreThanTenBoxes || mpcs.breakLotMode
         ? visibleExcessBoxes.value.reduce(
             (sum, box) => sum + Number(qtyValuesExcess.value[box] || 0),
             0
@@ -2140,7 +2141,7 @@ const totalWt = computed(() => {
         0
     );
 
-    const excessTotal = mpcs.moreThanTenBoxes
+    const excessTotal = mpcs.moreThanTenBoxes || mpcs.breakLotMode
         ? visibleExcessBoxes.value.reduce(
             (sum, box) => sum + Number(weightValuesExcess.value[box] || 0),
             0
@@ -2531,7 +2532,102 @@ const fetchAllLotDataBoxDetails = async () => {
         if (total < 10) {
             mpcs.moreThanTenBoxes = false;
 
-            const getRow = (title) => layer.find(r => r.rowTitle === title)?.data || {};
+            const hasExcess =
+                sheet.excess_data &&
+                Array.isArray(sheet.excess_data) &&
+                sheet.excess_data.length > 0;
+
+            const getRow = (title) =>
+                layer.find(r => r.rowTitle === title)?.data || {};
+
+            console.log('Has Excess: ', hasExcess);
+
+            // ==========================
+            // BREAK LOT MODE
+            // ==========================
+            if (hasExcess) {
+
+                mpcs.breakLotMode = true;
+
+                const qtyRow      = getRow("QTY (PCS):");
+                const weightRow   = getRow("WT (KG):");
+                const boxNoRow    = getRow("BOX No.:");
+                const rawMatRow   = getRow("RAW MATERIAL CODE:");
+
+                const modelRow    = getRow("MODEL:");
+                const coatingMC   = getRow("COATING M/C No.:");
+                const coatingRow  = getRow("COATING:");
+                const lotRow      = getRow("LT. No.:");
+                const magnetRow   = getRow("Magnet prepared by:");
+                const boxPrepRow  = getRow("Box prepared by:");
+
+                const getExcessRow = (title) =>
+                    sheet.excess_data.find(r => r.rowTitle === title)?.data || {};
+
+                const excessQtyRow    = getExcessRow("QTY (PCS):");
+                const excessWeightRow = getExcessRow("WT (KG):");
+                const excessBoxNoRow  = getExcessRow("BOX No.:");
+                const excessRawMatRow = getExcessRow("RAW MATERIAL CODE:");
+
+                // Determine boxes
+                visibleBoxes.value = Object.keys(boxNoRow || {});
+                visibleExcessBoxes.value = Object.keys(excessBoxNoRow || {});
+
+                // Clear maps
+                qtyValues.value = {};
+                weightValues.value = {};
+                boxNoValues.value = {};
+                qtyValuesExcess.value = {};
+                weightValuesExcess.value = {};
+                boxNoValuesExcess.value = {};
+                rawMaterialCodeValues.value = {};
+                htValues.value = {};
+                ltValues.value = {};
+
+                // Populate MAIN
+                visibleBoxes.value.forEach(box => {
+                    qtyValues.value[box]    = qtyRow[box] || '';
+                    weightValues.value[box] = weightRow[box] || '';
+                    boxNoValues.value[box]  = boxNoRow[box] || '';
+                    rawMaterialCodeValues.value[box] = rawMatRow[box] || '';
+                    htValues.value[box] = '';
+                    ltValues.value[box] = '';
+                });
+
+                // Populate EXCESS
+                visibleExcessBoxes.value.forEach(box => {
+                    qtyValuesExcess.value[box]    = excessQtyRow[box] || '';
+                    weightValuesExcess.value[box] = excessWeightRow[box] || '';
+                    boxNoValuesExcess.value[box]  = excessBoxNoRow[box] || '';
+                    rawMaterialCodeValues.value[box] = excessRawMatRow?.[box] || '';
+                });
+
+                // Top-level MPCS
+                const firstBox = visibleBoxes.value[0];
+
+                mpcs.selectedModel       = modelRow[firstBox] || '';
+                mpcs.coatingMCNo         = coatingMC[firstBox] || '';
+                mpcs.lotNo               = lotRow[firstBox] || '';
+                mpcs.coating             = coatingRow[firstBox] || 0;
+                mpcs.magnetPreparedBy    = magnetRow[firstBox] || '';
+                mpcs.boxPreparedBy       = boxPrepRow[firstBox] || '';
+
+                mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
+                mpcs.selectedExcessBoxEndList = visibleExcessBoxes.value.at(-1) || null;
+
+                toast.info("Break lot data loaded into table");
+                grandTotalWeight.value = await computeTrueGrandTotal();
+                currentTotalWeight.value = await getGrandTotalWeightData();
+                isDataShown.value = true;
+
+                return;
+            }
+
+            // ==========================
+            // NORMAL < 10 MODE
+            // ==========================
+
+            mpcs.breakLotMode = false;
 
             const qtyRow      = getRow("QTY (PCS):");
             const weightRow   = getRow("WT (KG):");
@@ -2545,28 +2641,27 @@ const fetchAllLotDataBoxDetails = async () => {
             const boxPrepRow  = getRow("Box prepared by:");
             const rawMatRow   = getRow("RAW MATERIAL CODE:");
 
-            // Only the keys that exist (less than 10)
-            visibleBoxes.value = Object.keys(boxNoRow || {}).filter(k => boxNoRow[k] !== "" && boxNoRow[k] !== null);
+            visibleBoxes.value = Object.keys(boxNoRow || {})
+                .filter(k => boxNoRow[k] !== "" && boxNoRow[k] !== null);
 
-            // Clear previous reactive maps
             qtyValues.value = {};
             weightValues.value = {};
             boxNoValues.value = {};
             htValues.value = {};
             ltValues.value = {};
+            rawMaterialCodeValues.value = {};
 
-            // Populate values
             visibleBoxes.value.forEach(box => {
                 qtyValues.value[box]    = qtyRow[box] || '';
                 weightValues.value[box] = weightRow[box] || '';
                 boxNoValues.value[box]  = boxNoRow[box] || '';
-                htValues.value[box]     = '';
-                ltValues.value[box]     = '';
                 rawMaterialCodeValues.value[box] = rawMatRow[box] || '';
+                htValues.value[box] = '';
+                ltValues.value[box] = '';
             });
 
-            // Top-level MPCS
             const firstBox = visibleBoxes.value[0];
+
             mpcs.selectedModel       = modelRow[firstBox] || '';
             mpcs.coatingMCNo         = coatingMC[firstBox] || '';
             mpcs.lotNo               = lotRow[firstBox] || '';
@@ -2574,12 +2669,13 @@ const fetchAllLotDataBoxDetails = async () => {
             mpcs.magnetPreparedBy    = magnetRow[firstBox] || '';
             mpcs.boxPreparedBy       = boxPrepRow[firstBox] || '';
 
-            mpcs.selectedBoxEndList = visibleBoxes.value[visibleBoxes.value.length - 1];
+            mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
 
             toast.info('Less than 10 boxes, data loaded into table');
             grandTotalWeight.value = await computeTrueGrandTotal();
             currentTotalWeight.value = await getGrandTotalWeightData();
             isDataShown.value = true;
+
             return;
         }
 
@@ -2699,7 +2795,7 @@ const fetchAllLotDataBoxDetails = async () => {
         mpcs.boxPreparedBy        = boxPrepRow[firstBox] || '';
         mpcs.rawMaterialCode      = rawMatRow[firstBox] || '';
 
-        console.log("Assigned top-level MPCS values:", {
+        /*console.log("Assigned top-level MPCS values:", {
             selectedModel: mpcs.selectedModel,
             coatingMCNo: mpcs.coatingMCNo,
             lotNo: mpcs.lotNo,
@@ -2707,14 +2803,14 @@ const fetchAllLotDataBoxDetails = async () => {
             magnetPreparedBy: mpcs.magnetPreparedBy,
             boxPreparedBy: mpcs.boxPreparedBy,
             rawMaterialCode: mpcs.rawMaterialCode
-        });
+        });*/
 
         // --- 8. UI end letters ---
         mpcs.selectedBoxEndList = visibleBoxes.value.at(-1);
         mpcs.selectedExcessBoxEndList = visibleExcessBoxes.value.at(-1) || null;
 
-        console.log("Selected Box End List:", mpcs.selectedBoxEndList);
-        console.log("Selected Excess Box End List:", mpcs.selectedExcessBoxEndList);
+        //console.log("Selected Box End List:", mpcs.selectedBoxEndList);
+        //console.log("Selected Excess Box End List:", mpcs.selectedExcessBoxEndList);
 
         toast.info("Loaded more than 10 boxes data");
         grandTotalWeight.value = await computeTrueGrandTotal();
@@ -3077,7 +3173,7 @@ const finalize = () => {
             return;
         }
 
-        if(mpcs.moreThanTenBoxes){
+        if(mpcs.moreThanTenBoxes || mpcs.breakLotMode){
             if(!mpcs.selectedExcessLayer){
                 toast.error("Please fill in Excess Layer.");
                 return;
@@ -3181,7 +3277,7 @@ const saveToDatabase = async () => {
         const response = await axios.patch(`/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`, dataPayload);
         console.log('Main layer saved:', response.data);
 
-        if (mpcs.moreThanTenBoxes && visibleExcessBoxes.value.length) {
+        if ((mpcs.moreThanTenBoxes || mpcs.breakLotMode) && visibleExcessBoxes.value.length) {
             const excessLayerPayload = formatLayerDataForDatabase(visibleExcessBoxes.value, true);
             const excessPayload = {
                 furnace: mpcs.selectedFurnace,

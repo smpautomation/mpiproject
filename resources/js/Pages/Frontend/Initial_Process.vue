@@ -317,11 +317,11 @@
                     <div class="grid grid-cols-1 gap-4 md:gap-6">
 
                     <!-- Main Boxes -->
-                    <div class="grid items-end grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6">
+                    <div class="grid items-end grid-cols-1 gap-4 sm:grid-cols-4 md:gap-6">
                         <!-- Start Box -->
                         <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">Start Box <span class="text-red-500">*</span></label>
-                        <select v-model="initial_mpcs.selectedBoxStart" :disabled="initial_mpcs.moreThanTenBoxes" class="w-full text-xs border-gray-300 rounded-lg shadow-sm">
+                        <select v-model="initial_mpcs.selectedBoxStart" :disabled="initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode" class="w-full text-xs border-gray-300 rounded-lg shadow-sm">
                             <option v-for="item in allBoxes" :key="item" :value="item">{{ item }}</option>
                         </select>
                         </div>
@@ -329,7 +329,7 @@
                         <!-- End Box -->
                         <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">End Box <span class="text-red-500">*</span></label>
-                        <select v-model="initial_mpcs.selectedBoxEnd" :disabled="initial_mpcs.moreThanTenBoxes" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <select v-model="initial_mpcs.selectedBoxEnd" :disabled="initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option v-for="item in boxesEndList" :key="item" :value="item">{{ item }}</option>
                         </select>
                         </div>
@@ -339,10 +339,10 @@
                             <button
                                 @click="initial_mpcs.moreThanTenBoxes = !initial_mpcs.moreThanTenBoxes"
                                 type="button"
-                                :disabled="!canEnableExcessBoxes"
+                                :disabled="!canEnableExcessBoxes  || initial_mpcs.breakLotMode"
                                 :class="[
                                     'w-full px-3 py-2 text-xs font-semibold rounded-lg shadow-sm focus:outline-none focus:ring-2 transition',
-                                    !canEnableExcessBoxes
+                                    !canEnableExcessBoxes || initial_mpcs.breakLotMode
                                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300'
                                         : initial_mpcs.moreThanTenBoxes
                                             ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 focus:ring-blue-500'
@@ -353,10 +353,29 @@
                             </button>
                         </div>
 
+                        <!-- Toggle Breaklot Mode -->
+                        <div class="flex items-end">
+                            <button
+                                @click="initial_mpcs.breakLotMode = !initial_mpcs.breakLotMode"
+                                type="button"
+                                :disabled="canEnableExcessBoxes"
+                                :class="[
+                                    'w-full px-3 py-2 text-xs font-semibold rounded-lg shadow-sm focus:outline-none focus:ring-2 transition',
+                                    canEnableExcessBoxes
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300' :
+                                    initial_mpcs.breakLotMode
+                                            ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 focus:ring-blue-500'
+                                            : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 focus:ring-gray-400'
+                                ]"
+                            >
+                                {{ initial_mpcs.breakLotMode ? 'Click again to cancel' : 'Breaklot Mode' }}
+                            </button>
+                        </div>
+
                     </div>
 
                     <!-- Excess Boxes -->
-                    <div v-if="initial_mpcs.moreThanTenBoxes" class="grid grid-cols-1 gap-4 pt-2 border-t border-gray-200 sm:grid-cols-2 md:gap-6">
+                    <div v-if="initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode" class="grid grid-cols-1 gap-4 pt-2 border-t border-gray-200 sm:grid-cols-2 md:gap-6">
                         <!-- Excess Start Box -->
                         <div>
                         <label class="block mb-1 text-xs font-medium text-gray-700">Excess Start Box <span class="text-red-500">*</span></label>
@@ -657,7 +676,7 @@
                     </div>
 
                     <!-- Excess Boxes Section -->
-                    <div v-if="initial_mpcs.moreThanTenBoxes" class="mt-8">
+                    <div v-if="initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode" class="mt-8">
                         <!-- Excess BOX No. table -->
                         <p class="pb-1 text-[11px] font-semibold text-gray-800 border-b">
                             Excess BOX No. <span class="text-gray-300">(example: UBP85172)</span>
@@ -875,7 +894,7 @@
                     </div>
 
                     <!-- Excess Boxes Manual Qty -->
-                    <div v-if="manualQtyMode && initial_mpcs.moreThanTenBoxes" class="mt-6">
+                    <div v-if="manualQtyMode && (initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode)" class="mt-6">
                         <!-- Quantity (PCS) per Box - Excess table -->
                         <p class="pb-1 mt-3 text-[11px] font-semibold text-gray-800 border-b">
                             Quantity (PCS) per Box - Excess
@@ -1028,7 +1047,7 @@
                     </div>
 
                     <!-- ========== EXCESS BOXES ========== -->
-                    <div v-if="initial_mpcs.moreThanTenBoxes" class="px-5 mt-10 overflow-auto">
+                    <div v-if="initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode" class="px-5 mt-10 overflow-auto">
                     <p class="mb-2 font-semibold text-gray-700">Excess Boxes</p>
 
                     <table class="min-w-full text-xs border border-collapse border-gray-200">
@@ -1093,11 +1112,11 @@
                         Cancel
                     </button>
                     <button
-                        v-if="initial_mpcs.moreThanTenBoxes"
+                        v-if="initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode"
                         @click="saveExcessCase"
                         class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700"
                     >
-                        Proceed
+                        {{ initial_mpcs.breakLotMode ? 'Proceed Breaklot' : 'Proceed Excess' }}
                         <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
                     </button>
                     <button
@@ -2761,8 +2780,22 @@ const filmPastingSearch = ref('');
 
 const activeSection = ref('overall_summary');
 const allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
-const boxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
-const excessBoxesEndList = ref(['A','B','C','D','E','F','G','H','J','K']);
+const boxesEndList = computed(() => {
+    const start = initial_mpcs.selectedBoxStart;
+    if (!start) return allBoxes;
+
+    const startIndex = allBoxes.indexOf(start);
+
+    return allBoxes.filter((box, index) => index >= startIndex);
+});
+const excessBoxesEndList = computed(() => {
+    const start = initial_mpcs.selectedExcessBoxStart;
+    if (!start) return allBoxes;
+
+    const startIndex = allBoxes.indexOf(start);
+
+    return allBoxes.filter((box, index) => index >= startIndex);
+});
 const model_names = ref([]);
 const boxNoValues = ref({});
 //const weightValues = ref({});
@@ -2781,6 +2814,7 @@ const initial_mpcs = reactive({
     selectedExcessBoxStart: 'A',        // new
     selectedExcessBoxEnd: 'E',
     moreThanTenBoxes: false,
+    breakLotMode: false,
     selectedModel: '',
     coatingMCNo: '',
     rawMaterialCode: '',
@@ -2883,14 +2917,41 @@ const sectionTitle = computed(() => {
 });
 
 // Initialize qtyValues from mpcs.qty / qty_lastBox when manual mode is enabled
+
+
+watch(
+    () => initial_mpcs.selectedBoxStart,
+    (newStart) => {
+        const startIndex = allBoxes.indexOf(newStart);
+        const endIndex = allBoxes.indexOf(initial_mpcs.selectedBoxEnd);
+
+        if (endIndex < startIndex) {
+        initial_mpcs.selectedBoxEnd = newStart;
+        }
+    }
+);
+
+watch(
+    () => initial_mpcs.selectedExcessBoxStart,
+    (newStart) => {
+        const startIndex = allBoxes.indexOf(newStart);
+        const endIndex = allBoxes.indexOf(initial_mpcs.selectedExcessBoxEnd);
+
+        if (endIndex < startIndex) {
+        initial_mpcs.selectedExcessBoxEnd = newStart;
+        }
+    }
+);
+
 // Watch manualQtyMode and initialize qtyValues for both tables
+
 watch(manualQtyMode, (val) => {
   if (!val) return;
 
   // MAIN TABLE
   qtyValues.value = {};
   visibleBoxes.value.forEach((box, index) => {
-    qtyValues.value[box] = initial_mpcs.moreThanTenBoxes
+    qtyValues.value[box] = initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode
       ? initial_mpcs.qty              // main boxes never get lastBox if excess exists
       : index === visibleBoxes.value.length - 1
         ? initial_mpcs.qty_lastBox    // last box only if no excess
@@ -2898,7 +2959,7 @@ watch(manualQtyMode, (val) => {
   });
 
   // EXCESS TABLE (only if moreThanTenBoxes)
-  if (initial_mpcs.moreThanTenBoxes) {
+  if (initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode) {
     qtyValuesExcess.value = {};
     visibleExcessBoxes.value.forEach((box, index) => {
       qtyValuesExcess.value[box] = index === visibleExcessBoxes.value.length - 1
@@ -2914,7 +2975,7 @@ watch(manualQtyMode, (val) => {
     visibleBoxes.value.forEach((box, index) => {
         data[box] = manualQtyMode.value
         ? qtyValues.value[box]
-        : initial_mpcs.moreThanTenBoxes
+        : initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode
             ? initial_mpcs.qty             // main boxes never get lastBox if excess exists
             : index === visibleBoxes.value.length - 1
             ? initial_mpcs.qty_lastBox
@@ -2925,7 +2986,7 @@ watch(manualQtyMode, (val) => {
 
     // For EXCESS table
     const qtyDataExcess = computed(() => {
-    if (!initial_mpcs.moreThanTenBoxes) return {};
+    if (!initial_mpcs.moreThanTenBoxes && !initial_mpcs.breakLotMode) return {};
 
     const data = {};
     visibleExcessBoxes.value.forEach((box, index) => {
@@ -2953,7 +3014,7 @@ const totalWt = computed(() => {
 });
 
 const numberOfBoxes = computed(() => {
-    if (initial_mpcs.moreThanTenBoxes) {
+    if (initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode) {
         return visibleBoxes.value.length + visibleExcessBoxes.value.length;
     }
     return visibleBoxes.value.length;
@@ -3438,7 +3499,7 @@ const dataValidation = async() => {
     }
 
     // Check excess boxes if moreThanTenBoxes
-    if (initial_mpcs.moreThanTenBoxes) {
+    if (initial_mpcs.moreThanTenBoxes || initial_mpcs.breakLotMode) {
         for (const box of visibleExcessBoxes.value) {
             if ((manualQtyMode.value && (!qtyValuesExcess.value[box] && qtyValuesExcess.value[box] !== 0)) || (!manualQtyMode.value && (initial_mpcs.qty_lastBox === '' || initial_mpcs.qty === ''))) {
                 toast.error(`Qty for excess box ${box} is required.`);
@@ -3602,7 +3663,7 @@ const saveExcessCase = async () => {
         };
 
         //console.log('Excess payload', payload);
-        //console.log('Number Of Boxes: ',numberOfBoxes.value);
+        console.log('Number Of Boxes: ',numberOfBoxes.value);
 
         // POST to your API
         const response = await axios.post('/api/initial_control_sheet', payload);
