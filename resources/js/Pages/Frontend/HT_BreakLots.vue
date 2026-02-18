@@ -213,7 +213,7 @@
                         </div>
                     </div>
 
-                    <div v-if="state.user && state.user.access_type === 'Automation'" class="p-4 my-10 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div class="p-4 my-10 bg-white border border-gray-200 rounded-lg shadow-sm">
                         <!-- Panel Header -->
                         <h3 class="mb-3 text-sm font-bold text-gray-700">Selection Summary</h3>
 
@@ -1050,11 +1050,21 @@ function toggleCoordinate(layer, box) {
 
 // Reactive array of layers involved in current selection
 const layersInvolvedUserPick = computed(() => {
-    // Extract layer numbers from selectedCoordinates
-    const layersSet = new Set(
-        selectedCoordinates.value.map(coord => coord.match(/^\d+/)[0])
+    const mainLayer = String(firstLayerSelected.value); // normalize type
+
+    // Extract all unique layers from selectedCoordinates
+    const allLayersSet = new Set(
+        selectedCoordinates.value.map(coord => String(coord.match(/^\d+/)[0]))
     );
-    return Array.from(layersSet).sort((a, b) => b - a); // optional: sort descending like your layers
+
+    // Remove main layer from set to avoid duplicates
+    allLayersSet.delete(mainLayer);
+
+    // Convert set to array and sort ascending
+    const otherLayers = Array.from(allLayersSet).sort((a, b) => Number(a) - Number(b));
+
+    // Combine: main layer first
+    return [mainLayer, ...otherLayers];
 });
 
 // Group selections by layer — used later to build dynamic forms
