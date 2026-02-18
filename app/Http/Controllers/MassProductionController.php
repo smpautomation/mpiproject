@@ -1547,16 +1547,23 @@ class MassProductionController extends Controller
         // --- 2. Decode layer JSON ---
         $layerData = json_decode($mp->$column, true);
 
-        $targetModel = null;
-        $targetLot   = null;
-
+        // --- 2a. Gather all unique MODEL + LT pairs ---
+        $uniquePairs = [];
         if (!empty($layerData)) {
+            $modelRow = null;
+            $lotRow   = null;
+
             foreach ($layerData as $row) {
-                if ($row['rowTitle'] === 'MODEL:') {
-                    $targetModel = $row['data']['A'] ?? null; // Take A as reference for model
-                }
-                if ($row['rowTitle'] === 'LT. No.:') {
-                    $targetLot = $row['data']['A'] ?? null; // Take A as reference for lot
+                if ($row['rowTitle'] === 'MODEL:') $modelRow = $row['data'] ?? [];
+                if ($row['rowTitle'] === 'LT. No.:') $lotRow = $row['data'] ?? [];
+            }
+
+            if ($modelRow && $lotRow) {
+                foreach ($modelRow as $box => $modelValue) {
+                    $lotValue = $lotRow[$box] ?? null;
+                    if ($modelValue && $lotValue) {
+                        $uniquePairs["{$modelValue}|{$lotValue}"] = true; // using associative keys to deduplicate
+                    }
                 }
             }
         }
@@ -1567,25 +1574,32 @@ class MassProductionController extends Controller
 
         // --- 4. Delete matching excess layer rows ---
         $deletedRows = 0;
-        if ($targetModel && $targetLot) {
+
+        if (!empty($uniquePairs)) {
             $excessLayers = ExcessLayers::where('mass_prod', $massProd)
                                         ->where('furnace', $furnace)
                                         ->get();
-
-            //Log::info('Excess layers fetched', ['count' => $excessLayers->count()]);
 
             foreach ($excessLayers as $excess) {
                 $layerDataExcess = is_array($excess->layer_data) ? $excess->layer_data : json_decode($excess->layer_data, true);
 
                 $shouldDelete = false;
 
-                foreach ($layerDataExcess as $row) {
-                    if ($row['rowTitle'] === 'MODEL:' && in_array($targetModel, $row['data'], true)) {
-                        // Check if corresponding LT. No. exists in same row_data
-                        foreach ($layerDataExcess as $rowLot) {
-                            if ($rowLot['rowTitle'] === 'LT. No.:' && in_array($targetLot, $rowLot['data'], true)) {
+                if (!empty($layerDataExcess)) {
+                    $excessModelRow = null;
+                    $excessLotRow   = null;
+
+                    foreach ($layerDataExcess as $row) {
+                        if ($row['rowTitle'] === 'MODEL:') $excessModelRow = $row['data'] ?? [];
+                        if ($row['rowTitle'] === 'LT. No.:') $excessLotRow = $row['data'] ?? [];
+                    }
+
+                    if ($excessModelRow && $excessLotRow) {
+                        foreach ($excessModelRow as $box => $modelValue) {
+                            $lotValue = $excessLotRow[$box] ?? null;
+                            if (isset($uniquePairs["{$modelValue}|{$lotValue}"])) {
                                 $shouldDelete = true;
-                                break 2; // Found both, no need to continue checking
+                                break; // Found a matching pair, delete this excess layer
                             }
                         }
                     }
@@ -1597,7 +1611,6 @@ class MassProductionController extends Controller
                 }
             }
         }
-
 
         return response()->json([
             'success' => true,

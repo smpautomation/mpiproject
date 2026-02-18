@@ -72,35 +72,40 @@ class HtGraphPatternsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Fetch the pattern
         $pattern = HtGraphPatterns::findOrFail($id);
 
+        // Validate input
         $request->validate([
-            'pattern_no' => 'required|integer',
+            'pattern_no'       => 'required|integer',
             'pattern_no_hours' => 'nullable|numeric',
-            'furnace_no' => 'required|string|max:50',
-            'encoded_by' => 'required|string|max:100',
-            'graph'      => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'furnace_no'       => 'required|string|max:50',
+            'encoded_by'       => 'required|string|max:100',
+            'graph'            => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
 
         $oldPatternNo = $pattern->pattern_no;
-        $newPatternNo = $request->input('pattern_no');
-        $pattern->pattern_no = $newPatternNo;
-        $pattern->furnace_no = $request->input('furnace_no');
+        $oldFurnaceNo = $pattern->furnace_no;
+
+        // Update pattern fields
+        $pattern->pattern_no       = $request->input('pattern_no');
+        $pattern->furnace_no       = $request->input('furnace_no');
         $pattern->pattern_no_hours = $request->input('pattern_no_hours');
-        $pattern->encoded_by = $request->input('encoded_by');
+        $pattern->encoded_by       = $request->input('encoded_by');
 
         $uploadDir = public_path('htgraph_patterns');
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
-        // 1️⃣ Rename existing file if pattern_no changed and no new file uploaded
-        if ($oldPatternNo != $newPatternNo && !$request->hasFile('graph')) {
-            $existingFiles = glob("$uploadDir/pattern_{$oldPatternNo}.{png,jpg,jpeg}", GLOB_BRACE);
+        // 1️⃣ Rename existing file if pattern_no or furnace_no changed and no new file uploaded
+        if (!$request->hasFile('graph') && ($oldPatternNo != $pattern->pattern_no || $oldFurnaceNo != $pattern->furnace_no)) {
+            $existingFiles = glob("$uploadDir/pattern_{$oldPatternNo}_{$oldFurnaceNo}.{png,jpg,jpeg}", GLOB_BRACE);
             if (count($existingFiles)) {
                 $extension = pathinfo($existingFiles[0], PATHINFO_EXTENSION);
-                $newFileName = "pattern_{$newPatternNo}.{$extension}";
+                $newFileName = "pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{$extension}";
                 rename($existingFiles[0], "$uploadDir/$newFileName");
+                \Log::info("Pattern renamed to: $newFileName");
             }
         }
 
@@ -108,16 +113,23 @@ class HtGraphPatternsController extends Controller
         if ($request->hasFile('graph')) {
             $file = $request->file('graph');
 
-            // Delete old files for this pattern_no (any extension)
-            foreach (glob("$uploadDir/pattern_{$newPatternNo}.*") as $oldFile) {
+            $extension = $file->getClientOriginalExtension();
+            $filename  = "pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{$extension}";
+            $filePath  = $uploadDir . '/' . $filename;
+
+            // Delete any existing files for this pattern_no + furnace_no
+            foreach (glob("$uploadDir/pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.*", GLOB_BRACE) as $oldFile) {
                 @unlink($oldFile);
             }
 
-            $extension = $file->getClientOriginalExtension();
-            $filename = "pattern_{$newPatternNo}.{$extension}";
+            // Move uploaded file
             $file->move($uploadDir, $filename);
+            \Log::info("Graph moved to: $filePath");
+        } else {
+            \Log::info('No graph file received');
         }
 
+        // Save pattern record
         $pattern->save();
 
         return response()->json([
@@ -187,9 +199,14 @@ class HtGraphPatternsController extends Controller
 
             // Scan for files starting with pattern_<pattern_no>
             $files = glob("$folder/pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{png,jpg,jpeg}", GLOB_BRACE); // matches png, jpg, jpeg
-            $url = count($files)
-                ? asset('htgraph_patterns/' . basename($files[0])) . '?t=' . time()
-                : null;
+            $url = null;
+
+            if (count($files)) {
+                $filename = basename($files[0]);
+                $path = $files[0];
+
+                $url = asset('htgraph_patterns/' . $filename) . '?v=' . filemtime($path);
+            }
 
             return [
                 'id' => $pattern->id,

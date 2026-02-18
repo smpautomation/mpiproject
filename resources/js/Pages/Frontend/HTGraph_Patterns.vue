@@ -134,7 +134,7 @@
 
                         <div class="flex flex-col">
                             <label class="mb-1 text-sm font-medium text-gray-700">Encoded By</label>
-                            <input type="text" v-model="encodedBy" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
+                            <input type="text" v-model="encodedBy" @input="encodedBy = encodedBy.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
                         </div>
                     </div>
 
@@ -218,6 +218,7 @@
                             <input
                                 type="text"
                                 v-model="encodedBy"
+                                @input="encodedBy = encodedBy.toUpperCase()"
                                 class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
@@ -377,6 +378,7 @@ const selectedGraph = ref();
 const selectedPattern = ref();
 const editId = ref(null);
 const editFile = ref(null);
+const editedGraphFile = ref(null);
 
 // General Variables ---------------------------------- General Variables
 
@@ -400,8 +402,8 @@ const updatePattern = async () => {
     formData.append('furnace_no', selectedFurnace.value || '');
     formData.append('encoded_by', encodedBy.value || '');
 
-    if (editFile.value?.files[0]) {
-        formData.append('graph', editFile.value.files[0]);
+    if (editedGraphFile.value) {
+        formData.append('graph', editedGraphFile.value);
     }
 
     // Spoof method for Laravel
@@ -420,6 +422,8 @@ const updatePattern = async () => {
         console.error(error.response?.data || error);
     } finally {
         await getAllPatterns();
+        editedGraphFile.value = null;
+        uploadedGraphEdited.value = null;
     }
 };
 
@@ -429,12 +433,14 @@ const handleEditGraph = (event) => {
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
     if (!allowedTypes.includes(file.type)) {
-        toast.error('Invalid file type. Please upload a PNG, JPG or JPEG image.');
+        toast.error('Invalid file type.');
         event.target.value = '';
         uploadedGraphEdited.value = null;
+        editedGraphFile.value = null;
         return;
     }
 
+    editedGraphFile.value = file; // store file properly
     uploadedGraphEdited.value = URL.createObjectURL(file); // preview
 }
 
