@@ -3263,7 +3263,7 @@ const cancelProceed = () => {
 
 const clearAll = () => {
     // Reset all mpcs fields except box selection
-    const skipKeys = ['selectedBoxStart', 'selectedBoxEnd', 'selectedExcessBoxStart', 'selectedExcessBoxEnd', 'selectedModel','moreThanTenBoxes'];
+    const skipKeys = ['selectedBoxStart', 'selectedBoxEnd', 'selectedExcessBoxStart', 'selectedExcessBoxEnd', 'selectedModel','moreThanTenBoxes','breakLotMode'];
 
     Object.keys(initial_mpcs).forEach(key => {
         if (!skipKeys.includes(key)) {

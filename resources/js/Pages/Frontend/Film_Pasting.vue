@@ -788,6 +788,7 @@ const saveInitialLot = async () => {
             furnace: filmPastingInfo.selectedFurnace,
             layer: filmPastingInfo.selected_layer,
             initial_lot: filmPasteLotNo.value,
+            initial_model: filmPasteModel.value,
         };
 
         const check = await axios.get(
@@ -910,6 +911,9 @@ const saveToDatabase = async () => {
 
         const response = await axios.post('/api/film-pasting-data', payload);
         console.log(response.data);
+        if(lotNoLists.value.length > 1){
+            await saveInitialLot();
+        }
         toast.success('Data successfully saved.')
         await updateFormatType();
     }catch(error){
@@ -963,6 +967,7 @@ const updateFormatType = async () => { // Update format type of Mass Productions
 
 const clearAll = () => {
     Object.assign(filmPastingInfo,{
+        selected_layer: null,
         film_pasting_date: '',
         machine_no: '',
         total_magnet_weight: 0,
@@ -993,6 +998,8 @@ const clearAll = () => {
         },
         is_setter_sand: false,
     });
+    filmPasteLotNo.value = '';
+    filmPasteModel.value = '';
 };
 
 const triggerAdditional = () => {
