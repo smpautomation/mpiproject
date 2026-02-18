@@ -767,7 +767,7 @@
                     <div v-for="layer in layersInvolvedUserPick" :key="layer">
                         <div v-if="layer !== firstLayerSelected">
                             <h2 class="mt-8 mb-2 text-lg font-bold">
-                                Layer {{ layer }}
+                                Layer {{ layer }} <span v-if="String(layer) === String(firstLayerSelected)" class="ml-1 font-bold">(Main Lot)</span>
                             </h2>
 
                             <table class="w-full text-xs border">
@@ -1485,21 +1485,12 @@ const fetchAllLotDataBoxDetails = async () => {
     console.log('--- fetchAllLotDataBoxDetails START ---');
 
     if (!mpcsbl.selectedModel || !mpcsbl.lotNo) {
-        console.warn('Model or Lot missing', {
-            selectedModel: mpcsbl.selectedModel,
-            lotNo: mpcsbl.lotNo
-        });
         toast.warning('Please select Model and Lot number first');
         return;
     }
 
     try {
         isDataShown.value = true;
-
-        console.log('Calling API with:', {
-            model_name: mpcsbl.selectedModel,
-            lot_no: mpcsbl.lotNo
-        });
 
         const response = await axios.post(
             '/api/initial-control-sheets/fetch-layer-excess-data',
@@ -1509,43 +1500,57 @@ const fetchAllLotDataBoxDetails = async () => {
             }
         );
 
-        console.log('API raw response:', response.data);
-
-        const { layer_data, excess_data, total_boxes } = response.data;
-
-        console.log('Parsed response:', {
-            layer_data_count: layer_data?.length,
-            excess_data_count: excess_data?.length,
-            total_boxes
-        });
+        const { layer_data = [], excess_data = [], total_boxes = 0 } = response.data;
 
         totalBoxes.value = total_boxes ?? 0;
-
-        const mainLayer = firstLayerSelected.value;
-
-        console.log('Main Layer:', mainLayer);
-        console.log('Selected Coordinates:', selectedCoordinates.value);
-        console.log('Layers Involved:', layersInvolvedUserPick.value);
 
         const normalizeTitle = (title) =>
             title?.toLowerCase().replace(/[^a-z]/g, '');
 
-        // -------------------------
-        // Populate global mpcsbl
-        // -------------------------
-        const mainBoxes = selectedCoordinates.value
-            .filter(c => c.startsWith(mainLayer))
-            .map(c => c.replace(mainLayer, ''));
+        // -------------------------------------------------
+        // 1️⃣ MERGE + FLATTEN INTO ORDERED BOX OBJECTS
+        // -------------------------------------------------
 
-        console.log('Main Layer Boxes:', mainBoxes);
+        const extractBoxesFromSheet = (sheetRows) => {
+            if (!sheetRows?.length) return [];
 
-        if (mainBoxes.length) {
-            const firstBoxIndex = 0;
+            const qtyRow = sheetRows.find(r => normalizeTitle(r.rowTitle) === 'qtypcs');
+            const weightRow = sheetRows.find(r => normalizeTitle(r.rowTitle) === 'wtkg');
+            const boxNoRow = sheetRows.find(r => normalizeTitle(r.rowTitle) === 'boxno');
+            const rawMatRow = sheetRows.find(r => normalizeTitle(r.rowTitle) === 'rawmaterialcode');
+
+            const boxKeys = qtyRow ? Object.keys(qtyRow.data) : [];
+
+            return boxKeys.map(key => ({
+                qty: qtyRow?.data?.[key] ?? 0,
+                weight: weightRow?.data?.[key] ?? 0,
+                boxNo: boxNoRow?.data?.[key] ?? '',
+                rawMaterialCode: rawMatRow?.data?.[key] ?? ''
+            }));
+        };
+
+        const mainBoxes = extractBoxesFromSheet(layer_data);
+        const excessBoxes = extractBoxesFromSheet(excess_data);
+
+        // Preserve order: layer_data first, then excess_data
+        const orderedBoxes = [...mainBoxes, ...excessBoxes];
+
+        if (orderedBoxes.length !== selectedCoordinates.value.length) {
+            console.warn('Mismatch between fetched boxes and selected coordinates');
+        }
+
+        // -------------------------------------------------
+        // 2️⃣ POPULATE GLOBAL MPCSBL (FROM FIRST BOX)
+        // -------------------------------------------------
+
+        if (layer_data.length) {
+            const firstColumnValues = Object.values(layer_data[0].data ?? {});
+            const firstIndex = 0;
 
             layer_data.forEach(row => {
                 const title = normalizeTitle(row.rowTitle);
                 const dataValues = Object.values(row.data);
-                const value = dataValues[firstBoxIndex] ?? '';
+                const value = dataValues[firstIndex] ?? '';
 
                 if (title.includes('model')) mpcsbl.selectedModel = value;
                 else if (title.includes('coatingmcno')) mpcsbl.coatingMCNo = value;
@@ -1555,142 +1560,79 @@ const fetchAllLotDataBoxDetails = async () => {
                 else if (title.includes('boxpreparedby')) mpcsbl.boxPreparedBy = value;
                 else if (title.includes('rawmaterialcode')) mpcsbl.rawMaterialCode = value;
             });
-
-            console.log('mpcsbl after global mapping:', { ...mpcsbl });
         }
 
-        // -------------------------
-        // Clear previous layerInputs
-        // -------------------------
-        console.log('Clearing previous layerInputs...');
+        // -------------------------------------------------
+        // 3️⃣ CLEAR OLD LAYER INPUTS
+        // -------------------------------------------------
+
         Object.keys(layerInputs).forEach(layer => delete layerInputs[layer]);
 
-        // -------------------------
-        // Populate layerInputs
-        // -------------------------
+        // -------------------------------------------------
+        // 4️⃣ DISTRIBUTE SEQUENTIALLY BY SLOT COUNT
+        // -------------------------------------------------
+
+        let currentIndex = 0;
+
         layersInvolvedUserPick.value.forEach(layer => {
 
             const boxesInLayer = selectedCoordinates.value
                 .filter(c => c.startsWith(layer))
                 .map(c => c.replace(layer, ''));
 
-            console.log(`Processing Layer ${layer}`, {
-                boxesInLayer
-            });
-
             if (!layerInputs[layer]) layerInputs[layer] = {};
 
-            const sourceRows =
-                String(layer) === String(mainLayer)
-                    ? layer_data
-                    : excess_data;
+            boxesInLayer.forEach(boxKey => {
 
-            console.log(`Using sourceRows for layer ${layer}:`, {
-                isMainLayer: String(layer) === String(mainLayer),
-                sourceCount: sourceRows?.length
-            });
+                const boxData = orderedBoxes[currentIndex] || {};
 
-            const qtyRow = sourceRows.find(r =>
-                normalizeTitle(r.rowTitle) === 'qtypcs'
-            );
-
-            const weightRow = sourceRows.find(r =>
-                normalizeTitle(r.rowTitle) === 'wtkg'
-            );
-
-            const boxNoRow = sourceRows.find(r =>
-                normalizeTitle(r.rowTitle) === 'boxno'
-            );
-
-            const rawMatRow = sourceRows.find(r =>
-                normalizeTitle(r.rowTitle) === 'rawmaterialcode'
-            );
-
-            console.log(`Row detection for layer ${layer}:`, {
-                qtyRowFound: !!qtyRow,
-                weightRowFound: !!weightRow,
-                boxNoRowFound: !!boxNoRow,
-                rawMatRowFound: !!rawMatRow
-            });
-
-            boxesInLayer.forEach((box) => {
-
-                const qtyValue = qtyRow?.data?.[box] ?? 0;
-                const weightValue = weightRow?.data?.[box] ?? 0;
-                const boxNoValue = boxNoRow?.data?.[box] ?? '';
-                const rawMatValue = rawMatRow?.data?.[box] ?? '';
-
-                console.log(`Mapping Layer ${layer} Box ${box}`, {
-                    qtyValue,
-                    weightValue,
-                    boxNoValue,
-                    rawMatValue
-                });
-
-                layerInputs[layer][box] = {
-                    qty: qtyValue,
-                    weight: weightValue,
-                    boxNo: boxNoValue,
-                    rawMaterialCode: rawMatValue,
-                    ht: layerInputs[layer]?.[box]?.ht ?? '',
-                    lt: layerInputs[layer]?.[box]?.lt ?? ''
+                layerInputs[layer][boxKey] = {
+                    qty: boxData.qty ?? 0,
+                    weight: boxData.weight ?? 0,
+                    boxNo: boxData.boxNo ?? '',
+                    rawMaterialCode: boxData.rawMaterialCode ?? '',
+                    ht: '',
+                    lt: ''
                 };
+
+                currentIndex++;
             });
         });
 
-        console.log('layerInputs after population:', JSON.parse(JSON.stringify(layerInputs)));
+        console.log('layerInputs after distribution:', JSON.parse(JSON.stringify(layerInputs)));
 
-        // -------------------------
-        // Current Grand Total
-        // -------------------------
+        // -------------------------------------------------
+        // 5️⃣ CURRENT GRAND TOTAL
+        // -------------------------------------------------
+
         currentGrandTotal.value = Number(
             (await getGrandTotalWeightData()).toFixed(2)
         );
 
-        console.log('Current Grand Total:', currentGrandTotal.value);
+        // -------------------------------------------------
+        // 6️⃣ EXPECTED TOTAL WEIGHT (SINGLE SOURCE)
+        // -------------------------------------------------
 
-        // -------------------------
-        // Weight Calculations
-        // -------------------------
-        const sumWeightRow = (dataArray) => {
-            if (!dataArray?.length) return 0;
-
-            const weightRow = dataArray.find(r =>
-                normalizeTitle(r.rowTitle).includes('wt')
-            );
-
-            if (!weightRow) return 0;
-
-            return Object.values(weightRow.data)
-                .reduce((sum, val) => sum + (Number(val) || 0), 0);
-        };
-
-        const totalMainWeight = sumWeightRow(layer_data);
-        const totalExcessWeight = sumWeightRow(excess_data);
-
-        console.log('Weight Breakdown:', {
-            totalMainWeight,
-            totalExcessWeight,
-            currentGrandTotal: currentGrandTotal.value
-        });
+        const totalFetchedWeight = orderedBoxes.reduce(
+            (sum, box) => sum + (Number(box.weight) || 0),
+            0
+        );
 
         expectedTotalWeight.value = Number(
-            (totalMainWeight + totalExcessWeight + currentGrandTotal.value)
-                .toFixed(2)
+            (totalFetchedWeight + currentGrandTotal.value).toFixed(2)
         );
 
         console.log('Expected Total Weight:', expectedTotalWeight.value);
 
-        console.log('--- fetchAllLotDataBoxDetails END ---');
-
         toast.success('Box details fetched successfully');
+
+        console.log('--- fetchAllLotDataBoxDetails END ---');
 
     } catch (error) {
         console.error('Failed to fetch box details', error);
         toast.error('Failed to fetch box details');
     }
 };
-
 
 const saveToDatabase = async () => {
     if (!selectedCoordinates.value.length) return;

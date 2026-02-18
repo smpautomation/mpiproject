@@ -1020,10 +1020,10 @@
                         <div class="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 opacity-60 blur-xl animate-pulse"></div>
                         <div class="absolute inset-0 flex items-center justify-center border-2 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl border-cyan-400/50">
                             <img
-                            src="photo/cogwheel.png"
-                            alt="Settings"
-                            class="relative z-10 object-contain w-10 h-10 animate-spin drop-shadow-lg"
-                            style="animation-duration: 3s;"
+                                src="photo/cogwheel.png"
+                                alt="Settings"
+                                class="relative z-10 object-contain w-10 h-10 animate-spin drop-shadow-lg"
+                                style="animation-duration: 3s;"
                             />
                         </div>
                         </div>
