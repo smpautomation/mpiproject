@@ -998,6 +998,10 @@ class MassProductionController extends Controller
                         ->where('mass_prod', $massprod)
                         ->where('layer', $layer_no)
                         ->exists(),
+                    'filmpasting_completed' => FilmPastingData::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
                     'mpi_completed' => TPMDataCategory::where('actual_model', $modelLot['models'][0] ?? null)
                         ->where('jhcurve_lotno', $modelLot['lots'][0] ?? null)
                         ->where('massprod_name', $massprod)

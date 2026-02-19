@@ -1143,6 +1143,19 @@
                         <span :class="preparedByPerson_lastNameFontSize">{{ preparedByPerson_lastName }}</span>
                         </span>
                     </div>
+                    <button
+                        v-if="!checkedByStampPhoto && preparedByStampPhoto"
+                        @click="openUndoModal('prepared')"
+                        class="bg-orange-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
+                            transition-all duration-200 ease-out
+                            hover:bg-orange-600
+                            hover:shadow-2xl
+                            hover:-translate-y-0.5
+                            active:translate-y-0
+                            active:shadow-lg"
+                    >
+                        UNDO PREPARED BY STAMP
+                    </button>
                     </div>
 
                     <!-- Checked By -->
@@ -1192,12 +1205,25 @@
                         <span :class="getFontSize(checkedByPerson_lastName)">{{ checkedByPerson_lastName }}</span>
                         </span>
                     </div>
+                    <button
+                        v-if="!approvedByStampPhoto && checkedByStampPhoto"
+                        @click="openUndoModal('checked')"
+                        class="bg-orange-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
+                            transition-all duration-200 ease-out
+                            hover:bg-orange-600
+                            hover:shadow-2xl
+                            hover:-translate-y-0.5
+                            active:translate-y-0
+                            active:shadow-lg"
+                    >
+                        UNDO CHECKED BY STAMP
+                    </button>
                     </div>
 
                     <!-- Approved By -->
                     <div class="flex flex-col">
                     <p class="p-2 text-xl font-extrabold text-center text-white bg-blue-400 border-4 border-white whitespace-nowrap">Approved By:</p>
-                    <div class="items-center p-2 text-center border-b-4 border-l-4 border-r-4 border-white">
+                    <div class="items-center p-1 text-center border-b-4 border-l-4 border-r-4 border-white">
                         <div v-show="showApprovedByDefault" class="w-[153px] h-[153px]">
                         <span class="font-semibold text-blue-700 opacity-100 animate-pulse whitespace-nowrap">
                             Waiting for stamp...
@@ -1215,6 +1241,19 @@
                         <span :class="getFontSize(approvedByPerson_lastName)">{{ approvedByPerson_lastName }}</span>
                         </span>
                     </div>
+                    <button
+                        v-if="approvedByStampPhoto"
+                        @click="openUndoModal('approved')"
+                        class="bg-orange-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
+                            transition-all duration-200 ease-out
+                            hover:bg-orange-600
+                            hover:shadow-2xl
+                            hover:-translate-y-0.5
+                            active:translate-y-0
+                            active:shadow-lg"
+                    >
+                        UNDO APPROVED BY STAMP
+                    </button>
                     </div>
 
                     <!-- Note: -->
@@ -1676,6 +1715,87 @@
                 </div>
             </div>
         </div>
+
+        <Modal :show="showModalUndoStamp" @close="showModalUndoStamp = false">
+            <div
+                class="relative flex flex-col items-start
+                    bg-gradient-to-br from-white via-cyan-50 to-teal-50
+                    border-l-4 border-cyan-500
+                    p-6 rounded-xl shadow-xl
+                    max-w-[95vw] max-h-[90vh] overflow-auto"
+            >
+
+                <!-- Exit Button -->
+                <button
+                    @click="showModalUndoStamp = false"
+                    class="absolute top-4 right-4 text-gray-400 transition-colors hover:text-cyan-600"
+                    aria-label="Close modal"
+                >
+                    ✕
+                </button>
+
+                <!-- Header -->
+                <div class="flex items-center mb-4 space-x-3">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-100">
+                        <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+                        </svg>
+                    </div>
+
+                    <h2 class="text-xl font-bold text-cyan-800 leading-snug">
+                        Undo {{ undoStampLabel }}
+                    </h2>
+                </div>
+
+                <!-- Body -->
+                <p class="text-sm leading-relaxed text-gray-700 mb-4">
+                    This action will remove the stamp permanently from the report.
+                    Please provide a clear reason for logs tracking.
+                </p>
+
+                <div class="w-full">
+                    <textarea
+                        v-model="stampUndoRemarks"
+                        rows="3"
+                        placeholder="Enter reason for undo..."
+                        required
+                        class="w-full px-3 py-2 text-sm
+                            bg-white border border-cyan-200 rounded-lg
+                            focus:outline-none focus:ring-2 focus:ring-cyan-400
+                            focus:border-cyan-400
+                            shadow-sm transition-all duration-200"
+                    ></textarea>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end w-full mt-6 space-x-3">
+                    <button
+                        @click="showModalUndoStamp = false"
+                        class="px-5 py-2 text-sm font-semibold text-gray-600
+                            bg-gray-100 rounded-lg
+                            hover:bg-gray-200 transition"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        @click="undoStamp"
+                        class="px-6 py-2 text-sm font-semibold text-white
+                            bg-gradient-to-r from-cyan-500 to-teal-500
+                            rounded-lg shadow-md
+                            hover:from-cyan-600 hover:to-teal-600
+                            hover:shadow-lg
+                            active:scale-[0.98]
+                            transition-all duration-200"
+                    >
+                        Confirm Undo
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+
       </div>
     </Frontend>
 </template>
@@ -1686,7 +1806,7 @@ import { ref, onMounted, nextTick, watch, computed, watchEffect, reactive } from
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3'
 import DotsLoader from '@/Components/DotsLoader.vue';
-import Modal from '@/Components/Modal.vue' // adjust path if needed
+import Modal from '@/Components/Modal.vue'
 import { useToast } from 'vue-toast-notification';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js';
@@ -1824,6 +1944,7 @@ const isFromApproval_prepared = ref(false);
 const backToApproval = ref(false);
 const isFromViewList = ref(false);
 const isSecAdditional = ref(false);
+const showModalUndoStamp = ref(false);
 
 const reportStatusReminder = ref(false);
 const report_isFinalized = ref(false);
@@ -2001,6 +2122,8 @@ const reportROB_remarks = ref('NA');
 //general variables start
 
 const runShowAllData = ref(false);
+const stampUndoRemarks = ref('');
+const currentUndoType = ref(null); // 'prepared' | 'checked' | 'approved'
 const currentFurnaceName = ref('');
 const currentLayerName = ref('');
 const tpmData = ref([]);
@@ -2602,6 +2725,16 @@ const adjustColor_iHcValue = computed(() => {
         return "text-red-500";
     }
 });
+
+const undoStampLabel = computed(() => {
+    const labels = {
+        prepared: 'Prepared By Stamp',
+        checked: 'Checked By Stamp',
+        approved: 'Approved By Stamp',
+    }
+
+    return labels[currentUndoType.value] || 'Stamp'
+})
 
 //UI Dynamic Color adjustments end
 
@@ -4631,6 +4764,77 @@ const saveReportUpdate = async (saveData, serial) => {
         if(isFromViewList.value){
             Inertia.visit('/reports');
         }
+    }
+}
+
+const openUndoModal = (type) => {
+    currentUndoType.value = type
+    stampUndoRemarks.value = ''
+    showModalUndoStamp.value = true
+}
+
+const undoStamp = async () => {
+    try {
+        if (!currentUndoType.value) return
+        if (!stampUndoRemarks.value){
+            toast.warning('You must add a reason for undo.');
+            return;
+        }
+
+        const fieldMap = {
+            prepared: {
+                firstname: 'prepared_by_firstname',
+                surname: 'prepared_by_surname',
+                date: 'prepared_by_date',
+                label: 'Prepared By'
+            },
+            checked: {
+                firstname: 'checked_by_firstname',
+                surname: 'checked_by_surname',
+                date: 'checked_by_date',
+                label: 'Checked By'
+            },
+            approved: {
+                firstname: 'approved_by_firstname',
+                surname: 'approved_by_surname',
+                date: 'approved_by_date',
+                label: 'Approved By'
+            }
+        }
+
+        const config = fieldMap[currentUndoType.value]
+
+        const reportData = {
+            [config.firstname]: "",
+            [config.surname]: "",
+            [config.date]: null,
+        }
+
+        // Clear stamp
+        await axios.patch(
+            `/api/reportdata/${currentSerialSelected.value}`,
+            reportData
+        )
+
+        // Save undo history
+        await axios.post('/api/stamp-undo-history', {
+            serial_no: currentSerialSelected.value,
+            mass_prod: selectedMassProd.value,
+            furnace: selectedFurnace.value,
+            model_name: jhCurveActualModel.value,
+            lot_no: jhCurveLotNo.value,
+            stamp_undone: config.label,
+            undo_remarks: stampUndoRemarks.value,
+            undo_by: state.user.firstName + state.user.surname,
+        })
+
+        await userReportLogging(`has successfully removed ${currentUndoType.value} by stamp | serial ${currentSerialSelected.value}`);
+
+        showModalUndoStamp.value = false
+        reportReset();
+        await showReportData();
+    } catch (error) {
+        console.error('Failed to undo stamp', error)
     }
 }
 

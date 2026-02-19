@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HtMassProDataController;
+use App\Http\Controllers\StampUndoHistoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TPMDataController;
 use App\Http\Controllers\FurnaceDataController;
@@ -538,3 +539,4 @@ Route::apiResource('error-logs', ErrorLogsController::class);
 Route::apiResource('initial_control_sheet', InitialControlSheetController::class);
 Route::apiResource('initial-coating',InitialCoatingController::class);
 Route::apiResource('initial-film-pasting', InitialFilmPastingController::class);
+Route::apiResource('stamp-undo-history', StampUndoHistoryController::class);

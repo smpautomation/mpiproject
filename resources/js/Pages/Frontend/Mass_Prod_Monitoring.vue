@@ -113,16 +113,24 @@
                                     <div
                                         :class="[
                                             'relative px-4 py-3 rounded-lg text-center font-semibold text-sm transition-all duration-200 border-2',
-                                            layer.coating_completed
+                                            (layer.type === 'Film Pasting'
+                                                ? layer.filmpasting_completed
+                                                : layer.coating_completed)
                                                 ? 'bg-teal-500 border-teal-600 text-white shadow-md'
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
                                     >
-                                        <div v-if="layer.coating_completed" class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2">
+                                        <div
+                                            v-if="layer.type === 'Film Pasting'
+                                                ? layer.filmpasting_completed
+                                                : layer.coating_completed"
+                                            class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2"
+                                        >
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
+
                                         {{ layer.type === 'Film Pasting' ? 'Film Pasting' : 'Coating' }}
                                     </div>
 
