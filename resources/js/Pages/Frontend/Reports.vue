@@ -1146,9 +1146,9 @@
                     <button
                         v-if="!checkedByStampPhoto && preparedByStampPhoto"
                         @click="openUndoModal('prepared')"
-                        class="bg-orange-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
+                        class="bg-red-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
                             transition-all duration-200 ease-out
-                            hover:bg-orange-600
+                            hover:bg-red-600
                             hover:shadow-2xl
                             hover:-translate-y-0.5
                             active:translate-y-0
@@ -1208,9 +1208,9 @@
                     <button
                         v-if="!approvedByStampPhoto && checkedByStampPhoto"
                         @click="openUndoModal('checked')"
-                        class="bg-orange-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
+                        class="bg-red-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
                             transition-all duration-200 ease-out
-                            hover:bg-orange-600
+                            hover:bg-red-600
                             hover:shadow-2xl
                             hover:-translate-y-0.5
                             active:translate-y-0
@@ -1244,9 +1244,9 @@
                     <button
                         v-if="approvedByStampPhoto"
                         @click="openUndoModal('approved')"
-                        class="bg-orange-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
+                        class="bg-red-500 rounded-xl shadow-xl text-white font-bold p-2 text-xs mt-6
                             transition-all duration-200 ease-out
-                            hover:bg-orange-600
+                            hover:bg-red-600
                             hover:shadow-2xl
                             hover:-translate-y-0.5
                             active:translate-y-0
@@ -1874,7 +1874,7 @@
                             {{ item.undo_by }}
                         </div>
 
-                        <div class="mt-1 text-sm text-gray-700">
+                        <div class="mt-1 text-sm text-gray-700 whitespace-break-spaces">
                             <span class="font-semibold">Remarks:</span>
                             {{ item.undo_remarks }}
                         </div>
