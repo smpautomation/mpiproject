@@ -2315,7 +2315,11 @@
         try{
 
             const responsePatchCategory = await axios.patch(`/api/updatecategory/${serialNo.value}`,{
-                    actual_model: jhCurveActualModel.value,
+                    actual_model: ((jhCurveActualModel.value ?? '')
+                        .split(' ')
+                        .map((word, index) => index === 0 ? word.replace(/-/g, '') : word)
+                        .join(' ')
+                    ),
                     jhcurve_lotno: jhCurveLotNo.value,
                     mias_emp: propData_miasEmp.value,
                     factor_emp: propData_factorEmp.value,

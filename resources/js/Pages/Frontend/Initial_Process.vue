@@ -400,7 +400,10 @@
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Model<span class="text-red-500"> *</span></label>
-                            <select v-model="initial_mpcs.selectedModel" class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50">
+                            <select
+                                v-model="selectedModel"
+                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                            >
                                 <option v-for="item in model_names" :key="item" :value="item">
                                     {{ item }}
                                 </option>
@@ -2824,6 +2827,22 @@ const initial_mpcs = reactive({
     coating: 0,
     magnetPreparedBy: '',
     boxPreparedBy: '',
+});
+
+const selectedModel = computed({
+    get() {
+        return initial_mpcs.selectedModel
+    },
+    set(value) {
+        const sanitized = (value ?? '')
+            .split(' ')
+            .map((word, index) =>
+                index === 0 ? word.replace(/-/g, '') : word
+            )
+            .join(' ')
+
+        initial_mpcs.selectedModel = sanitized
+    }
 });
 
 const canEnableExcessBoxes = computed(() => {
