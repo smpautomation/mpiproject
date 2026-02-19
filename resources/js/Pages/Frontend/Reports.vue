@@ -1321,6 +1321,13 @@
                         BACK TO VIEW LIST
                     </button>
 
+                    <button @click="async () => {
+                            await getUndoHistory();
+                            showModalUndoHistory = true;
+                        }" class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95">
+                        STAMP UNDO HISTORY
+                    </button>
+
                 </div>
                 <div>
                     <button v-if="onTestServer" @click="finalizeReport(currentSerialSelected, report_isFinalized)" class="p-2 bg-blue-100 rounded-lg">
@@ -1795,6 +1802,101 @@
             </div>
         </Modal>
 
+        <Modal :show="showModalUndoHistory" @close="showModalUndoHistory = false">
+            <div
+                class="relative flex flex-col items-start
+                    bg-gradient-to-br from-white via-cyan-50 to-teal-50
+                    border-l-4 border-cyan-500
+                    p-6 rounded-xl shadow-xl
+                    max-w-[95vw] max-h-[90vh] overflow-auto"
+            >
+
+                <!-- Exit Button -->
+                <button
+                    @click="showModalUndoHistory = false"
+                    class="absolute top-4 right-4 text-gray-400 transition-colors hover:text-cyan-600"
+                    aria-label="Close modal"
+                >
+                    ✕
+                </button>
+
+                <!-- Header -->
+                <div class="flex items-center mb-5 space-x-3">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-100">
+                        <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 17v-6h6v6m-7 4h8a2 2 0 002-2V7l-6-4-6 4v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+
+                    <h2 class="text-xl font-bold text-cyan-800">
+                        Stamp Undo History
+                    </h2>
+                </div>
+
+                <!-- Body -->
+                <div class="w-full space-y-4">
+
+                    <!-- Loading -->
+                    <div v-if="undoHistoryLoading" class="text-sm text-gray-600">
+                        Loading history...
+                    </div>
+
+                    <!-- Error -->
+                    <div v-if="undoHistoryError" class="text-sm text-red-600">
+                        {{ undoHistoryError }}
+                    </div>
+
+                    <!-- Empty State -->
+                    <div v-if="!undoHistoryLoading && undoHistory.length === 0"
+                        class="text-sm text-gray-500 italic">
+                        No undo history found for this serial number.
+                    </div>
+
+                    <!-- History List -->
+                    <div
+                        v-for="(item, index) in undoHistory"
+                        :key="item.id || index"
+                        class="p-4 bg-white border border-cyan-100 rounded-lg shadow-sm"
+                    >
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-semibold text-cyan-700">
+                                {{ item.stamp_undone }}
+                            </span>
+
+                            <span class="text-xs text-gray-500">
+                                {{ formatDateTime(item.created_at) }}
+                            </span>
+                        </div>
+
+                        <div class="text-sm text-gray-700">
+                            <span class="font-semibold">Undo By:</span>
+                            {{ item.undo_by }}
+                        </div>
+
+                        <div class="mt-1 text-sm text-gray-700">
+                            <span class="font-semibold">Remarks:</span>
+                            {{ item.undo_remarks }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-end w-full mt-6">
+                    <button
+                        @click="showModalUndoHistory = false"
+                        class="px-5 py-2 text-sm font-semibold text-gray-600
+                            bg-gray-100 rounded-lg
+                            hover:bg-gray-200 transition"
+                    >
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </Modal>
+
 
       </div>
     </Frontend>
@@ -1945,6 +2047,7 @@ const backToApproval = ref(false);
 const isFromViewList = ref(false);
 const isSecAdditional = ref(false);
 const showModalUndoStamp = ref(false);
+const showModalUndoHistory = ref(false);
 
 const reportStatusReminder = ref(false);
 const report_isFinalized = ref(false);
@@ -2038,6 +2141,10 @@ const MODELS_SHOW_CPK = ref([]);
 const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
+
+const undoHistory = ref([]);
+const undoHistoryLoading = ref(false);
+const undoHistoryError = ref(null);
 
 const reportStdDev = ref(0);
 const reportCp = ref(0);
@@ -3131,6 +3238,19 @@ const uncheckReport = async () => {
     }
 }
 
+const formatDateTime = (value) => {
+    if (!value) return '-';
+
+    return new Date(value).toLocaleString('en-PH', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+    });
+};
+
 const reportErrorMessage = ref('');
 
 const generateReport = async () => {
@@ -3312,6 +3432,33 @@ const getControlSheetData = async () => {
         );
     }
 }
+
+const getUndoHistory = async () => {
+    undoHistoryLoading.value = true;
+    undoHistoryError.value = null;
+
+    try {
+        const serialNo = currentSerialSelected.value;
+
+        if (!serialNo) {
+            throw new Error('Serial number is missing.');
+        }
+
+        const response = await axios.get(
+            `/api/stamp-undo-history/by-serial/${serialNo}`
+        );
+
+        undoHistory.value = response.data;
+
+        console.log('Undo history fetched successfully.', response.data);
+
+    } catch (error) {
+        undoHistoryError.value = error.response?.data?.message || error.message;
+        console.error('Failed to fetch undo history:', error);
+    } finally {
+        undoHistoryLoading.value = false;
+    }
+};
 
 const fetchAllData = async () => {
     try {

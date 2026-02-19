@@ -518,6 +518,9 @@ Route::get(
     [BreaklotInitialLotController::class, 'showAllAdditional']
 );
 
+Route::get('stamp-undo-history/by-serial/{serial_no}',
+    [StampUndoHistoryController::class, 'bySerial']);
+
 Route::get('breaklot-coating/generate-layer-code', [BreaklotCoatingController::class, 'generateLayerCode']);
 Route::get('breaklot-coating/check-existing', [BreaklotCoatingController::class, 'checkExisting']);
 Route::get('breaklot-coating/check-existing-tpm', [BreaklotCoatingController::class, 'checkExistingForTpm']);

@@ -76,4 +76,11 @@ class StampUndoHistoryController extends Controller
 
         return response()->noContent();
     }
+
+    public function bySerial($serial_no)
+    {
+        return StampUndoHistory::where('serial_no', $serial_no)
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }
