@@ -435,24 +435,29 @@ class MassProductionController extends Controller
         }
 
         foreach ($layerData as $index => $row) {
-            Log::info("Inspecting row #{$index}", $row);
 
             $rowTitle = $row['rowTitle'] ?? null;
-            Log::info("Row title: {$rowTitle}");
 
             if ($rowTitle === 'MODEL:') {
-                $modelValue = $row['data']['A'] ?? null;
 
-                // fallback to B if A is null or empty
-                if (empty($modelValue)) {
-                    $modelValue = $row['data']['B'] ?? null;
+                $boxes = ['A','B','C','D','E','F','G','H','J','K'];
+
+                foreach ($boxes as $box) {
+                    $value = $row['data'][$box] ?? null;
+
+                    if (!empty($value)) {
+
+                        Log::info("MODEL found in box {$box}.", [
+                            'model' => $value
+                        ]);
+
+                        return response()->json([
+                            'model' => $value,
+                        ]);
+                    }
                 }
 
-                Log::info("MODEL found. Value: ", ['model' => $modelValue]);
-
-                return response()->json([
-                    'model' => $modelValue,
-                ]);
+                break; // Row found but empty
             }
         }
 
@@ -507,15 +512,24 @@ class MassProductionController extends Controller
 
         // Search for row with "LT. No.:"
         foreach ($layerData as $row) {
-             if (($row['rowTitle'] ?? null) === 'LT. No.:') {
-                $lotnoValue = $row['data']['A'] ?? null;
-                if (empty($lotnoValue)) {
-                    $lotnoValue = $row['data']['B'] ?? null;
+
+            if (($row['rowTitle'] ?? null) === 'LT. No.:') {
+
+                $boxes = ['A','B','C','D','E','F','G','H','J','K'];
+
+                foreach ($boxes as $box) {
+                    $value = $row['data'][$box] ?? null;
+
+                    if (!empty($value)) {
+                        Log::info("LT. No. found in box {$box}.", ['lotno' => $value]);
+
+                        return response()->json([
+                            'lotno' => $value,
+                        ]);
+                    }
                 }
-                Log::info("LT. No. found. Value: ", ['lotno' => $lotnoValue]);
-                return response()->json([
-                    'lotno' => $lotnoValue,
-                ]);
+
+                break; // Row found but no values inside boxes
             }
         }
 
