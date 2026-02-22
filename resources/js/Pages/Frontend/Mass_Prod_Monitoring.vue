@@ -229,6 +229,33 @@ const checkAuthentication = async () => {
     }
 };
 
+// Utility: Save and load to sessionStorage
+function useSessionStorage(key, state) {
+    // Load existing session value
+    const saved = sessionStorage.getItem(key)
+    if (saved !== null) {
+        try {
+        const parsed = JSON.parse(saved)
+        if (typeof state === 'object' && 'value' in state) {
+            state.value = parsed
+        } else {
+            Object.assign(state, parsed)
+        }
+        } catch {
+            /* ignore parse errors */
+        }
+    }
+
+    // Watch and persist changes
+    watch(
+        state,
+        (val) => {
+            sessionStorage.setItem(key, JSON.stringify(val))
+        },
+        { deep: true }
+    )
+}
+
 const massProductionData = ref([]);
 const selectedMassProd = ref('');
 const selectedFurnace = ref('');
@@ -306,6 +333,9 @@ watch(
         }
     }
 );
+
+useSessionStorage('selectedMassProd', selectedMassProd);
+useSessionStorage('selectedFurnace', selectedFurnace);
 
 onMounted(async () => {
     const isAuthenticated = await checkAuthentication();
