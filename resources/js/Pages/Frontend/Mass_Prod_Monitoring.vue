@@ -96,7 +96,7 @@
                                     <div
                                         :class="[
                                             'relative px-4 py-3 rounded-lg text-center font-semibold text-sm transition-all duration-200 border-2',
-                                            (layer.type === '1st and 2nd gbdp'
+                                            (layer.type === '1st and 2nd Gbdp'
                                                 ? layer.second_heat_treatment_completed
                                                 : layer.heat_treatment_completed)
                                                 ? 'bg-green-500 border-green-600 text-white shadow-md'
@@ -104,7 +104,7 @@
                                         ]"
                                     >
                                         <div
-                                            v-if="layer.type === '1st and 2nd gbdp'
+                                            v-if="layer.type === '1st and 2nd Gbdp'
                                                 ? layer.second_heat_treatment_completed
                                                 : layer.heat_treatment_completed"
                                             class="absolute flex items-center justify-center w-6 h-6 bg-green-600 rounded-full shadow-md -top-2 -right-2"
@@ -122,7 +122,7 @@
                                             'relative px-4 py-3 rounded-lg text-center font-semibold text-sm transition-all duration-200 border-2',
                                             (layer.type === 'Film Pasting'
                                                 ? layer.filmpasting_completed
-                                                : layer.type === '1st and 2nd gbdp'
+                                                : layer.type === '1st and 2nd Gbdp'
                                                     ? layer.second_coating_completed
                                                     : layer.coating_completed)
                                                 ? 'bg-teal-500 border-teal-600 text-white shadow-md'
@@ -132,7 +132,7 @@
                                         <div
                                             v-if="layer.type === 'Film Pasting'
                                                 ? layer.filmpasting_completed
-                                                : layer.type === '1st and 2nd gbdp'
+                                                : layer.type === '1st and 2nd Gbdp'
                                                     ? layer.second_coating_completed
                                                     : layer.coating_completed"
                                             class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2"
@@ -144,8 +144,8 @@
 
                                         {{ layer.type === 'Film Pasting'
                                             ? 'Film Pasting'
-                                            : layer.type === '1st and 2nd gbdp'
-                                                ? '1st & 2nd Coating'
+                                            : layer.type === '1st and 2nd Gbdp'
+                                                ? 'Coating'
                                                 : 'Coating'
                                         }}
                                     </div>
