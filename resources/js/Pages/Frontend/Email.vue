@@ -44,6 +44,51 @@
                 </div>
 
                 <div>
+                    <label for="additionalFiles" class="block mb-2 text-sm font-semibold text-gray-700">
+                        Additional Excel Attachments
+                        <span class="text-xs font-normal text-gray-400">(Optional, multiple allowed)</span>
+                    </label>
+
+                    <!-- Drag & Click Area -->
+                    <label
+                        for="additionalFiles"
+                        class="flex flex-col items-center justify-center w-full px-4 py-6 text-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-cyan-400 hover:bg-gray-50 transition-colors"
+                    >
+                        <svg class="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12v8m0-8l-4 4m4-4l4 4"/>
+                        </svg>
+                        <span class="text-sm text-gray-600">Click to upload Excel files</span>
+                    </label>
+
+                    <!-- Hidden Input -->
+                    <input
+                        type="file"
+                        id="additionalFiles"
+                        multiple
+                        accept=".xls,.xlsx"
+                        @change="handleFileChange"
+                        class="hidden"
+                    />
+
+                    <!-- File List + Clear Button -->
+                    <div v-if="form.additionalFiles.length" class="mt-2 flex flex-col gap-2">
+                        <ul class="text-sm text-gray-700 list-disc list-inside">
+                            <li v-for="(file, index) in form.additionalFiles" :key="index">
+                                {{ file.name }}
+                            </li>
+                        </ul>
+                        <button
+                            type="button"
+                            @click="form.additionalFiles = []"
+                            class="self-start px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
+                        >
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div>
                     <label for="message" class="block mb-2 text-sm font-semibold text-gray-700">
                         Message <span class="text-xs font-normal text-gray-400">(Optional)</span>
                     </label>
@@ -165,49 +210,67 @@ const userEmailLogging = async (logEvent) => {
     }
 }
 
+const handleFileChange = (event) => {
+    form.additionalFiles = Array.from(event.target.files);
+};
+
 const form = reactive({
     massPro: '',
     emails: '',
     message: '',
+    additionalFiles: [],
 })
 
 const success = ref(false);
 const loading = ref(false);
 
 const submitEmail = async () => {
-loading.value = true;
-  try {
-    const response = await axios.post('/api/send-takefu-email', form, {
-        headers: {
-            Accept: 'application/json',
+    loading.value = true;
+
+    try {
+        // 1️⃣ Prepare FormData
+        const formData = new FormData();
+        formData.append('massPro', form.massPro);
+        formData.append('emails', form.emails);
+        formData.append('message', form.message);
+
+        // 2️⃣ Append additional files if any
+        form.additionalFiles.forEach((file, index) => {
+            formData.append('additionalFiles[]', file);
+        });
+
+        // 3️⃣ Send to backend
+        const response = await axios.post('/api/send-takefu-email', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Accept: 'application/json',
+            },
+        });
+
+        success.value = true;
+        setTimeout(() => (success.value = false), 3000);
+
+        await userEmailLogging(`has successfully sent an email for ${form.massPro}`);
+
+        // Reset form
+        form.massPro = '';
+        form.emails = '';
+        form.message = '';
+        form.additionalFiles = [];
+
+    } catch (error) {
+        if (error.response) {
+            console.error('Backend error status:', error.response.status);
+            console.error('Backend error data:', error.response.data);
+            alert('Server error: ' + JSON.stringify(error.response.data));
+        } else {
+            console.error('Request error:', error.message);
+            alert('Failed to send email. Please check your inputs or try again later.');
         }
-    });
-    //console.log(response.data);
-    success.value = true;
-    setTimeout(() => {
-        success.value = false;
-    }, 3000); // 3000 milliseconds = 3 seconds
-
-    await userEmailLogging(`has successfully sent an email for ${form.massPro}`); //user logs email
-
-    // Reset form
-    form.massPro = '';
-    form.emails = '';
-    form.message = '';
-
-  } catch (error) {
-    if (error.response) {
-      console.error('Backend error status:', error.response.status);
-      console.error('Backend error data:', error.response.data);
-      alert('Server error: ' + JSON.stringify(error.response.data));
-    } else {
-      console.error('Request error:', error.message);
-      alert('Failed to send email. Please check your inputs or try again later.');
+    } finally {
+        loading.value = false;
     }
-  }finally {
-    loading.value = false;
-  }
-}
+};
 
 onMounted(async()=>{
     await checkAuthentication();

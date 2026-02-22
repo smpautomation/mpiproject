@@ -170,6 +170,7 @@ Route::post('/send-takefu-email', function(Request $request) {
         'emails' => 'required|string',
         'message' => 'nullable|string|max:5000',
         'massPro' => 'required|string',
+        'additionalFiles.*' => 'file|mimes:xls,xlsx|max:10240',
     ]);
 
     // 2️⃣ Prepare email list
@@ -187,7 +188,12 @@ Route::post('/send-takefu-email', function(Request $request) {
     Log::info('Starting mail send');
 
     try {
-        Mail::to($emailList)->send(new TakefuMail($validated['massPro'], $customMessage));
+
+        // Collect uploaded files
+        $uploadedFiles = $request->file('additionalFiles', []);
+
+        // Send mail
+        Mail::to($emailList)->send(new TakefuMail($validated['massPro'], $customMessage, $uploadedFiles));
 
         Log::info('Mail sent successfully');
 

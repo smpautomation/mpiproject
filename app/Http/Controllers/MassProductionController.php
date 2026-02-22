@@ -1008,7 +1008,15 @@ class MassProductionController extends Controller
                     'model' => $modelLot['models'][0] ?? null,
                     'lot_no' => $modelLot['lots'][0] ?? null,
                     'heat_treatment_completed' => !empty($layer_json),
+                    'second_heat_treatment_completed' => GbdpSecondHeatTreatment::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
                     'coating_completed' => Coating::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
+                    'second_coating_completed' => GbdpSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massprod)
                         ->where('layer', $layer_no)
                         ->exists(),

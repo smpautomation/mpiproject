@@ -96,12 +96,19 @@
                                     <div
                                         :class="[
                                             'relative px-4 py-3 rounded-lg text-center font-semibold text-sm transition-all duration-200 border-2',
-                                            layer.heat_treatment_completed
+                                            (layer.type === '1st and 2nd gbdp'
+                                                ? layer.second_heat_treatment_completed
+                                                : layer.heat_treatment_completed)
                                                 ? 'bg-green-500 border-green-600 text-white shadow-md'
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
                                     >
-                                        <div v-if="layer.heat_treatment_completed" class="absolute flex items-center justify-center w-6 h-6 bg-green-600 rounded-full shadow-md -top-2 -right-2">
+                                        <div
+                                            v-if="layer.type === '1st and 2nd gbdp'
+                                                ? layer.second_heat_treatment_completed
+                                                : layer.heat_treatment_completed"
+                                            class="absolute flex items-center justify-center w-6 h-6 bg-green-600 rounded-full shadow-md -top-2 -right-2"
+                                        >
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                                             </svg>
@@ -115,7 +122,9 @@
                                             'relative px-4 py-3 rounded-lg text-center font-semibold text-sm transition-all duration-200 border-2',
                                             (layer.type === 'Film Pasting'
                                                 ? layer.filmpasting_completed
-                                                : layer.coating_completed)
+                                                : layer.type === '1st and 2nd gbdp'
+                                                    ? layer.second_coating_completed
+                                                    : layer.coating_completed)
                                                 ? 'bg-teal-500 border-teal-600 text-white shadow-md'
                                                 : 'bg-white border-gray-300 text-gray-500'
                                         ]"
@@ -123,7 +132,9 @@
                                         <div
                                             v-if="layer.type === 'Film Pasting'
                                                 ? layer.filmpasting_completed
-                                                : layer.coating_completed"
+                                                : layer.type === '1st and 2nd gbdp'
+                                                    ? layer.second_coating_completed
+                                                    : layer.coating_completed"
                                             class="absolute flex items-center justify-center w-6 h-6 bg-teal-600 rounded-full shadow-md -top-2 -right-2"
                                         >
                                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +142,12 @@
                                             </svg>
                                         </div>
 
-                                        {{ layer.type === 'Film Pasting' ? 'Film Pasting' : 'Coating' }}
+                                        {{ layer.type === 'Film Pasting'
+                                            ? 'Film Pasting'
+                                            : layer.type === '1st and 2nd gbdp'
+                                                ? '1st & 2nd Coating'
+                                                : 'Coating'
+                                        }}
                                     </div>
 
                                     <!-- MPI -->

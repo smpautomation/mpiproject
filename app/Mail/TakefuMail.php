@@ -18,11 +18,13 @@ class TakefuMail extends Mailable
 
     public string $massPro;
     protected $customMessage;
+    protected array $additionalFiles;
 
-    public function __construct(string $massPro, $customMessage = '')
+    public function __construct(string $massPro, $customMessage = '', array $additionalFiles = [])
     {
         $this->massPro = $massPro;
         $this->customMessage = $customMessage;
+        $this->additionalFiles = $additionalFiles;
     }
 
     public function envelope(): Envelope
@@ -83,6 +85,19 @@ class TakefuMail extends Mailable
             }
 
             Log::info("PDF/TXT attachments added: {$pdfTxtAttached}");
+
+            // --- Attach additional uploaded Excel files ---
+            $uploadedAttached = 0;
+            foreach ($this->additionalFiles as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $mail->attach($file->getRealPath(), [
+                        'as' => $file->getClientOriginalName(),
+                        'mime' => $file->getClientMimeType(),
+                    ]);
+                    $uploadedAttached++;
+                }
+            }
+            Log::info("Additional uploaded Excel files attached: {$uploadedAttached}");
 
             // Attach SMP Excel
             try {
