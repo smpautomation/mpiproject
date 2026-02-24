@@ -121,24 +121,11 @@ class InitialControlSheetController extends Controller
 
     public function fetchAllLotNumbers()
     {
-        try {
-            $records = InitialControlSheet::whereNotNull('lot_no')
-                ->orderByRaw(
-                    "CAST(COALESCE(NULLIF(TRIM(SUBSTRING_INDEX(lot_no, '-', 1)), ''), '0') AS UNSIGNED) ASC"
-                )
-                ->orderByRaw(
-                    "CAST(COALESCE(NULLIF(TRIM(SUBSTRING_INDEX(lot_no, '/', 1)), ''), '0') AS UNSIGNED) ASC"
-                )
-                ->get();
+        $records = InitialControlSheet::whereNotNull('lot_no')
+            ->orderBy('created_at', 'asc') // or 'desc' if you want newest first
+            ->get();
 
-            return response()->json($records);
-        } catch (\Throwable $e) {
-            \Log::error('fetchAllLotNumbers failed: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Server Error',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json($records);
     }
 
     public function fetchAllLotModels(Request $request)
