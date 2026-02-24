@@ -2414,7 +2414,7 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
 const fetchAllLotNoData = async () => {
     try {
         const response = await axios.get('/api/initial-control-sheets/lot-all');
-        //console.log(response.data); // All records with lot_no, newest first
+        console.log('All lot no: ',response.data); // All records with lot_no, newest first
         lotNoLists.value = response.data;
 
     } catch (err) {

@@ -438,7 +438,7 @@
                             <input
                                 v-model="initial_mpcs.lotNo"
                                 type="text"
-                                @input="initial_mpcs.lotNo = initial_mpcs.lotNo.toUpperCase().replace(/[^0-9\-\/]/g, '')"
+                                @input="initial_mpcs.lotNo = initial_mpcs.lotNo.toUpperCase().replace(/[^0-9\-\/()]/g, '')"
                                 class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
