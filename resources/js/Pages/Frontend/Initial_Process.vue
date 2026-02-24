@@ -432,10 +432,15 @@
                     <!-- Group: Lot + Qty -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Lot No.<span class="text-red-500"> *</span></label>
-                            <input v-model="initial_mpcs.lotNo" type="text"
-                                @input="initial_mpcs.lotNo = initial_mpcs.lotNo.toUpperCase()"
-                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Lot No.<span class="text-red-500"> *</span>
+                            </label>
+                            <input
+                                v-model="initial_mpcs.lotNo"
+                                type="text"
+                                @input="initial_mpcs.lotNo = initial_mpcs.lotNo.toUpperCase().replace(/[^0-9\-\/]/g, '')"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
 
                         <div>
