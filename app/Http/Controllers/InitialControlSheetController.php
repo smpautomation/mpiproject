@@ -13,7 +13,13 @@ class InitialControlSheetController extends Controller
      */
     public function index()
     {
-        return InitialControlSheet::all();
+        $data = InitialControlSheet::select(
+            'id',
+            'model_name',
+            'lot_no'
+        )->get();
+
+        return response()->json($data);
     }
 
     /**

@@ -3115,7 +3115,7 @@ const getControlSheetData = async () => {
         controlSheetData.value = response.data;
         //console.log('Initial Control Sheet Data ref array: ', controlSheetData.value);
     }catch(error){
-        console.error('Failed to fetch initial control sheet data');
+        console.error('Failed to fetch initial control sheet data',error);
     }
 }
 
@@ -3621,6 +3621,7 @@ const saveNormalCase = async () => {
         const response = await axios.post('/api/initial_control_sheet', payload);
         console.log('Normal case saved:', response.data);
         toast.success('Normal Control Sheet saved successfully.');
+        await userManageLogging('created Control Sheet Data for Lot No: '+ initial_mpcs.lotNo +' Model: ' + initial_mpcs.selectedModel + ' successfully.');
         clearAll(); // reset form
     } catch (err) {
         console.error('Error saving normal case:', err);
@@ -3688,6 +3689,7 @@ const saveExcessCase = async () => {
         const response = await axios.post('/api/initial_control_sheet', payload);
         //console.log('Excess case saved:', response.data);
         toast.success('Excess Control Sheet saved successfully.');
+        await userManageLogging('created Control Sheet Data for Lot No: '+ initial_mpcs.lotNo +' Model: ' + initial_mpcs.selectedModel + ' successfully.');
         clearAll(); // reset form
     } catch (err) {
         console.error('Error saving excess case:', err);
