@@ -876,7 +876,7 @@
                                     <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportCpkFrom_iHc_remarks }}</td>
                                 </tr>
                                 <template v-if="showBHData && (noteReasonForReject.includes('- N.G iHc'))">
-                                    <!-- VT Row 1: Sample + Remarks (Vertical Repeating Inputs) -->
+
                                     <tr class="text-center">
                                         <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBH_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                         hover:border-blue-400 hover:ring-1 hover:ring-blue-300
@@ -905,7 +905,6 @@
                                         <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
                                     </tr>
 
-                                    <!-- VT Row 2: Temperature, iHc, Result, Remarks -->
                                     <tr class="text-center">
                                         <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
                                             <div class="flex items-center">
@@ -1003,6 +1002,252 @@
                                         <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBH_remarks }}</td>
                                     </tr>
                                 </template>
+
+
+                                <!-- TEMPORARY DISABLED
+
+                                <template v-if="showBHDataSeg && isBhSegFormat">
+
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ ROOM TEMP</th>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBHSeg_sampleQty"
+                                                    :key="'sample-remarks-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="text"
+                                                    v-model="reportBHSeg_samples[i - 1]"
+                                                    @input="reportBHSeg_samples[i - 1] = reportBHSeg_samples[i - 1]?.toUpperCase()"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="18 AF"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                    </tr>
+
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                            <input type="text" v-model="reportBHRTSeg_data" @input="reportBHRTSeg_data = reportBH_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            <span class="ml-1 align-baseline"> (T)</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                            <input type="number" v-model="reportBHRTSeg_lower_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> ~
+                                            <input type="number" v-model="reportBHRTSeg_higher_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (T)
+                                        </td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBHSeg_sampleQty"
+                                                    :key="'result-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="number"
+                                                    v-model="reportBHRTSeg_results[i - 1]"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="0"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBHRTSeg_remarks }}</td>
+                                    </tr>
+
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data @ <input type="number" v-model="reportBHSeg_temp" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                        hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                        focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                        transition duration-200 ease-in-out"> °C</th>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">
+
+                                        </td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                    </tr>
+
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                            <input type="text" v-model="reportBHSeg_data" @input="reportBHSeg_data = reportBHSeg_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            <span class="ml-1 align-baseline"> (T)</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                            <input type="number" v-model="reportBHSeg_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (Oe)
+                                        </td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBHSeg_sampleQty"
+                                                    :key="'result-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="number"
+                                                    v-model="reportBHSeg_results[i - 1]"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="0"
+                                                    />
+                                                    <span class="text-gray-600">T</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBHSeg_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                            <input type="text" v-model="reportBHSeg_2nd_data" @input="reportBHSeg_2nd_data = reportBHSeg_2nd_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                            <input type="number" v-model="reportBHSeg_2nd_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (Oe)
+                                        </td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBHSeg_sampleQty"
+                                                    :key="'result-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="number"
+                                                    v-model="reportBHSeg_2nd_results[i - 1]"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="0"
+                                                    />
+                                                    <span class="text-gray-600">Oe</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBHSeg_2nd_remarks }}</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                            <input type="text" v-model="reportBHSeg_3rd_data" @input="reportBHSeg_2nd_data = reportBHSeg_2nd_data.toUpperCase()" name="stdDev" class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                transition duration-200 ease-in-out">
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap">
+                                            <input type="number" v-model="reportBHSeg_3rd_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"> (Oe)
+                                        </td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex flex-col gap-[6px] items-center">
+                                                <div
+                                                    v-for="i in reportBHSeg_sampleQty"
+                                                    :key="'result-' + i"
+                                                    class="flex items-center gap-1"
+                                                >{{ i + ")" }}
+                                                    <input
+                                                    type="number"
+                                                    v-model="reportBHSeg_3rd_results[i - 1]"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                                            transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                    placeholder="0"
+                                                    />
+                                                    <span class="text-gray-600">Oe</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBHSeg_3rd_remarks }}</td>
+                                    </tr>
+                                    <div v-if="!confirmResetSeg" class="text-center">
+                                        <button
+                                            @click="confirmResetSeg = true"
+                                            class="px-2 py-1 m-1 text-white transition-transform duration-200 ease-in-out bg-red-700 rounded-lg shadow-lg whitespace-nowrap active:scale-95 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                        >
+                                            Wrong Quantity Reset Button
+                                        </button>
+                                        </div>
+
+                                        <div v-else class="flex items-center justify-center gap-2 mt-1">
+                                        <span class="p-1 text-sm text-blue-600 whitespace-nowrap">This action will reset all BH Data Input. Are you sure?</span>
+                                        <button
+                                            @click="resetReportBHSegData(); confirmResetSeg = false"
+                                            class="px-2 py-1 text-xs text-white transition bg-green-600 rounded hover:bg-green-500"
+                                        >
+                                            Yes
+                                        </button>
+                                        <button
+                                            @click="confirmResetSeg = false"
+                                            class="px-2 py-1 text-xs text-white transition bg-gray-400 rounded hover:bg-gray-500"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </template>
+
+
+                                <template v-if="showBHDataSeg_default && isBhSegFormat">
+                                    <tr class="text-center">
+                                        <th colspan="2" class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">BH Data SEG </th>
+                                        <td colspan="3" class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300">Enter the number of samples first and then save</td>
+                                        <th class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white">Result</th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">
+                                            <div class="flex items-center">
+                                                <span class="ml-1 align-baseline"> </span>
+                                            </div>
+                                        </td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"></td>
+                                        <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">Quantity of Samples: <input type="number" v-model="reportBHSeg_sampleQty" name="stdDev" class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
+                                            hover:border-blue-400 hover:ring-1 hover:ring-blue-300
+                                            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
+                                            transition duration-200 ease-in-out"></td>
+                                        <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBHSeg_remarks }}</td>
+                                    </tr>
+                                </template>
+
+                                -->
+
                             </tbody>
                         </table>
                     </div>
@@ -2125,6 +2370,9 @@ const showVTData = ref(false);
 const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showGX = ref(false);
+const isBhSegFormat = ref(false);
+const showBHDataSeg = ref(false);
+const showBHDataSeg_default = ref(false);
 const showBHData = ref(false);
 const showBHData_default = ref(false);
 const showROB = ref(false);
@@ -2198,6 +2446,28 @@ const reportBH_samples = ref([]);
 const reportBH_sampleQty = ref();
 const reportBH_temp = ref(0);
 const reportBH_results = ref([]);
+
+const reportBHSeg_temp = ref(200);
+const reportBHSeg_data = ref('Br');
+const reportBHSeg_2nd_data = ref('Hcj');
+const reportBHSeg_3rd_data = ref('Hd5');
+const reportBHSeg_sampleQty = ref();
+const reportBHSeg_samples = ref([]);
+const reportBHSeg_remarks = ref('NA');
+const reportBHSeg_2nd_remarks = ref('NA');
+const reportBHSeg_3rd_remarks = ref('NA');
+const reportBHSeg_dataStandard = ref(1.07);
+const reportBHSeg_2nd_dataStandard = ref(4273);
+const reportBHSeg_3rd_dataStandard = ref(3845);
+const reportBHSeg_results = ref([]);
+const reportBHSeg_2nd_results = ref([]);
+const reportBHSeg_3rd_results = ref([]);
+
+const reportBHRTSeg_data = ref('Br');
+const reportBHRTSeg_lower_dataStandard = ref(1.38);
+const reportBHRTSeg_higher_dataStandard = ref(1.44);
+const reportBHRTSeg_results = ref([]);
+const reportBHRTSeg_remarks = ref('NA');
 
 const reportROB_brMax = ref('');
 const reportROB_brMin = ref('');
@@ -2936,6 +3206,36 @@ const resetReportBHData = async() => {
     await saveReport();
 };
 
+const confirmResetSeg = ref(false);
+
+const resetReportBHSegData = async() => {
+    reportBHSeg_temp.value = 200;
+    reportBHSeg_data.value = 'Br';
+    reportBHSeg_2nd_data.value = 'Hcj';
+    reportBHSeg_3rd_data.value = 'Hd5';
+    reportBHSeg_sampleQty.value = 0;
+    reportBHSeg_samples.value = [];
+    reportBHSeg_remarks.value = 'NA';
+    reportBHSeg_2nd_remarks.value = 'NA';
+    reportBHSeg_3rd_remarks.value = 'NA';
+    reportBHSeg_dataStandard.value = 1.07;
+    reportBHSeg_2nd_dataStandard.value = 4273;
+    reportBHSeg_3rd_dataStandard.value = 3845;
+    reportBHSeg_results.value = [];
+    reportBHSeg_2nd_results.value = [];
+    reportBHSeg_3rd_results.value = [];
+
+    reportBHRTSeg_data.value = 'Br';
+    reportBHRTSeg_lower_dataStandard.value = 1.38;
+    reportBHRTSeg_higher_dataStandard.value = 1.44;
+    reportBHRTSeg_results.value = [];
+    reportBHRTSeg_remarks.value = 'NA';
+
+    showBHDataSeg.value = false;
+    showBHDataSeg_default.value = true;
+    await saveReport();
+};
+
 watchEffect(() => {
   const data = reportCoatingAmounts.value.filter(n => typeof n === 'number' && !isNaN(n));
 
@@ -3124,6 +3424,8 @@ watch(
   },
   { immediate: true }
 );
+
+
 //For TTM Models
 watch(
   [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks, isTTM_model, show1x1x1Data_withoutCorner, show1x1x1Data_Corner],
@@ -3365,6 +3667,17 @@ const checkSpecialJudgement = async () => {
     } else if (MODELS_SHOW_BH.value.includes(model)) {
         showBHData.value = false;
         showBHData_default.value = true;
+        //console.log('[BH] Showing default BH layout (sample qty = 0)');
+    }
+
+    // BH SEG Data
+    if (model === 'SEG0A03G' && reportBHSeg_sampleQty.value > 0) {
+        showBHDataSeg.value = true;
+        showBHDataSeg_default.value = false;
+        //console.log('[BH] Showing BH Data (sample qty > 0)');
+    } else if (model === 'SEG0A03G') {
+        showBHDataSeg.value = true;
+        showBHDataSeg_default.value = false;
         //console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
@@ -4539,6 +4852,7 @@ const showReportData = async () => {
 
         report_isFinalized.value = filterBySerial[0].is_finalized == 1;
         //console.log("Report is finalized: ", report_isFinalized.value);
+        isBhSegFormat.value = filterBySerial[0].is_bh_format_seg == 1;
 
         isAutomotive.value = filterBySerial[0].withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
@@ -4849,6 +5163,27 @@ const saveReport = async () => {
             "JD5_iHcMax": reportROB_JD5_iHcMax.value,
             "result": reportROB_remarks.value,
         }),
+        /* TEMPORARY DISABLED
+        "data_bh_seg_info": JSON.stringify({ // BH DATA @ ROOM TEMP AND BH DATA @ 200
+            "dataRt": reportBHRTSeg_data.value,
+            "dataRtLowerStandard": reportBHRTSeg_lower_dataStandard.value,
+            "dataRtHigherStandard": reportBHRTSeg_higher_dataStandard.value,
+            "remarksRt": reportBHRTSeg_remarks.value,
+            "resultRt": reportBHRTSeg_results.value,
+            "data": reportBHSeg_data.value,
+            "dataStandard": reportBHSeg_dataStandard.value,
+            "data2ndStandard": reportBHSeg_2nd_dataStandard.value,
+            "data3rdStandard": reportBHSeg_3rd_dataStandard.value,
+            "remarks": reportBHSeg_remarks.value,
+            "remarks2nd": reportBHSeg_2nd_remarks.value,
+            "remarks3rd": reportBHSeg_3rd_remarks.value,
+            "sample": reportBHSeg_samples.value,
+            "sample_qty": reportBHSeg_sampleQty.value,
+            "temp": reportBHSeg_temp.value,
+            "result": reportBHSeg_results.value,
+            "result2nd": reportBHSeg_2nd_results.value,
+            "result3rd": reportBHSeg_3rd_results.value,
+        }), */
         "coating_completed": coatingCompleted.value ? 1 : 0,
         "heat_treatment_completed": heatTreatmentCompleted.value ? 1 : 0,
     }
