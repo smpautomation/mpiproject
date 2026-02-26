@@ -1003,9 +1003,6 @@
                                     </tr>
                                 </template>
 
-
-                                <!-- TEMPORARY DISABLED
-
                                 <template v-if="showBHDataSeg && isBhSegFormat">
 
                                     <tr class="text-center">
@@ -1062,7 +1059,7 @@
                                                 >{{ i + ")" }}
                                                     <input
                                                     type="number"
-                                                    v-model="reportBHRTSeg_results[i - 1]"
+                                                    v-model.number="reportBHRTSeg_results[i - 1]"
                                                     class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
@@ -1100,7 +1097,7 @@
                                             <input type="number" v-model="reportBHSeg_dataStandard" name="stdDev" class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
-                                            transition duration-200 ease-in-out"> (Oe)
+                                            transition duration-200 ease-in-out"> (T)
                                         </td>
                                         <td colspan="3" class="px-1 py-[2px] text-blue-600 border-4 border-white">
                                             <div class="flex flex-col gap-[6px] items-center">
@@ -1111,7 +1108,7 @@
                                                 >{{ i + ")" }}
                                                     <input
                                                     type="number"
-                                                    v-model="reportBHSeg_results[i - 1]"
+                                                    v-model.number="reportBHSeg_results[i - 1]"
                                                     class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
@@ -1148,7 +1145,7 @@
                                                 >{{ i + ")" }}
                                                     <input
                                                     type="number"
-                                                    v-model="reportBHSeg_2nd_results[i - 1]"
+                                                    v-model.number="reportBHSeg_2nd_results[i - 1]"
                                                     class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
@@ -1185,7 +1182,7 @@
                                                 >{{ i + ")" }}
                                                     <input
                                                     type="number"
-                                                    v-model="reportBHSeg_3rd_results[i - 1]"
+                                                    v-model.number="reportBHSeg_3rd_results[i - 1]"
                                                     class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800
                                                             hover:border-blue-400 hover:ring-1 hover:ring-blue-300
                                                             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white
@@ -1245,8 +1242,6 @@
                                         <td class="px-1 py-[2px] text-blue-600 border-4 border-white">{{ reportBHSeg_remarks }}</td>
                                     </tr>
                                 </template>
-
-                                -->
 
                             </tbody>
                         </table>
@@ -1536,7 +1531,7 @@
                         @click="sec_additional_redirect(currentSerialSelected, selectedMassProd, selectedLayer, selectedFurnace)"
                         class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
-                        Apply Additional
+                        APPLY ADDITIONAL
                     </button>
                     <button
                         v-if="approvedByPerson_firstName"
@@ -1571,6 +1566,22 @@
                             showModalUndoHistory = true;
                         }" class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95">
                         STAMP UNDO HISTORY
+                    </button>
+
+                    <button
+                        v-if="!isBhSegFormat && showBHDataSeg_default"
+                        @click="applyBhSegFormatLayout"
+                        class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                    >
+                        APPLY BH DATA SEG FORMAT
+                    </button>
+
+                    <button
+                        v-else-if="showBHDataSeg_default"
+                        @click="cancelBhSegFormatLayout"
+                        class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                    >
+                        CANCEL BH DATA SEG FORMAT
                     </button>
 
                 </div>
@@ -2453,21 +2464,36 @@ const reportBHSeg_2nd_data = ref('Hcj');
 const reportBHSeg_3rd_data = ref('Hd5');
 const reportBHSeg_sampleQty = ref();
 const reportBHSeg_samples = ref([]);
-const reportBHSeg_remarks = ref('NA');
-const reportBHSeg_2nd_remarks = ref('NA');
-const reportBHSeg_3rd_remarks = ref('NA');
 const reportBHSeg_dataStandard = ref(1.07);
 const reportBHSeg_2nd_dataStandard = ref(4273);
 const reportBHSeg_3rd_dataStandard = ref(3845);
-const reportBHSeg_results = ref([]);
-const reportBHSeg_2nd_results = ref([]);
-const reportBHSeg_3rd_results = ref([]);
+const reportBHSeg_results = reactive([]);
+const reportBHSeg_2nd_results = reactive([]);
+const reportBHSeg_3rd_results = reactive([]);
 
 const reportBHRTSeg_data = ref('Br');
 const reportBHRTSeg_lower_dataStandard = ref(1.38);
 const reportBHRTSeg_higher_dataStandard = ref(1.44);
-const reportBHRTSeg_results = ref([]);
-const reportBHRTSeg_remarks = ref('NA');
+const reportBHRTSeg_results = reactive([]);
+
+// ---- COMPUTED REMARKS ----
+const reportBHRTSeg_remarks = computed(() =>
+  reportBHRTSeg_results.some(
+    s => s < reportBHRTSeg_lower_dataStandard.value || s > reportBHRTSeg_higher_dataStandard.value
+  ) ? 'NG' : 'OK'
+);
+
+const reportBHSeg_remarks = computed(() =>
+  reportBHSeg_results.some(s => s <= reportBHSeg_dataStandard.value) ? 'NG' : 'OK'
+);
+
+const reportBHSeg_2nd_remarks = computed(() =>
+  reportBHSeg_2nd_results.some(s => s <= reportBHSeg_2nd_dataStandard.value) ? 'NG' : 'OK'
+);
+
+const reportBHSeg_3rd_remarks = computed(() =>
+  reportBHSeg_3rd_results.some(s => s <= reportBHSeg_3rd_dataStandard.value) ? 'NG' : 'OK'
+);
 
 const reportROB_brMax = ref('');
 const reportROB_brMin = ref('');
@@ -3208,32 +3234,36 @@ const resetReportBHData = async() => {
 
 const confirmResetSeg = ref(false);
 
-const resetReportBHSegData = async() => {
-    reportBHSeg_temp.value = 200;
-    reportBHSeg_data.value = 'Br';
-    reportBHSeg_2nd_data.value = 'Hcj';
-    reportBHSeg_3rd_data.value = 'Hd5';
-    reportBHSeg_sampleQty.value = 0;
-    reportBHSeg_samples.value = [];
-    reportBHSeg_remarks.value = 'NA';
-    reportBHSeg_2nd_remarks.value = 'NA';
-    reportBHSeg_3rd_remarks.value = 'NA';
-    reportBHSeg_dataStandard.value = 1.07;
-    reportBHSeg_2nd_dataStandard.value = 4273;
-    reportBHSeg_3rd_dataStandard.value = 3845;
-    reportBHSeg_results.value = [];
-    reportBHSeg_2nd_results.value = [];
-    reportBHSeg_3rd_results.value = [];
+const resetReportBHSegData = async () => {
+  reportBHSeg_temp.value = 200;
+  reportBHSeg_data.value = 'Br';
+  reportBHSeg_2nd_data.value = 'Hcj';
+  reportBHSeg_3rd_data.value = 'Hd5';
+  reportBHSeg_sampleQty.value = 0;
 
-    reportBHRTSeg_data.value = 'Br';
-    reportBHRTSeg_lower_dataStandard.value = 1.38;
-    reportBHRTSeg_higher_dataStandard.value = 1.44;
-    reportBHRTSeg_results.value = [];
-    reportBHRTSeg_remarks.value = 'NA';
+  reportBHSeg_samples.splice(0);
+  reportBHSeg_results.splice(0);
+  reportBHSeg_2nd_results.splice(0);
+  reportBHSeg_3rd_results.splice(0);
 
-    showBHDataSeg.value = false;
-    showBHDataSeg_default.value = true;
-    await saveReport();
+  reportBHSeg_remarks.value = 'NA';
+  reportBHSeg_2nd_remarks.value = 'NA';
+  reportBHSeg_3rd_remarks.value = 'NA';
+
+  reportBHSeg_dataStandard.value = 1.07;
+  reportBHSeg_2nd_dataStandard.value = 4273;
+  reportBHSeg_3rd_dataStandard.value = 3845;
+
+  reportBHRTSeg_data.value = 'Br';
+  reportBHRTSeg_lower_dataStandard.value = 1.38;
+  reportBHRTSeg_higher_dataStandard.value = 1.44;
+  reportBHRTSeg_results.splice(0);
+  reportBHRTSeg_remarks.value = 'NA';
+
+  showBHDataSeg.value = false;
+  showBHDataSeg_default.value = true;
+
+  await saveReport();
 };
 
 watchEffect(() => {
@@ -3425,7 +3455,6 @@ watch(
   { immediate: true }
 );
 
-
 //For TTM Models
 watch(
   [reportCpk, reportCpkRemarks, reportSurface_cpk, reportCore_cpk, reportCorner_cpk, reportSMPJudgement, reportSurface_remarks, reportCore_remarks, reportCorner_remarks, isTTM_model, show1x1x1Data_withoutCorner, show1x1x1Data_Corner],
@@ -3553,6 +3582,38 @@ const formatDateTime = (value) => {
     });
 };
 
+const applyBhSegFormatLayout = async () => {
+    try{
+
+        const reportBHSEGData = {
+            is_bh_format_seg: 1,
+        }
+
+        const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, reportBHSEGData);
+        console.log('Format applied successfully: ', response.data);
+        await fetchAllData();
+        await showReportData();
+    }catch(error){
+        console.error('Failed to apply BH SEG format layout', error);
+    }
+}
+
+const cancelBhSegFormatLayout = async () => {
+    try{
+
+        const reportBHSEGData = {
+            is_bh_format_seg: 0,
+        }
+
+        const response = await axios.patch(`/api/reportdata/${currentSerialSelected.value}`, reportBHSEGData);
+        console.log('Cancelled successfully: ', response.data);
+        await fetchAllData();
+        await showReportData();
+    }catch(error){
+        console.error('Failed to cancel BH SEG format layout', error);
+    }
+}
+
 const reportErrorMessage = ref('');
 
 const generateReport = async () => {
@@ -3640,6 +3701,19 @@ const checkSpecialJudgement = async () => {
 
     const hasNGihc = noteReasonForReject.value.includes('- N.G iHc');
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
+
+    // BH SEG Data
+
+    if (model === 'SEG0A03G' && reportBHSeg_sampleQty.value > 0) { //SEG0A03G
+        showBHDataSeg.value = true;
+        showBHDataSeg_default.value = false;
+        //console.log('[BH] Showing BH Data (sample qty > 0)');
+    } else if (model === 'SEG0A03G') {
+        showBHDataSeg.value = false;
+        showBHDataSeg_default.value = true;
+        //console.log('[BH] Showing default BH layout (sample qty = 0)');
+    }
+
     if (!hasNGihc) return;
 
     // === Logic Blocks ===
@@ -3667,17 +3741,6 @@ const checkSpecialJudgement = async () => {
     } else if (MODELS_SHOW_BH.value.includes(model)) {
         showBHData.value = false;
         showBHData_default.value = true;
-        //console.log('[BH] Showing default BH layout (sample qty = 0)');
-    }
-
-    // BH SEG Data
-    if (model === 'SEG0A03G' && reportBHSeg_sampleQty.value > 0) {
-        showBHDataSeg.value = true;
-        showBHDataSeg_default.value = false;
-        //console.log('[BH] Showing BH Data (sample qty > 0)');
-    } else if (model === 'SEG0A03G') {
-        showBHDataSeg.value = true;
-        showBHDataSeg_default.value = false;
         //console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
@@ -4936,6 +4999,7 @@ const showReportData = async () => {
         const GX = JSON.parse(filterBySerial[0].data_GX_info || '{}');
         const bh = JSON.parse(filterBySerial[0].data_bh_info || '{}');
         const ROB = JSON.parse(filterBySerial[0].data_ROB_info || '{}');
+        const bhSeg = JSON.parse(filterBySerial[0].data_bh_seg_info || '{}');
 
         reportCorner.value = oneby.corner || '';
         reportCorner_average.value = oneby.corner_average || '';
@@ -5014,6 +5078,24 @@ const showReportData = async () => {
         reportROB_JD5_iHcMax.value = ROB.JD5_iHcMax || '';
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || '';
         reportROB_remarks.value = ROB.result || '';
+
+        reportBHRTSeg_data.value = bhSeg.dataRt || 'Br';
+        reportBHRTSeg_lower_dataStandard.value = bhSeg.dataRtLowerStandard || 1.38;
+        reportBHRTSeg_higher_dataStandard.value = bhSeg.dataRtHigherStandard || 1.44;
+        reportBHRTSeg_results.splice(0, reportBHRTSeg_results.length, ...(Array.isArray(bhSeg.resultRt) ? bhSeg.resultRt : []));
+
+        reportBHSeg_data.value = bhSeg.data || 'Br';
+        reportBHSeg_2nd_data.value = bhSeg.data2nd || 'Hcj';
+        reportBHSeg_3rd_data.value = bhSeg.data3rd || 'Hd5';
+        reportBHSeg_dataStandard.value = bhSeg.dataStandard || 1.07;
+        reportBHSeg_2nd_dataStandard.value = bhSeg.data2ndStandard || 4273;
+        reportBHSeg_3rd_dataStandard.value = bhSeg.data3rdStandard || 3845;
+        reportBHSeg_samples.value = Array.isArray(bhSeg.sample) ? bhSeg.sample : [];
+        reportBHSeg_sampleQty.value = bhSeg.sample_qty ?? 0;
+        reportBHSeg_temp.value = bhSeg.temp || 200;
+        reportBHSeg_results.splice(0, reportBHSeg_results.length, ...(Array.isArray(bhSeg.result) ? bhSeg.result : []));
+        reportBHSeg_2nd_results.splice(0, reportBHSeg_2nd_results.length, ...(Array.isArray(bhSeg.result2nd) ? bhSeg.result2nd : []));
+        reportBHSeg_3rd_results.splice(0, reportBHSeg_3rd_results.length, ...(Array.isArray(bhSeg.result3rd) ? bhSeg.result3rd : []));
 
         console.log('Entering Evalation for Reject reasons...');
         await evaluateAllRejectReasons();
@@ -5163,14 +5245,15 @@ const saveReport = async () => {
             "JD5_iHcMax": reportROB_JD5_iHcMax.value,
             "result": reportROB_remarks.value,
         }),
-        /* TEMPORARY DISABLED
         "data_bh_seg_info": JSON.stringify({ // BH DATA @ ROOM TEMP AND BH DATA @ 200
             "dataRt": reportBHRTSeg_data.value,
             "dataRtLowerStandard": reportBHRTSeg_lower_dataStandard.value,
             "dataRtHigherStandard": reportBHRTSeg_higher_dataStandard.value,
             "remarksRt": reportBHRTSeg_remarks.value,
-            "resultRt": reportBHRTSeg_results.value,
+            "resultRt": reportBHRTSeg_results,
             "data": reportBHSeg_data.value,
+            "data2nd": reportBHSeg_2nd_data.value,
+            "data3rd": reportBHSeg_3rd_data.value,
             "dataStandard": reportBHSeg_dataStandard.value,
             "data2ndStandard": reportBHSeg_2nd_dataStandard.value,
             "data3rdStandard": reportBHSeg_3rd_dataStandard.value,
@@ -5180,10 +5263,10 @@ const saveReport = async () => {
             "sample": reportBHSeg_samples.value,
             "sample_qty": reportBHSeg_sampleQty.value,
             "temp": reportBHSeg_temp.value,
-            "result": reportBHSeg_results.value,
-            "result2nd": reportBHSeg_2nd_results.value,
-            "result3rd": reportBHSeg_3rd_results.value,
-        }), */
+            "result": reportBHSeg_results,
+            "result2nd": reportBHSeg_2nd_results,
+            "result3rd": reportBHSeg_3rd_results,
+        }),
         "coating_completed": coatingCompleted.value ? 1 : 0,
         "heat_treatment_completed": heatTreatmentCompleted.value ? 1 : 0,
     }

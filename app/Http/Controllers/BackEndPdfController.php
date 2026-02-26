@@ -230,7 +230,7 @@ class BackEndPdfController extends Controller
             ])->exists()) {
                 $gbdp_report_format_type = 'Film Pasting';
             }
-        }*/
+        }
 
         $debug = [
             'input' => [
@@ -292,7 +292,7 @@ class BackEndPdfController extends Controller
 
         $debug['final_format_type'] = $gbdp_report_format_type;
 
-        //dd($debug);
+        //dd($debug);*/
 
 
         // Decode JSON string
@@ -477,6 +477,7 @@ class BackEndPdfController extends Controller
         $dGX        = json_decode($reportData->data_GX_info ?? '[]', true);
         $dBH        = json_decode($reportData->data_bh_info ?? '[]', true);
         $dROB       = json_decode($reportData->data_ROB_info ?? '[]', true);
+        $dBHSeg = json_decode($reportData->data_bh_seg_info ?? '[]', true);
 
         $model = $tpmCategories->actual_model ?? '';
         $noteReasons = $noteReasonRaw;
@@ -498,6 +499,11 @@ class BackEndPdfController extends Controller
 
         $showVTData         = false; // default to false
         $showVTData_default = false; // default to false
+        $showBHDataSeg      = false;
+
+        if ($model === 'SEG0A03G' && ($dBHSeg['sample_qty'] ?? 0) > 0 && $reportData->is_bh_format_seg == 1) {
+            $showBHDataSeg = true;
+        }
 
         // VT Logic
         if ($hasNGihc && in_array($model, $MODELS_SHOW_VT_DATA)) {
@@ -662,6 +668,7 @@ class BackEndPdfController extends Controller
                 'show1x1x1Data_withoutCorner' => $show1x1x1Data_withoutCorner,
                 'show1x1x1Data_Corner' => $show1x1x1Data_Corner,
                 'isTTM_model' => $isTTM_model,
+                'showBHDataSeg' => $showBHDataSeg,
             ],
             'modelData' => [
                 'gx' => $dGX,
@@ -670,6 +677,7 @@ class BackEndPdfController extends Controller
                 'bh' => $dBH,
                 'rob' => $dROB,
                 'd1x1x1' => $d1x1x1,
+                'bhSeg' => $dBHSeg,
             ],
             'nsaData'       => $nsaData,
             'nsaGroups'     => $nsaGroups,

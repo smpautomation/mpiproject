@@ -978,7 +978,195 @@
                             </tr>
                         @endif
 
+                        @if ($flags['showBHDataSeg'])
+                            @php
+                                $bhSeg = $modelData['bhSeg'] ?? [];
+                                $sampleCount = $bhSeg['sample_qty'] ?? 0;
+                                $samples = $bhSeg['sample'] ?? [];
+                                $results = $bhSeg['result'] ?? [];
+                                $results2nd = $bhSeg['result2nd'] ?? [];
+                                $results3rd = $bhSeg['result3rd'] ?? [];
+                                $resultsRt = $bhSeg['resultRt'] ?? [];
+                                $rowCount = ceil($sampleCount / 5); // max 5 columns
+                                $colCount = match (true) {
+                                    $sampleCount <= 3 => 3,
+                                    $sampleCount === 4 => 4,
+                                    default => 5,
+                                };
+                            @endphp
 
+                            {{-- BH Data @ ROOM TEMP --}}
+                            <tr>
+                                <th colspan="2" style="text-align:center; background-color:#f0f0f0; border:1px solid #000;">
+                                    BH Data @ ROOM TEMP
+                                </th>
+                                <th colspan="3" style="text-align:center; background-color:#f0f0f0; border:1px solid #000;">
+                                    Samples
+                                </th>
+                                <th style="text-align:center; background-color:#f0f0f0; border:1px solid #000;">
+                                    Result
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['dataRt'] ?? 'NA' }} (T)
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['dataRtLowerStandard'] ?? 'NA' }} ~ {{ $bhSeg['dataRtHigherStandard'] ?? 'NA' }} (T)
+                                </td>
+                                <td colspan="3" style="padding:0; border:1px solid #000;">
+                                    <table style="width:100%; border-collapse:collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $result = $resultsRt[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border:1px solid #ccc; text-align:center; font-size:9px;">
+                                                        @if ($sample)
+                                                            <div style="background-color:#f9f9f9; white-space:nowrap;">
+                                                                {{ $sample }}
+                                                            </div>
+                                                            <div style="border-top:1px solid #ccc;">
+                                                                {{ $result }} (T)
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['remarksRt'] ?? 'NA' }}
+                                </td>
+                            </tr>
+
+                            {{-- BH Data @ Main Temp --}}
+                            <tr>
+                                <th colspan="2" style="text-align:center; background-color:#f0f0f0; border:1px solid #000;">
+                                    BH Data @ {{ $bhSeg['temp'] ?? 'NA' }} °C
+                                </th>
+                                <th colspan="3" style="text-align:center; background-color:#f0f0f0; border:1px solid #000;"></th>
+                                <th style="text-align:center; background-color:#f0f0f0; border:1px solid #000;">
+                                    Result
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['data'] ?? 'NA' }} (T)
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['dataStandard'] ?? 'NA' }} (T)
+                                </td>
+                                <td colspan="3" style="padding:0; border:1px solid #000;">
+                                    <table style="width:100%; border-collapse:collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $resultVal = $results[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border:1px solid #ccc; text-align:center; font-size:9px;">
+                                                        @if ($sample)
+                                                            <div style="background-color:#f9f9f9; white-space:nowrap;">
+                                                                {{ $sample }}
+                                                            </div>
+                                                            <div style="border-top:1px solid #ccc;">
+                                                                {{ $resultVal }} (T)
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['remarks'] ?? 'NA' }}
+                                </td>
+                            </tr>
+
+                            {{-- BH Data 2nd --}}
+                            <tr>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['data2nd'] ?? 'NA' }} (Oe)
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['data2ndStandard'] ?? 'NA' }} (Oe)
+                                </td>
+                                <td colspan="3" style="padding:0; border:1px solid #000;">
+                                    <table style="width:100%; border-collapse:collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $resultVal = $results2nd[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border:1px solid #ccc; text-align:center; font-size:9px;">
+                                                        @if ($sample)
+                                                            <div style="background-color:#f9f9f9; white-space:nowrap;">
+                                                                {{ $sample }}
+                                                            </div>
+                                                            <div style="border-top:1px solid #ccc;">
+                                                                {{ $resultVal }} Oe
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['remarks2nd'] ?? 'NA' }}
+                                </td>
+                            </tr>
+
+                            {{-- BH Data 3rd --}}
+                            <tr>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['data3rd'] ?? 'NA' }} (Oe)
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['data3rdStandard'] ?? 'NA' }} (Oe)
+                                </td>
+                                <td colspan="3" style="padding:0; border:1px solid #000;">
+                                    <table style="width:100%; border-collapse:collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $resultVal = $results3rd[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border:1px solid #ccc; text-align:center; font-size:9px;">
+                                                        @if ($sample)
+                                                            <div style="background-color:#f9f9f9; white-space:nowrap;">
+                                                                {{ $sample }}
+                                                            </div>
+                                                            <div style="border-top:1px solid #ccc;">
+                                                                {{ $resultVal }} Oe
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                                <td style="text-align:center; border:1px solid #000;">
+                                    {{ $bhSeg['remarks3rd'] ?? 'NA' }}
+                                </td>
+                            </tr>
+                        @endif
 
                     </tbody>
                 </table>
