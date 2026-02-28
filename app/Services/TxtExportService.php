@@ -273,34 +273,31 @@ class TxtExportService
             return 'No MassProduction data found.';
         }
 
-        $breaklotCoating = BreaklotCoating::where('furnace', $normalizedFurnace)
+        $breaklotCoating = collect(BreaklotCoating::query()
+            ->where('furnace', $normalizedFurnace)
             ->where('mass_prod', $massPro)
             ->get()
-            ->mapWithKeys(function ($item) {
-                return [
-                    $item->layer => [
-                        'model' => $item->model,
-                        'lot_no' => $item->lot_no,
-                    ]
-                ];
-            });
-        //dump($breaklotCoating);
+            ->mapWithKeys(fn($item) => [
+                $item->layer => [
+                    'model'  => $item->model,
+                    'lot_no' => $item->lot_no,
+                ]
+            ])
+        );
 
-        $breaklotSecondCoating = BreaklotSecondCoating::where('furnace', $normalizedFurnace)
+        $breaklotSecondCoating = collect(BreaklotSecondCoating::query()
+            ->where('furnace', $normalizedFurnace)
             ->where('mass_prod', $massPro)
             ->get()
-            ->mapWithKeys(function ($item) {
-                return [
-                    $item->layer => [
-                        'model' => $item->model,
-                        'lot_no' => $item->lot_no,
-                    ]
-                ];
-            });
-        //dump($breaklotSecondCoating);
+            ->mapWithKeys(fn($item) => [
+                $item->layer => [
+                    'model'  => $item->model,
+                    'lot_no' => $item->lot_no,
+                ]
+            ])
+        );
 
-        $additionalKeyPairs = $breaklotCoating->merge($breaklotSecondCoating)->toArray();
-        //dump($additionalKeyPairs);
+        $additionalKeyPairs = $breaklotCoating->merge($breaklotSecondCoating)->all();
 
 
         // Step 4: Define layers (T first, then 9 → 1)
