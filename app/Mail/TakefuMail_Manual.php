@@ -67,6 +67,7 @@ class TakefuMail_Manual extends Mailable
 
             // Force the Blade view to render here inside try/catch
             try {
+
                 $html = view('emails.takefu-email-manual', [
                     'customMessage' => $this->customMessage,
                     'massPro' => $this->massPro

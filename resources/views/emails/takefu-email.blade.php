@@ -109,10 +109,6 @@
         <td style="background-color:#f8fafc; padding:22px 30px; text-align:center; font-size:12px; color:#64748b; border-top:1px solid #e2e8f0;">
             This is an automated message. Please do not reply directly to this email.<br>
             &copy; 2025 Automation Engineering Department. All rights reserved.
-
-            {{ app(\App\Services\TxtExportService::class)->exportData3($actualFurnaceNo, $actualMassPro) }}
-            {{ app(\App\Services\TxtExportService::class)->exportData2($actualFurnaceNo, $actualMassPro) }}
-            {{ app(\App\Services\TxtExportService::class)->exportData1($actualFurnaceNo, $actualMassPro) }}
         </td>
     </tr>
 

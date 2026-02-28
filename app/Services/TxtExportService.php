@@ -60,7 +60,13 @@ class TxtExportService
                        ->where('layer', $layerKey)
                        ->value('layer_data');
                 //dump($layerKey, $excess);
-                $layerData = $excess ?? [];
+                if (is_string($excess)) {
+                    $layerData = json_decode($excess, true);
+                } elseif (is_array($excess)) {
+                    $layerData = $excess;
+                } else {
+                    $layerData = [];
+                }
             }
 
             // Get model code from TPM data using the serial number

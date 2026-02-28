@@ -57,6 +57,22 @@ class TakefuMail extends Mailable
             $this->verifyFormatType($this->massPro);
 
             Log::info("Rendering email view...");
+
+            // Generate TXT exports before rendering view
+            $parts = explode(' ', $this->massPro);
+            $furnaceNo = $parts[0] ?? null;
+            $massProd  = $parts[1] ?? null;
+
+            if ($furnaceNo && $massProd) {
+                $txtService = app(\App\Services\TxtExportService::class);
+
+                $txtService->exportData1($furnaceNo, $massProd);
+                $txtService->exportData2($furnaceNo, $massProd);
+                $txtService->exportData3($furnaceNo, $massProd);
+
+                Log::info("TXT exports generated for {$furnaceNo} {$massProd}");
+            }
+
             $html = view('emails.takefu-email', [
                 'customMessage' => $this->customMessage,
                 'massPro' => $this->massPro
