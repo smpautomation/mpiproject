@@ -264,7 +264,7 @@
                         <!-- Third Face: Success -->
                         <div class="card-face success">
                           <div
-                            class="relative z-10 flex flex-col items-center w-full max-w-sm p-10 mt-24 text-white shadow-lg select-none bg-green-700/30 backdrop-blur-lg rounded-xl animate-fade-in"
+                            class="relative z-10 flex flex-col items-center w-full max-w-sm p-10 mt-24 text-white shadow-lg select-none bg-cyan-700/30 backdrop-blur-lg rounded-xl animate-fade-in"
                             role="alert"
                             aria-live="assertive"
                           >
@@ -600,7 +600,7 @@ For Login form...
 
 .input:focus {
   outline: none;
-  border-color: #3b82f6; /* blue-500 */
+  border-color: #0996ce; /* cyan-500 */
   background-color: rgba(255, 255, 255, 0.4);
   color: #fff;
 }
@@ -625,7 +625,7 @@ For Login form...
   top: -8px;
   left: 10px;
   font-size: 0.75rem;
-  color: #3b82f6; /* blue-500 */
+  color: #0996ce; /* cyan-500 */
   font-weight: 600;
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 100px;
@@ -690,7 +690,7 @@ For Login form...
   font-weight: 700;
   font-family: 'Inter', 'Segoe UI', sans-serif;
   color: transparent;
-  background: linear-gradient(135deg, #d1fae5, #6ee7b7, #10b981, #059669);
+  background: linear-gradient(135deg, #cffafe, #67e8f9, #06b6d4, #0891b2);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
