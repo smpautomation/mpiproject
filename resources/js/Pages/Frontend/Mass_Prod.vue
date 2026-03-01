@@ -6,7 +6,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Mass Production Records</h1>
             <button
                 @click="showModalCreate = true"
-                class="px-5 py-2 font-semibold text-white transition-all bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="px-5 py-2 font-semibold text-white transition-all rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
                 + Create New
             </button>
@@ -73,23 +73,41 @@
                             <td class="px-6 py-4 text-center text-gray-800">{{ item.cycle_no }}</td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex flex-wrap justify-center gap-2">
+                                    <!-- Control Sheet -->
                                     <button
                                         @click="viewControlSheet(item.mass_prod, item.furnace)"
-                                        class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-cyan-600 rounded-md hover:bg-cyan-700 focus:ring-2 focus:ring-cyan-500"
                                     >
-                                        Control Sheet
+                                        <!-- Document Icon -->
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path d="M9 12h6M9 16h6M7 4h7l5 5v11a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                                        </svg>
+                                        <span>Control Sheet</span>
                                     </button>
+
+                                    <!-- HT Graph -->
                                     <button
                                         @click="viewHTGraph(item.mass_prod, item.furnace)"
-                                        class="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-cyan-600 rounded-md hover:bg-cyan-700 focus:ring-2 focus:ring-cyan-500"
                                     >
-                                        HT Graph
+                                        <!-- Chart Icon -->
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path d="M3 3v18h18M7 14l3-3 4 4 5-6"/>
+                                        </svg>
+                                        <span>HT Graph</span>
                                     </button>
+
+                                    <!-- SMP Data -->
                                     <button
                                         @click="viewSMPData(item.mass_prod, item.furnace)"
-                                        class="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-500"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-cyan-600 rounded-md hover:bg-cyan-700 focus:ring-2 focus:ring-cyan-500"
                                     >
-                                        SMP Data
+                                        <!-- Database Icon -->
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                            <path d="M3 5v6c0 1.7 4 3 9 3s9-1.3 9-3V5M3 11v6c0 1.7 4 3 9 3s9-1.3 9-3v-6"/>
+                                        </svg>
+                                        <span>SMP Data</span>
                                     </button>
                                 </div>
                             </td>
@@ -208,7 +226,7 @@
 
                     <button
                         @click="downloadCsvMonthlySummary"
-                        class="flex items-center gap-2 px-4 py-2.5 font-semibold text-white transition-all duration-300 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        class="flex items-center gap-2 px-4 py-2.5 font-semibold text-white transition-all duration-300 bg-gradient-to-r from-cyan-500 to-cyan-500 hover:from-cyan-600 hover:to-cyan-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>

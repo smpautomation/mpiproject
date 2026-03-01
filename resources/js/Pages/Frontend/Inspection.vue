@@ -3,7 +3,7 @@
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showMainUI" class="flex flex-col items-center justify-center">
                 <div>
-                    <button @click="insertBtn" class="relative flex px-6 py-3 m-10 overflow-hidden font-semibold text-white transition duration-300 ease-in-out bg-green-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
+                    <button @click="insertBtn" class="relative flex px-6 py-3 m-10 overflow-hidden font-semibold text-white transition duration-300 ease-in-out shadow-md bg-cyan-600 rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95">
                         Insert New Record
                     </button>
                 </div>
@@ -18,7 +18,7 @@
                 </div>
                 <div v-if="inspectionDataList.length > 0" class="flex items-center justify-center mb-10 bg-gray-100">
                     <table class="w-11/12 mx-auto border border-collapse border-gray-300 table-auto md:w-3/4">
-                        <thead class="text-white bg-gradient-to-l from-blue-600 to-green-600 ">
+                        <thead class="text-white bg-gradient-to-l from-cyan-600 to-teal-600 ">
                             <tr class="text-sm">
                                 <th class="px-2 py-1 text-center border whitespace-nowrap">Model</th>
                                 <th class="px-2 py-1 text-center border whitespace-nowrap">L</th>
@@ -213,7 +213,7 @@
                     <div class="flex justify-center mt-8">
                         <button
                             @click="submitData"
-                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out bg-blue-600 shadow-md rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95"
+                            class="relative flex px-6 py-3 font-semibold text-white transition duration-300 ease-in-out shadow-md bg-cyan-600 rounded-xl hover:brightness-110 hover:shadow-lg active:scale-95"
                         >
                             {{ isEditMode ? 'Update' : 'Register' }}
                         </button>

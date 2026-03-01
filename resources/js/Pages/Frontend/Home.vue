@@ -85,7 +85,7 @@
 
                                     <button
                                     type="submit"
-                                    class="w-full py-3 mt-10 font-semibold text-white transition bg-blue-600 rounded-md hover:bg-blue-700"
+                                    class="w-full py-3 mt-10 font-semibold text-white transition rounded-md bg-cyan-600 hover:bg-cyan-700"
                                     >
                                     LOGIN
                                     </button>
@@ -103,7 +103,7 @@
                                     Not registered yet?
                                     <button
                                         @click="switchToRegister"
-                                        class="font-semibold text-blue-400 underline hover:text-blue-600 focus:outline-none"
+                                        class="font-semibold text-blue-400 underline hover:text-blue-200 focus:outline-none"
                                         aria-label="Go to registration form"
                                     >
                                         Register here
@@ -246,7 +246,7 @@
 
                                     <button
                                         type="submit"
-                                        class="w-full py-3 font-semibold text-white transition bg-blue-600 rounded-md hover:bg-blue-700"
+                                        class="w-full py-3 font-semibold text-white transition rounded-md bg-cyan-600 hover:bg-cyan-700"
                                     >
                                         REGISTER
                                     </button>

@@ -8,10 +8,10 @@
             </div>
         </div>
         <div class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100">
-            <div class="flex items-center justify-between p-4 mb-4 text-sm text-yellow-800 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg">
+            <div class="flex items-center justify-between p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 bg-cyan-100 border-cyan-500">
                 <div>
                     <strong>Note:</strong> For 1st & 2nd GBDP formats, select <span class="font-semibold">Mass Prod</span>, <span class="font-semibold">Layer</span>, and <span class="font-semibold">Model</span>, then click the
-                    <span class="bg-orange-500 text-white px-2 py-0.5 rounded">Apply 1st & 2nd GBDP</span> button in the <span class="font-semibold">Control Panel</span>. If button is disabled, the model is not yet registered.
+                    <span class="bg-cyan-500 text-white px-2 py-0.5 rounded">Apply 1st & 2nd GBDP</span> button in the <span class="font-semibold">Control Panel</span>. If button is disabled, the model is not yet registered.
                 </div>
                 <button
                     class="ml-4 font-semibold text-blue-600 hover:underline"
@@ -286,7 +286,7 @@
                         <button
                             @click="showBreakLotForm()"
                             :disabled="!mpcs.selectedFurnace || !mpcs.selectedMassProd || isDataShown || noMassProdData"
-                            class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-blue-600 hover:from-indigo-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
+                            class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
                         >
                             Manual Layer Allocation
                         </button>
@@ -993,7 +993,7 @@
                         @change="handleCycleGraphUpload"
                         accept=".png, .jpg, .jpeg"
                         type="file"
-                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1"
                         />
                     </div>
 
@@ -1004,7 +1004,7 @@
                         @change="handleActualGraphUpload"
                         accept=".png, .jpg, .jpeg"
                         type="file"
-                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1"
                         />
                     </div>
                 </div>
@@ -1165,7 +1165,7 @@
                             v-if="!overwriteMode"
                             @click="second_heat_treatment()"
                             :disabled="!(activate2ndGBDP && heatTreatmentInformationDetected) || isExisting_2ndGBDP"
-                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 hover:shadow-orange-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-orange-600 disabled:hover:to-amber-600 overflow-hidden"
+                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-cyan-600 disabled:hover:to-teal-600 overflow-hidden"
                         >
                         <div class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
                         <span class="relative flex items-center justify-center space-x-2">
@@ -1180,7 +1180,7 @@
                         <button
                             v-if="!overwriteMode"
                             @click="Inertia.visit('ht_graph_patterns')"
-                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 hover:shadow-emerald-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400 focus:ring-opacity-50 overflow-hidden"
+                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 overflow-hidden"
                         >
                         <div class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"></div>
                         <span class="relative flex items-center justify-center space-x-2">

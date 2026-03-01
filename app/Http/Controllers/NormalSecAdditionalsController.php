@@ -392,18 +392,30 @@ class NormalSecAdditionalsController extends Controller
             ], 500);
         }
     }
-    public function destroy($id){
-        try{
-            $nsaData = NormalSecAdditionals::findorfail($id);
-            $nsaData->delete();
+    public function destroy($serial, $set)
+    {
+        try {
+
+            $deleted = NormalSecAdditionals::where('serial_no', $serial)
+                ->where('set_no', $set)
+                ->delete();
+
+            if ($deleted === 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'NSA Data not found.'
+                ], 404);
+            }
+
             return response()->json([
                 'status' => true,
-                'message' => 'NSA Data deleted successfully'
+                'message' => 'NSA Data deleted successfully.'
             ], 200);
-        }catch(\Exception $e){
+
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Error deleting NSA Data',
+                'message' => 'Error deleting NSA Data.',
                 'error' => $e->getMessage(),
             ], 500);
         }

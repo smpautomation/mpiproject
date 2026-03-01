@@ -1887,6 +1887,65 @@
                                     Set {{ setNo }}
                                 </option>
                             </select>
+                            <div v-if="!showDeleteConfirm">
+                                <button
+                                    @click="showDeleteConfirm = true"
+                                    class="px-3 py-1 text-white transition bg-red-600 rounded hover:bg-red-700"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+
+                            <!-- Delete Confirmation -->
+                            <div
+                                v-else
+                                class="p-4 mt-3 text-center border border-red-300 rounded bg-red-50"
+                            >
+                                <p class="mb-3 font-medium text-red-700">
+                                    Are you sure you want to delete Set {{ current_setNo }}?
+                                </p>
+
+                                <div class="flex justify-center space-x-3">
+                                    <button
+                                        @click="confirmDelete"
+                                        :disabled="nsaDeleteLoader"
+                                        class="flex items-center justify-center px-4 py-1 text-white transition bg-red-600 rounded hover:bg-red-700 disabled:opacity-50"
+                                    >
+                                        <span v-if="!nsaDeleteLoader">Yes</span>
+
+                                        <span v-else class="flex items-center space-x-2">
+                                            <svg
+                                                class="w-4 h-4 animate-spin"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                            >
+                                                <circle
+                                                    class="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="white"
+                                                    stroke-width="4"
+                                                />
+                                                <path
+                                                    class="opacity-75"
+                                                    fill="white"
+                                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                                />
+                                            </svg>
+                                            <span>Deleting...</span>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        @click="showDeleteConfirm = false"
+                                        :disabled="nsaDeleteLoader"
+                                        class="px-4 py-1 text-white transition bg-gray-400 rounded hover:bg-gray-500 disabled:opacity-50"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Chart and Side Info -->
@@ -1991,7 +2050,7 @@
                 <!-- Exit Button -->
                 <button
                     @click="showModalUndoStamp = false"
-                    class="absolute top-4 right-4 text-gray-400 transition-colors hover:text-cyan-600"
+                    class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-cyan-600"
                     aria-label="Close modal"
                 >
                     ✕
@@ -2006,13 +2065,13 @@
                         </svg>
                     </div>
 
-                    <h2 class="text-xl font-bold text-cyan-800 leading-snug">
+                    <h2 class="text-xl font-bold leading-snug text-cyan-800">
                         Undo {{ undoStampLabel }}
                     </h2>
                 </div>
 
                 <!-- Body -->
-                <p class="text-sm leading-relaxed text-gray-700 mb-4">
+                <p class="mb-4 text-sm leading-relaxed text-gray-700">
                     This action will remove the stamp permanently from the report.
                     Please provide a clear reason for logs tracking.
                 </p>
@@ -2023,11 +2082,7 @@
                         rows="3"
                         placeholder="Enter reason for undo..."
                         required
-                        class="w-full px-3 py-2 text-sm
-                            bg-white border border-cyan-200 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-cyan-400
-                            focus:border-cyan-400
-                            shadow-sm transition-all duration-200"
+                        class="w-full px-3 py-2 text-sm transition-all duration-200 bg-white border rounded-lg shadow-sm border-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400"
                     ></textarea>
                 </div>
 
@@ -2035,9 +2090,7 @@
                 <div class="flex justify-end w-full mt-6 space-x-3">
                     <button
                         @click="showModalUndoStamp = false"
-                        class="px-5 py-2 text-sm font-semibold text-gray-600
-                            bg-gray-100 rounded-lg
-                            hover:bg-gray-200 transition"
+                        class="px-5 py-2 text-sm font-semibold text-gray-600 transition bg-gray-100 rounded-lg hover:bg-gray-200"
                     >
                         Cancel
                     </button>
@@ -2070,7 +2123,7 @@
                 <!-- Exit Button -->
                 <button
                     @click="showModalUndoHistory = false"
-                    class="absolute top-4 right-4 text-gray-400 transition-colors hover:text-cyan-600"
+                    class="absolute text-gray-400 transition-colors top-4 right-4 hover:text-cyan-600"
                     aria-label="Close modal"
                 >
                     ✕
@@ -2105,7 +2158,7 @@
 
                     <!-- Empty State -->
                     <div v-if="!undoHistoryLoading && undoHistory.length === 0"
-                        class="text-sm text-gray-500 italic">
+                        class="text-sm italic text-gray-500">
                         No undo history found for this serial number.
                     </div>
 
@@ -2113,7 +2166,7 @@
                     <div
                         v-for="(item, index) in undoHistory"
                         :key="item.id || index"
-                        class="p-4 bg-white border border-cyan-100 rounded-lg shadow-sm"
+                        class="p-4 bg-white border rounded-lg shadow-sm border-cyan-100"
                     >
                         <div class="flex justify-between mb-2">
                             <span class="text-sm font-semibold text-cyan-700">
@@ -2142,9 +2195,7 @@
                 <div class="flex justify-end w-full mt-6">
                     <button
                         @click="showModalUndoHistory = false"
-                        class="px-5 py-2 text-sm font-semibold text-gray-600
-                            bg-gray-100 rounded-lg
-                            hover:bg-gray-200 transition"
+                        class="px-5 py-2 text-sm font-semibold text-gray-600 transition bg-gray-100 rounded-lg hover:bg-gray-200"
                     >
                         Close
                     </button>
@@ -2374,6 +2425,8 @@ watch(isAutomotive, (newVal, oldVal) => {
   //console.log(`isAutomotive changed from ${oldVal} to ${newVal}`);
   // Your reactive logic here
 }, { immediate: true });
+const showDeleteConfirm = ref(false);
+const nsaDeleteLoader = ref(false);
 const showCarMarkButton = ref(true);
 const show1x1x1Data_withoutCorner = ref(false);
 const show1x1x1Data_Corner = ref(false);
@@ -5331,6 +5384,40 @@ const saveReportUpdate = async (saveData, serial) => {
         }
     }
 }
+
+const confirmDelete = async () => {
+    if (nsaDeleteLoader.value) return;
+
+    try {
+        nsaDeleteLoader.value = true;
+
+        await deleteNsaData();
+
+        showDeleteConfirm.value = false;
+    } finally {
+        nsaDeleteLoader.value = false;
+    }
+}
+
+const deleteNsaData = async () => { //goback
+    try {
+        // Tell backend to delete the chart image
+        await axios.delete(`/api/tpmdata/${currentSerialSelected.value}/${current_setNo.value}/delete-nsa-chart`);
+
+        // Delete the database row
+        await axios.delete(`/api/nsadata/${currentSerialSelected.value}/${current_setNo.value}`);
+
+        await fetchAllData();
+        await showReportData();
+
+        showDeleteConfirm.value = false;
+
+        console.log(`[Row + Chart Deleted]: Serial ${currentSerialSelected.value} Set ${current_setNo.value}`);
+        userSerialDeleteLogging(`deleted Serial ${currentSerialSelected.value} set ${current_setNo.value} and its chart image`);
+    } catch (error) {
+        console.error(`[Error Deleting Serial ${serial}]`, error);
+    }
+};
 
 const openUndoModal = (type) => {
     currentUndoType.value = type

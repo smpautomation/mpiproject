@@ -91,7 +91,7 @@
             class="flex items-center px-4 py-2 space-x-3 transition-all duration-200 bg-white border border-blue-100 rounded-full shadow-md hover:shadow-lg hover:border-blue-200">
 
             <!-- Avatar -->
-            <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full shadow-md bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500">
+            <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full shadow-md bg-gradient-to-br from-cyan-300 via-cyan-500 to-cyan-700">
                 {{ state.user.firstName.charAt(0).toUpperCase() }}
             </div>
 
@@ -107,9 +107,9 @@
             <button
                 @click="handleLogout"
                 class="px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 rounded-full
-                    bg-gradient-to-r from-blue-500 to-cyan-500
-                    hover:from-blue-600 hover:to-cyan-600 hover:shadow-md
-                    active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
+                    bg-gradient-to-r from-cyan-300 to-cyan-700
+                    hover:from-cyan-700 hover:to-cyan-300 hover:shadow-md
+                    active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-1"
             >
                 Logout
             </button>

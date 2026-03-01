@@ -72,7 +72,7 @@
       <div v-else class="w-full overflow-x-auto">
         <table class="w-full border-collapse rounded-lg shadow-lg">
             <thead>
-                <tr class="text-white bg-gradient-to-r from-green-400 via-black to-blue-400">
+                <tr class="text-white bg-gradient-to-r from-cyan-600 via-cyan-900 to-teal-600">
                     <th class="px-2 py-2 whitespace-nowrap">Date</th>
                     <th class="px-2 py-2 whitespace-nowrap">Mass Production</th>
                     <th class="px-2 py-2 whitespace-nowrap">Layer</th>
@@ -91,7 +91,7 @@
                 <tr
                 v-for="(item, index) in paginatedData"
                 :key="index"
-                class="bg-gradient-to-r from-green-400 via-black to-blue-400"
+                class="bg-gradient-to-r from-cyan-600 via-cyan-900 to-teal-600"
                 >
                 <td class="p-[1px]">
                     <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
@@ -164,13 +164,13 @@
                             <button
                                 @click="viewReport(item.category[0].tpm_data_serial)"
                                 class="w-[110px]
-                                        bg-blue-600 text-white
+                                        bg-cyan-600 text-white
                                         rounded-md font-medium text-sm
                                         shadow-sm
-                                        hover:bg-blue-500
-                                        active:bg-blue-700 active:shadow-none
+                                        hover:bg-cyan-500
+                                        active:bg-cyan-700 active:shadow-none
                                         transition-all duration-150
-                                        focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
                                 >
                                 View Report
                             </button>
@@ -227,7 +227,7 @@
         <button
           @click="prevPage"
           :disabled="currentPage === 1"
-          class="px-3 py-1 text-white bg-green-300 rounded hover:bg-green-600 disabled:opacity-50"
+          class="px-3 py-1 text-white rounded bg-cyan-400 hover:bg-cyan-600 disabled:opacity-50"
         >
           Prev
         </button>
@@ -235,7 +235,7 @@
         <button
           @click="nextPage"
           :disabled="currentPage === totalPages"
-          class="px-3 py-1 text-white bg-blue-300 rounded hover:bg-blue-600 disabled:opacity-50"
+          class="px-3 py-1 text-white rounded bg-cyan-400 hover:bg-cyan-600 disabled:opacity-50"
         >
           Next
         </button>
