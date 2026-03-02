@@ -1652,23 +1652,23 @@
     const serialNo = ref('')
     const generateSerialNumber = async () => {
         try {
-            const { data } = await axios.get("/api/tpmdata")
-            const tpmData = data?.data?.tpmDataAll || []
+            const { data } = await axios.get("/api/tpmdata");
+            const tpmData = data?.data?.tpmDataAll || [];
 
-            const now = new Date()
-            const year = now.getFullYear().toString().slice(-2)
-            const month = (now.getMonth() + 1).toString().padStart(2, "0")
-            const currentPrefix = `${year}${month}`
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2);
+            const month = (now.getMonth() + 1).toString().padStart(2, "0");
+            const currentPrefix = `${year}${month}`;
 
             // Filter only serials from current month
-            const monthlySerials = tpmData
+            const monthlySerials = tpmData;
                 .map(item => item.serial_no?.toString())
                 .filter(serial =>
                     serial &&
                     serial.startsWith(currentPrefix)
-                )
+                );
 
-            let nextNumber = 1
+            let nextNumber = 1;
 
             if (monthlySerials.length > 0) {
                 const highestSerial = monthlySerials.reduce((max, current) =>

@@ -34,6 +34,33 @@
                     Centralized data management and control hub for your GBDP MPI system
                 </p>
 
+                <!-- User Guide Callout -->
+                <div class="mt-6">
+                    <a
+                        href="/system_guides/GBDP%20MPI%20ONLINE%20SYSTEM%20USER%20GUIDE.pdf"
+                        target="_blank"
+                        class="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white/90 hover:bg-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 group"
+                    >
+                        <svg
+                            class="w-5 h-5 text-cyan-400 transition-transform duration-300 group-hover:rotate-12"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+
+                        <span class="text-sm md:text-base">
+                            New here? Review the System User Guide before proceeding.
+                        </span>
+                    </a>
+                </div>
+
                 <!-- Decorative Element -->
                 <div class="flex items-center mt-6 space-x-2">
                     <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>

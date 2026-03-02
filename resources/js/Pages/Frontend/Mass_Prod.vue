@@ -145,21 +145,68 @@
 
         <!-- Modern HT Mass Pro Dashboard - Compact Version -->
         <div class="flex flex-row gap-10">
-                <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 shadow-xl rounded-2xl hover:shadow-2xl border-cyan-500">
-                    <div class="absolute top-0 right-0 w-40 h-40 -mt-20 -mr-20 rounded-full opacity-50 bg-gradient-to-br from-cyan-100 to-teal-100"></div>
-                    <div class="relative flex items-center gap-3 mb-8">
-                        <div class="p-3 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
+            <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 shadow-xl rounded-2xl hover:shadow-2xl border-cyan-500">
+                <!-- Decorative Gradient Orb -->
+                <div class="absolute top-0 right-0 w-40 h-40 -mt-20 -mr-20 rounded-full opacity-50 bg-gradient-to-br from-cyan-100 to-teal-100"></div>
+
+                <!-- Help Button (Utility Action) -->
+                <a
+                    href="/system_guides/UPLOADING%20HT%20MASS%20PRO%20GUIDE.pdf"
+                    target="_blank"
+                    class="absolute top-1 right-1 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-500 shadow-md transition-all duration-300 hover:bg-cyan-500 hover:text-white hover:shadow-lg group"
+                >
+                    <!-- Pulse Ring -->
+                    <span class="absolute inline-flex w-full h-full rounded-full bg-cyan-400 opacity-20 animate-ping group-hover:hidden"></span>
+
+                    <!-- Icon -->
+                    <svg
+                        class="relative w-5 h-5 transition-transform duration-300 group-hover:rotate-12"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M8.227 9a3 3 0 115.546 1.5c-.5 1-1.5 1.5-1.5 3m0 4h.01"
+                        />
+                    </svg>
+
+                    <!-- Custom Tooltip -->
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 whitespace-nowrap
+                                opacity-0 scale-95 translate-x-2
+                                group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0
+                                transition-all duration-200 pointer-events-none">
+
+                        <div class="px-4 py-2 text-sm font-medium text-white rounded-lg shadow-xl
+                                    bg-slate-900/90 backdrop-blur-md border border-white/10">
+                            View Upload Guide
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text">
-                                Upload HT Mass Pro
-                            </h3>
-                            <p class="text-sm text-slate-500">Import your production data</p>
-                        </div>
+
+                        <!-- Tooltip Arrow -->
+                        <div class="absolute top-1/2 -right-1 w-2 h-2 bg-slate-900/90 rotate-45 -translate-y-1/2 border-r border-b border-white/10"></div>
                     </div>
+                </a>
+
+                <!-- Header -->
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-3 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text">
+                            Upload HT Mass Pro
+                        </h3>
+                        <p class="text-sm text-slate-500">
+                            Import your production data
+                        </p>
+                    </div>
+                </div>
 
                     <form @submit.prevent="submitExcelUpload" class="relative space-y-6">
                         <div class="space-y-2">
