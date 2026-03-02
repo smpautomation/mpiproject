@@ -1649,65 +1649,41 @@
 
     //Serial Generation
 
-    const serialNo = ref('');  // Reactive variable to hold the generated serial number
+    const serialNo = ref('')
     const generateSerialNumber = async () => {
         try {
-            // Step 1: Fetch the data from the API
-            const response = await axios.get("/api/tpmdata"); // Adjust this URL to your API endpoint
-            const tpmData = response.data.data.tpmDataAll || [];  // Fallback to an empty array if undefined
-            //console.log("tpmData-data result = ",tpmData);
+            const { data } = await axios.get("/api/tpmdata")
+            const tpmData = data?.data?.tpmDataAll || []
 
-            if (tpmData.length > 0) {
-                // Step 2: Loop through tpmData to find serial_no values and filter out invalid serial numbers
-                const serialNumbers = tpmData
-                    .map(item => item.serial_no)
-                    .filter(serial => typeof serial === 'number');  // Ensure serial_no is a number
+            const now = new Date()
+            const year = now.getFullYear().toString().slice(-2)
+            const month = (now.getMonth() + 1).toString().padStart(2, "0")
+            const currentPrefix = `${year}${month}`
 
-                if (serialNumbers.length > 0) {
-                    // Step 3: Find the highest serial number (no need for slice, handle it as a full number)
-                    const highestSerial = serialNumbers.reduce((max, current) => {
-                        return current > max ? current : max;  // Compare the numbers directly
-                    });
+            // Filter only serials from current month
+            const monthlySerials = tpmData
+                .map(item => item.serial_no?.toString())
+                .filter(serial =>
+                    serial &&
+                    serial.startsWith(currentPrefix)
+                )
 
-                    const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
-                    const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
+            let nextNumber = 1
 
-                    // Extract the numeric part of the serial number (last part after year and month)
-                    const numericPart = highestSerial.toString().slice(4);  // Take everything after the first 4 digits (YYYYMM)
-                    const newNumericPart = parseInt(numericPart, 10) + 1; // Increment the numeric part
+            if (monthlySerials.length > 0) {
+                const highestSerial = monthlySerials.reduce((max, current) =>
+                    current > max ? current : max
+                )
 
-                    // Ensure the new numeric part is padded to 6 digits (e.g., 000001)
-                    const paddedNumericPart = newNumericPart.toString().padStart(6, "0");
-
-                    // Combine year, month, and the new incremented serial number
-                    serialNo.value = `${year}${month}${paddedNumericPart}`;
-
-                    //console.log('Generated Serial Number:', serialNo.value);
-                } else {
-                    // Step 4: If no valid serial number exists, generate the first one
-                    const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
-                    const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
-
-                    // Start with 1 if there's no serial number in the database
-                    const firstSerialNumber = '000001';
-
-                    // Generate the first serial number
-                    serialNo.value = `${year}${month}${firstSerialNumber}`;
-
-                    //console.log('Generated First Serial Number:', serialNo.value);
-                    //alert(`Generated First Serial Number: ${serialNo.value}`);
-                }
-            } else {
-                // Handle case where there's no data
-                //console.log('No data available in tpmData');
-                const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of the year
-                const month = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get month (01-12)
-                const firstSerialNumber = '000001';
-                serialNo.value = `${year}${month}${firstSerialNumber}`;
-                //alert(`Generated First Serial Number: ${serialNo.value}`);
+                const numericPart = highestSerial.slice(4)
+                nextNumber = parseInt(numericPart, 10) + 1
             }
+
+            serialNo.value = `${currentPrefix}${nextNumber
+                .toString()
+                .padStart(6, "0")}`
+
         } catch (error) {
-            //console.error('Error generating serial number:', error);
             await userErrorLogging(
                 {
                     message: error.message,
@@ -1717,9 +1693,9 @@
                 },
                 "generateSerialNumber",
                 "Error generating serial number"
-            );
+            )
         }
-    };
+    }
 
     //Serial Generation end
 
