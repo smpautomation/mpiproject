@@ -1661,7 +1661,7 @@
             const currentPrefix = `${year}${month}`;
 
             // Filter only serials from current month
-            const monthlySerials = tpmData;
+            const monthlySerials = tpmData
                 .map(item => item.serial_no?.toString())
                 .filter(serial =>
                     serial &&
