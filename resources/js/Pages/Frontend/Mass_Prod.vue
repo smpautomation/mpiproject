@@ -286,11 +286,11 @@
                                 Day
                             </th>
                             <th
-                                v-for="hour in 24"
+                                v-for="hour in hours"
                                 :key="hour"
                                 class="p-2 text-center border"
                             >
-                                {{ hour }}:00
+                                {{ hour.toString().padStart(2, "0") }}:00
                             </th>
                             <th class="p-2 text-center border">Date</th>
                         </tr>
@@ -312,9 +312,9 @@
 
                             <!-- Hour Slots -->
                             <td
-                                v-for="hour in 24"
+                                v-for="hour in hours"
                                 :key="hour"
-                                class="p-1 text-center border cursor-pointer whitespace-nowrap"
+                                class="p-1 text-center border whitespace-nowrap"
                                 @click="
                                     timetableMap[day.date]?.[hour] &&
                                     viewControlSheet(
@@ -1142,6 +1142,8 @@ const monthsGrid = [
     "November",
     "December",
 ];
+
+const hours = Array.from({ length: 24 }, (_, i) => i);
 
 // Year options: last 5 to next 2 years
 const yearsGrid = [];

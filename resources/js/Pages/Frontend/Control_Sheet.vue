@@ -1,6 +1,8 @@
 <template>
     <Frontend>
-        <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
+        <div
+            class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100"
+        >
             <div
                 v-if="errMsg"
                 class="warning-box-anim"
@@ -12,120 +14,191 @@
                     background-color: #fff3cd;
                     border: 1px solid #ffeeba;
                     border-radius: 4px;
-                    color: #856404;"
-                >
-                <img src="/photo/warning.png" alt="Warning" style="height: 20px; width: 20px;">
+                    color: #856404;
+                "
+            >
+                <img
+                    src="/photo/warning.png"
+                    alt="Warning"
+                    style="height: 20px; width: 20px"
+                />
                 <span>{{ errMsg }}</span>
             </div>
             <button
                 v-if="errMsg"
                 @click="Inertia.visit('/massprod')"
                 class="px-4 py-2 mt-2 text-red-800 transition duration-200 ease-out bg-red-100 border border-red-300 rounded hover:bg-red-200"
-                >
+            >
                 ← Return
             </button>
             <div v-if="!errMsg">
                 <div>
-                    <p><span>{{ redirectedFurnace }} {{ redirectedMassPro }}</span> Mass Production</p>
+                    <p>
+                        <span
+                            >{{ redirectedFurnace }}
+                            {{ redirectedMassPro }}</span
+                        >
+                        Mass Production
+                    </p>
                 </div>
-                <table id="controlSheetTable" class="border border-collapse border-gray-300 table-auto ">
+                <table
+                    id="controlSheetTable"
+                    class="border border-collapse border-gray-300 table-auto"
+                >
                     <thead>
                         <tr :class="[headerFontSize]">
-                          <th colspan="2" rowspan="2" :class="[borderColor, headerPaddings]">
-                            #
-                          </th>
-                          <th colspan="10" :class="[borderColor, headerPaddings]">
-                            <p>Heat Treatment Production Control Sheet</p>
-                          </th>
-                          <th rowspan="2" :class="[borderColor, headerPaddings]">
-                            TOTAL WT(KG)
-                          </th>
-                          <th rowspan="2" :class="[borderColor, headerPaddings]">
-                            TOTAL QTY(PCS)
-                          </th>
-                          <th rowspan="2" :class="[borderColor, headerPaddings]">
-                            MPI Sample Qty.
-                          </th>
+                            <th
+                                colspan="2"
+                                rowspan="2"
+                                :class="[borderColor, headerPaddings]"
+                            >
+                                #
+                            </th>
+                            <th
+                                colspan="10"
+                                :class="[borderColor, headerPaddings]"
+                            >
+                                <p>Heat Treatment Production Control Sheet</p>
+                            </th>
+                            <th
+                                rowspan="2"
+                                :class="[borderColor, headerPaddings]"
+                            >
+                                TOTAL WT(KG)
+                            </th>
+                            <th
+                                rowspan="2"
+                                :class="[borderColor, headerPaddings]"
+                            >
+                                TOTAL QTY(PCS)
+                            </th>
+                            <th
+                                rowspan="2"
+                                :class="[borderColor, headerPaddings]"
+                            >
+                                MPI Sample Qty.
+                            </th>
                         </tr>
                         <tr :class="[headerFontSize]">
-                          <th
-                          v-for="(letter, index) in controlSheet_headerLetters"
-                          :key="index"
-                          :class="[borderColor, headerPaddings]"
-                          >
-                            {{ letter }}
-                          </th>
+                            <th
+                                v-for="(
+                                    letter, index
+                                ) in controlSheet_headerLetters"
+                                :key="index"
+                                :class="[borderColor, headerPaddings]"
+                            >
+                                {{ letter }}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <template
-                          v-for="(layer, layerIndex) in controlSheet_layers"
-                          :key="layerIndex"
+                            v-for="(layer, layerIndex) in controlSheet_layers"
+                            :key="layerIndex"
                         >
-                          <tr
-                            v-for="(row, rowIndex) in controlSheet_dataMatrix[layer]"
-                            :key="`${layer}-${rowIndex}`"
-                            :class="[cellFontSize]"
-                          >
-                            <!-- Left Layer Cell (rowspan once per layer) -->
-                            <td
-                              v-if="rowIndex === 0"
-                              :rowspan="controlSheet_rowTitles.length"
-                              :class="[borderColor, cellPaddings]"
+                            <tr
+                                v-for="(
+                                    row, rowIndex
+                                ) in controlSheet_dataMatrix[layer]"
+                                :key="`${layer}-${rowIndex}`"
+                                :class="[cellFontSize]"
                             >
-                              {{ layer }}
-                            </td>
+                                <!-- Left Layer Cell (rowspan once per layer) -->
+                                <td
+                                    v-if="rowIndex === 0"
+                                    :rowspan="controlSheet_rowTitles.length"
+                                    :class="[borderColor, cellPaddings]"
+                                >
+                                    {{ layer }}
+                                </td>
 
-                            <!-- Row Title -->
-                            <td :class="[borderColor, cellPaddings]">
-                              {{ row.rowTitle }}
-                            </td>
+                                <!-- Row Title -->
+                                <td :class="[borderColor, cellPaddings]">
+                                    {{ row.rowTitle }}
+                                </td>
 
-                            <!-- Data Cells -->
-                            <td
-                                v-for="letter in visibleHeaderLetters(layer, rowIndex)"
-                                :key="letter"
-                                :rowspan="emptyColumns[layer][letter] ? controlSheet_rowTitles.length : 1"
-                                :class="[borderColor, cellPaddings, 'text-center', getCellClass(layer, row.rowTitle, letter)]"
-                            >
-                                {{ emptyColumns[layer][letter] ? 'EMPTY' : row.data[letter] }}
-                            </td>
+                                <!-- Data Cells -->
+                                <td
+                                    v-for="letter in visibleHeaderLetters(
+                                        layer,
+                                        rowIndex,
+                                    )"
+                                    :key="letter"
+                                    :rowspan="
+                                        emptyColumns[layer][letter]
+                                            ? controlSheet_rowTitles.length
+                                            : 1
+                                    "
+                                    :class="[
+                                        borderColor,
+                                        cellPaddings,
+                                        'text-center',
+                                        getCellClass(
+                                            layer,
+                                            row.rowTitle,
+                                            letter,
+                                        ),
+                                    ]"
+                                >
+                                    {{
+                                        emptyColumns[layer][letter]
+                                            ? "EMPTY"
+                                            : row.data[letter]
+                                    }}
+                                </td>
 
-                            <!-- Final 3 total cells (only show once per layer, at last row) -->
-                            <template v-if="rowIndex === 0">
-                              <td
-                                :rowspan="controlSheet_dataMatrix[layer].length"
-                                :class="[borderColor, cellPaddings, 'text-center']"
-                              >
-                                {{ getTotalWtForLayer(layer) }}
-                              </td>
-                              <td
-                                :rowspan="controlSheet_dataMatrix[layer].length"
-                                :class="[borderColor, cellPaddings, 'text-center']"
-                              >
-                                {{ getTotalQtyForLayer(layer) }}
-                              </td>
-                              <td
-                                :rowspan="controlSheet_dataMatrix[layer].length"
-                                :class="[borderColor, cellPaddings]"
-                              >
-                                {{ }}
-                              </td>
-                            </template>
-                          </tr>
+                                <!-- Final 3 total cells (only show once per layer, at last row) -->
+                                <template v-if="rowIndex === 0">
+                                    <td
+                                        :rowspan="
+                                            controlSheet_dataMatrix[layer]
+                                                .length
+                                        "
+                                        :class="[
+                                            borderColor,
+                                            cellPaddings,
+                                            'text-center',
+                                        ]"
+                                    >
+                                        {{ getTotalWtForLayer(layer) }}
+                                    </td>
+                                    <td
+                                        :rowspan="
+                                            controlSheet_dataMatrix[layer]
+                                                .length
+                                        "
+                                        :class="[
+                                            borderColor,
+                                            cellPaddings,
+                                            'text-center',
+                                        ]"
+                                    >
+                                        {{ getTotalQtyForLayer(layer) }}
+                                    </td>
+                                    <td
+                                        :rowspan="
+                                            controlSheet_dataMatrix[layer]
+                                                .length
+                                        "
+                                        :class="[borderColor, cellPaddings]"
+                                    >
+                                        {{}}
+                                    </td>
+                                </template>
+                            </tr>
                         </template>
                         <tr :class="[headerFontSize]">
-                          <td v-for="n in 10" :key="n"></td>
-                          <th colspan="2" :class="[borderColor]">GRAND TOTAL</th>
-                          <th :class="[borderColor]">
-                            {{ totalWt }}
-                          </th>
-                          <th :class="[borderColor]">
-                            {{ totalQty }}
-                          </th>
-                          <th :class="[borderColor]">
-
-                          </th>
+                            <td v-for="n in 10" :key="n"></td>
+                            <th colspan="2" :class="[borderColor]">
+                                GRAND TOTAL
+                            </th>
+                            <th :class="[borderColor]">
+                                {{ totalWt }}
+                            </th>
+                            <th :class="[borderColor]">
+                                {{ totalQty }}
+                            </th>
+                            <th :class="[borderColor]"></th>
                         </tr>
                     </tbody>
                 </table>
@@ -133,215 +206,441 @@
                     <p class="font-bold">Heat Treatment Information</p>
                     <div class="flex flex-row">
                         <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                            <label :class="[ht_info_fontsize]">BATCH CYCLE No:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">MACHINE No:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">CYCLE No:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">PATTERN No:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">Cycle Pattern:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">Current Pattern:&nbsp;</label>
-                        </div>
-                        <div class="flex flex-col pr-4">
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.batchCycleNo || 'NA' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.machineNo || 'NA' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.cycleNo || 'NA' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.patternNo || 'NA' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.cyclePattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.cyclePattern?.trim() || 'NA' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline, controlSheet_ht_info_values.currentPattern === 'ABNORMAL' ? 'text-red-500 font-extrabold' : '']">{{ controlSheet_ht_info_values.currentPattern?.trim() || 'NA' }}</span>
-                        </div>
-                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                            <label :class="[ht_info_fontsize]">DATE START:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">TIME START:&nbsp;</label>
-                            <label :class="[ht_info_fontsize]">LOADER:&nbsp;</label>
-
-                        </div>
-                        <div class="flex flex-col pr-4">
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateStart ?? null }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeStart ?? null }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.loader || 'NA' }}</span>
-                        </div>
-                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                                <label :class="[ht_info_fontsize]">DATE FINISHED:&nbsp;</label>
-                                <label :class="[ht_info_fontsize]">TIME FINISHED:&nbsp;</label>
-                                <label :class="[ht_info_fontsize]">UNLOADER:&nbsp;</label>
-                        </div>
-                        <div class="flex flex-col pr-4">
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.dateFinished ?? null }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.timeFinished ?? null }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.unloader || 'NA' }}</span>
-                        </div>
-                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                                <label :class="[ht_info_fontsize]">BOX CONDITION:&nbsp;</label>
-                                <label :class="[ht_info_fontsize]">BOX COVER:&nbsp;</label>
-                                <label :class="[ht_info_fontsize]">BOX ARRANGEMENT:&nbsp;</label>
-                                <label :class="[ht_info_fontsize]">ENCODED BY:&nbsp;</label>
-                        </div>
-                        <div class="flex flex-col pr-4">
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxCondition || '' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxCover || '' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.boxArrangement || '' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline]">{{ controlSheet_ht_info_values.encodedBy || '' }}</span>
-                        </div>
-                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
-                            <label :class="[ht_info_fontsize]" class="font-bold">REMARKS:&nbsp;</label>
-                        </div>
-                        <div class="flex flex-col pr-4">
-                            <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks1 || '' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks2 || '' }}</span>
-                            <span :class="[ht_info_fontsize, ht_info_underline2]">{{ controlSheet_ht_info_values.remarks3 || '' }}</span>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="w-full max-w-md p-4 mt-5 bg-white rounded-md shadow-md">
-                        <h3 class="mb-1 text-sm font-semibold tracking-wide text-gray-700 uppercase">
-                            Estimated Completion
-                        </h3>
-                        <p class="text-lg font-medium text-gray-900">
-                            {{ estimated_DateTimeFinish || 'Calculating...' }}
-                        </p>
-                    </div>
-
-                    <div class="flex flex-row justify-end mt-3">
-                        <button
-                            @click="exportToExcel"
-                            class="flex items-center gap-2 px-4 py-2 font-semibold text-white transition duration-150 ease-in-out bg-green-600 rounded shadow-sm hover:bg-green-700 active:bg-green-800 hover:shadow-md"
-                        >
-                            <img
-                                src="/photo/download.png"
-                                alt="Download"
-                                style="height: 20px; width: 20px; filter: brightness(0) invert(1);"
+                            <label :class="[ht_info_fontsize]"
+                                >BATCH CYCLE No:&nbsp;</label
                             >
-                            Download Excel
-                        </button>
-                    </div>
-                    <div class="flex justify-start mt-4 gap-6">
-                        <div>
-                            <button
-                                @click="Inertia.visit('/massprod')"
-                                class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                            <label :class="[ht_info_fontsize]"
+                                >MACHINE No:&nbsp;</label
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                </svg>
-                                Back to Mass Production Lists
-                            </button>
+                            <label :class="[ht_info_fontsize]"
+                                >CYCLE No:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >PATTERN No:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >Cycle Pattern:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >Current Pattern:&nbsp;</label
+                            >
                         </div>
-                        
-                        <div>
-                            <button 
-                                @click="viewHTGraph"
-                                class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
-                                >View HT Graph
-                            </button>
+                        <div class="flex flex-col pr-4">
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.batchCycleNo ||
+                                    "NA"
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.machineNo ||
+                                    "NA"
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.cycleNo || "NA"
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.patternNo ||
+                                    "NA"
+                                }}</span
+                            >
+                            <span
+                                :class="[
+                                    ht_info_fontsize,
+                                    ht_info_underline,
+                                    controlSheet_ht_info_values.cyclePattern ===
+                                    'ABNORMAL'
+                                        ? 'text-red-500 font-extrabold'
+                                        : '',
+                                ]"
+                                >{{
+                                    controlSheet_ht_info_values.cyclePattern?.trim() ||
+                                    "NA"
+                                }}</span
+                            >
+                            <span
+                                :class="[
+                                    ht_info_fontsize,
+                                    ht_info_underline,
+                                    controlSheet_ht_info_values.currentPattern ===
+                                    'ABNORMAL'
+                                        ? 'text-red-500 font-extrabold'
+                                        : '',
+                                ]"
+                                >{{
+                                    controlSheet_ht_info_values.currentPattern?.trim() ||
+                                    "NA"
+                                }}</span
+                            >
                         </div>
-                        
-                        <div>
-                            <button 
-                                @click="viewSMPData"
-                                class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
-                                >View SMP Data
-                            </button>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]"
+                                >DATE START:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >TIME START:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >LOADER:&nbsp;</label
+                            >
                         </div>
-
-                    </div>
-                    <div class="mt-20 overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl">
-                        <table class="min-w-full text-sm divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">#</th>
-                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Model</th>
-                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Lot No</th>
-                                    <th class="px-4 py-3 font-semibold text-right text-gray-600">Total Qty</th>
-                                    <th class="px-4 py-3 font-semibold text-right text-gray-600">Total WT (KG)</th>
-                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Layers</th>
-                                    <th class="px-4 py-3 font-semibold text-left text-gray-600">Boxes</th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="divide-y divide-gray-100">
-                                <tr v-if="lotRows.length === 0">
-                                    <td colspan="7" class="px-4 py-8 italic text-center text-gray-500">
-                                        No lot data found for this mass production
-                                    </td>
-                                </tr>
-
-                                <tr
-                                    v-for="(row, index) in lotRows"
-                                    :key="`${row.model}-${row.lt_no}`"
-                                    class="transition hover:bg-gray-50"
-                                >
-                                    <td class="px-4 py-3 text-gray-500">
-                                        {{ index + 1 }}
-                                    </td>
-
-                                    <td class="px-4 py-3 font-medium text-gray-900">
-                                        {{ row.model }}
-                                    </td>
-
-                                    <td class="px-4 py-3 text-gray-700">
-                                        {{ row.lt_no }}
-                                    </td>
-
-                                    <td class="px-4 py-3 text-right text-gray-800 tabular-nums">
-                                        {{ row.total_qty.toLocaleString() }}
-                                    </td>
-
-                                    <td class="px-4 py-3 text-right text-gray-800 tabular-nums">
-                                        {{ row.total_wt.toFixed(2) }}
-                                    </td>
-
-                                    <td class="px-4 py-3 text-gray-700">
-                                        <span
-                                            v-for="layer in row.layers"
-                                            :key="layer"
-                                            class="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 mr-1 text-xs font-medium text-blue-700"
-                                        >
-                                            {{ layer }}
-                                        </span>
-                                    </td>
-
-                                    <td class="px-4 py-3 space-y-1 text-gray-700">
-                                        <!-- Main boxes -->
-                                        <div v-if="row.main_boxes && row.main_boxes.length">
-                                            <span class="text-xs font-semibold text-gray-500">Main:</span>
-                                            <span
-                                                v-for="box in row.main_boxes"
-                                                :key="box"
-                                                class="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 mr-1 text-xs font-medium text-gray-700"
-                                            >
-                                                {{ box }}
-                                            </span>
-                                        </div>
-
-                                        <!-- Excess boxes -->
-                                        <div v-if="row.excess_boxes && row.excess_boxes.length">
-                                            <span class="text-xs font-semibold text-gray-500">Excess:</span>
-                                            <span
-                                                v-for="box in row.excess_boxes"
-                                                :key="box"
-                                                class="inline-flex items-center rounded-md bg-yellow-100 px-2 py-0.5 mr-1 text-xs font-medium text-yellow-800"
-                                            >
-                                                {{ box }}
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="flex flex-col pr-4">
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.dateStart ??
+                                    null
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.timeStart ??
+                                    null
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.loader || "NA"
+                                }}</span
+                            >
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]"
+                                >DATE FINISHED:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >TIME FINISHED:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >UNLOADER:&nbsp;</label
+                            >
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.dateFinished ??
+                                    null
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.timeFinished ??
+                                    null
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.unloader || "NA"
+                                }}</span
+                            >
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]"
+                                >BOX CONDITION:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >BOX COVER:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >BOX ARRANGEMENT:&nbsp;</label
+                            >
+                            <label :class="[ht_info_fontsize]"
+                                >ENCODED BY:&nbsp;</label
+                            >
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.boxCondition ||
+                                    ""
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.boxCover || ""
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.boxArrangement ||
+                                    ""
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline]"
+                                >{{
+                                    controlSheet_ht_info_values.encodedBy || ""
+                                }}</span
+                            >
+                        </div>
+                        <div class="flex flex-col text-end gap-[1px] pt-[1px]">
+                            <label :class="[ht_info_fontsize]" class="font-bold"
+                                >REMARKS:&nbsp;</label
+                            >
+                        </div>
+                        <div class="flex flex-col pr-4">
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline2]"
+                                >{{
+                                    controlSheet_ht_info_values.remarks1 || ""
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline2]"
+                                >{{
+                                    controlSheet_ht_info_values.remarks2 || ""
+                                }}</span
+                            >
+                            <span
+                                :class="[ht_info_fontsize, ht_info_underline2]"
+                                >{{
+                                    controlSheet_ht_info_values.remarks3 || ""
+                                }}</span
+                            >
+                        </div>
                     </div>
                 </div>
+                <div
+                    class="w-full max-w-md p-4 mt-5 bg-white rounded-md shadow-md"
+                >
+                    <h3
+                        class="mb-1 text-sm font-semibold tracking-wide text-gray-700 uppercase"
+                    >
+                        Estimated Completion
+                    </h3>
+                    <p class="text-lg font-medium text-gray-900">
+                        {{ estimated_DateTimeFinish || "Calculating..." }}
+                    </p>
+                </div>
+
+                <div class="flex flex-row justify-end mt-3">
+                    <button
+                        @click="exportToExcel"
+                        class="flex items-center gap-2 px-4 py-2 font-semibold text-white transition duration-150 ease-in-out bg-green-600 rounded shadow-sm hover:bg-green-700 active:bg-green-800 hover:shadow-md"
+                    >
+                        <img
+                            src="/photo/download.png"
+                            alt="Download"
+                            style="
+                                height: 20px;
+                                width: 20px;
+                                filter: brightness(0) invert(1);
+                            "
+                        />
+                        Download Excel
+                    </button>
+                </div>
+                <div class="flex justify-start gap-6 mt-4">
+                    <div>
+                        <button
+                            @click="Inertia.visit('/massprod')"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 19l-7-7 7-7"
+                                />
+                            </svg>
+                            Back to Mass Production Lists
+                        </button>
+                    </div>
+
+                    <div>
+                        <button
+                            @click="viewHTGraph"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                        >
+                            View HT Graph
+                        </button>
+                    </div>
+
+                    <div>
+                        <button
+                            @click="viewSMPData"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                        >
+                            View SMP Data
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="mt-20 overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl"
+                >
+                    <table class="min-w-full text-sm divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 font-semibold text-left text-gray-600"
+                                >
+                                    #
+                                </th>
+                                <th
+                                    class="px-4 py-3 font-semibold text-left text-gray-600"
+                                >
+                                    Model
+                                </th>
+                                <th
+                                    class="px-4 py-3 font-semibold text-left text-gray-600"
+                                >
+                                    Lot No
+                                </th>
+                                <th
+                                    class="px-4 py-3 font-semibold text-right text-gray-600"
+                                >
+                                    Total Qty
+                                </th>
+                                <th
+                                    class="px-4 py-3 font-semibold text-right text-gray-600"
+                                >
+                                    Total WT (KG)
+                                </th>
+                                <th
+                                    class="px-4 py-3 font-semibold text-left text-gray-600"
+                                >
+                                    Layers
+                                </th>
+                                <th
+                                    class="px-4 py-3 font-semibold text-left text-gray-600"
+                                >
+                                    Boxes
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100">
+                            <tr v-if="lotRows.length === 0">
+                                <td
+                                    colspan="7"
+                                    class="px-4 py-8 italic text-center text-gray-500"
+                                >
+                                    No lot data found for this mass production
+                                </td>
+                            </tr>
+
+                            <tr
+                                v-for="(row, index) in lotRows"
+                                :key="`${row.model}-${row.lt_no}`"
+                                class="transition hover:bg-gray-50"
+                            >
+                                <td class="px-4 py-3 text-gray-500">
+                                    {{ index + 1 }}
+                                </td>
+
+                                <td class="px-4 py-3 font-medium text-gray-900">
+                                    {{ row.model }}
+                                </td>
+
+                                <td class="px-4 py-3 text-gray-700">
+                                    {{ row.lt_no }}
+                                </td>
+
+                                <td
+                                    class="px-4 py-3 text-right text-gray-800 tabular-nums"
+                                >
+                                    {{ row.total_qty.toLocaleString() }}
+                                </td>
+
+                                <td
+                                    class="px-4 py-3 text-right text-gray-800 tabular-nums"
+                                >
+                                    {{ row.total_wt.toFixed(2) }}
+                                </td>
+
+                                <td class="px-4 py-3 text-gray-700">
+                                    <span
+                                        v-for="layer in row.layers"
+                                        :key="layer"
+                                        class="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 mr-1 text-xs font-medium text-blue-700"
+                                    >
+                                        {{ layer }}
+                                    </span>
+                                </td>
+
+                                <td class="px-4 py-3 space-y-1 text-gray-700">
+                                    <!-- Main boxes -->
+                                    <div
+                                        v-if="
+                                            row.main_boxes &&
+                                            row.main_boxes.length
+                                        "
+                                    >
+                                        <span
+                                            class="text-xs font-semibold text-gray-500"
+                                            >Main:</span
+                                        >
+                                        <span
+                                            v-for="box in row.main_boxes"
+                                            :key="box"
+                                            class="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 mr-1 text-xs font-medium text-gray-700"
+                                        >
+                                            {{ box }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Excess boxes -->
+                                    <div
+                                        v-if="
+                                            row.excess_boxes &&
+                                            row.excess_boxes.length
+                                        "
+                                    >
+                                        <span
+                                            class="text-xs font-semibold text-gray-500"
+                                            >Excess:</span
+                                        >
+                                        <span
+                                            v-for="box in row.excess_boxes"
+                                            :key="box"
+                                            class="inline-flex items-center rounded-md bg-yellow-100 px-2 py-0.5 mr-1 text-xs font-medium text-yellow-800"
+                                        >
+                                            {{ box }}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </div>
     </Frontend>
 </template>
 
 <script setup>
-import Frontend from '@/Layouts/FrontendLayout.vue';
-import { ref, computed, onMounted, watch } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
-import axios from 'axios';
-import { useAuth } from '@/Composables/useAuth.js'
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-import { useToast } from 'vue-toast-notification';
+import Frontend from "@/Layouts/FrontendLayout.vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { Inertia } from "@inertiajs/inertia";
+import axios from "axios";
+import { useAuth } from "@/Composables/useAuth.js";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { useToast } from "vue-toast-notification";
 const toast = useToast();
 const { state } = useAuth();
 
@@ -353,15 +652,17 @@ const checkAuthentication = async () => {
 
         while (!state.user) {
             if (Date.now() - start > timeout) {
-                console.error('Auth timeout: user data failed to load within 5 seconds.');
-                Inertia.visit('/'); // Redirect if not authenticated
+                console.error(
+                    "Auth timeout: user data failed to load within 5 seconds.",
+                );
+                Inertia.visit("/"); // Redirect if not authenticated
                 return false;
             }
-            await new Promise(resolve => setTimeout(resolve, 50)); // small delay
+            await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
+            Inertia.visit("/"); // Redirect if not authenticated
             return false; // Indicate not authenticated
         }
 
@@ -371,42 +672,42 @@ const checkAuthentication = async () => {
 
         return true; // Indicate authenticated
     } catch (error) {
-        console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
+        console.error("Error checking authentication:", error);
+        Inertia.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
 
 const highlightColors = [
-    'bg-yellow-100',
-    'bg-green-100',
-    'bg-blue-100',
-    'bg-pink-100',
-    'bg-purple-100',
-    'bg-teal-100',
-    'bg-orange-100',
-    'bg-lime-100',
-    'bg-indigo-100',
-    'bg-rose-100',
-    'bg-cyan-100',
-    'bg-amber-100',
-    'bg-fuchsia-100',
-    'bg-violet-100',
-    'bg-sky-100',
-    'bg-lime-200',
-    'bg-emerald-100',
-    'bg-pink-200',
-    'bg-purple-200',
-    'bg-blue-200',
-    'bg-teal-200',
-    'bg-orange-200',
-    'bg-yellow-200',
-    'bg-rose-200',
-    'bg-cyan-200',
-    'bg-fuchsia-200',
-    'bg-violet-200',
-    'bg-sky-200',
-    'bg-emerald-200'
+    "bg-yellow-100",
+    "bg-green-100",
+    "bg-blue-100",
+    "bg-pink-100",
+    "bg-purple-100",
+    "bg-teal-100",
+    "bg-orange-100",
+    "bg-lime-100",
+    "bg-indigo-100",
+    "bg-rose-100",
+    "bg-cyan-100",
+    "bg-amber-100",
+    "bg-fuchsia-100",
+    "bg-violet-100",
+    "bg-sky-100",
+    "bg-lime-200",
+    "bg-emerald-100",
+    "bg-pink-200",
+    "bg-purple-200",
+    "bg-blue-200",
+    "bg-teal-200",
+    "bg-orange-200",
+    "bg-yellow-200",
+    "bg-rose-200",
+    "bg-cyan-200",
+    "bg-fuchsia-200",
+    "bg-violet-200",
+    "bg-sky-200",
+    "bg-emerald-200",
 ];
 
 const estimated_DateTimeFinish = ref();
@@ -417,7 +718,7 @@ const redirectedFurnace = ref();
 const errMsg = ref();
 const controlSheet_props = defineProps({
     massProd: String,
-    furnace: String
+    furnace: String,
 });
 redirectedMassPro.value = controlSheet_props.massProd;
 redirectedFurnace.value = controlSheet_props.furnace;
@@ -431,7 +732,7 @@ const ltNoMatrix = computed(() => {
         const rows = controlSheet_dataMatrix.value[layer];
         if (!rows) continue;
 
-        const ltRow = rows.find(r => r.rowTitle === 'LT. No.:');
+        const ltRow = rows.find((r) => r.rowTitle === "LT. No.:");
         if (!ltRow) continue;
 
         for (const [letter, ltNo] of Object.entries(ltRow.data)) {
@@ -447,10 +748,9 @@ const ltNoMatrix = computed(() => {
 
 const ltNoAnalysis = computed(() => {
     const result = {};
-    const allLetters = ['A','B','C','D','E','F','G','H','J','K'];
+    const allLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K"];
 
     for (const [ltNo, positions] of Object.entries(ltNoMatrix.value)) {
-
         // group per layer
         const layersUsed = {};
         for (const pos of positions) {
@@ -479,8 +779,7 @@ const ltNoAnalysis = computed(() => {
         // RULE 1 — ONE FULL LAYER ONLY → NO highlight
         if (layerCount === 1 && fullLayers === 1) {
             highlight = false;
-        }
-        else {
+        } else {
             // RULE 2 — multi-layer
             if (layerCount > 1) highlight = true;
 
@@ -493,7 +792,7 @@ const ltNoAnalysis = computed(() => {
             layersUsed,
             fullLayers,
             partialLayers,
-            layerCount
+            layerCount,
         };
     }
 
@@ -516,41 +815,41 @@ const ltNoClassMap = computed(() => {
 });
 
 const getCellClass = (layer, rowTitle, letter) => {
-    if (!highlightableRows.includes(rowTitle)) return '';
+    if (!highlightableRows.includes(rowTitle)) return "";
 
     const ltRow = controlSheet_dataMatrix.value[layer]?.find(
-        r => r.rowTitle === 'LT. No.:'
+        (r) => r.rowTitle === "LT. No.:",
     );
-    if (!ltRow) return '';
+    if (!ltRow) return "";
 
     const ltNo = ltRow.data[letter];
-    if (!ltNo) return '';
+    if (!ltNo) return "";
 
     const analysis = ltNoAnalysis.value[ltNo];
-    if (!analysis || !analysis.highlight) return '';
+    if (!analysis || !analysis.highlight) return "";
 
-    return ltNoClassMap.value[ltNo] || '';
+    return ltNoClassMap.value[ltNo] || "";
 };
 
 const highlightableRows = [
-  'MODEL:',
-  'COATING M/C No.:',
-  'LT. No.:',
-  'QTY (PCS):',
-  'HT (PCS):',
-  'LT (PCS):',
-  'COATING:',
-  'WT (KG):',
-  'BOX No.:',
-  'Magnet prepared by:',
-  'Box prepared by:'
+    "MODEL:",
+    "COATING M/C No.:",
+    "LT. No.:",
+    "QTY (PCS):",
+    "HT (PCS):",
+    "LT (PCS):",
+    "COATING:",
+    "WT (KG):",
+    "BOX No.:",
+    "Magnet prepared by:",
+    "Box prepared by:",
 ];
 
 const calc_dateTimeFinish = async (patternNo, dateStart, timeStart) => {
     try {
         // Guard 1: required inputs
         if (!patternNo || !dateStart || !timeStart) {
-            console.warn('Missing required inputs for date calculation.');
+            console.warn("Missing required inputs for date calculation.");
             return;
         }
 
@@ -559,7 +858,7 @@ const calc_dateTimeFinish = async (patternNo, dateStart, timeStart) => {
 
         // Guard 2: invalid pattern hours
         if (patternHours == null || isNaN(patternHours)) {
-            console.error('No valid hours found for this pattern.');
+            console.error("No valid hours found for this pattern.");
             return;
         }
 
@@ -567,65 +866,68 @@ const calc_dateTimeFinish = async (patternNo, dateStart, timeStart) => {
 
         // Guard 3: invalid date construction
         if (isNaN(startDateTime.getTime())) {
-            console.error('Invalid start date/time:', dateStart, timeStart);
+            console.error("Invalid start date/time:", dateStart, timeStart);
             return;
         }
 
         const finishDateTime = new Date(
-            startDateTime.getTime() + patternHours * 60 * 60 * 1000
+            startDateTime.getTime() + patternHours * 60 * 60 * 1000,
         );
 
         // Display (unchanged)
-        const formattedFinish = finishDateTime.toLocaleString('en-US', {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
+        const formattedFinish = finishDateTime.toLocaleString("en-US", {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
         });
 
         estimated_DateTimeFinish.value = formattedFinish;
 
         // DB-safe format
         const mysqlDateTime =
-            finishDateTime.getFullYear() + '-' +
-            String(finishDateTime.getMonth() + 1).padStart(2, '0') + '-' +
-            String(finishDateTime.getDate()).padStart(2, '0') + ' ' +
-            String(finishDateTime.getHours()).padStart(2, '0') + ':' +
-            String(finishDateTime.getMinutes()).padStart(2, '0') + ':' +
-            String(finishDateTime.getSeconds()).padStart(2, '0');
+            finishDateTime.getFullYear() +
+            "-" +
+            String(finishDateTime.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(finishDateTime.getDate()).padStart(2, "0") +
+            " " +
+            String(finishDateTime.getHours()).padStart(2, "0") +
+            ":" +
+            String(finishDateTime.getMinutes()).padStart(2, "0") +
+            ":" +
+            String(finishDateTime.getSeconds()).padStart(2, "0");
 
         await axios.patch(
             `/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}`,
-            { estimated_completion: mysqlDateTime }
+            { estimated_completion: mysqlDateTime },
         );
-
     } catch (error) {
         console.error(
-            'Failed to calculate/update estimated completion:',
-            error.response?.data || error.message
+            "Failed to calculate/update estimated completion:",
+            error.response?.data || error.message,
         );
     }
 };
 
-
 const tableProperties = {
-    borderColor: 'border border-gray-400',
-    headerPaddings: 'px-3 py-1',
-    cellPaddings: 'px-1 py-1',
-    headerFontSize: 'text-[14px]',
-    cellFontSize: 'text-[9px]',
-}
+    borderColor: "border border-gray-400",
+    headerPaddings: "px-3 py-1",
+    cellPaddings: "px-1 py-1",
+    headerFontSize: "text-[14px]",
+    cellFontSize: "text-[9px]",
+};
 
 const heatTreatmentInformationProperties = {
-   fontSize: 'text-[10px]',
-   inputBoxSize: 'px-0 py-0',
-   underlineEffect: 'inline-block border-b border-black w-24 text-start',
-   underlineEffect2: 'inline-block border-b border-black w-80 text-start'
-}
+    fontSize: "text-[10px]",
+    inputBoxSize: "px-0 py-0",
+    underlineEffect: "inline-block border-b border-black w-24 text-start",
+    underlineEffect2: "inline-block border-b border-black w-80 text-start",
+};
 
 const borderColor = ref(tableProperties.borderColor);
 const headerPaddings = ref(tableProperties.headerPaddings);
@@ -634,81 +936,111 @@ const cellFontSize = ref(tableProperties.cellFontSize);
 const cellPaddings = ref(tableProperties.cellPaddings);
 
 const ht_info_fontsize = ref(heatTreatmentInformationProperties.fontSize);
-const ht_info_inputBoxSize = ref(heatTreatmentInformationProperties.inputBoxSize);
-const ht_info_underline = ref(heatTreatmentInformationProperties.underlineEffect);
-const ht_info_underline2 = ref(heatTreatmentInformationProperties.underlineEffect2);
+const ht_info_inputBoxSize = ref(
+    heatTreatmentInformationProperties.inputBoxSize,
+);
+const ht_info_underline = ref(
+    heatTreatmentInformationProperties.underlineEffect,
+);
+const ht_info_underline2 = ref(
+    heatTreatmentInformationProperties.underlineEffect2,
+);
 
-const controlSheet_headerLetters = ref(['A','B','C','D','E','F','G','H','J','K']);
-const controlSheet_layers = ref(['9.5','9','8','7','6','5','4','3','2','1']);
+const controlSheet_headerLetters = ref([
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "J",
+    "K",
+]);
+const controlSheet_layers = ref([
+    "9.5",
+    "9",
+    "8",
+    "7",
+    "6",
+    "5",
+    "4",
+    "3",
+    "2",
+    "1",
+]);
 const controlSheet_rowTitles = ref([
-  'MODEL:',
-  'COATING M/C No.:',
-  'LT. No.:',
-  'QTY (PCS):',
-  'HT (PCS):',
-  'LT (PCS):',
-  'COATING:',
-  'WT (KG):',
-  'BOX No.:',
-  'Magnet prepared by:',
-  'Box prepared by:',
+    "MODEL:",
+    "COATING M/C No.:",
+    "LT. No.:",
+    "QTY (PCS):",
+    "HT (PCS):",
+    "LT (PCS):",
+    "COATING:",
+    "WT (KG):",
+    "BOX No.:",
+    "Magnet prepared by:",
+    "Box prepared by:",
 ]);
 
 const controlSheet_ht_info_values = ref({
-    batchCycleNo: 'NA',
-    machineNo: 'NA',
-    cycleNo: 'NA',
-    patternNo: 'NA',
-    cyclePattern: 'NA',
-    currentPattern: 'NA',
-    dateStart: 'NA',
-    timeStart: 'NA',
-    loader: 'NA',
-    dateFinished: 'NA',
-    timeFinished: 'NA',
-    unloader: 'NA',
-    boxCondition: 'NA',
-    boxCover: 'NA',
-    boxArrangement: 'NA',
-    encodedBy: 'NA',
-    remarks1: 'NA',
-    remarks2: 'NA',
-    remarks3: 'NA'
+    batchCycleNo: "NA",
+    machineNo: "NA",
+    cycleNo: "NA",
+    patternNo: "NA",
+    cyclePattern: "NA",
+    currentPattern: "NA",
+    dateStart: "NA",
+    timeStart: "NA",
+    loader: "NA",
+    dateFinished: "NA",
+    timeFinished: "NA",
+    unloader: "NA",
+    boxCondition: "NA",
+    boxCover: "NA",
+    boxArrangement: "NA",
+    encodedBy: "NA",
+    remarks1: "NA",
+    remarks2: "NA",
+    remarks3: "NA",
 });
 
 const controlSheet_dataMatrix = ref({});
 
 for (const layer of controlSheet_layers.value) {
-  controlSheet_dataMatrix.value[layer] = controlSheet_rowTitles.value.map(rowTitle => {
-    const data = {};
-    for (const letter of controlSheet_headerLetters.value) {
-      data[letter] = '';
-    }
-    return { rowTitle, data };
-  });
+    controlSheet_dataMatrix.value[layer] = controlSheet_rowTitles.value.map(
+        (rowTitle) => {
+            const data = {};
+            for (const letter of controlSheet_headerLetters.value) {
+                data[letter] = "";
+            }
+            return { rowTitle, data };
+        },
+    );
 }
 
 const emptyColumns = computed(() => {
-  const result = {};
-  for (const layer of controlSheet_layers.value) {
-    const layerRows = controlSheet_dataMatrix.value[layer];
-    const ltRow = layerRows.find(r => r.rowTitle === 'LT. No.:');
-    if (!ltRow) continue;
+    const result = {};
+    for (const layer of controlSheet_layers.value) {
+        const layerRows = controlSheet_dataMatrix.value[layer];
+        const ltRow = layerRows.find((r) => r.rowTitle === "LT. No.:");
+        if (!ltRow) continue;
 
-    result[layer] = {};
-    for (const letter of controlSheet_headerLetters.value) {
-      result[layer][letter] = !ltRow.data[letter]; // true if empty
+        result[layer] = {};
+        for (const letter of controlSheet_headerLetters.value) {
+            result[layer][letter] = !ltRow.data[letter]; // true if empty
+        }
     }
-  }
-  return result;
+    return result;
 });
 
 const visibleHeaderLetters = (layer, rowIndex) => {
-  return controlSheet_headerLetters.value.filter(letter => {
-    // If the column is empty and this is not the first row, skip it
-    if (emptyColumns.value[layer][letter] && rowIndex > 0) return false;
-    return true;
-  });
+    return controlSheet_headerLetters.value.filter((letter) => {
+        // If the column is empty and this is not the first row, skip it
+        if (emptyColumns.value[layer][letter] && rowIndex > 0) return false;
+        return true;
+    });
 };
 
 //console.log(controlSheet_dataMatrix.value);
@@ -717,81 +1049,100 @@ const setDataMatrixValue = (layer, rowTitle, letter, value) => {
     const layerRows = controlSheet_dataMatrix.value[layer];
     if (!layerRows) return;
 
-    const row = layerRows.find(r => r.rowTitle === rowTitle);
+    const row = layerRows.find((r) => r.rowTitle === rowTitle);
     if (row) {
         row.data[letter] = value;
     }
-}
+};
 
 const getMassProdData = async (massprod, furnace) => {
     try {
-        const response = await axios.get(`api/mass-production/${furnace}/${massprod}`);
+        const response = await axios.get(
+            `api/mass-production/${furnace}/${massprod}`,
+        );
         const mp = response.data;
         massProd_list.value = mp;
 
         const htVal = controlSheet_ht_info_values.value;
 
-        htVal.batchCycleNo = mp.batch_cycle_no || 'NA';
-        htVal.machineNo = mp.machine_no || 'NA';
-        htVal.cycleNo = mp.cycle_no || 'NA';
-        htVal.patternNo = mp.pattern_no || 'NA';
-        htVal.cyclePattern = mp.cycle_pattern || 'NA';
-        htVal.currentPattern = mp.current_pattern || 'NA';
-        htVal.dateStart = mp.date_start || 'NA';
-        htVal.timeStart = mp.time_start || 'NA';
-        htVal.loader = mp.loader || 'NA';
-        htVal.dateFinished = mp.date_finished || 'NA';
-        htVal.timeFinished = mp.time_finished || 'NA';
-        htVal.unloader = mp.unloader || 'NA';
-        htVal.boxCondition = mp.box_condition || 'NA';
-        htVal.boxCover = mp.box_cover || 'NA';
-        htVal.boxArrangement = mp.box_arrangement || 'NA';
-        htVal.encodedBy = mp.encoded_by || 'NA';
-        htVal.remarks1 = mp.remarks1 || 'NA';
-        htVal.remarks2 = mp.remarks2 || '';
-        htVal.remarks3 = mp.remarks3 || '';
+        htVal.batchCycleNo = mp.batch_cycle_no || "NA";
+        htVal.machineNo = mp.machine_no || "NA";
+        htVal.cycleNo = mp.cycle_no || "NA";
+        htVal.patternNo = mp.pattern_no || "NA";
+        htVal.cyclePattern = mp.cycle_pattern || "NA";
+        htVal.currentPattern = mp.current_pattern || "NA";
+        htVal.dateStart = mp.date_start || "NA";
+        htVal.timeStart = mp.time_start || "NA";
+        htVal.loader = mp.loader || "NA";
+        htVal.dateFinished = mp.date_finished || "NA";
+        htVal.timeFinished = mp.time_finished || "NA";
+        htVal.unloader = mp.unloader || "NA";
+        htVal.boxCondition = mp.box_condition || "NA";
+        htVal.boxCover = mp.box_cover || "NA";
+        htVal.boxArrangement = mp.box_arrangement || "NA";
+        htVal.encodedBy = mp.encoded_by || "NA";
+        htVal.remarks1 = mp.remarks1 || "NA";
+        htVal.remarks2 = mp.remarks2 || "";
+        htVal.remarks3 = mp.remarks3 || "";
 
-        await calc_dateTimeFinish(htVal.patternNo, htVal.dateStart, htVal.timeStart);
+        await calc_dateTimeFinish(
+            htVal.patternNo,
+            htVal.dateStart,
+            htVal.timeStart,
+        );
 
         for (const layer of controlSheet_layers.value) {
-            const fieldName = `layer_${layer.replace('.', '_')}`;
+            const fieldName = `layer_${layer.replace(".", "_")}`;
             const rawLayer = mp[fieldName];
             if (!rawLayer) continue;
 
             const parsedLayer = JSON.parse(rawLayer);
 
-            for (let rowIndex = 0; rowIndex < controlSheet_rowTitles.value.length; rowIndex++) {
+            for (
+                let rowIndex = 0;
+                rowIndex < controlSheet_rowTitles.value.length;
+                rowIndex++
+            ) {
                 const rowTitle = controlSheet_rowTitles.value[rowIndex];
                 const rowData = parsedLayer[rowIndex]?.data ?? {};
 
                 for (const letter of controlSheet_headerLetters.value) {
-                    const value = rowData[letter] ?? '';
+                    const value = rowData[letter] ?? "";
                     setDataMatrixValue(layer, rowTitle, letter, value);
                 }
             }
         }
 
-        const excessResponse = await axios.get('/api/excess-layers'); // use index
+        const excessResponse = await axios.get("/api/excess-layers"); // use index
         const allExcessLayers = excessResponse.data;
 
         const excessLayers = allExcessLayers.filter(
-            e => e.furnace === furnace && e.mass_prod === massprod
+            (e) => e.furnace === furnace && e.mass_prod === massprod,
         );
 
         for (const layer of controlSheet_layers.value) {
-            const excessLayerRecord = excessLayers.find(e => e.layer === parseFloat(layer));
+            const excessLayerRecord = excessLayers.find(
+                (e) => e.layer === parseFloat(layer),
+            );
             if (!excessLayerRecord) continue;
 
             const excessLayerData = excessLayerRecord.layer_data; // already array from cast
             if (!Array.isArray(excessLayerData)) continue;
 
-            for (let rowIndex = 0; rowIndex < controlSheet_rowTitles.value.length; rowIndex++) {
+            for (
+                let rowIndex = 0;
+                rowIndex < controlSheet_rowTitles.value.length;
+                rowIndex++
+            ) {
                 const rowTitle = controlSheet_rowTitles.value[rowIndex];
                 const rowData = excessLayerData[rowIndex]?.data ?? {};
 
                 for (const letter of controlSheet_headerLetters.value) {
-                    const existingValue = controlSheet_dataMatrix.value[layer][rowIndex].data[letter];
-                    const newValue = rowData[letter] ?? '';
+                    const existingValue =
+                        controlSheet_dataMatrix.value[layer][rowIndex].data[
+                            letter
+                        ];
+                    const newValue = rowData[letter] ?? "";
 
                     // Only fill empty cells
                     if (!existingValue && newValue) {
@@ -800,24 +1151,19 @@ const getMassProdData = async (massprod, furnace) => {
                 }
             }
         }
-
-
     } catch (error) {
         if (error.response && error.response.status === 404) {
-            errMsg.value = 'Record not found for this Mass Production name.';
-            toast.warning('Record not found for this Mass Production name.');
-            console.error('Record not found for this Mass Production name.');
+            errMsg.value = "Record not found for this Mass Production name.";
+            toast.warning("Record not found for this Mass Production name.");
+            console.error("Record not found for this Mass Production name.");
         } else {
-            errMsg.value = 'An unexpected error occured. Please try again.';
-            toast.error('An unexpected error occured. Please try again.');
-            console.error('An unexpected error occured. Please try again.');
+            errMsg.value = "An unexpected error occured. Please try again.";
+            toast.error("An unexpected error occured. Please try again.");
+            console.error("An unexpected error occured. Please try again.");
         }
         massProd_list.value = null;
     }
 };
-
-
-
 
 // GETTING TOTALS
 
@@ -826,35 +1172,35 @@ const totalWt = computed(() => getTotalWt());
 const totalMpiQty = computed(() => getTotalMpiQty());
 
 const getTotalQty = () => {
-  let total = 0;
-  for (const layer of controlSheet_layers.value) {
-    const rows = controlSheet_dataMatrix.value[layer];
-    if (!rows) continue;
+    let total = 0;
+    for (const layer of controlSheet_layers.value) {
+        const rows = controlSheet_dataMatrix.value[layer];
+        if (!rows) continue;
 
-    const qtyRow = rows.find(r => r.rowTitle === 'QTY (PCS):');
-    if (!qtyRow) continue;
+        const qtyRow = rows.find((r) => r.rowTitle === "QTY (PCS):");
+        if (!qtyRow) continue;
 
-    for (const val of Object.values(qtyRow.data)) {
-      const num = parseFloat(val);
-      if (!isNaN(num)) {
-        total += num;
-      }
+        for (const val of Object.values(qtyRow.data)) {
+            const num = parseFloat(val);
+            if (!isNaN(num)) {
+                total += num;
+            }
+        }
     }
-  }
-  return total;
+    return total;
 };
 
 const getTotalQtyForLayer = (layer) => {
-  const rows = controlSheet_dataMatrix.value[layer];
-  if (!rows) return 0;
+    const rows = controlSheet_dataMatrix.value[layer];
+    if (!rows) return 0;
 
-  const qtyRow = rows.find(r => r.rowTitle === 'QTY (PCS):');
-  if (!qtyRow) return 0;
+    const qtyRow = rows.find((r) => r.rowTitle === "QTY (PCS):");
+    if (!qtyRow) return 0;
 
-  return Object.values(qtyRow.data).reduce((sum, val) => {
-    const num = parseFloat(val);
-    return !isNaN(num) ? sum + num : sum;
-  }, 0);
+    return Object.values(qtyRow.data).reduce((sum, val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) ? sum + num : sum;
+    }, 0);
 };
 
 const getTotalWt = () => {
@@ -863,14 +1209,14 @@ const getTotalWt = () => {
         const rows = controlSheet_dataMatrix.value[layer];
         if (!rows) continue;
 
-        const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
+        const wtRow = rows.find((r) => r.rowTitle === "WT (KG):");
         if (!wtRow) continue;
 
         for (const val of Object.values(wtRow.data)) {
-        const num = parseFloat(val);
-        if (!isNaN(num)) {
-            total += num;
-        }
+            const num = parseFloat(val);
+            if (!isNaN(num)) {
+                total += num;
+            }
         }
     }
     return Math.round(total * 100) / 100;
@@ -880,7 +1226,7 @@ const getTotalWtForLayer = (layer) => {
     const rows = controlSheet_dataMatrix.value[layer];
     if (!rows) return 0;
 
-    const wtRow = rows.find(r => r.rowTitle === 'WT (KG):');
+    const wtRow = rows.find((r) => r.rowTitle === "WT (KG):");
     if (!wtRow) return 0;
 
     const total = Object.values(wtRow.data).reduce((sum, val) => {
@@ -897,60 +1243,65 @@ const getTotalMpiQty = (qty) => {
         const rows = controlSheet_dataMatrix.value[layer];
         if (!rows) continue;
 
-        const qtyRow = rows.find(r => r.rowTitle === 'QTY (PCS):');
+        const qtyRow = rows.find((r) => r.rowTitle === "QTY (PCS):");
         if (!qtyRow) continue;
 
         for (const val of Object.values(qtyRow.data)) {
-        const num = parseFloat(val);
-        if (!isNaN(num)) {
-            total += num;
-        }
+            const num = parseFloat(val);
+            if (!isNaN(num)) {
+                total += num;
+            }
         }
     }
     return total;
-}
+};
 
 // GETTING TOTALS END
 
 const getPerLotData = async () => {
     try {
         const response = await axios.get(
-            '/api/mass-production/get-all-data-per-lot',
+            "/api/mass-production/get-all-data-per-lot",
             {
                 params: {
                     mass_prod: redirectedMassPro.value,
                     furnace: redirectedFurnace.value,
-                }
-            }
+                },
+            },
         );
 
         lotRows.value = response.data; // 👈 store for table
-        console.log('All Data per lot:', lotRows.value);
-
+        console.log("All Data per lot:", lotRows.value);
     } catch (error) {
-        console.error('Failed to get control sheet lot per data', error);
+        console.error("Failed to get control sheet lot per data", error);
     }
 };
 
 const viewHTGraph = () => {
-    Inertia.visit('/htgraph',{
-        method: 'get',
-        data: { massProd: redirectedMassPro.value, furnace: redirectedFurnace.value },
+    Inertia.visit("/htgraph", {
+        method: "get",
+        data: {
+            massProd: redirectedMassPro.value,
+            furnace: redirectedFurnace.value,
+        },
         preserveScroll: true,
         preserveState: true,
     });
-}
+};
 
 const viewSMPData = () => {
-    Inertia.visit('/smpdata',{
-        method: 'get',
-        data: { massProd: redirectedMassPro.value, furnace: redirectedFurnace.value },
+    Inertia.visit("/smpdata", {
+        method: "get",
+        data: {
+            massProd: redirectedMassPro.value,
+            furnace: redirectedFurnace.value,
+        },
         preserveState: true,
         preserveScroll: true,
     });
-}
+};
 
-onMounted(async()=>{
+onMounted(async () => {
     const massPro = redirectedMassPro.value;
     const furnace = redirectedFurnace.value;
     getMassProdData(massPro, furnace);
@@ -964,12 +1315,12 @@ const exportToExcel = () => {
 
     // 1. Header
     sheetData.push([
-        'LAYER',
-        'ROW TITLE',
+        "LAYER",
+        "ROW TITLE",
         ...controlSheet_headerLetters.value,
-        'TOTAL WT(KG)',
-        'TOTAL QTY(PCS)',
-        'MPI SAMPLE QTY'
+        "TOTAL WT(KG)",
+        "TOTAL QTY(PCS)",
+        "MPI SAMPLE QTY",
     ]);
 
     // 2. Body rows by layer
@@ -980,29 +1331,36 @@ const exportToExcel = () => {
             const row = rows[rowIndex];
             const rowData = [];
 
-            rowData.push(rowIndex === 0 ? layer : '');
+            rowData.push(rowIndex === 0 ? layer : "");
             rowData.push(row.rowTitle);
 
             // Loop over letters
-            for (let colIndex = 0; colIndex < controlSheet_headerLetters.value.length; colIndex++) {
+            for (
+                let colIndex = 0;
+                colIndex < controlSheet_headerLetters.value.length;
+                colIndex++
+            ) {
                 const letter = controlSheet_headerLetters.value[colIndex];
 
                 if (emptyColumns.value[layer][letter]) {
                     if (rowIndex === 0) {
                         // Put "EMPTY" on the first row
-                        rowData.push('EMPTY');
+                        rowData.push("EMPTY");
 
                         // Add merge for this empty column spanning all rows of this layer
                         merges.push({
                             s: { r: excelRow, c: 2 + colIndex }, // +2: LAYER + ROW TITLE
-                            e: { r: excelRow + rows.length - 1, c: 2 + colIndex }
+                            e: {
+                                r: excelRow + rows.length - 1,
+                                c: 2 + colIndex,
+                            },
                         });
                     } else {
                         // Empty cells for merged area
-                        rowData.push('');
+                        rowData.push("");
                     }
                 } else {
-                    rowData.push(row.data[letter] ?? '');
+                    rowData.push(row.data[letter] ?? "");
                 }
             }
 
@@ -1011,10 +1369,10 @@ const exportToExcel = () => {
                 rowData.push(
                     getTotalWtForLayer(layer),
                     getTotalQtyForLayer(layer),
-                    '' // MPI SAMPLE QTY placeholder
+                    "", // MPI SAMPLE QTY placeholder
                 );
             } else {
-                rowData.push('', '', '');
+                rowData.push("", "", "");
             }
 
             sheetData.push(rowData);
@@ -1024,76 +1382,84 @@ const exportToExcel = () => {
 
     // 3. Grand total row
     sheetData.push([
-        '', '', '', '', '', '', '', '', '', '', '', '',
-        'GRAND TOTAL',
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "GRAND TOTAL",
         totalWt.value,
         totalQty.value,
-        ''
+        "",
     ]);
 
     // 4. Create worksheet and workbook
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    ws['!merges'] = merges; // Apply empty column merges
+    ws["!merges"] = merges; // Apply empty column merges
 
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'MASS PRO');
+    XLSX.utils.book_append_sheet(wb, ws, "MASS PRO");
 
     const htWs = generateHeatTreatmentInfoSheet();
-    XLSX.utils.book_append_sheet(wb, htWs, 'Heat Treatment Info');
+    XLSX.utils.book_append_sheet(wb, htWs, "Heat Treatment Info");
 
     // 5. Download
     XLSX.writeFile(wb, `${redirectedMassPro.value}_MASS_PRODUCTION.xlsx`);
 };
 
-    const generateHeatTreatmentInfoSheet = () => {
-        const info = controlSheet_ht_info_values.value
+const generateHeatTreatmentInfoSheet = () => {
+    const info = controlSheet_ht_info_values.value;
 
-        const rows = [
-            ['BATCH CYCLE No.', info.batchCycleNo],
-            ['MACHINE No.', info.machineNo],
-            ['CYCLE No.', info.cycleNo],
-            ['PATTERN No.', info.patternNo],
-            ['Cycle Pattern', info.cyclePattern],
-            ['Current Pattern', info.currentPattern],
+    const rows = [
+        ["BATCH CYCLE No.", info.batchCycleNo],
+        ["MACHINE No.", info.machineNo],
+        ["CYCLE No.", info.cycleNo],
+        ["PATTERN No.", info.patternNo],
+        ["Cycle Pattern", info.cyclePattern],
+        ["Current Pattern", info.currentPattern],
 
-            ['DATE START', info.dateStart],
-            ['TIME START', info.timeStart],
-            ['LOADER', info.loader],
+        ["DATE START", info.dateStart],
+        ["TIME START", info.timeStart],
+        ["LOADER", info.loader],
 
-            ['DATE FINISHED', info.dateFinished],
-            ['TIME FINISHED', info.timeFinished],
-            ['UNLOADER', info.unloader],
+        ["DATE FINISHED", info.dateFinished],
+        ["TIME FINISHED", info.timeFinished],
+        ["UNLOADER", info.unloader],
 
-            ['BOX CONDITION', info.boxCondition],
-            ['BOX COVER', info.boxCover],
-            ['BOX ARRANGEMENT', info.boxArrangement],
-            ['ENCODED BY', info.encodedBy],
+        ["BOX CONDITION", info.boxCondition],
+        ["BOX COVER", info.boxCover],
+        ["BOX ARRANGEMENT", info.boxArrangement],
+        ["ENCODED BY", info.encodedBy],
 
-            ['REMARKS 1', info.remarks1],
-            ['REMARKS 2', info.remarks2],
-            ['REMARKS 3', info.remarks3],
-        ]
+        ["REMARKS 1", info.remarks1],
+        ["REMARKS 2", info.remarks2],
+        ["REMARKS 3", info.remarks3],
+    ];
 
-        return XLSX.utils.aoa_to_sheet(rows)
-    }
-
-
+    return XLSX.utils.aoa_to_sheet(rows);
+};
 </script>
 
 <style scoped>
 @keyframes fadeSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(32px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    0% {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .warning-box-anim {
-  animation: fadeSlideIn 0.4s ease-out forwards;
+    animation: fadeSlideIn 0.4s ease-out forwards;
 }
-
 </style>
