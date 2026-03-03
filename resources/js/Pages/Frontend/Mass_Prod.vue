@@ -143,6 +143,87 @@
             </div>
         </div>
 
+
+        <div class="p-4 mt-10 overflow-auto bg-white border rounded-lg shadow-md">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-gray-800">
+                    Monthly Furnace Machine Estimated Time Finished
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    Select the desired month and year using the dropdown filters above to update the timetable view.
+                </p>
+            </div>
+            <!-- Month/Year Filter -->
+            <div class="flex items-center justify-start gap-2 mb-4">
+                <select
+                v-model="selectedMonthGrid"
+                class="p-2 text-sm bg-white border rounded shadow-sm"
+                >
+                <option v-for="(m, index) in months" :key="index" :value="index">
+                    {{ m }}
+                </option>
+                </select>
+
+                <select
+                v-model="selectedYearGrid"
+                class="w-20 p-2 text-sm bg-white border rounded shadow-sm"
+                >
+                <option v-for="y in yearsGrid" :key="y" :value="y">
+                    {{ y }}
+                </option>
+                </select>
+
+                <button
+                @click="refreshTable"
+                class="px-4 py-2 font-semibold text-white rounded shadow bg-cyan-500 hover:bg-cyan-600"
+                >
+                    Refresh
+                </button>
+            </div>
+
+            <table class="w-full text-sm border-collapse table-auto">
+                <!-- Header Row -->
+                <thead class="sticky top-0 z-20 bg-slate-100">
+                <tr>
+                    <th class="sticky left-0 z-10 p-2 border bg-slate-100">Day</th>
+                    <th v-for="hour in 24" :key="hour" class="p-2 text-center border">
+                    {{ hour }}:00
+                    </th>
+                    <th class="p-2 text-center border">Date</th>
+                </tr>
+                </thead>
+
+                <!-- Body Rows -->
+                <tbody>
+                <tr v-for="day in monthDays" :key="day.date" class="hover:bg-slate-50">
+                    <!-- Weekday Name -->
+                    <td class="sticky left-0 z-10 p-2 font-semibold bg-white border">
+                    {{ day.name }}
+                    </td>
+
+                    <!-- Hour Slots -->
+                    <td v-for="hour in 24" :key="hour" class="p-2 text-center border">
+                        <div v-if="timetableMap[day.date] && timetableMap[day.date][hour]">
+                            <button
+                                v-for="item in timetableMap[day.date][hour]"
+                                :key="item.cycle_no + '-' + item.mass_prod"
+                                @click="viewControlSheet(item.mass_prod, item.furnace)"
+                                class="inline-block bg-cyan-200 hover:bg-cyan-300 text-cyan-800 text-xs px-2 py-1 rounded m-0.5 transition"
+                            >
+                                {{ item?.cycle_no }}
+                            </button>
+                        </div>
+                    </td>
+
+                    <!-- Date -->
+                    <td class="p-2 font-semibold text-center border">{{ day.date }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
         <!-- Modern HT Mass Pro Dashboard - Compact Version -->
         <div class="flex flex-row gap-10">
             <div class="relative max-w-2xl p-8 mx-auto mt-10 overflow-hidden transition-all duration-300 bg-white border-t-4 shadow-xl rounded-2xl hover:shadow-2xl border-cyan-500">
@@ -153,7 +234,7 @@
                 <a
                     href="/system_guides/UPLOADING%20HT%20MASS%20PRO%20GUIDE.pdf"
                     target="_blank"
-                    class="absolute top-1 right-1 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-500 shadow-md transition-all duration-300 hover:bg-cyan-500 hover:text-white hover:shadow-lg group"
+                    class="absolute z-20 flex items-center justify-center w-10 h-10 transition-all duration-300 bg-white border rounded-full shadow-md top-1 right-1 border-slate-200 text-slate-500 hover:bg-cyan-500 hover:text-white hover:shadow-lg group"
                 >
                     <!-- Pulse Ring -->
                     <span class="absolute inline-flex w-full h-full rounded-full bg-cyan-400 opacity-20 animate-ping group-hover:hidden"></span>
@@ -174,18 +255,14 @@
                     </svg>
 
                     <!-- Custom Tooltip -->
-                    <div class="absolute right-12 top-1/2 -translate-y-1/2 whitespace-nowrap
-                                opacity-0 scale-95 translate-x-2
-                                group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0
-                                transition-all duration-200 pointer-events-none">
+                    <div class="absolute transition-all duration-200 scale-95 translate-x-2 -translate-y-1/2 opacity-0 pointer-events-none right-12 top-1/2 whitespace-nowrap group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0">
 
-                        <div class="px-4 py-2 text-sm font-medium text-white rounded-lg shadow-xl
-                                    bg-slate-900/90 backdrop-blur-md border border-white/10">
+                        <div class="px-4 py-2 text-sm font-medium text-white border rounded-lg shadow-xl bg-slate-900/90 backdrop-blur-md border-white/10">
                             View Upload Guide
                         </div>
 
                         <!-- Tooltip Arrow -->
-                        <div class="absolute top-1/2 -right-1 w-2 h-2 bg-slate-900/90 rotate-45 -translate-y-1/2 border-r border-b border-white/10"></div>
+                        <div class="absolute w-2 h-2 rotate-45 -translate-y-1/2 border-b border-r top-1/2 -right-1 bg-slate-900/90 border-white/10"></div>
                     </div>
                 </a>
 
@@ -642,6 +719,99 @@ const searchQuery = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 5;
 
+//----------------------------------------------------
+// ---------------------------
+// Month & Year Selection
+// ---------------------------
+
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth(); // 0-based (Jan = 0)
+
+// Month names for dropdown
+const monthsGrid = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+
+// Year options: last 5 to next 2 years
+const yearsGrid = [];
+for (let y = currentYear - 5; y <= currentYear + 2; y++) yearsGrid.push(y);
+
+// Reactive selected month & year
+const selectedMonthGrid = ref(currentMonth);
+const selectedYearGrid = ref(currentYear);
+
+// ---------------------------
+// Generate month days dynamically
+// ---------------------------
+const monthDays = computed(() => {
+    const totalDays = new Date(selectedYearGrid.value, selectedMonthGrid.value + 1, 0).getDate();
+    const daysArray = [];
+
+    for (let d = 1; d <= totalDays; d++) {
+        const weekdayName = new Date(selectedYearGrid.value, selectedMonthGrid.value, d)
+        .toLocaleDateString("en-US", { weekday: "short" }); // Mon, Tue, ...
+        daysArray.push({ date: d, name: weekdayName });
+    }
+
+    return daysArray;
+});
+
+// ---------------------------
+// Production Data Integration (Placeholder)
+// ---------------------------
+
+// Reactive array for fetched production data
+const productionData = ref([]);
+
+// Fetch production data from API (replace URL with actual endpoint)
+const fetchProductionData = async () => {
+    try {
+        const { data } = await axios.get("/api/mass-production/all-duplicates");
+        // Assume data.data is the array of production records
+        productionData.value = data || [];
+        console.log("Production data: ", data);
+    } catch (error) {
+        console.error("Error fetching production data:", error);
+    }
+};
+
+// Compute lookup map by day & hour for quick access in table
+const timetableMap = computed(() => {
+    const map = {}
+
+    productionData.value.forEach(item => {
+
+        // Skip broken records
+        if (!item || !item.estimated_completion) return
+
+        const dateObj = new Date(item.estimated_completion)
+
+        if (isNaN(dateObj)) return
+
+        const day = dateObj.getDate()
+        const hour = dateObj.getHours()
+
+        if (!map[day]) map[day] = {}
+        if (!map[day][hour]) map[day][hour] = []
+
+        map[day][hour].push({
+        cycle_no: item.cycle_no,
+        mass_prod: item.mass_prod,
+        furnace: item.furnace
+        })
+    })
+
+    return map;
+})
+
+// Optional: refresh table manually if needed
+const refreshTable = async() => {
+    await fetchProductionData();
+};
+//----------------------------------------------------
+
 const excelFile = ref(null)
 
 // Handle file selection
@@ -938,6 +1108,7 @@ onMounted(async () => {
     await getMassProdData();
     await getFurnaceLists();
     await checkLatestUpload();
+    await fetchProductionData();
     const currentYear = new Date().getFullYear();
     for (let y = currentYear; y >= 2020; y--) {
         years.value.push(y);

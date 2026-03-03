@@ -173,16 +173,37 @@
                         Download Excel
                     </button>
                 </div>
-                <div class="flex justify-start mt-4">
-                    <button
-                        @click="Inertia.visit('/massprod')"
-                        class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Back to Mass Production Lists
-                    </button>
+                <div class="flex justify-start mt-4 gap-6">
+
+                    <div>
+                        <button
+                            @click="Inertia.visit('/massprod')"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Back to Mass Production Lists
+                        </button>
+                    </div>
+
+                    <div>
+                        <button
+                            @click="viewControlSheet"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                        >
+                            View Control Sheet
+                        </button>
+                    </div>
+
+                    <div>
+                        <button 
+                            @click="viewHTGraph"
+                            class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
+                            >View HT Graph
+                        </button>
+                    </div>
+                    
                 </div>
 
                 <Modal :show="showConfirmation" @close="showConfirmation = false">
@@ -510,6 +531,24 @@ const exportToExcel = () => {
     XLSX.writeFile(wb, `${redirectedMassPro.value || 'SMP_DATA'}_SMP_Data.xlsx`);
     toast.success('Excel file generated successfully.');
 };
+
+const viewControlSheet = () => {
+    Inertia.visit('/control_sheet',{
+        method: 'get',
+        data: { massProd: redirectedMassPro.value, furnace: redirectedFurnace.value },
+        preserveState: true,
+        preserveScroll: true,
+    });
+}
+
+const viewHTGraph = () => {
+    Inertia.visit('/htgraph',{
+        method: 'get',
+        data: { massProd: redirectedMassPro.value, furnace: redirectedFurnace.value },
+        preserveScroll: true,
+        preserveState: true,
+    });
+}
 
 onMounted(async()=>{
     const isAuthenticated = await checkAuthentication();
