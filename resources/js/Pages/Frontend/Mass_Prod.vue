@@ -314,31 +314,40 @@
                             <td
                                 v-for="hour in 24"
                                 :key="hour"
-                                class="p-2 text-center border"
+                                class="p-1 text-center border cursor-pointer whitespace-nowrap"
+                                @click="
+                                    timetableMap[day.date]?.[hour] &&
+                                    viewControlSheet(
+                                        timetableMap[day.date][hour][0]
+                                            .mass_prod,
+                                        timetableMap[day.date][hour][0].furnace,
+                                    )
+                                "
                             >
                                 <div
                                     v-if="
                                         timetableMap[day.date] &&
                                         timetableMap[day.date][hour]
                                     "
+                                    class="flex flex-wrap justify-center gap-1 py-1 rounded"
                                 >
-                                    <button
+                                    <span
                                         v-for="item in timetableMap[day.date][
                                             hour
                                         ]"
                                         :key="
                                             item.cycle_no + '-' + item.mass_prod
                                         "
-                                        @click="
-                                            viewControlSheet(
-                                                item.mass_prod,
-                                                item.furnace,
-                                            )
-                                        "
-                                        class="inline-block bg-cyan-200 hover:bg-cyan-300 text-cyan-800 text-xs px-2 py-1 rounded m-0.5 transition"
+                                        :style="{
+                                            backgroundColor: getColor(
+                                                item.cycle_no,
+                                            ),
+                                        }"
+                                        class="px-1.5 py-0.5 rounded text-xs text-white font-semibold truncate"
+                                        title="Click to view Control Sheet"
                                     >
-                                        {{ item?.cycle_no }}
-                                    </button>
+                                        {{ item.cycle_no }}
+                                    </span>
                                 </div>
                             </td>
 
@@ -1221,6 +1230,39 @@ const refreshTable = async () => {
     await fetchProductionData();
 };
 //----------------------------------------------------
+
+const colorPalette = [
+    "#1abc9c",
+    "#2ecc71",
+    "#3498db",
+    "#9b59b6",
+    "#e67e22",
+    "#e74c3c",
+    "#16a085",
+    "#27ae60",
+    "#2980b9",
+    "#8e44ad",
+    "#f39c12",
+    "#d35400",
+    "#c0392b",
+    "#34495e",
+    "#7f8c8d",
+    "#00b894",
+    "#6c5ce7",
+    "#fd79a8",
+    "#fab1a0",
+    "#00cec9",
+];
+
+const getColor = (cycle_no) => {
+    // deterministic color for each cycle_no
+    let hash = 0;
+    for (let i = 0; i < cycle_no.length; i++) {
+        hash = cycle_no.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colorPalette.length;
+    return colorPalette[index];
+};
 
 const excelFile = ref(null);
 
