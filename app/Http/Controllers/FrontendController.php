@@ -167,6 +167,7 @@ class FrontendController extends Controller
         $fromApproval_checked = $request->get('fromApproval_checked');
         $fromApproval_prepared = $request->get('fromApproval_prepared');
         $fromViewList = $request->get('fromViewList');
+        $fromControlSheet = $request->get('fromControlSheet');
 
         // Get the real client IP address
         $xForwardedFor = $request->header('X-Forwarded-For');
@@ -190,6 +191,7 @@ class FrontendController extends Controller
             'fromApproval_checked' => filter_var($request->fromApproval_checked, FILTER_VALIDATE_BOOLEAN),
             'fromApproval_prepared' => filter_var($request->fromApproval_prepared, FILTER_VALIDATE_BOOLEAN),
             'fromViewList' => filter_var($request->fromViewList, FILTER_VALIDATE_BOOLEAN),
+            'fromControlSheet' => filter_var($request->fromControlSheet, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 

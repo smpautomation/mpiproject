@@ -1919,4 +1919,74 @@ class MassProductionController extends Controller
 
         return $map;
     }
+
+    public function mpiReportStatusPanel(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+        ]);
+
+        $massProd = trim($validated['mass_prod']);
+        $furnace  = trim($validated['furnace']);
+
+        $massProduction = MassProduction::where('mass_prod', $massProd)
+            ->where('furnace', $furnace)
+            ->first();
+
+        if (!$massProduction) {
+            return response()->json(['message' => 'Mass production not found'], 404);
+        }
+
+        $expectedLayers = ['1','2','3','4','5','6','7','8','9','9.5'];
+        $lotsByLayer = [];
+
+        foreach ($expectedLayers as $layer) {
+            $column = $layer === '9.5' ? 'layer_9_5' : 'layer_' . $layer;
+            $layerDataRaw = $massProduction->{$column} ?? null;
+            $layerData = is_array($layerDataRaw) ? $layerDataRaw : json_decode($layerDataRaw, true);
+
+            // Skip this layer if MassProduction column is empty
+            if (empty($layerData)) {
+                continue;
+            }
+
+            // Extract boxes/lots from this layer
+            $boxes = $this->extractBoxes($layerData);
+
+            // Deduplicate lots per model + lt_no
+            $uniqueLots = [];
+            foreach ($boxes as $box => $data) {
+                if (empty($data['model']) || empty($data['lt_no'])) continue;
+                $lotKey = $data['model'] . '|' . $data['lt_no'];
+                if (!isset($uniqueLots[$lotKey])) {
+                    $uniqueLots[$lotKey] = [
+                        'layer' => $layer,
+                        'model' => $data['model'],
+                        'lt_no' => $data['lt_no'],
+                        'status' => 'yellow', // default, may upgrade to green
+                        'serial' => null,
+                    ];
+                }
+            }
+
+            // Check TPMDataCategory for green status per lot
+            foreach ($uniqueLots as &$lot) {
+                $tpmData = TPMDataCategory::where('actual_model', $lot['model'])
+                    ->where('jhcurve_lotno', $lot['lt_no'])
+                    ->first();
+
+                if ($tpmData) {
+                    $lot['status'] = 'green';
+                    $lot['serial'] = $tpmData->tpm_data_serial ?? null;
+                }
+            }
+            unset($lot);
+
+            // Assign unique lots array to this layer
+            $lotsByLayer[$layer] = array_values($uniqueLots);
+        }
+
+        return response()->json(['layers' => $lotsByLayer]);
+    }
 }

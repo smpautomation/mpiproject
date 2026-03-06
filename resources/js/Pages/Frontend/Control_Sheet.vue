@@ -489,6 +489,114 @@
                         </button>
                     </div>
                 </div>
+
+                <div
+                    class="p-6 mt-10 bg-white border border-gray-200 shadow-md rounded-2xl"
+                >
+                    <!-- Panel Title -->
+                    <div class="mb-6">
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-xl font-semibold text-gray-900">
+                                MPI Reports Status Panel
+                            </h3>
+                            <span class="text-sm text-gray-500">
+                                {{ redirectedFurnace }} —
+                                {{ redirectedMassPro }} Mass Production
+                            </span>
+                            <span class="text-xs text-gray-400">
+                                Monitor report readiness and generation status
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div
+                        class="flex flex-wrap items-center gap-6 pb-4 mb-6 text-sm border-b border-gray-200"
+                    >
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-4 h-4 bg-yellow-300 rounded-full"
+                            ></span>
+                            <span class="text-gray-700"
+                                >Ready but not processed</span
+                            >
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-4 h-4 bg-green-400 rounded-full"
+                            ></span>
+                            <span class="text-gray-700">Report generated</span>
+                        </div>
+                    </div>
+
+                    <!-- MPI Layers Grid -->
+                    <div class="grid grid-cols-5 gap-4">
+                        <!-- Iterate over layers -->
+                        <div
+                            v-for="layer in Object.keys(mpiLayerStatus).sort(
+                                (a, b) => parseFloat(a) - parseFloat(b),
+                            )"
+                            :key="layer"
+                            class="p-4 bg-white border border-gray-200 shadow rounded-xl"
+                        >
+                            <div class="mb-2 font-semibold text-gray-800">
+                                Layer {{ layer }}
+                            </div>
+
+                            <!-- Iterate over lots in each layer -->
+                            <div
+                                v-for="(lot, index) in mpiLayerStatus[layer]"
+                                :key="index"
+                                class="relative p-2 mb-2 transition border rounded-lg bg-gray-50 hover:shadow-md"
+                                :class="{
+                                    'cursor-pointer hover:bg-green-50':
+                                        lot.status === 'green',
+                                    'cursor-not-allowed opacity-70':
+                                        lot.status !== 'green',
+                                }"
+                                @click="
+                                    lot.status === 'green' &&
+                                    viewReport(lot.serial)
+                                "
+                                @mouseenter="hoveredLot = `${layer}-${index}`"
+                                @mouseleave="hoveredLot = null"
+                            >
+                                <!-- Status Indicator Pill -->
+                                <span
+                                    :class="[
+                                        'inline-block w-3 h-3 rounded-full absolute top-2 right-2',
+                                        layerStatusColor(lot.status, true),
+                                    ]"
+                                ></span>
+
+                                <!-- Lot Info -->
+                                <div class="text-sm text-gray-700">
+                                    <span class="font-medium">{{
+                                        lot.model
+                                    }}</span>
+                                    |
+                                    <span>{{ lot.lt_no }}</span>
+                                </div>
+
+                                <!-- Tooltip -->
+                                <div
+                                    class="absolute max-w-xs px-2 py-1 mb-2 text-xs text-white transition-opacity duration-150 transform -translate-x-1/2 bg-gray-800 rounded opacity-0 pointer-events-none left-1/2 bottom-full w-max"
+                                    :class="{
+                                        'opacity-100 pointer-events-auto':
+                                            hoveredLot === `${layer}-${index}`,
+                                    }"
+                                >
+                                    {{
+                                        lot.status === "green"
+                                            ? `Report generated: ${lot.serial ?? ""}`
+                                            : "Data ready but not processed"
+                                    }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div
                     class="mt-20 overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl"
                 >
@@ -677,6 +785,19 @@ const checkAuthentication = async () => {
         return false; // Indicate not authenticated
     }
 };
+
+const reportStages = [
+    "1st",
+    "2nd",
+    "3rd",
+    "4th",
+    "5th",
+    "6th",
+    "7th",
+    "8th",
+    "9th",
+    "9.5th",
+];
 
 const highlightColors = [
     "bg-yellow-100",
@@ -1270,10 +1391,62 @@ const getPerLotData = async () => {
             },
         );
 
-        lotRows.value = response.data; // 👈 store for table
+        lotRows.value = response.data;
         console.log("All Data per lot:", lotRows.value);
     } catch (error) {
         console.error("Failed to get control sheet lot per data", error);
+    }
+};
+
+const mpiLayerStatus = ref({});
+const isLoadingLayerStatus = ref(false);
+const hoveredLot = ref(null); // tracks tooltip per lot
+
+// Map status to Tailwind classes
+const layerStatusColor = (status, pill = false) => {
+    const defaultColor = pill ? "bg-gray-300" : "bg-gray-50";
+    if (!status) return defaultColor;
+
+    const colorMap = {
+        green: pill ? "bg-green-500" : "bg-green-50",
+        yellow: pill ? "bg-yellow-400" : "bg-yellow-50",
+    };
+
+    return colorMap[status] ?? defaultColor;
+};
+
+const getMpiReportLayerStatus = async () => {
+    if (!redirectedMassPro.value || !redirectedFurnace.value) return;
+
+    isLoadingLayerStatus.value = true;
+
+    try {
+        const response = await axios.get(
+            "/api/mass-production/mpi-layer-status",
+            {
+                params: {
+                    mass_prod: redirectedMassPro.value,
+                    furnace: redirectedFurnace.value,
+                },
+            },
+        );
+
+        // Normalize keys as strings
+        const normalizedLayers = Object.fromEntries(
+            Object.entries(response.data.layers || {}).map(([key, lots]) => [
+                String(key),
+                Array.isArray(lots) ? lots : [], // ensure lots array
+            ]),
+        );
+
+        mpiLayerStatus.value = normalizedLayers;
+
+        console.log("Dynamic MPI layer status:", mpiLayerStatus.value);
+    } catch (error) {
+        console.error("Failed to get MPI Report layer status", error);
+        mpiLayerStatus.value = {};
+    } finally {
+        isLoadingLayerStatus.value = false;
     }
 };
 
@@ -1301,11 +1474,21 @@ const viewSMPData = () => {
     });
 };
 
+const viewReport = (serial) => {
+    Inertia.visit("/reports", {
+        method: "get", // You can keep 'get' since we are not modifying any data
+        data: { serialParam: serial, fromControlSheet: true }, // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 onMounted(async () => {
     const massPro = redirectedMassPro.value;
     const furnace = redirectedFurnace.value;
     getMassProdData(massPro, furnace);
     await getPerLotData();
+    await getMpiReportLayerStatus();
 });
 
 const exportToExcel = () => {

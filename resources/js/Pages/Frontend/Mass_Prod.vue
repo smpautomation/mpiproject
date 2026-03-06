@@ -244,11 +244,20 @@
                         filters above to update the timetable view.
                     </p>
                 </div>
-                <!-- Month/Year Filter -->
+
                 <div class="flex items-center justify-start gap-2 mb-4">
                     <select
+                        v-model="selectedPlant"
+                        class="w-32 p-2 text-sm bg-white border rounded shadow-sm"
+                    >
+                        <option value="all">All</option>
+                        <option value="7">Plant 7</option>
+                        <option value="8">Plant 8</option>
+                    </select>
+
+                    <select
                         v-model="selectedMonthGrid"
-                        class="p-2 text-sm bg-white border rounded shadow-sm"
+                        class="p-2 text-sm bg-white border rounded shadow-sm w-28"
                     >
                         <option
                             v-for="(m, index) in months"
@@ -1145,13 +1154,27 @@ const monthsGrid = [
 
 const hours = Array.from({ length: 24 }, (_, i) => i);
 
-// Year options: last 5 to next 2 years
-const yearsGrid = [];
-for (let y = currentYear - 5; y <= currentYear + 2; y++) yearsGrid.push(y);
+const yearsGrid = computed(() => {
+    const yearSet = new Set();
+
+    productionData.value.forEach((item) => {
+        if (!item?.estimated_completion) return;
+
+        const dateObj = new Date(item.estimated_completion);
+        if (isNaN(dateObj)) return;
+
+        yearSet.add(dateObj.getFullYear());
+    });
+
+    // Convert to sorted array
+    return Array.from(yearSet).sort((a, b) => a - b);
+});
 
 // Reactive selected month & year
 const selectedMonthGrid = ref(currentMonth);
 const selectedYearGrid = ref(currentYear);
+
+const selectedPlant = ref("all");
 
 // ---------------------------
 // Generate month days dynamically
@@ -1200,16 +1223,24 @@ const timetableMap = computed(() => {
     const map = {};
 
     productionData.value.forEach((item) => {
-        if (!item || !item.estimated_completion) return;
+        if (!item || !item.estimated_completion || !item.cycle_no) return;
 
         const dateObj = new Date(item.estimated_completion);
 
-        // Only include rows matching selected month/year
         if (
             dateObj.getFullYear() !== selectedYearGrid.value ||
             dateObj.getMonth() !== selectedMonthGrid.value
         )
             return;
+
+        // Extract plant number from cycle_no
+        const plantNumber = parseInt(item.cycle_no.substring(1, 3));
+
+        // Apply plant filter
+        if (selectedPlant.value !== "all") {
+            if (selectedPlant.value === "7" && plantNumber > 24) return;
+            if (selectedPlant.value === "8" && plantNumber <= 24) return;
+        }
 
         const day = dateObj.getDate();
         const hour = dateObj.getHours();
@@ -1558,6 +1589,9 @@ const downloadCsvMonthlySummary = async () => {
 useSessionStorage("searchQuery", searchQuery);
 useSessionStorage("dateFrom", dateFrom);
 useSessionStorage("dateTo", dateTo);
+useSessionStorage("selectedMonthGrid", selectedMonthGrid);
+useSessionStorage("selectedYearGrid", selectedYearGrid);
+useSessionStorage("selectedPlant", selectedPlant);
 
 onMounted(async () => {
     await checkAuthentication();
