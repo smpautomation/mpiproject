@@ -24,75 +24,43 @@ use Illuminate\Support\Facades\Log;
 
 class TPMDataController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $serial_no = $request->query('serial');
         $report = $request->query('report');
-
         if (!$serial_no) {
-            try {
-                // Fetch all serials ordered by latest created_at without limiting
-                $latestSerials = TPMData::query()
-                    ->select('serial_no')
-                    ->groupBy('serial_no')
-                    ->orderByRaw('MAX(created_at) DESC')
-                    ->pluck('serial_no');
-
-                $tpmData = [];
-                TPMData::whereIn('serial_no', $latestSerials)
-                    ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace', 'mass_prod', 'layer_no', 'created_at')
-                    ->orderByDesc('created_at')
-                    ->chunk(500, function ($chunk) use (&$tpmData) {
-                        foreach ($chunk as $row) {
-                            $tpmData[$row->serial_no][] = $row;
-                        }
-                    });
-
-                $category = [];
-                TPMDataCategory::whereIn('tpm_data_serial', $latestSerials)
-                    ->select('tpm_data_serial', 'actual_model', 'massprod_name', 'jhcurve_lotno', 'created_at')
-                    ->orderByDesc('created_at')
-                    ->chunk(500, function ($chunk) use (&$category) {
-                        foreach ($chunk as $row) {
-                            $category[$row->tpm_data_serial][] = $row;
-                        }
-                    });
-
-                $reportData = [];
-                ReportData::whereIn('tpm_data_serial', $latestSerials)
-                    ->select(
-                        'tpm_data_serial',
-                        'updated_at',
-                        'smp_judgement',
-                        'prepared_by_firstname',
-                        'checked_by_firstname',
-                        'approved_by_firstname',
-                        'is_finalized',
-                        'coating_completed',
-                        'heat_treatment_completed',
-                        'is_emailed',
-                        'created_at'
-                    )
-                    ->orderByDesc('created_at')
-                    ->chunk(500, function ($chunk) use (&$reportData) {
-                        foreach ($chunk as $row) {
-                            $reportData[$row->tpm_data_serial][] = $row;
-                        }
-                    });
-
+            try{
+                $latestSerials = TPMData::select('serial_no')
+                            ->groupBy('serial_no')
+                            ->orderByRaw('MAX(created_at) DESC')
+                            ->limit(1000)
+                            ->pluck('serial_no');
+                $tpmData = TPMData::whereIn('serial_no', $latestSerials)
+                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace', 'mass_prod', 'layer_no')
+                            ->orderByDesc('created_at')
+                            ->get()
+                            ->groupBy('serial_no');
+                $category = TPMDataCategory::whereIn('tpm_data_serial', $latestSerials)
+                            ->orderByDesc('created_at')
+                            ->select('tpm_data_serial', 'actual_model', 'massprod_name', 'jhcurve_lotno')
+                            ->get()
+                            ->groupBy('tpm_data_serial');
+                $reportData = ReportData::whereIn('tpm_data_serial', $latestSerials)
+                            ->orderByDesc('created_at')
+                            ->select('tpm_data_serial', 'updated_at', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname', 'is_finalized', 'coating_completed', 'heat_treatment_completed', 'is_emailed')
+                            ->get()
+                            ->groupBy('tpm_data_serial');
                 $grouped = [];
+                $tpmDataAll = TPMData::latest()->limit(1000)->get();
+                $aggregateFunctions = TPMDataAggregateFunctions::latest()->limit(1000)->get();
+                $remarks = TPMDataRemark::latest()->limit(1000)->get();
                 foreach ($latestSerials as $serial) {
                     $grouped[$serial] = [
                         'tpm' => $tpmData[$serial] ?? collect(),
                         'category' => $category[$serial] ?? collect(),
-                        'report' => $reportData[$serial] ?? collect(),
+                        'report' => $reportData[$serial] ?? collect()
                     ];
                 }
 
-                // Keep your other original datasets untouched
-                $tpmDataAll = TPMData::latest()->get();
-                $aggregateFunctions = TPMDataAggregateFunctions::latest()->get();
-                $remarks = TPMDataRemark::latest()->get();
                 $furnace = FurnaceData::all();
                 $layer = LayerData::all();
 
@@ -108,35 +76,34 @@ class TPMDataController extends Controller
                         'aggregateFunctions' => $aggregateFunctions
                     ]
                 ], 200);
-            } catch (\Exception $e) {
+            }catch(\Exception $e){
                 return response()->json([
                     'status' => false,
                     'message' => 'Error retrieving tmp Data',
                     'error' => $e->getMessage(),
                 ], 500);
             }
-        } else {
-            try {
-                // Leave serial-specific fetch untouched
+        }else{
+            try{
                 $tpmData = TPMData::with($report ? ['remark', 'reportData', 'category'] : ['remark', 'category'])
-                    ->where('serial_no', $serial_no)
-                    ->orderBy('zone', 'asc')
-                    ->get();
+                                    ->where('serial_no',  $serial_no)
+                                    ->orderBy('zone', 'asc')
+                                    ->get();
 
-                if (!$tpmData->isEmpty()) {
+                if(!$tpmData->isEmpty()){
                     $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
                         'message' => 'TPM data found successfully',
                         'data' => $tpmData, $tpmDataAggregateFunctions
                     ], 200);
-                } else {
+                }else{
                     return response()->json([
                         'status' => false,
                         'message' => 'TPM data not found for this serial number.'
                     ], 404);
                 }
-            } catch (\Exception $e) {
+            }catch(\Exception $e){
                 return response()->json([
                     'status' => false,
                     'message' => 'An error occurred while retrieving TPM data',
@@ -145,6 +112,7 @@ class TPMDataController extends Controller
             }
         }
     }
+
     public function show($id){
         try{
             $tpmData = TPMData::with(['remark'])
