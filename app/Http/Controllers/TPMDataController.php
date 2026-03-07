@@ -571,4 +571,17 @@ class TPMDataController extends Controller
         }
     }
 
+    public function getMaxSerialForMonth(Request $request)
+    {
+        $month = $request->query('month') ?? now()->format('ym');
+
+        // Get the max serial for the month
+        $maxSerial = TPMData::where('serial_no', 'like', $month.'%')->max('serial_no');
+
+        // Instead of throwing an error if none found, just return null
+        return response()->json([
+            'maxSerial' => $maxSerial // null if nothing exists
+        ]);
+    }
+
 }

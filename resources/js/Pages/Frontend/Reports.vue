@@ -6233,17 +6233,29 @@ const cancelBhSegFormatLayout = async () => {
 const reportErrorMessage = ref("");
 
 const generateReport = async () => {
+    const logTime = (label, start) => {
+        console.log(`${label} took ${Date.now() - start}ms`);
+    };
+
     try {
+        const overallStart = Date.now();
+
         showReportLoading.value = true;
         showReportContent.value = true;
         showSelectionPanel.value = false;
 
+        let stepStart = Date.now();
         await fetchAllData();
-        showReportProceedButtons.value = false;
-        await showReportData();
+        logTime("fetchAllData", stepStart);
 
+        showReportProceedButtons.value = false;
+
+        stepStart = Date.now();
+        await showReportData();
+        logTime("showReportData", stepStart);
+
+        stepStart = Date.now();
         const waitForFlag = (timeout = 8000) => {
-            // 8s timeout
             return new Promise((resolve, reject) => {
                 const start = Date.now();
                 const check = () => {
@@ -6259,11 +6271,17 @@ const generateReport = async () => {
                 check();
             });
         };
-
         await waitForFlag();
+        logTime("waitForFlag", stepStart);
+
+        stepStart = Date.now();
         await new Promise((r) => setTimeout(r, 50)); // tiny tick delay
+        logTime("tick delay", stepStart);
+
         showReportLoading.value = false;
         showReportMain.value = true;
+
+        logTime("generateReport total", overallStart);
     } catch (error) {
         showReportLoading.value = false;
         reportErrorMessage.value =
@@ -6272,9 +6290,8 @@ const generateReport = async () => {
             reportErrorMessage.value = "";
             showReportContent.value = false;
             showSelectionPanel.value = true;
-        }, 2000); // Clear after 3 seconds
+        }, 2000);
         console.error("generateReport failed:", error.message);
-        // Optional: show user an error message
 
         await userErrorLogging(
             {
@@ -7985,7 +8002,7 @@ const showReportData = async () => {
 
         setTimeout(() => {
             isReportDataReady.value = true; //!important this is flag for when date is ready. (it must be always set to true)
-        }, 1000); // 1 second delay
+        }, 50); // 1 second delay
     } catch (error) {
         console.error("API get request showReportData Error:", error);
         await userErrorLogging(

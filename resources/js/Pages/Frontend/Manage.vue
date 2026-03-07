@@ -998,6 +998,8 @@
     const propData_miasEmp = ref("");
     const propData_factorEmp = ref("");
 
+    let miasFactorCache = null;
+
     const proceedToGraphConfirmation = () => {
         if(!selectedMassProd.value){
             toast.error('Please select a Mass Production.');
@@ -1406,59 +1408,43 @@
     }
 
     const mias_factorData = async (factor, mias) => {
-        //console.log("🔄 Starting mias_factorData with:", { factor, mias });
 
-        // Step 1: Fetch data
-        const response = await axios.get('/api/mias-factor');
-        const miasFactorData = response.data.data;
-        //console.log("📥 API Response Data:", miasFactorData);
+        if (!miasFactorCache) {
+            const response = await axios.get('/api/mias-factor');
+            miasFactorCache = response.data.data;
+        }
 
-        // Helper function with logging
+        const miasFactorData = miasFactorCache;
+
         const findByEmpOrMiasNo = (searchValue) => {
-            //console.log(`🔍 Searching for: ${searchValue}`);
             const empMatch = miasFactorData.find(item => item.employee_no === searchValue);
-            if (empMatch) {
-                //console.log(`✅ Found match in employee_no:`, empMatch);
-                return empMatch;
-            }
+            if (empMatch) return empMatch;
+
             const miasMatch = miasFactorData.find(item => item.mias_no === searchValue);
-            if (miasMatch) {
-                //console.log(`✅ Found match in mias_no:`, miasMatch);
-                return miasMatch;
-            }
-            //console.log(`❌ No match found for: ${searchValue}`);
+            if (miasMatch) return miasMatch;
+
             return null;
         };
 
-        // Step 2: Factor check
-        //console.log("⚡ Checking factor:", factor);
         const factorMatch = findByEmpOrMiasNo(factor);
         if (factorMatch) {
             propData_factorEmp.value = factorMatch.employee_name;
-            //console.log("➡️ Assigned factor employee:", propData_factorEmp.value);
         } else {
             mias_factorCsvError.value = true;
-            //console.error(`❌ Factor ID "${factor}" not found in either employee_no or mias_no fields.`);
             showMiasFactorError.value = true;
             await nextTick();
             return;
         }
 
-        // Step 3: MIAS check
-        //console.log("⚡ Checking mias:", mias);
         const miasMatch = findByEmpOrMiasNo(mias);
         if (miasMatch) {
             propData_miasEmp.value = miasMatch.employee_name;
-            //console.log("➡️ Assigned mias employee:", propData_miasEmp.value);
         } else {
             mias_factorCsvError.value = true;
-            //console.error(`❌ MIAS ID "${mias}" not found in either employee_no or mias_no fields.`);
             showMiasFactorError.value = true;
             await nextTick();
             return;
         }
-
-        //console.log("✅ Completed mias_factorData successfully.");
     };
 
     const csv_selectedFile = ref(null);
@@ -1472,21 +1458,27 @@
     //const finalizeDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     const finalizeGraph = async () => {
+
+        //console.time("FinalizeGraph Total");
+
         toast.success('Generating graph...');
         showGraphProceedConfirmation.value = false;
         toggleManageForm.value = false;
         showLoadingForGraphAndTables.value = true;
-        // Step 1: Save to database
+
+        //console.time("saveToDatabase");
         await saveToDatabase();
+        //console.timeEnd("saveToDatabase");
 
-        // Step 2: Submit file after DB save completes
+        //console.time("csv_submitFile");
         await csv_submitFile();
+        //console.timeEnd("csv_submitFile");
 
-        // Step 3: Wait 1.5 seconds before showing all data
-        //await finalizeDelay(1500);
-
-        // Step 4: Finally show all data
+        //console.time("showAllData");
         await showAllData();
+        //console.timeEnd("showAllData");
+
+        //console.timeEnd("FinalizeGraph Total");
     };
 
     const csv_submitFile = async () => {
@@ -1568,7 +1560,7 @@
 
             const getAllID = tpmData.map(item => item.id);
 
-            // 👇 Create an array of promises
+            // Create an array of promises
             const patchPromises = getAllID.map((id, i) => {
             return axios.patch(`/api/tpmdataupdate/${id}`, {
                 temperature: csv_tempWithDataStat.value[i]?.temp || null,
@@ -1582,7 +1574,7 @@
             });
             });
 
-            // 👇 Run them all at once
+            // Run them all at once
             const patchResults = await Promise.all(patchPromises);
             //console.log('All patch results:', patchResults);
             await updateMassProductionTable();
@@ -1649,7 +1641,9 @@
 
     //Serial Generation
 
-    const serialNo = ref('')
+    // Serial Generation
+    const serialNo = ref('');
+
     const generateSerialNumber = async () => {
         try {
             const { data } = await axios.get("/api/tpmdata");
@@ -1663,26 +1657,26 @@
             // Filter only serials from current month
             const monthlySerials = tpmData
                 .map(item => item.serial_no?.toString())
-                .filter(serial =>
-                    serial &&
-                    serial.startsWith(currentPrefix)
-                );
+                .filter(serial => serial && serial.startsWith(currentPrefix));
 
-            let nextNumber = 1;
+            let nextNumber;
 
-            if (monthlySerials.length > 0) {
+            if (monthlySerials.length === 0) {
+                // No serials yet → default starting point
+                nextNumber = 1;
+            } else {
+                // Find highest existing serial
                 const highestSerial = monthlySerials.reduce((max, current) =>
                     current > max ? current : max
-                )
-
-                const numericPart = highestSerial.slice(4)
-                nextNumber = parseInt(numericPart, 10) + 1
+                );
+                const numericPart = highestSerial.slice(4); // Remove YYMM prefix
+                nextNumber = parseInt(numericPart, 10) + 1;
             }
 
-            serialNo.value = `${currentPrefix}${nextNumber
-                .toString()
-                .padStart(6, "0")}`
+            // Construct serial with padded 6-digit numeric part
+            serialNo.value = `${currentPrefix}${nextNumber.toString().padStart(6, '0')}`;
 
+            return serialNo.value; // make sure caller can await this
         } catch (error) {
             await userErrorLogging(
                 {
@@ -1693,9 +1687,13 @@
                 },
                 "generateSerialNumber",
                 "Error generating serial number"
-            )
+            );
+            // Fallback in case of error
+            const fallbackPrefix = `${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, "0")}`;
+            serialNo.value = `${fallbackPrefix}000001`;
+            return serialNo.value;
         }
-    }
+    };
 
     //Serial Generation end
 
@@ -1993,183 +1991,155 @@
         //console.log('Sorted Files:', fileData.value);
 
         layerTableRowLoading.value = true;
-        const filePromises = fileData.value.map((file) => {
-            return new Promise((resolve, reject) => {
+        const filePromises = fileData.value.map(file => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const stream = file.stream();
+                    const reader = stream.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let content = "";
+                    let done = false;
 
-            const reader = new FileReader();
-
-            reader.onload = async () => {
-                const content = reader.result; // Read file content
-                const parsedData = parseFileContent(content); // Parse content
-
-                //console.log('Parsed Data:', parsedData);
-
-
-                // Dynamically handle rows based on the length of the file content
-                const lines = content.split("\n"); // Split content into lines (assuming newline delimiter)
-                const rows = lines.map(line => line.split("\t")); // Split each line by tabs (if TSV)
-
-                const numberOfRows = rows.length; // This gives the total number of rows in the file
-                //console.log(`The file contains ${numberOfRows} rows.`);
-
-                // Map specific keys to extract relevant values
-                const dataKeysValue = [
-                    2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
-                    22, 24, 27, 30, 33, 36, 39, 42, 45,
-                    48, 51, 54, 57, 60, 63, 66, 68, 71,
-                    74, 76, 78, 81, 83, 86, 88, 91, 93,
-                    96
-                ];
-
-                const newRowValues = dataKeysValue
-                    .map((i) => parsedData[`data${i}`])
-                    .filter(Boolean);
-
-                //-------------------------------------GRAPH
-                const xValues = [];
-                const yValues = [];
-                for (const key in parsedData) {
-                    if (
-                        parsedData.hasOwnProperty(key) &&
-                        key.startsWith('data') &&
-                        parseInt(key.replace('data', ''), 10) >= 150 && //Adjust
-                        parseInt(key.replace('data', ''), 10) <= numberOfRows
-                    ) {
-                        const [x, y] = parsedData[key].split(',').map(Number);
-
-                        // Custom condition: x must be less than 100 and y must be greater than -1000
-                        if (x >= 10000 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
-                            //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
-                            continue; // Skip this iteration if condition is not met
-                        }
-
-                        xValues.push(x);
-                        yValues.push(y);
+                    while (!done) {
+                        const { value, done: readerDone } = await reader.read();
+                        if (value) content += decoder.decode(value, { stream: true });
+                        done = readerDone;
                     }
-                }
+                    content += decoder.decode(); // flush remaining
 
+                    const parsedData = parseFileContent(content); // Parse content
 
-                xAxis.value = xValues;
-                yAxis.value = yValues;
+                    const lines = content.split("\n");
+                    const rows = lines.map(line => line.split("\t"));
+                    const numberOfRows = rows.length;
 
-                xJsonOutput.value = JSON.stringify(xValues, null, 2);
-                yJsonOutput.value = JSON.stringify(yValues, null, 2);
+                    const dataKeysValue = [
+                        2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
+                        22, 24, 27, 30, 33, 36, 39, 42, 45,
+                        48, 51, 54, 57, 60, 63, 66, 68, 71,
+                        74, 76, 78, 81, 83, 86, 88, 91, 93,
+                        96
+                    ];
 
-                //console.log('X Axis JSON:', xJsonOutput.value);
-                //console.log('Y Axis JSON:', yJsonOutput.value);
+                    const newRowValues = dataKeysValue
+                        .map(i => parsedData[`data${i}`])
+                        .filter(Boolean);
 
-                //-------------------------------------GRAPH END
+                    //-------------------------------------GRAPH
+                    const xValues = [];
+                    const yValues = [];
+                    for (const key in parsedData) {
+                        if (
+                            parsedData.hasOwnProperty(key) &&
+                            key.startsWith("data") &&
+                            parseInt(key.replace("data", ""), 10) >= 150 &&
+                            parseInt(key.replace("data", ""), 10) <= numberOfRows
+                        ) {
+                            const [x, y] = parsedData[key].split(",").map(Number);
+                            if (x >= 10000 || y <= -1000) continue;
+                            xValues.push(x);
+                            yValues.push(y);
+                        }
+                    }
 
-                rowCell.value = newRowValues;
+                    xAxis.value = xValues;
+                    yAxis.value = yValues;
+                    xJsonOutput.value = JSON.stringify(xValues, null, 2);
+                    yJsonOutput.value = JSON.stringify(yValues, null, 2);
+                    //-------------------------------------GRAPH END
 
-                saveBrRemarks.value = parsedData.data25;
-                save4paiIdRemarks.value = parsedData.data28;
-                saveIHcRemarks.value = parsedData.data31;
-                saveBHcRemarks.value = parsedData.data34;
-                saveBHMaxRemarks.value = parsedData.data37;
-                saveSquarenessRemarks.value = parsedData.data40;
-                save4paiIsRemarks.value = parsedData.data43;
-                saveIHkRemarks.value = parsedData.data46;
-                save4paiIaRemarks.value = parsedData.data49;
-                saveDensityRemarks.value = parsedData.data52;
-                saveIHkiHcRemarks.value = parsedData.data55;
-                saveBr4paiRemarks.value = parsedData.data58;
-                saveIHr95Remarks.value = parsedData.data61;
-                saveIHr98Remarks.value = parsedData.data64;
+                    rowCell.value = newRowValues;
 
-                const rawDate = rowCell.value[0]; // The raw date from rowCell.value[0]
+                    // Assign all remarks exactly as before
+                    saveBrRemarks.value = parsedData.data25;
+                    save4paiIdRemarks.value = parsedData.data28;
+                    saveIHcRemarks.value = parsedData.data31;
+                    saveBHcRemarks.value = parsedData.data34;
+                    saveBHMaxRemarks.value = parsedData.data37;
+                    saveSquarenessRemarks.value = parsedData.data40;
+                    save4paiIsRemarks.value = parsedData.data43;
+                    saveIHkRemarks.value = parsedData.data46;
+                    save4paiIaRemarks.value = parsedData.data49;
+                    saveDensityRemarks.value = parsedData.data52;
+                    saveIHkiHcRemarks.value = parsedData.data55;
+                    saveBr4paiRemarks.value = parsedData.data58;
+                    saveIHr95Remarks.value = parsedData.data61;
+                    saveIHr98Remarks.value = parsedData.data64;
 
-                let formattedDate;
-
-                if (rawDate instanceof Date) {
-                    const d = rawDate;
-                    formattedDate = [
+                    const rawDate = rowCell.value[0];
+                    const d = rawDate instanceof Date ? rawDate : new Date(rawDate);
+                    const formattedDate = [
                         d.getFullYear(),
                         String(d.getMonth() + 1).padStart(2, "0"),
                         String(d.getDate()).padStart(2, "0")
                     ].join("-");
-                } else {
-                    const d = new Date(rawDate);
-                    formattedDate = [
-                        d.getFullYear(),
-                        String(d.getMonth() + 1).padStart(2, "0"),
-                        String(d.getDate()).padStart(2, "0")
-                    ].join("-");
+
+                    const layerData = {
+                        date: formattedDate,
+                        serial_no: serialNo.value,
+                        furnace: selectedFurnace.value,
+                        mass_prod: selectedMassProd.value,
+                        layer_no: currentLayerNo.value,
+                        code_no: rowCell.value[1],
+                        order_no: rowCell.value[2],
+                        type: rowCell.value[3],
+                        press_1: rowCell.value[4],
+                        press_2: rowCell.value[5],
+                        machine_no: rowCell.value[6],
+                        sintering_furnace_no: rowCell.value[7],
+                        furnace_no: rowCell.value[8],
+                        zone: rowCell.value[9],
+                        pass_no: rowCell.value[10],
+                        Br: Math.round(rowCell.value[11]),
+                        "4paiId": Math.round(rowCell.value[12]),
+                        iHc: Math.round(rowCell.value[13]),
+                        bHc: Math.round(rowCell.value[14]),
+                        BHMax: parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
+                        Squareness: parseFloat(parseFloat(rowCell.value[16]).toFixed(3)) || 0,
+                        "4paiIs": Math.round(rowCell.value[17]),
+                        iHk: Math.round(rowCell.value[18]),
+                        "4paiIa": Math.round(rowCell.value[19]),
+                        Density: rowCell.value[20],
+                        iHkiHc: Math.round(rowCell.value[21]),
+                        Br4pai: Math.round(rowCell.value[22]),
+                        iHr95: Math.round(rowCell.value[23]),
+                        iHr98: Math.round(rowCell.value[24]),
+                        Tracer: rowCell.value[25],
+                        HRX: rowCell.value[26],
+                        MRX: rowCell.value[27],
+                        HRY: rowCell.value[28],
+                        MRY: rowCell.value[29],
+                        IHKA: rowCell.value[30],
+                        MRA: rowCell.value[31],
+                        IHKB: rowCell.value[32],
+                        MRB: rowCell.value[33],
+                        IHKC: rowCell.value[34],
+                        MRC: rowCell.value[35],
+                        HR: rowCell.value[36],
+                        HRO: rowCell.value[37],
+                        x: xJsonOutput.value,
+                        y: yJsonOutput.value,
+                        Br_remarks: saveBrRemarks.value,
+                        "4paiId_remarks": save4paiIdRemarks.value,
+                        iHc_remarks: saveIHcRemarks.value,
+                        bHc_remarks: saveBHcRemarks.value,
+                        BHMax_remarks: saveBHMaxRemarks.value,
+                        Squareness_remarks: saveSquarenessRemarks.value,
+                        "4paiIs_remarks": save4paiIsRemarks.value,
+                        iHk_remarks: saveIHkRemarks.value,
+                        "4paiIa_remarks": save4paiIaRemarks.value,
+                        Density_remarks: saveDensityRemarks.value,
+                        iHkiHc_remarks: saveIHkiHcRemarks.value,
+                        Br4pai_remarks: saveBr4paiRemarks.value,
+                        iHr95_remarks: saveIHr95Remarks.value,
+                        iHr98_remarks: saveIHr98Remarks.value,
+                    };
+
+                    await sendLayerData(layerData);
+                    resolve();
+                } catch (err) {
+                    reject(err);
                 }
-
-                const layerData = {
-                    "date": formattedDate,
-                    "serial_no": serialNo.value,
-                    "furnace": selectedFurnace.value,
-                    "mass_prod": selectedMassProd.value,
-                    "layer_no": currentLayerNo.value,
-                    "code_no": rowCell.value[1],
-                    "order_no": rowCell.value[2],
-                    "type": rowCell.value[3],
-                    "press_1": rowCell.value[4],
-                    "press_2": rowCell.value[5],
-                    "machine_no": rowCell.value[6],
-                    "sintering_furnace_no": rowCell.value[7],
-                    "furnace_no": rowCell.value[8],
-                    "zone": rowCell.value[9],
-                    "pass_no": rowCell.value[10],
-                    "Br": Math.round(rowCell.value[11]),
-                    "4paiId": Math.round(rowCell.value[12]),
-                    "iHc": Math.round(rowCell.value[13]),
-                    "bHc": Math.round(rowCell.value[14]),
-                    "BHMax": parseFloat(parseFloat(rowCell.value[15]).toFixed(2)) || 0,
-                    "Squareness": parseFloat(parseFloat(rowCell.value[16]).toFixed(3)) || 0,
-                    "4paiIs": Math.round(rowCell.value[17]),
-                    "iHk": Math.round(rowCell.value[18]),
-                    "4paiIa": Math.round(rowCell.value[19]),
-                    "Density": rowCell.value[20],
-                    "iHkiHc": Math.round(rowCell.value[21]),
-                    "Br4pai": Math.round(rowCell.value[22]),
-                    "iHr95": Math.round(rowCell.value[23]),
-                    "iHr98": Math.round(rowCell.value[24]),
-                    "Tracer": rowCell.value[25],
-                    "HRX": rowCell.value[26],
-                    "MRX": rowCell.value[27],
-                    "HRY": rowCell.value[28],
-                    "MRY": rowCell.value[29],
-                    "IHKA": rowCell.value[30],
-                    "MRA": rowCell.value[31],
-                    "IHKB": rowCell.value[32],
-                    "MRB": rowCell.value[33],
-                    "IHKC": rowCell.value[34],
-                    "MRC": rowCell.value[35],
-                    "HR": rowCell.value[36],
-                    "HRO": rowCell.value[37],
-                    "x": xJsonOutput.value,
-                    "y": yJsonOutput.value,
-                    "Br_remarks": saveBrRemarks.value,
-                    "4paiId_remarks": save4paiIdRemarks.value,
-                    "iHc_remarks": saveIHcRemarks.value,
-                    "bHc_remarks": saveBHcRemarks.value,
-                    "BHMax_remarks": saveBHMaxRemarks.value,
-                    "Squareness_remarks": saveSquarenessRemarks.value,
-                    "4paiIs_remarks": save4paiIsRemarks.value,
-                    "iHk_remarks": saveIHkRemarks.value,
-                    "4paiIa_remarks": save4paiIaRemarks.value,
-                    "Density_remarks": saveDensityRemarks.value,
-                    "iHkiHc_remarks": saveIHkiHcRemarks.value,
-                    "Br4pai_remarks": saveBr4paiRemarks.value,
-                    "iHr95_remarks": saveIHr95Remarks.value,
-                    "iHr98_remarks": saveIHr98Remarks.value,
-                };
-                //console.log("Layer Data:", layerData);
-
-                await sendLayerData(layerData); // Send the parsed data to the server
-                resolve();
-            };
-
-            reader.onerror = () => {
-                //console.error('Error reading file:', file.name);
-                reject(reader.error);
-            };
-
-            reader.readAsText(file); // Read the file as text
-
             });
         });
 

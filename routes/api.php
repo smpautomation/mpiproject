@@ -72,6 +72,7 @@ Route::patch('/updateboxes/{id}', [TPMDataController::class, 'updateBoxes']);
 Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
 Route::delete('/tpmdata/{serial}/delete-chart', [TPMDataController::class, 'deleteChart']);
 Route::delete('/tpmdata/{serial}/{set}/delete-nsa-chart', [TPMDataController::class, 'deleteNsaChart']);
+Route::get('/tpmdata/max-serial', [TPMDataController::class, 'getMaxSerialForMonth']);
 
 Route::get('/reportdata', [ReportDataController::class, 'index']);
 Route::get('/reportdata/{id}', [ReportDataController::class, 'show']);
