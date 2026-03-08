@@ -285,88 +285,120 @@
                     </button>
                 </div>
 
-                <table class="w-full text-sm border-collapse table-auto">
-                    <!-- Header Row -->
-                    <thead class="sticky top-0 z-20 bg-slate-100">
-                        <tr>
-                            <th
-                                class="sticky left-0 z-10 p-2 border bg-slate-100"
-                            >
-                                Day
-                            </th>
-                            <th
-                                v-for="hour in hours"
-                                :key="hour"
-                                class="p-2 text-center border"
-                            >
-                                {{ hour.toString().padStart(2, "0") }}:00
-                            </th>
-                            <th class="p-2 text-center border">Date</th>
-                        </tr>
-                    </thead>
-
-                    <!-- Body Rows -->
-                    <tbody>
-                        <tr
-                            v-for="day in monthDays"
-                            :key="day.date"
-                            class="hover:bg-slate-50"
+                <!-- Table Wrapper (relative for loader) -->
+                <div class="relative overflow-auto rounded-lg border shadow-sm p-2 bg-white">
+                    <!-- Loader -->
+                    <div
+                        v-if="loadingTableGrid"
+                        class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-20"
+                    >
+                        <svg
+                            class="animate-spin h-8 w-8 text-blue-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
                         >
-                            <!-- Weekday Name -->
-                            <td
-                                class="sticky left-0 z-10 p-2 font-semibold bg-white border"
-                            >
-                                {{ day.name }}
-                            </td>
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                            ></circle>
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v8H4z"
+                            ></path>
+                        </svg>
+                    </div>
 
-                            <!-- Hour Slots -->
-                            <td
-                                v-for="hour in hours"
-                                :key="hour"
-                                class="p-1 text-center border whitespace-nowrap"
-                                @click="
-                                    timetableMap[day.date]?.[hour] &&
-                                    viewControlSheet(
-                                        timetableMap[day.date][hour][0]
-                                            .mass_prod,
-                                        timetableMap[day.date][hour][0].furnace,
-                                    )
-                                "
-                            >
-                                <div
-                                    v-if="
-                                        timetableMap[day.date] &&
-                                        timetableMap[day.date][hour]
-                                    "
-                                    class="flex flex-wrap justify-center gap-1 py-1 rounded"
+                    <table class="w-full text-sm border-collapse table-auto">
+                        <!-- Header Row -->
+                        <thead class="sticky top-0 z-20 bg-slate-100">
+                            <tr>
+                                <th
+                                    class="sticky left-0 z-10 p-2 border bg-slate-100"
                                 >
-                                    <span
-                                        v-for="item in timetableMap[day.date][
-                                            hour
-                                        ]"
-                                        :key="
-                                            item.cycle_no + '-' + item.mass_prod
-                                        "
-                                        :style="{
-                                            backgroundColor: getColor(
-                                                item.cycle_no,
-                                            ),
-                                        }"
-                                        class="px-1.5 py-0.5 rounded text-xs text-white font-semibold truncate"
-                                        title="Click to view Control Sheet"
-                                    >
-                                        {{ item.cycle_no }}
-                                    </span>
-                                </div>
-                            </td>
+                                    Day
+                                </th>
+                                <th
+                                    v-for="hour in hours"
+                                    :key="hour"
+                                    class="p-2 text-center border"
+                                >
+                                    {{ hour.toString().padStart(2, "0") }}:00
+                                </th>
+                                <th class="p-2 text-center border">Date</th>
+                            </tr>
+                        </thead>
 
-                            <!-- Date -->
-                            <td class="p-2 font-semibold text-center border">
-                                {{ day.date }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <!-- Body Rows -->
+                        <tbody>
+                            <tr
+                                v-for="day in monthDays"
+                                :key="day.date"
+                                class="hover:bg-slate-50"
+                            >
+                                <!-- Weekday Name -->
+                                <td
+                                    class="sticky left-0 z-10 p-2 font-semibold bg-white border"
+                                >
+                                    {{ day.name }}
+                                </td>
+
+                                <!-- Hour Slots -->
+                                <td
+                                    v-for="hour in hours"
+                                    :key="hour"
+                                    class="p-1 text-center border whitespace-nowrap"
+                                    @click="
+                                        timetableMap[day.date]?.[hour] &&
+                                        viewControlSheet(
+                                            timetableMap[day.date][hour][0]
+                                                .mass_prod,
+                                            timetableMap[day.date][hour][0].furnace,
+                                        )
+                                    "
+                                >
+                                    <div
+                                        v-if="
+                                            timetableMap[day.date] &&
+                                            timetableMap[day.date][hour]
+                                        "
+                                        class="flex flex-wrap justify-center gap-1 py-1 rounded"
+                                    >
+                                        <span
+                                            v-for="item in timetableMap[day.date][
+                                                hour
+                                            ]"
+                                            :key="
+                                                item.cycle_no + '-' + item.mass_prod
+                                            "
+                                            :style="{
+                                                backgroundColor: getColor(
+                                                    item.cycle_no,
+                                                ),
+                                            }"
+                                            class="px-1.5 py-0.5 rounded text-xs text-white font-semibold truncate"
+                                            title="Click to view Control Sheet"
+                                        >
+                                            {{ item.cycle_no }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <!-- Date -->
+                                <td class="p-2 font-semibold text-center border">
+                                    {{ day.date }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
             </div>
 
             <!-- Modern HT Mass Pro Dashboard - Compact Version -->
@@ -1205,9 +1237,11 @@ const monthDays = computed(() => {
 
 // Reactive array for fetched production data
 const productionData = ref([]);
+const loadingTableGrid = ref(false);
 
 // Fetch production data from API (replace URL with actual endpoint)
 const fetchProductionData = async () => {
+    loadingTableGrid.value = true;
     try {
         const { data } = await axios.get("/api/mass-production/all-duplicates");
         // Assume data.data is the array of production records
@@ -1215,6 +1249,8 @@ const fetchProductionData = async () => {
         console.log("Production data: ", data);
     } catch (error) {
         console.error("Error fetching production data:", error);
+    } finally {
+        loadingTableGrid.value = false;
     }
 };
 

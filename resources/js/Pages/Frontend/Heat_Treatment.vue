@@ -1058,30 +1058,17 @@
                         <button
                             v-else
                             @click="finalize"
-                            :disabled="
-                                noMassProdData ||
-                                isExisting ||
-                                isExistingExcess ||
-                                !isDataShown ||
-                                isGrandTotalLimitReached
-                            "
+                            :disabled="isFinalizeDisabled"
                             :class="[
                                 'group relative w-full py-3.5 text-sm font-bold transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
-
-                                (noMassProdData || isExisting || isExistingExcess || !isDataShown || isGrandTotalLimitReached)
+                                isFinalizeDisabled
                                     ? 'bg-gradient-to-r from-red-600 to-red-700 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
                                     : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 focus:ring-cyan-400 text-white hover:shadow-teal-500/60 hover:shadow-2xl hover:scale-105 active:scale-95'
                             ]"
                         >
-                            <!-- Shine (only when enabled) -->
+                            <!-- Shine -->
                             <div
-                                v-if="!(
-                                    noMassProdData ||
-                                    isExisting ||
-                                    isExistingExcess ||
-                                    !isDataShown ||
-                                    isGrandTotalLimitReached
-                                )"
+                                v-if="!isFinalizeDisabled"
                                 class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
                             ></div>
 
@@ -1089,20 +1076,16 @@
 
                                 <!-- Disabled icon -->
                                 <svg
-                                    v-if="
-                                        noMassProdData ||
-                                        isExisting ||
-                                        isExistingExcess ||
-                                        !isDataShown ||
-                                        isGrandTotalLimitReached
-                                    "
+                                    v-if="isFinalizeDisabled"
                                     class="w-5 h-5 drop-shadow-md"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >
-                                    <path fill-rule="evenodd"
+                                    <path
+                                        fill-rule="evenodd"
                                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                        clip-rule="evenodd" />
+                                        clip-rule="evenodd"
+                                    />
                                 </svg>
 
                                 <!-- Active icon -->
@@ -1112,32 +1095,24 @@
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >
-                                    <path fill-rule="evenodd"
+                                    <path
+                                        fill-rule="evenodd"
                                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd" />
+                                        clip-rule="evenodd"
+                                    />
                                 </svg>
 
-                                <!-- Button Label -->
+                                <!-- Label -->
                                 <span class="drop-shadow-md">
-                                    {{
-                                        noMassProdData
-                                            ? 'NO MASS PROD DATA'
-                                            : isExisting || isExistingExcess
-                                                ? 'LAYER OCCUPIED'
-                                                : !isDataShown
-                                                    ? 'SHOW DATA FIRST'
-                                                    : isGrandTotalLimitReached
-                                                        ? 'LIMIT REACHED'
-                                                        : 'SUBMIT DATA'
-                                    }}
+                                    {{ finalizeLabel }}
                                 </span>
                             </span>
 
-                            <!-- Pulse for disabled -->
+                            <!-- Disabled Pulse -->
                             <div
-                                v-if="noMassProdData || isExisting || isExistingExcess || !isDataShown || isGrandTotalLimitReached"
-                                class="absolute inset-0 bg-red-400 opacity-10 animate-pulse">
-                            </div>
+                                v-if="isFinalizeDisabled"
+                                class="absolute inset-0 bg-red-400 opacity-10 animate-pulse"
+                            ></div>
                         </button>
 
 
@@ -1742,10 +1717,43 @@
                         </button>
                         <button
                             @click="saveToDatabase"
-                            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                            :disabled="isSaving"
+                            :class="[
+                                'flex items-center px-4 py-2 text-sm font-medium text-white rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-offset-1',
+                                isSaving
+                                    ? 'bg-blue-400 cursor-not-allowed'
+                                    : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+                            ]"
                         >
-                            Proceed
-                            <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
+                            <span v-if="!isSaving" class="flex items-center">
+                                Proceed
+                                <img src="/photo/arrow_proceed.png" alt="Proceed" class="w-4 h-4 ml-2">
+                            </span>
+
+                            <span v-else class="flex items-center gap-2">
+                                <svg
+                                    class="w-4 h-4 animate-spin"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        class="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        stroke-width="4"
+                                    ></circle>
+                                    <path
+                                        class="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v8H4z"
+                                    ></path>
+                                </svg>
+
+                                Saving...
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -1869,6 +1877,7 @@ const isExisting = ref(false);
 const isExisting_2ndGBDP = ref(false);
 const isExistingExcess = ref(false);
 const noMassProdData = ref(false);
+const isSaving = ref(false);
 //Dev Controls ----------------- Allow Commands
 
 const heatTreatmentInformationDetected = ref(false);
@@ -2015,6 +2024,22 @@ watch(
 
 const activate2ndGBDP = computed(() => {
     return firstSecondGBDP_models.value.includes(mpcs.selectedModel);
+});
+
+const isFinalizeDisabled = computed(() =>
+    noMassProdData.value ||
+    isExisting.value ||
+    isExistingExcess.value ||
+    !isDataShown.value ||
+    isGrandTotalLimitReached.value
+);
+
+const finalizeLabel = computed(() => {
+    if (noMassProdData.value) return "NO MASS PROD DATA";
+    if (isExisting.value || isExistingExcess.value) return "LAYER OCCUPIED";
+    if (!isDataShown.value) return "SHOW DATA FIRST";
+    if (isGrandTotalLimitReached.value) return "LIMIT REACHED";
+    return "SUBMIT DATA";
 });
 
 
@@ -3220,6 +3245,7 @@ const finalize = () => {
 }
 
 const saveToDatabase = async () => {
+    isSaving.value = true;
     // Determine layer key
     const layerKey = mpcs.selectedLayer === '9.5' ? 'layer_9_5' : `layer_${mpcs.selectedLayer}`;
 
@@ -3313,6 +3339,7 @@ const saveToDatabase = async () => {
             payload: error.response?.data ?? null,
         }, "saveToDatabase", "Failed to save data. Please try again.");
     } finally {
+        isSaving.value = false;
         clearAllAfterSave();
         await getMassProdData();
         await fetchExistingLayers();
