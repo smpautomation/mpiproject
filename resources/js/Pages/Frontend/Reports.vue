@@ -8654,7 +8654,7 @@ const checkApprovalStates = async () => {
 };
 
 const evaluateAllRejectReasons = async () => {
-    //console.log('Have already entered Evalation for Reject reasons...');
+    console.log('Have already entered Evalation for Reject reasons...');
 
     // force some async delay for testing
     await new Promise((res) => setTimeout(res, 100));
@@ -8690,7 +8690,7 @@ const evaluateAllRejectReasons = async () => {
 
         //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
 
-        //console.log('Evaluating rejection reasons part2...');
+        console.log('Evaluating rejection reasons part2...');
 
         if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
             //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
