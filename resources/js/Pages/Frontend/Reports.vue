@@ -3157,7 +3157,7 @@
                                     state.user.access_type === 'Automation')
                             "
                             @click="saveReport"
-                            class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95"
+                            class="px-4 py-2 mt-4 text-sm font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95"
                         >
                             {{
                                 reportExistingSMPJudgement !== null
@@ -3176,7 +3176,7 @@
                                     selectedFurnace,
                                 )
                             "
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY ADDITIONAL
                         </button>
@@ -3188,7 +3188,7 @@
                                     report_isFinalized,
                                 )
                             "
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
                             View PDF Report
                         </button>
@@ -3203,7 +3203,7 @@
                                 !isFromApproval_prepared
                             "
                             @click="exitReport()"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK
                         </button>
@@ -3214,7 +3214,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL
                         </button>
@@ -3225,7 +3225,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction_checked"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL (Checked)
                         </button>
@@ -3236,7 +3236,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction_prepared"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL (Prepared)
                         </button>
@@ -3244,7 +3244,7 @@
                         <button
                             v-if="isFromViewList && !isFromApproval"
                             @click="$inertia.visit('/view')"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO VIEW LIST
                         </button>
@@ -3252,7 +3252,7 @@
                         <button
                             v-if="isFromControlSheet && !isFromApproval"
                             @click="backToControlSheet"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO CONTROL SHEET
                         </button>
@@ -3264,7 +3264,7 @@
                                     showModalUndoHistory = true;
                                 }
                             "
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             STAMP UNDO HISTORY
                         </button>
@@ -3272,7 +3272,7 @@
                         <button
                             v-if="!isBhSegFormat && showBHDataSeg_default"
                             @click="applyBhSegFormatLayout"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY BH DATA SEG FORMAT
                         </button>
@@ -3280,7 +3280,7 @@
                         <button
                             v-else-if="showBHDataSeg_default"
                             @click="cancelBhSegFormatLayout"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             CANCEL BH DATA SEG FORMAT
                         </button>
@@ -8698,7 +8698,7 @@ const evaluateAllRejectReasons = async () => {
         }
 
         if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-            //console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
+            console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
             noteReasonForReject.value.push("- HIGH BR");
         }
 
