@@ -7991,7 +7991,7 @@ const showReportData = async () => {
             ...(Array.isArray(bhSeg.result3rd) ? bhSeg.result3rd : []),
         );
 
-        console.log("Entering Evalation for Reject reasons...");
+        console.log("Entering Evaluation for Reject reasons...");
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
@@ -8699,7 +8699,7 @@ const evaluateAllRejectReasons = async () => {
 
         if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
             console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
-            noteReasonForReject.value.push("- HIGH BR");
+            //noteReasonForReject.value.push("- HIGH BR");
         }
 
         if (reportihcMinimum.value < inspectioniHcStandard.value) {
