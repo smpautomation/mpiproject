@@ -8766,10 +8766,24 @@ const addCarmark = async () => {
 };
 
 const finalizeReport = async (serial, isFinalized) => {
-    console.log("isFInalized: ", isFinalized);
+    console.log("isFinalized: ", isFinalized);
     if (!isFinalized) {
-        await userFinalizedLogging(`has finalized report serial: ${serial}`);
+        try {
+            const responseFinalize = await axios.patch(
+                `/api/reportdata/${serial}`,
+                {
+                    is_finalized: 1,
+                },
+            );
+            await userFinalizedLogging(
+                `has finalized report serial: ${serial}`,
+            );
+            //console.log('[Finalize Report] Response:', responseFinalize.data);
+        } catch (error) {
+            console.error("[Finalize Report] Error finalizing report:", error);
+        }
     }
+
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, "_blank");
 };
 
