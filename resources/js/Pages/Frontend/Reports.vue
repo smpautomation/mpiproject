@@ -3176,7 +3176,7 @@
                                     selectedFurnace,
                                 )
                             "
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY ADDITIONAL
                         </button>
@@ -3188,7 +3188,7 @@
                                     report_isFinalized,
                                 )
                             "
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
                             View PDF Report
                         </button>
@@ -3203,7 +3203,7 @@
                                 !isFromApproval_prepared
                             "
                             @click="exitReport()"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK
                         </button>
@@ -3214,7 +3214,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL
                         </button>
@@ -3225,7 +3225,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction_checked"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL (Checked)
                         </button>
@@ -3236,7 +3236,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction_prepared"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL (Prepared)
                         </button>
@@ -3244,17 +3244,16 @@
                         <button
                             v-if="isFromViewList && !isFromApproval"
                             @click="$inertia.visit('/view')"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO VIEW LIST
                         </button>
 
                         <button
-                            v-if="isFromControlSheet && !isFromApproval"
-                            @click="backToControlSheet"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            @click="goToControlSheet"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white rounded-lg shadow-md bg-cyan-700 text-md hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-900"
                         >
-                            BACK TO CONTROL SHEET
+                            VIEW CONTROL SHEET
                         </button>
 
                         <button
@@ -3264,7 +3263,7 @@
                                     showModalUndoHistory = true;
                                 }
                             "
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             STAMP UNDO HISTORY
                         </button>
@@ -3280,7 +3279,7 @@
                         <button
                             v-else-if="showBHDataSeg_default"
                             @click="cancelBhSegFormatLayout"
-                            class="px-4 py-2 text-sm mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             CANCEL BH DATA SEG FORMAT
                         </button>
@@ -6824,7 +6823,7 @@ const fetchAllData = async () => {
                 );
             }
             if (ngiHc.value > 0) {
-                rejectOKNG.value.push("iHc " + reject + "  ");
+                rejectOKNG.value.push(reject + " iHc" + "  ");
                 addRejectLotRemarks(lotReject);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6832,7 +6831,7 @@ const fetchAllData = async () => {
                 rejectInstruction.value = perform;
             }
             if (ngiHk.value > 0) {
-                rejectOKNG.value.push("iHk " + reject + "  ");
+                rejectOKNG.value.push(reject + " iHk" + "  ");
                 addRejectLotRemarks(lotReject);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6840,7 +6839,7 @@ const fetchAllData = async () => {
                 rejectInstruction.value = perform;
             }
             if (ngBHMax.value > 0) {
-                rejectOKNG.value.push("BHMax " + reject + "  ");
+                rejectOKNG.value.push(reject + " BHMax" + "  ");
                 addRejectLotRemarks(lotReject);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6848,7 +6847,7 @@ const fetchAllData = async () => {
             }
             if (ngiHr95.value > 0) {
                 //noteReasonForReject.value.push('- N.G Hr95');
-                rejectOKNG.value.push("Hr95 " + hold + "  ");
+                rejectOKNG.value.push(hold + " Hr95" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6856,28 +6855,28 @@ const fetchAllData = async () => {
             }
             if (ngiHr98.value > 0) {
                 //noteReasonForReject.value.push('- N.G Hr98');
-                rejectOKNG.value.push("Hr98 " + hold + "  ");
+                rejectOKNG.value.push(hold + " Hr98" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
             }
             if (ngiHciHk.value > 0) {
-                rejectOKNG.value.push("iHciHk " + hold + "  ");
+                rejectOKNG.value.push(hold + " iHciHk" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
             }
             if (ngBr4pai.value > 0) {
-                rejectOKNG.value.push("Br4pai " + hold + "  ");
+                rejectOKNG.value.push(hold + " Br4pai" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
             }
             if (ngbHc.value > 0) {
-                rejectOKNG.value.push("bHc " + hold + "  ");
+                rejectOKNG.value.push(hold + " bHc" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -8654,7 +8653,7 @@ const checkApprovalStates = async () => {
 };
 
 const evaluateAllRejectReasons = async () => {
-    console.log('Have already entered Evalation for Reject reasons...');
+    console.log("Have already entered Evalation for Reject reasons...");
 
     // force some async delay for testing
     await new Promise((res) => setTimeout(res, 100));
@@ -8690,7 +8689,7 @@ const evaluateAllRejectReasons = async () => {
 
         //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
 
-        console.log('Evaluating rejection reasons part2...');
+        console.log("Evaluating rejection reasons part2...");
 
         if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
             //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
@@ -8698,7 +8697,9 @@ const evaluateAllRejectReasons = async () => {
         }
 
         if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-            console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
+            console.log(
+                `HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`,
+            );
             //noteReasonForReject.value.push("- HIGH BR");
         }
 
@@ -8838,7 +8839,7 @@ const backToApprovalFunction_prepared = () => {
     });
 };
 
-const backToControlSheet = () => {
+const goToControlSheet = () => {
     //console.log('Navigating to report with serial:', serial);
     Inertia.visit("/control_sheet", {
         method: "get", // You can keep 'get' since we are not modifying any data
