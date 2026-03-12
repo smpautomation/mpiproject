@@ -1907,6 +1907,245 @@
                                             </td>
                                         </tr>
                                     </template>
+
+
+
+
+
+
+
+                                    <template
+                                        v-if="
+                                            showTsiData &&
+                                            noteReasonForReject.includes(
+                                                '- N.G iHc',
+                                            )
+                                        "
+                                    >
+                                        <!-- TSI Data Row 1: HASI-2 Data -->
+                                        <tr class="text-center">
+                                            <th
+                                                colspan="2"
+                                                rowspan="2"
+                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
+                                            >
+                                                HASI-2 Data
+                                            </th>
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
+                                            >
+                                                Sample with < 23000 Oe
+                                            </td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
+                                            >
+                                                <div
+                                                    class="flex flex-col gap-[6px] items-center"
+                                                >
+                                                    <div
+                                                        v-for="i in reportTsi_samplesQty"
+                                                        :key="
+                                                            'sample-remarks-' +
+                                                            i
+                                                        "
+                                                        class="flex items-center gap-1"
+                                                    >
+                                                        {{ i + ")" }}
+                                                        <input
+                                                            type="text"
+                                                            v-model="
+                                                                reportTsi_samples[
+                                                                    i - 1
+                                                                ]
+                                                            "
+                                                            @input="
+                                                                reportTsi_samples[
+                                                                    i - 1
+                                                                ] =
+                                                                    reportTsi_samples[
+                                                                        i - 1
+                                                                    ]?.toUpperCase()
+                                                            "
+                                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                            placeholder="12AB"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- TSI Data Row 2: GX data -->
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div class="flex items-center">
+                                                    <p>iHc (Oe) GX</p>
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
+                                            >
+                                               <p>23000</p>
+                                            </td>
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div
+                                                    class="flex flex-col gap-[6px] items-center"
+                                                >
+                                                    <div
+                                                        v-for="i in reportTsi_samplesQty"
+                                                        :key="'result-' + i"
+                                                        class="flex items-center gap-1"
+                                                    >
+                                                        {{ i + ")" }}
+                                                        <input
+                                                            type="number"
+                                                            v-model="
+                                                                reportTsi_GxResults[
+                                                                    i - 1
+                                                                ]
+                                                            "
+                                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                            placeholder="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- TSI Data Row 3: GY data -->
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div class="flex items-center">
+                                                    <p>iHc (Oe) GY</p>
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
+                                            >
+                                               <p>23000</p>
+                                            </td>
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div
+                                                    class="flex flex-col gap-[6px] items-center"
+                                                >
+                                                    <div
+                                                        v-for="i in reportTsi_samplesQty"
+                                                        :key="'result-' + i"
+                                                        class="flex items-center gap-1"
+                                                    >
+                                                        {{ i + ")" }}
+                                                        <input
+                                                            type="number"
+                                                            v-model="
+                                                                reportTsi_GyResults[
+                                                                    i - 1
+                                                                ]
+                                                            "
+                                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                            placeholder="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+
+
+                                    <template
+                                        v-if="
+                                            showTsiData_default &&
+                                            noteReasonForReject.includes(
+                                                '- N.G iHc',
+                                            )
+                                        "
+                                    >
+                                        <tr class="text-center">
+                                            <th
+                                                colspan="2"
+                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
+                                            >
+                                                VT Data
+                                            </th>
+                                            <td
+                                                colspan="3"
+                                                class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
+                                            >
+                                                Enter the number of samples
+                                                first and then save
+                                            </td>
+                                            <th
+                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
+                                            >
+                                                Result
+                                            </th>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div class="flex items-center">
+                                                    <input
+                                                        type="number"
+                                                        v-model="reportVT_temp"
+                                                        name="stdDev"
+                                                        class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                    />
+                                                    <span
+                                                        class="ml-1 align-baseline"
+                                                        >°C</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
+                                            >
+                                                iHc (kOe) &#8805;
+                                                <input
+                                                    type="number"
+                                                    v-model="reportVT_iHc"
+                                                    name="stdDev"
+                                                    class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                                (kOe)
+                                            </td>
+                                            <td
+                                                colspan="3"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                Quantity of Samples:<input
+                                                    type="number"
+                                                    v-model="
+                                                        reportTsi_samplesQty
+                                                    "
+                                                    name="stdDev"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                {{ reportVT_remarks }}
+                                            </td>
+                                        </tr>
+                                    </template>
+
+
+
+
+
+
                                     <tr
                                         v-show="showCpkFrom_iHc"
                                         class="bg-blue-300"
@@ -4673,7 +4912,7 @@ const { state } = useAuth();
 const checkAuthentication = async () => {
     try {
         const start = Date.now();
-        const timeout = 500; // 5 seconds
+        const timeout = 1000; // 10 seconds
 
         while (!state.user) {
             if (Date.now() - start > timeout) {
@@ -4897,6 +5136,9 @@ const showBHDataSeg_default = ref(false);
 const showBHData = ref(false);
 const showBHData_default = ref(false);
 const showROB = ref(false);
+const showTsiData = ref(false);
+const showTsiData_default = ref(false);
+
 
 const isLoading = ref(true);
 
@@ -4946,6 +5188,11 @@ const reportVT_samples = ref([]);
 const reportVT_sampleRemarks = ref([]);
 const reportVT_iHcResults = ref([]);
 const reportVT_sampleQtyConfirmation = ref(false);
+
+const reportTsi_samplesQty = ref();
+const reportTsi_GxResults = ref([]);
+const reportTsi_GyResults = ref([]);
+const reportTsi_samples = ref([]);
 
 const reportCpkFrom_iHc_StdDev = ref(0);
 const reportCpkFrom_iHc_Cpk = ref(0);
@@ -5613,6 +5860,7 @@ const secAdd_ng4paila = ref(null);
 //Variables for ave max min ng counter end
 
 const specialModelsForGxFormat = ref(["ROB0C79G"]); //ROB MODEL SPECIAL GX
+const specialModelsForTsiFormat = ref(["TSI0817G"]); //TSI iHc below target + 500 Oe or NG iHc
 
 //UI Dynamic Color adjustments
 
@@ -6334,7 +6582,8 @@ const checkSpecialJudgement = async () => {
 
     const model = jhCurveActualModel.value;
 
-    const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");
+    const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");//goback
+    const hasIhcBelowTarget = noteReasonForReject.value.includes("- iHc Below Target+500 Oe");
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
 
     // BH SEG Data
@@ -6348,6 +6597,11 @@ const checkSpecialJudgement = async () => {
         showBHDataSeg.value = false;
         showBHDataSeg_default.value = true;
         //console.log('[BH] Showing default BH layout (sample qty = 0)');
+    }
+
+    if (specialModelsForGxFormat.value.includes(model)) {
+        showGX.value = true;
+        //console.log("[GX] GX enabled");
     }
 
     if (!hasNGihc) return;
@@ -6370,6 +6624,20 @@ const checkSpecialJudgement = async () => {
         showVTData.value = false;
         showVTData_default.value = true;
         console.log("[VT] Showing default VT layout (sample qty = 0)");
+    }
+
+    //TSI Data
+    if (
+        specialModelsForTsiFormat.value.includes(model) &&
+        reportVT_samplesQty.value > 0
+    ) {
+        showTsiData.value = true;
+        showTsiData_default.value = false;
+        //console.log("[VT] Showing VT Data (sample qty > 0)");
+    } else if (specialModelsForTsiFormat.value.includes(model)) {
+        showTsiData.value = false;
+        showTsiData_default.value = true;
+        //console.log("[VT] Showing default VT layout (sample qty = 0)");
     }
 
     // BH Data
@@ -6400,16 +6668,17 @@ const checkSpecialJudgement = async () => {
         showCpkFrom_iHc.value = true;
         //console.log('[CPK] CPK enabled');
     }
-    if (
-        MODELS_SHOW_GX.value.includes(model) ||
-        specialModelsForGxFormat.value.includes(model)
-    ) {
+    if (MODELS_SHOW_GX.value.includes(model)) {
         showGX.value = true;
-        console.log("[GX] GX enabled");
+        //console.log("[GX] GX enabled");
     }
     if (MODELS_SHOW_ROB.value.includes(model)) {
         showROB.value = true;
         //console.log('[ROB] ROB enabled');
+    }
+    if (specialModelsForTsiFormat.value.includes(model)) {
+        showTsiData.value = true;
+        //console.log("[GX] GX enabled");
     }
 
     //console.log('--- Logic Evaluation End ---');
