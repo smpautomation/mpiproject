@@ -1907,6 +1907,245 @@
                                             </td>
                                         </tr>
                                     </template>
+
+
+
+
+
+
+
+                                    <template
+                                        v-if="
+                                            showTsiData &&
+                                            noteReasonForReject.includes(
+                                                '- N.G iHc',
+                                            )
+                                        "
+                                    >
+                                        <!-- TSI Data Row 1: HASI-2 Data -->
+                                        <tr class="text-center">
+                                            <th
+                                                colspan="2"
+                                                rowspan="2"
+                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
+                                            >
+                                                HASI-2 Data
+                                            </th>
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
+                                            >
+                                                Sample with < 23000 Oe
+                                            </td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
+                                            >
+                                                <div
+                                                    class="flex flex-col gap-[6px] items-center"
+                                                >
+                                                    <div
+                                                        v-for="i in reportTsi_samplesQty"
+                                                        :key="
+                                                            'sample-remarks-' +
+                                                            i
+                                                        "
+                                                        class="flex items-center gap-1"
+                                                    >
+                                                        {{ i + ")" }}
+                                                        <input
+                                                            type="text"
+                                                            v-model="
+                                                                reportTsi_samples[
+                                                                    i - 1
+                                                                ]
+                                                            "
+                                                            @input="
+                                                                reportTsi_samples[
+                                                                    i - 1
+                                                                ] =
+                                                                    reportTsi_samples[
+                                                                        i - 1
+                                                                    ]?.toUpperCase()
+                                                            "
+                                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                            placeholder="12AB"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- TSI Data Row 2: GX data -->
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div class="flex items-center">
+                                                    <p>iHc (Oe) GX</p>
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
+                                            >
+                                               <p>23000</p>
+                                            </td>
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div
+                                                    class="flex flex-col gap-[6px] items-center"
+                                                >
+                                                    <div
+                                                        v-for="i in reportTsi_samplesQty"
+                                                        :key="'result-' + i"
+                                                        class="flex items-center gap-1"
+                                                    >
+                                                        {{ i + ")" }}
+                                                        <input
+                                                            type="number"
+                                                            v-model="
+                                                                reportTsi_GxResults[
+                                                                    i - 1
+                                                                ]
+                                                            "
+                                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                            placeholder="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- TSI Data Row 3: GY data -->
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div class="flex items-center">
+                                                    <p>iHc (Oe) GY</p>
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
+                                            >
+                                               <p>23000</p>
+                                            </td>
+                                            <td
+                                                colspan="4"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div
+                                                    class="flex flex-col gap-[6px] items-center"
+                                                >
+                                                    <div
+                                                        v-for="i in reportTsi_samplesQty"
+                                                        :key="'result-' + i"
+                                                        class="flex items-center gap-1"
+                                                    >
+                                                        {{ i + ")" }}
+                                                        <input
+                                                            type="number"
+                                                            v-model="
+                                                                reportTsi_GyResults[
+                                                                    i - 1
+                                                                ]
+                                                            "
+                                                            class="w-[6.5rem] h-[1.5rem] py-[14px] text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out placeholder-opacity-30 placeholder-gray-500"
+                                                            placeholder="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+
+
+                                    <template
+                                        v-if="
+                                            showTsiData_default &&
+                                            noteReasonForReject.includes(
+                                                '- N.G iHc',
+                                            )
+                                        "
+                                    >
+                                        <tr class="text-center">
+                                            <th
+                                                colspan="2"
+                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
+                                            >
+                                                VT Data
+                                            </th>
+                                            <td
+                                                colspan="3"
+                                                class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
+                                            >
+                                                Enter the number of samples
+                                                first and then save
+                                            </td>
+                                            <th
+                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
+                                            >
+                                                Result
+                                            </th>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <div class="flex items-center">
+                                                    <input
+                                                        type="number"
+                                                        v-model="reportVT_temp"
+                                                        name="stdDev"
+                                                        class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                    />
+                                                    <span
+                                                        class="ml-1 align-baseline"
+                                                        >°C</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
+                                            >
+                                                iHc (kOe) &#8805;
+                                                <input
+                                                    type="number"
+                                                    v-model="reportVT_iHc"
+                                                    name="stdDev"
+                                                    class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                                (kOe)
+                                            </td>
+                                            <td
+                                                colspan="3"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                Quantity of Samples:<input
+                                                    type="number"
+                                                    v-model="
+                                                        reportTsi_samplesQty
+                                                    "
+                                                    name="stdDev"
+                                                    class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                {{ reportVT_remarks }}
+                                            </td>
+                                        </tr>
+                                    </template>
+
+
+
+
+
+
                                     <tr
                                         v-show="showCpkFrom_iHc"
                                         class="bg-blue-300"
@@ -3157,7 +3396,7 @@
                                     state.user.access_type === 'Automation')
                             "
                             @click="saveReport"
-                            class="px-6 py-4 mt-4 font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95"
+                            class="px-4 py-2 mt-4 text-sm font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95"
                         >
                             {{
                                 reportExistingSMPJudgement !== null
@@ -3176,7 +3415,7 @@
                                     selectedFurnace,
                                 )
                             "
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY ADDITIONAL
                         </button>
@@ -3188,7 +3427,7 @@
                                     report_isFinalized,
                                 )
                             "
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
                             View PDF Report
                         </button>
@@ -3203,7 +3442,7 @@
                                 !isFromApproval_prepared
                             "
                             @click="exitReport()"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK
                         </button>
@@ -3214,7 +3453,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL
                         </button>
@@ -3225,7 +3464,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction_checked"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL (Checked)
                         </button>
@@ -3236,7 +3475,7 @@
                                 (!isFromViewList || !isFromControlSheet)
                             "
                             @click="backToApprovalFunction_prepared"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO APPROVAL (Prepared)
                         </button>
@@ -3244,17 +3483,16 @@
                         <button
                             v-if="isFromViewList && !isFromApproval"
                             @click="$inertia.visit('/view')"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO VIEW LIST
                         </button>
 
                         <button
-                            v-if="isFromControlSheet && !isFromApproval"
-                            @click="backToControlSheet"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            @click="goToControlSheet"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white rounded-lg shadow-md bg-cyan-700 text-md hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-900"
                         >
-                            BACK TO CONTROL SHEET
+                            VIEW CONTROL SHEET
                         </button>
 
                         <button
@@ -3264,7 +3502,7 @@
                                     showModalUndoHistory = true;
                                 }
                             "
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             STAMP UNDO HISTORY
                         </button>
@@ -3272,7 +3510,7 @@
                         <button
                             v-if="!isBhSegFormat && showBHDataSeg_default"
                             @click="applyBhSegFormatLayout"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY BH DATA SEG FORMAT
                         </button>
@@ -3280,7 +3518,7 @@
                         <button
                             v-else-if="showBHDataSeg_default"
                             @click="cancelBhSegFormatLayout"
-                            class="px-6 py-4 mt-4 ml-5 font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-orange-700 transition duration-300 ease-in-out transform border border-orange-700 shadow-xl rounded-xl hover:text-white hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             CANCEL BH DATA SEG FORMAT
                         </button>
@@ -4674,7 +4912,7 @@ const { state } = useAuth();
 const checkAuthentication = async () => {
     try {
         const start = Date.now();
-        const timeout = 500; // 5 seconds
+        const timeout = 1000; // 10 seconds
 
         while (!state.user) {
             if (Date.now() - start > timeout) {
@@ -4898,6 +5136,9 @@ const showBHDataSeg_default = ref(false);
 const showBHData = ref(false);
 const showBHData_default = ref(false);
 const showROB = ref(false);
+const showTsiData = ref(false);
+const showTsiData_default = ref(false);
+
 
 const isLoading = ref(true);
 
@@ -4947,6 +5188,11 @@ const reportVT_samples = ref([]);
 const reportVT_sampleRemarks = ref([]);
 const reportVT_iHcResults = ref([]);
 const reportVT_sampleQtyConfirmation = ref(false);
+
+const reportTsi_samplesQty = ref();
+const reportTsi_GxResults = ref([]);
+const reportTsi_GyResults = ref([]);
+const reportTsi_samples = ref([]);
 
 const reportCpkFrom_iHc_StdDev = ref(0);
 const reportCpkFrom_iHc_Cpk = ref(0);
@@ -5614,6 +5860,7 @@ const secAdd_ng4paila = ref(null);
 //Variables for ave max min ng counter end
 
 const specialModelsForGxFormat = ref(["ROB0C79G"]); //ROB MODEL SPECIAL GX
+const specialModelsForTsiFormat = ref(["TSI0817G"]); //TSI iHc below target + 500 Oe or NG iHc
 
 //UI Dynamic Color adjustments
 
@@ -6335,7 +6582,8 @@ const checkSpecialJudgement = async () => {
 
     const model = jhCurveActualModel.value;
 
-    const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");
+    const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");//goback
+    const hasIhcBelowTarget = noteReasonForReject.value.includes("- iHc Below Target+500 Oe");
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
 
     // BH SEG Data
@@ -6349,6 +6597,11 @@ const checkSpecialJudgement = async () => {
         showBHDataSeg.value = false;
         showBHDataSeg_default.value = true;
         //console.log('[BH] Showing default BH layout (sample qty = 0)');
+    }
+
+    if (specialModelsForGxFormat.value.includes(model)) {
+        showGX.value = true;
+        //console.log("[GX] GX enabled");
     }
 
     if (!hasNGihc) return;
@@ -6371,6 +6624,20 @@ const checkSpecialJudgement = async () => {
         showVTData.value = false;
         showVTData_default.value = true;
         console.log("[VT] Showing default VT layout (sample qty = 0)");
+    }
+
+    //TSI Data
+    if (
+        specialModelsForTsiFormat.value.includes(model) &&
+        reportVT_samplesQty.value > 0
+    ) {
+        showTsiData.value = true;
+        showTsiData_default.value = false;
+        //console.log("[VT] Showing VT Data (sample qty > 0)");
+    } else if (specialModelsForTsiFormat.value.includes(model)) {
+        showTsiData.value = false;
+        showTsiData_default.value = true;
+        //console.log("[VT] Showing default VT layout (sample qty = 0)");
     }
 
     // BH Data
@@ -6401,16 +6668,17 @@ const checkSpecialJudgement = async () => {
         showCpkFrom_iHc.value = true;
         //console.log('[CPK] CPK enabled');
     }
-    if (
-        MODELS_SHOW_GX.value.includes(model) ||
-        specialModelsForGxFormat.value.includes(model)
-    ) {
+    if (MODELS_SHOW_GX.value.includes(model)) {
         showGX.value = true;
-        console.log("[GX] GX enabled");
+        //console.log("[GX] GX enabled");
     }
     if (MODELS_SHOW_ROB.value.includes(model)) {
         showROB.value = true;
         //console.log('[ROB] ROB enabled');
+    }
+    if (specialModelsForTsiFormat.value.includes(model)) {
+        showTsiData.value = true;
+        //console.log("[GX] GX enabled");
     }
 
     //console.log('--- Logic Evaluation End ---');
@@ -6824,7 +7092,7 @@ const fetchAllData = async () => {
                 );
             }
             if (ngiHc.value > 0) {
-                rejectOKNG.value.push("iHc " + reject + "  ");
+                rejectOKNG.value.push(reject + " iHc" + "  ");
                 addRejectLotRemarks(lotReject);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6832,7 +7100,7 @@ const fetchAllData = async () => {
                 rejectInstruction.value = perform;
             }
             if (ngiHk.value > 0) {
-                rejectOKNG.value.push("iHk " + reject + "  ");
+                rejectOKNG.value.push(reject + " iHk" + "  ");
                 addRejectLotRemarks(lotReject);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6840,7 +7108,7 @@ const fetchAllData = async () => {
                 rejectInstruction.value = perform;
             }
             if (ngBHMax.value > 0) {
-                rejectOKNG.value.push("BHMax " + reject + "  ");
+                rejectOKNG.value.push(reject + " BHMax" + "  ");
                 addRejectLotRemarks(lotReject);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6848,7 +7116,7 @@ const fetchAllData = async () => {
             }
             if (ngiHr95.value > 0) {
                 //noteReasonForReject.value.push('- N.G Hr95');
-                rejectOKNG.value.push("Hr95 " + hold + "  ");
+                rejectOKNG.value.push(hold + " Hr95" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -6856,28 +7124,28 @@ const fetchAllData = async () => {
             }
             if (ngiHr98.value > 0) {
                 //noteReasonForReject.value.push('- N.G Hr98');
-                rejectOKNG.value.push("Hr98 " + hold + "  ");
+                rejectOKNG.value.push(hold + " Hr98" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
             }
             if (ngiHciHk.value > 0) {
-                rejectOKNG.value.push("iHciHk " + hold + "  ");
+                rejectOKNG.value.push(hold + " iHciHk" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
             }
             if (ngBr4pai.value > 0) {
-                rejectOKNG.value.push("Br4pai " + hold + "  ");
+                rejectOKNG.value.push(hold + " Br4pai" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
             }
             if (ngbHc.value > 0) {
-                rejectOKNG.value.push("bHc " + hold + "  ");
+                rejectOKNG.value.push(hold + " bHc" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -7991,7 +8259,7 @@ const showReportData = async () => {
             ...(Array.isArray(bhSeg.result3rd) ? bhSeg.result3rd : []),
         );
 
-        console.log("Entering Evalation for Reject reasons...");
+        console.log("Entering Evaluation for Reject reasons...");
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
@@ -8654,7 +8922,7 @@ const checkApprovalStates = async () => {
 };
 
 const evaluateAllRejectReasons = async () => {
-    //console.log('Have already entered Evalation for Reject reasons...');
+    console.log("Have already entered Evalation for Reject reasons...");
 
     // force some async delay for testing
     await new Promise((res) => setTimeout(res, 100));
@@ -8690,7 +8958,7 @@ const evaluateAllRejectReasons = async () => {
 
         //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
 
-        //console.log('Evaluating rejection reasons part2...');
+        console.log("Evaluating rejection reasons part2...");
 
         if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
             //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
@@ -8698,8 +8966,10 @@ const evaluateAllRejectReasons = async () => {
         }
 
         if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-            //console.log(`HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`);
-            noteReasonForReject.value.push("- HIGH BR");
+            console.log(
+                `HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`,
+            );
+            //noteReasonForReject.value.push("- HIGH BR");
         }
 
         if (reportihcMinimum.value < inspectioniHcStandard.value) {
@@ -8765,10 +9035,24 @@ const addCarmark = async () => {
 };
 
 const finalizeReport = async (serial, isFinalized) => {
-    console.log("isFInalized: ", isFinalized);
+    console.log("isFinalized: ", isFinalized);
     if (!isFinalized) {
-        await userFinalizedLogging(`has finalized report serial: ${serial}`);
+        try {
+            const responseFinalize = await axios.patch(
+                `/api/reportdata/${serial}`,
+                {
+                    is_finalized: 1,
+                },
+            );
+            await userFinalizedLogging(
+                `has finalized report serial: ${serial}`,
+            );
+            //console.log('[Finalize Report] Response:', responseFinalize.data);
+        } catch (error) {
+            console.error("[Finalize Report] Error finalizing report:", error);
+        }
     }
+
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, "_blank");
 };
 
@@ -8838,7 +9122,7 @@ const backToApprovalFunction_prepared = () => {
     });
 };
 
-const backToControlSheet = () => {
+const goToControlSheet = () => {
     //console.log('Navigating to report with serial:', serial);
     Inertia.visit("/control_sheet", {
         method: "get", // You can keep 'get' since we are not modifying any data

@@ -78,7 +78,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-start mt-8 gap-6">
+            <div class="flex justify-start gap-6 mt-8">
                 <div>
                     <button
                         @click="Inertia.visit('/massprod')"
@@ -100,13 +100,13 @@
                 </div>
 
                 <div>
-                    <button 
+                    <button
                         @click="viewSMPData"
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
                         >View SMP Data
                     </button>
                 </div>
-              
+
             </div>
         </div>
     </Frontend>

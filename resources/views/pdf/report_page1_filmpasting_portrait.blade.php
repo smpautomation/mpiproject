@@ -575,6 +575,7 @@
             <div class="table-cell">
                 @php
                     $showGX = $flags['showGX'] ?? false;
+                    $isSpecialGX = $flags['isSpecialGX'] ?? false;
                     $noteReasons = $noteReasonsSorted ?? [];
                     $hasNGihc = in_array('- N.G iHc', $noteReasons);
                     $gx = $modelData['gx'] ?? [];
@@ -621,24 +622,26 @@
 
                         {{-- iHc GM --}}
                         <tr>
-                            <td rowspan="{{ ($hasNGihc && $showGX) ? 2 : 1 }}">iHc (Oe)</td>
+                            <td rowspan="{{ ($showGX && ($hasNGihc || $isSpecialGX)) ? 2 : 1 }}">
+                                iHc (Oe)
+                            </td>
                             <td>
-                                @if($showGX && $hasNGihc)
+                                @if($showGX && ($hasNGihc || $isSpecialGX))
                                     GM
                                 @endif
-                                {{ $magneticProperty['ihcStandard'] ?? 'NA' }}
+                                {{ $magneticProperty['ihcStandard'] ?? '-' }}
                             </td>
-                            <td>{{ $magneticProperty['ihcAverage'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['ihcMaximum'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['ihcMinimum'] ?? 'NA' }}</td>
-                            <td>{{ $ihcVariance ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihcAverage'] ?? '-' }}</td>
+                            <td>{{ $magneticProperty['ihcMaximum'] ?? '-' }}</td>
+                            <td>{{ $magneticProperty['ihcMinimum'] ?? '-' }}</td>
+                            <td>{{ $ihcVariance ?? '-' }}</td>
                             @if($showROB)
                                 <td style="text-align: center;"></td>
                             @endif
                         </tr>
 
                         {{-- iHc GX --}}
-                        @if($showGX && $hasNGihc)
+                        @if($showGX && ($hasNGihc || $isSpecialGX))
                         <tr>
                             <td>GX {{ $gx['iHcStandard'] ?? '-' }}</td>
                             <td>{{ $gx['iHcAverage'] ?? '-' }}</td>
@@ -650,30 +653,30 @@
 
                         {{-- iHk GM --}}
                         <tr>
-                            <td rowspan="{{ ($hasNGihc && $showGX) ? 2 : 1 }}">iHk (Oe)</td>
+                            <td rowspan="{{ ($showGX && ($hasNGihc || $isSpecialGX)) ? 2 : 1 }}">iHk (Oe)</td>
                             <td>
-                                @if($showGX && $hasNGihc)
+                                @if($showGX && ($hasNGihc || $isSpecialGX))
                                     GM
                                 @endif
-                                {{ $magneticProperty['iHkStandard'] ?? 'NA' }}
+                                {{ $magneticProperty['ihkStandard'] ?? '-' }}
                             </td>
-                            <td>{{ $magneticProperty['iHkAverage'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['iHkMaximum'] ?? 'NA' }}</td>
-                            <td>{{ $magneticProperty['iHkMinimum'] ?? 'NA' }}</td>
-                            <td>{{ $ihkVariance ?? 'NA' }}</td>
+                            <td>{{ $magneticProperty['ihkAverage'] ?? '-' }}</td>
+                            <td>{{ $magneticProperty['ihkMaximum'] ?? '-' }}</td>
+                            <td>{{ $magneticProperty['ihkMinimum'] ?? '-' }}</td>
+                            <td>{{ $ihkVariance ?? '-' }}</td>
                             @if($showROB)
                                 <td style="text-align: center;"></td>
                             @endif
                         </tr>
 
                         {{-- iHk GX --}}
-                        @if($showGX && $hasNGihc)
+                        @if($showGX && ($hasNGihc || $isSpecialGX))
                         <tr>
                             <td>GX -</td>
-                            <td>{{ $gx['ihkAverage'] ?? '-' }}</td>
-                            <td>{{ $gx['ihkMaximum'] ?? '-' }}</td>
-                            <td>{{ $gx['ihkMinimum'] ?? '-' }}</td>
-                            <td>{{ $gx['ihkVariance'] ?? '-' }}</td>
+                            <td>{{ $gx['iHkAverage'] ?? '-' }}</td>
+                            <td>{{ $gx['iHkMaximum'] ?? '-' }}</td>
+                            <td>{{ $gx['iHkMinimum'] ?? '-' }}</td>
+                            <td>{{ $gx['iHkVariance'] ?? '-' }}</td>
                         </tr>
                         @endif
 

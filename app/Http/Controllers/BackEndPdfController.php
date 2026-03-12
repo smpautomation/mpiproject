@@ -79,7 +79,7 @@ class BackEndPdfController extends Controller
         $checkedByDate = null;
         $approvedByDate = null;
 
-        if(!empty($reportData->created_at)){
+        if (!empty($reportData->created_at)) {
             $reportDate = \Carbon\Carbon::parse($reportData->created_at)->format('Y-m-d');
         }
 
@@ -202,7 +202,7 @@ class BackEndPdfController extends Controller
                 'model'     => $addtnlModel,
                 'lot_no'    => $addtnlLot,
             ])->exists();
-            /*
+        /*
         if ($initialLotExists) {
             // Only proceed if initial lot exists
             if (BreaklotCoating::where([
@@ -421,7 +421,7 @@ class BackEndPdfController extends Controller
 
         //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp
 
-       if ($initialLotExists) {
+        if ($initialLotExists) {
             $secondGbdpCoatingData = BreaklotSecondCoating::where([
                 'mass_prod' => $massprod,
                 'layer'     => $layer,
@@ -494,7 +494,8 @@ class BackEndPdfController extends Controller
         $hasNGihc        = in_array('- N.G iHc', $noteReasons);
 
         $showCpkFrom_iHc = $hasNGihc && in_array($model, $MODELS_SHOW_CPK);
-        $showGX          = ($hasNGihc && in_array($model, $MODELS_SHOW_GX)) || in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
+        $showGX          = (($hasNGihc && in_array($model, $MODELS_SHOW_GX))) || in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
+        $isSpecialGX = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
         $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
 
         $showVTData         = false; // default to false
@@ -545,7 +546,7 @@ class BackEndPdfController extends Controller
         //Refactor: Sort the data by zone column --- 1/23/2026
         foreach ($nsaGroups as $setNo => $rows) {
             $nsaGroups[$setNo] = $rows->sort(function ($a, $b) {
-                $parse = function($zone) {
+                $parse = function ($zone) {
                     if (preg_match('/^(\d+)([A-Z]+)(\d+)$/i', $zone, $matches)) {
                         return [
                             'n1' => (int)$matches[1],
@@ -664,6 +665,7 @@ class BackEndPdfController extends Controller
                 'showVTData_default' => $showVTData_default,
                 'showCpkFrom_iHc' => $showCpkFrom_iHc,
                 'showGX' => $showGX,
+                'isSpecialGX' => $isSpecialGX,
                 'showBHData' => $showBHData,
                 'show1x1x1Data_withoutCorner' => $show1x1x1Data_withoutCorner,
                 'show1x1x1Data_Corner' => $show1x1x1Data_Corner,
