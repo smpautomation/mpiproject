@@ -56,7 +56,7 @@
                         </svg>
 
                         <span class="text-sm md:text-base">
-                            New here? Review the System User Guide before proceeding.
+                            Click here to see our system user guide.
                         </span>
                     </a>
                 </div>
