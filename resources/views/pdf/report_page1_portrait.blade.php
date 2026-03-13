@@ -893,6 +893,80 @@
                             </tr>
                         @endif
 
+                        @if ($flags['showTsi'])
+                            @php
+                                $tsi = $modelData['dTsi'] ?? [];
+                                $samples = $tsi['samples'] ?? [];
+                                $gxResults = $tsi['gx_results'] ?? [];
+                                $gyResults = $tsi['gy_results'] ?? [];
+                                $sampleCount = count($samples);
+
+                                $colCount = match (true) {
+                                    $sampleCount <= 3 => 3,
+                                    $sampleCount === 4 => 4,
+                                    default => 5,
+                                };
+
+                                $rowCount = ceil($sampleCount / $colCount);
+                            @endphp
+
+                            <tr>
+                                <th colspan="2" style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    HASI-2 Data
+                                </th>
+                                <th colspan="{{ $colCount }}" style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    Sample with &lt; 23000 Oe
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    iHc (Oe) GX
+                                </th>
+                                <th style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    23000
+                                </th>
+                                <td rowspan="2" colspan="{{ $colCount }}" style="padding: 0; border: 1px solid #000;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        @for ($i = 0; $i < $rowCount; $i++)
+                                            <tr>
+                                                @for ($j = 0; $j < $colCount; $j++)
+                                                    @php
+                                                        $index = $i * $colCount + $j;
+                                                        $sample = $samples[$index] ?? null;
+                                                        $gx = $gxResults[$index] ?? null;
+                                                        $gy = $gyResults[$index] ?? null;
+                                                    @endphp
+                                                    <td style="border: 1px solid #ccc; text-align: center; font-size: 9px;">
+                                                        @if ($sample)
+                                                            <div style="background-color: #f9f9f9; white-space: nowrap;">
+                                                                {{ $sample }}
+                                                            </div>
+                                                            <div style="border-top: 1px solid #ccc;">
+                                                                {{ $gx ?? '-' }} (GX)
+                                                            </div>
+                                                            <div style="border-top: 1px solid #ccc;">
+                                                                {{ $gy ?? '-' }} (GY)
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endfor
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    iHc (Oe) GY
+                                </th>
+                                <th style="text-align: center; background-color: #f0f0f0; border: 1px solid #000;">
+                                    23000
+                                </th>
+                            </tr>
+                        @endif
+
                         @if ($flags['showCpkFrom_iHc'])
                             @php
                                 $ihcCpk = $modelData['ihc_cpk'] ?? [];

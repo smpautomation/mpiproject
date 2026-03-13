@@ -1917,8 +1917,9 @@
                                     <template
                                         v-if="
                                             showTsiData &&
-                                            noteReasonForReject.includes(
-                                                '- N.G iHc',
+                                            (
+                                                noteReasonForReject.includes('- N.G iHc') ||
+                                                noteReasonForReject.includes('- iHc Below Target+500 Oe')
                                             )
                                         "
                                     >
@@ -2060,14 +2061,52 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <div
+                                            v-if="!confirmResetTsi && preparedByButton"
+                                            class="text-center"
+                                        >
+                                            <button
+                                                @click="confirmResetTsi = true"
+                                                class="px-2 py-1 m-1 text-white transition-transform duration-200 ease-in-out bg-red-700 rounded-lg shadow-lg whitespace-nowrap active:scale-95 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                            >
+                                                Wrong Quantity Reset Button
+                                            </button>
+                                        </div>
+
+                                        <div
+                                            v-else-if="confirmResetTsi && preparedByButton"
+                                            class="flex items-center justify-center gap-2 mt-1"
+                                        >
+                                            <span
+                                                class="p-1 text-sm text-blue-600 whitespace-nowrap"
+                                                >This action will reset all Tsi
+                                                Data Input. Are you sure?</span
+                                            >
+                                            <button
+                                                @click="
+                                                    resetReportTsiData();
+                                                    confirmResetTsi = false;
+                                                "
+                                                class="px-2 py-1 text-xs text-white transition bg-green-600 rounded hover:bg-green-500"
+                                            >
+                                                Yes
+                                            </button>
+                                            <button
+                                                @click="confirmResetTsi = false"
+                                                class="px-2 py-1 text-xs text-white transition bg-gray-400 rounded hover:bg-gray-500"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
                                     </template>
 
 
                                     <template
                                         v-if="
                                             showTsiData_default &&
-                                            noteReasonForReject.includes(
-                                                '- N.G iHc',
+                                            (
+                                                noteReasonForReject.includes('- N.G iHc') ||
+                                                noteReasonForReject.includes('- iHc Below Target+500 Oe')
                                             )
                                         "
                                     >
@@ -2076,52 +2115,28 @@
                                                 colspan="2"
                                                 class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
                                             >
-                                                VT Data
+                                                HASI-2 Data
                                             </th>
                                             <td
-                                                colspan="3"
+                                                colspan="4"
                                                 class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
                                             >
                                                 Enter the number of samples
                                                 first and then save
                                             </td>
-                                            <th
-                                                class="px-1 py-[2px] font-extrabold text-white bg-blue-300 border-4 border-white"
-                                            >
-                                                Result
-                                            </th>
                                         </tr>
                                         <tr class="text-center">
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white"
                                             >
-                                                <div class="flex items-center">
-                                                    <input
-                                                        type="number"
-                                                        v-model="reportVT_temp"
-                                                        name="stdDev"
-                                                        class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
-                                                    />
-                                                    <span
-                                                        class="ml-1 align-baseline"
-                                                        >°C</span
-                                                    >
-                                                </div>
                                             </td>
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
                                             >
-                                                iHc (kOe) &#8805;
-                                                <input
-                                                    type="number"
-                                                    v-model="reportVT_iHc"
-                                                    name="stdDev"
-                                                    class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
-                                                />
-                                                (kOe)
+
                                             </td>
                                             <td
-                                                colspan="3"
+                                                colspan="4"
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white"
                                             >
                                                 Quantity of Samples:<input
@@ -2132,11 +2147,6 @@
                                                     name="stdDev"
                                                     class="w-[6.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
                                                 />
-                                            </td>
-                                            <td
-                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
-                                            >
-                                                {{ reportVT_remarks }}
                                             </td>
                                         </tr>
                                     </template>
@@ -6008,6 +6018,7 @@ const resetReportBHData = async () => {
 };
 
 const confirmResetSeg = ref(false);
+const confirmResetTsi = ref(false);
 
 const resetReportBHSegData = async () => {
     reportBHSeg_temp.value = 200;
@@ -6040,6 +6051,15 @@ const resetReportBHSegData = async () => {
 
     await saveReport();
 };
+
+const resetReportTsiData = async () => {
+    reportTsi_samplesQty.value = 0;
+    reportTsi_GxResults.value = [];
+    reportTsi_GyResults.value = [];
+    reportTsi_samples.value = [];
+
+    await saveReport();
+}
 
 watchEffect(() => {
     const data = reportCoatingAmounts.value.filter(
@@ -6554,7 +6574,7 @@ const generateReport = async () => {
 };
 
 const checkSpecialJudgement = async () => {
-    console.log("Entered Special Judgement function");
+    //console.log("Entered Special Judgement function");
     const responseGetVTData = await axios.get("/api/vt-models");
     const fetchAllVT = responseGetVTData.data;
     MODELS_SHOW_VT_DATA.value = fetchAllVT.map((item) => item.model_name);
@@ -6566,7 +6586,7 @@ const checkSpecialJudgement = async () => {
     const responseGetGXData = await axios.get("/api/gx-models");
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map((item) => item.model_name);
-    console.log("GX MODELS: ", MODELS_SHOW_GX.value);
+    //console.log("GX MODELS: ", MODELS_SHOW_GX.value);
     const responseGetTTMNCData = await axios.get("/api/ttmnc-models");
     const fetchAllTTMNC = responseGetTTMNCData.data;
     MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map((item) => item.model_name);
@@ -6604,13 +6624,31 @@ const checkSpecialJudgement = async () => {
         //console.log("[GX] GX enabled");
     }
 
+    /* TEMPORARY DISABLED
+    if (hasIhcBelowTarget || hasNGihc){
+        //TSI Data
+        if (
+            specialModelsForTsiFormat.value.includes(model) &&
+            reportTsi_samplesQty.value > 0
+        ) {
+            showTsiData.value = true;
+            showTsiData_default.value = false;
+            console.log("[TSI] Showing TSI Data (sample qty > 0)");
+        } else if (specialModelsForTsiFormat.value.includes(model)) {
+            showTsiData.value = false;
+            showTsiData_default.value = true;
+            console.log("[TSI] Showing default TSI layout (sample qty = 0)");
+        }
+    }*/
+
+    //other logic here
+
     if (!hasNGihc) return;
 
     // === Logic Blocks ===
     //console.log('--- Logic Evaluation Start ---');
     console.log("Model:", model);
-    //console.log('VT Sample Qty:', reportVT_samplesQty.value);
-    //console.log('BH Sample Qty:', reportBH_sampleQty.value);
+
 
     // VT Data
     if (
@@ -6619,24 +6657,10 @@ const checkSpecialJudgement = async () => {
     ) {
         showVTData.value = true;
         showVTData_default.value = false;
-        console.log("[VT] Showing VT Data (sample qty > 0)");
+        //console.log("[VT] Showing VT Data (sample qty > 0)");
     } else if (MODELS_SHOW_VT_DATA.value.includes(model)) {
         showVTData.value = false;
         showVTData_default.value = true;
-        console.log("[VT] Showing default VT layout (sample qty = 0)");
-    }
-
-    //TSI Data
-    if (
-        specialModelsForTsiFormat.value.includes(model) &&
-        reportVT_samplesQty.value > 0
-    ) {
-        showTsiData.value = true;
-        showTsiData_default.value = false;
-        //console.log("[VT] Showing VT Data (sample qty > 0)");
-    } else if (specialModelsForTsiFormat.value.includes(model)) {
-        showTsiData.value = false;
-        showTsiData_default.value = true;
         //console.log("[VT] Showing default VT layout (sample qty = 0)");
     }
 
@@ -6675,10 +6699,6 @@ const checkSpecialJudgement = async () => {
     if (MODELS_SHOW_ROB.value.includes(model)) {
         showROB.value = true;
         //console.log('[ROB] ROB enabled');
-    }
-    if (specialModelsForTsiFormat.value.includes(model)) {
-        showTsiData.value = true;
-        //console.log("[GX] GX enabled");
     }
 
     //console.log('--- Logic Evaluation End ---');
@@ -8138,6 +8158,7 @@ const showReportData = async () => {
         const bh = JSON.parse(filterBySerial[0].data_bh_info || "{}");
         const ROB = JSON.parse(filterBySerial[0].data_ROB_info || "{}");
         const bhSeg = JSON.parse(filterBySerial[0].data_bh_seg_info || "{}");
+        const tsi = JSON.parse(filterBySerial[0].data_tsi_info || "{}");
 
         reportCorner.value = oneby.corner || "";
         reportCorner_average.value = oneby.corner_average || "";
@@ -8176,6 +8197,11 @@ const showReportData = async () => {
         //console.log("reportVT_iHc:", reportVT_iHc.value);
         reportVT_remarks.value = VT.remarks ?? "";
         //console.log("reportVT_remarks:", reportVT_remarks.value);
+
+        reportTsi_samplesQty.value = tsi.sample_qty ?? 0;
+        reportTsi_GxResults.value = Array.isArray(tsi.gx_results) ? tsi.gx_results : [];
+        reportTsi_GyResults.value = Array.isArray(tsi.gy_results) ? tsi.gy_results : [];
+        reportTsi_samples.value = Array.isArray(tsi.samples) ? tsi.samples : [];
 
         reportCpkFrom_iHc_StdDev.value = iHc_cpk.std_dev || "";
         reportCpkFrom_iHc_Cpk.value = iHc_cpk.cpk || "";
@@ -8259,7 +8285,7 @@ const showReportData = async () => {
             ...(Array.isArray(bhSeg.result3rd) ? bhSeg.result3rd : []),
         );
 
-        console.log("Entering Evaluation for Reject reasons...");
+        //console.log("Entering Evaluation for Reject reasons...");
         await evaluateAllRejectReasons();
         await checkApprovalStates();
         await checkSpecialJudgement();
@@ -8358,6 +8384,12 @@ const saveReport = async () => {
             iHc: reportVT_iHc.value, // Single iHc value
             iHcResult: reportVT_iHcResults.value, // Dynamic iHc results array
             remarks: reportVT_remarks.value, // Single remarks value
+        }),
+        data_tsi_info: JSON.stringify({
+            samples: reportTsi_samples.value,
+            sample_qty: reportTsi_samplesQty.value,
+            gx_results: reportTsi_GxResults.value,
+            gy_results: reportTsi_GyResults.value,
         }),
         data_iHc_cpk_info: JSON.stringify({
             std_dev: reportCpkFrom_iHc_StdDev.value,
@@ -8552,6 +8584,7 @@ const openUndoModal = (type) => {
     currentUndoType.value = type;
     stampUndoRemarks.value = "";
     showModalUndoStamp.value = true;
+    //goback
 };
 
 const undoStamp = async () => {
@@ -8589,6 +8622,8 @@ const undoStamp = async () => {
             [config.firstname]: "",
             [config.surname]: "",
             [config.date]: null,
+            is_emailed: 0,
+            is_finalized: 0,
         };
 
         // Clear stamp
@@ -8614,6 +8649,13 @@ const undoStamp = async () => {
         );
 
         showModalUndoStamp.value = false;
+        if(currentUndoType.value == "prepared"){
+            showPreparedByDefault.value = true;
+            checkedByButton.value = false;
+            showCheckedByDefault.value = true;
+        }else if(currentUndoType.value == "approved"){
+            showApprovedByDefault.value = true;
+        }
         reportReset();
         await showReportData();
     } catch (error) {
@@ -8922,7 +8964,7 @@ const checkApprovalStates = async () => {
 };
 
 const evaluateAllRejectReasons = async () => {
-    console.log("Have already entered Evalation for Reject reasons...");
+    //console.log("Have already entered Evalation for Reject reasons...");
 
     // force some async delay for testing
     await new Promise((res) => setTimeout(res, 100));
@@ -8958,7 +9000,7 @@ const evaluateAllRejectReasons = async () => {
 
         //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
 
-        console.log("Evaluating rejection reasons part2...");
+        //console.log("Evaluating rejection reasons part2...");
 
         if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
             //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
@@ -8966,9 +9008,9 @@ const evaluateAllRejectReasons = async () => {
         }
 
         if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-            console.log(
-                `HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`,
-            );
+            //console.log(
+            ///    `HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`,
+            //);
             //noteReasonForReject.value.push("- HIGH BR");
         }
 

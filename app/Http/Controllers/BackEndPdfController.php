@@ -477,12 +477,14 @@ class BackEndPdfController extends Controller
         $dGX        = json_decode($reportData->data_GX_info ?? '[]', true);
         $dBH        = json_decode($reportData->data_bh_info ?? '[]', true);
         $dROB       = json_decode($reportData->data_ROB_info ?? '[]', true);
-        $dBHSeg = json_decode($reportData->data_bh_seg_info ?? '[]', true);
+        $dBHSeg     = json_decode($reportData->data_bh_seg_info ?? '[]', true);
+        $dTsi       = json_decode($reportData->data_tsi_info ?? '[]', true);
 
         $model = $tpmCategories->actual_model ?? '';
         $noteReasons = $noteReasonRaw;
 
         $MODELS_SPECIAL_ROB_FOR_GX = ['ROB0C79G'];
+        $MODELS_SPECIAL_TSI = ['TSI0817G'];
         $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
         $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_GX      = GxModel::pluck('model_name')->toArray();
@@ -490,12 +492,14 @@ class BackEndPdfController extends Controller
         $MODELS_SHOW_BH      = BhModel::pluck('model_name')->toArray();
         $MODELS_SHOW_ROB     = RobModel::pluck('model_name')->toArray();
 
-        $showROB         = in_array($model, $MODELS_SHOW_ROB);
-        $hasNGihc        = in_array('- N.G iHc', $noteReasons);
+        $showROB           = in_array($model, $MODELS_SHOW_ROB);
+        $hasNGihc          = in_array('- N.G iHc', $noteReasons);
+        $hasIhcBelowTarget = in_array('- iHc Below Target+500 Oe', $noteReasons);
 
         $showCpkFrom_iHc = $hasNGihc && in_array($model, $MODELS_SHOW_CPK);
         $showGX          = (($hasNGihc && in_array($model, $MODELS_SHOW_GX))) || in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
-        $isSpecialGX = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
+        $isSpecialGX     = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
+        $showTsi         = (($hasNGihc || $hasIhcBelowTarget) && in_array($model, $MODELS_SPECIAL_TSI));
         $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
 
         $showVTData         = false; // default to false
@@ -671,6 +675,7 @@ class BackEndPdfController extends Controller
                 'show1x1x1Data_Corner' => $show1x1x1Data_Corner,
                 'isTTM_model' => $isTTM_model,
                 'showBHDataSeg' => $showBHDataSeg,
+                'showTsi' => $showTsi
             ],
             'modelData' => [
                 'gx' => $dGX,
@@ -680,6 +685,7 @@ class BackEndPdfController extends Controller
                 'rob' => $dROB,
                 'd1x1x1' => $d1x1x1,
                 'bhSeg' => $dBHSeg,
+                'dTsi' => $dTsi,
             ],
             'nsaData'       => $nsaData,
             'nsaGroups'     => $nsaGroups,

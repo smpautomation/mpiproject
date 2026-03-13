@@ -1946,44 +1946,65 @@ class MassProductionController extends Controller
             $layerDataRaw = $massProduction->{$column} ?? null;
             $layerData = is_array($layerDataRaw) ? $layerDataRaw : json_decode($layerDataRaw, true);
 
-            // Skip this layer if MassProduction column is empty
-            if (empty($layerData)) {
-                continue;
-            }
+            if (empty($layerData)) continue;
 
-            // Extract boxes/lots from this layer
             $boxes = $this->extractBoxes($layerData);
 
-            // Deduplicate lots per model + lt_no
             $uniqueLots = [];
             foreach ($boxes as $box => $data) {
                 if (empty($data['model']) || empty($data['lt_no'])) continue;
+
                 $lotKey = $data['model'] . '|' . $data['lt_no'];
                 if (!isset($uniqueLots[$lotKey])) {
                     $uniqueLots[$lotKey] = [
-                        'layer' => $layer,
-                        'model' => $data['model'],
-                        'lt_no' => $data['lt_no'],
-                        'status' => 'yellow', // default, may upgrade to green
+                        'layer'  => $layer,
+                        'model'  => $data['model'],
+                        'lt_no'  => $data['lt_no'],
+                        'status' => 'yellow',
                         'serial' => null,
                     ];
                 }
             }
 
-            // Check TPMDataCategory for green status per lot
+            // Assign serials with verification for duplicates
             foreach ($uniqueLots as &$lot) {
-                $tpmData = TPMDataCategory::where('actual_model', $lot['model'])
+                $tpmCandidates = TPMDataCategory::where('actual_model', $lot['model'])
                     ->where('jhcurve_lotno', $lot['lt_no'])
-                    ->first();
+                    ->get();
 
-                if ($tpmData) {
+                if ($tpmCandidates->isEmpty()) continue;
+
+                if ($tpmCandidates->count() === 1) {
                     $lot['status'] = 'green';
-                    $lot['serial'] = $tpmData->tpm_data_serial ?? null;
+                    $lot['serial'] = $tpmCandidates->first()->tpm_data_serial;
+                } else {
+                    // Multiple candidates: verify against mass production serials
+                    $foundSerial = null;
+                    foreach ($tpmCandidates as $candidate) {
+                        foreach ($expectedLayers as $checkLayer) {
+                            $serialColumn = $checkLayer === '9.5' ? 'layer_9_5_serial' : 'layer_' . $checkLayer . '_serial';
+                            $layerSerialsRaw = $massProduction->{$serialColumn} ?? null;
+                            $layerSerials = is_array($layerSerialsRaw) ? $layerSerialsRaw : json_decode($layerSerialsRaw, true);
+
+                            if (!empty($layerSerials) && in_array($candidate->tpm_data_serial, $layerSerials)) {
+                                $foundSerial = $candidate->tpm_data_serial;
+                                break 2; // Stop both loops
+                            }
+                        }
+                    }
+
+                    if ($foundSerial) {
+                        $lot['status'] = 'green';
+                        $lot['serial'] = $foundSerial;
+                    } else {
+                        // fallback if none found in mass production
+                        $lot['status'] = 'green';
+                        $lot['serial'] = $tpmCandidates->first()->tpm_data_serial;
+                    }
                 }
             }
             unset($lot);
 
-            // Assign unique lots array to this layer
             $lotsByLayer[$layer] = array_values($uniqueLots);
         }
 

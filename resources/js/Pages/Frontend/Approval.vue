@@ -619,6 +619,27 @@ const cancelApprove = () => {
     showApproveConfirmation.value = false;
 };
 
+const rollbackApproval = async (serials) => {
+    if (!serials || !serials.length) return;
+    console.warn("⚠️ Rolling back approval for serials:", serials);
+
+    const rollbackData = {
+        approved_by_firstname: "",
+        approved_by_surname: "",
+        approved_by_date: null,
+        is_finalized: 0,
+    };
+
+    for (const serial of serials) {
+        try {
+            await axios.patch(`/api/reportdata/${serial}`, rollbackData);
+            await userFinalizedLogging(`Rollback approval for serial: ${serial}`);
+        } catch (err) {
+            console.error(`❌ Rollback failed for serial ${serial}`, err);
+        }
+    }
+};
+
 const finalizeReport = async (serial) => {
     try {
         const responseFinalize = await axios.patch(
@@ -653,69 +674,86 @@ const confirmationApprove = async () => {
     isLoadingApproval.value = true;
     showApproveConfirmation.value = false;
 
+    console.log("== Starting approval process ==");
+    const dateNow = datenow();
+
+    const reportData = {
+        approved_by_firstname: state.user.firstName,
+        approved_by_surname: state.user.surname,
+        approved_by_date: dateNow,
+    };
+
     try {
-        console.log("== Starting approval process ==");
-        const dateNow = datenow();
-
-        const reportData = {
-            approved_by_firstname: state.user.firstName,
-            approved_by_surname: state.user.surname,
-            approved_by_date: dateNow,
-        };
-
-        // 1. Stamp approval
+        // 1️⃣ Stamp approval
         for (const serial of selectedRows.value) {
-            await userApprovalLogging(
-                `has successfully stamped Approved by of serial ${serial}`,
-            );
-            await axios.patch(`/api/reportdata/${serial}`, reportData);
+            try {
+                await userApprovalLogging(
+                    `has successfully stamped Approved by of serial ${serial}`
+                );
+                await axios.patch(`/api/reportdata/${serial}`, reportData);
+            } catch (err) {
+                console.error(`[Stamp Approval] Error for serial ${serial}:`, err);
+                await rollbackApproval(selectedRows.value); // undo stamping
+                throw err; // stop process if stamping fails
+            }
         }
 
-        // 2. Generate + save PDFs
+        // 2️⃣ Generate + save PDFs
         for (const serial of selectedRows.value) {
             try {
                 await axios.get(
-                    `/api/reports/${encodeURIComponent(serial)}/generate-and-save`,
+                    `/api/reports/${encodeURIComponent(serial)}/generate-and-save`
                 );
-                //console.log(`✅ PDF generated and saved for serial: ${serial}`);
+                console.log(`✅ PDF generated and saved for serial: ${serial}`);
             } catch (pdfErr) {
-                //console.error(`❌ PDF generation failed for serial ${serial}`, pdfErr);
-                //await rollbackApproval(); // ⬅ safe undo
+                console.error(`[PDF Generation] Failed for serial ${serial}`, pdfErr);
+                await rollbackApproval(selectedRows.value); // undo stamping
+                showBlockedNotification(`PDF generation failed for serial ${serial}`);
                 throw pdfErr; // bubble up to outer catch
             }
         }
 
-        // 2a. Send emails
+        // 2a️⃣ Send emails
         try {
             await axios.post("/api/notify-email", {
                 serial: selectedRows.value,
                 emails: "edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph",
-                //emails: 'qa_trainingp8@smp.com.ph, qa-mpiengr@smp.com.ph, rizza@smp.com.ph, p7_mpi_ahi@smp.com.ph, mpi-engr.p8@smp.com.ph, edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph',
             });
-            //console.log("Emails sent successfully");
+            console.log("📧 Emails sent successfully");
         } catch (emailErr) {
-            //console.error("❌ Failed to send emails", emailErr);
+            console.error("[Email Sending] Failed", emailErr);
             showBlockedNotification(
-                "Emails could not be sent. Please try again later.",
+                "Emails could not be sent. Please try again later."
             );
+            // Note: Do not throw here, continue to finalization
         }
 
-        // 3. Finalize report
+        // 3️⃣ Finalize report (errors are loud)
         for (const serial of selectedRows.value) {
-            await finalizeReport(serial);
+            try {
+                await finalizeReport(serial);
+            } catch (finalErr) {
+                console.error(`[Finalize Report] Failed for serial ${serial}`, finalErr);
+                await rollbackApproval(selectedRows.value);
+                showBlockedNotification(`
+                    An error occurred while saving the PDF reports.<br>
+                    Please try again later or contact support.
+                `);
+                throw finalErr; // stop the process if finalization fails
+            }
         }
 
-        showApprovedNotification("Approved and PDF saved successfully.");
+        showApprovedNotification("✅ Approved and PDF saved successfully.");
+
     } catch (error) {
-        console.error("Error during approval:", error);
-        //await rollbackApproval(); // failsafe backup
+        console.error("❌ Approval process error:", error);
         showBlockedNotification(`
-            An error occurred while saving the PDF reports.<br>
+            An error occurred during the approval process.<br>
             Please try again later or contact support.
         `);
     } finally {
         isLoadingApproval.value = false;
-        await showReportData(); // refresh
+        await showReportData(); // refresh table
         showApproveButton.value = true;
     }
 };

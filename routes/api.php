@@ -271,6 +271,32 @@ Route::post('/send-takefu-email-manual', function(Request $request) {
             $customMessage,
             $validated['selectedFiles'] // PASS selected files
         ));
+
+        $parts = explode(' ', $validated['massPro'], 2);
+        $furnace = isset($parts[0]) ? preg_replace('/(\d+)/', '-$1', $parts[0]) : null;
+        $massprod = $parts[1] ?? null;
+
+        if ($furnace && $massprod) {
+
+            // --- Fetch serial_no from TPMData ---
+            $serials = DB::table('tpm_data')
+                ->where('furnace', $furnace)
+                ->where('mass_prod', $massprod)
+                ->pluck('serial_no')
+                ->unique();
+
+            if ($serials->isNotEmpty()) {
+                // --- Update ReportData where tpm_data_serial in serials AND is_finalized = 1 ---
+                DB::table('report_data')
+                    ->whereIn('tpm_data_serial', $serials)
+                    ->where('is_finalized', 1)
+                    ->update([
+                        'is_emailed' => 1,
+                        'date_emailed' => Carbon::now(),
+                    ]);
+            }
+        }
+
     } catch (\Throwable $e) {
         return response()->json(['error' => 'Mail sending failed', 'message' => $e->getMessage()], 500);
     }
