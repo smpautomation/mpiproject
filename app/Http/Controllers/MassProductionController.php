@@ -1978,28 +1978,31 @@ class MassProductionController extends Controller
 
                 $foundMatch = false;
 
+                $serialColumn = $lot['layer'] === '9.5'
+                    ? 'layer_9_5_serial'
+                    : 'layer_' . $lot['layer'] . '_serial';
+
+                $serialRaw = $massProduction->{$serialColumn} ?? null;
+
+                $serialArray = [];
+                if ($serialRaw) {
+                    $serialArray = is_array($serialRaw)
+                        ? $serialRaw
+                        : json_decode($serialRaw, true);
+
+                    if (!is_array($serialArray)) $serialArray = [];
+                }
+
                 foreach ($candidates as $candidate) {
-                    // Iterate through mass production serial columns to find a match
-                    foreach ($expectedLayers as $checkLayer) {
-                        $serialColumn = $checkLayer === '9.5' ? 'layer_9_5_serial' : 'layer_' . $checkLayer . '_serial';
-                        $serialRaw = $massProduction->{$serialColumn} ?? null;
-
-                        $serialArray = [];
-                        if ($serialRaw) {
-                            $serialArray = is_array($serialRaw) ? $serialRaw : json_decode($serialRaw, true);
-                            if (!is_array($serialArray)) $serialArray = [];
-                        }
-
-                        if (in_array($candidate->tpm_data_serial, $serialArray)) {
-                            $lot['serial'] = $candidate->tpm_data_serial;
-                            $lot['status'] = 'green';
-                            $foundMatch = true;
-                            break 2; // exit both loops, we found the correct serial
-                        }
+                    if (in_array($candidate->tpm_data_serial, $serialArray)) {
+                        $lot['serial'] = $candidate->tpm_data_serial;
+                        $lot['status'] = 'green';
+                        $foundMatch = true;
+                        break;
                     }
                 }
 
-                // If no match found in mass production, fallback to first candidate
+                // fallback if no match found
                 if (!$foundMatch) {
                     $first = $candidates->first();
                     $lot['serial'] = $first->tpm_data_serial ?? null;
