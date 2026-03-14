@@ -28,11 +28,11 @@ class MassProductionController extends Controller
     public function index()
     {
         return MassProduction::whereIn('id', function ($query) {
-                $query->selectRaw('MAX(id)')
-                    ->from('mass_productions')
-                    ->whereNotNull('mass_prod')
-                    ->groupBy('mass_prod');
-            })
+            $query->selectRaw('MAX(id)')
+                ->from('mass_productions')
+                ->whereNotNull('mass_prod')
+                ->groupBy('mass_prod');
+        })
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -130,7 +130,7 @@ class MassProductionController extends Controller
                 'string',
                 Rule::unique('mass_productions')
                     ->ignore($production->id)
-                    ->where(fn ($query) => $query->where('furnace', $request->furnace ?? $furnace)),
+                    ->where(fn($query) => $query->where('furnace', $request->furnace ?? $furnace)),
             ],
             'furnace' => 'nullable|string',
             'batch_cycle_no' => 'nullable|string',
@@ -440,7 +440,7 @@ class MassProductionController extends Controller
 
             if ($rowTitle === 'MODEL:') {
 
-                $boxes = ['A','B','C','D','E','F','G','H','J','K'];
+                $boxes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'];
 
                 foreach ($boxes as $box) {
                     $value = $row['data'][$box] ?? null;
@@ -496,7 +496,7 @@ class MassProductionController extends Controller
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
         // Check if the layer column exists and is not null
-         if (!isset($record->$layerColumn)) {
+        if (!isset($record->$layerColumn)) {
             return response()->json([
                 'message' => "Layer {$layerNumber} not found for this record.",
             ], 404);
@@ -515,7 +515,7 @@ class MassProductionController extends Controller
 
             if (($row['rowTitle'] ?? null) === 'LT. No.:') {
 
-                $boxes = ['A','B','C','D','E','F','G','H','J','K'];
+                $boxes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'];
 
                 foreach ($boxes as $box) {
                     $value = $row['data'][$box] ?? null;
@@ -844,14 +844,14 @@ class MassProductionController extends Controller
 
     public function getLayerDataByLayerNo($furnace, $massprod, $layer)
     {
-        Log::info('getLayerDataByLayerNo called', compact('furnace','massprod','layer'));
+        Log::info('getLayerDataByLayerNo called', compact('furnace', 'massprod', 'layer'));
 
         $production = MassProduction::where('furnace', trim($furnace))
             ->where('mass_prod', trim($massprod))
             ->first();
 
         if (!$production) {
-            Log::warning('Record not found', compact('furnace','massprod'));
+            Log::warning('Record not found', compact('furnace', 'massprod'));
             return response()->json([
                 'message' => "Mass Production record not found for furnace '{$furnace}' and mass production '{$massprod}'.",
             ], 404);
@@ -882,7 +882,7 @@ class MassProductionController extends Controller
         $layerData = $production->$layerColumn ? json_decode($production->$layerColumn, true) : null;
 
         if (empty($layerData) || !is_array($layerData)) {
-            Log::warning('Layer data empty', compact('layerColumn','layerData'));
+            Log::warning('Layer data empty', compact('layerColumn', 'layerData'));
             return response()->json([
                 'message' => "No valid data found for layer {$layer} in furnace '{$furnace}' mass production '{$massprod}'.",
             ], 404);
@@ -1085,8 +1085,8 @@ class MassProductionController extends Controller
 
         // Layers 1–9
         for ($i = 1; $i <= 9; $i++) {
-            $layer_json = $prod->{'layer_'.$i};
-            $layer_type = $prod->{'layer_'.$i.'_format_type'};
+            $layer_json = $prod->{'layer_' . $i};
+            $layer_type = $prod->{'layer_' . $i . '_format_type'};
             $processLayer($layer_json, $i, $layer_type);
         }
 
@@ -1120,7 +1120,7 @@ class MassProductionController extends Controller
         }
 
         $layers = [];
-        $boxLetters = ['A','B','C','D','E','F','G','H','J','K'];
+        $boxLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'];
 
         // Fetch all excess layers for this furnace + massprod in one query
         $excessLayers = ExcessLayers::where('furnace', $furnace)
@@ -1228,12 +1228,12 @@ class MassProductionController extends Controller
     public function excessLayerList($furnace, $massprod, $excessData)
     {
         $excessBoxes = $this->parseBoxRange($excessData);
-        $allBoxes = ['A','B','C','D','E','F','G','H','J','K'];
+        $allBoxes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'];
 
         // --- Fetch main mass production row ---
         $mp = MassProduction::where('furnace', $furnace)
-                ->where('mass_prod', $massprod)
-                ->first();
+            ->where('mass_prod', $massprod)
+            ->first();
 
         if (!$mp) {
             return response()->json(['message' => 'Mass production not found'], 404);
@@ -1241,9 +1241,9 @@ class MassProductionController extends Controller
 
         // --- Fetch all excess layers for this mass production ---
         $excessLayers = ExcessLayers::where('furnace', $furnace)
-                            ->where('mass_prod', $massprod)
-                            ->get()
-                            ->keyBy('layer'); // key by layer number for easier lookup
+            ->where('mass_prod', $massprod)
+            ->get()
+            ->keyBy('layer'); // key by layer number for easier lookup
 
         $availableLayers = [];
 
@@ -1461,7 +1461,7 @@ class MassProductionController extends Controller
 
             $excelData[] = array_merge($row, [
                 'AFTER GBDP WT'   => $afterGbdpWt,
-                'EQUIVALENT LOTS'=> $equivalentLots,
+                'EQUIVALENT LOTS' => $equivalentLots,
                 'LAYER'          => implode(', ', array_keys($row['LAYERS'])),
             ]);
         }
@@ -1562,8 +1562,8 @@ class MassProductionController extends Controller
 
         // --- 1. Fetch the mass production row ---
         $mp = MassProduction::where('mass_prod', $massProd)
-                            ->where('furnace', $furnace)
-                            ->first();
+            ->where('furnace', $furnace)
+            ->first();
 
         if (!$mp) {
             Log::error('Mass production not found', ['massProd' => $massProd, 'furnace' => $furnace]);
@@ -1603,8 +1603,8 @@ class MassProductionController extends Controller
 
         if (!empty($uniquePairs)) {
             $excessLayers = ExcessLayers::where('mass_prod', $massProd)
-                                        ->where('furnace', $furnace)
-                                        ->get();
+                ->where('furnace', $furnace)
+                ->get();
 
             foreach ($excessLayers as $excess) {
                 $layerDataExcess = is_array($excess->layer_data) ? $excess->layer_data : json_decode($excess->layer_data, true);
@@ -1760,7 +1760,7 @@ class MassProductionController extends Controller
             return response()->json(['message' => 'Mass production not found'], 404);
         }
 
-        $layers = ['1','2','3','4','5','6','7','8','9','9.5'];
+        $layers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '9.5'];
 
         $finalLots = [];
         $assignedBoxes = [];
@@ -1938,7 +1938,7 @@ class MassProductionController extends Controller
             return response()->json(['message' => 'Mass production not found'], 404);
         }
 
-        $expectedLayers = ['1','2','3','4','5','6','7','8','9','9.5'];
+        $expectedLayers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '9.5'];
         $lotsByLayer = [];
 
         foreach ($expectedLayers as $layer) {
@@ -1968,7 +1968,7 @@ class MassProductionController extends Controller
                 }
             }
 
-            // Assign serials, handle multiple candidates
+            // Assign serials, handle single bigint columns
             foreach ($uniqueLots as &$lot) {
                 $candidates = TPMDataCategory::where('actual_model', $lot['model'])
                     ->where('jhcurve_lotno', $lot['lt_no'])
@@ -1982,20 +1982,11 @@ class MassProductionController extends Controller
                     ? 'layer_9_5_serial'
                     : 'layer_' . $lot['layer'] . '_serial';
 
-                $serialRaw = $massProduction->{$serialColumn} ?? null;
-
-                $serialArray = [];
-                if ($serialRaw) {
-                    $serialArray = is_array($serialRaw)
-                        ? $serialRaw
-                        : json_decode($serialRaw, true);
-
-                    if (!is_array($serialArray)) $serialArray = [];
-                }
+                $serialValue = $massProduction->{$serialColumn} ?? null;
 
                 foreach ($candidates as $candidate) {
-                    if (in_array($candidate->tpm_data_serial, $serialArray)) {
-                        $lot['serial'] = $candidate->tpm_data_serial;
+                    if ($candidate->tpm_data_serial == $serialValue) {
+                        $lot['serial'] = $serialValue;
                         $lot['status'] = 'green';
                         $foundMatch = true;
                         break;
