@@ -684,7 +684,7 @@ const confirmationApprove = async () => {
     };
 
     try {
-        // 1️⃣ Stamp approval
+        // 1. Stamp approval
         for (const serial of selectedRows.value) {
             try {
                 await userApprovalLogging(
@@ -698,7 +698,7 @@ const confirmationApprove = async () => {
             }
         }
 
-        // 2️⃣ Generate + save PDFs
+        // 2. Generate + save PDFs
         for (const serial of selectedRows.value) {
             try {
                 await axios.get(
@@ -713,7 +713,7 @@ const confirmationApprove = async () => {
             }
         }
 
-        // 2a️⃣ Send emails
+        // 3. Send emails
         try {
             await axios.post("/api/notify-email", {
                 serial: selectedRows.value,
@@ -728,7 +728,7 @@ const confirmationApprove = async () => {
             // Note: Do not throw here, continue to finalization
         }
 
-        // 3️⃣ Finalize report (errors are loud)
+        // 4. Finalize report (errors are loud)
         for (const serial of selectedRows.value) {
             try {
                 await finalizeReport(serial);

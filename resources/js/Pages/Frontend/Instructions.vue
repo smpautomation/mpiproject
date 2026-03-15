@@ -30,6 +30,11 @@
             <button @click="showROBPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 ROB BH TRACER MODELS
             </button>
+            <!-- TEMPORARY DISABLED
+            <button @click="showCPKBRPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                CPK BR MODELS
+            </button>
+             -->
         </div>
     </div>
 
@@ -644,6 +649,107 @@
         </div>
       </div>
 
+      <!-- ROB MODELS Table Section -->
+      <div
+        v-if="showCPKBRPanel"
+        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
+      >
+        <!-- Table -->
+        <div>
+          <h2 class="mb-4 text-2xl font-semibold text-gray-800">CPK BR MODELS</h2>
+          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
+            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-3 text-left border-b">Date</th>
+                <th class="px-4 py-3 text-left border-b">Model Name</th>
+                <th class="px-4 py-3 text-left border-b">Encoded By</th>
+                <th class="px-4 py-3 text-left border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="cpkbr in cpkbrModels"
+                :key="cpkbr.id"
+                class="transition border-b hover:bg-gray-50 last:border-b-0"
+              >
+                <td class="px-4 py-3">{{ new Date(cpkbr.created_at).toISOString().slice(0, 10) }}</td>
+                <td class="px-4 py-3">{{ cpkbr.model_name }}</td>
+                <td class="px-4 py-3">{{ cpkbr.encoded_by }}</td>
+                <td class="px-4 py-3">
+                  <button
+                    @click="cpkbr_startEditing(cpkbr)"
+                    class="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Edit Model
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New -->
+        <div class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="cpkbr_newRecord.model_name"
+              type="text"
+              @input="cpkbr_newRecord.model_name = cpkbr_newRecord.model_name.toUpperCase()"
+              placeholder="Model Name"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+            <input
+              v-model="cpkbr_newRecord.encoded_by"
+              type="text"
+              @input="cpkbr_newRecord.encoded_by = cpkbr_newRecord.encoded_by.toUpperCase()"
+              placeholder="Encoded By"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+          </div>
+          <button
+            @click="cpkbr_addRecord"
+            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
+          >
+            Add
+          </button>
+        </div>
+
+        <!-- Edit Record -->
+        <div v-if="cpkbr_editingRecord" class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="cpkbr_editingRecord.model_name"
+              type="text"
+              @input="cpkbr_editingRecord.model_name = cpkbr_editingRecord.model_name.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+            <input
+              v-model="cpkbr_editingRecord.encoded_by"
+              type="text"
+              @input="cpkbr_editingRecord.encoded_by = cpkbr_editingRecord.encoded_by.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+          </div>
+          <div class="space-x-3">
+            <button
+              @click="cpkihc_updateRecord"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+            >
+              Update
+            </button>
+            <button
+              @click="cpkbr_editingRecord = null"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+
 
     </div>
 
@@ -715,6 +821,7 @@ const showGXPanel = ref(false);
 const showTTMNCPanel = ref(false);
 const showBHPanel = ref(false);
 const showROBPanel = ref(false);
+const showCPKBRPanel = ref(false);
 
 const vtModels = ref([]); // all fetched records
 const cpkihcModels = ref([]);
@@ -722,6 +829,7 @@ const gxModels = ref([]);
 const ttmncModels = ref([]);
 const bhModels = ref([]);
 const robModels = ref([]);
+const cpkbrModels = ref([]);
 
 const vt_newRecord = ref({ model_name: '', encoded_by: ''});
 const cpkihc_newRecord = ref({ model_name: '', encoded_by: ''});
@@ -729,6 +837,7 @@ const gx_newRecord = ref({ model_name: '', encoded_by: ''});
 const ttmnc_newRecord = ref({ model_name: '', encoded_by: ''});
 const bh_newRecord = ref({ model_name: '', encoded_by: ''});
 const rob_newRecord = ref({ model_name: '', encoded_by: ''});
+const cpkbr_newRecord = ref({ model_name: '', encoded_by: ''});
 
 const vt_editingRecord = ref(null);
 const cpkihc_editingRecord = ref(null);
@@ -736,6 +845,7 @@ const gx_editingRecord = ref(null);
 const ttmnc_editingRecord = ref(null);
 const bh_editingRecord = ref(null);
 const rob_editingRecord = ref(null);
+const cpkbr_editingRecord = ref(null);
 
 const backButton = () => {
     showSelectionPanel.value = true;
@@ -745,6 +855,7 @@ const backButton = () => {
     showCPKIHCPanel.value = false;
     showGXPanel.value = false;
     showTTMNCPanel.value = false;
+    showCPKBRPanel.value = false;
 }
 
 const vt_startEditing = (record) => {
@@ -770,6 +881,10 @@ const bh_startEditing = (record) => {
 const rob_startEditing = (record) => {
   rob_editingRecord.value = { ...record };
 };
+
+const cpkbr_startEditing = (record) => {
+    cpkbr_editingRecord.value = { ...record };
+}
 
 // Add record
 const vt_addRecord = async () => {
@@ -831,6 +946,16 @@ const rob_addRecord = async () => {
   rob_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
+const cpkbr_addRecord = async () => {
+  if (!cpkbr_newRecord.value.model_name || !cpkbr_newRecord.value.encoded_by) return;
+
+  await axios.post('/api/cpk-br-models', cpkbr_newRecord.value);
+  await userInstructionsLogging(`has successfully added ${cpkbr_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await loadData();
+  cpkbr_newRecord.value = { model_name: '', encoded_by: ''};
+};
+
+
 // Update record
 const vt_updateRecord = async () => {
   await axios.put(`/api/vt-models/${vt_editingRecord.value.id}`, vt_editingRecord.value);
@@ -877,6 +1002,13 @@ const rob_updateRecord = async () => {
   await loadData();
 };
 
+const cpkbr_updateRecord = async () => {
+    await axios.put(`/api/cpk-ihc-models/${cpkbr_editingRecord.value.id}`, cpkbr_editingRecord.value);
+    await userInstructionsLogging(`has successfully edited ${cpkbr_editingRecord.value.model_name} to the data list instructions of CPK BR Models`);
+    cpkbr_editingRecord.value = null;
+    await loadData();
+};
+
 const loadData = async () => {
   try {
     const responseGetVTData = await axios.get('/api/vt-models');
@@ -891,6 +1023,8 @@ const loadData = async () => {
     bhModels.value = responseGetBHData.data;
     const responseGetROBData = await axios.get('/api/rob-models');
     robModels.value = responseGetROBData.data;
+    const responseGetCPKBRData = await axios.get('/api/cpk-br-models');
+    cpkbrModels.value = responseGetCPKBRData.data;
   } catch (e) {
     console.error('Failed to load responseGetVTData: ', e);
   }

@@ -1936,7 +1936,7 @@
                                                 colspan="4"
                                                 class="px-1 py-[2px] font-extrabold text-white border-4 border-white bg-blue-300"
                                             >
-                                                Sample with < 23000 Oe
+                                                Sample with &lt; 23000 Oe
                                             </td>
                                         </tr>
                                         <tr class="text-center">
@@ -2155,70 +2155,76 @@
 
 
 
+                                    <template>
+                                        <tr
+                                            v-show="showCpkFrom_iHc"
+                                            class="bg-blue-300"
+                                        >
+                                            <th
+                                                rowspan="2"
+                                                colspan="2"
+                                                class="px-4 py-2 text-xl text-white border-4 border-white whitespace-nowrap"
+                                            >
+                                                Computation of Cpk from iHc
+                                            </th>
+                                            <th
+                                                class="px-4 py-2 text-white border-4 border-white"
+                                            >
+                                                STD DEV
+                                            </th>
+                                            <th
+                                                colspan="2"
+                                                class="px-4 py-2 text-white border-4 border-white whitespace-nowrap"
+                                            >
+                                                Cpk &#8805; {{ cpkStandardValue }}
+                                            </th>
+                                            <!-- &#8805; is greater than equal to symbol -->
+                                            <th
+                                                colspan="2"
+                                                class="px-4 py-2 text-white border-4 border-white"
+                                            >
+                                                Remarks
+                                            </th>
+                                        </tr>
+                                        <tr
+                                            v-show="showCpkFrom_iHc"
+                                            class="text-center"
+                                        >
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"
+                                            >
+                                                <input
+                                                    type="number"
+                                                    v-model="
+                                                        reportCpkFrom_iHc_StdDev
+                                                    "
+                                                    name="stdDev"
+                                                    class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                colspan="2"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <input
+                                                    type="number"
+                                                    v-model="reportCpkFrom_iHc_Cpk"
+                                                    name="stdDev"
+                                                    class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                {{ reportCpkFrom_iHc_remarks }}
+                                            </td>
+                                        </tr>
+                                    </template>
 
-                                    <tr
-                                        v-show="showCpkFrom_iHc"
-                                        class="bg-blue-300"
-                                    >
-                                        <th
-                                            rowspan="2"
-                                            colspan="2"
-                                            class="px-4 py-2 text-xl text-white border-4 border-white whitespace-nowrap"
-                                        >
-                                            Computation of Cpk from iHc
-                                        </th>
-                                        <th
-                                            class="px-4 py-2 text-white border-4 border-white"
-                                        >
-                                            STD DEV
-                                        </th>
-                                        <th
-                                            colspan="2"
-                                            class="px-4 py-2 text-white border-4 border-white whitespace-nowrap"
-                                        >
-                                            Cpk &#8805; {{ cpkStandardValue }}
-                                        </th>
-                                        <!-- &#8805; is greater than equal to symbol -->
-                                        <th
-                                            colspan="2"
-                                            class="px-4 py-2 text-white border-4 border-white"
-                                        >
-                                            Remarks
-                                        </th>
-                                    </tr>
-                                    <tr
-                                        v-show="showCpkFrom_iHc"
-                                        class="text-center"
-                                    >
-                                        <td
-                                            class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"
-                                        >
-                                            <input
-                                                type="number"
-                                                v-model="
-                                                    reportCpkFrom_iHc_StdDev
-                                                "
-                                                name="stdDev"
-                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
-                                            />
-                                        </td>
-                                        <td
-                                            colspan="2"
-                                            class="px-1 py-[2px] text-blue-600 border-4 border-white"
-                                        >
-                                            <input
-                                                type="number"
-                                                v-model="reportCpkFrom_iHc_Cpk"
-                                                name="stdDev"
-                                                class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
-                                            />
-                                        </td>
-                                        <td
-                                            class="px-1 py-[2px] text-blue-600 border-4 border-white"
-                                        >
-                                            {{ reportCpkFrom_iHc_remarks }}
-                                        </td>
-                                    </tr>
+
+
+
+
                                     <template
                                         v-if="
                                             showBHData &&
@@ -5139,6 +5145,7 @@ const show1x1x1Data_Corner = ref(false);
 const showVTData = ref(false);
 const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
+const showCpkFrom_br = ref(false);
 const showGX = ref(false);
 const isBhSegFormat = ref(false);
 const showBHDataSeg = ref(false);
@@ -5159,6 +5166,7 @@ const isLoading = ref(true);
 const MODELS_SHOW_VT_DATA = ref([]);
 const MODELS_1X1X1_NO_CORNER = ref([]);
 const MODELS_SHOW_CPK = ref([]);
+const MODELS_SHOW_CPK_BR = ref([]);
 const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
@@ -6400,6 +6408,7 @@ const reportReset = () => {
     showGX.value = false;
     showVTData.value = false;
     showCpkFrom_iHc.value = false;
+    showCpkFrom_br.value = false;
     preparedByStampConfirmation.value = false;
     checkedByStampConfirmation.value = false;
     preparedByStampPhoto.value = false;
@@ -6583,6 +6592,10 @@ const checkSpecialJudgement = async () => {
     const fetchAllCPKIHC = responseGetCPKIHCData.data;
     MODELS_SHOW_CPK.value = fetchAllCPKIHC.map((item) => item.model_name);
     //console.log('CPK MODELS: ',MODELS_SHOW_CPK.value);
+    const responseGetCPKBRData = await axios.get("/api/cpk-br-models");
+    const fetchAllCPKBR = responseGetCPKBRData.data;
+    MODELS_SHOW_CPK_BR.value = fetchAllCPKBR.map((item) => item.model_name);
+    //console.log('CPK MODELS: ',MODELS_SHOW_CPK_BR.value);
     const responseGetGXData = await axios.get("/api/gx-models");
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map((item) => item.model_name);
@@ -6624,7 +6637,6 @@ const checkSpecialJudgement = async () => {
         //console.log("[GX] GX enabled");
     }
 
-    /* TEMPORARY DISABLED
     if (hasIhcBelowTarget || hasNGihc){
         //TSI Data
         if (
@@ -6639,7 +6651,7 @@ const checkSpecialJudgement = async () => {
             showTsiData_default.value = true;
             console.log("[TSI] Showing default TSI layout (sample qty = 0)");
         }
-    }*/
+    }
 
     //other logic here
 
@@ -6692,6 +6704,12 @@ const checkSpecialJudgement = async () => {
         showCpkFrom_iHc.value = true;
         //console.log('[CPK] CPK enabled');
     }
+
+    if (MODELS_SHOW_CPK.value.includes(model)) {
+        showCpkFrom_br.value = true;
+        //console.log('[CPK] CPK enabled');
+    }
+
     if (MODELS_SHOW_GX.value.includes(model)) {
         showGX.value = true;
         //console.log("[GX] GX enabled");

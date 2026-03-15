@@ -45,6 +45,7 @@ use App\Http\Controllers\ErrorLogsController;
 use App\Http\Controllers\InitialControlSheetController;
 use App\Http\Controllers\InitialCoatingController;
 use App\Http\Controllers\InitialFilmPastingController;
+use App\Http\Controllers\CpkBrModelsController;
 use App\Mail\TakefuMail_Manual;
 use App\Models\InitialFilmPasting;
 use Illuminate\Support\Facades\Route;
@@ -147,25 +148,25 @@ Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
-Route::apiResource('userlogs',UserLogController::class);
+Route::apiResource('userlogs', UserLogController::class);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login',[AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::middleware('auth:sanctum')->group(function (){
-    Route::post('/logout',[AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::apiResource('users', UserController::class);
 });
 
 Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
-Route::post('/send-takefu-email', function(Request $request) {
+Route::post('/send-takefu-email', function (Request $request) {
 
     // 1️⃣ Validate
     $validated = $request->validate([
@@ -232,7 +233,6 @@ Route::post('/send-takefu-email', function(Request $request) {
                 Log::info("Updated ReportData for " . $serials->count() . " serials");
             }
         }
-
     } catch (\Throwable $e) {
         Log::error('Mail sending failed: ' . $e->getMessage());
         Log::error($e->getTraceAsString());
@@ -246,7 +246,7 @@ Route::post('/send-takefu-email', function(Request $request) {
     return response()->json(['message' => 'Email sent successfully'], 200);
 });
 
-Route::post('/send-takefu-email-manual', function(Request $request) {
+Route::post('/send-takefu-email-manual', function (Request $request) {
 
     $validated = $request->validate([
         'emails' => 'required|string',
@@ -296,7 +296,6 @@ Route::post('/send-takefu-email-manual', function(Request $request) {
                     ]);
             }
         }
-
     } catch (\Throwable $e) {
         return response()->json(['error' => 'Mail sending failed', 'message' => $e->getMessage()], 500);
     }
@@ -316,7 +315,6 @@ if (app()->environment('local')) {
 
         return view('emails.takefu-email', compact('customMessage', 'massPro'));
     });
-
 }
 
 Route::get('/files/{massPro}', function (Request $request, $massPro) {
@@ -357,7 +355,7 @@ Route::post('/route-email', function (Request $request) {
     ]);
 
     $emailList = array_map('trim', explode(',', $validated['emails']));
-    Mail::to($emailList)->send(new RouteMail( $validated['serial']));
+    Mail::to($emailList)->send(new RouteMail($validated['serial']));
     return redirect()->route('approval')->with('success', 'Emails sent successfully!');
 });
 
@@ -379,29 +377,30 @@ Route::post('/mias-factor/bulk-upload', [MiasFactorController::class, 'bulkUploa
 
 Route::apiResource('dev-button-controls', DevButtonControlsController::class);
 Route::apiResource('mias-factor', MiasFactorController::class);
-Route::apiResource('vt-models',VtModelController::class);
-Route::apiResource('cpk-ihc-models',CpkIhcModelController::class);
-Route::apiResource('gx-models',GxModelController::class);
-Route::apiResource('ttmnc-models',TtmncModelController::class);
-Route::apiResource('bh-models',BhModelController::class);
-Route::apiResource('rob-models',RobModelController::class);
+Route::apiResource('vt-models', VtModelController::class);
+Route::apiResource('cpk-ihc-models', CpkIhcModelController::class);
+Route::apiResource('gx-models', GxModelController::class);
+Route::apiResource('ttmnc-models', TtmncModelController::class);
+Route::apiResource('bh-models', BhModelController::class);
+Route::apiResource('rob-models', RobModelController::class);
+Route::apiResource('cpk-br-models', CpkBrModelsController::class);
 
 Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
 Route::apiResource('furnace-data', FurnaceDataController::class);
 Route::apiResource('second-gbdp-models', SecondGbdpModelsController::class);
 
-Route::apiResource('coating-data',CoatingController::class);
-Route::apiResource('heat-treatment-data',HeatTreatmentController::class);
+Route::apiResource('coating-data', CoatingController::class);
+Route::apiResource('heat-treatment-data', HeatTreatmentController::class);
 
 Route::get('/mass-production/all-duplicates', [MassProductionController::class, 'allMassProductionWithDuplicates']);
 
-Route::apiResource('second_heat_treatment',GbdpSecondHeatTreatmentController::class);
+Route::apiResource('second_heat_treatment', GbdpSecondHeatTreatmentController::class);
 
 Route::apiResource('gbdp-second-coating', GbdpSecondCoatingController::class);
 
 Route::apiResource('film-pasting-data', FilmPastingDataController::class);
 
-Route::apiResource('smp-data',SmpDataController::class);
+Route::apiResource('smp-data', SmpDataController::class);
 
 Route::get('/film-pasting-data/{furnace}/{massProd}/layers', [FilmPastingDataController::class, 'getLayersByMassProd']);
 Route::get('/coating-data/{furnace}/{massProd}/layers', [CoatingController::class, 'getLayersByMassProd']);
@@ -412,7 +411,7 @@ Route::get('/second-ht-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondHeat
 Route::get('/second-coating-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
 
 Route::get('/mass-production/{furnace}/{massprod}', [MassProductionController::class, 'getByFurnaceAndMassProd']);
-    //->where('massprod', '[A-Za-z0-9\-]+');
+//->where('massprod', '[A-Za-z0-9\-]+');
 Route::patch('/mass-production/{furnace}/{massprod}', [MassProductionController::class, 'updateByFurnaceAndMassProd']);
 
 Route::post('/mass-production/{furnace}/{massprod}/upload-graphs', [MassProductionController::class, 'uploadGraphs']);
@@ -430,8 +429,8 @@ Route::get('htgraph-patterns/related-lists', [HtGraphPatternsController::class, 
 Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);
 
 Route::get('/coating-data/check', [CoatingController::class, 'checkExisting']);
-Route::get('/coating-pending-add',[CoatingController::class, 'addPending']);
-Route::get('/coating-pending-check',[CoatingController::class, 'checkPending']);
+Route::get('/coating-pending-add', [CoatingController::class, 'addPending']);
+Route::get('/coating-pending-check', [CoatingController::class, 'checkPending']);
 
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
@@ -444,7 +443,7 @@ Route::get('/fetch-reject', [ReportDataController::class, 'getRejectsData']);
 Route::get('/mass-production-monitoring/{furnace}/{massprod}', [MassProductionController::class, 'massProductionMonitoring']);
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/model',
-    //[MassProductionController::class, 'getLayerModel']);
+//[MassProductionController::class, 'getLayerModel']);
 Route::get('/mass-production/get-layer-model', [MassProductionController::class, 'getLayerModel']);
 
 
@@ -495,7 +494,7 @@ Route::get('/mass-production/{furnace}/{massprod}/layer/{layer}/layer-no', [Mass
 
 Route::get('/mass-production/get-associated-model', [MassProductionController::class, 'getAssociatedModel']);
 
-Route::get('/mass-production/{furnace}/{massprod}/smp-data',[MassProductionController::class, 'smpDataSummary']);
+Route::get('/mass-production/{furnace}/{massprod}/smp-data', [MassProductionController::class, 'smpDataSummary']);
 
 Route::get('/break-lot-monitoring/{furnace}/{massprod}', [MassProductionController::class, 'breakLotMonitoring']);
 
@@ -554,8 +553,10 @@ Route::get(
     [BreaklotInitialLotController::class, 'showAllAdditional']
 );
 
-Route::get('stamp-undo-history/by-serial/{serial_no}',
-    [StampUndoHistoryController::class, 'bySerial']);
+Route::get(
+    'stamp-undo-history/by-serial/{serial_no}',
+    [StampUndoHistoryController::class, 'bySerial']
+);
 
 Route::get('breaklot-coating/generate-layer-code', [BreaklotCoatingController::class, 'generateLayerCode']);
 Route::get('breaklot-coating/check-existing', [BreaklotCoatingController::class, 'checkExisting']);
@@ -568,14 +569,14 @@ Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::cl
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
 Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
 
-Route::apiResource('mass-production',MassProductionController::class);
+Route::apiResource('mass-production', MassProductionController::class);
 Route::apiResource('break-lot-coating', BreaklotCoatingController::class);
 Route::apiResource('break-lot-second-coating', BreaklotSecondCoatingController::class);
 Route::apiResource('break-lot-filmpasting', BreaklotFilmpastingController::class);
 Route::apiResource('breaklot-initial-lots', BreaklotInitialLotController::class);
-Route::apiResource('excess-layers',ExcessLayersController::class);
+Route::apiResource('excess-layers', ExcessLayersController::class);
 Route::apiResource('error-logs', ErrorLogsController::class);
 Route::apiResource('initial_control_sheet', InitialControlSheetController::class);
-Route::apiResource('initial-coating',InitialCoatingController::class);
+Route::apiResource('initial-coating', InitialCoatingController::class);
 Route::apiResource('initial-film-pasting', InitialFilmPastingController::class);
 Route::apiResource('stamp-undo-history', StampUndoHistoryController::class);
