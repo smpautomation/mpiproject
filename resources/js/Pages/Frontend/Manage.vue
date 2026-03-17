@@ -1870,6 +1870,7 @@ const mias_factorCsvError = ref(false);
 const showGraphProceedConfirmation = ref(false);
 const isAdditionalExisting = ref(false);
 const showMiasFactorError = ref(false);
+const showMixLotErrorMessage = ref(false);
 
 const showGraphAndTables = ref(false);
 const showLoadingForGraphAndTables = ref(false);
@@ -2928,6 +2929,7 @@ const saveToDatabase = async () => {
     //console.log('Sorted Files:', fileData.value);
 
     layerTableRowLoading.value = true;
+    const lotCombinations = [];
     const filePromises = fileData.value.map((file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -3093,6 +3095,18 @@ const saveToDatabase = async () => {
                     iHr98_remarks: saveIHr98Remarks.value,
                 };
                 //console.log("Layer Data:", layerData);
+
+                /* TEMPORARY DISABLED
+                const currentLotCombo = `${rowCell.value[4]}|${rowCell.value[5]}|${rowCell.value[6]}`;
+                lotCombinations.push(currentLotCombo);
+
+                const uniqueLots = [...new Set(lotCombinations)];
+                if (uniqueLots.length > 1) {
+                    toast.error('Mix lots detected in the uploaded files. Please try again.');
+                    reject(new Error('Mix lots detected'));
+                    return;
+                }
+                */
 
                 await sendLayerData(layerData); // Send the parsed data to the server
                 resolve();

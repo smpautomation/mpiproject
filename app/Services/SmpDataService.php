@@ -101,9 +101,9 @@ class SmpDataService
                 'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? '' : '',
                 'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? '' : '',
                 'iHc_Ave' => $tpmAggregate && $tpmAggregate->average ? json_decode($tpmAggregate->average, true)['iHc'] ?? '' : '',
-                'Remarks' => is_array($remarksDecoded)
+                'Remarks' => (is_array($remarksDecoded) && count($remarksDecoded) > 0)
                     ? implode("\n", $remarksDecoded)
-                    : ($remarksDecoded ?? ''),
+                    : (!empty($remarksDecoded) ? $remarksDecoded : 'NONE'),
                 'Status' => $reportData->smp_judgement ?? '',
                 'HT_Trouble' => $massProdData->current_pattern === 'PASS' ? 'NO' : 'YES',
                 'Special_Instruction' => $smpData->special_instruction ?? ''

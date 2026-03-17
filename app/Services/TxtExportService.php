@@ -820,7 +820,7 @@ class TxtExportService
         //dump($formattedFurnace);
 
         // Fetch TPM data by mass_prod and furnace only
-        $tpmData = TpmData::with('remark', 'category')
+        $tpmData = TPMData::with('remark', 'category')
             ->where('furnace', 'LIKE', "{$formattedFurnace}")
             ->where('mass_prod', $massPro)
             ->get();
@@ -873,7 +873,18 @@ class TxtExportService
                 )
                 : '0',
             'ZONE' => fn($item) => $item->zone ?? '0',
-            'PASS_NO' => fn($item) => $item->pass_no ?? '0',
+            'PASS_NO' => function ($item) use ($massProdData) {
+                $passNo = (int) ($item->pass_no ?? 0);
+
+                if (
+                    isset($massProdData->cycle_pattern) && strtoupper($massProdData->cycle_pattern) === 'ABNORMAL'
+                    || isset($massProdData->current_pattern) && strtoupper($massProdData->current_pattern) === 'ABNORMAL'
+                ) {
+                    $passNo += 100;
+                }
+
+                return $passNo;
+            },
             'HD5' => fn($item, $ctx) => $ctx['hd5'] ?? '0',
 
             // ---- CUSTOM ORDER ----
