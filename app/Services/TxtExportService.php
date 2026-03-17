@@ -28,6 +28,8 @@ class TxtExportService
             return 'No date found for this furnace and mass production.';
         }
 
+        $transformedFurnace = substr($furnace_no, 0, 1) . '-' . substr($furnace_no, 1);
+
         // Step 2: Fetch the mass production row
         $massProdData = MassProduction::where('mass_prod', $massPro)->first();
 
@@ -37,11 +39,11 @@ class TxtExportService
 
         // Step 3: Prepare layer/area structure
         $layers = range(1, 10);
-
         $outputRows = [];
         $allBoxes = []; // will collect all boxes across layers
 
         foreach ($layers as $layerKey) {
+
             // Handle 9.5 column naming
             if ($layerKey == 10) {
                 $layerColumn = 'layer_9_5';
@@ -56,10 +58,10 @@ class TxtExportService
 
             if (empty($layerData)) {
                 $excess = ExcessLayers::where('furnace', preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no))
-                       ->where('mass_prod', $massPro)
-                       ->where('layer', $layerKey)
-                       ->value('layer_data');
-                //dump($layerKey, $excess);
+                    ->where('mass_prod', $massPro)
+                    ->where('layer', $layerKey)
+                    ->value('layer_data');
+
                 if (is_string($excess)) {
                     $layerData = json_decode($excess, true);
                 } elseif (is_array($excess)) {
@@ -69,9 +71,27 @@ class TxtExportService
                 }
             }
 
-            // Get model code from TPM data using the serial number
-            $tpmRow = TPMData::where('serial_no', $layerSerial)->first();
-            $modelCode = $tpmRow->code_no ?? '0';
+            // --- MODEL_CODE RESOLUTION (layer aware) ---
+            $layerForQuery = $layerKey == 10 ? 9.5 : $layerKey;
+            Log::info("Layer {$layerKey} (query as {$layerForQuery}) for furnace {$transformedFurnace} mass_prod {$massPro}");
+
+            $serialArray = array_unique(
+                TPMData::where('mass_prod', $massPro)
+                    ->where('furnace', $transformedFurnace)
+                    ->where('layer_no', $layerForQuery)
+                    ->pluck('serial_no')
+                    ->toArray()
+            );
+
+            Log::info("Layer {$layerKey}: Serial numbers fetched: " . implode(',', $serialArray));
+
+            $categoryRows = [];
+            if (!empty($serialArray)) {
+                $categoryRows = TPMDataCategory::whereIn('tpm_data_serial', $serialArray)
+                    ->get(['actual_model', 'jhcurve_lotno', 'tpm_data_serial']);
+
+                Log::info("Layer {$layerKey}: Category rows fetched count: " . $categoryRows->count());
+            }
 
             // Detect boxes dynamically from JSON keys
             $boxes = [];
@@ -80,26 +100,28 @@ class TxtExportService
                     $boxes = array_unique(array_merge($boxes, array_keys($item['data'] ?? [])));
                 }
             }
-
-            // Merge with global boxes array
             $allBoxes = array_unique(array_merge($allBoxes, $boxes));
 
             // Step 5: Build per-box rows
             foreach ($boxes as $area) {
+
                 $rowData = [
-                    'MODEL_NAME'      => '0',
-                    'COATING_MC_NO'   => '0',
-                    'LOT_NO'          => '0',
-                    'MC_NO'           => '0',
-                    'QTY'             => '0',
-                    'COATING'         => '0',
-                    'WT'              => '0',
-                    'BOX_NO'          => '0',
-                    'MODEL_CODE'      => $modelCode,
+                    'MODEL_NAME' => '0',
+                    'COATING_MC_NO' => '0',
+                    'LOT_NO' => '0',
+                    'MC_NO' => '0',
+                    'QTY' => '0',
+                    'COATING' => '0',
+                    'WT' => '0',
+                    'BOX_NO' => '0',
+                    'MODEL_CODE' => '0',
                     'RAW_MATERIAL_CODE' => '0',
                 ];
 
                 // Fill with real data from JSON
+                $rawModelName = '0';
+                $rawLotNo     = '0';
+
                 foreach ($layerData as $item) {
                     $title = $item['rowTitle'] ?? '';
                     $data = $item['data'][$area] ?? '0';
@@ -109,34 +131,66 @@ class TxtExportService
                     switch ($normalizedTitle) {
                         case 'model':
                             $rowData['MODEL_NAME'] = $data;
+                            $rawModelName = $data; // raw for serial lookup
                             break;
+
                         case 'coatingmcno':
                             $rowData['COATING_MC_NO'] = $this->normalizeCoatingMcNo($data);
                             break;
+
                         case 'ltno':
-                            $rowData['LOT_NO'] = $this->normalizeLotNo($data);
+                            $rowData['LOT_NO'] = $this->normalizeLotNo($data); // normalized for display
+                            $rawLotNo = $data; // raw for serial lookup
                             $rowData['MC_NO']  = $this->extractMcNo($data);
                             break;
+
                         case 'qty(pcs)':
                             $rowData['QTY'] = $data;
                             break;
+
                         case 'coating':
                             $rowData['COATING'] = $data;
                             break;
+
                         case 'wt(kg)':
                             $rowData['WT'] = $data;
                             break;
+
                         case 'boxno':
                             $cleanBoxNo = str_replace(' ', '', $data);
                             $rowData['BOX_NO'] = str_pad($cleanBoxNo ?: '0', 11, '0', STR_PAD_LEFT);
                             break;
+
                         case 'rawmaterialcode':
                             $rowData['RAW_MATERIAL_CODE'] = $data;
                             break;
                     }
                 }
 
-                //dd($layerKey, $area, $rowData); // commented out
+                // --- Resolve correct serial via RAW MODEL + LOT ---
+                $matchedSerial = null;
+
+                foreach ($categoryRows as $cat) {
+                    if (
+                        $cat->actual_model == $rawModelName &&
+                        $cat->jhcurve_lotno == $rawLotNo
+                    ) {
+                        $matchedSerial = $cat->tpm_data_serial;
+                        Log::info("Layer {$layerKey}, Box {$area}: Matched MODEL_NAME {$rawModelName} + LOT_NO {$rawLotNo} => Serial {$matchedSerial}");
+                        break;
+                    }
+                }
+
+                if (!$matchedSerial) {
+                    Log::info("Layer {$layerKey}, Box {$area}: No matching serial found for MODEL_NAME {$rawModelName} + LOT_NO {$rawLotNo}");
+                }
+
+                if ($matchedSerial) {
+                    $tpmRow = TPMData::where('serial_no', $matchedSerial)->first();
+                    $rowData['MODEL_CODE'] = $tpmRow->code_no ?? '0';
+                    Log::info("Layer {$layerKey}, Box {$area}: MODEL_CODE resolved as {$rowData['MODEL_CODE']} from serial {$matchedSerial}");
+                }
+
                 $outputRows[$layerKey][$area] = $rowData;
             }
         }
@@ -170,7 +224,7 @@ class TxtExportService
         // Step 7: Format into lines and save
         $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,MC_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
         $lines = collect($finalRows)->map(fn($row) => implode(',', $row))->prepend($header);
-        //dd($lines->toArray()); // commented out
+        //dd($lines->toArray());
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
         if (!File::exists($directory)) {
@@ -255,7 +309,7 @@ class TxtExportService
     {
         $formattedFurnace = preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no);
         // Fetch all TPM data for this furnace + mass production
-        $tpmData = TpmData::where('furnace', 'LIKE', "{$formattedFurnace}%")
+        $tpmData = TPMData::where('furnace', 'LIKE', "{$formattedFurnace}%")
             ->where('mass_prod', $massPro)
             ->get();
 
@@ -273,28 +327,30 @@ class TxtExportService
             return 'No MassProduction data found.';
         }
 
-        $breaklotCoating = collect(BreaklotCoating::query()
-            ->where('furnace', $normalizedFurnace)
-            ->where('mass_prod', $massPro)
-            ->get()
-            ->mapWithKeys(fn($item) => [
-                $item->layer => [
-                    'model'  => $item->model,
-                    'lot_no' => $item->lot_no,
-                ]
-            ])
+        $breaklotCoating = collect(
+            BreaklotCoating::query()
+                ->where('furnace', $normalizedFurnace)
+                ->where('mass_prod', $massPro)
+                ->get()
+                ->mapWithKeys(fn($item) => [
+                    $item->layer => [
+                        'model'  => $item->model,
+                        'lot_no' => $item->lot_no,
+                    ]
+                ])
         );
 
-        $breaklotSecondCoating = collect(BreaklotSecondCoating::query()
-            ->where('furnace', $normalizedFurnace)
-            ->where('mass_prod', $massPro)
-            ->get()
-            ->mapWithKeys(fn($item) => [
-                $item->layer => [
-                    'model'  => $item->model,
-                    'lot_no' => $item->lot_no,
-                ]
-            ])
+        $breaklotSecondCoating = collect(
+            BreaklotSecondCoating::query()
+                ->where('furnace', $normalizedFurnace)
+                ->where('mass_prod', $massPro)
+                ->get()
+                ->mapWithKeys(fn($item) => [
+                    $item->layer => [
+                        'model'  => $item->model,
+                        'lot_no' => $item->lot_no,
+                    ]
+                ])
         );
 
         $additionalKeyPairs = $breaklotCoating->merge($breaklotSecondCoating)->all();
@@ -355,7 +411,7 @@ class TxtExportService
                 // Case 1: Standard layer, not yet processed
                 //dump("Standard layer processing for {$layerKey}");
                 $tpmRow = $layerSerial
-                    ? TpmData::where('serial_no', $layerSerial)->first()
+                    ? TPMData::where('serial_no', $layerSerial)->first()
                     : null;
                 $reportData = $layerSerial
                     ? ReportData::where('tpm_data_serial', $layerSerial)->first()
@@ -376,7 +432,7 @@ class TxtExportService
                     //dump("Trying keyPair #{$index} for layer {$layerKey}", ['model' => $model, 'lot_no' => $lotNo]);
 
                     // Fetch all serials for this furnace/mass_prod/layer
-                    $layerSerials = TpmData::where('furnace', $normalizedFurnace)
+                    $layerSerials = TPMData::where('furnace', $normalizedFurnace)
                         ->where('mass_prod', $massPro)
                         ->where('layer_no', $layerKey)
                         ->pluck('serial_no');
@@ -389,7 +445,7 @@ class TxtExportService
 
                         if ($category) {
                             // Found matching serial
-                            $tpmRow = TpmData::where('serial_no', $serial)->first();
+                            $tpmRow = TPMData::where('serial_no', $serial)->first();
                             $reportData = ReportData::where('tpm_data_serial', $serial)->first();
 
                             /*dump("Found matching TPM & Report for layer {$layerKey} with keyPair #{$index}", [
@@ -406,7 +462,6 @@ class TxtExportService
 
                     //dump("No matching TPM found for keyPair #{$index}");
                 }
-
             } else {
                 // Case 3: Layer already processed or no remaining keyPairs
                 //dump("Skipping layer {$layerKey}: already processed or no keyPairs left");
@@ -446,7 +501,6 @@ class TxtExportService
 
                 // Mark this layer as processed
                 $processedStandardLayers[] = $layerKey;
-
             } elseif (in_array($layerKey, $additionalLayerKeys) && !empty($remainingKeyPairs)) {
                 // Subsequent occurrences → use additionalKeyPairs logic
                 //dump("=== Start additional layer loop for layer {$layerKey} ===");
@@ -468,7 +522,7 @@ class TxtExportService
                         ->where('lot_no', $lotNo)
                         ->first();
 
-                     // Refactored fallback using helper
+                    // Refactored fallback using helper
                     if (!$coating) {
                         $coating = $this->getSecondCoatingFallbackByKeyPair(
                             $normalizedFurnace,
@@ -556,20 +610,53 @@ class TxtExportService
                 // Completely blank — only layer preserved
                 $outputRows[] = [
                     $layerKey,
-                    '0','0',0,'','',0,0,0,0,0,
-                    '','','','','','',0,0,0,''
+                    '0',
+                    '0',
+                    0,
+                    '',
+                    '',
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    0,
+                    0,
+                    0,
+                    ''
                 ];
             }
         }
 
         // Step 5: Define headers (non-negotiable)
         $header = [
-            'LAYER', 'MODEL_CODE', 'RAW_MATERIAL_CODE', 'TOTAL_QUANTITY',
-            'COATING_DATE', 'COATING_MC_NO', 'MIN_TB_CONTENT', 'TOTAL_MAGNET_WEIGHT',
-            'COATING_MAX', 'COATING_MIN', 'COATING_AVE',
-            'FURNACE_MC_NO', 'CYCLE_NO', 'BATCH_CYCLE_NO', 'PATTERN',
-            'DATE_START', 'DATE_FINISH',
-            'LENGTH', 'WIDTH', 'THICKNESS', 'MATERIAL_GRADE'
+            'LAYER',
+            'MODEL_CODE',
+            'RAW_MATERIAL_CODE',
+            'TOTAL_QUANTITY',
+            'COATING_DATE',
+            'COATING_MC_NO',
+            'MIN_TB_CONTENT',
+            'TOTAL_MAGNET_WEIGHT',
+            'COATING_MAX',
+            'COATING_MIN',
+            'COATING_AVE',
+            'FURNACE_MC_NO',
+            'CYCLE_NO',
+            'BATCH_CYCLE_NO',
+            'PATTERN',
+            'DATE_START',
+            'DATE_FINISH',
+            'LENGTH',
+            'WIDTH',
+            'THICKNESS',
+            'MATERIAL_GRADE'
         ];
 
         // Step 6: Prepare lines
@@ -771,20 +858,20 @@ class TxtExportService
             'LOT_NO'  => fn($item) => $item->press_1 ?? '0',
             'MC_NO' => fn($item) => $item->machine_no ?? '0',
             'FURNACE_MC_NO' => fn($item) =>
-                $item->sintering_furnace_no
-                    ? substr(explode('-', $item->sintering_furnace_no)[0], 0, 1)
-                    . '0'
-                    . substr(explode('-', $item->sintering_furnace_no)[0], 1)
-                    : '0',
+            $item->sintering_furnace_no
+                ? substr(explode('-', $item->sintering_furnace_no)[0], 0, 1)
+                . '0'
+                . substr(explode('-', $item->sintering_furnace_no)[0], 1)
+                : '0',
             'CYCLE_NO' => fn($item) => ltrim(explode('-', $cycleNo)[1] ?? '0', '0'),
-            'COATING_MC_NO' => fn ($item) =>
-                $item->furnace_no
-                    ? str_replace(
-                        '-',
-                        '0',
-                        preg_replace('/^FP/i', 'F', $item->furnace_no)
-                    )
-                    : '0',
+            'COATING_MC_NO' => fn($item) =>
+            $item->furnace_no
+                ? str_replace(
+                    '-',
+                    '0',
+                    preg_replace('/^FP/i', 'F', $item->furnace_no)
+                )
+                : '0',
             'ZONE' => fn($item) => $item->zone ?? '0',
             'PASS_NO' => fn($item) => $item->pass_no ?? '0',
             'HD5' => fn($item, $ctx) => $ctx['hd5'] ?? '0',
@@ -837,7 +924,7 @@ class TxtExportService
         $lines = [];
         $lines[] = implode(',', $headers);
 
-        $layerOrder = ['1','2','3','4','5','6','7','8','9','T'];
+        $layerOrder = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'T'];
 
         foreach ($layerOrder as $layer) {
             // Determine the numeric value for queries
@@ -881,7 +968,7 @@ class TxtExportService
                 foreach ($schema as $resolver) {
                     $value = $resolver($item, $context);
                     $value = $this->convertToString($value);
-                    $value = str_replace(["\r","\n"], [' ',' '], $value);
+                    $value = str_replace(["\r", "\n"], [' ', ' '], $value);
                     $row[] = str_contains($value, ',') ? "\"$value\"" : $value;
                 }
 
@@ -923,7 +1010,7 @@ class TxtExportService
         }
 
         // Step 3: Define layers
-        $layers = [1,2,3,4,5,6,7,8,9,9.5];
+        $layers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 9.5];
 
         $outputRows = [];
         $hasValidData = false;
@@ -994,6 +1081,4 @@ class TxtExportService
 
         return (string)$value; // Fallback for strings, numbers, and null
     }
-
-
 }

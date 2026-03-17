@@ -2152,12 +2152,8 @@
                                     </template>
 
 
-
-
-
-                                    <template>
+                                    <template v-if="showCpkFrom_iHc">
                                         <tr
-                                            v-show="showCpkFrom_iHc"
                                             class="bg-blue-300"
                                         >
                                             <th
@@ -2187,7 +2183,6 @@
                                             </th>
                                         </tr>
                                         <tr
-                                            v-show="showCpkFrom_iHc"
                                             class="text-center"
                                         >
                                             <td
@@ -2221,8 +2216,77 @@
                                         </tr>
                                     </template>
 
-
-
+                                    <template v-if="showCpkFrom_br">
+                                        <tr class="bg-blue-300">
+                                            <th
+                                                rowspan="2"
+                                                colspan="2"
+                                                class="text-xl text-white border-4 border-white whitespace-nowrap"
+                                            >
+                                                Computation of Cpk from Br
+                                            </th>
+                                            <th
+                                                class="text-white border-4 border-white"
+                                            >
+                                                STD DEV
+                                            </th>
+                                            <th
+                                                class="text-white border-4 border-white"
+                                            >
+                                                Cp
+                                            </th>
+                                            <th
+                                                class="text-white border-4 border-white whitespace-nowrap"
+                                            >
+                                                Cpk &#8805; 1.00
+                                            </th>
+                                            <!-- &#8805; is greater than equal to symbol -->
+                                            <th
+                                                colspan="2"
+                                                class="px-4 py-2 text-white border-4 border-white"
+                                            >
+                                                Remarks
+                                            </th>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"
+                                            >
+                                                <input
+                                                    type="number"
+                                                    v-model="reportCpkFrom_br_StdDev"
+                                                    name="stdDev"
+                                                    class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <input
+                                                    type="number"
+                                                    v-model="reportCpkFrom_br_Cp"
+                                                    name="stdDev"
+                                                    class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                <input
+                                                    type="number"
+                                                    v-model="reportCpkFrom_br_Cpk"
+                                                    name="stdDev"
+                                                    class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                                />
+                                            </td>
+                                            <td
+                                                colspan="2"
+                                                class="px-1 py-[2px] text-blue-600 border-4 border-white"
+                                            >
+                                                {{ reportCpkFrom_br_remarks }}
+                                            </td>
+                                        </tr>
+                                    </template>
 
 
                                     <template
@@ -5215,6 +5279,12 @@ const reportTsi_samples = ref([]);
 const reportCpkFrom_iHc_StdDev = ref(0);
 const reportCpkFrom_iHc_Cpk = ref(0);
 const reportCpkFrom_iHc_remarks = ref("NA");
+
+const reportCpkFrom_br_StdDev = ref(0);
+const reportCpkFrom_br_Cpk = ref(0);
+const reportCpkFrom_br_Cp = ref(0);
+const reportCpkFrom_br_remarks = ref("NA");
+
 const reportGX_iHcStandard = ref(0);
 const reportGX_iHcAverage = ref(0);
 const reportGX_iHcMaximum = ref(0);
@@ -6392,6 +6462,30 @@ watch(
     { immediate: true },
 );
 
+//For CPK From BR models
+watch(
+    [
+        reportCpkFrom_br_Cpk,
+        reportCpkFrom_br_remarks,
+        showCpkFrom_br,
+    ],
+    () => {
+
+        if (showCpkFrom_br.value === true && reportCpkFrom_br_Cpk.value !== null) {
+            if (reportCpkFrom_br_Cpk.value < 1.0) {
+                //console.log('reportCpkFrom_br_Cpk is below 1.00 — setting NG/REJECT');
+                reportCpkFrom_br_remarks.value = "NG";
+            } else {
+                //console.log('reportCpkFrom_br_Cpk is 1.00 or higher — setting OK/HOLD');
+                reportCpkFrom_br_remarks.value = "OK";
+            }
+        } else {
+            //console.log('showCpkFrom_br is false — skipping CPK BR check');
+        }
+    },
+    { immediate: true },
+);
+
 // special judgement conditions logic end
 
 const reportReset = () => {
@@ -6705,9 +6799,9 @@ const checkSpecialJudgement = async () => {
         //console.log('[CPK] CPK enabled');
     }
 
-    if (MODELS_SHOW_CPK.value.includes(model)) {
+    if (MODELS_SHOW_CPK_BR.value.includes(model)) {
         showCpkFrom_br.value = true;
-        //console.log('[CPK] CPK enabled');
+        //console.log('[CPK BR] CPK BR enabled');
     }
 
     if (MODELS_SHOW_GX.value.includes(model)) {

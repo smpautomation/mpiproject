@@ -30,11 +30,10 @@
             <button @click="showROBPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 ROB BH TRACER MODELS
             </button>
-            <!-- TEMPORARY DISABLED
+
             <button @click="showCPKBRPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 CPK BR MODELS
             </button>
-             -->
         </div>
     </div>
 
@@ -734,7 +733,7 @@
           </div>
           <div class="space-x-3">
             <button
-              @click="cpkihc_updateRecord"
+              @click="cpkbr_updateRecord"
               class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
             >
               Update
@@ -996,14 +995,14 @@ const bh_updateRecord = async () => {
 
 // Update record
 const rob_updateRecord = async () => {
-  await axios.put(`/api/rob-models/${rob_editingRecord.value.id}`, rob_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${rob_editingRecord.value.model_name} to the data list instructions of VT Models`);
-  rob_editingRecord.value = null;
-  await loadData();
+    await axios.put(`/api/rob-models/${rob_editingRecord.value.id}`, rob_editingRecord.value);
+    await userInstructionsLogging(`has successfully edited ${rob_editingRecord.value.model_name} to the data list instructions of VT Models`);
+    rob_editingRecord.value = null;
+    await loadData();
 };
 
 const cpkbr_updateRecord = async () => {
-    await axios.put(`/api/cpk-ihc-models/${cpkbr_editingRecord.value.id}`, cpkbr_editingRecord.value);
+    await axios.put(`/api/cpk-br-models/${cpkbr_editingRecord.value.id}`, cpkbr_editingRecord.value);
     await userInstructionsLogging(`has successfully edited ${cpkbr_editingRecord.value.model_name} to the data list instructions of CPK BR Models`);
     cpkbr_editingRecord.value = null;
     await loadData();
