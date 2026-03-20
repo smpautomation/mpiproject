@@ -1411,9 +1411,7 @@
                                     </p>
                                     <p class="whitespace-nowrap">
                                         <span
-                                            :class="
-                                                adjustColor_rejectInstructions
-                                            "
+                                            :class=" adjustColor_rejectInstructions"
                                         >
                                             {{ rejectInstruction }}
                                         </span>
