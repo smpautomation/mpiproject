@@ -233,6 +233,7 @@
                 <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateAvg['4paila'] }}</td>
             </tr>
             <tr>
+                <td style="width: 6.25%; font-weight: bold; font-size: 10px; text-align: center; white-space: nowrap;"><i>Max</i></td>
                 <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['Br'] }}</td>
                 <td style="width: 2.25%; font-size: 10px; text-align: center; white-space: nowrap;"></td>
                 <td style="width: 6.25%; font-size: 10px; text-align: center; white-space: nowrap;">{{ $tpmAggregateMax['iHc'] }}</td>
