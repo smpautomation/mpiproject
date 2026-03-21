@@ -1006,14 +1006,14 @@
                         <!-- Finalize -->
                         <button
                             v-if="!activate2ndGBDP"
-                            :disabled="isExists || coatingNoMassProdData"
+                            :disabled="isExists || isExists_2ndGBDP || coatingNoMassProdData"
                             @click="finalize"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
                             :class="isExists || coatingNoMassProdData
                                 ? 'bg-red-600 hover:bg-red-700 focus:ring-red-400 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'"
                         >
-                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT') }}
+                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists || isExists_2ndGBDP ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT') }}
                         </button>
 
                         <button

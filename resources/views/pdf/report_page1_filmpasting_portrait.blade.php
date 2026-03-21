@@ -1478,9 +1478,9 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <img src="{{ public_path('photo/template.png') }}"
+                                            <!--img src="{{ public_path('photo/template.png') }}"
                                                 style="height: 60px; margin: -5px 3px;"
-                                                alt="Checked By Stamp">
+                                                alt="Checked By Stamp"-->
                                         @endif
                                     </td>
                                 </tr>

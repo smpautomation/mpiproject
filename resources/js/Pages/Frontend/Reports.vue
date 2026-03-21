@@ -3500,7 +3500,7 @@
                             APPLY ADDITIONAL
                         </button>
                         <button
-                            v-if="approvedByPerson_firstName"
+                            v-if="checkedByPerson_firstName"
                             @click="
                                 finalizeReport(
                                     currentSerialSelected,
@@ -9190,6 +9190,7 @@ const addCarmark = async () => {
 
 const finalizeReport = async (serial, isFinalized) => {
     console.log("isFinalized: ", isFinalized);
+    /*
     if (!isFinalized) {
         try {
             const responseFinalize = await axios.patch(
@@ -9205,7 +9206,9 @@ const finalizeReport = async (serial, isFinalized) => {
         } catch (error) {
             console.error("[Finalize Report] Error finalizing report:", error);
         }
+
     }
+    */
 
     window.open(`/reports/${encodeURIComponent(serial)}/pdf`, "_blank");
 };
