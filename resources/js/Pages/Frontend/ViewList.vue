@@ -84,133 +84,162 @@
                     <th class="px-2 py-2 whitespace-nowrap">SMP Judgement</th>
                     <th class="px-2 py-2 whitespace-nowrap">Status</th>
                     <th class="px-2 py-2 whitespace-nowrap">Email</th>
-                    <th v-if="state.user && state.user.access_type !== 'Basic User'" class="px-2 py-2 whitespace-nowrap">Action</th>
+                    <th v-if="state.user && state.user.access_type !== 'Basic User'" class="px-2 py-2 whitespace-nowrap">Action</th> <!-- New Action Column -->
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in paginatedData" :key="index" class="bg-gradient-to-r from-cyan-600 via-cyan-900 to-teal-600">
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.created_at || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.mass_prod || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.layer_no || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.serial_no || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.model || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.lot_no || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.sintering_furnace_no || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.tracer || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.smp_judgement || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
-                            {{ item.status || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td class="p-[1px]">
-                        <div
-                            class="px-2 py-1 text-sm font-medium text-center rounded-sm"
-                            :class="{
-                                'bg-green-100 text-green-800': item.email === 'EMAIL SENT',
-                                'bg-blue-100 text-blue-800': item.email === 'READY FOR EMAIL',
-                                'bg-yellow-100 text-yellow-800': item.email === 'PENDING'
-                            }"
-                        >
-                            {{ item.email || "NO DATA" }}
-                        </div>
-                    </td>
-                    <td v-if="state.user && state.user.access_type !== 'Basic User'" class="p-[1px] text-center">
-                        <div class="flex flex-row justify-center px-0 py-1 text-sm text-center bg-white rounded-sm space-x-7 whitespace-nowrap">
-                            <div>
-                                <button
-                                    @click="viewReport(item.serial_no)"
-                                    class="w-[110px] bg-cyan-600 text-white rounded-md font-medium text-sm shadow-sm hover:bg-cyan-500 active:bg-cyan-700 active:shadow-none transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                <tr
+                v-for="(item, index) in paginatedData"
+                :key="index"
+                class="bg-gradient-to-r from-cyan-600 via-cyan-900 to-teal-600"
+                >
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ formatDate(item.report[0]?.updated_at) || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.tpm[0].mass_prod || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.tpm[0].layer_no || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.category[0].tpm_data_serial || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.category[0].actual_model || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.category[0].jhcurve_lotno || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.tpm[0].sintering_furnace_no || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.tpm[0].Tracer || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                        {{ item.report[0]?.smp_judgement || "NO DATA" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div class="px-2 py-1 text-sm text-center bg-white rounded-sm">
+                    {{ item.report[0]?.approved_by_firstname ? "COMPLETED" : "PENDING" }}
+                    </div>
+                </td>
+                <td class="p-[1px]">
+                    <div
+                        class="px-2 py-1 text-sm font-medium text-center rounded-sm"
+                        :class="{
+                            'bg-green-100 text-green-800': item.report[0]?.is_emailed,
+                            'bg-blue-100 text-blue-800': item.report[0]?.is_finalized && !item.report[0]?.is_emailed,
+                            'bg-yellow-100 text-yellow-800': !item.report[0]?.is_finalized && !item.report[0]?.is_emailed
+                        }"
+                    >
+                        {{
+                            item.report[0]?.is_emailed ? 'EMAIL SENT' :
+                            (item.report[0]?.is_finalized ? 'READY FOR EMAIL' : 'PENDING')
+                        }}
+                    </div>
+                </td>
+                <td v-if="state.user && state.user.access_type !== 'Basic User'" class="p-[1px] text-center"> <!-- New Cell -->
+                    <div class="flex flex-row justify-center px-0 py-1 text-sm text-center bg-white rounded-sm space-x-7 whitespace-nowrap">
+                        <div>
+                            <button
+                                @click="viewReport(item.category[0].tpm_data_serial)"
+                                class="w-[110px]
+                                        bg-cyan-600 text-white
+                                        rounded-md font-medium text-sm
+                                        shadow-sm
+                                        hover:bg-cyan-500
+                                        active:bg-cyan-700 active:shadow-none
+                                        transition-all duration-150
+                                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
                                 >
-                                    View Report
-                                </button>
-                            </div>
-                            <div>
-                                <template v-if="confirmDeleteFor === item.serial_no">
-                                    <button
-                                        @click="deleteRow(item.serial_no)"
-                                        class="bg-gradient-to-b from-green-600 to-green-500 text-white rounded-sm w-[40px] mr-2 shadow-md hover:from-green-500 hover:to-green-400 active:shadow-inner active:from-green-700 active:to-green-600 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1"
-                                    >
-                                        Yes
-                                    </button>
-                                    <button
-                                        @click="confirmDeleteFor = null"
-                                        class="bg-gradient-to-b from-gray-300 to-gray-200 text-gray-800 rounded-sm w-[60px] shadow-md hover:from-gray-400 hover:to-gray-300 active:shadow-inner active:from-gray-500 active:to-gray-400 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
-                                    >
-                                        Cancel
-                                    </button>
-                                </template>
-                                <template v-else>
-                                    <button
-                                        @click="confirmDeleteFor = item.serial_no"
-                                        class="w-[110px] bg-red-700 text-white rounded-md font-medium text-sm shadow-sm hover:bg-red-600 active:bg-red-800 active:shadow-none transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                    >
-                                        Delete
-                                    </button>
-                                </template>
-                            </div>
+                                View Report
+                            </button>
                         </div>
-                    </td>
+                        <div>
+                            <template v-if="confirmDeleteFor === item.category[0].tpm_data_serial">
+                              <!-- Yes Button -->
+                            <button
+                            @click="deleteRow(item.category[0].tpm_data_serial)"
+                            class="bg-gradient-to-b from-green-600 to-green-500 text-white rounded-sm w-[40px] mr-2
+                                    shadow-md hover:from-green-500 hover:to-green-400 active:shadow-inner active:from-green-700 active:to-green-600
+                                    transition-all duration-150
+                                    focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1"
+                            >
+                            Yes
+                            </button>
+
+                            <!-- Cancel Button -->
+                            <button
+                            @click="confirmDeleteFor = null"
+                            class="bg-gradient-to-b from-gray-300 to-gray-200 text-gray-800 rounded-sm w-[60px]
+                                    shadow-md hover:from-gray-400 hover:to-gray-300 active:shadow-inner active:from-gray-500 active:to-gray-400
+                                    transition-all duration-150
+                                    focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                            >
+                                Cancel
+                            </button>
+                            </template>
+                            <template v-else>
+                                <button
+                                    @click="confirmDeleteFor = item.category[0].tpm_data_serial"
+                                    class="w-[110px]
+                                            bg-red-700 text-white
+                                            rounded-md font-medium text-sm
+                                            shadow-sm
+                                            hover:bg-red-600
+                                            active:bg-red-800 active:shadow-none
+                                            transition-all duration-150
+                                            focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    >
+                                    Delete
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Pagination -->
-    <div class="flex items-center mt-4 space-x-2">
+      <!-- Pagination -->
+      <div class="flex items-center mt-4 space-x-2">
         <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="px-3 py-1 text-white rounded bg-cyan-400 hover:bg-cyan-600 disabled:opacity-50"
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="px-3 py-1 text-white rounded bg-cyan-400 hover:bg-cyan-600 disabled:opacity-50"
         >
-            Prev
+          Prev
         </button>
         <span class="text-gray-400">Page {{ currentPage }} of {{ totalPages }}</span>
         <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1 text-white rounded bg-cyan-400 hover:bg-cyan-600 disabled:opacity-50"
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="px-3 py-1 text-white rounded bg-cyan-400 hover:bg-cyan-600 disabled:opacity-50"
         >
-            Next
+          Next
         </button>
-    </div>
-
+      </div>
     </div>
   </Frontend>
 </template>
@@ -356,15 +385,15 @@ const selectedFurnace = ref('');
 // Fetch data
 const viewAllSerialedLayers = async () => {
     try {
-        const response = await axios.post('/api/viewlist-remastered');
-        const rawData = response.data.data || [];
-
-        // No mapping needed, backend is already flat and structured
-        tpmData.value = [...rawData].sort((a, b) => b.created_at.localeCompare(a.created_at)); // DESC by created_at
-
-        console.log('TPM DATA: ', tpmData.value);
-
+        const response = await axios.get('/api/tpmdata');
+        const rawData = response.data.data?.tpmData || {};
+        //console.log("Show respone raw data: ",response.data);
+        tpmData.value = Object.entries(rawData)
+            .map(([serial, data]) => ({ serial: Number(serial), ...data }))
+            .sort((a, b) => b.serial - a.serial); // Sort DESC by serial
+        //console.log('[Fetched Data]:', tpmData.value);
         totalPages.value = Math.ceil(tpmData.value.length / itemsPerPage);
+        //console.log(totalPages.value);
     } catch (error) {
         console.error('[Error Fetching Data]:', error);
     }
@@ -417,45 +446,98 @@ const filteredData = computed(() => {
     const to = vl_dateTo.value;
 
     return tpmData.value.filter(item => {
-        // Search query
-        const model = item.model?.toLowerCase() || '';
-        const lot = item.lot_no?.toLowerCase() || '';
+        const model = item.category?.[0]?.actual_model?.toLowerCase?.() || '';
+        const lot = item.category?.[0]?.jhcurve_lotno?.toLowerCase?.() || '';
         const matchesQuery = !query || model.includes(query) || lot.includes(query);
 
-        // Status filter (already precomputed)
+        const tpm = item.tpm?.[0] || {};
+        const report = item.report?.[0] || {};
+
+        const isEmpty = (val) =>
+        val === null ||
+        val === undefined ||
+        (typeof val === 'string' && (val.trim() === '' || val === 'null'));
+
         let matchesStatus = true;
-        if (status === 'COMPLETED') matchesStatus = item.status === 'COMPLETED';
-        else if (status === 'PENDING') matchesStatus = item.status === 'PENDING';
 
-        // Mass production filter
-        const matchesMassProd = !massProd || item.mass_prod === massProd;
-
-        // Furnace filter with flexible matching (e.g., K40-0581 vs K40)
-        const matchesFurnace = !furnace || item.sintering_furnace_no.replace('-', '').startsWith(furnace.replace('-', ''));
-
-        // Date range filter
-        let matchesDate = true;
-        if (from || to) {
-            const recordDate = item.created_at?.split(' ')[0]; // Date only
-            if (from && recordDate < from) matchesDate = false;
-            if (to && recordDate > to) matchesDate = false;
+        if (status === 'COMPLETED') {
+        matchesStatus = !isEmpty(report.approved_by_firstname);
+        } else if (status === 'PENDING') {
+        matchesStatus = isEmpty(report.approved_by_firstname) &&
+                        !isEmpty(report.prepared_by_firstname) &&
+                        !isEmpty(report.checked_by_firstname);
+        } else if (status === 'PREPARED_PENDING') {
+        matchesStatus = isEmpty(report.prepared_by_firstname) &&
+                        isEmpty(report.checked_by_firstname) &&
+                        isEmpty(report.approved_by_firstname);
+        } else if (status === 'CHECKED_PENDING') {
+        matchesStatus = isEmpty(report.checked_by_firstname) &&
+                        isEmpty(report.approved_by_firstname) &&
+                        !isEmpty(report.prepared_by_firstname);
+        } else if (status === 'FINALIZED_PENDING') {
+        matchesStatus = !report.is_finalized &&
+                        !isEmpty(report.prepared_by_firstname) &&
+                        !isEmpty(report.checked_by_firstname) &&
+                        !isEmpty(report.approved_by_firstname);
+        } else if (status === 'COATING_PENDING') {
+        matchesStatus = report.coating_completed == false;
+        } else if (status === 'HEAT_TREATMENT_PENDING') {
+        matchesStatus = report.heat_treatment_completed == false;
         }
 
-        return matchesQuery && matchesStatus && matchesMassProd && matchesFurnace && matchesDate;
+        const matchesMassProd = !massProd || tpm.mass_prod === massProd;
+        const matchesFurnace = !furnace || tpm.furnace === furnace;
+
+        let matchesDate = true;
+        if (from || to) {
+            const recordDate = report.updated_at;
+            if (!recordDate) {
+                //console.log('Record skipped: no updated_at', item);
+                return false;
+            }
+
+            const recordDateStr = recordDate.split(' ')[0];
+
+            if (from && recordDateStr < from) {
+                matchesDate = false;
+                //console.log(`Record skipped: date ${recordDateStr} < from ${from}`, item);
+            }
+            if (to && recordDateStr > to) {
+                matchesDate = false;
+                //console.log(`Record skipped: date ${recordDateStr} > to ${to}`, item);
+            }
+        }
+
+        return matchesQuery &&
+            matchesStatus &&
+            matchesMassProd &&
+            matchesFurnace &&
+            matchesDate;
     });
 });
 
+
+watch(statusFilter, val => console.log('[Filter Selected]:', val));
+
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
-    return filteredData.value.slice(start, start + itemsPerPage);
+    const paginated = filteredData.value.slice(start, start + itemsPerPage);
+    //console.log(`[Paginated Data]: Page ${currentPage.value} | Items =`, paginated.length);
+    return paginated;
 });
 
 const nextPage = () => {
-    if (currentPage.value < totalPages.value) currentPage.value++;
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+    //console.log('[Pagination]: Next Page →', currentPage.value);
+  }
 };
 
 const prevPage = () => {
-    if (currentPage.value > 1) currentPage.value--;
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    //console.log('[Pagination]: Previous Page ←', currentPage.value);
+  }
 };
 
 // Watchers for debugging
@@ -482,9 +564,6 @@ const deleteRow = async (serial) => {
 
         console.log(`[Row + Chart Deleted]: Serial ${serial}`);
         userSerialDeleteLogging(`deleted Serial ${serial} and its chart image`);
-        await viewAllSerialedLayers();
-        await getMassProdLists();
-        await getFurnaceLists();
     } catch (error) {
         console.error(`[Error Deleting Serial ${serial}]`, error);
         confirmDeleteFor.value = null;
