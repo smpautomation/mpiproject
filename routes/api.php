@@ -61,6 +61,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+Route::post('/viewlist-remastered', [TPMDataController::class, 'viewListRemastered']);
+
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
@@ -433,6 +435,8 @@ Route::get('/coating-pending-add', [CoatingController::class, 'addPending']);
 Route::get('/coating-pending-check', [CoatingController::class, 'checkPending']);
 
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
+
+Route::get('/coating/get-data-breaklot', [CoatingController::class, 'getCoatingDataBreaklot']);
 
 Route::get('/approve-list-checked', [ReportDataController::class, 'getViewListChecked']);
 

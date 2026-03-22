@@ -241,51 +241,109 @@
             </div>
             <div v-if="activate2ndGBDP" class="w-full max-w-4xl mt-12">
                 <div class="px-8 py-6 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-2xl">
+
                     <!-- Header -->
-                    <h2 class="pb-3 mb-5 text-xl font-semibold tracking-wide text-gray-800 border-b border-gray-200">
+                    <h2 class="pb-3 mb-6 text-xl font-semibold tracking-wide text-gray-800 border-b border-gray-200">
                         Options
                     </h2>
 
-                    <!-- Body -->
-                    <div class="flex items-center space-x-4">
+                    <!-- Top Row -->
+                    <div class="flex items-start gap-4">
+
                     <!-- Icon -->
                     <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-full shadow-inner">
-                        <svg
-                            class="w-6 h-6 text-teal-600"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                            />
+                        <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"/>
                         </svg>
                     </div>
 
                     <!-- Content -->
                     <div class="flex-1">
-                        <p class="mb-4 text-sm leading-relaxed text-gray-600">
-                        This button allows data to be fetched automatically for
-                        <span class="font-semibold text-gray-800">1st GBDP</span>. Use this
-                        option when you want the system <br> to retrieve relevant information
-                        without manual input.
+
+                        <p class="mb-5 text-sm leading-relaxed text-gray-600">
+                        <template v-if="!breaklotFetchMode">
+                            This button allows data to be fetched automatically for
+                            <span class="font-semibold text-gray-800">1st GBDP</span>.
+                            Use this option when you want the system to retrieve relevant information
+                            without manual input.
+                        </template>
+
+                        <template v-else>
+                            Breaklot mode is active. The system will fetch coating data using
+                            <span class="font-semibold text-gray-800">Lot Number</span> along with
+                            Furnace, Mass Production, and Layer.
+                            Use this when working with split or partial production batches.
+                        </template>
                         </p>
+
+                        <!-- Inputs -->
+                        <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+                        <input v-model="selectedFurnace_fetch" type="text"
+                            @input="selectedFurnace_fetch = selectedFurnace_fetch.toUpperCase()"
+                            placeholder="Furnace (e.g. K-40)"
+                            class="text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+
+                        <input v-model="selectedMassProd_fetch" type="text"
+                            @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()"
+                            placeholder="Mass Prod (e.g. 541ST)"
+                            class="text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+
+                        <input v-model="selectedLayer_fetch" type="number"
+                            placeholder="Layer (e.g. 1)"
+                            class="text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+
+                        <input v-if="breaklotFetchMode"
+                            v-model="selectedLotNo_fetch"
+                            type="text"
+                            placeholder="Lot No (e.g. 144/145-2)"
+                            class="text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-3 mt-6">
+
+                        <!-- Secondary -->
                         <button
+                            v-if="!breaklotFetchMode"
+                            @click="breaklotFetchMode = true"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                        >
+                            Breaklot Mode
+                        </button>
+
+                        <!-- Cancel -->
+                        <button
+                            v-if="breaklotFetchMode"
+                            @click="breaklotFetchMode = false"
+                            class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600"
+                        >
+                            Cancel
+                        </button>
+
+                        <!-- Primary -->
+                        <button
+                            v-if="breaklotFetchMode"
+                            @click="autoFetchBreaklot"
+                            class="px-5 py-2 text-sm font-semibold text-white rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700"
+                        >
+                            Auto Fetch Breaklot
+                        </button>
+                        <button
+                            v-else
                             @click="autoFetch"
-                            class="px-5 py-2 text-sm font-semibold tracking-wide text-white transition-all duration-300 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400"
+                            class="px-5 py-2 text-sm font-semibold text-white rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700"
                         >
                             Auto Fetch
                         </button>
-                        <input v-model="selectedFurnace_fetch" type="text" @input="selectedFurnace_fetch = selectedFurnace_fetch.toUpperCase()" placeholder="e.g. K-40 (furnace)" class="ml-5 w-[8rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        <input v-model="selectedMassProd_fetch" type="text" @input="selectedMassProd_fetch = selectedMassProd_fetch.toUpperCase()" placeholder="e.g. 541ST (mass prod)" class="ml-5 w-[9.5rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-                        <input v-model="selectedLayer_fetch" type="number" placeholder="e.g. 1 (layer no)" class="ml-5 w-[7rem] text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+
+                        </div>
+
                     </div>
                     </div>
+
                 </div>
-            </div>
+                </div>
 
             <div v-if="isModelMissing" class="p-4 mb-4 text-red-800 border-l-4 border-red-500 rounded-md shadow-sm bg-red-50">
                 <strong class="font-semibold">Warning:</strong> Control Sheet for this layer has not been completed. Please ensure the model exists before proceeding.
@@ -1632,6 +1690,7 @@ const isDataShown = ref(false);
 const isAdditionalMode = ref(false);
 const isInitialLotSaved = ref(false);
 const isAdditionalExisting = ref(false);
+const breaklotFetchMode = ref(false);
 //Toggle Control
 
 const currentInitialLot = ref();
@@ -1651,6 +1710,7 @@ const fetchedModelValue = ref();
 const selectedFurnace_fetch = ref();
 const selectedMassProd_fetch = ref();
 const selectedLayer_fetch = ref();
+const selectedLotNo_fetch = ref();
 const fetchedCoatingData = ref([]);
 
 // General Variables --------- General Variables
@@ -2294,7 +2354,7 @@ const addtnl_saveToDatabase_1st2ndgbdp = async() => {
             mass_prod: coatingInfo.selectedMassProd,
             layer: coatingInfo.selectedLayer,
             layer_code: layerCode,
-            lot_no: lotNo.value,
+            lot_no: selectedLotNo_fetch.value,
             model: coatingInfo.selectedModel,
             coating_info_1stgbdp: {
                 mass_prod: selectedMassProd_fetch.value,
@@ -2915,6 +2975,109 @@ const autoFetch = async () => {
                 furnace: selectedFurnace_fetch.value,
                 mass_prod: selectedMassProd_fetch.value,
                 layer: selectedLayer_fetch.value
+
+            }
+        });
+        const coatingData = response.data;
+        if (!coatingData) {
+            toast.error(`No coating data found for Mass Production: ${selectedMassProd_fetch.value}, Layer ${selectedLayer_fetch.value}`);
+            return;
+        }
+        fetchedCoatingData.value = coatingData;
+
+        //Fetched data allocation --- Fetched data allocation
+        const cd = fetchedCoatingData.value;
+        const cdJson = JSON.parse(cd.coating_data);
+        const coatingAmounts = cdJson['Coating Amount Data'] ?? [];
+        const concentrationData = cdJson['Concentration Data']
+
+        coatingInfo_1stgbdp.selectedMassProd = selectedMassProd_fetch.value;
+        coatingInfo_1stgbdp.coatingDate = cd.date;
+        coatingInfo_1stgbdp.coatingMachineNo = cd.machine_no;
+        coatingInfo_1stgbdp.slurryLotNo = cd.slurry_lot_no;
+        coatingInfo_1stgbdp.minTbContent = cd.min_tb_content;
+        coatingInfo_1stgbdp.totalMagnetWeight = cd.total_magnet_weight;
+        coatingInfo_1stgbdp.remarks = cd.remarks;
+
+        lotNo_1stGBDP.value = cdJson['Lot no'] ?? null;
+
+        coatingAverage_1stgbdp.value = cd.average;
+        coatingMaximum_1stgbdp.value = cd.maximum;
+        coatingMinimum_1stgbdp.value = cd.minimum;
+
+        // Fill the table
+        coatingsTable_1stgbdp.value = coatingsTable_1stgbdp.value.map((row, index) => {
+            const fetched = coatingAmounts[index]?.coating;
+            return {
+                ...row,
+                coating: fetched !== undefined ? fetched : null
+            };
+        });
+
+        // 1stGBDP grid allocation (1–20 only)
+        concentrationData_1stGBDP.value = ranges_1stgbdp.map(rangeLabel => {
+            const rangeData = concentrationData.find(r => r.range === rangeLabel);
+            return modules.map(moduleName => {
+                const mod = rangeData?.modules.find(m => m.module === moduleName);
+                return mod?.value ?? null;
+            });
+        });
+
+        //Fetched data allocation --- Fetched data allocation END
+
+        toast.success(`Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`);
+        console.log('Fetched Mass Production Data: ', fetchedCoatingData.value);
+    }catch(error){
+        console.error("Error fetching mass prod data:", error);
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "autoFetch",
+            "Error fetching mass prod data"
+        );
+
+        if (error.response) {
+            if (error.response.status === 404) {
+                toast.error(`"${selectedFurnace_fetch.value} ${selectedMassProd_fetch.value}" layer ${selectedLayer_fetch.value} does not exists.`);
+            } else {
+                toast.error(`Server error (${error.response.status}): Unable to fetch data.`);
+            }
+        } else if (error.request) {
+            toast.error("No response from server. Please check your connection.");
+        } else {
+            toast.error("Unexpected error occurred while fetching data.");
+        }
+    }
+}
+
+const autoFetchBreaklot = async () => {
+    if(!selectedFurnace_fetch.value){
+        toast.error("Please enter Mass Production name to fetch data.");
+        return;
+    }
+    if(!selectedMassProd_fetch.value){
+        toast.error("Please enter Mass Production name to fetch data.");
+        return;
+    }
+    if(!selectedLayer_fetch.value){
+        toast.error("Please enter layer number to fetch data.");
+        return;
+    }
+    if(!selectedLotNo_fetch.value){
+        toast.error("Please enter lot no to fetch data.")
+    }
+    try{
+        const response = await axios.get(`/api/coating/get-data-breaklot`, {
+            params: {
+                furnace: selectedFurnace_fetch.value,
+                mass_prod: selectedMassProd_fetch.value,
+                layer: selectedLayer_fetch.value,
+                lot_no: selectedLotNo_fetch.value
             }
         });
         const coatingData = response.data;

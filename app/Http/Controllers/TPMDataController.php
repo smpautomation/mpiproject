@@ -24,31 +24,32 @@ use Illuminate\Support\Facades\Log;
 
 class TPMDataController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $serial_no = $request->query('serial');
         $report = $request->query('report');
         if (!$serial_no) {
-            try{
+            try {
                 $latestSerials = TPMData::select('serial_no')
-                            ->groupBy('serial_no')
-                            ->orderByRaw('MAX(created_at) DESC')
-                            ->limit(1000)
-                            ->pluck('serial_no');
+                    ->groupBy('serial_no')
+                    ->orderByRaw('MAX(created_at) DESC')
+                    ->limit(1000)
+                    ->pluck('serial_no');
                 $tpmData = TPMData::whereIn('serial_no', $latestSerials)
-                            ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace', 'mass_prod', 'layer_no')
-                            ->orderByDesc('created_at')
-                            ->get()
-                            ->groupBy('serial_no');
+                    ->select('serial_no', 'sintering_furnace_no', 'Tracer', 'furnace', 'mass_prod', 'layer_no')
+                    ->orderByDesc('created_at')
+                    ->get()
+                    ->groupBy('serial_no');
                 $category = TPMDataCategory::whereIn('tpm_data_serial', $latestSerials)
-                            ->orderByDesc('created_at')
-                            ->select('tpm_data_serial', 'actual_model', 'massprod_name', 'jhcurve_lotno')
-                            ->get()
-                            ->groupBy('tpm_data_serial');
+                    ->orderByDesc('created_at')
+                    ->select('tpm_data_serial', 'actual_model', 'massprod_name', 'jhcurve_lotno')
+                    ->get()
+                    ->groupBy('tpm_data_serial');
                 $reportData = ReportData::whereIn('tpm_data_serial', $latestSerials)
-                            ->orderByDesc('created_at')
-                            ->select('tpm_data_serial', 'updated_at', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname', 'is_finalized', 'coating_completed', 'heat_treatment_completed', 'is_emailed')
-                            ->get()
-                            ->groupBy('tpm_data_serial');
+                    ->orderByDesc('created_at')
+                    ->select('tpm_data_serial', 'updated_at', 'smp_judgement', 'prepared_by_firstname', 'checked_by_firstname', 'approved_by_firstname', 'is_finalized', 'coating_completed', 'heat_treatment_completed', 'is_emailed')
+                    ->get()
+                    ->groupBy('tpm_data_serial');
                 $grouped = [];
                 $tpmDataAll = TPMData::latest()->limit(1000)->get();
                 $aggregateFunctions = TPMDataAggregateFunctions::latest()->limit(1000)->get();
@@ -76,34 +77,35 @@ class TPMDataController extends Controller
                         'aggregateFunctions' => $aggregateFunctions
                     ]
                 ], 200);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Error retrieving tmp Data',
                     'error' => $e->getMessage(),
                 ], 500);
             }
-        }else{
-            try{
+        } else {
+            try {
                 $tpmData = TPMData::with($report ? ['remark', 'reportData', 'category'] : ['remark', 'category'])
-                                    ->where('serial_no',  $serial_no)
-                                    ->orderBy('zone', 'asc')
-                                    ->get();
+                    ->where('serial_no',  $serial_no)
+                    ->orderBy('zone', 'asc')
+                    ->get();
 
-                if(!$tpmData->isEmpty()){
+                if (!$tpmData->isEmpty()) {
                     $tpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->get();
                     return response()->json([
                         'status' => true,
                         'message' => 'TPM data found successfully',
-                        'data' => $tpmData, $tpmDataAggregateFunctions
+                        'data' => $tpmData,
+                        $tpmDataAggregateFunctions
                     ], 200);
-                }else{
+                } else {
                     return response()->json([
                         'status' => false,
                         'message' => 'TPM data not found for this serial number.'
                     ], 404);
                 }
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
                     'message' => 'An error occurred while retrieving TPM data',
@@ -113,27 +115,29 @@ class TPMDataController extends Controller
         }
     }
 
-    public function show($id){
-        try{
+    public function show($id)
+    {
+        try {
             $tpmData = TPMData::with(['remark'])
-                                ->find($id);
+                ->find($id);
 
-            if(!empty($tpmData)){
+            if (!empty($tpmData)) {
                 $remark = $tpmData->remark ?? 'No remark available';
                 $tpmAggregateData = TPMDataAggregateFunctions::where('serial_no', $tpmData->serial_no)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'TPM data found successfully',
-                    'data' => $tpmData, $tpmAggregateData
+                    'data' => $tpmData,
+                    $tpmAggregateData
                 ], 200);
-            }else{
+            } else {
                 return response()->json([
                     'status' => false,
                     'message' => 'TPM data not found for this serial number.'
                 ], 404);
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'An error occurred while retrieving TPM data',
@@ -141,10 +145,11 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         DB::beginTransaction();
 
-        try{
+        try {
             $tpmDataInputs = [
                 'date' => $request->input('date', null),
                 'serial_no' => $request->input('serial_no', null),
@@ -227,97 +232,90 @@ class TPMDataController extends Controller
             $remark = TPMDataRemark::create($remarkData);
 
             $checkTpmDataAggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkTpmDataAggregateFunctions){
-                try{
+            if (!$checkTpmDataAggregateFunctions) {
+                try {
                     $tpmAggragateFunctionsInput = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $tpmAggragateFunctions = TPMDataAggregateFunctions::create($tpmAggragateFunctionsInput);
-                }catch(\Exception $e){
+                } catch (\Exception $e) {
                     Log::error('Failed to create TPMDataAggregateFunctions: ' . $e->getMessage());
                 }
             }
 
             $checkTpmDataCategory = TPMDataCategory::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkTpmDataCategory){
-                try{
+            if (!$checkTpmDataCategory) {
+                try {
                     $tpmDataCategoryInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $tpmDataCategory = TPMDataCategory::create($tpmDataCategoryInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
 
             $checkReportData = ReportData::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkReportData){
-                try{
+            if (!$checkReportData) {
+                try {
                     $reportDataInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $reportData = ReportData::create($reportDataInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
 
             $checkStandardData = StandardData::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkStandardData){
-                try{
+            if (!$checkStandardData) {
+                try {
                     $standardDataInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $standardData = StandardData::create($standardDataInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
 
             $checkDataInstructions = DataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkDataInstructions){
-                try{
+            if (!$checkDataInstructions) {
+                try {
                     $dataInstructionsInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $dataInstructions = DataInstructions::create($dataInstructionsInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
 
             $checkDataInstructionsAggregate = DataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkDataInstructionsAggregate){
-                try{
+            if (!$checkDataInstructionsAggregate) {
+                try {
                     $dataInstructionsAggregateInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $dataInstructionsAggregate = DataInstructionsAggregate::create($dataInstructionsAggregateInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
 
             $checkMieGxDataInstructions = MieGxDataInstructions::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkMieGxDataInstructions){
-                try{
+            if (!$checkMieGxDataInstructions) {
+                try {
                     $mieGxDataInstructionsInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $mieGxDataInstructions = MieGxDataInstructions::create($mieGxDataInstructionsInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
             $checkMieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::where('tpm_data_serial', $tpmData->serial_no)->exists();
-            if(!$checkMieGxDataInstructionsAggregate){
-                try{
+            if (!$checkMieGxDataInstructionsAggregate) {
+                try {
                     $mieGxDataInstructionsAggregateInputs = [
                         'tpm_data_serial' => $tpmData->serial_no,
                     ];
                     $mieGxDataInstructionsAggregate = MieGxDataInstructionsAggregate::create($mieGxDataInstructionsAggregateInputs);
-                }catch(\Exception $e){
-
+                } catch (\Exception $e) {
                 }
             }
 
@@ -326,19 +324,19 @@ class TPMDataController extends Controller
                 'status' => true,
                 'message' => 'tmp Data created successfully',
                 'data' => [
-                        $tpmData,
-                        $remark,
-                        $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
-                        $checkTpmDataCategory ?? $tpmDataCategory,
-                        $checkReportData ?? $reportData,
-                        $checkStandardData ?? $standardData,
-                        $checkDataInstructions ?? $dataInstructions,
-                        $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
-                        $checkMieGxDataInstructions ?? $mieGxDataInstructions,
-                        $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
-                    ]
+                    $tpmData,
+                    $remark,
+                    $checkTpmDataAggregateFunctions ?? $tpmAggragateFunctions,
+                    $checkTpmDataCategory ?? $tpmDataCategory,
+                    $checkReportData ?? $reportData,
+                    $checkStandardData ?? $standardData,
+                    $checkDataInstructions ?? $dataInstructions,
+                    $checkDataInstructionsAggregate ?? $dataInstructionsAggregate,
+                    $checkMieGxDataInstructions ?? $mieGxDataInstructions,
+                    $checkMieGxDataInstructionsAggregate ?? $mieGxDataInstructionsAggregate
+                ]
             ], 201);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             // If an error occurs, roll back the transaction
             DB::rollBack();
 
@@ -408,7 +406,7 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $tpmData = TPMData::findorfail( $id );
+            $tpmData = TPMData::findorfail($id);
 
             $inputData = $request->all();
             $tpmData->update($inputData);
@@ -420,7 +418,6 @@ class TPMDataController extends Controller
                 'message' => 'TPM Data updated successfully',
                 'data' => $tpmData
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -434,7 +431,7 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $tpmData = TPMData::findorfail( $id );
+            $tpmData = TPMData::findorfail($id);
 
             $remarks = $tpmData->remark;
             $remarksData = $request->all();
@@ -447,7 +444,6 @@ class TPMDataController extends Controller
                 'message' => 'Remarks updated successfully',
                 'data' => $tpmData->remark
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -461,8 +457,8 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $aggregateFunctions = TPMDataAggregateFunctions::where( 'tpm_data_serial',$id )
-                                ->first();
+            $aggregateFunctions = TPMDataAggregateFunctions::where('tpm_data_serial', $id)
+                ->first();
             $aggregateFields = $request->all();
             $aggregateFunctions->update($aggregateFields);
 
@@ -473,7 +469,6 @@ class TPMDataController extends Controller
                 'message' => 'Aggregate Functions updated successfully',
                 'data' => $aggregateFunctions
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -487,8 +482,8 @@ class TPMDataController extends Controller
     {
         DB::beginTransaction();
         try {
-            $category = TPMDataCategory::where('tpm_data_serial',$id)
-                                ->first();
+            $category = TPMDataCategory::where('tpm_data_serial', $id)
+                ->first();
             $categoryFields = $request->all();
             $category->update($categoryFields);
 
@@ -499,7 +494,6 @@ class TPMDataController extends Controller
                 'message' => 'Category updated successfully',
                 'data' => $category
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -544,9 +538,9 @@ class TPMDataController extends Controller
     public function checkExisting(string $furnace, string $massprod, string $layer): bool
     {
         return TPMData::where('furnace', $furnace)
-                    ->where('mass_prod', $massprod)
-                    ->where('layer_no', $layer)
-                    ->exists();
+            ->where('mass_prod', $massprod)
+            ->where('layer_no', $layer)
+            ->exists();
     }
 
     public function deleteChart($serial)
@@ -576,7 +570,7 @@ class TPMDataController extends Controller
         $month = $request->query('month') ?? now()->format('ym');
 
         // Get the max serial for the month
-        $maxSerial = TPMData::where('serial_no', 'like', $month.'%')->max('serial_no');
+        $maxSerial = TPMData::where('serial_no', 'like', $month . '%')->max('serial_no');
 
         // Instead of throwing an error if none found, just return null
         return response()->json([
@@ -584,4 +578,98 @@ class TPMDataController extends Controller
         ]);
     }
 
+    public function viewListRemastered(Request $request)
+    {
+        // --- Step 0: Read pagination/filter params ---
+        $page = (int) $request->input('page', 1);
+        $perPage = (int) $request->input('per_page', 50); // default 50
+        $search = $request->input('search', null);
+        $massProdFilter = $request->input('mass_prod', null);
+        $furnaceFilter = $request->input('furnace', null);
+
+        // --- Step 1: Get latest record per serial_no ---
+        $serialQuery = TPMData::query()
+            ->select('serial_no')
+            ->selectRaw('MAX(created_at) as latest_created_at')
+            ->groupBy('serial_no')
+            ->orderByDesc('latest_created_at');
+
+        // Optional filters
+        if ($massProdFilter) {
+            $serialQuery->where('mass_prod', $massProdFilter);
+        }
+
+        if ($furnaceFilter) {
+            $serialQuery->where('sintering_furnace_no', 'like', "%{$furnaceFilter}%");
+        }
+
+        if ($search) {
+            $serialQuery->where(function ($q) use ($search) {
+                $q->where('serial_no', 'like', "%{$search}%")
+                    ->orWhere('mass_prod', 'like', "%{$search}%");
+            });
+        }
+
+        // --- Step 2: Paginate serials ---
+        $paginatedSerials = $serialQuery->paginate($perPage, ['*'], 'page', $page);
+
+        $serialNos = $paginatedSerials->pluck('serial_no');
+
+        // --- Step 3: Fetch full TPMData rows for these serials ---
+        $serials = TPMData::whereIn('serial_no', $serialNos)
+            ->orderByDesc('created_at')
+            ->get()
+            ->keyBy('serial_no'); // key by serial for easy mapping
+
+        // --- Step 4: Eager load related tables ---
+        $categories = TPMDataCategory::whereIn('tpm_data_serial', $serialNos)
+            ->get()
+            ->keyBy('tpm_data_serial');
+
+        $reports = ReportData::whereIn('tpm_data_serial', $serialNos)
+            ->get()
+            ->keyBy('tpm_data_serial');
+
+        // --- Step 5: Map each row with related data ---
+        $mapped = $serialNos->map(function ($serial) use ($serials, $categories, $reports) {
+            $item = $serials->get($serial);
+            $category = $categories->get($serial);
+            $report = $reports->get($serial);
+
+            // Status
+            $status = empty($report?->approved_by_firstname) ? 'COMPLETED' : 'PENDING';
+
+            // Email column
+            if ($report?->is_emailed) {
+                $emailStatus = 'EMAIL SENT';
+            } elseif (!$report?->is_emailed && $report?->is_finalized) {
+                $emailStatus = 'READY FOR EMAIL';
+            } else {
+                $emailStatus = 'PENDING';
+            }
+
+            return [
+                'created_at' => $item->created_at->format('Y-m-d H:i:s'),
+                'serial_no' => $serial,
+                'mass_prod' => $item->mass_prod,
+                'sintering_furnace_no' => $item->sintering_furnace_no,
+                'layer_no' => $item->layer_no,
+                'model' => $category?->actual_model ?? null,
+                'lot_no' => $category?->jhcurve_lotno ?? null,
+                'tracer' => $item->Tracer,
+                'smp_judgement' => $report?->smp_judgement ?? null,
+                'status' => $status,
+                'email' => $emailStatus,
+            ];
+        });
+
+        // --- Step 6: Return paginated response ---
+        return response()->json([
+            'data' => $mapped,
+            'current_page' => $paginatedSerials->currentPage(),
+            'per_page' => $paginatedSerials->perPage(),
+            'total' => $paginatedSerials->total(),
+            'last_page' => $paginatedSerials->lastPage(),
+        ]);
+    }
 }

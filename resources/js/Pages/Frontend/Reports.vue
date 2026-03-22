@@ -3715,9 +3715,10 @@
                         <div
                             class="p-6 mt-4 mb-10 border-2 border-gray-500 rounded-lg shadow-lg bg-gray-50"
                         >
-                            <div class="mb-4">
+                            <div>
                                 <p class="text-center">PROPERTY DATA</p>
                             </div>
+                            <div class="mb-4 text-center"><span class="text-xs text-gray-400">( {{ propD_tpmData.length }} rows )</span></div>
                             <div class="flex flex-row justify-center">
                                 <p class="mr-10">
                                     Mias. Employee:
@@ -5615,6 +5616,7 @@ const current_setNo = ref(1);
 const ok = "Status OK";
 const reject = "REJECT, N.G";
 const hold = "HOLD, N.G";
+const holdHr = "N.G";
 const within = "within internal specs";
 
 const perform =
@@ -5626,7 +5628,7 @@ const lotPass = "THIS LOT IS PASS";
 const lotHold = "THIS LOT IS HOLD";
 
 const iHcOK = "iHc variance OK";
-const iHcNG = "Process right side with iHc variance more than 1500 Oe";
+const iHcNG = "with iHc variance more than 1500 Oe";
 
 const rejectOKNG = ref([]);
 const rejectInstruction = ref(null);
@@ -7248,7 +7250,7 @@ const fetchAllData = async () => {
             }
             if (ngiHr95.value > 0) {
                 //noteReasonForReject.value.push('- N.G Hr95');
-                rejectOKNG.value.push(hold + " Hr95" + "  ");
+                rejectOKNG.value.push(holdHr + " Hr95" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
@@ -7256,7 +7258,7 @@ const fetchAllData = async () => {
             }
             if (ngiHr98.value > 0) {
                 //noteReasonForReject.value.push('- N.G Hr98');
-                rejectOKNG.value.push(hold + " Hr98" + "  ");
+                rejectOKNG.value.push(holdHr + " Hr98" + "  ");
                 addRejectLotRemarks(lotHold);
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",

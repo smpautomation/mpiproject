@@ -975,6 +975,7 @@ const storeFileList = (event) => {
     const ok = "Status OK";
     const reject = "REJECT, N.G";
     const hold = "HOLD, N.G";
+    const holdHr = "N.G";
     const within = "within internal specs";
 
     const perform = "Perform additional samples from 2nd layer & beside the normal samples of all boxes.";
@@ -985,7 +986,7 @@ const storeFileList = (event) => {
     const lotHold = "THIS LOT IS HOLD";
 
     const iHcOK = "iHc variance OK";
-    const iHcNG = "Process right side with iHc variance more than 1500 Oe";
+    const iHcNG = "with iHc variance more than 1500 Oe";
 
     const rejectOKNG = ref([]);
     const rejectInstruction = ref(null);
@@ -1733,12 +1734,12 @@ const saveToNsaCategory = async () => {
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }
                 if(ngiHr95.value > 0) {
-                    rejectOKNG.value.push("Hr95 " + hold + "  ");
+                    rejectOKNG.value.push(holdHr + " Hr98" + " ");
                     addRejectLotRemarks(lotHold);
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }
                 if(ngiHr98.value > 0) {
-                    rejectOKNG.value.push("Hr98 " + hold + "  ");
+                    rejectOKNG.value.push(holdHr + " Hr98" + " ");
                     addRejectLotRemarks(lotHold);
                     rejectLotRemarks.value = rejectLotRemarks.value.filter(rejectLot => rejectLot !== lotPass + "  ");
                 }

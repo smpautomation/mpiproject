@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BreaklotCoating;
+use App\Models\BreaklotSecondCoating;
 use App\Models\Coating;
 use App\Models\CoatingPending;
 use App\Models\GbdpSecondCoating;
@@ -178,6 +180,39 @@ class CoatingController extends Controller
         return response()->json($coating);
     }
 
+    public function getCoatingDataBreaklot(Request $request)
+    {
+        $request->validate([
+            'furnace' => 'required|string',
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|numeric',
+            'lot_no' => 'required|string',
+        ]);
+
+        $coating = BreaklotCoating::where('furnace', $request->furnace)
+            ->where('mass_prod', $request->mass_prod)
+            ->where('layer', $request->layer)
+            ->where('lot_no', $request->lot_no)
+            ->first();
+
+        // fallback
+        if (!$coating) {
+            $coating = BreaklotSecondCoating::where('furnace', $request->furnace)
+                ->where('mass_prod', $request->mass_prod)
+                ->where('layer', $request->layer)
+                ->where('lot_no', $request->lot_no)
+                ->first();
+        }
+
+        if (!$coating) {
+            return response()->json([
+                'message' => "Coating record not found for Furnace: {$request->furnace}, Mass Production: {$request->mass_prod}, Layer: {$request->layer}."
+            ], 404);
+        }
+
+        return response()->json($coating);
+    }
+
     public function getLayersByMassProd($furnace, $massProd)
     {
         // Fetch all layer values for this furnace + mass_prod
@@ -192,5 +227,4 @@ class CoatingController extends Controller
             'completed_layers' => $layers,
         ]);
     }
-
 }

@@ -12,6 +12,43 @@
             <!-- Overlay -->
             <div class="absolute inset-0 z-0 bg-black bg-opacity-50"></div>
             <div
+                v-if="showMixMatchError"
+                class="z-20 p-4 mb-4 border border-red-300 rounded-lg shadow-sm bg-red-50"
+            >
+                <div class="flex items-center justify-between gap-4">
+                    <!-- Left: Icon + Message -->
+                    <div class="flex items-center gap-3">
+                        <svg
+                            class="w-5 h-5 text-red-600"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67
+                                1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46
+                                0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                            />
+                        </svg>
+
+                        <p class="text-sm font-medium text-red-700">
+                            Mixed lot detected. Please review the uploaded files.
+                        </p>
+                    </div>
+
+                    <!-- Right: Action -->
+                    <button
+                        @click="Inertia.visit('/manage')"
+                        class="px-3 py-1 text-xs font-medium text-red-600 transition border border-red-300 rounded-md hover:text-red-700 hover:bg-red-100"
+                    >
+                        Try again
+                    </button>
+                </div>
+            </div>
+            <div
                 v-if="toggleManageForm"
                 class="max-w-5xl p-8 mx-auto mb-8 border shadow-2xl bg-white/95 backdrop-blur-sm border-teal-200/50 rounded-xl"
             >
@@ -1466,6 +1503,7 @@
                     </div>
                 </div>
             </div>
+
             <Modal
                 :show="showGraphProceedConfirmation"
                 @close="showGraphProceedConfirmation = false"
@@ -1872,6 +1910,7 @@ const showMixLotErrorMessage = ref(false);
 
 const showGraphAndTables = ref(false);
 const showLoadingForGraphAndTables = ref(false);
+const showMixMatchError = ref(false);
 const showUploadData = ref(true);
 const showUploadTPMFiles = ref(true);
 const showLoadingForProceed1 = ref(false);
@@ -2401,7 +2440,13 @@ const finalizeGraph = async () => {
     toggleManageForm.value = false;
     showLoadingForGraphAndTables.value = true;
     // Step 1: Save to database
-    await saveToDatabase();
+    const saved = await saveToDatabase();
+
+    if (!saved) {
+        showLoadingForGraphAndTables.value = false; // release UI lock
+        showMixMatchError.value = true;
+        return; // hard stop — nothing continues
+    }
 
     // Step 2: Submit file after DB save completes
     await csv_submitFile();
@@ -2927,7 +2972,30 @@ const saveToDatabase = async () => {
     //console.log('Sorted Files:', fileData.value);
 
     layerTableRowLoading.value = true;
-    const lotCombinations = [];
+    // Lifted here for pre-validation
+    const dataKeysValue = [
+        2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 27, 30, 33, 36,
+        39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 68, 71, 74, 76, 78,
+        81, 83, 86, 88, 91, 93, 96,
+    ];
+    let baseLotCombo = null;
+
+    for (const file of fileData.value) {
+        const content = await file.text(); // simple, async read
+        const parsedData = parseFileContent(content);
+        const rowCellTemp = dataKeysValue.map(i => parsedData[`data${i}`]).filter(Boolean);
+
+        const currentLotCombo = `${rowCellTemp[4]}|${rowCellTemp[5]}|${rowCellTemp[6]}`;
+
+        if (!baseLotCombo) {
+            baseLotCombo = currentLotCombo; // first file sets standard
+        } else if (baseLotCombo !== currentLotCombo) {
+            toast.error('Mixed lot detected. Please review the uploaded files.');
+            showMixMatchError.value = true;
+            return false; // stop everything before any save
+        }
+    }
+
     const filePromises = fileData.value.map((file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -2944,13 +3012,6 @@ const saveToDatabase = async () => {
 
                 const numberOfRows = rows.length; // This gives the total number of rows in the file
                 //console.log(`The file contains ${numberOfRows} rows.`);
-
-                // Map specific keys to extract relevant values
-                const dataKeysValue = [
-                    2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 27, 30, 33, 36,
-                    39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 68, 71, 74, 76, 78,
-                    81, 83, 86, 88, 91, 93, 96,
-                ];
 
                 const newRowValues = dataKeysValue
                     .map((i) => parsedData[`data${i}`])
@@ -3094,18 +3155,6 @@ const saveToDatabase = async () => {
                 };
                 //console.log("Layer Data:", layerData);
 
-                /* TEMPORARY DISABLED
-                const currentLotCombo = `${rowCell.value[4]}|${rowCell.value[5]}|${rowCell.value[6]}`;
-                lotCombinations.push(currentLotCombo);
-
-                const uniqueLots = [...new Set(lotCombinations)];
-                if (uniqueLots.length > 1) {
-                    toast.error('Mix lots detected in the uploaded files. Please try again.');
-                    reject(new Error('Mix lots detected'));
-                    return;
-                }
-                */
-
                 await sendLayerData(layerData); // Send the parsed data to the server
                 resolve();
             };
@@ -3123,8 +3172,8 @@ const saveToDatabase = async () => {
         await Promise.all(filePromises);
         showProceed1.value = true;
         showSerialNo.value = true;
-    } catch (e) {
-        //console.error("One or more files failed to upload." , e);
+        return true;
+    } catch (error) {
         await userErrorLogging(
             {
                 message: error.message,
@@ -3135,6 +3184,8 @@ const saveToDatabase = async () => {
             "saveToDatabase",
             "One or more files failed to upload. This is under filePromises map loop.",
         );
+
+        return false;
     } finally {
         layerTableRowLoading.value = false;
         showSaveToDatabase_confirmation.value = false;
