@@ -6711,7 +6711,7 @@ const checkSpecialJudgement = async () => {
 
     const model = jhCurveActualModel.value;
 
-    const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");//goback
+    const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");
     const hasIhcBelowTarget = noteReasonForReject.value.includes("- iHc Below Target+500 Oe");
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
 
@@ -6839,11 +6839,35 @@ const getControlSheetData = async () => {
         const response = await axios.get(
             `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`,
         );
-        const controlSheet = response.data.layer_data;
-        reportTotalQuantity.value =
-            controlSheet[12].data.A ?? controlSheet[12].data.B ?? 0;
 
-        //console.log('reportTotalQuantity: ', reportTotalQuantity.value);
+        const controlSheet = response.data.layer_data;
+
+        const letters = ['A','B','C','D','E','F','G','H','J','K'];
+
+        let matchedKey = null;
+
+        for (const key of letters) {
+            const modelMatch = controlSheet[0]?.data?.[key];
+            if (!modelMatch) continue;
+
+            if (modelMatch === jhCurveActualModel.value) {
+                const lotMatch = controlSheet[2]?.data?.[key];
+
+                if (lotMatch === jhCurveLotNo.value) {
+                    matchedKey = key;
+                    break;
+                }
+            }
+        }
+
+        reportTotalQuantity.value = matchedKey
+            ? controlSheet[12]?.data?.[matchedKey] ?? 0
+            : 0;
+
+        //console.log('Matched Key:', matchedKey);
+        //console.log('reportTotalQuantity:', reportTotalQuantity.value);
+        //console.log('Control Sheet:', controlSheet);
+
     } catch (error) {
         console.log("Failed to get response Control Sheet Data: ", error);
         await userErrorLogging(
@@ -8666,7 +8690,6 @@ const confirmDelete = async () => {
 };
 
 const deleteNsaData = async () => {
-    //goback
     try {
         // Tell backend to delete the chart image
         await axios.delete(
@@ -8698,7 +8721,6 @@ const openUndoModal = (type) => {
     currentUndoType.value = type;
     stampUndoRemarks.value = "";
     showModalUndoStamp.value = true;
-    //goback
 };
 
 const undoStamp = async () => {
