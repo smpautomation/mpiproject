@@ -2025,11 +2025,15 @@ const getFurnaceLists = async () => {
     try {
         const response = await axios.get("/api/furnace-data");
         const furnaceList = response.data;
-        furnace_names.value = furnaceList.map((item) => item.furnace_name);
-        //console.log("List of mass prods: ",furnace_names.value);
+
+        furnace_names.value = furnaceList
+            .map(item => item.furnace_name)
+            .sort((a, b) => b.localeCompare(a)); // descending
+
     } catch (error) {
         console.error("Error fetching mass prod lists", error);
         toast.error("Failed to get the furnace lists api error");
+
         await userErrorLogging(
             {
                 message: error.message,
