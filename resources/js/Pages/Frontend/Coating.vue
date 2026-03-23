@@ -1085,7 +1085,7 @@
                                     : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
                             ]"
                         >
-                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT') }}
+                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT 2ND GBDP') }}
                         </button>
 
                         <button
@@ -1685,6 +1685,7 @@ const showModalFinalize = ref(false);
 const showModalSubmit = ref(false);
 const isExists = ref(false);
 const isExists_2ndGBDP = ref(false);
+const isHeatTreatmentEncoded = ref(false);
 const isModelMissing = ref(false);
 const isDataShown = ref(false);
 const isAdditionalMode = ref(false);
@@ -2127,6 +2128,18 @@ const checkExistingAdditional = async () => {
         toast.error('Failed to verify Lot Number.');
     }
 };
+
+const checkHt2ndGbdp = async () => {
+    try{
+        const response = await axios.get('/api/check-second-gbdp-ht', {
+            params: {
+
+            }
+        });
+    }catch(error){
+        console.error('Failed to check 2nd GBDP of HT', error);
+    }
+}
 
 const checkInitialLot = async () => {
     try{

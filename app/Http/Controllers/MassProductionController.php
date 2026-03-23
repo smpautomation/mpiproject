@@ -820,7 +820,8 @@ class MassProductionController extends Controller
             ], 404);
         }
 
-        $layerColumn = 'layer_' . $request->layer;
+        $layer = $request->layer == '9.5' ? '9_5' : $request->layer;
+        $layerColumn = 'layer_' . $layer;
 
         if (!isset($production->$layerColumn)) {
             return response()->json([
