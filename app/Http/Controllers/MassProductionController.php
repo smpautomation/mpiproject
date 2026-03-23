@@ -800,46 +800,77 @@ class MassProductionController extends Controller
     }
 
 
-    public function getLayerDataBySerial($furnace, $massprod, $serial)
+    public function getLayerDataControlSheet(Request $request)
     {
-        // Find record by composite key: furnace + mass_prod
-        $production = MassProduction::where('furnace', $furnace)
-            ->where('mass_prod', $massprod)
+        $request->validate([
+            'furnace'  => 'required|string',
+            'massprod' => 'required|string',
+            'layer'    => 'required|string',
+            'lotno'    => 'required|string',
+            'model'    => 'required|string',
+        ]);
+
+        $production = MassProduction::where('furnace', $request->furnace)
+            ->where('mass_prod', $request->massprod)
             ->first();
 
         if (!$production) {
             return response()->json([
-                'message' => "Mass Production record not found for furnace '{$furnace}' and mass production '{$massprod}'.",
+                'message' => "Mass Production not found."
             ], 404);
         }
 
-        // Map serial columns to layer columns
-        $layers = [
-            'layer_1_serial'   => 'layer_1',
-            'layer_2_serial'   => 'layer_2',
-            'layer_3_serial'   => 'layer_3',
-            'layer_4_serial'   => 'layer_4',
-            'layer_5_serial'   => 'layer_5',
-            'layer_6_serial'   => 'layer_6',
-            'layer_7_serial'   => 'layer_7',
-            'layer_8_serial'   => 'layer_8',
-            'layer_9_serial'   => 'layer_9',
-            'layer_9_5_serial' => 'layer_9_5',
-        ];
+        $layerColumn = 'layer_' . $request->layer;
 
-        foreach ($layers as $serialColumn => $layerColumn) {
-            if ($production->$serialColumn == $serial) {
-                return response()->json([
-                    'serial_column' => $serialColumn,
-                    'layer_column'  => $layerColumn,
-                    'layer_data'    => $production->$layerColumn ? json_decode($production->$layerColumn, true) : null,
-                ]);
+        if (!isset($production->$layerColumn)) {
+            return response()->json([
+                'message' => "Layer '{$layerColumn}' not found."
+            ], 404);
+        }
+
+        $layerData = json_decode($production->$layerColumn, true);
+
+        if (!$layerData) {
+            return response()->json([
+                'message' => "Layer data is empty or invalid."
+            ], 404);
+        }
+
+        // Extract needed rows
+        $modelRow = collect($layerData)->firstWhere('rowTitle', 'MODEL:');
+        $lotRow   = collect($layerData)->firstWhere('rowTitle', 'LT. No.:');
+        $totalRow = collect($layerData)->firstWhere('rowTitle', 'TOTAL QTY');
+
+        if (!$modelRow || !$lotRow || !$totalRow) {
+            return response()->json([
+                'message' => "Required rows not found."
+            ], 404);
+        }
+
+        $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'];
+        $matchedKey = null;
+
+        foreach ($letters as $key) {
+            $modelMatch = $modelRow['data'][$key] ?? null;
+
+            if ($modelMatch === $request->model) {
+                $lotMatch = $lotRow['data'][$key] ?? null;
+
+                if ($lotMatch === $request->lotno) {
+                    $matchedKey = $key;
+                    break;
+                }
             }
         }
 
+        $result = $matchedKey
+            ? ($totalRow['data'][$matchedKey] ?? 0)
+            : 0;
+
         return response()->json([
-            'message' => "No layer data found for serial '{$serial}' in furnace '{$furnace}' mass production '{$massprod}'.",
-        ], 404);
+            'matched_key' => $matchedKey,
+            'total_qty'   => $result,
+        ]);
     }
 
     public function getLayerDataByLayerNo($furnace, $massprod, $layer)

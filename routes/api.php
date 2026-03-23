@@ -486,7 +486,7 @@ Route::get('/mass-production/{furnace}/{massprod}/second-ht-completed-layers', [
 //    '/mass-productions/{massprod}/layer-by-serial/{serial}',
 //   [MassProductionController::class, 'getLayerDataBySerial']
 //);
-Route::get('/mass-production/{furnace}/{massprod}/layer-by-serial/{serial}', [MassProductionController::class, 'getLayerDataBySerial']);
+Route::get('/mass-production/layer-control-sheet', [MassProductionController::class, 'getLayerDataControlSheet']);
 
 Route::get('/mass-production/mpi-layer-status', [MassProductionController::class, 'mpiReportStatusPanel']);
 

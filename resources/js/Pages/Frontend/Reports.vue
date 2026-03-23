@@ -6837,39 +6837,28 @@ const autoCheckRemarks = () => {
 const getControlSheetData = async () => {
     try {
         const response = await axios.get(
-            `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-by-serial/${currentSerialSelected.value}`,
-        );
-
-        const controlSheet = response.data.layer_data;
-
-        const letters = ['A','B','C','D','E','F','G','H','J','K'];
-
-        let matchedKey = null;
-
-        for (const key of letters) {
-            const modelMatch = controlSheet[0]?.data?.[key];
-            if (!modelMatch) continue;
-
-            if (modelMatch === jhCurveActualModel.value) {
-                const lotMatch = controlSheet[2]?.data?.[key];
-
-                if (lotMatch === jhCurveLotNo.value) {
-                    matchedKey = key;
-                    break;
+            `/api/mass-production/layer-control-sheet`,
+            {
+                params: {
+                    furnace: selectedFurnace.value,
+                    massprod: selectedMassProd.value,
+                    layer: selectedLayer.value,
+                    lotno: jhCurveLotNo.value,
+                    model: jhCurveActualModel.value,
                 }
             }
-        }
+        );
 
-        reportTotalQuantity.value = matchedKey
-            ? controlSheet[12]?.data?.[matchedKey] ?? 0
-            : 0;
+        reportTotalQuantity.value = response.data.total_qty ?? 0;
 
-        //console.log('Matched Key:', matchedKey);
-        //console.log('reportTotalQuantity:', reportTotalQuantity.value);
-        //console.log('Control Sheet:', controlSheet);
+        console.log('Matched Key:', response.data.matched_key);
+        console.log('reportTotalQuantity:', reportTotalQuantity.value);
 
     } catch (error) {
         console.log("Failed to get response Control Sheet Data: ", error);
+
+        reportTotalQuantity.value = 0; // fail safe
+
         await userErrorLogging(
             {
                 message: error.message,
