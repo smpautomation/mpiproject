@@ -372,7 +372,7 @@
                                     </div>
 
                                 </div>
-                                <div v-if="!isEditingExpired" class="mt-5">
+                                <div v-if="!isEditingExpired && !isClearLayerDataDisabled" class="mt-5">
                                     <!-- Warning Note -->
                                     <div
                                         class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
