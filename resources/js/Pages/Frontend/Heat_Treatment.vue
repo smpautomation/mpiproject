@@ -3470,6 +3470,7 @@ watch(
     async ([newMassProd, newFurnace], [oldMassProd, oldFurnace]) => {
         await getMassProdData();
         await getGraphPatterns();
+        await checkInitialLot();
     },
 );
 
@@ -3797,7 +3798,7 @@ const getMassProdLists = async () => {
                 return Number(aNum) - Number(bNum);
             });
 
-        console.log("List of mass prods: ", massProdList);
+        //console.log("List of mass prods: ", massProdList);
     } catch (error) {
         //console.error('Error fetching mass prod lists', error);
         toast.error("Failed to get the mass prod lists api error");
@@ -3937,7 +3938,7 @@ const fetchExistingLayers = async () => {
             `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/excess-existing-layers`,
         );
         existingExcessLayers.value = response3.data.excess_layers.map(String);
-        console.log("Existing excess layers: ", existingExcessLayers.value);
+        //console.log("Existing excess layers: ", existingExcessLayers.value);
         // Check current selected layer
         if (mpcs.selectedLayer) {
             isExisting.value = existingLayers.value.includes(
@@ -4030,7 +4031,7 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
 const fetchAllLotNoData = async () => {
     try {
         const response = await axios.get("/api/initial-control-sheets/lot-all");
-        console.log("All lot no: ", response.data); // All records with lot_no, newest first
+        //console.log("All lot no: ", response.data); // All records with lot_no, newest first
         lotNoLists.value = response.data;
     } catch (err) {
         console.error("Failed to fetch lot_no data:", err);
@@ -5425,9 +5426,6 @@ onMounted(async () => {
 
         loadingStep.value = 'Loading GBDP models...';
         await get1st2ndGBDPModels();
-
-        loadingStep.value = 'Checking initial lot...';
-        await checkInitialLot();
 
         loadingStep.value = 'Finalizing...';
         checkExpiration();
