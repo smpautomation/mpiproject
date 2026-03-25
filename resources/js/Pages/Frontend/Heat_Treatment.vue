@@ -23,333 +23,2251 @@
                 </button>
             </div>
         </div>
-        <div
-            class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100"
-        >
+
+        <div class="relative">
+            <!-- Overlay -->
             <div
-                class="flex items-center justify-between p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 bg-cyan-100 border-cyan-500"
+                v-if="isHeatTreatmentPageLoading"
+                class="absolute inset-0 z-50 flex flex-col items-center justify-start pt-24 bg-black/40 backdrop-blur-sm"
             >
-                <div>
-                    <strong>Note:</strong> For 1st & 2nd GBDP formats, select
-                    <span class="font-semibold">Mass Prod</span>,
-                    <span class="font-semibold">Layer</span>, and
-                    <span class="font-semibold">Model</span>, then click the
-                    <span class="bg-cyan-500 text-white px-2 py-0.5 rounded"
-                        >Apply 1st & 2nd GBDP</span
-                    >
-                    button in the
-                    <span class="font-semibold">Control Panel</span>. If button
-                    is disabled, the model is not yet registered.
-                </div>
-                <button
-                    class="ml-4 font-semibold text-blue-600 hover:underline"
-                    @click.prevent="$inertia.visit('/second_gbdp_models')"
-                >
-                    Register Here
-                </button>
-            </div>
-            <div class="flex items-start p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 border-cyan-500 bg-cyan-100">
-                <div>
-                    <strong>Warning for Breaklot Cases:</strong>
-                    Do not proceed to encode in the
-                    <span class="font-semibold">Coating Input Page</span> or apply
-                    <span class="font-semibold">1st &amp; 2nd GBDP</span> unless all intended
-                    <span class="font-semibold text-red-600">layers are fully assigned</span>.
-                </div>
-            </div>
-            <div class="flex flex-row justify-center gap-0">
-                <div
-                    v-if="!overwriteMode"
-                    class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12"
-                >
-                    <div
-                        class="flex items-center justify-between pb-4 mb-6 border-b-2 border-gray-200"
-                    >
-                        <div class="flex items-center space-x-3">
-                            <div
-                                class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"
-                            ></div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900">
-                                    Mass Production Control Sheet
-                                </h2>
-                                <p class="text-sm text-gray-500">
-                                    Fill up all details below. Fields with
-                                    <span class="font-semibold text-red-500"
-                                        >*</span
-                                    >
-                                    are required
-                                </p>
-                            </div>
-                        </div>
+                <!-- Loader Card -->
+                <div class="bg-white rounded-lg shadow-xl px-6 py-5 flex flex-col items-center gap-3 min-w-[260px]">
+
+                    <!-- Spinner -->
+                    <div class="w-10 h-10 border-4 border-gray-300 rounded-full border-t-cyan-500 animate-spin"></div>
+
+                    <!-- Step text -->
+                    <div class="text-sm font-medium text-center text-gray-700">
+                        {{ loadingStep }}
                     </div>
 
-                    <!-- Group: Selection -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div class="relative">
-                            <label
-                                class="block mb-1 text-xs font-semibold text-gray-800"
-                            >
-                                Furnace Name <span class="text-red-500">*</span>
-                            </label>
-                            <select
-                                v-model="mpcs.selectedFurnace"
-                                :disabled="isDataShown"
-                                :class="
-                                    isDataShown
-                                        ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
-                                        : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
-                                "
-                            >
-                                <option
-                                    v-for="item in furnace_names"
-                                    :key="item"
-                                    :value="item"
-                                >
-                                    {{ item }}
-                                </option>
-                            </select>
-                        </div>
+                    <!-- Progress bar (visual feedback) -->
+                    <div class="w-full h-1.5 bg-gray-200 rounded overflow-hidden">
+                        <div class="w-full h-full bg-cyan-500 animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="relative">
-                            <label
-                                class="block mb-1 text-xs font-semibold text-gray-800"
-                            >
-                                Mass Prod. Name
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <select
-                                v-model="mpcs.selectedMassProd"
-                                :disabled="isDataShown"
-                                :class="
-                                    isDataShown
-                                        ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
-                                        : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
-                                "
-                            >
-                                <option
-                                    v-for="item in massProd_names"
-                                    :key="item"
-                                    :value="item"
-                                >
-                                    {{ item }}
-                                </option>
-                            </select>
-                        </div>
-
+            <div
+                class="flex flex-col justify-start min-h-screen px-4 py-0 bg-gray-100"
+                :class="{ 'pointer-events-none select-none': isHeatTreatmentPageLoading }"
+            >
+                <!-- Main content -->
+                <div
+                    class="flex flex-col justify-start min-h-screen px-4 py-12 bg-gray-100"
+                >
+                    <div
+                        class="flex items-center justify-between p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 bg-cyan-100 border-cyan-500"
+                    >
                         <div>
-                            <label
-                                class="block mb-1 text-xs font-medium text-gray-700"
+                            <strong>Note:</strong> For 1st & 2nd GBDP formats, select
+                            <span class="font-semibold">Mass Prod</span>,
+                            <span class="font-semibold">Layer</span>, and
+                            <span class="font-semibold">Model</span>, then click the
+                            <span class="bg-cyan-500 text-white px-2 py-0.5 rounded"
+                                >Apply 1st & 2nd GBDP</span
                             >
-                                Layer<span class="text-red-500"> *</span>
-                            </label>
-                            <select
-                                v-model="mpcs.selectedLayer"
-                                :disabled="isDataShown"
-                                :class="
-                                    isDataShown
-                                        ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
-                                        : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                            button in the
+                            <span class="font-semibold">Control Panel</span>. If button
+                            is disabled, the model is not yet registered.
+                        </div>
+                        <button
+                            class="ml-4 font-semibold text-blue-600 hover:underline"
+                            @click.prevent="$inertia.visit('/second_gbdp_models')"
+                        >
+                            Register Here
+                        </button>
+                    </div>
+                    <div class="flex items-start p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 border-cyan-500 bg-cyan-100">
+                        <div>
+                            <strong>Warning for Breaklot Cases:</strong>
+                            Do not proceed to encode in the
+                            <span class="font-semibold">Coating Input Page</span> or apply
+                            <span class="font-semibold">1st &amp; 2nd GBDP</span> unless all intended
+                            <span class="font-semibold text-red-600">layers are fully assigned</span>.
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-center gap-0">
+                        <div
+                            v-if="!overwriteMode"
+                            class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12"
+                        >
+                            <div
+                                class="flex items-center justify-between pb-4 mb-6 border-b-2 border-gray-200"
+                            >
+                                <div class="flex items-center space-x-3">
+                                    <div
+                                        class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"
+                                    ></div>
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-900">
+                                            Mass Production Control Sheet
+                                        </h2>
+                                        <p class="text-sm text-gray-500">
+                                            Fill up all details below. Fields with
+                                            <span class="font-semibold text-red-500"
+                                                >*</span
+                                            >
+                                            are required
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div class="relative">
+                                    <label
+                                        class="block mb-1 text-xs font-semibold text-gray-800"
+                                    >
+                                        Furnace Name <span class="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        v-model="mpcs.selectedFurnace"
+                                        :disabled="isDataShown"
+                                        :class="
+                                            isDataShown
+                                                ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
+                                                : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                                        "
+                                    >
+                                        <option
+                                            v-for="item in furnace_names"
+                                            :key="item"
+                                            :value="item"
+                                        >
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="relative">
+                                    <label
+                                        class="block mb-1 text-xs font-semibold text-gray-800"
+                                    >
+                                        Mass Prod. Name
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        v-model="mpcs.selectedMassProd"
+                                        :disabled="isDataShown"
+                                        :class="
+                                            isDataShown
+                                                ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
+                                                : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                                        "
+                                    >
+                                        <option
+                                            v-for="item in massProd_names"
+                                            :key="item"
+                                            :value="item"
+                                        >
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                    >
+                                        Layer<span class="text-red-500"> *</span>
+                                    </label>
+                                    <select
+                                        v-model="mpcs.selectedLayer"
+                                        :disabled="isDataShown"
+                                        :class="
+                                            isDataShown
+                                                ? 'w-full text-xs font-semibold text-gray-400 border-2 border-gray-300 rounded-lg bg-gray-100 opacity-70 cursor-not-allowed'
+                                                : 'w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50'
+                                        "
+                                    >
+                                        <option
+                                            v-for="item in layers"
+                                            :key="item"
+                                            :value="item"
+                                            :disabled="
+                                                item === '9.5' &&
+                                                Number(totalBoxes) !== 10
+                                            "
+                                        >
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- 9.5 Layer Radios: Full width row -->
+                                <div
+                                    v-if="isLayerNinePointFive"
+                                    class="col-span-1 md:col-span-4"
+                                >
+                                    <label
+                                        class="block mb-1 text-xs font-semibold text-gray-800"
+                                        >9.5 Layer Set
+                                        <span class="text-red-500">*</span></label
+                                    >
+                                    <div class="flex flex-col gap-4 md:flex-row">
+                                        <label
+                                            class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
+                                            :class="{
+                                                'border-yellow-500 bg-yellow-50':
+                                                    mpcs.nineHalfSet === 'SET1',
+                                                'opacity-50 cursor-not-allowed':
+                                                    isDataShown,
+                                            }"
+                                        >
+                                            <input
+                                                type="radio"
+                                                value="SET1"
+                                                v-model="mpcs.nineHalfSet"
+                                                class="accent-yellow-500"
+                                                :disabled="isDataShown"
+                                            />
+                                            First Half: A, C, E, G, J
+                                        </label>
+
+                                        <label
+                                            class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
+                                            :class="{
+                                                'border-yellow-500 bg-yellow-50':
+                                                    mpcs.nineHalfSet === 'SET2',
+                                                'opacity-50 cursor-not-allowed':
+                                                    isDataShown,
+                                            }"
+                                        >
+                                            <input
+                                                type="radio"
+                                                value="SET2"
+                                                v-model="mpcs.nineHalfSet"
+                                                class="accent-yellow-500"
+                                                :disabled="isDataShown"
+                                            />
+                                            Second Half: B, D, F, H, K
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Group: Basic Info -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                    >
+                                        Lot No.<span class="text-red-500"> *</span>
+                                    </label>
+                                    <select
+                                        v-model="mpcs.lotNo"
+                                        :disabled="isDataShown"
+                                        :class="[
+                                            'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
+                                            isDataShown
+                                                ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
+                                                : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
+                                        ]"
+                                    >
+                                        <option value="" disabled>Select Lot No</option>
+                                        <option
+                                            v-for="(lot, index) in lotNoLists"
+                                            :key="index"
+                                            :value="lot.lot_no"
+                                        >
+                                            {{ lot.lot_no }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                    >
+                                        Model<span class="text-red-500"> *</span>
+                                    </label>
+                                    <select
+                                        v-model="mpcs.selectedModel"
+                                        :disabled="isDataShown"
+                                        :class="[
+                                            'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
+                                            isDataShown
+                                                ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
+                                                : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
+                                        ]"
+                                    >
+                                        <option
+                                            v-for="(lot, index) in model_names"
+                                            :key="index"
+                                            :value="lot.model_name"
+                                        >
+                                            {{ lot.model_name }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="mt-5">
+                                    <button
+                                        v-if="!isDataShown"
+                                        @click="fetchAllLotDataBoxDetails()"
+                                        class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                    >
+                                        Show Data
+                                    </button>
+                                    <button
+                                        v-else
+                                        @click="changeData()"
+                                        class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-yellow-600 rounded-lg shadow-md hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    >
+                                        Change Data
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Group: Prepared By -->
+                            <div
+                                v-if="
+                                    (isExisting || isExisting_2ndGBDP) && !isDataShown
                                 "
+                                class="flex flex-col gap-4 md:flex-row md:items-start whitespace-nowrap"
                             >
-                                <option
-                                    v-for="item in layers"
-                                    :key="item"
-                                    :value="item"
-                                    :disabled="
-                                        item === '9.5' &&
-                                        Number(totalBoxes) !== 10
+                                <div
+                                    v-if="
+                                        !isEditingExpired ||
+                                        (state.user &&
+                                            state.user.access_type == 'Automation')
+                                    "
+                                    class="mt-5"
+                                >
+                                    <div v-if="isClearLayerDataDisabled">
+                                        <!-- Warning Note -->
+                                        <div
+                                            class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="w-5 h-5"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                                                />
+                                            </svg>
+                                            <span
+                                                >Clear Layer Data disabled (Existing data on {{ clearLayerDisabledCause }})</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <!-- Clear Layer Button -->
+                                        <button
+
+                                            @click="deleteLayerData()"
+                                            class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                        >
+                                            Clear Layer {{ mpcs.selectedLayer }} Data
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <div v-if="!isEditingExpired" class="mt-5">
+                                    <!-- Warning Note -->
+                                    <div
+                                        class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                                            />
+                                        </svg>
+                                        <span
+                                            >Important: This action will clear other
+                                            layers sharing the same lot number, if there
+                                            are any. ({{ hoursLeftDisplay }})</span
+                                        >
+                                    </div>
+                                </div>
+                                <div v-else class="mt-5">
+                                    <!-- Warning Note -->
+                                    <div
+                                        class="flex items-center flex-1 gap-2 p-2 text-sm text-yellow-700 bg-red-100 border-l-4 border-yellow-600 rounded-lg shadow-md"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                                            />
+                                        </svg>
+                                        <span
+                                            >Layer modifications for this mass
+                                            production has expired.</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Group: Prepared By -->
+                            <div
+                                class="grid items-end grid-cols-1 gap-6 pt-10 md:grid-cols-3"
+                            >
+                                <div
+                                    class="w-full px-4 py-3 mt-4 bg-gray-100 border-l-4 rounded-md shadow-sm border-cyan-600"
+                                >
+                                    <p class="text-sm font-semibold text-gray-800">
+                                        Detected Total Boxes:
+                                        <span class="text-blue-700">{{
+                                            totalBoxes
+                                        }}</span>
+                                    </p>
+                                </div>
+                                <!-- Button -->
+                                <div v-if="isDataShown">
+                                    <button
+                                        @click="applyHTLT()"
+                                        class="w-full px-4 py-2 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-1"
+                                    >
+                                        Apply HT and LT
+                                    </button>
+                                </div>
+                                <div
+                                    v-if="
+                                        isDataShown &&
+                                        (mpcs.moreThanTenBoxes || mpcs.breakLotMode)
                                     "
                                 >
-                                    {{ item }}
-                                </option>
-                            </select>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                        >Excess Layer<span class="text-red-500">
+                                            *</span
+                                        ></label
+                                    >
+                                    <select
+                                        v-model="mpcs.selectedExcessLayer"
+                                        class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
+                                    >
+                                        <option
+                                            v-for="item in excessLayers"
+                                            :key="item"
+                                            :value="item"
+                                        >
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div
+                                class="p-4 bg-white border border-gray-300 shadow-lg rounded-xl"
+                            >
+                                <h3
+                                    class="mb-2 text-sm font-bold tracking-wide text-gray-800"
+                                >
+                                    Manual Layer Allocation
+                                </h3>
+
+                                <div class="h-px mb-4 bg-gray-200"></div>
+
+                                <p
+                                    class="mb-3 text-xs tracking-wide"
+                                    :class="
+                                        !mpcs.selectedFurnace ||
+                                        !mpcs.selectedMassProd ||
+                                        isDataShown ||
+                                        noMassProdData
+                                            ? 'text-red-600'
+                                            : 'text-gray-700'
+                                    "
+                                >
+                                    {{
+                                        noMassProdData
+                                            ? "The selected furnace and mass production does not exist."
+                                            : isDataShown
+                                            ? "Click Change Data button to enable Manual Allocation."
+                                            : "Select a Furnace and Mass Production Name to enable Manual Layer Allocation."
+                                    }}
+                                </p>
+
+                                <button
+                                    @click="showBreakLotForm()"
+                                    :disabled="
+                                        !mpcs.selectedFurnace ||
+                                        !mpcs.selectedMassProd ||
+                                        isDataShown ||
+                                        noMassProdData
+                                    "
+                                    class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
+                                >
+                                    Manual Layer Allocation
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- 9.5 Layer Radios: Full width row -->
                         <div
-                            v-if="isLayerNinePointFive"
-                            class="col-span-1 md:col-span-4"
+                            v-if="!overwriteMode"
+                            class="w-full px-8 py-8 ml-10 mr-5 space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12"
                         >
-                            <label
-                                class="block mb-1 text-xs font-semibold text-gray-800"
-                                >9.5 Layer Set
-                                <span class="text-red-500">*</span></label
-                            >
-                            <div class="flex flex-col gap-4 md:flex-row">
-                                <label
-                                    class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
-                                    :class="{
-                                        'border-yellow-500 bg-yellow-50':
-                                            mpcs.nineHalfSet === 'SET1',
-                                        'opacity-50 cursor-not-allowed':
-                                            isDataShown,
-                                    }"
+                            <div v-if="isDataShown">
+                                <div
+                                    v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode"
+                                    class="w-full px-5"
                                 >
-                                    <input
-                                        type="radio"
-                                        value="SET1"
-                                        v-model="mpcs.nineHalfSet"
-                                        class="accent-yellow-500"
-                                        :disabled="isDataShown"
-                                    />
-                                    First Half: A, C, E, G, J
-                                </label>
+                                    <table
+                                        class="min-w-full text-xs border border-collapse border-gray-200"
+                                    >
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th
+                                                    class="px-2 py-1 text-left border border-gray-300"
+                                                ></th>
+                                                <th
+                                                    v-for="item in visibleBoxes"
+                                                    :key="item"
+                                                    class="px-2 py-1 font-semibold text-center border border-gray-300"
+                                                >
+                                                    {{ item }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Model:
+                                                </td>
+                                                <td
+                                                    v-for="n in visibleBoxes.length"
+                                                    :key="n"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.selectedModel }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Coating M/C No:
+                                                </td>
+                                                <td
+                                                    v-for="n in visibleBoxes.length"
+                                                    :key="n"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.coatingMCNo }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Lot No:
+                                                </td>
+                                                <td
+                                                    v-for="n in visibleBoxes.length"
+                                                    :key="n"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.lotNo }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Qty (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ qtyValues[box] }}
+                                                </td>
+                                            </tr>
 
-                                <label
-                                    class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
-                                    :class="{
-                                        'border-yellow-500 bg-yellow-50':
-                                            mpcs.nineHalfSet === 'SET2',
-                                        'opacity-50 cursor-not-allowed':
-                                            isDataShown,
-                                    }"
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    HT (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ htValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    LT (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ ltValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    WT (KG):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ weightValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Box No.:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ boxNoValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Coating:
+                                                </td>
+                                                <td
+                                                    v-for="n in visibleBoxes.length"
+                                                    :key="n"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.coating }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Magnet Prepared By:
+                                                </td>
+                                                <td
+                                                    v-for="n in visibleBoxes.length"
+                                                    :key="n"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.magnetPreparedBy }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Box Prepared By:
+                                                </td>
+                                                <td
+                                                    v-for="n in visibleBoxes.length"
+                                                    :key="n"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.boxPreparedBy }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div v-else class="w-full px-5">
+                                    <!-- ================= MAIN 10 BOXES ================= -->
+                                    <p class="mb-2 font-semibold text-gray-700">
+                                        Main Boxes - Layer {{ mpcs.selectedLayer }}
+                                    </p>
+                                    <table
+                                        class="min-w-full mb-6 text-xs border border-collapse border-gray-200"
+                                    >
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th
+                                                    class="px-2 py-1 text-left border border-gray-300"
+                                                ></th>
+                                                <th
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-header-' + box"
+                                                    class="px-2 py-1 font-semibold text-center border border-gray-300"
+                                                >
+                                                    {{ box }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Model:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-model-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.selectedModel }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Coating M/C No:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-coatingMC-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.coatingMCNo }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Lot No:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-lot-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.lotNo }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Qty (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-qty-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ qtyValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    HT (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-ht-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ htValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    LT (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-lt-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ ltValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    WT (KG):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-weight-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ weightValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Box No.:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-boxno-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ boxNoValues[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Coating:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-coating-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.coating }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Magnet Prepared By:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-magnet-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.magnetPreparedBy }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Box Prepared By:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleBoxes"
+                                                    :key="'main-boxprep-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.boxPreparedBy }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <!-- ================= EXCESS BOXES ================= -->
+                                    <div>
+                                        <p class="mb-2 font-semibold text-gray-700">
+                                            Excess Boxes - Layer
+                                            {{ mpcs.selectedExcessLayer }}
+                                        </p>
+                                        <table
+                                            class="min-w-full text-xs border border-collapse border-gray-200"
+                                        >
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th
+                                                        class="px-2 py-1 text-left border border-gray-300"
+                                                    ></th>
+                                                    <th
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-header-' + box"
+                                                        class="px-2 py-1 font-semibold text-center border border-gray-300"
+                                                    >
+                                                        {{ box }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Model:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-model-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ mpcs.selectedModel }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Coating M/C No:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-coatingMC-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ mpcs.coatingMCNo }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Lot No:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-lot-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ mpcs.lotNo }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Qty (PCS):
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-qty-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ qtyValuesExcess[box] }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        HT (PCS):
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-ht-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ htValuesExcess[box] }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        LT (PCS):
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-lt-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ ltValuesExcess[box] }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        WT (KG):
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-weight-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ weightValuesExcess[box] }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Box No.:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-boxno-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ boxNoValuesExcess[box] }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Coating:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-coating-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ mpcs.coating }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Magnet Prepared By:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-magnet-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ mpcs.magnetPreparedBy }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                    >
+                                                        Box Prepared By:
+                                                    </td>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="'excess-boxprep-' + box"
+                                                        class="px-2 py-1 text-center border border-gray-300"
+                                                    >
+                                                        {{ mpcs.boxPreparedBy }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                v-else
+                                class="relative w-full max-w-4xl px-8 py-0 mx-auto overflow-hidden"
+                            >
+                                <!-- Animated Background Pattern -->
+                                <div class="absolute inset-0 opacity-5">
+                                    <svg
+                                        class="w-full h-full"
+                                        viewBox="0 0 100 100"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <defs>
+                                            <pattern
+                                                id="dot-pattern"
+                                                width="10"
+                                                height="10"
+                                                patternUnits="userSpaceOnUse"
+                                            >
+                                                <circle
+                                                    cx="5"
+                                                    cy="5"
+                                                    r="1"
+                                                    fill="currentColor"
+                                                    class="text-cyan-400"
+                                                />
+                                            </pattern>
+                                        </defs>
+                                        <rect
+                                            width="100%"
+                                            height="100%"
+                                            fill="url(#dot-pattern)"
+                                        />
+                                    </svg>
+                                </div>
+
+                                <!-- Main Card -->
+                                <div
+                                    class="relative overflow-hidden border-2 border-gray-200 shadow-2xl bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl"
                                 >
-                                    <input
-                                        type="radio"
-                                        value="SET2"
-                                        v-model="mpcs.nineHalfSet"
-                                        class="accent-yellow-500"
-                                        :disabled="isDataShown"
-                                    />
-                                    Second Half: B, D, F, H, K
-                                </label>
+                                    <!-- Top Gradient Accent -->
+                                    <div
+                                        class="h-2 bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-500 bg-[length:200%_100%] animate-gradient-flow"
+                                    ></div>
+
+                                    <!-- Content Container -->
+                                    <div
+                                        class="flex flex-col items-center justify-center px-8 py-10 space-y-6"
+                                    >
+                                        <!-- Animated Icon Container -->
+                                        <div class="relative">
+                                            <!-- Outer rotating ring -->
+                                            <div
+                                                class="absolute inset-0 w-24 h-24 -m-3"
+                                            >
+                                                <div
+                                                    class="absolute inset-0 border-transparent rounded-full border-3 border-t-cyan-400 border-r-teal-400 animate-spin-slow"
+                                                ></div>
+                                            </div>
+
+                                            <!-- Glowing background -->
+                                            <div
+                                                class="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-2xl blur-xl animate-pulse"
+                                            ></div>
+
+                                            <!-- Icon Container -->
+                                            <div
+                                                class="relative flex items-center justify-center transition-transform duration-500 border-2 border-gray-200 shadow-lg w-18 h-18 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl group hover:scale-110"
+                                            >
+                                                <!-- Inner glow on hover -->
+                                                <div
+                                                    class="absolute inset-0 transition-all duration-500 bg-gradient-to-br from-cyan-400/0 to-teal-400/0 group-hover:from-cyan-400/30 group-hover:to-teal-400/30 rounded-xl"
+                                                ></div>
+
+                                                <!-- Main Icon -->
+                                                <svg
+                                                    class="relative w-10 h-10 text-gray-400 transition-colors duration-500 group-hover:text-cyan-500"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.5"
+                                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <!-- Title Section -->
+                                        <div class="space-y-2 text-center">
+                                            <h2
+                                                class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800"
+                                            >
+                                                No Data Available
+                                            </h2>
+                                            <div
+                                                class="flex items-center justify-center space-x-2"
+                                            >
+                                                <div
+                                                    class="w-12 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent rounded-full"
+                                                ></div>
+                                                <div
+                                                    class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"
+                                                ></div>
+                                                <div
+                                                    class="w-12 h-0.5 bg-gradient-to-r from-transparent via-teal-400 to-transparent rounded-full"
+                                                ></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Description Card -->
+                                        <div class="max-w-xl">
+                                            <div
+                                                class="p-5 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-xl"
+                                            >
+                                                <div class="flex items-start space-x-4">
+                                                    <div class="flex-shrink-0 mt-1">
+                                                        <div
+                                                            class="flex items-center justify-center w-8 h-8 rounded-lg shadow-md bg-gradient-to-br from-cyan-500 to-teal-500"
+                                                        >
+                                                            <svg
+                                                                class="w-5 h-5 text-white"
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                            >
+                                                                <path
+                                                                    fill-rule="evenodd"
+                                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                                    clip-rule="evenodd"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-1 space-y-2">
+                                                        <p
+                                                            class="text-sm leading-relaxed text-gray-700"
+                                                        >
+                                                            No heat treatment data has
+                                                            been loaded yet. Click
+                                                            <span
+                                                                class="p-1 font-bold text-white rounded-lg bg-cyan-600"
+                                                                >Show Data</span
+                                                            >
+                                                            button.
+                                                        </p>
+                                                        <div class="space-y-1.5">
+                                                            <div
+                                                                class="flex items-center space-x-2 text-sm text-gray-600"
+                                                            >
+                                                                <svg
+                                                                    class="w-4 h-4 text-cyan-500"
+                                                                    fill="currentColor"
+                                                                    viewBox="0 0 20 20"
+                                                                >
+                                                                    <path
+                                                                        fill-rule="evenodd"
+                                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                        clip-rule="evenodd"
+                                                                    />
+                                                                </svg>
+                                                                <span
+                                                                    >Select a
+                                                                    <span
+                                                                        class="font-semibold text-gray-800"
+                                                                        >Model</span
+                                                                    ></span
+                                                                >
+                                                            </div>
+                                                            <div
+                                                                class="flex items-center space-x-2 text-sm text-gray-600"
+                                                            >
+                                                                <svg
+                                                                    class="w-4 h-4 text-teal-500"
+                                                                    fill="currentColor"
+                                                                    viewBox="0 0 20 20"
+                                                                >
+                                                                    <path
+                                                                        fill-rule="evenodd"
+                                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                        clip-rule="evenodd"
+                                                                    />
+                                                                </svg>
+                                                                <span
+                                                                    >Choose a
+                                                                    <span
+                                                                        class="font-semibold text-gray-800"
+                                                                        >Lot
+                                                                        Number</span
+                                                                    ></span
+                                                                >
+                                                            </div>
+                                                        </div>
+                                                        <p
+                                                            class="pt-1 text-xs italic text-gray-500"
+                                                        >
+                                                            Once loaded, the table will
+                                                            display all relevant
+                                                            information including main
+                                                            and excess boxes.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Decorative Elements -->
+                                        <div
+                                            class="flex items-center justify-center pt-2 space-x-2"
+                                        >
+                                            <div
+                                                class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
+                                                style="animation-delay: 0s"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce"
+                                                style="animation-delay: 0.2s"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
+                                                style="animation-delay: 0.4s"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== TOTAL SUMMARY ===== -->
+                            <div
+                                v-if="isDataShown"
+                                class="flex justify-end gap-8 px-4 py-3 mt-4 border border-gray-300 rounded-lg bg-gray-50"
+                            >
+                                <div class="text-sm font-medium text-gray-700">
+                                    Total Qty:
+                                    <span class="ml-1 font-bold text-gray-900">
+                                        {{ totalQty }}
+                                    </span>
+                                </div>
+
+                                <div class="text-sm font-medium text-gray-700">
+                                    Total WT (KG):
+                                    <span class="ml-1 font-bold text-gray-900">
+                                        {{ totalWt }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <!-- Current Grand Total Weight -->
+                                <div
+                                    v-if="isDataShown"
+                                    class="inline-flex flex-col gap-1 px-5 py-3 border border-gray-300 shadow-md rounded-xl bg-gradient-to-br from-gray-50 to-slate-50 shadow-gray-200/40"
+                                >
+                                    <div
+                                        class="text-[8px] font-semibold tracking-widest uppercase text-gray-600"
+                                    >
+                                        Current Grand Total Weight
+                                    </div>
+
+                                    <div
+                                        class="text-xl font-bold leading-none text-gray-600"
+                                    >
+                                        {{ currentTotalWeight }} (Kgs)
+                                    </div>
+                                </div>
+
+                                <div
+                                    v-if="isDataShown"
+                                    :class="
+                                        isGrandTotalLimitReached
+                                            ? 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-red-50 to-rose-50 border-red-400 shadow-md shadow-red-300/40'
+                                            : 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md shadow-cyan-200/40'
+                                    "
+                                >
+                                    <div
+                                        :class="
+                                            isGrandTotalLimitReached
+                                                ? 'text-[8px] font-semibold tracking-widest uppercase text-red-700'
+                                                : 'text-[8px] font-semibold tracking-widest uppercase text-teal-700'
+                                        "
+                                    >
+                                        Expected Grand Total Weight
+                                    </div>
+
+                                    <div
+                                        :class="
+                                            isGrandTotalLimitReached
+                                                ? 'text-xl font-bold leading-none text-red-600'
+                                                : 'text-xl font-bold leading-none text-cyan-500'
+                                        "
+                                    >
+                                        {{ grandTotalWeight }} (Kgs)
+                                    </div>
+
+                                    <!-- Warning text -->
+                                    <div
+                                        v-if="isGrandTotalLimitReached"
+                                        class="text-[8px] font-semibold tracking-wide text-red-700"
+                                    >
+                                        ⚠ LIMIT EXCEEDED — Max 1425
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Group: Basic Info -->
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div>
-                            <label
-                                class="block mb-1 text-xs font-medium text-gray-700"
-                            >
-                                Lot No.<span class="text-red-500"> *</span>
-                            </label>
-                            <select
-                                v-model="mpcs.lotNo"
-                                :disabled="isDataShown"
-                                :class="[
-                                    'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
-                                    isDataShown
-                                        ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
-                                        : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
-                                ]"
-                            >
-                                <option value="" disabled>Select Lot No</option>
-                                <option
-                                    v-for="(lot, index) in lotNoLists"
-                                    :key="index"
-                                    :value="lot.lot_no"
-                                >
-                                    {{ lot.lot_no }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label
-                                class="block mb-1 text-xs font-medium text-gray-700"
-                            >
-                                Model<span class="text-red-500"> *</span>
-                            </label>
-                            <select
-                                v-model="mpcs.selectedModel"
-                                :disabled="isDataShown"
-                                :class="[
-                                    'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
-                                    isDataShown
-                                        ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
-                                        : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
-                                ]"
-                            >
-                                <option
-                                    v-for="(lot, index) in model_names"
-                                    :key="index"
-                                    :value="lot.model_name"
-                                >
-                                    {{ lot.model_name }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="mt-5">
-                            <button
-                                v-if="!isDataShown"
-                                @click="fetchAllLotDataBoxDetails()"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                            >
-                                Show Data
-                            </button>
-                            <button
-                                v-else
-                                @click="changeData()"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-yellow-600 rounded-lg shadow-md hover:bg-yellow-500 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                            >
-                                Change Data
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Group: Prepared By -->
-                    <div
-                        v-if="
-                            (isExisting || isExisting_2ndGBDP) && !isDataShown
-                        "
-                        class="flex flex-col gap-4 md:flex-row md:items-start whitespace-nowrap"
-                    >
+                    <div class="flex flex-row mt-12">
                         <div
-                            v-if="
-                                !isEditingExpired ||
-                                (state.user &&
-                                    state.user.access_type == 'Automation')
-                            "
-                            class="mt-5"
+                            v-if="!heatTreatmentInformationDetected"
+                            class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8"
                         >
-                            <div v-if="isClearLayerDataDisabled">
-                                <!-- Warning Note -->
-                                <div
-                                    class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-5 h-5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
+                            <div>
+                                <div v-if="overwriteMode">
+                                    <h2
+                                        class="pb-1 mb-4 font-bold text-gray-800 border-b text-md"
                                     >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                                        Overwriting Heat Treatment Information
+                                    </h2>
+
+                                    <p
+                                        class="px-3 py-1 mb-3 text-xs font-medium text-teal-900 border rounded-md bg-cyan-100 border-cyan-300"
+                                    >
+                                        Note: Only
+                                        <span class="font-semibold"
+                                            >Cycle Pattern, Current Pattern, Date
+                                            Finish, Time Finish, Remarks</span
+                                        >
+                                        and
+                                        <span class="font-semibold">Graph Uploads</span>
+                                        can be overwritten.
+                                    </p>
+
+                                    <p
+                                        class="px-3 py-1 pl-2 mb-3 text-xs font-medium text-yellow-800 border-l-2 border-yellow-500"
+                                        v-if="!isEditingExpired"
+                                    >
+                                        ⚠ Time Start and Date Start can only be edited
+                                        within 24 hours.
+                                    </p>
+
+                                    <p
+                                        class="px-3 py-1 mb-3 text-xs font-medium text-red-700"
+                                        v-if="isEditingExpired"
+                                    >
+                                        ⚠ Edit window has expired.
+                                    </p>
+                                    <p
+                                        class="px-3 py-1 mb-3 text-xs font-medium text-teal-900"
+                                        v-else
+                                    >
+                                        ⏱ Hours left until expiration:
+                                        {{ hoursLeftDisplay }}
+                                    </p>
+                                </div>
+                                <div v-else>
+                                    <h2
+                                        class="pb-1 mb-4 font-bold text-gray-800 border-b text-md"
+                                    >
+                                        Heat Treatment Information
+                                    </h2>
+                                </div>
+                                <div class="flex flex-row space-x-3">
+                                    <div class="flex flex-col">
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Batch Cycle No</label
+                                            >
+                                            <input
+                                                v-model="mpcs.selectedMassProd"
+                                                type="text"
+                                                disabled
+                                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Machine No</label
+                                            >
+                                            <input
+                                                v-model="initialFurnaceData"
+                                                type="text"
+                                                disabled
+                                                class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Cycle No<span class="text-red-500">
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.cycleNo"
+                                                type="text"
+                                                :disabled="overwriteMode"
+                                                @input="
+                                                    hti.cycleNo =
+                                                        hti.cycleNo.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Pattern No<span class="text-red-500">
+                                                    *</span
+                                                ></label
+                                            >
+                                            <select
+                                                v-model="hti.patternNo"
+                                                :disabled="overwriteMode"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            >
+                                                <option
+                                                    v-for="item in graph_patterns"
+                                                    :key="item"
+                                                    :value="item"
+                                                >
+                                                    {{ item }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Cycle Pattern</label
+                                            >
+                                            <select
+                                                v-model="hti.cyclePattern"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="PASS">PASS</option>
+                                                <option value="ABNORMAL">
+                                                    ABNORMAL
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Current Pattern</label
+                                            >
+                                            <select
+                                                v-model="hti.currentPattern"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="PASS">PASS</option>
+                                                <option value="ABNORMAL">
+                                                    ABNORMAL
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                            >
+                                                Date Start<span class="text-red-500">
+                                                    *</span
+                                                >
+                                            </label>
+                                            <input
+                                                v-model="hti.dateStart"
+                                                :disabled="
+                                                    overwriteMode && isEditingExpired
+                                                "
+                                                type="date"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                            >
+                                                Time Start<span class="text-red-500">
+                                                    *</span
+                                                >
+                                            </label>
+                                            <input
+                                                v-model="hti.timeStart"
+                                                :disabled="
+                                                    overwriteMode && isEditingExpired
+                                                "
+                                                type="time"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Loader<span class="text-red-500">
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.loader"
+                                                :disabled="overwriteMode"
+                                                type="text"
+                                                @input="
+                                                    hti.loader =
+                                                        hti.loader.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Partial No.<span class="text-red-500">
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.partialNo"
+                                                :disabled="overwriteMode"
+                                                type="number"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Date Finish</label
+                                            >
+                                            <input
+                                                v-model="hti.dateFinish"
+                                                type="date"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Time Finish</label
+                                            >
+                                            <input
+                                                v-model="hti.timeFinish"
+                                                type="time"
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Unloader</label
+                                            >
+                                            <input
+                                                v-model="hti.unloader"
+                                                type="text"
+                                                @input="
+                                                    hti.unloader =
+                                                        hti.unloader.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Box Condition<span
+                                                    class="text-red-500"
+                                                >
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.boxCondition"
+                                                type="text"
+                                                :disabled="overwriteMode"
+                                                @input="
+                                                    hti.boxCondition =
+                                                        hti.boxCondition.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Box Cover<span class="text-red-500">
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.boxCover"
+                                                type="text"
+                                                :disabled="overwriteMode"
+                                                @input="
+                                                    hti.boxCover =
+                                                        hti.boxCover.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Box Arrangement<span
+                                                    class="text-red-500"
+                                                >
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.boxArrangement"
+                                                type="text"
+                                                :disabled="overwriteMode"
+                                                @input="
+                                                    hti.boxArrangement =
+                                                        hti.boxArrangement.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Encoded By<span class="text-red-500">
+                                                    *</span
+                                                ></label
+                                            >
+                                            <input
+                                                v-model="hti.encodedBy"
+                                                type="text"
+                                                :disabled="overwriteMode"
+                                                @input="
+                                                    hti.encodedBy =
+                                                        hti.encodedBy.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-[40rem]">
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Remarks1</label
+                                            >
+                                            <input
+                                                v-model="hti.remarks1"
+                                                type="text"
+                                                @input="
+                                                    hti.remarks1 =
+                                                        hti.remarks1.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Remarks2</label
+                                            >
+                                            <input
+                                                v-model="hti.remarks2"
+                                                type="text"
+                                                @input="
+                                                    hti.remarks2 =
+                                                        hti.remarks2.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1 text-xs font-medium text-gray-700"
+                                                >Remarks3</label
+                                            >
+                                            <input
+                                                v-model="hti.remarks3"
+                                                type="text"
+                                                @input="
+                                                    hti.remarks3 =
+                                                        hti.remarks3.toUpperCase()
+                                                "
+                                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            v-else
+                            class="w-full px-2 mx-auto mr-10 space-y-4 shadow-xl bg-gray-50 rounded-2xl py-7 md:px-8 whitespace-nowrap"
+                            :class="
+                                activate2ndGBDP
+                                    ? 'border border-red-600'
+                                    : 'border border-yellow-400'
+                            "
+                        >
+                            <div
+                                class="flex flex-col items-center space-y-3 text-center"
+                                :class="activate2ndGBDP ? 'px-72' : 'px-96'"
+                            >
+                                <!-- Icon -->
+                                <div
+                                    class="flex items-center justify-center w-12 h-12 border rounded-full"
+                                    :class="
+                                        activate2ndGBDP
+                                            ? 'bg-red-100 border-red-300'
+                                            : 'bg-yellow-100 border-yellow-300'
+                                    "
+                                >
+                                    ⚠️
+                                </div>
+
+                                <!-- Title -->
+                                <h2 class="text-lg font-semibold text-gray-800">
+                                    Heat Treatment Information
+                                </h2>
+
+                                <!-- Message -->
+                                <p class="text-sm text-gray-600 whitespace-nowrap">
+                                    Heat Treatment Information data and graph already
+                                    exists for this Mass Production.
+                                </p>
+
+                                <!-- Extra note if activate2ndGBDP -->
+                                <div v-if="activate2ndGBDP" class="space-y-2">
+                                    <p class="text-sm font-medium text-red-700">
+                                        The selected model is subjected to 1st and 2nd
+                                        GBDP format. Please click the orange button
+                                        called
+                                        <span class="font-bold text-orange-600"
+                                            >APPLY 1ST 2ND GBDP</span
+                                        >.
+                                    </p>
+                                    <!-- Status preview -->
+                                    <div>
+                                        <p
+                                            class="mb-2 text-sm font-semibold text-gray-800"
+                                        >
+                                            Status Preview:
+                                        </p>
+                                        <div
+                                            class="flex flex-wrap justify-center gap-2"
+                                        >
+                                            <div
+                                                v-for="layer in layers"
+                                                :key="layer"
+                                                class="flex items-center justify-center w-12 h-12 text-xs font-bold rounded-lg"
+                                                :class="
+                                                    completedLayers.includes(layer)
+                                                        ? 'bg-green-500 text-white shadow-md'
+                                                        : 'bg-gray-300 text-gray-700'
+                                                "
+                                            >
+                                                {{ layer }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Explanation -->
+                                    <div class="flex justify-center">
+                                        <p
+                                            class="mt-3 text-xs text-center text-gray-500"
+                                        >
+                                            Each box represents a process layer (1 –
+                                            9.5).
+                                            <span class="font-semibold text-green-600"
+                                                >Green</span
+                                            >
+                                            indicates the layer is complete, while
+                                            <span class="font-semibold text-gray-600"
+                                                >gray</span
+                                            >
+                                            indicates it is pending.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Button -->
+                                <button
+                                    v-if="overwriteHeatTreatment"
+                                    @click="updateHeatTreatmentInfo()"
+                                    class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
+                                >
+                                    <span>OVERWRITE</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div
+                            v-if="!heatTreatmentInformationDetected"
+                            class="w-[30%] px-2 py-8 mx-auto ml-10 mr-10 space-y-8 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8"
+                        >
+                            <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
+                                Heat Treatment Graph Upload
+                                <span class="text-xs text-gray-300"
+                                    >(PNG, JPG and JPEG)</span
+                                >
+                            </h2>
+                            <div
+                                class="flex flex-col p-6 space-y-8 bg-white border border-gray-300 rounded-lg shadow-sm"
+                            >
+                                <div
+                                    class="flex flex-col pb-4 space-y-2 border-b border-gray-200"
+                                >
+                                    <label
+                                        for="cycleGraph"
+                                        class="text-sm font-semibold text-gray-800"
+                                        >Cycle Graph</label
+                                    >
+                                    <input
+                                        id="cycleGraph"
+                                        @change="handleCycleGraphUpload"
+                                        accept=".png, .jpg, .jpeg"
+                                        type="file"
+                                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1"
+                                    />
+                                </div>
+
+                                <div class="flex flex-col space-y-2">
+                                    <label
+                                        for="actualGraph"
+                                        class="text-sm font-semibold text-gray-800"
+                                        >Actual Graph</label
+                                    >
+                                    <input
+                                        id="actualGraph"
+                                        @change="handleActualGraphUpload"
+                                        accept=".png, .jpg, .jpeg"
+                                        type="file"
+                                        class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Sleek Control Panel - Design Improved, Logic Intact -->
+                        <div
+                            class="w-[20%] mr-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-cyan-500/40 shadow-[0_20px_50px_rgba(6,182,212,0.3),0_4px_15px_rgba(0,0,0,0.5)] rounded-3xl px-6 py-10 space-y-10 flex flex-col items-center ring-2 ring-cyan-400/20 backdrop-blur-xl"
+                        >
+                            <!-- Header: Cogwheel + Label -->
+                            <div class="flex items-center justify-center space-x-4">
+                                <!-- Glowing spinning cogwheel -->
+                                <div class="relative w-14 h-14">
+                                    <div
+                                        class="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 opacity-60 blur-xl animate-pulse"
+                                    ></div>
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center border-2 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl border-cyan-400/50"
+                                    >
+                                        <img
+                                            src="photo/cogwheel.png"
+                                            alt="Settings"
+                                            class="relative z-10 object-contain w-10 h-10 animate-spin drop-shadow-lg"
+                                            style="animation-duration: 3s"
                                         />
-                                    </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Label with gradient text -->
+                                <div>
                                     <span
-                                        >Clear Layer Data disabled (Existing data on {{ clearLayerDisabledCause }})</span
+                                        class="block text-2xl font-extrabold tracking-wider text-transparent whitespace-nowrap bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-500 drop-shadow-lg"
+                                    >
+                                        Control Panel
+                                    </span>
+                                    <span
+                                        class="block text-xs tracking-wide text-cyan-300/60"
+                                        >System Operations</span
                                     >
                                 </div>
                             </div>
-                            <div v-else>
-                                <!-- Clear Layer Button -->
-                                <button
 
-                                    @click="deleteLayerData()"
-                                    class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            <!-- Finalize Button Section -->
+                            <div class="w-full space-y-4">
+                                <!-- PROCEED OVERWRITE Button -->
+                                <button
+                                    v-if="overwriteMode"
+                                    @click="overwriteDatabase"
+                                    :disabled="isOverwriting"
+                                    :class="[
+                                        'group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
+                                        isOverwriting
+                                            ? 'bg-gradient-to-r from-cyan-400 to-teal-400 cursor-not-allowed opacity-80'
+                                            : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:ring-cyan-400',
+                                    ]"
                                 >
-                                    Clear Layer {{ mpcs.selectedLayer }} Data
+                                    <!-- Shine (only when active) -->
+                                    <div
+                                        v-if="!isOverwriting"
+                                        class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                                    ></div>
+
+                                    <span
+                                        class="relative flex items-center justify-center space-x-2"
+                                    >
+                                        <!-- Normal state -->
+                                        <template v-if="!isOverwriting">
+                                            <svg
+                                                class="w-5 h-5 transition-transform group-hover:rotate-12 drop-shadow-md"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+                                                />
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+
+                                            <span class="drop-shadow-md">
+                                                PROCEED OVERWRITE
+                                            </span>
+                                        </template>
+
+                                        <!-- Loading state -->
+                                        <template v-else>
+                                            <svg
+                                                class="w-5 h-5 animate-spin"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    class="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    stroke-width="4"
+                                                ></circle>
+                                                <path
+                                                    class="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8H4z"
+                                                ></path>
+                                            </svg>
+
+                                            <span class="drop-shadow-md">
+                                                OVERWRITING...
+                                            </span>
+                                        </template>
+                                    </span>
+                                </button>
+
+                                <button
+                                    v-else
+                                    @click="finalize"
+                                    :disabled="isFinalizeDisabled"
+                                    :class="[
+                                        'group relative w-full py-3.5 text-sm font-bold transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
+                                        isFinalizeDisabled
+                                            ? 'bg-gradient-to-r from-red-600 to-red-700 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
+                                            : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 focus:ring-cyan-400 text-white hover:shadow-teal-500/60 hover:shadow-2xl hover:scale-105 active:scale-95',
+                                    ]"
+                                >
+                                    <!-- Shine -->
+                                    <div
+                                        v-if="!isFinalizeDisabled"
+                                        class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                                    ></div>
+
+                                    <span
+                                        class="relative flex items-center justify-center space-x-2"
+                                    >
+                                        <!-- Disabled icon -->
+                                        <svg
+                                            v-if="isFinalizeDisabled"
+                                            class="w-5 h-5 drop-shadow-md"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+
+                                        <!-- Active icon -->
+                                        <svg
+                                            v-else
+                                            class="w-5 h-5 transition-transform group-hover:rotate-12 drop-shadow-md"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+
+                                        <!-- Label -->
+                                        <span class="drop-shadow-md">
+                                            {{ finalizeLabel }}
+                                        </span>
+                                    </span>
+
+                                    <!-- Disabled Pulse -->
+                                    <div
+                                        v-if="isFinalizeDisabled"
+                                        class="absolute inset-0 bg-red-400 opacity-10 animate-pulse"
+                                    ></div>
+                                </button>
+
+                                <!-- CANCEL OVERWRITE Button -->
+                                <button
+                                    v-if="overwriteMode"
+                                    @click="cancelOverwrite"
+                                    :disabled="isOverwriting"
+                                    :class="[
+                                        'group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
+                                        isOverwriting
+                                            ? 'bg-gradient-to-r from-red-400 to-red-500 cursor-not-allowed opacity-80'
+                                            : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 hover:shadow-red-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:ring-red-400',
+                                    ]"
+                                >
+                                    <!-- Shine (only when active) -->
+                                    <div
+                                        v-if="!isOverwriting"
+                                        class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                                    ></div>
+
+                                    <span
+                                        class="relative flex items-center justify-center space-x-2"
+                                    >
+                                        <!-- Normal state -->
+                                        <template v-if="!isOverwriting">
+                                            <svg
+                                                class="w-5 h-5 transition-transform group-hover:rotate-90 drop-shadow-md"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+
+                                            <span class="drop-shadow-md">
+                                                CANCEL OVERWRITE
+                                            </span>
+                                        </template>
+
+                                        <!-- Locked while overwriting -->
+                                        <template v-else>
+                                            <svg
+                                                class="w-5 h-5 animate-spin"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    class="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    stroke-width="4"
+                                                ></circle>
+                                                <path
+                                                    class="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8H4z"
+                                                ></path>
+                                            </svg>
+
+                                            <span class="drop-shadow-md">
+                                                CANNOT CANCEL
+                                            </span>
+                                        </template>
+                                    </span>
                                 </button>
                             </div>
 
+                            <!-- Other Buttons Section -->
+                            <div class="w-full mt-4 space-y-4">
+                                <!-- APPLY 1ST 2ND GBDP Button -->
+                                <button
+                                    v-if="!overwriteMode"
+                                    @click="second_heat_treatment()"
+                                    :disabled="
+                                        !(
+                                            activate2ndGBDP &&
+                                            heatTreatmentInformationDetected
+                                        )
+                                    "
+                                    class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-cyan-600 disabled:hover:to-teal-600 overflow-hidden"
+                                >
+                                    <div
+                                        class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                                    ></div>
+                                    <span
+                                        class="relative flex items-center justify-center space-x-2"
+                                    >
+                                        <svg
+                                            class="w-5 h-5 transition-transform group-hover:scale-110 drop-shadow-md"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        <span class="drop-shadow-md">APPLY 1ST 2ND GBDP</span>
+                                    </span>
+                                </button>
+
+                                <!-- GRAPH PATTERNS Button -->
+                                <button
+                                    v-if="!overwriteMode"
+                                    @click="Inertia.visit('ht_graph_patterns')"
+                                    class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 overflow-hidden"
+                                >
+                                    <div
+                                        class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                                    ></div>
+                                    <span
+                                        class="relative flex items-center justify-center space-x-2"
+                                    >
+                                        <svg
+                                            class="w-5 h-5 transition-transform group-hover:scale-110 drop-shadow-md"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+                                            />
+                                        </svg>
+                                        <span class="drop-shadow-md"
+                                            >GRAPH PATTERNS</span
+                                        >
+                                    </span>
+                                </button>
+
+                                <!-- CLEAR ALL Button -->
+                                <button
+                                    @click="clearAll()"
+                                    v-if="!overwriteMode"
+                                    class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-slate-600 to-gray-700 hover:from-slate-500 hover:to-gray-600 hover:shadow-gray-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50 overflow-hidden"
+                                >
+                                    <div
+                                        class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
+                                    ></div>
+                                    <span
+                                        class="relative flex items-center justify-center space-x-2"
+                                    >
+                                        <svg
+                                            class="w-5 h-5 transition-transform group-hover:rotate-180 drop-shadow-md"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+                                                clip-rule="evenodd"
+                                            />
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        <span class="drop-shadow-md">CLEAR ALL</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                        <div v-if="!isEditingExpired" class="mt-5">
-                            <!-- Warning Note -->
+                    </div>
+
+                    <Modal
+                        :show="showHTLTPanel"
+                        maxWidth="none"
+                        @close="showHTLTPanel = false"
+                    >
+                        <div
+                            class="relative flex flex-col items-start bg-white p-8 rounded-2xl shadow-2xl w-[60vw] h-[55vh] overflow-auto mx-auto"
+                        >
                             <div
-                                class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
+                                class="flex items-center px-4 py-3 mb-2 text-white rounded-lg shadow-md bg-gradient-to-r from-cyan-500 to-teal-500"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    class="w-5 h-5"
+                                    class="w-5 h-5 mr-2"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
@@ -358,511 +2276,251 @@
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         stroke-width="2"
-                                        d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                                        d="M13 16h-1v-4h-1m1 4v-4h1m-1 0V8m-6 8h6m-6 0h6"
                                     />
                                 </svg>
-                                <span
-                                    >Important: This action will clear other
-                                    layers sharing the same lot number, if there
-                                    are any. ({{ hoursLeftDisplay }})</span
-                                >
-                            </div>
-                        </div>
-                        <div v-else class="mt-5">
-                            <!-- Warning Note -->
-                            <div
-                                class="flex items-center flex-1 gap-2 p-2 text-sm text-yellow-700 bg-red-100 border-l-4 border-yellow-600 rounded-lg shadow-md"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="w-5 h-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
-                                    />
-                                </svg>
-                                <span
-                                    >Layer modifications for this mass
-                                    production has expired.</span
-                                >
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Group: Prepared By -->
-                    <div
-                        class="grid items-end grid-cols-1 gap-6 pt-10 md:grid-cols-3"
-                    >
-                        <div
-                            class="w-full px-4 py-3 mt-4 bg-gray-100 border-l-4 rounded-md shadow-sm border-cyan-600"
-                        >
-                            <p class="text-sm font-semibold text-gray-800">
-                                Detected Total Boxes:
-                                <span class="text-blue-700">{{
-                                    totalBoxes
-                                }}</span>
-                            </p>
-                        </div>
-                        <!-- Button -->
-                        <div v-if="isDataShown">
-                            <button
-                                @click="applyHTLT()"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-1"
-                            >
-                                Apply HT and LT
-                            </button>
-                        </div>
-                        <div
-                            v-if="
-                                isDataShown &&
-                                (mpcs.moreThanTenBoxes || mpcs.breakLotMode)
-                            "
-                        >
-                            <label
-                                class="block mb-1 text-xs font-medium text-gray-700"
-                                >Excess Layer<span class="text-red-500">
-                                    *</span
-                                ></label
-                            >
-                            <select
-                                v-model="mpcs.selectedExcessLayer"
-                                class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-600 bg-yellow-50"
-                            >
-                                <option
-                                    v-for="item in excessLayers"
-                                    :key="item"
-                                    :value="item"
-                                >
-                                    {{ item }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div
-                        class="p-4 bg-white border border-gray-300 shadow-lg rounded-xl"
-                    >
-                        <h3
-                            class="mb-2 text-sm font-bold tracking-wide text-gray-800"
-                        >
-                            Manual Layer Allocation
-                        </h3>
-
-                        <div class="h-px mb-4 bg-gray-200"></div>
-
-                        <p
-                            class="mb-3 text-xs tracking-wide"
-                            :class="
-                                !mpcs.selectedFurnace ||
-                                !mpcs.selectedMassProd ||
-                                isDataShown ||
-                                noMassProdData
-                                    ? 'text-red-600'
-                                    : 'text-gray-700'
-                            "
-                        >
-                            {{
-                                noMassProdData
-                                    ? "The selected furnace and mass production does not exist."
-                                    : isDataShown
-                                      ? "Click Change Data button to enable Manual Allocation."
-                                      : "Select a Furnace and Mass Production Name to enable Manual Layer Allocation."
-                            }}
-                        </p>
-
-                        <button
-                            @click="showBreakLotForm()"
-                            :disabled="
-                                !mpcs.selectedFurnace ||
-                                !mpcs.selectedMassProd ||
-                                isDataShown ||
-                                noMassProdData
-                            "
-                            class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
-                        >
-                            Manual Layer Allocation
-                        </button>
-                    </div>
-                </div>
-
-                <div
-                    v-if="!overwriteMode"
-                    class="w-full px-8 py-8 ml-10 mr-5 space-y-6 bg-white border border-gray-200 shadow-xl rounded-2xl md:px-12"
-                >
-                    <div v-if="isDataShown">
-                        <div
-                            v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode"
-                            class="w-full px-5"
-                        >
-                            <table
-                                class="min-w-full text-xs border border-collapse border-gray-200"
-                            >
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th
-                                            class="px-2 py-1 text-left border border-gray-300"
-                                        ></th>
-                                        <th
-                                            v-for="item in visibleBoxes"
-                                            :key="item"
-                                            class="px-2 py-1 font-semibold text-center border border-gray-300"
-                                        >
-                                            {{ item }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Model:
-                                        </td>
-                                        <td
-                                            v-for="n in visibleBoxes.length"
-                                            :key="n"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.selectedModel }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Coating M/C No:
-                                        </td>
-                                        <td
-                                            v-for="n in visibleBoxes.length"
-                                            :key="n"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.coatingMCNo }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Lot No:
-                                        </td>
-                                        <td
-                                            v-for="n in visibleBoxes.length"
-                                            :key="n"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.lotNo }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Qty (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ qtyValues[box] }}
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            HT (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ htValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            LT (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ ltValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            WT (KG):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ weightValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Box No.:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ boxNoValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Coating:
-                                        </td>
-                                        <td
-                                            v-for="n in visibleBoxes.length"
-                                            :key="n"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.coating }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Magnet Prepared By:
-                                        </td>
-                                        <td
-                                            v-for="n in visibleBoxes.length"
-                                            :key="n"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.magnetPreparedBy }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Box Prepared By:
-                                        </td>
-                                        <td
-                                            v-for="n in visibleBoxes.length"
-                                            :key="n"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.boxPreparedBy }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div v-else class="w-full px-5">
-                            <!-- ================= MAIN 10 BOXES ================= -->
-                            <p class="mb-2 font-semibold text-gray-700">
-                                Main Boxes - Layer {{ mpcs.selectedLayer }}
-                            </p>
-                            <table
-                                class="min-w-full mb-6 text-xs border border-collapse border-gray-200"
-                            >
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th
-                                            class="px-2 py-1 text-left border border-gray-300"
-                                        ></th>
-                                        <th
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-header-' + box"
-                                            class="px-2 py-1 font-semibold text-center border border-gray-300"
-                                        >
-                                            {{ box }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Model:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-model-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.selectedModel }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Coating M/C No:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-coatingMC-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.coatingMCNo }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Lot No:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-lot-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.lotNo }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Qty (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-qty-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ qtyValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            HT (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-ht-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ htValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            LT (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-lt-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ ltValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            WT (KG):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-weight-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ weightValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Box No.:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-boxno-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ boxNoValues[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Coating:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-coating-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.coating }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Magnet Prepared By:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-magnet-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.magnetPreparedBy }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Box Prepared By:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleBoxes"
-                                            :key="'main-boxprep-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.boxPreparedBy }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <!-- ================= EXCESS BOXES ================= -->
-                            <div>
-                                <p class="mb-2 font-semibold text-gray-700">
-                                    Excess Boxes - Layer
-                                    {{ mpcs.selectedExcessLayer }}
+                                <p class="text-sm font-medium">
+                                    Note: When finished, click the
+                                    <span class="font-bold">(×)</span> button at the
+                                    top-right corner to close this panel.
                                 </p>
+                            </div>
+                            <!-- Close Button -->
+                            <button
+                                @click="showHTLTPanel = false"
+                                class="absolute flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full shadow-md top-4 right-4 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+
+                            <div
+                                class="w-full max-w-6xl px-10 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-lg rounded-2xl"
+                            >
+                                <!-- MAIN Boxes Table -->
+                                <div v-if="visibleBoxes.length">
+                                    <p
+                                        class="pb-2 text-sm font-semibold text-gray-800 border-b"
+                                    >
+                                        HT (PCS) - Main Boxes
+                                    </p>
+                                    <div class="overflow-x-auto">
+                                        <table
+                                            class="min-w-full text-center border border-collapse border-gray-300"
+                                        >
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th
+                                                        v-for="box in visibleBoxes"
+                                                        :key="box"
+                                                        class="px-4 py-2 text-xs border border-gray-300"
+                                                    >
+                                                        {{ box }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td
+                                                        v-for="box in visibleBoxes"
+                                                        :key="box"
+                                                        class="px-2 py-1 border border-gray-300"
+                                                    >
+                                                        <input
+                                                            :value="htValues[box]"
+                                                            @input="
+                                                                htValues[box] =
+                                                                    $event.target.value.toUpperCase()
+                                                            "
+                                                            type="text"
+                                                            class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <p
+                                        class="pt-4 pb-2 text-sm font-semibold text-gray-800 border-b"
+                                    >
+                                        LT (PCS) - Main Boxes
+                                    </p>
+                                    <div class="overflow-x-auto">
+                                        <table
+                                            class="min-w-full text-center border border-collapse border-gray-300"
+                                        >
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th
+                                                        v-for="box in visibleBoxes"
+                                                        :key="box"
+                                                        class="px-4 py-2 text-xs border border-gray-300"
+                                                    >
+                                                        {{ box }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td
+                                                        v-for="box in visibleBoxes"
+                                                        :key="box"
+                                                        class="px-2 py-1 border border-gray-300"
+                                                    >
+                                                        <input
+                                                            :value="ltValues[box]"
+                                                            @input="
+                                                                ltValues[box] =
+                                                                    $event.target.value.toUpperCase()
+                                                            "
+                                                            type="text"
+                                                            class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- EXCESS Boxes Table -->
+                                <div v-if="visibleExcessBoxes.length">
+                                    <p
+                                        class="pb-2 text-sm font-semibold text-gray-800 border-b"
+                                    >
+                                        HT (PCS) - Excess Boxes
+                                    </p>
+                                    <div class="overflow-x-auto">
+                                        <table
+                                            class="min-w-full text-center border border-collapse border-gray-300"
+                                        >
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="box"
+                                                        class="px-4 py-2 text-xs border border-gray-300"
+                                                    >
+                                                        {{ box }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="box"
+                                                        class="px-2 py-1 border border-gray-300"
+                                                    >
+                                                        <input
+                                                            :value="htValuesExcess[box]"
+                                                            @input="
+                                                                htValuesExcess[box] =
+                                                                    $event.target.value.toUpperCase()
+                                                            "
+                                                            type="text"
+                                                            class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <p
+                                        class="pt-4 pb-2 text-sm font-semibold text-gray-800 border-b"
+                                    >
+                                        LT (PCS) - Excess Boxes
+                                    </p>
+                                    <div class="overflow-x-auto">
+                                        <table
+                                            class="min-w-full text-center border border-collapse border-gray-300"
+                                        >
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="box"
+                                                        class="px-4 py-2 text-xs border border-gray-300"
+                                                    >
+                                                        {{ box }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td
+                                                        v-for="box in visibleExcessBoxes"
+                                                        :key="box"
+                                                        class="px-2 py-1 border border-gray-300"
+                                                    >
+                                                        <input
+                                                            :value="ltValuesExcess[box]"
+                                                            @input="
+                                                                ltValuesExcess[box] =
+                                                                    $event.target.value.toUpperCase()
+                                                            "
+                                                            type="text"
+                                                            class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal>
+
+                    <Modal :show="showModalCreate" @close="showModalCreate = false">
+                        <div
+                            class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
+                        >
+                            <!-- Exit Button -->
+                            <button
+                                @click="showModalCreate = false"
+                                class="text-gray-400 transition duration-150 hover:text-gray-600"
+                                aria-label="Close modal"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+
+                            <p class="mb-6 text-lg font-bold text-gray-800">
+                                Please review your inputs
+                                <span class="text-red-700">carefully</span> before
+                                submitting.
+                            </p>
+
+                            <div
+                                v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode"
+                                class="w-full px-5"
+                            >
                                 <table
                                     class="min-w-full text-xs border border-collapse border-gray-200"
                                 >
@@ -872,8 +2530,191 @@
                                                 class="px-2 py-1 text-left border border-gray-300"
                                             ></th>
                                             <th
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-header-' + box"
+                                                v-for="item in visibleBoxes"
+                                                :key="item"
+                                                class="px-2 py-1 font-semibold text-center border border-gray-300"
+                                            >
+                                                {{ item }}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Model:
+                                            </td>
+                                            <td
+                                                v-for="n in visibleBoxes.length"
+                                                :key="n"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ mpcs.selectedModel }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Coating M/C No:
+                                            </td>
+                                            <td
+                                                v-for="n in visibleBoxes.length"
+                                                :key="n"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ mpcs.coatingMCNo }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Lot No:
+                                            </td>
+                                            <td
+                                                v-for="n in visibleBoxes.length"
+                                                :key="n"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ mpcs.lotNo }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Qty (PCS):
+                                            </td>
+                                            <td
+                                                v-for="box in visibleBoxes"
+                                                :key="box"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ qtyValues[box] }}
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                HT (PCS):
+                                            </td>
+                                            <td
+                                                v-for="box in visibleBoxes"
+                                                :key="box"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ htValues[box] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                LT (PCS):
+                                            </td>
+                                            <td
+                                                v-for="box in visibleBoxes"
+                                                :key="box"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ ltValues[box] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                WT (KG):
+                                            </td>
+                                            <td
+                                                v-for="box in visibleBoxes"
+                                                :key="box"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ weightValues[box] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Box No.:
+                                            </td>
+                                            <td
+                                                v-for="box in visibleBoxes"
+                                                :key="box"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ boxNoValues[box] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Coating:
+                                            </td>
+                                            <td
+                                                v-for="n in visibleBoxes.length"
+                                                :key="n"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ mpcs.coating }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Magnet Prepared By:
+                                            </td>
+                                            <td
+                                                v-for="n in visibleBoxes.length"
+                                                :key="n"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ mpcs.magnetPreparedBy }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                            >
+                                                Box Prepared By:
+                                            </td>
+                                            <td
+                                                v-for="n in visibleBoxes.length"
+                                                :key="n"
+                                                class="px-2 py-1 text-center border border-gray-300"
+                                            >
+                                                {{ mpcs.boxPreparedBy }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div v-else class="w-full px-5">
+                                <!-- ================= MAIN 10 BOXES ================= -->
+                                <p class="mb-2 font-semibold text-gray-700">
+                                    Main Boxes (Selected Layer -
+                                    {{ mpcs.selectedLayer }})
+                                </p>
+                                <table
+                                    class="min-w-full mb-6 text-xs border border-collapse border-gray-200"
+                                >
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th
+                                                class="px-2 py-1 text-left border border-gray-300"
+                                            ></th>
+                                            <th
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-header-' + box"
                                                 class="px-2 py-1 font-semibold text-center border border-gray-300"
                                             >
                                                 {{ box }}
@@ -888,8 +2729,8 @@
                                                 Model:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-model-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-model-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
                                                 {{ mpcs.selectedModel }}
@@ -902,8 +2743,8 @@
                                                 Coating M/C No:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-coatingMC-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-coatingMC-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
                                                 {{ mpcs.coatingMCNo }}
@@ -916,8 +2757,8 @@
                                                 Lot No:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-lot-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-lot-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
                                                 {{ mpcs.lotNo }}
@@ -930,11 +2771,11 @@
                                                 Qty (PCS):
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-qty-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-qty-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
-                                                {{ qtyValuesExcess[box] }}
+                                                {{ qtyValues[box] }}
                                             </td>
                                         </tr>
                                         <tr>
@@ -944,11 +2785,11 @@
                                                 HT (PCS):
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-ht-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-ht-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
-                                                {{ htValuesExcess[box] }}
+                                                {{ htValues[box] }}
                                             </td>
                                         </tr>
                                         <tr>
@@ -958,11 +2799,11 @@
                                                 LT (PCS):
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-lt-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-lt-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
-                                                {{ ltValuesExcess[box] }}
+                                                {{ ltValues[box] }}
                                             </td>
                                         </tr>
                                         <tr>
@@ -972,11 +2813,11 @@
                                                 WT (KG):
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-weight-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-weight-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
-                                                {{ weightValuesExcess[box] }}
+                                                {{ weightValues[box] }}
                                             </td>
                                         </tr>
                                         <tr>
@@ -986,11 +2827,11 @@
                                                 Box No.:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-boxno-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-boxno-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
-                                                {{ boxNoValuesExcess[box] }}
+                                                {{ boxNoValues[box] }}
                                             </td>
                                         </tr>
                                         <tr>
@@ -1000,8 +2841,8 @@
                                                 Coating:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-coating-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-coating-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
                                                 {{ mpcs.coating }}
@@ -1014,8 +2855,8 @@
                                                 Magnet Prepared By:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-magnet-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-magnet-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
                                                 {{ mpcs.magnetPreparedBy }}
@@ -1028,8 +2869,8 @@
                                                 Box Prepared By:
                                             </td>
                                             <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="'excess-boxprep-' + box"
+                                                v-for="box in visibleBoxes"
+                                                :key="'main-boxprep-' + box"
                                                 class="px-2 py-1 text-center border border-gray-300"
                                             >
                                                 {{ mpcs.boxPreparedBy }}
@@ -1037,2177 +2878,369 @@
                                         </tr>
                                     </tbody>
                                 </table>
+
+                                <!-- ================= EXCESS BOXES ================= -->
+                                <div>
+                                    <p class="mb-2 font-semibold text-gray-700">
+                                        Excess Boxes (Selected Layer -
+                                        {{ mpcs.selectedExcessLayer }})
+                                    </p>
+                                    <table
+                                        class="min-w-full text-xs border border-collapse border-gray-200"
+                                    >
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th
+                                                    class="px-2 py-1 text-left border border-gray-300"
+                                                ></th>
+                                                <th
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-header-' + box"
+                                                    class="px-2 py-1 font-semibold text-center border border-gray-300"
+                                                >
+                                                    {{ box }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Model:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-model-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.selectedModel }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Coating M/C No:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-coatingMC-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.coatingMCNo }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Lot No:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-lot-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.lotNo }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Qty (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-qty-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ qtyValuesExcess[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    HT (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-ht-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ htValuesExcess[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    LT (PCS):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-lt-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ ltValuesExcess[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    WT (KG):
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-weight-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ weightValuesExcess[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Box No.:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-boxno-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ boxNoValuesExcess[box] }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Coating:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-coating-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.coating }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Magnet Prepared By:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-magnet-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.magnetPreparedBy }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
+                                                >
+                                                    Box Prepared By:
+                                                </td>
+                                                <td
+                                                    v-for="box in visibleExcessBoxes"
+                                                    :key="'excess-boxprep-' + box"
+                                                    class="px-2 py-1 text-center border border-gray-300"
+                                                >
+                                                    {{ mpcs.boxPreparedBy }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div
-                        v-else
-                        class="relative w-full max-w-4xl px-8 py-0 mx-auto overflow-hidden"
-                    >
-                        <!-- Animated Background Pattern -->
-                        <div class="absolute inset-0 opacity-5">
-                            <svg
-                                class="w-full h-full"
-                                viewBox="0 0 100 100"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <defs>
-                                    <pattern
-                                        id="dot-pattern"
-                                        width="10"
-                                        height="10"
-                                        patternUnits="userSpaceOnUse"
-                                    >
-                                        <circle
-                                            cx="5"
-                                            cy="5"
-                                            r="1"
-                                            fill="currentColor"
-                                            class="text-cyan-400"
-                                        />
-                                    </pattern>
-                                </defs>
-                                <rect
-                                    width="100%"
-                                    height="100%"
-                                    fill="url(#dot-pattern)"
-                                />
-                            </svg>
-                        </div>
 
-                        <!-- Main Card -->
-                        <div
-                            class="relative overflow-hidden border-2 border-gray-200 shadow-2xl bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl"
-                        >
-                            <!-- Top Gradient Accent -->
                             <div
-                                class="h-2 bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-500 bg-[length:200%_100%] animate-gradient-flow"
-                            ></div>
-
-                            <!-- Content Container -->
-                            <div
-                                class="flex flex-col items-center justify-center px-8 py-10 space-y-6"
+                                v-if="!heatTreatmentInformationDetected"
+                                class="p-4 my-2 border border-gray-200"
                             >
-                                <!-- Animated Icon Container -->
-                                <div class="relative">
-                                    <!-- Outer rotating ring -->
+                                <div class="flex flex-row text-xs whitespace-nowrap">
                                     <div
-                                        class="absolute inset-0 w-24 h-24 -m-3"
+                                        class="flex flex-col items-end gap-1 font-semibold"
                                     >
-                                        <div
-                                            class="absolute inset-0 border-transparent rounded-full border-3 border-t-cyan-400 border-r-teal-400 animate-spin-slow"
-                                        ></div>
+                                        <label>Batch Cycle No.: </label>
+                                        <label>Machine No.: </label>
+                                        <label>Cycle No.: </label>
+                                        <label>Pattern No.: </label>
+                                        <label>Cycle Pattern: </label>
+                                        <label>Current Pattern: </label>
                                     </div>
-
-                                    <!-- Glowing background -->
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ mpcs.selectedMassProd || "NA" }}</span>
+                                        <span>{{ initialFurnaceData || "NA" }}</span>
+                                        <span>{{ hti.cycleNo || "NA" }}</span>
+                                        <span>{{ hti.patternNo || "NA" }}</span>
+                                        <span>{{ hti.cyclePattern || "NA" }}</span>
+                                        <span>{{ hti.currentPattern || "NA" }}</span>
+                                    </div>
                                     <div
-                                        class="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-2xl blur-xl animate-pulse"
-                                    ></div>
-
-                                    <!-- Icon Container -->
-                                    <div
-                                        class="relative flex items-center justify-center transition-transform duration-500 border-2 border-gray-200 shadow-lg w-18 h-18 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl group hover:scale-110"
+                                        class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
                                     >
-                                        <!-- Inner glow on hover -->
-                                        <div
-                                            class="absolute inset-0 transition-all duration-500 bg-gradient-to-br from-cyan-400/0 to-teal-400/0 group-hover:from-cyan-400/30 group-hover:to-teal-400/30 rounded-xl"
-                                        ></div>
+                                        <label>Date Start: </label>
+                                        <label>Time Start: </label>
+                                        <label>Loader: </label>
+                                    </div>
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ hti.dateStart || "NA" }}</span>
+                                        <span>{{ hti.timeStart || "NA" }}</span>
+                                        <span>{{ hti.loader || "NA" }}</span>
+                                    </div>
+                                    <div
+                                        class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
+                                    >
+                                        <label>Date Finished: </label>
+                                        <label>Time Finished: </label>
+                                        <label>Unloader: </label>
+                                    </div>
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ hti.dateFinish || "NA" }}</span>
+                                        <span>{{ hti.timeFinish || "NA" }}</span>
+                                        <span>{{ hti.unloader || "NA" }}</span>
+                                    </div>
+                                    <div
+                                        class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
+                                    >
+                                        <label>Box Condition: </label>
+                                        <label>Box Cover: </label>
+                                        <label>Box Arrangement: </label>
+                                        <label>Encoded By: </label>
+                                    </div>
+                                    <div class="flex flex-col gap-1 ml-5">
+                                        <span>{{ hti.boxCondition || "NA" }}</span>
+                                        <span>{{ hti.boxCover || "NA" }}</span>
+                                        <span>{{ hti.boxArrangement || "NA" }}</span>
+                                        <span>{{ hti.encodedBy || "NA" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                v-if="!heatTreatmentInformationDetected"
+                                class="flex flex-row items-center justify-center gap-6 mb-2 whitespace-nowrap"
+                            >
+                                <div
+                                    class="flex flex-col items-center text-xs text-center"
+                                >
+                                    <p>Cycle Graph File selected:</p>
+                                    <span class="font-semibold">{{
+                                        (cycleGraphFile && cycleGraphFile.name) || "NA"
+                                    }}</span>
+                                    <img
+                                        :src="cycleGraphPreview"
+                                        alt="Cycle Graph Preview"
+                                        class="object-contain w-32 h-32 rounded-lg shadow"
+                                    />
+                                </div>
 
-                                        <!-- Main Icon -->
+                                <div
+                                    class="flex flex-col items-center text-xs text-center"
+                                >
+                                    <p>Actual Graph File selected:</p>
+                                    <span class="font-semibold">{{
+                                        (actualGraphFile && actualGraphFile.name) ||
+                                        "NA"
+                                    }}</span>
+                                    <img
+                                        :src="actualGraphPreview"
+                                        alt="Actual Graph Preview"
+                                        class="object-contain w-32 h-32 rounded-lg shadow"
+                                    />
+                                </div>
+                            </div>
+
+                            <div v-if="isInitialLotNotSaved" class="p-4 mt-5 bg-white border border-gray-300 rounded-lg">
+                                <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                    <svg
+                                        class="w-5 h-5 text-yellow-500"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"
+                                        />
+                                    </svg>
+
+                                    <p>Important</p>
+                                </div>
+                                <p class="mt-1 text-xs leading-relaxed text-gray-600">
+                                    If this layer is intended for <span class="font-semibold text-red-600">breaklots</span>, this submission will be recorded as the
+                                    <span class="font-semibold text-red-600">initial lot</span>. The first model and lot number assigned to this layer.
+                                </p>
+                            </div>
+
+                            <div class="flex mt-4 space-x-3">
+                                <button
+                                    @click="cancelProceed"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    @click="saveToDatabase"
+                                    :disabled="isSaving"
+                                    :class="[
+                                        'flex items-center px-4 py-2 text-sm font-medium text-white rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-offset-1',
+                                        isSaving
+                                            ? 'bg-blue-400 cursor-not-allowed'
+                                            : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
+                                    ]"
+                                >
+                                    <span v-if="!isSaving" class="flex items-center">
+                                        Proceed
+                                        <img
+                                            src="/photo/arrow_proceed.png"
+                                            alt="Proceed"
+                                            class="w-4 h-4 ml-2"
+                                        />
+                                    </span>
+
+                                    <span v-else class="flex items-center gap-2">
                                         <svg
-                                            class="relative w-10 h-10 text-gray-400 transition-colors duration-500 group-hover:text-cyan-500"
+                                            class="w-4 h-4 animate-spin"
+                                            xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
                                             viewBox="0 0 24 24"
-                                            stroke="currentColor"
                                         >
+                                            <circle
+                                                class="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                stroke-width="4"
+                                            ></circle>
                                             <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="1.5"
-                                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                                            />
+                                                class="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8v8H4z"
+                                            ></path>
                                         </svg>
-                                    </div>
-                                </div>
 
-                                <!-- Title Section -->
-                                <div class="space-y-2 text-center">
-                                    <h2
-                                        class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800"
-                                    >
-                                        No Data Available
-                                    </h2>
-                                    <div
-                                        class="flex items-center justify-center space-x-2"
-                                    >
-                                        <div
-                                            class="w-12 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent rounded-full"
-                                        ></div>
-                                        <div
-                                            class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"
-                                        ></div>
-                                        <div
-                                            class="w-12 h-0.5 bg-gradient-to-r from-transparent via-teal-400 to-transparent rounded-full"
-                                        ></div>
-                                    </div>
-                                </div>
-
-                                <!-- Description Card -->
-                                <div class="max-w-xl">
-                                    <div
-                                        class="p-5 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-xl"
-                                    >
-                                        <div class="flex items-start space-x-4">
-                                            <div class="flex-shrink-0 mt-1">
-                                                <div
-                                                    class="flex items-center justify-center w-8 h-8 rounded-lg shadow-md bg-gradient-to-br from-cyan-500 to-teal-500"
-                                                >
-                                                    <svg
-                                                        class="w-5 h-5 text-white"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 20 20"
-                                                    >
-                                                        <path
-                                                            fill-rule="evenodd"
-                                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                                            clip-rule="evenodd"
-                                                        />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <div class="flex-1 space-y-2">
-                                                <p
-                                                    class="text-sm leading-relaxed text-gray-700"
-                                                >
-                                                    No heat treatment data has
-                                                    been loaded yet. Click
-                                                    <span
-                                                        class="p-1 font-bold text-white rounded-lg bg-cyan-600"
-                                                        >Show Data</span
-                                                    >
-                                                    button.
-                                                </p>
-                                                <div class="space-y-1.5">
-                                                    <div
-                                                        class="flex items-center space-x-2 text-sm text-gray-600"
-                                                    >
-                                                        <svg
-                                                            class="w-4 h-4 text-cyan-500"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path
-                                                                fill-rule="evenodd"
-                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                                clip-rule="evenodd"
-                                                            />
-                                                        </svg>
-                                                        <span
-                                                            >Select a
-                                                            <span
-                                                                class="font-semibold text-gray-800"
-                                                                >Model</span
-                                                            ></span
-                                                        >
-                                                    </div>
-                                                    <div
-                                                        class="flex items-center space-x-2 text-sm text-gray-600"
-                                                    >
-                                                        <svg
-                                                            class="w-4 h-4 text-teal-500"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path
-                                                                fill-rule="evenodd"
-                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                                clip-rule="evenodd"
-                                                            />
-                                                        </svg>
-                                                        <span
-                                                            >Choose a
-                                                            <span
-                                                                class="font-semibold text-gray-800"
-                                                                >Lot
-                                                                Number</span
-                                                            ></span
-                                                        >
-                                                    </div>
-                                                </div>
-                                                <p
-                                                    class="pt-1 text-xs italic text-gray-500"
-                                                >
-                                                    Once loaded, the table will
-                                                    display all relevant
-                                                    information including main
-                                                    and excess boxes.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Decorative Elements -->
-                                <div
-                                    class="flex items-center justify-center pt-2 space-x-2"
-                                >
-                                    <div
-                                        class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
-                                        style="animation-delay: 0s"
-                                    ></div>
-                                    <div
-                                        class="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce"
-                                        style="animation-delay: 0.2s"
-                                    ></div>
-                                    <div
-                                        class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
-                                        style="animation-delay: 0.4s"
-                                    ></div>
-                                </div>
+                                        Saving...
+                                    </span>
+                                </button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- ===== TOTAL SUMMARY ===== -->
-                    <div
-                        v-if="isDataShown"
-                        class="flex justify-end gap-8 px-4 py-3 mt-4 border border-gray-300 rounded-lg bg-gray-50"
-                    >
-                        <div class="text-sm font-medium text-gray-700">
-                            Total Qty:
-                            <span class="ml-1 font-bold text-gray-900">
-                                {{ totalQty }}
-                            </span>
-                        </div>
-
-                        <div class="text-sm font-medium text-gray-700">
-                            Total WT (KG):
-                            <span class="ml-1 font-bold text-gray-900">
-                                {{ totalWt }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <!-- Current Grand Total Weight -->
-                        <div
-                            v-if="isDataShown"
-                            class="inline-flex flex-col gap-1 px-5 py-3 border border-gray-300 shadow-md rounded-xl bg-gradient-to-br from-gray-50 to-slate-50 shadow-gray-200/40"
-                        >
-                            <div
-                                class="text-[8px] font-semibold tracking-widest uppercase text-gray-600"
-                            >
-                                Current Grand Total Weight
-                            </div>
-
-                            <div
-                                class="text-xl font-bold leading-none text-gray-600"
-                            >
-                                {{ currentTotalWeight }} (Kgs)
-                            </div>
-                        </div>
-
-                        <div
-                            v-if="isDataShown"
-                            :class="
-                                isGrandTotalLimitReached
-                                    ? 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-red-50 to-rose-50 border-red-400 shadow-md shadow-red-300/40'
-                                    : 'inline-flex flex-col gap-1 px-5 py-3 rounded-xl border bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md shadow-cyan-200/40'
-                            "
-                        >
-                            <div
-                                :class="
-                                    isGrandTotalLimitReached
-                                        ? 'text-[8px] font-semibold tracking-widest uppercase text-red-700'
-                                        : 'text-[8px] font-semibold tracking-widest uppercase text-teal-700'
-                                "
-                            >
-                                Expected Grand Total Weight
-                            </div>
-
-                            <div
-                                :class="
-                                    isGrandTotalLimitReached
-                                        ? 'text-xl font-bold leading-none text-red-600'
-                                        : 'text-xl font-bold leading-none text-cyan-500'
-                                "
-                            >
-                                {{ grandTotalWeight }} (Kgs)
-                            </div>
-
-                            <!-- Warning text -->
-                            <div
-                                v-if="isGrandTotalLimitReached"
-                                class="text-[8px] font-semibold tracking-wide text-red-700"
-                            >
-                                ⚠ LIMIT EXCEEDED — Max 1425
-                            </div>
-                        </div>
-                    </div>
+                    </Modal>
                 </div>
             </div>
-            <div class="flex flex-row mt-12">
-                <div
-                    v-if="!heatTreatmentInformationDetected"
-                    class="w-full px-2 mx-auto space-y-4 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-8"
-                >
-                    <div>
-                        <div v-if="overwriteMode">
-                            <h2
-                                class="pb-1 mb-4 font-bold text-gray-800 border-b text-md"
-                            >
-                                Overwriting Heat Treatment Information
-                            </h2>
-
-                            <p
-                                class="px-3 py-1 mb-3 text-xs font-medium text-teal-900 border rounded-md bg-cyan-100 border-cyan-300"
-                            >
-                                Note: Only
-                                <span class="font-semibold"
-                                    >Cycle Pattern, Current Pattern, Date
-                                    Finish, Time Finish, Remarks</span
-                                >
-                                and
-                                <span class="font-semibold">Graph Uploads</span>
-                                can be overwritten.
-                            </p>
-
-                            <p
-                                class="px-3 py-1 pl-2 mb-3 text-xs font-medium text-yellow-800 border-l-2 border-yellow-500"
-                                v-if="!isEditingExpired"
-                            >
-                                ⚠ Time Start and Date Start can only be edited
-                                within 24 hours.
-                            </p>
-
-                            <p
-                                class="px-3 py-1 mb-3 text-xs font-medium text-red-700"
-                                v-if="isEditingExpired"
-                            >
-                                ⚠ Edit window has expired.
-                            </p>
-                            <p
-                                class="px-3 py-1 mb-3 text-xs font-medium text-teal-900"
-                                v-else
-                            >
-                                ⏱ Hours left until expiration:
-                                {{ hoursLeftDisplay }}
-                            </p>
-                        </div>
-                        <div v-else>
-                            <h2
-                                class="pb-1 mb-4 font-bold text-gray-800 border-b text-md"
-                            >
-                                Heat Treatment Information
-                            </h2>
-                        </div>
-                        <div class="flex flex-row space-x-3">
-                            <div class="flex flex-col">
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Batch Cycle No</label
-                                    >
-                                    <input
-                                        v-model="mpcs.selectedMassProd"
-                                        type="text"
-                                        disabled
-                                        class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Machine No</label
-                                    >
-                                    <input
-                                        v-model="initialFurnaceData"
-                                        type="text"
-                                        disabled
-                                        class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Cycle No<span class="text-red-500">
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.cycleNo"
-                                        type="text"
-                                        :disabled="overwriteMode"
-                                        @input="
-                                            hti.cycleNo =
-                                                hti.cycleNo.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Pattern No<span class="text-red-500">
-                                            *</span
-                                        ></label
-                                    >
-                                    <select
-                                        v-model="hti.patternNo"
-                                        :disabled="overwriteMode"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    >
-                                        <option
-                                            v-for="item in graph_patterns"
-                                            :key="item"
-                                            :value="item"
-                                        >
-                                            {{ item }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Cycle Pattern</label
-                                    >
-                                    <select
-                                        v-model="hti.cyclePattern"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="PASS">PASS</option>
-                                        <option value="ABNORMAL">
-                                            ABNORMAL
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Current Pattern</label
-                                    >
-                                    <select
-                                        v-model="hti.currentPattern"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="PASS">PASS</option>
-                                        <option value="ABNORMAL">
-                                            ABNORMAL
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="flex flex-col">
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                    >
-                                        Date Start<span class="text-red-500">
-                                            *</span
-                                        >
-                                    </label>
-                                    <input
-                                        v-model="hti.dateStart"
-                                        :disabled="
-                                            overwriteMode && isEditingExpired
-                                        "
-                                        type="date"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                    >
-                                        Time Start<span class="text-red-500">
-                                            *</span
-                                        >
-                                    </label>
-                                    <input
-                                        v-model="hti.timeStart"
-                                        :disabled="
-                                            overwriteMode && isEditingExpired
-                                        "
-                                        type="time"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Loader<span class="text-red-500">
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.loader"
-                                        :disabled="overwriteMode"
-                                        type="text"
-                                        @input="
-                                            hti.loader =
-                                                hti.loader.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Partial No.<span class="text-red-500">
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.partialNo"
-                                        :disabled="overwriteMode"
-                                        type="number"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex flex-col">
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Date Finish</label
-                                    >
-                                    <input
-                                        v-model="hti.dateFinish"
-                                        type="date"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Time Finish</label
-                                    >
-                                    <input
-                                        v-model="hti.timeFinish"
-                                        type="time"
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Unloader</label
-                                    >
-                                    <input
-                                        v-model="hti.unloader"
-                                        type="text"
-                                        @input="
-                                            hti.unloader =
-                                                hti.unloader.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex flex-col">
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Box Condition<span
-                                            class="text-red-500"
-                                        >
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.boxCondition"
-                                        type="text"
-                                        :disabled="overwriteMode"
-                                        @input="
-                                            hti.boxCondition =
-                                                hti.boxCondition.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Box Cover<span class="text-red-500">
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.boxCover"
-                                        type="text"
-                                        :disabled="overwriteMode"
-                                        @input="
-                                            hti.boxCover =
-                                                hti.boxCover.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Box Arrangement<span
-                                            class="text-red-500"
-                                        >
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.boxArrangement"
-                                        type="text"
-                                        :disabled="overwriteMode"
-                                        @input="
-                                            hti.boxArrangement =
-                                                hti.boxArrangement.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Encoded By<span class="text-red-500">
-                                            *</span
-                                        ></label
-                                    >
-                                    <input
-                                        v-model="hti.encodedBy"
-                                        type="text"
-                                        :disabled="overwriteMode"
-                                        @input="
-                                            hti.encodedBy =
-                                                hti.encodedBy.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex flex-col w-[40rem]">
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Remarks1</label
-                                    >
-                                    <input
-                                        v-model="hti.remarks1"
-                                        type="text"
-                                        @input="
-                                            hti.remarks1 =
-                                                hti.remarks1.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Remarks2</label
-                                    >
-                                    <input
-                                        v-model="hti.remarks2"
-                                        type="text"
-                                        @input="
-                                            hti.remarks2 =
-                                                hti.remarks2.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                        >Remarks3</label
-                                    >
-                                    <input
-                                        v-model="hti.remarks3"
-                                        type="text"
-                                        @input="
-                                            hti.remarks3 =
-                                                hti.remarks3.toUpperCase()
-                                        "
-                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    v-else
-                    class="w-full px-2 mx-auto mr-10 space-y-4 shadow-xl bg-gray-50 rounded-2xl py-7 md:px-8 whitespace-nowrap"
-                    :class="
-                        activate2ndGBDP
-                            ? 'border border-red-600'
-                            : 'border border-yellow-400'
-                    "
-                >
-                    <div
-                        class="flex flex-col items-center space-y-3 text-center"
-                        :class="activate2ndGBDP ? 'px-72' : 'px-96'"
-                    >
-                        <!-- Icon -->
-                        <div
-                            class="flex items-center justify-center w-12 h-12 border rounded-full"
-                            :class="
-                                activate2ndGBDP
-                                    ? 'bg-red-100 border-red-300'
-                                    : 'bg-yellow-100 border-yellow-300'
-                            "
-                        >
-                            ⚠️
-                        </div>
-
-                        <!-- Title -->
-                        <h2 class="text-lg font-semibold text-gray-800">
-                            Heat Treatment Information
-                        </h2>
-
-                        <!-- Message -->
-                        <p class="text-sm text-gray-600 whitespace-nowrap">
-                            Heat Treatment Information data and graph already
-                            exists for this Mass Production.
-                        </p>
-
-                        <!-- Extra note if activate2ndGBDP -->
-                        <div v-if="activate2ndGBDP" class="space-y-2">
-                            <p class="text-sm font-medium text-red-700">
-                                The selected model is subjected to 1st and 2nd
-                                GBDP format. Please click the orange button
-                                called
-                                <span class="font-bold text-orange-600"
-                                    >APPLY 1ST 2ND GBDP</span
-                                >.
-                            </p>
-                            <!-- Status preview -->
-                            <div>
-                                <p
-                                    class="mb-2 text-sm font-semibold text-gray-800"
-                                >
-                                    Status Preview:
-                                </p>
-                                <div
-                                    class="flex flex-wrap justify-center gap-2"
-                                >
-                                    <div
-                                        v-for="layer in layers"
-                                        :key="layer"
-                                        class="flex items-center justify-center w-12 h-12 text-xs font-bold rounded-lg"
-                                        :class="
-                                            completedLayers.includes(layer)
-                                                ? 'bg-green-500 text-white shadow-md'
-                                                : 'bg-gray-300 text-gray-700'
-                                        "
-                                    >
-                                        {{ layer }}
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Explanation -->
-                            <div class="flex justify-center">
-                                <p
-                                    class="mt-3 text-xs text-center text-gray-500"
-                                >
-                                    Each box represents a process layer (1 –
-                                    9.5).
-                                    <span class="font-semibold text-green-600"
-                                        >Green</span
-                                    >
-                                    indicates the layer is complete, while
-                                    <span class="font-semibold text-gray-600"
-                                        >gray</span
-                                    >
-                                    indicates it is pending.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Button -->
-                        <button
-                            v-if="overwriteHeatTreatment"
-                            @click="updateHeatTreatmentInfo()"
-                            class="flex items-center justify-center px-6 py-2 space-x-2 font-bold text-white transition-all duration-200 transform bg-red-600 border-2 border-red-900 rounded-lg shadow-lg hover:scale-110 hover:shadow-2xl hover:bg-red-800 active:scale-95 active:bg-red-900"
-                        >
-                            <span>OVERWRITE</span>
-                        </button>
-                    </div>
-                </div>
-                <div
-                    v-if="!heatTreatmentInformationDetected"
-                    class="w-[30%] px-2 py-8 mx-auto ml-10 mr-10 space-y-8 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8"
-                >
-                    <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
-                        Heat Treatment Graph Upload
-                        <span class="text-xs text-gray-300"
-                            >(PNG, JPG and JPEG)</span
-                        >
-                    </h2>
-                    <div
-                        class="flex flex-col p-6 space-y-8 bg-white border border-gray-300 rounded-lg shadow-sm"
-                    >
-                        <div
-                            class="flex flex-col pb-4 space-y-2 border-b border-gray-200"
-                        >
-                            <label
-                                for="cycleGraph"
-                                class="text-sm font-semibold text-gray-800"
-                                >Cycle Graph</label
-                            >
-                            <input
-                                id="cycleGraph"
-                                @change="handleCycleGraphUpload"
-                                accept=".png, .jpg, .jpeg"
-                                type="file"
-                                class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1"
-                            />
-                        </div>
-
-                        <div class="flex flex-col space-y-2">
-                            <label
-                                for="actualGraph"
-                                class="text-sm font-semibold text-gray-800"
-                                >Actual Graph</label
-                            >
-                            <input
-                                id="actualGraph"
-                                @change="handleActualGraphUpload"
-                                accept=".png, .jpg, .jpeg"
-                                type="file"
-                                class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Professional Sleek Control Panel - Design Improved, Logic Intact -->
-                <div
-                    class="w-[20%] mr-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-cyan-500/40 shadow-[0_20px_50px_rgba(6,182,212,0.3),0_4px_15px_rgba(0,0,0,0.5)] rounded-3xl px-6 py-10 space-y-10 flex flex-col items-center ring-2 ring-cyan-400/20 backdrop-blur-xl"
-                >
-                    <!-- Header: Cogwheel + Label -->
-                    <div class="flex items-center justify-center space-x-4">
-                        <!-- Glowing spinning cogwheel -->
-                        <div class="relative w-14 h-14">
-                            <div
-                                class="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 opacity-60 blur-xl animate-pulse"
-                            ></div>
-                            <div
-                                class="absolute inset-0 flex items-center justify-center border-2 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl border-cyan-400/50"
-                            >
-                                <img
-                                    src="photo/cogwheel.png"
-                                    alt="Settings"
-                                    class="relative z-10 object-contain w-10 h-10 animate-spin drop-shadow-lg"
-                                    style="animation-duration: 3s"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Label with gradient text -->
-                        <div>
-                            <span
-                                class="block text-2xl font-extrabold tracking-wider text-transparent whitespace-nowrap bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-500 drop-shadow-lg"
-                            >
-                                Control Panel
-                            </span>
-                            <span
-                                class="block text-xs tracking-wide text-cyan-300/60"
-                                >System Operations</span
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Finalize Button Section -->
-                    <div class="w-full space-y-4">
-                        <!-- PROCEED OVERWRITE Button -->
-                        <button
-                            v-if="overwriteMode"
-                            @click="overwriteDatabase"
-                            :disabled="isOverwriting"
-                            :class="[
-                                'group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
-                                isOverwriting
-                                    ? 'bg-gradient-to-r from-cyan-400 to-teal-400 cursor-not-allowed opacity-80'
-                                    : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:ring-cyan-400',
-                            ]"
-                        >
-                            <!-- Shine (only when active) -->
-                            <div
-                                v-if="!isOverwriting"
-                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
-                            ></div>
-
-                            <span
-                                class="relative flex items-center justify-center space-x-2"
-                            >
-                                <!-- Normal state -->
-                                <template v-if="!isOverwriting">
-                                    <svg
-                                        class="w-5 h-5 transition-transform group-hover:rotate-12 drop-shadow-md"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-                                        />
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-
-                                    <span class="drop-shadow-md">
-                                        PROCEED OVERWRITE
-                                    </span>
-                                </template>
-
-                                <!-- Loading state -->
-                                <template v-else>
-                                    <svg
-                                        class="w-5 h-5 animate-spin"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <circle
-                                            class="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            stroke-width="4"
-                                        ></circle>
-                                        <path
-                                            class="opacity-75"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8v8H4z"
-                                        ></path>
-                                    </svg>
-
-                                    <span class="drop-shadow-md">
-                                        OVERWRITING...
-                                    </span>
-                                </template>
-                            </span>
-                        </button>
-
-                        <button
-                            v-else
-                            @click="finalize"
-                            :disabled="isFinalizeDisabled"
-                            :class="[
-                                'group relative w-full py-3.5 text-sm font-bold transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
-                                isFinalizeDisabled
-                                    ? 'bg-gradient-to-r from-red-600 to-red-700 cursor-not-allowed opacity-70 focus:ring-red-400 text-white'
-                                    : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 focus:ring-cyan-400 text-white hover:shadow-teal-500/60 hover:shadow-2xl hover:scale-105 active:scale-95',
-                            ]"
-                        >
-                            <!-- Shine -->
-                            <div
-                                v-if="!isFinalizeDisabled"
-                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
-                            ></div>
-
-                            <span
-                                class="relative flex items-center justify-center space-x-2"
-                            >
-                                <!-- Disabled icon -->
-                                <svg
-                                    v-if="isFinalizeDisabled"
-                                    class="w-5 h-5 drop-shadow-md"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-
-                                <!-- Active icon -->
-                                <svg
-                                    v-else
-                                    class="w-5 h-5 transition-transform group-hover:rotate-12 drop-shadow-md"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-
-                                <!-- Label -->
-                                <span class="drop-shadow-md">
-                                    {{ finalizeLabel }}
-                                </span>
-                            </span>
-
-                            <!-- Disabled Pulse -->
-                            <div
-                                v-if="isFinalizeDisabled"
-                                class="absolute inset-0 bg-red-400 opacity-10 animate-pulse"
-                            ></div>
-                        </button>
-
-                        <!-- CANCEL OVERWRITE Button -->
-                        <button
-                            v-if="overwriteMode"
-                            @click="cancelOverwrite"
-                            :disabled="isOverwriting"
-                            :class="[
-                                'group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 overflow-hidden',
-                                isOverwriting
-                                    ? 'bg-gradient-to-r from-red-400 to-red-500 cursor-not-allowed opacity-80'
-                                    : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 hover:shadow-red-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:ring-red-400',
-                            ]"
-                        >
-                            <!-- Shine (only when active) -->
-                            <div
-                                v-if="!isOverwriting"
-                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
-                            ></div>
-
-                            <span
-                                class="relative flex items-center justify-center space-x-2"
-                            >
-                                <!-- Normal state -->
-                                <template v-if="!isOverwriting">
-                                    <svg
-                                        class="w-5 h-5 transition-transform group-hover:rotate-90 drop-shadow-md"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-
-                                    <span class="drop-shadow-md">
-                                        CANCEL OVERWRITE
-                                    </span>
-                                </template>
-
-                                <!-- Locked while overwriting -->
-                                <template v-else>
-                                    <svg
-                                        class="w-5 h-5 animate-spin"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <circle
-                                            class="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            stroke-width="4"
-                                        ></circle>
-                                        <path
-                                            class="opacity-75"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8v8H4z"
-                                        ></path>
-                                    </svg>
-
-                                    <span class="drop-shadow-md">
-                                        CANNOT CANCEL
-                                    </span>
-                                </template>
-                            </span>
-                        </button>
-                    </div>
-
-                    <!-- Other Buttons Section -->
-                    <div class="w-full mt-4 space-y-4">
-                        <!-- APPLY 1ST 2ND GBDP Button -->
-                        <button
-                            v-if="!overwriteMode"
-                            @click="second_heat_treatment()"
-                            :disabled="
-                                !(
-                                    activate2ndGBDP &&
-                                    heatTreatmentInformationDetected
-                                )
-                            "
-                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-cyan-600 disabled:hover:to-teal-600 overflow-hidden"
-                        >
-                            <div
-                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
-                            ></div>
-                            <span
-                                class="relative flex items-center justify-center space-x-2"
-                            >
-                                <svg
-                                    class="w-5 h-5 transition-transform group-hover:scale-110 drop-shadow-md"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                <span class="drop-shadow-md">APPLY 1ST 2ND GBDP</span>
-                            </span>
-                        </button>
-
-                        <!-- GRAPH PATTERNS Button -->
-                        <button
-                            v-if="!overwriteMode"
-                            @click="Inertia.visit('ht_graph_patterns')"
-                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 overflow-hidden"
-                        >
-                            <div
-                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
-                            ></div>
-                            <span
-                                class="relative flex items-center justify-center space-x-2"
-                            >
-                                <svg
-                                    class="w-5 h-5 transition-transform group-hover:scale-110 drop-shadow-md"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
-                                    />
-                                </svg>
-                                <span class="drop-shadow-md"
-                                    >GRAPH PATTERNS</span
-                                >
-                            </span>
-                        </button>
-
-                        <!-- CLEAR ALL Button -->
-                        <button
-                            @click="clearAll()"
-                            v-if="!overwriteMode"
-                            class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-slate-600 to-gray-700 hover:from-slate-500 hover:to-gray-600 hover:shadow-gray-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50 overflow-hidden"
-                        >
-                            <div
-                                class="absolute inset-0 transition-transform duration-700 transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-30 group-hover:translate-x-full"
-                            ></div>
-                            <span
-                                class="relative flex items-center justify-center space-x-2"
-                            >
-                                <svg
-                                    class="w-5 h-5 transition-transform group-hover:rotate-180 drop-shadow-md"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
-                                        clip-rule="evenodd"
-                                    />
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                <span class="drop-shadow-md">CLEAR ALL</span>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <Modal
-                :show="showHTLTPanel"
-                maxWidth="none"
-                @close="showHTLTPanel = false"
-            >
-                <div
-                    class="relative flex flex-col items-start bg-white p-8 rounded-2xl shadow-2xl w-[60vw] h-[55vh] overflow-auto mx-auto"
-                >
-                    <div
-                        class="flex items-center px-4 py-3 mb-2 text-white rounded-lg shadow-md bg-gradient-to-r from-cyan-500 to-teal-500"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="w-5 h-5 mr-2"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M13 16h-1v-4h-1m1 4v-4h1m-1 0V8m-6 8h6m-6 0h6"
-                            />
-                        </svg>
-                        <p class="text-sm font-medium">
-                            Note: When finished, click the
-                            <span class="font-bold">(×)</span> button at the
-                            top-right corner to close this panel.
-                        </p>
-                    </div>
-                    <!-- Close Button -->
-                    <button
-                        @click="showHTLTPanel = false"
-                        class="absolute flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full shadow-md top-4 right-4 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                    >
-                        <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-
-                    <div
-                        class="w-full max-w-6xl px-10 py-8 mx-auto space-y-6 bg-white border border-gray-200 shadow-lg rounded-2xl"
-                    >
-                        <!-- MAIN Boxes Table -->
-                        <div v-if="visibleBoxes.length">
-                            <p
-                                class="pb-2 text-sm font-semibold text-gray-800 border-b"
-                            >
-                                HT (PCS) - Main Boxes
-                            </p>
-                            <div class="overflow-x-auto">
-                                <table
-                                    class="min-w-full text-center border border-collapse border-gray-300"
-                                >
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th
-                                                v-for="box in visibleBoxes"
-                                                :key="box"
-                                                class="px-4 py-2 text-xs border border-gray-300"
-                                            >
-                                                {{ box }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td
-                                                v-for="box in visibleBoxes"
-                                                :key="box"
-                                                class="px-2 py-1 border border-gray-300"
-                                            >
-                                                <input
-                                                    :value="htValues[box]"
-                                                    @input="
-                                                        htValues[box] =
-                                                            $event.target.value.toUpperCase()
-                                                    "
-                                                    type="text"
-                                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <p
-                                class="pt-4 pb-2 text-sm font-semibold text-gray-800 border-b"
-                            >
-                                LT (PCS) - Main Boxes
-                            </p>
-                            <div class="overflow-x-auto">
-                                <table
-                                    class="min-w-full text-center border border-collapse border-gray-300"
-                                >
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th
-                                                v-for="box in visibleBoxes"
-                                                :key="box"
-                                                class="px-4 py-2 text-xs border border-gray-300"
-                                            >
-                                                {{ box }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td
-                                                v-for="box in visibleBoxes"
-                                                :key="box"
-                                                class="px-2 py-1 border border-gray-300"
-                                            >
-                                                <input
-                                                    :value="ltValues[box]"
-                                                    @input="
-                                                        ltValues[box] =
-                                                            $event.target.value.toUpperCase()
-                                                    "
-                                                    type="text"
-                                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- EXCESS Boxes Table -->
-                        <div v-if="visibleExcessBoxes.length">
-                            <p
-                                class="pb-2 text-sm font-semibold text-gray-800 border-b"
-                            >
-                                HT (PCS) - Excess Boxes
-                            </p>
-                            <div class="overflow-x-auto">
-                                <table
-                                    class="min-w-full text-center border border-collapse border-gray-300"
-                                >
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="box"
-                                                class="px-4 py-2 text-xs border border-gray-300"
-                                            >
-                                                {{ box }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="box"
-                                                class="px-2 py-1 border border-gray-300"
-                                            >
-                                                <input
-                                                    :value="htValuesExcess[box]"
-                                                    @input="
-                                                        htValuesExcess[box] =
-                                                            $event.target.value.toUpperCase()
-                                                    "
-                                                    type="text"
-                                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <p
-                                class="pt-4 pb-2 text-sm font-semibold text-gray-800 border-b"
-                            >
-                                LT (PCS) - Excess Boxes
-                            </p>
-                            <div class="overflow-x-auto">
-                                <table
-                                    class="min-w-full text-center border border-collapse border-gray-300"
-                                >
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="box"
-                                                class="px-4 py-2 text-xs border border-gray-300"
-                                            >
-                                                {{ box }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td
-                                                v-for="box in visibleExcessBoxes"
-                                                :key="box"
-                                                class="px-2 py-1 border border-gray-300"
-                                            >
-                                                <input
-                                                    :value="ltValuesExcess[box]"
-                                                    @input="
-                                                        ltValuesExcess[box] =
-                                                            $event.target.value.toUpperCase()
-                                                    "
-                                                    type="text"
-                                                    class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Modal>
-
-            <Modal :show="showModalCreate" @close="showModalCreate = false">
-                <div
-                    class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
-                >
-                    <!-- Exit Button -->
-                    <button
-                        @click="showModalCreate = false"
-                        class="text-gray-400 transition duration-150 hover:text-gray-600"
-                        aria-label="Close modal"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="w-5 h-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-
-                    <p class="mb-6 text-lg font-bold text-gray-800">
-                        Please review your inputs
-                        <span class="text-red-700">carefully</span> before
-                        submitting.
-                    </p>
-
-                    <div
-                        v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode"
-                        class="w-full px-5"
-                    >
-                        <table
-                            class="min-w-full text-xs border border-collapse border-gray-200"
-                        >
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th
-                                        class="px-2 py-1 text-left border border-gray-300"
-                                    ></th>
-                                    <th
-                                        v-for="item in visibleBoxes"
-                                        :key="item"
-                                        class="px-2 py-1 font-semibold text-center border border-gray-300"
-                                    >
-                                        {{ item }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Model:
-                                    </td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.selectedModel }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Coating M/C No:
-                                    </td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.coatingMCNo }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Lot No:
-                                    </td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.lotNo }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Qty (PCS):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ qtyValues[box] }}
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        HT (PCS):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ htValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        LT (PCS):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ ltValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        WT (KG):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ weightValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Box No.:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ boxNoValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Coating:
-                                    </td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.coating }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Magnet Prepared By:
-                                    </td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.magnetPreparedBy }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Box Prepared By:
-                                    </td>
-                                    <td
-                                        v-for="n in visibleBoxes.length"
-                                        :key="n"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.boxPreparedBy }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div v-else class="w-full px-5">
-                        <!-- ================= MAIN 10 BOXES ================= -->
-                        <p class="mb-2 font-semibold text-gray-700">
-                            Main Boxes (Selected Layer -
-                            {{ mpcs.selectedLayer }})
-                        </p>
-                        <table
-                            class="min-w-full mb-6 text-xs border border-collapse border-gray-200"
-                        >
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th
-                                        class="px-2 py-1 text-left border border-gray-300"
-                                    ></th>
-                                    <th
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-header-' + box"
-                                        class="px-2 py-1 font-semibold text-center border border-gray-300"
-                                    >
-                                        {{ box }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Model:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-model-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.selectedModel }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Coating M/C No:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-coatingMC-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.coatingMCNo }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Lot No:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-lot-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.lotNo }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Qty (PCS):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-qty-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ qtyValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        HT (PCS):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-ht-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ htValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        LT (PCS):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-lt-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ ltValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        WT (KG):
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-weight-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ weightValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Box No.:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-boxno-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ boxNoValues[box] }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Coating:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-coating-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.coating }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Magnet Prepared By:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-magnet-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.magnetPreparedBy }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                    >
-                                        Box Prepared By:
-                                    </td>
-                                    <td
-                                        v-for="box in visibleBoxes"
-                                        :key="'main-boxprep-' + box"
-                                        class="px-2 py-1 text-center border border-gray-300"
-                                    >
-                                        {{ mpcs.boxPreparedBy }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- ================= EXCESS BOXES ================= -->
-                        <div>
-                            <p class="mb-2 font-semibold text-gray-700">
-                                Excess Boxes (Selected Layer -
-                                {{ mpcs.selectedExcessLayer }})
-                            </p>
-                            <table
-                                class="min-w-full text-xs border border-collapse border-gray-200"
-                            >
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th
-                                            class="px-2 py-1 text-left border border-gray-300"
-                                        ></th>
-                                        <th
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-header-' + box"
-                                            class="px-2 py-1 font-semibold text-center border border-gray-300"
-                                        >
-                                            {{ box }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Model:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-model-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.selectedModel }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Coating M/C No:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-coatingMC-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.coatingMCNo }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Lot No:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-lot-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.lotNo }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Qty (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-qty-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ qtyValuesExcess[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            HT (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-ht-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ htValuesExcess[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            LT (PCS):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-lt-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ ltValuesExcess[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            WT (KG):
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-weight-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ weightValuesExcess[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Box No.:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-boxno-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ boxNoValuesExcess[box] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Coating:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-coating-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.coating }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Magnet Prepared By:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-magnet-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.magnetPreparedBy }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-2 py-1 font-medium border border-gray-300 whitespace-nowrap"
-                                        >
-                                            Box Prepared By:
-                                        </td>
-                                        <td
-                                            v-for="box in visibleExcessBoxes"
-                                            :key="'excess-boxprep-' + box"
-                                            class="px-2 py-1 text-center border border-gray-300"
-                                        >
-                                            {{ mpcs.boxPreparedBy }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="!heatTreatmentInformationDetected"
-                        class="p-4 my-2 border border-gray-200"
-                    >
-                        <div class="flex flex-row text-xs whitespace-nowrap">
-                            <div
-                                class="flex flex-col items-end gap-1 font-semibold"
-                            >
-                                <label>Batch Cycle No.: </label>
-                                <label>Machine No.: </label>
-                                <label>Cycle No.: </label>
-                                <label>Pattern No.: </label>
-                                <label>Cycle Pattern: </label>
-                                <label>Current Pattern: </label>
-                            </div>
-                            <div class="flex flex-col gap-1 ml-5">
-                                <span>{{ mpcs.selectedMassProd || "NA" }}</span>
-                                <span>{{ initialFurnaceData || "NA" }}</span>
-                                <span>{{ hti.cycleNo || "NA" }}</span>
-                                <span>{{ hti.patternNo || "NA" }}</span>
-                                <span>{{ hti.cyclePattern || "NA" }}</span>
-                                <span>{{ hti.currentPattern || "NA" }}</span>
-                            </div>
-                            <div
-                                class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
-                            >
-                                <label>Date Start: </label>
-                                <label>Time Start: </label>
-                                <label>Loader: </label>
-                            </div>
-                            <div class="flex flex-col gap-1 ml-5">
-                                <span>{{ hti.dateStart || "NA" }}</span>
-                                <span>{{ hti.timeStart || "NA" }}</span>
-                                <span>{{ hti.loader || "NA" }}</span>
-                            </div>
-                            <div
-                                class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
-                            >
-                                <label>Date Finished: </label>
-                                <label>Time Finished: </label>
-                                <label>Unloader: </label>
-                            </div>
-                            <div class="flex flex-col gap-1 ml-5">
-                                <span>{{ hti.dateFinish || "NA" }}</span>
-                                <span>{{ hti.timeFinish || "NA" }}</span>
-                                <span>{{ hti.unloader || "NA" }}</span>
-                            </div>
-                            <div
-                                class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
-                            >
-                                <label>Box Condition: </label>
-                                <label>Box Cover: </label>
-                                <label>Box Arrangement: </label>
-                                <label>Encoded By: </label>
-                            </div>
-                            <div class="flex flex-col gap-1 ml-5">
-                                <span>{{ hti.boxCondition || "NA" }}</span>
-                                <span>{{ hti.boxCover || "NA" }}</span>
-                                <span>{{ hti.boxArrangement || "NA" }}</span>
-                                <span>{{ hti.encodedBy || "NA" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        v-if="!heatTreatmentInformationDetected"
-                        class="flex flex-row items-center justify-center gap-6 mb-2 whitespace-nowrap"
-                    >
-                        <div
-                            class="flex flex-col items-center text-xs text-center"
-                        >
-                            <p>Cycle Graph File selected:</p>
-                            <span class="font-semibold">{{
-                                (cycleGraphFile && cycleGraphFile.name) || "NA"
-                            }}</span>
-                            <img
-                                :src="cycleGraphPreview"
-                                alt="Cycle Graph Preview"
-                                class="object-contain w-32 h-32 rounded-lg shadow"
-                            />
-                        </div>
-
-                        <div
-                            class="flex flex-col items-center text-xs text-center"
-                        >
-                            <p>Actual Graph File selected:</p>
-                            <span class="font-semibold">{{
-                                (actualGraphFile && actualGraphFile.name) ||
-                                "NA"
-                            }}</span>
-                            <img
-                                :src="actualGraphPreview"
-                                alt="Actual Graph Preview"
-                                class="object-contain w-32 h-32 rounded-lg shadow"
-                            />
-                        </div>
-                    </div>
-
-                    <div v-if="isInitialLotNotSaved" class="p-4 mt-5 bg-white border border-gray-300 rounded-lg">
-                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                            <svg
-                                class="w-5 h-5 text-yellow-500"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"
-                                />
-                            </svg>
-
-                            <p>Important</p>
-                        </div>
-                        <p class="mt-1 text-xs leading-relaxed text-gray-600">
-                            If this layer is intended for <span class="font-semibold text-red-600">breaklots</span>, this submission will be recorded as the
-                            <span class="font-semibold text-red-600">initial lot</span>. The first model and lot number assigned to this layer.
-                        </p>
-                    </div>
-
-                    <div class="flex mt-4 space-x-3">
-                        <button
-                            @click="cancelProceed"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            @click="saveToDatabase"
-                            :disabled="isSaving"
-                            :class="[
-                                'flex items-center px-4 py-2 text-sm font-medium text-white rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-offset-1',
-                                isSaving
-                                    ? 'bg-blue-400 cursor-not-allowed'
-                                    : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
-                            ]"
-                        >
-                            <span v-if="!isSaving" class="flex items-center">
-                                Proceed
-                                <img
-                                    src="/photo/arrow_proceed.png"
-                                    alt="Proceed"
-                                    class="w-4 h-4 ml-2"
-                                />
-                            </span>
-
-                            <span v-else class="flex items-center gap-2">
-                                <svg
-                                    class="w-4 h-4 animate-spin"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        class="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        stroke-width="4"
-                                    ></circle>
-                                    <path
-                                        class="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8v8H4z"
-                                    ></path>
-                                </svg>
-
-                                Saving...
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </Modal>
         </div>
+
     </Frontend>
 </template>
 
@@ -3314,6 +3347,10 @@ function useSessionStorage(key, state) {
         { deep: true },
     );
 }
+
+
+const isHeatTreatmentPageLoading = ref(true)
+const loadingStep = ref('')
 
 //Dev Controls ----------------- Allow Commands
 const isEditingExpired = ref(false); //This is for Time Start and Date Start ONLYY!!! (Now for clear layer data button as well)
@@ -5365,25 +5402,45 @@ useSessionStorage("hti", hti);
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
 onMounted(async () => {
-    const isAuthenticated = await checkAuthentication();
+    isHeatTreatmentPageLoading.value = true
+
+    const isAuthenticated = await checkAuthentication()
     if (!isAuthenticated) {
-        return; // Stop execution if not authenticated
+        isHeatTreatmentPageLoading.value = false
+        return
     }
-    await getFurnaceLists();
-    await getMassProdLists();
-    await fetchAllLotNoData();
-    await getGraphPatterns();
-    await get1st2ndGBDPModels();
-    await checkInitialLot();
 
-    // Initial check
-    checkExpiration();
+    try {
+        loadingStep.value = 'Loading furnace lists...';
+        await getFurnaceLists();
 
-    // Update every minute (60000ms) for real-time display
-    intervalId = setInterval(() => {
+        loadingStep.value = 'Loading mass production data...';
+        await getMassProdLists();
+
+        loadingStep.value = 'Fetching lot numbers...';
+        await fetchAllLotNoData();
+
+        loadingStep.value = 'Loading graph patterns...';
+        await getGraphPatterns();
+
+        loadingStep.value = 'Loading GBDP models...';
+        await get1st2ndGBDPModels();
+
+        loadingStep.value = 'Checking initial lot...';
+        await checkInitialLot();
+
+        loadingStep.value = 'Finalizing...';
         checkExpiration();
-    }, 300000);
-});
+
+        intervalId = setInterval(() => {
+            checkExpiration()
+        }, 300000)
+
+    } finally {
+        isHeatTreatmentPageLoading.value = false
+        loadingStep.value = '';
+    }
+})
 
 onUnmounted(() => {
     clearInterval(intervalId);

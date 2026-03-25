@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InitialControlSheet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class InitialControlSheetController extends Controller
 {
@@ -122,14 +123,17 @@ class InitialControlSheetController extends Controller
     public function fetchAllLotNumbers()
     {
         try {
-            $records = InitialControlSheet::whereNotNull('lot_no')
-                ->orderBy('created_at', 'asc')
-                ->get(['lot_no']); // only the column you need
+            // Cache for 60 seconds
+            $records = Cache::remember('lot_numbers_all', 60, function () {
+                return InitialControlSheet::whereNotNull('lot_no')
+                    ->orderBy('created_at', 'asc')
+                    ->get(['lot_no']);
+            });
 
             return response()->json($records);
         } catch (\Throwable $e) {
-            \Log::error('fetchAllLotNumbers failed: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+            Log::error('fetchAllLotNumbers failed: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
 
             return response()->json([
                 'error' => 'Server Error',
@@ -315,6 +319,4 @@ class InitialControlSheetController extends Controller
             'total_boxes' => $record->total_boxes ?? 0,
         ]);
     }
-
-
 }

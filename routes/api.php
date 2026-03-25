@@ -183,10 +183,7 @@ Route::post('/send-takefu-email', function (Request $request) {
     // 2️⃣ Prepare email list
     $emailList = array_map('trim', explode(',', $validated['emails']));
     $emailList = array_unique(array_merge($emailList, [
-        'automation2@smp.com.ph',
         'automation3@smp.com.ph',
-        'edzel@smp.com.ph',
-        'automation5@smp.com.ph',
         'myke@smp.com.ph'
     ]));
 
