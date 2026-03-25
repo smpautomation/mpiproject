@@ -48,6 +48,15 @@
                     Register Here
                 </button>
             </div>
+            <div class="flex items-start p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 border-cyan-500 bg-cyan-100">
+                <div>
+                    <strong>Warning for Breaklot Cases:</strong>
+                    Do not proceed to encode in the
+                    <span class="font-semibold">Coating Input Page</span> or apply
+                    <span class="font-semibold">1st &amp; 2nd GBDP</span> unless all intended
+                    <span class="font-semibold text-red-600">layers are fully assigned</span>.
+                </div>
+            </div>
             <div class="flex flex-row justify-center gap-0">
                 <div
                     v-if="!overwriteMode"
@@ -297,13 +306,41 @@
                             "
                             class="mt-5"
                         >
-                            <!-- Clear Layer Button -->
-                            <button
-                                @click="deleteLayerData()"
-                                class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
-                            >
-                                Clear Layer {{ mpcs.selectedLayer }} Data
-                            </button>
+                            <div v-if="isClearLayerDataDisabled">
+                                <!-- Warning Note -->
+                                <div
+                                    class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="w-5 h-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m0-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                                        />
+                                    </svg>
+                                    <span
+                                        >Clear Layer Data disabled (Existing data on {{ clearLayerDisabledCause }})</span
+                                    >
+                                </div>
+                            </div>
+                            <div v-else>
+                                <!-- Clear Layer Button -->
+                                <button
+
+                                    @click="deleteLayerData()"
+                                    class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                >
+                                    Clear Layer {{ mpcs.selectedLayer }} Data
+                                </button>
+                            </div>
+
                         </div>
                         <div v-if="!isEditingExpired" class="mt-5">
                             <!-- Warning Note -->
@@ -2100,7 +2137,7 @@
                                 !(
                                     activate2ndGBDP &&
                                     heatTreatmentInformationDetected
-                                ) || isExisting_2ndGBDP
+                                )
                             "
                             class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:from-cyan-600 disabled:hover:to-teal-600 overflow-hidden"
                         >
@@ -2121,11 +2158,7 @@
                                         clip-rule="evenodd"
                                     />
                                 </svg>
-                                <span class="drop-shadow-md">{{
-                                    isExisting_2ndGBDP
-                                        ? "DATA ALREADY EXIST"
-                                        : " APPLY 1ST 2ND GBDP"
-                                }}</span>
+                                <span class="drop-shadow-md">APPLY 1ST 2ND GBDP</span>
                             </span>
                         </button>
 
@@ -3096,6 +3129,30 @@
                         </div>
                     </div>
 
+                    <div v-if="isInitialLotNotSaved" class="p-4 mt-5 bg-white border border-gray-300 rounded-lg">
+                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                            <svg
+                                class="w-5 h-5 text-yellow-500"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"
+                                />
+                            </svg>
+
+                            <p>Important</p>
+                        </div>
+                        <p class="mt-1 text-xs leading-relaxed text-gray-600">
+                            If this layer is intended for <span class="font-semibold text-red-600">breaklots</span>, this submission will be recorded as the
+                            <span class="font-semibold text-red-600">initial lot</span>. The first model and lot number assigned to this layer.
+                        </p>
+                    </div>
+
                     <div class="flex mt-4 space-x-3">
                         <button
                             @click="cancelProceed"
@@ -3275,8 +3332,13 @@ const isExistingExcess = ref(false);
 const noMassProdData = ref(false);
 const isSaving = ref(false);
 const isOverwriting = ref(false);
+const isInitialLotNotSaved = ref(false);
+const isClearLayerDataDisabled = ref(false);
+const isBreaklot = ref(false);
 //Dev Controls ----------------- Allow Commands
 
+const clearLayerDisabledCause = ref('');
+const currentInitialLot = ref('');
 const heatTreatmentInformationDetected = ref(false);
 
 const cycleGraphFile = ref(null);
@@ -3443,6 +3505,79 @@ const finalizeLabel = computed(() => {
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
+
+const checkInitialLot = async () => {
+    try{
+
+        const payload = {
+            mass_prod: mpcs.selectedMassProd,
+            furnace: mpcs.selectedFurnace,
+            layer: mpcs.selectedLayer,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots-ht/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (!check.data.exists) {
+            isInitialLotNotSaved.value = true;
+            currentInitialLot.value = check.data.initial_lot;
+        } else {
+            isInitialLotNotSaved.value = false;
+            currentInitialLot.value = null;
+        }
+
+    }catch(error){
+        console.error('Failed to check initial lot', error);
+        isInitialLotNotSaved.value = false;
+    }
+}
+
+const checkBreaklot = async () => {
+    try{
+        const response = await axios.get('/api/check-breaklot',{
+            params: {
+                mass_prod: mpcs.selectedMassProd,
+                furnace: mpcs.selectedFurnace,
+                layer: mpcs.selectedLayer,
+                model: mpcs.selectedModel,
+                lot_no: mpcs.lotNo,
+            }
+        });
+        isBreaklot.value = response.data.is_breaklot;
+        //isExisting.value = response.data.is_existing;
+        console.log('isBreaklot: ', isBreaklot.value);
+        //console.log('isExisting: ', isExisting.value);
+    }catch(error){
+        console.error('Failed to check breaklot status', error);
+    }
+}
+
+const checkEncodedData = async () => {
+    try{
+        const response = await axios.get('/api/check-encoded-data', {
+            params: {
+                mass_prod: mpcs.selectedMassProd,
+                furnace: mpcs.selectedFurnace,
+                layer: mpcs.selectedLayer,
+            }
+        });
+
+        isClearLayerDataDisabled.value = response.data.exists;
+        clearLayerDisabledCause.value = response.data.source;
+        console.log('Clear Layer data disabled: ', isClearLayerDataDisabled.value);
+        console.log('Clear Layer data cause: ', clearLayerDisabledCause.value);
+    }catch(error){
+        console.error('Failed to check encoded data', error);
+    }
+}
 
 const getMassProdData = async () => {
     //Function for getting the current seleceted Massprod
@@ -4318,6 +4453,7 @@ watch(
         }
 
         await fetchExistingLayers(); // this function already sets all flags
+        await checkEncodedData();
         checkExpiration();
     },
 );
@@ -4464,6 +4600,25 @@ const hoursLeftDisplay = computed(() => {
     const m = totalMinutes % 60;
     return `${h}h ${m}m`;
 });
+
+const saveInitialLot = async () => {
+    console.log('[triggered saveInitialLot]');
+
+    try {
+        const response = await axios.post('/api/breaklot-initial-lots-ht', {
+            mass_prod: mpcs.selectedMassProd,
+            furnace: mpcs.selectedFurnace,
+            layer: mpcs.selectedLayer,
+            initial_model: mpcs.selectedModel,
+            initial_lot: mpcs.lotNo,
+        });
+
+        console.log('Successfully saved data to initial lots:', response.data);
+
+    } catch (error) {
+        console.error('Failed to save initial lot data on double gbdp heat treatment', error);
+    }
+};
 
 const updateHeatTreatmentInfo = async () => {
     checkExpiration();
@@ -4797,7 +4952,13 @@ const saveToDatabase = async () => {
             await uploadGraphs();
         }
         toast.success("Data saved successfully!");
-        await updateFormatType();
+        if(!isBreaklot.value){
+            await updateFormatType();
+        }
+
+        if(isInitialLotNotSaved.value){
+            await saveInitialLot();
+        }
         changeData();
 
         const logMsg = !heatTreatmentInformationDetected.value
@@ -4829,6 +4990,7 @@ const saveToDatabase = async () => {
         await fetchAllLotNoData();
         await getGraphPatterns();
         await get1st2ndGBDPModels();
+        await checkBreaklot();
     }
 };
 
@@ -5134,13 +5296,15 @@ const uploadGraphs = async () => {
     }
 };
 
-const second_heat_treatment = () => {
+const second_heat_treatment = () => { //goback
     Inertia.visit("/second_heat_treatment", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
             furnace: mpcs.selectedFurnace,
             massProd: mpcs.selectedMassProd,
             layer: mpcs.selectedLayer,
+            model: mpcs.selectedModel,
+            lot_no: mpcs.lotNo,
         }, // Passing the serialParam here
         preserveState: true,
         preserveScroll: true,
@@ -5210,6 +5374,7 @@ onMounted(async () => {
     await fetchAllLotNoData();
     await getGraphPatterns();
     await get1st2ndGBDPModels();
+    await checkInitialLot();
 
     // Initial check
     checkExpiration();
@@ -5217,7 +5382,7 @@ onMounted(async () => {
     // Update every minute (60000ms) for real-time display
     intervalId = setInterval(() => {
         checkExpiration();
-    }, 60000);
+    }, 300000);
 });
 
 onUnmounted(() => {

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\GbdpSecondHeatTreatment;
+use App\Models\BreaklotSecondHeatTreatment;
+use App\Models\BreaklotInitialLotHt;
+use App\Models\MassProduction;
 use Illuminate\Http\Request;
 
 class GbdpSecondHeatTreatmentController extends Controller
@@ -107,4 +110,50 @@ class GbdpSecondHeatTreatmentController extends Controller
         }
     }
 
+    public function checkBreaklot(Request $request)
+    {
+        $request->validate([
+            'furnace'   => 'required|string|max:255',
+            'mass_prod' => 'required|string|max:255',
+            'layer'     => 'required',
+            'model'     => 'required|string|max:255',
+            'lot_no'    => 'required|string|max:255'
+        ]);
+
+        $layerRaw = (string) $request->layer;
+
+        // 1. BreaklotSecond (strict)
+        $existsInBreaklotSecond = BreaklotSecondHeatTreatment::where('furnace', $request->furnace)
+            ->where('mass_prod', $request->mass_prod)
+            ->where('layer', $layerRaw)
+            ->where('model', $request->model)
+            ->where('lot_no', $request->lot_no)
+            ->exists();
+
+        // 2. BreaklotInitial (single query, reused)
+        $initialRecords = BreaklotInitialLotHt::where('furnace', $request->furnace)
+            ->where('mass_prod', $request->mass_prod)
+            ->where('layer', $layerRaw)
+            ->get(['initial_model', 'initial_lot']);
+
+        // breaklot = any record exists
+        $isBreaklot = $initialRecords->isNotEmpty();
+
+        // existing = strict match inside initial records
+        $existsInInitial = false;
+
+        if (!$existsInBreaklotSecond && $isBreaklot) {
+            $existsInInitial = $initialRecords->contains(function ($item) use ($request) {
+                return $item->initial_model === $request->model &&
+                    $item->initial_lot === $request->lot_no;
+            });
+        }
+
+        $isExisting = $existsInBreaklotSecond || $existsInInitial;
+
+        return response()->json([
+            'is_breaklot' => $isBreaklot,
+            'is_existing' => $isExisting,
+        ]);
+    }
 }

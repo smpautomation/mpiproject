@@ -10,124 +10,149 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class FrontendController extends Controller
 {
 
-    public function index(){
+    public function index()
+    {
         return Inertia::render('Frontend/Home');
     }
 
-    public function automation(){
+    public function automation()
+    {
         return Inertia::render('Frontend/Automation');
     }
 
-    public function initial_process(){
+    public function initial_process()
+    {
         return Inertia::render('Frontend/Initial_Process');
     }
 
-    public function massprod(){
+    public function massprod()
+    {
         return Inertia::render('Frontend/Mass_Prod');
     }
 
-    public function controlSheet(Request $request){
+    public function controlSheet(Request $request)
+    {
 
         $massProd = $request->get('massProd');
         $furnace = $request->get('furnace');
 
-        return Inertia::render('Frontend/Control_Sheet',[
+        return Inertia::render('Frontend/Control_Sheet', [
             'massProd' => $massProd,
             'furnace' => $furnace
         ]);
     }
 
-    public function htgraph(Request $request){
+    public function htgraph(Request $request)
+    {
 
         $massProd = $request->get('massProd');
         $furnace = $request->get('furnace');
 
-        return Inertia::render('Frontend/HT_Graph',[
+        return Inertia::render('Frontend/HT_Graph', [
             'massProd' => $massProd,
             'furnace' => $furnace
         ]);
     }
 
-    public function smpData(Request $request){
+    public function smpData(Request $request)
+    {
 
         $massProd = $request->get('massProd');
         $furnace = $request->get('furnace');
 
-        return Inertia::render('Frontend/SMP_Data',[
+        return Inertia::render('Frontend/SMP_Data', [
             'massProd' => $massProd,
             'furnace' => $furnace
         ]);
     }
 
-    public function massProdMonitoring(Request $request){
+    public function massProdMonitoring(Request $request)
+    {
         return Inertia::render('Frontend/Mass_Prod_Monitoring');
     }
 
-    public function heatTreatment(Request $request){
+    public function heatTreatment(Request $request)
+    {
         return Inertia::render('Frontend/Heat_Treatment');
     }
 
-    public function breakLots(Request $request){
+    public function breakLots(Request $request)
+    {
 
         $massprod = $request->get('massprod');
         $furnace = $request->get('furnace');
 
-        return Inertia::render('Frontend/HT_BreakLots',[
+        return Inertia::render('Frontend/HT_BreakLots', [
             'massprod' => $massprod,
             'furnace' => $furnace
         ]);
     }
 
-    public function viewList(){
+    public function viewList()
+    {
         return Inertia::render('Frontend/ViewList');
     }
 
-    public function coating(){
+    public function coating()
+    {
         return Inertia::render('Frontend/Coating');
     }
 
-    public function emailForm(){
+    public function emailForm()
+    {
         return Inertia::render('Frontend/Email');
     }
 
-    public function emailFormManual(){
+    public function emailFormManual()
+    {
         return Inertia::render('Frontend/Email_Manual');
     }
 
-    public function furnace(){
+    public function furnace()
+    {
         return Inertia::render('Frontend/Furnace');
     }
 
-    public function filmPasting(){
+    public function filmPasting()
+    {
         return Inertia::render('Frontend/Film_Pasting');
     }
 
-    public function heatTreatmentGraphPatterns(){
+    public function heatTreatmentGraphPatterns()
+    {
         return Inertia::render('Frontend/HTGraph_Patterns');
     }
 
-    public function second_gbdp_models(){
+    public function second_gbdp_models()
+    {
         return Inertia::render('Frontend/Second_GBDP_Models');
     }
 
-    public function viewSecondGbdp(){
+    public function viewSecondGbdp()
+    {
         return Inertia::render('Frontend/View_Second_GBDP');
     }
 
-    public function second_heat_treatment(Request $request){
+    public function second_heat_treatment(Request $request)
+    {
 
         $furnace = $request->get('furnace');
         $massProd = $request->get('massProd');
         $layer = $request->get('layer');
+        $model = $request->get('model');
+        $lotno = $request->get('lot_no');
 
-        return Inertia::render('Frontend/Second_Heat_Treatment',[
+        return Inertia::render('Frontend/Second_Heat_Treatment', [
             'furnace' => $furnace,
             'massProd' => $massProd,
             'layer' => $layer,
+            'model' => $model,
+            'lotno' => $lotno
         ]);
     }
 
-    public function manage(Request $request) {
+    public function manage(Request $request)
+    {
         // Capture the manageSerialParam query parameter from the URL
         $manageSerialParam = $request->query('manageSerialParam'); // Use $request->query() to get the value
         $manageMassProd = $request->query('manageMassProd');
@@ -143,7 +168,8 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function sec_additional(Request $request) {
+    public function sec_additional(Request $request)
+    {
         $serial = $request->input('sec_serialParam');
         $massProd = $request->input('sec_massProd');
         $layer = $request->input('sec_layer');
@@ -195,11 +221,13 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function inspection(){
+    public function inspection()
+    {
         return Inertia::render('Frontend/Inspection');
     }
 
-    public function approval(Request $request){
+    public function approval(Request $request)
+    {
 
         $filterStatus = $request->get('filterStatus');
         $fromReports = $request->get('fromReports');
@@ -224,31 +252,38 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function approval_checked(Request $request){
+    public function approval_checked(Request $request)
+    {
         return Inertia::render('Frontend/Approval_Checked');
     }
 
-    public function approval_prepared(Request $request){
+    public function approval_prepared(Request $request)
+    {
         return Inertia::render('Frontend/Approval_Prepared');
     }
 
-    public function admin(){
+    public function admin()
+    {
         return Inertia::render('Frontend/Admin');
     }
 
-    public function mias_factor(){
+    public function mias_factor()
+    {
         return Inertia::render('Frontend/Mias_factor');
     }
 
-    public function instructions(){
+    public function instructions()
+    {
         return Inertia::render('Frontend/Instructions');
     }
 
-    public function data_ins(){
+    public function data_ins()
+    {
         return Inertia::render('Frontend/Data_INS');
     }
 
-    public function generatePdf(Request $request){
+    public function generatePdf(Request $request)
+    {
         // Capture the serialParam from the GET request
         $serial = $request->get('serialParam');
         // Return the Inertia response and pass both serialParam and ipAddress to the PreviewPdf.vue component

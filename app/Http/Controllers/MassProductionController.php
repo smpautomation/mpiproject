@@ -2039,4 +2039,96 @@ class MassProductionController extends Controller
 
         return response()->json(['layers' => $lotsByLayer]);
     }
+
+    public function checkEncodedData(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+            'layer'     => 'required|string',
+        ]);
+
+        $massProd = $validated['mass_prod'];
+        $furnace  = $validated['furnace'];
+        $layer    = $validated['layer'];
+
+        $tables = [
+            'coating' => Coating::class,
+            'gbdp_second_coating' => GbdpSecondCoating::class,
+            'gbdp_second_heat_treatment' => GbdpSecondHeatTreatment::class,
+            'film_pasting' => FilmPastingData::class,
+            'breaklot_initial_lot' => BreaklotInitialLot::class,
+            'breaklot_coating' => BreaklotCoating::class,
+            'breaklot_second_coating' => BreaklotSecondCoating::class,
+            'breaklot_filmpasting' => BreaklotFilmpasting::class,
+        ];
+
+        foreach ($tables as $key => $model) {
+            if ($model::where('mass_prod', $massProd)
+                ->where('furnace', $furnace)
+                ->where('layer', $layer)
+                ->exists()
+            ) {
+                return response()->json([
+                    'exists' => true,
+                    'source' => $key,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'exists' => false,
+            'source' => null,
+        ]);
+    }
+
+    public function checkControlSheetLayers(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+        ]);
+
+        $production = MassProduction::where('furnace', $request->furnace)
+            ->where('mass_prod', $request->mass_prod)
+            ->first();
+
+        if (!$production) {
+            return response()->json([
+                'message' => 'Mass Production not found.',
+                'is_incomplete' => true,
+                'missing_layers' => [],
+            ], 404);
+        }
+
+        $layers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '9.5'];
+
+        $missingLayers = [];
+
+        foreach ($layers as $layerRaw) {
+
+            $layerColumn = $layerRaw === '9.5'
+                ? 'layer_9_5'
+                : 'layer_' . $layerRaw;
+
+            $layerData = $production->$layerColumn ?? null;
+
+            if (empty($layerData)) {
+
+                $existsInExcess = ExcessLayers::where('furnace', $request->furnace)
+                    ->where('mass_prod', $request->mass_prod)
+                    ->where('layer', $layerRaw)
+                    ->exists();
+
+                if (!$existsInExcess) {
+                    $missingLayers[] = $layerRaw;
+                }
+            }
+        }
+
+        return response()->json([
+            'is_incomplete' => count($missingLayers) > 0,
+            'missing_layers' => $missingLayers,
+        ]);
+    }
 }

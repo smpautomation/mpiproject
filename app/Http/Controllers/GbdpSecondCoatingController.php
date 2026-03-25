@@ -114,5 +114,4 @@ class GbdpSecondCoatingController extends Controller
             ], 500);
         }
     }
-
 }

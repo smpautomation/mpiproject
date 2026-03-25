@@ -87,6 +87,24 @@
                                 </span>
                             </div>
                         </div>
+                        <div class="flex flex-row mt-4 space-x-5">
+                            <div>
+                                <label class="block mb-1 text-xs font-semibold text-gray-700">
+                                    Selected Model
+                                </label>
+                                <span class="px-2 py-1 text-sm font-semibold text-teal-700 border border-teal-200 rounded-md shadow-sm bg-teal-50">
+                                    {{ selectedModel }}
+                                </span>
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-xs font-semibold text-gray-700">
+                                    Selected Lot No
+                                </label>
+                                <span class="px-2 py-1 text-sm font-semibold text-teal-700 border border-teal-200 rounded-md shadow-sm bg-teal-50">
+                                    {{ selectedLotNo }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -207,12 +225,17 @@
             >
                 <!-- Buttons container (row layout) -->
                 <div class="flex flex-row items-center space-x-4">
-                    <!-- Submit -->
                     <button
                         @click="finalize"
-                        class="px-4 py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-white hover:text-black hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-teal-400 focus:ring-opacity-50"
+                        :disabled="isExisting"
+                        class="px-4 py-2 text-sm font-bold transition-all duration-300 transform rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
+
+                        :class="isExisting
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+                            : 'text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 hover:shadow-xl hover:scale-105 active:scale-95 shadow-md focus:ring-teal-400'
+                        "
                     >
-                        SUBMIT
+                        {{ isExisting ? 'THE SELECTED DATA ALREADY EXISTS' : 'SUBMIT' }}
                     </button>
 
                     <!-- Cancel -->
@@ -308,15 +331,28 @@
                         </button>
 
                         <button
-                        @click="saveToDatabase()"
-                        class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
-                        <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
-                        <span class="relative flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            <span>⚠️ Submit Now</span>
-                        </span>
+                            v-if="isBreaklot"
+                            @click="addtnl_saveToDatabase()"
+                            class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                            <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+                            <span class="relative flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>⚠️ Submit Addtnl Now</span>
+                            </span>
+                        </button>
+                        <button
+                            v-else
+                            @click="saveToDatabase()"
+                            class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                            <div class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"></div>
+                            <span class="relative flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                <span>⚠️ Submit Now</span>
+                            </span>
                         </button>
                     </div>
                     </div>
@@ -420,6 +456,8 @@ const overwriteHeatTreatment = ref(false);
 
 const heatTreatmentInformationDetected = ref(false);
 
+const isBreaklot = ref(false);
+const isExisting = ref(false);
 const showModalCreate = ref(false);
 const selectedLayer_fetch = ref();
 const selectedMassProd_fetch = ref();
@@ -428,10 +466,14 @@ const selectedFurnace = ref();
 const selectedMassProd = ref();
 const fetchedMassProdData = ref(null);
 const selectedLayer = ref();
+const selectedModel = ref();
+const selectedLotNo = ref();
 const graph_patterns = ref([]);
 const furnace_lists = ref([]);
 const massProd_names = ref([]);
 const firstSecondGBDP_models = ref([]);
+const isInitialLotNotSaved_second = ref(false);
+const currentInitialLot_second = ref('');
 
 // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!! // HEAT TREATMENT INFORMATION VARIABLES !!!!!!!!!!!!!
 
@@ -540,10 +582,12 @@ const getCurrentMassProdData = async () => {
     }
 }
 
-const props = defineProps(['furnace','massProd', 'layer']);
+const props = defineProps(['furnace','massProd', 'layer', 'model', 'lotno']);
 selectedFurnace.value = props.furnace;
 selectedMassProd.value = props.massProd;
 selectedLayer.value = props.layer;
+selectedModel.value = props.model;
+selectedLotNo.value = props.lotno;
 
 // Trigger Based Fetching below ----- Trigger Based Fetching below ----- Trigger Based Fetching below
 
@@ -625,13 +669,136 @@ const finalize = () => {
     showModalCreate.value = true;
 }
 
+const checkInitialLot = async () => {
+    try{
+
+        const payload = {
+            mass_prod: selectedMassProd.value,
+            furnace: selectedFurnace.value,
+            layer: selectedLayer.value,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots-ht/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (!check.data.exists) {
+            isInitialLotNotSaved_second.value = true;
+            currentInitialLot_second.value = check.data.initial_lot;
+        } else {
+            isInitialLotNotSaved_second.value = false;
+            currentInitialLot_second.value = null;
+        }
+
+    }catch(error){
+        console.error('Failed to check initial lot', error);
+        isInitialLotNotSaved_second.value = false;
+    }
+}
+
+const saveInitialLot = async () => {
+    console.log('[triggered saveInitialLot]');
+
+    try {
+        const response = await axios.post('/api/breaklot-initial-lots-ht', {
+            mass_prod: selectedMassProd.value,
+            furnace: selectedFurnace.value,
+            layer: selectedLayer.value,
+            initial_model: selectedModel.value,
+            initial_lot: selectedLotNo.value,
+        });
+
+        console.log('Successfully saved data to initial lots:', response.data);
+
+    } catch (error) {
+        console.error('Failed to save initial lot data on double gbdp heat treatment', error);
+    }
+};
+
 const saveToDatabase = async () => {
+
+    // 🔒 SNAPSHOT (immutable during execution)
+    const snapshot = {
+        furnace: selectedFurnace.value,
+        mass_prod: selectedMassProd.value,
+        layer: selectedLayer.value,
+        fetchLayer: selectedLayer_fetch.value,
+    };
+
+    const dataPayload = {
+        furnace: snapshot.furnace,
+        mass_prod: snapshot.mass_prod,
+        layer: snapshot.layer,
+        gbdp_1st: {
+            batch_cycle_no: gbdp_1st.batchCycleNo,
+            furnace_machine: gbdp_1st.furnaceNo,
+            cycle_no: gbdp_1st.cycleNo,
+            pattern_no: gbdp_1st.patternNo,
+            cycle_pattern: gbdp_1st.cyclePattern,
+            current_pattern: gbdp_1st.currentPattern,
+            date_start: gbdp_1st.dateStart,
+            time_start: gbdp_1st.timeStart,
+            date_finished: gbdp_1st.dateFinish,
+            time_finished: gbdp_1st.timeFinish,
+            layer: snapshot.fetchLayer
+        },
+        gbdp_2nd: {
+            batch_cycle_no: snapshot.mass_prod,
+            furnace_machine: gbdp_2nd.furnaceNo,
+            cycle_no: gbdp_2nd.cycleNo,
+            pattern_no: gbdp_2nd.patternNo,
+            cycle_pattern: gbdp_2nd.cyclePattern,
+            current_pattern: gbdp_2nd.currentPattern,
+            date_start: gbdp_2nd.dateStart,
+            time_start: gbdp_2nd.timeStart,
+            date_finished: gbdp_2nd.dateFinish,
+            time_finished: gbdp_2nd.timeFinish,
+            layer: snapshot.layer
+        }
+    };
+
+    try {
+        await axios.post(`/api/second_heat_treatment`, dataPayload);
+
+        if(isInitialLotNotSaved_second.value){
+             await saveInitialLot();
+        }
+
+        if(!isBreaklot.value){
+            await updateFormatType();
+        }
+
+        await userManageLogging(
+            `created 2nd Gbdp HT Data for Mass Prod: ${snapshot.mass_prod} Layer: ${snapshot.layer} successfully.`
+        );
+
+        showModalCreate.value = false;
+        clearAll();
+
+        toast.success('Data saved successfully!');
+        Inertia.visit('/heat_treatment');
+    } catch (error) {
+        console.error('Error saving data:', error);
+        toast.error('Failed to save data. Please try again.');
+    }
+};
+
+const addtnl_saveToDatabase = async () => {
 
     // Base payload
     const dataPayload = {
         furnace: selectedFurnace.value,
         mass_prod: selectedMassProd.value,
         layer: selectedLayer.value,
+        model: selectedModel.value,
+        lot_no: selectedLotNo.value,
         gbdp_1st: {
             batch_cycle_no: gbdp_1st.batchCycleNo,
             furnace_machine: gbdp_1st.furnaceNo,
@@ -663,18 +830,41 @@ const saveToDatabase = async () => {
     console.log('Data Payload:', dataPayload);
 
     try {
-        const response = await axios.post(`/api/second_heat_treatment`, dataPayload);
+        const response = await axios.post(`/api/break-lot-second-heat-treatment`, dataPayload);
         console.log('Data saved successfully:', response.data);
         toast.success('Data saved successfully!');
-        await updateFormatType();
+        if(!isBreaklot.value){
+            await updateFormatType();
+        }
         showModalCreate.value = false;
         await userManageLogging('created 2nd Gbdp HT Data for Mass Prod: '+ selectedMassProd.value +' Layer: ' + selectedLayer.value + ' successfully.');
         clearAll(); // Clear all fields after successful save
+        Inertia.visit('/heat_treatment');
     } catch (error) {
         console.error('Error saving data:', error);
         toast.error('Failed to save data. Please try again.');
     }
 };
+
+const checkBreaklot = async () => {
+    try{
+        const response = await axios.get('/api/check-breaklot',{
+            params: {
+                furnace: selectedFurnace.value,
+                mass_prod: selectedMassProd.value,
+                layer: selectedLayer.value,
+                model: selectedModel.value,
+                lot_no: selectedLotNo.value,
+            }
+        });
+        isBreaklot.value = response.data.is_breaklot;
+        isExisting.value = response.data.is_existing;
+        console.log('isBreaklot: ', isBreaklot.value);
+        console.log('isExisting: ', isExisting.value);
+    }catch(error){
+        console.error('Failed to check breaklot status', error);
+    }
+}
 
 const updateFormatType = async () => { // Update format type of Mass Productions Table
     const layerKey = selectedLayer.value === '9.5' ? 'layer_9_5_format_type' : `layer_${selectedLayer.value}_format_type`;
@@ -709,6 +899,8 @@ onMounted(async () => {
     await getFurnaceLists();
     await getGraphPatterns();
     await getCurrentMassProdData();
+    await checkBreaklot();
+    await checkInitialLot();
     //await get1st2ndGBDPModels();
 });
 

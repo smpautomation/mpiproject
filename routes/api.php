@@ -30,7 +30,9 @@ use App\Http\Controllers\BackEndPdfController;
 use App\Http\Controllers\BreaklotCoatingController;
 use App\Http\Controllers\BreaklotFilmpastingController;
 use App\Http\Controllers\BreaklotInitialLotController;
+use App\Http\Controllers\BreaklotInitialLotHtController;
 use App\Http\Controllers\BreaklotSecondCoatingController;
+use App\Http\Controllers\BreaklotSecondHeatTreatmentController;
 use App\Http\Controllers\ExcessLayersController;
 use App\Http\Controllers\FilmPastingDataController;
 use App\Http\Controllers\GbdpSecondCoatingController;
@@ -396,8 +398,6 @@ Route::apiResource('heat-treatment-data', HeatTreatmentController::class);
 
 Route::get('/mass-production/all-duplicates', [MassProductionController::class, 'allMassProductionWithDuplicates']);
 
-Route::apiResource('second_heat_treatment', GbdpSecondHeatTreatmentController::class);
-
 Route::apiResource('gbdp-second-coating', GbdpSecondCoatingController::class);
 
 Route::apiResource('film-pasting-data', FilmPastingDataController::class);
@@ -411,6 +411,8 @@ Route::get('/second-heat-treatment-data/{furnace}/{massProd}/layers', [GbdpSecon
 //Route::get('/second-ht-data/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
 Route::get('/second-ht-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondHeatTreatmentController::class, 'getLayerData']);
 Route::get('/second-coating-data/{furnace}/{massprod}/layer/{layer}', [GbdpSecondCoatingController::class, 'getLayerData']);
+
+Route::get('/check-breaklot', [GbdpSecondHeatTreatmentController::class, 'checkBreaklot']);
 
 Route::get('/mass-production/{furnace}/{massprod}', [MassProductionController::class, 'getByFurnaceAndMassProd']);
 //->where('massprod', '[A-Za-z0-9\-]+');
@@ -553,6 +555,11 @@ Route::get(
 );
 
 Route::get(
+    'breaklot-initial-lots-ht/exists',
+    [BreaklotInitialLotHtController::class, 'exists']
+);
+
+Route::get(
     'breaklot-initial-lots/show-all',
     [BreaklotInitialLotController::class, 'showAllAdditional']
 );
@@ -567,20 +574,27 @@ Route::get('breaklot-coating/check-existing', [BreaklotCoatingController::class,
 Route::get('breaklot-coating/check-existing-tpm', [BreaklotCoatingController::class, 'checkExistingForTpm']);
 
 Route::get('/monthly-summary', [MassProductionController::class, 'generateMonthlySummary']);
+Route::get('/check-control-sheet-layers', [MassProductionController::class, 'checkControlSheetLayers']);
+
+Route::get('/check-encoded-data', [MassProductionController::class, 'checkEncodedData']);
 
 Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class, 'checkDuplicateLot']);
 Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
 Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
 
+
 Route::apiResource('mass-production', MassProductionController::class);
 Route::apiResource('break-lot-coating', BreaklotCoatingController::class);
 Route::apiResource('break-lot-second-coating', BreaklotSecondCoatingController::class);
+Route::apiResource('break-lot-second-heat-treatment', BreaklotSecondHeatTreatmentController::class);
 Route::apiResource('break-lot-filmpasting', BreaklotFilmpastingController::class);
 Route::apiResource('breaklot-initial-lots', BreaklotInitialLotController::class);
+Route::apiResource('breaklot-initial-lots-ht', BreaklotInitialLotHtController::class);
 Route::apiResource('excess-layers', ExcessLayersController::class);
 Route::apiResource('error-logs', ErrorLogsController::class);
 Route::apiResource('initial_control_sheet', InitialControlSheetController::class);
 Route::apiResource('initial-coating', InitialCoatingController::class);
 Route::apiResource('initial-film-pasting', InitialFilmPastingController::class);
 Route::apiResource('stamp-undo-history', StampUndoHistoryController::class);
+Route::apiResource('second_heat_treatment', GbdpSecondHeatTreatmentController::class);

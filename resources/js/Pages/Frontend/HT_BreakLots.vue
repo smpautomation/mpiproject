@@ -874,6 +874,56 @@
                             </table>
                         </div>
                     </div>
+
+                    <div v-if="isInitialLotNotSaved" class="p-4 mt-5 bg-white border border-gray-300 rounded-lg">
+                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                            <svg
+                                class="w-5 h-5 text-yellow-500"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"
+                                />
+                            </svg>
+
+                            <p>Important</p>
+                        </div>
+                        <p class="mt-1 text-xs leading-relaxed text-gray-600">
+                            If this layer is intended for <span class="font-semibold text-red-600">breaklots</span>, this submission will be recorded as the
+                            <span class="font-semibold text-red-600">initial lot</span>. The first model and lot number assigned to this layer.
+                        </p>
+                    </div>
+                    <div v-else class="p-4 mt-5 bg-white border border-gray-300 rounded-lg">
+                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                            <svg
+                                class="w-5 h-5 text-yellow-500"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"
+                                />
+                            </svg>
+
+                            <p>Important</p>
+                        </div>
+                        <p class="mt-1 text-xs leading-relaxed text-gray-600">
+                            An <span class="font-semibold text-red-600">initial lot ({{ currentInitialLot }} - {{ currentInitialModel }})</span> has already been recorded for this layer.
+                            This submission will be treated as an
+                            <span class="font-semibold text-red-600">additional lot</span>, and the layer will be handled as a
+                            <span class="font-semibold text-red-600">breaklot</span>.
+                        </p>
+                    </div>
+
                     <div class="flex my-8 space-x-3">
                         <button
                             @click="showPreviewPanel = false"
@@ -999,7 +1049,9 @@ function useSessionStorage(key, state) {
 }
 
 const isDataShown = ref(false);
-
+const isInitialLotNotSaved = ref(false);
+const currentInitialLot = ref();
+const currentInitialModel = ref();
 const showConfirmationPanel = ref(false);
 const showPreviewPanel = ref(false);
 const firstLayerSelected = ref('');
@@ -1014,6 +1066,7 @@ const currentGridData = ref();
 const currentGrandTotal = ref();
 const expectedTotalWeight = ref();
 const grandTotalLimit = ref(1425);
+const isBreaklot = ref(false);
 const isGrandTotalLimitReached = computed(() => {
     return Number(expectedTotalWeight.value) > grandTotalLimit.value;
 });
@@ -1463,7 +1516,7 @@ const formatLayerDataForDatabase = (layer) => {
     ];
 };
 
-const updateFormatType = async () => { // Update format type of Mass Productions Table
+const updateFormatType = async () => { // Update format type of Mass Productions Table //goback
     const layerKey = firstLayerSelected.value === '9.5' ? 'layer_9_5_format_type' : `layer_${firstLayerSelected.value}_format_type`;
 
     const dataPayload = {
@@ -1635,12 +1688,88 @@ const fetchAllLotDataBoxDetails = async () => {
         console.log('Expected Total Weight:', expectedTotalWeight.value);
 
         toast.success('Box details fetched successfully');
-
+        await checkBreaklot();
+        await checkInitialLot();
         console.log('--- fetchAllLotDataBoxDetails END ---');
-
     } catch (error) {
         console.error('Failed to fetch box details', error);
         toast.error('Failed to fetch box details');
+    }
+};
+
+const checkInitialLot = async () => {
+    try{
+        const payload = {
+            mass_prod: mpcsbl.selectedMassProd,
+            furnace: mpcsbl.selectedFurnace,
+            layer: firstLayerSelected.value,
+        };
+
+        const check = await axios.get(
+            '/api/breaklot-initial-lots-ht/exists',
+            {
+                params: {
+                    mass_prod: payload.mass_prod,
+                    furnace: payload.furnace,
+                    layer: payload.layer,
+                }
+            }
+        );
+
+        if (!check.data.exists) {
+            isInitialLotNotSaved.value = true;
+            currentInitialLot.value = null;
+            currentInitialModel.value = null;
+        } else {
+            isInitialLotNotSaved.value = false;
+            currentInitialLot.value = check.data.initial_lot;
+            currentInitialModel.value = check.data.initial_model;
+        }
+        console.log('Initial lot no saved payload: ', payload);
+        console.log('Initial Lot Not saved: ', isInitialLotNotSaved.value);
+
+    }catch(error){
+        console.error('Failed to check initial lot', error);
+        isInitialLotNotSaved.value = false;
+    }
+}
+
+const checkBreaklot = async () => {
+    try{
+        const response = await axios.get('/api/check-breaklot',{
+            params: {
+                mass_prod: mpcsbl.selectedMassProd,
+                furnace: mpcsbl.selectedFurnace,
+                layer: firstLayerSelected.value,
+                model: mpcsbl.selectedModel,
+                lot_no: mpcsbl.lotNo,
+            }
+        });
+        isBreaklot.value = response.data.is_breaklot;
+        //isExisting.value = response.data.is_existing;
+        console.log('isBreaklot: ', isBreaklot.value);
+        //console.log('isExisting: ', isExisting.value);
+    }catch(error){
+        console.error('Failed to check breaklot status', error);
+    }
+}
+
+const saveInitialLot = async () => {
+    console.log('[triggered saveInitialLot]');
+
+    try {
+        const response = await axios.post('/api/breaklot-initial-lots-ht', {
+            mass_prod: mpcsbl.selectedMassProd,
+            furnace: mpcsbl.selectedFurnace,
+            layer: String(firstLayerSelected.value),
+            initial_model: mpcsbl.selectedModel,
+            initial_lot: mpcsbl.lotNo,
+        });
+
+        console.log('Successfully saved data to initial lots:', response.data);
+
+    } catch (error) {
+        console.error('Failed to save initial lot data on double gbdp heat treatment', error);
     }
 };
 
@@ -1648,6 +1777,13 @@ const saveToDatabase = async () => {
     if (!selectedCoordinates.value.length) return;
 
     try {
+
+         if(isInitialLotNotSaved.value){
+            await saveInitialLot();
+        }
+        if(!isBreaklot.value){
+            await updateFormatType();
+        }
         // --- Normalize & identify layers ---
         const sortedLayers = [...layersInvolvedUserPick.value]
             .map(l => Number(l))
@@ -1689,8 +1825,7 @@ const saveToDatabase = async () => {
             console.log(`Excess layer ${layer} merged:`, excessSaveRes.data);
         }
         toast.success('Saved Successfully!');
-        await userManageLogging(`has successfully created Layer ${firstLayerSelected.value} | ${mpcsbl.selectedFurnace} - ${mpcsbl.selectedMassProd}`)
-        await updateFormatType();
+        await userManageLogging(`has successfully created Layer ${firstLayerSelected.value} | ${mpcsbl.selectedFurnace} - ${mpcsbl.selectedMassProd}`);
         showConfirmationPanel.value = false;
         resetData();
         Inertia.visit('/heat_treatment');

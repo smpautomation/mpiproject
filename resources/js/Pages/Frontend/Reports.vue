@@ -8766,7 +8766,7 @@ const undoStamp = async () => {
             lot_no: jhCurveLotNo.value,
             stamp_undone: config.label,
             undo_remarks: stampUndoRemarks.value,
-            undo_by: state.user.firstName + state.user.surname,
+            undo_by: state.user.firstName + " " + state.user.surname,
         });
 
         await userReportLogging(
@@ -9309,6 +9309,7 @@ const goToControlSheet = () => {
 onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
+    await getUndoHistory();
     //await test_nsa_showData();
     if (
         (props.serialParam && props.fromApproval) ||

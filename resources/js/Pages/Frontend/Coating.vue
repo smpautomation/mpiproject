@@ -212,6 +212,20 @@
                     </div>
                 </div>
             </div>
+
+            <div class="flex items-start p-4 mb-4 border-l-4 border-red-500 rounded-lg bg-gray-50">
+                <svg class="w-5 h-5 mt-0.5 mr-3 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"/>
+                </svg>
+
+                <div class="text-sm text-gray-800">
+                    <span class="font-semibold text-red-600">Warning:</span>
+                    Do not encode any <span class="font-semibold text-red-600">coating data</span> unless all layers in the
+                    <span class="font-semibold">control sheet</span> are fully assigned (Breaklot Cases).
+                    Proceeding with incomplete layers may result in inaccurate data and <span class="font-semibold text-red-600">Clear Layer Data button</span> feature will also be disabled.
+                </div>
+            </div>
+
             <div v-if="activate2ndGBDP" class="p-4 mt-6 border rounded-lg shadow-sm bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200">
                 <div class="flex items-start space-x-3">
                     <!-- Info Icon -->
@@ -1067,7 +1081,7 @@
                             :disabled="isExists || isExists_2ndGBDP || coatingNoMassProdData"
                             @click="finalize"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
-                            :class="isExists || coatingNoMassProdData
+                            :class="isExists || isExists_2ndGBDP || coatingNoMassProdData
                                 ? 'bg-red-600 hover:bg-red-700 focus:ring-red-400 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95 focus:ring-indigo-400'"
                         >
@@ -1077,15 +1091,25 @@
                         <button
                             v-else-if="!canSubmitAdditional"
                             @click="finalize_1st2ndGbdp"
-                            :disabled="isExists_2ndGBDP || coatingNoMassProdData"
+                            :disabled="ht2ndGbdpNotAvailable || isExists_2ndGBDP || coatingNoMassProdData"
                             :class="[
                                 'flex-1 px-4 py-3 text-lg font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50',
-                                isExists_2ndGBDP || coatingNoMassProdData
-                                    ? 'bg-red-600 text-white cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                                ht2ndGbdpNotAvailable
+                                    ? 'bg-gray-400 text-white cursor-not-allowed'
+                                    : (isExists_2ndGBDP || coatingNoMassProdData)
+                                        ? 'bg-red-600 text-white cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
                             ]"
                         >
-                            {{ coatingNoMassProdData ? 'NO MASS PROD DATA' : (isExists_2ndGBDP ? 'DATA ALREADY EXISTS FOR THIS LAYER' : 'SUBMIT 2ND GBDP') }}
+                            {{
+                                ht2ndGbdpNotAvailable
+                                    ? 'APPLY 1ST 2ND GBDP DATA ON HT FIRST'
+                                    : coatingNoMassProdData
+                                        ? 'NO MASS PROD DATA'
+                                        : isExists_2ndGBDP
+                                            ? 'DATA ALREADY EXISTS FOR THIS LAYER'
+                                            : 'SUBMIT 2ND GBDP'
+                            }}
                         </button>
 
                         <button
@@ -1105,15 +1129,23 @@
                         <button
                             v-else-if="canSubmitAdditional && !isAdditionalMode"
                             @click="finalize_1st2ndGbdp"
-                            :disabled="isAdditionalExisting"
+                            :disabled="ht2ndGbdpNotAvailable || isAdditionalExisting"
                             :class="[
-                                'flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
-                                isAdditionalExisting
-                                    ? 'bg-gradient-to-r from-gray-400 to-slate-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
+                                'flex-1 px-4 py-3 text-lg font-bold transition-all duration-300 transform shadow-md rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                ht2ndGbdpNotAvailable
+                                    ? 'bg-gray-400 text-white cursor-not-allowed'
+                                    : isAdditionalExisting
+                                        ? 'bg-gradient-to-r from-gray-400 to-slate-500 text-white cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-cyan-500 to-teal-600 text-white hover:from-cyan-600 hover:to-teal-700 hover:shadow-xl hover:scale-105 active:scale-95'
                             ]"
                         >
-                            {{ isAdditionalExisting ? 'THIS ADDTNL LOT ALREADY EXISTS' : 'SUBMIT ADDTNL (Double)' }}
+                            {{
+                                ht2ndGbdpNotAvailable
+                                    ? 'APPLY 1ST 2ND GBDP DATA ON HT FIRST'
+                                    : isAdditionalExisting
+                                        ? 'THIS ADDTNL LOT ALREADY EXISTS'
+                                        : 'SUBMIT ADDTNL (Double)'
+                            }}
                         </button>
 
                         <!-- Clear All -->
@@ -1569,6 +1601,177 @@
 
                 </div>
             </Modal>
+
+
+            <Modal :show="showIncompleteLayerWarning" @close="showIncompleteLayerWarning = false">
+                <div class="relative">
+                    <!-- Header -->
+                    <div class="relative px-6 py-6 bg-gradient-to-r from-black via-gray-900 to-black">
+                        <div class="absolute inset-0 opacity-10">
+                            <svg class="w-full h-full" viewBox="0 0 60 60">
+                                <defs>
+                                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                                        <path d="M10 0H0V10" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#grid)" />
+                            </svg>
+                        </div>
+
+                        <div class="relative flex items-center justify-between">
+                            <div class="flex items-center justify-center w-12 h-12 border border-white rounded-xl bg-white/10 backdrop-blur-sm">
+                                <svg class="w-6 h-6 text-red-500 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.584c.75 1.334-.213 2.983-1.742 2.983H3.48c-1.53 0-2.492-1.65-1.742-2.983L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-.993.883L9 6v4a1 1 0 001.993.117L11 10V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+
+                            <button @click="showIncompleteLayerWarning = false"
+                                class="p-2 text-white transition rounded-lg hover:bg-white/10">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="px-6 py-6 bg-white border border-gray-300 rounded-lg shadow-inner">
+                        <div class="mb-5 text-center">
+                            <h3 class="text-xl font-bold text-red-700">
+                                Incomplete Layer Detected
+                            </h3>
+                            <p class="mt-2 text-sm text-gray-700">
+                                One or more layers are not fully assigned in the control sheet.
+                            </p>
+                        </div>
+
+                        <!-- Warning block -->
+                        <div class="p-4 mb-6 border border-red-300 rounded-lg bg-red-50">
+                            <p class="text-sm font-semibold text-red-800">
+                                Are you really sure?
+                            </p>
+
+                            <p class="mt-2 text-xs leading-relaxed text-red-700">
+                                You may proceed, but only if this incomplete state is intentional and fully understood.
+                                Submitting at this stage will lock the data with missing layer assignments.
+                            </p>
+
+                            <p class="mt-3 text-xs leading-relaxed text-red-700">
+                                This can result in incorrect tracking, reporting inconsistencies, and additional manual corrections later.
+                            </p>
+
+                            <p class="mt-3 text-xs font-semibold text-red-800">
+                                Proceed only if you are absolutely certain this is intended.
+                            </p>
+                        </div>
+
+                        <!-- Optional: show missing layers -->
+                        <div v-if="incompleteLayers.length" class="mb-6 text-xs text-gray-600">
+                            <span class="font-semibold text-gray-800">Missing Layers:</span>
+                            {{ incompleteLayers.join(', ') }}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex space-x-3">
+                            <button
+                                @click="showIncompleteLayerWarning = false"
+                                class="flex-1 px-4 py-3 text-sm font-semibold text-white transition bg-gray-600 rounded-xl hover:bg-gray-700">
+                                Cancel
+                            </button>
+
+                            <button
+                                @click="showModalFinalize = true; showIncompleteLayerWarning = false"
+                                class="flex-1 px-4 py-3 text-sm font-semibold text-white transition bg-red-600 rounded-xl hover:bg-red-700">
+                                Proceed Anyway
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom accent -->
+                    <div class="h-1 bg-gradient-to-r from-black via-red-600 to-black"></div>
+                </div>
+            </Modal>
+
+            <Modal :show="showIncompleteLayerWarning2" @close="showIncompleteLayerWarning2 = false">
+                <div class="relative">
+                    <!-- Header -->
+                    <div class="relative px-6 py-6 bg-gradient-to-r from-black via-gray-900 to-black">
+                        <div class="absolute inset-0 opacity-10">
+                            <svg class="w-full h-full" viewBox="0 0 60 60">
+                                <defs>
+                                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                                        <path d="M10 0H0V10" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#grid)" />
+                            </svg>
+                        </div>
+
+                        <div class="relative flex items-center justify-between">
+                            <div class="flex items-center justify-center w-12 h-12 border border-white rounded-xl bg-white/10 backdrop-blur-sm">
+                                <svg class="w-6 h-6 text-red-500 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.584c.75 1.334-.213 2.983-1.742 2.983H3.48c-1.53 0-2.492-1.65-1.742-2.983L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-.993.883L9 6v4a1 1 0 001.993.117L11 10V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+
+                            <button @click="showIncompleteLayerWarning2 = false"
+                                class="p-2 text-white transition rounded-lg hover:bg-white/10">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="px-6 py-6 bg-white border border-gray-300 rounded-lg shadow-inner">
+                        <div class="mb-5 text-center">
+                            <h3 class="text-xl font-bold text-red-700">
+                                Incomplete Layer Detected
+                            </h3>
+                            <p class="mt-2 text-sm text-gray-700">
+                                One or more layers are not fully assigned.
+                            </p>
+                        </div>
+
+                        <!-- Warning block -->
+                        <div class="p-4 mb-6 border border-red-300 rounded-lg bg-red-50">
+                            <p class="text-sm font-semibold text-red-800">
+                                This action is not safe.
+                            </p>
+                            <p class="mt-2 text-xs leading-relaxed text-red-700">
+                                Proceeding will lock this submission while required layers remain incomplete.
+                                This may lead to inconsistent records, incorrect tracking, and additional manual correction.
+                            </p>
+
+                            <p class="mt-3 text-xs font-semibold text-red-700">
+                                Verify all intended layers are assigned before continuing.
+                            </p>
+                        </div>
+
+                        <!-- Optional: show missing layers -->
+                        <div v-if="incompleteLayers.length" class="mb-6 text-xs text-gray-600">
+                            <span class="font-semibold text-gray-800">Missing Layers:</span>
+                            {{ incompleteLayers.join(', ') }}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex space-x-3">
+                            <button
+                                @click="showIncompleteLayerWarning2 = false"
+                                class="flex-1 px-4 py-3 text-sm font-semibold text-white transition bg-gray-600 rounded-xl hover:bg-gray-700">
+                                Cancel
+                            </button>
+
+                            <button
+                                @click="showModalSubmit = true; showIncompleteLayerWarning2 = false"
+                                class="flex-1 px-4 py-3 text-sm font-semibold text-white transition bg-red-600 rounded-xl hover:bg-red-700">
+                                Proceed Anyway
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom accent -->
+                    <div class="h-1 bg-gradient-to-r from-black via-red-600 to-black"></div>
+                </div>
+            </Modal>
+
         </div>
     </Frontend>
 </template>
@@ -1682,9 +1885,12 @@ const bypassValidation = ref(false);
 //Toggle Control
 const coatingNoMassProdData = ref(false);
 const showModalFinalize = ref(false);
+const showIncompleteLayerWarning = ref(false);
+const showIncompleteLayerWarning2 = ref(false);
 const showModalSubmit = ref(false);
 const isExists = ref(false);
 const isExists_2ndGBDP = ref(false);
+const ht2ndGbdpNotAvailable = ref(false);
 const isHeatTreatmentEncoded = ref(false);
 const isModelMissing = ref(false);
 const isDataShown = ref(false);
@@ -1692,6 +1898,8 @@ const isAdditionalMode = ref(false);
 const isInitialLotSaved = ref(false);
 const isAdditionalExisting = ref(false);
 const breaklotFetchMode = ref(false);
+const isLayersIncomplete = ref(false);
+const incompleteLayers = ref([]);
 //Toggle Control
 
 const currentInitialLot = ref();
@@ -1932,7 +2140,12 @@ const finalize = async () => {
         }
     }
 
-    showModalFinalize.value = true;
+    if(isLayersIncomplete.value){
+        showIncompleteLayerWarning.value = true;
+    }else{
+        showIncompleteLayerWarning.value = false;
+        showModalFinalize.value = true;
+    }
 
     //console.log("Concentration Data: ", concentrationData.value);
     //console.log("Coatings Data: ", coatingsTable.value);
@@ -1960,7 +2173,13 @@ const finalize_1st2ndGbdp = async() => {
         }
     }
 
-    showModalSubmit.value = true;
+    if(isLayersIncomplete.value){
+        showIncompleteLayerWarning2.value = true;
+    }else{
+        showIncompleteLayerWarning2.value = false;
+        showModalSubmit.value = true;
+    }
+
 
     //console.log("Concentration Data: ", concentrationData.value);
     //console.log("Coatings Data: ", coatingsTable.value);
@@ -2131,11 +2350,17 @@ const checkExistingAdditional = async () => {
 
 const checkHt2ndGbdp = async () => {
     try{
-        const response = await axios.get('/api/check-second-gbdp-ht', {
+        const response = await axios.get('/api/check-breaklot',{
             params: {
-
+                mass_prod: coatingInfo.selectedMassProd,
+                furnace: coatingInfo.selectedFurnace,
+                layer: coatingInfo.selectedLayer,
+                model: coatingInfo.selectedModel,
+                lot_no: lotNo.value,
             }
         });
+        ht2ndGbdpNotAvailable.value = !response.data.is_existing;
+        console.log('ht2ndGbdpNotAvailable: ', ht2ndGbdpNotAvailable.value);
     }catch(error){
         console.error('Failed to check 2nd GBDP of HT', error);
     }
@@ -2367,7 +2592,7 @@ const addtnl_saveToDatabase_1st2ndgbdp = async() => {
             mass_prod: coatingInfo.selectedMassProd,
             layer: coatingInfo.selectedLayer,
             layer_code: layerCode,
-            lot_no: selectedLotNo_fetch.value,
+            lot_no: lotNo.value,
             model: coatingInfo.selectedModel,
             coating_info_1stgbdp: {
                 mass_prod: selectedMassProd_fetch.value,
@@ -2409,7 +2634,8 @@ const addtnl_saveToDatabase_1st2ndgbdp = async() => {
 
         const response = await axios.post(`/api/break-lot-second-coating`, payload);
         toast.success('1st and 2nd GBDP Data Saved Successfully');
-        console.log(response.data);
+        console.log('Saved succesfully', response.data);
+        console.log('Lot no: ', lotNo.value);
         await userManageLogging('created 2nd Gbdp Coating Data for Mass Prod: '+ coatingInfo.selectedMassProd +' Layer: ' + coatingInfo.selectedLayer + ' successfully.');
         isDataShown.value = false;
         isInitialLotSaved.value = false;
@@ -2612,6 +2838,23 @@ const checkExisting = async(furnace, massprod, layer) => {
         console.error("Check failed:", error);
         toast.error("Failed to check existing record.");
         return false;
+    }
+}
+
+const checkIncompleteLayers = async () => {
+    try{
+        const response = await axios.get('/api/check-control-sheet-layers', {
+            params: {
+                mass_prod: coatingInfo.selectedMassProd,
+                furnace: coatingInfo.selectedFurnace,
+            }
+        });
+        isLayersIncomplete.value = response.data.is_incomplete;
+        incompleteLayers.value = response.data.missing_layers;
+        console.log('IsLayersIncomplate: ', isLayersIncomplete.value);
+        console.log('Incomplete Layers: ', incompleteLayers.value);
+    }catch(error){
+        console.error('Failed to check incomplete layers', error);
     }
 }
 
@@ -2891,6 +3134,7 @@ watch(lotNo, async (lot) => {
     if (!lot) return;
     await getAdditionalModel();
     await checkExistingAdditional();
+    await checkHt2ndGbdp();
 });
 
 
@@ -3463,6 +3707,7 @@ onMounted(async () => {
     await getMassProdLists();
     await getFurnaceLists();
     await get1st2ndGBDPModels();
+    await checkIncompleteLayers();
 });
 
 </script>

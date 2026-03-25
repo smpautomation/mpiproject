@@ -10,6 +10,7 @@ use App\Models\MassProduction;
 use App\Models\ExcessLayers;
 use App\Models\GbdpSecondCoating;
 use App\Models\GbdpSecondHeatTreatment;
+use App\Models\BreaklotSecondHeatTreatment;
 use App\Models\FilmPastingData;
 use App\Models\TPMDataCategory;
 use App\Models\TPMData;
@@ -23,6 +24,7 @@ use App\Models\GxModel;
 use App\Models\TtmncModel;
 use App\Models\BhModel;
 use App\Models\RobModel;
+use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotInitialLot;
 use App\Models\BreaklotSecondCoating;
@@ -185,6 +187,77 @@ class BackEndPdfController extends Controller
             ], 404);
         }
 
+
+        // Decode layer data to check breaklot
+        $controlArray = json_decode($control_sheet_data, true) ?? [];
+        $modelRow = collect($controlArray)->firstWhere('rowTitle', 'MODEL:')['data'] ?? [];
+        $lotRow   = collect($controlArray)->firstWhere('rowTitle', 'LT. No.:')['data'] ?? [];
+
+        // Count unique model+lot pairs
+        $uniquePairs = [];
+        foreach ($modelRow as $key => $model) {
+            $lot = $lotRow[$key] ?? null;
+            if ($model && $lot) {
+                $uniquePairs[$model . '||' . $lot] = true;
+            }
+        }
+
+        $isBreaklot = count($uniquePairs) > 1;
+
+        // --- Breaklot logic ---
+        if ($isBreaklot) {
+            // Step 1: Check initial lot exception
+            $initialLotMatch = BreaklotInitialLotHt::where([
+                'initial_model' => $addtnlModel,
+                'initial_lot'   => $addtnlLot,
+            ])->exists()
+                || BreaklotInitialLot::where([
+                    'initial_model' => $addtnlModel,
+                    'initial_lot'   => $addtnlLot,
+                ])->exists();
+
+            //dd($initialLotMatch);
+            if ($initialLotMatch) {
+                // Use original layer format type
+                $finalFormatType = $gbdp_report_format_type;
+            } else {
+                // Step 2: Determine dynamic format type for breaklot
+                // Check 1st & 2nd Gbdp
+                $hasSecondGbdp = BreaklotSecondHeatTreatment::where([
+                    'mass_prod' => $massprod,
+                    'furnace'   => $furnace,
+                    'layer'     => $layer,
+                    'model'     => $addtnlModel,
+                    'lot_no'    => $addtnlLot,
+                ])->exists()
+                    || BreaklotSecondCoating::where([
+                        'mass_prod' => $massprod,
+                        'furnace'   => $furnace,
+                        'layer'     => $layer,
+                        'model'     => $addtnlModel,
+                        'lot_no'    => $addtnlLot,
+                    ])->exists();
+
+                if ($hasSecondGbdp) {
+                    $finalFormatType = '1st and 2nd Gbdp';
+                } else {
+                    // Check Film Pasting
+                    $hasFilmPasting = BreaklotFilmpasting::where([
+                        'mass_prod' => $massprod,
+                        'furnace'   => $furnace,
+                        'layer'     => $layer,
+                        'model'     => $addtnlModel,
+                        'lot_no'    => $addtnlLot,
+                    ])->exists();
+
+                    $finalFormatType = $hasFilmPasting ? 'Film Pasting' : 'Normal';
+                }
+            }
+        } else {
+            // Not a breaklot, use original format type
+            $finalFormatType = $gbdp_report_format_type;
+        }
+
         // Check if there is a matching Initial Lot
         $initialLotExists =
             BreaklotCoating::where([
@@ -202,95 +275,8 @@ class BackEndPdfController extends Controller
                 'model'     => $addtnlModel,
                 'lot_no'    => $addtnlLot,
             ])->exists();
-        /*
-        if ($initialLotExists) {
-            // Only proceed if initial lot exists
-            if (BreaklotCoating::where([
-                'mass_prod' => $massprod,
-                'furnace'   => $furnace,
-                'layer'     => $layer,
-                'model'     => $addtnlModel,
-                'lot_no'    => $addtnlLot,
-            ])->exists()) {
-                $gbdp_report_format_type = 'Normal';
-            } elseif (BreaklotSecondCoating::where([
-                'mass_prod' => $massprod,
-                'furnace'   => $furnace,
-                'layer'     => $layer,
-                'model'     => $addtnlModel,
-                'lot_no'    => $addtnlLot,
-            ])->exists()) {
-                $gbdp_report_format_type = '1st and 2nd Gbdp';
-            } elseif (BreaklotFilmpasting::where([
-                'mass_prod' => $massprod,
-                'furnace'   => $furnace,
-                'layer'     => $layer,
-                'model'     => $addtnlModel,
-                'lot_no'    => $addtnlLot,
-            ])->exists()) {
-                $gbdp_report_format_type = 'Film Pasting';
-            }
-        }
 
-        $debug = [
-            'input' => [
-                'mass_prod' => $massprod,
-                'furnace'   => $furnace,
-                'layer'     => $layer,
-                'model'     => $addtnlModel,
-                'lot_no'    => $addtnlLot,
-            ],
-            'initial_lot_exists' => $initialLotExists,
-            'matches' => [
-                'coating'        => false,
-                'second_coating' => false,
-                'film_pasting'   => false,
-            ],
-            'final_format_type' => null,
-        ];
-
-        if ($initialLotExists) {
-
-            $debug['matches']['coating'] = BreaklotCoating::where([
-                'mass_prod' => $massprod,
-                'furnace'   => $furnace,
-                'layer'     => $layer,
-                'model'     => $addtnlModel,
-                'lot_no'    => $addtnlLot,
-            ])->exists();
-
-            if ($debug['matches']['coating']) {
-                $gbdp_report_format_type = 'Normal';
-            } else {
-
-                $debug['matches']['second_coating'] = BreaklotSecondCoating::where([
-                    'mass_prod' => $massprod,
-                    'furnace'   => $furnace,
-                    'layer'     => $layer,
-                    'model'     => $addtnlModel,
-                    'lot_no'    => $addtnlLot,
-                ])->exists();
-
-                if ($debug['matches']['second_coating']) {
-                    $gbdp_report_format_type = '1st and 2nd Gbdp';
-                } else {
-
-                    $debug['matches']['film_pasting'] = BreaklotFilmpasting::where([
-                        'mass_prod' => $massprod,
-                        'furnace'   => $furnace,
-                        'layer'     => $layer,
-                        'model'     => $addtnlModel,
-                        'lot_no'    => $addtnlLot,
-                    ])->exists();
-
-                    if ($debug['matches']['film_pasting']) {
-                        $gbdp_report_format_type = 'Film Pasting';
-                    }
-                }
-            }
-        }
-
-        $debug['final_format_type'] = $gbdp_report_format_type;
+        //$debug['final_format_type'] = $gbdp_report_format_type;
 
         //dd($debug);*/
 
@@ -699,7 +685,7 @@ class BackEndPdfController extends Controller
         ];
 
         // Decide which portrait view to use
-        switch ($gbdp_report_format_type) {
+        switch ($finalFormatType) {
             case 'Normal':
                 $portraitView = 'pdf.report_page1_portrait';
                 break;
@@ -710,7 +696,7 @@ class BackEndPdfController extends Controller
                 $portraitView = 'pdf.report_page1_second_gbdp_portrait';
                 break;
             default:
-                throw new \Exception("Unknown report format type: {$gbdp_report_format_type}");
+                throw new \Exception("Unknown report format type: {$finalFormatType}");
         }
 
         // Generate portrait
