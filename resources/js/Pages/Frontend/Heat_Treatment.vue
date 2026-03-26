@@ -251,30 +251,39 @@
                             <!-- Group: Basic Info -->
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div>
-                                    <label
-                                        class="block mb-1 text-xs font-medium text-gray-700"
-                                    >
+                                    <label class="block mb-1 text-xs font-medium text-gray-700">
                                         Lot No.<span class="text-red-500"> *</span>
                                     </label>
-                                    <select
-                                        v-model="mpcs.lotNo"
-                                        :disabled="isDataShown"
-                                        :class="[
-                                            'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
-                                            isDataShown
-                                                ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
-                                                : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
-                                        ]"
-                                    >
-                                        <option value="" disabled>Select Lot No</option>
-                                        <option
-                                            v-for="(lot, index) in lotNoLists"
-                                            :key="index"
-                                            :value="lot.lot_no"
+
+                                    <div class="flex items-center gap-2">
+                                        <select
+                                            v-model="mpcs.lotNo"
+                                            :disabled="isDataShown || isLotListsLoading"
+                                            :class="[
+                                                'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
+                                                isDataShown || isLotListsLoading
+                                                    ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
+                                                    : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
+                                            ]"
                                         >
-                                            {{ lot.lot_no }}
-                                        </option>
-                                    </select>
+                                            <option value="" disabled>
+                                                {{ isLotListsLoading ? 'Loading lots...' : 'Select Lot No' }}
+                                            </option>
+
+                                            <option
+                                                v-for="(lot, index) in lotNoLists"
+                                                :key="index"
+                                                :value="lot.lot_no"
+                                            >
+                                                {{ lot.lot_no }}
+                                            </option>
+                                        </select>
+
+                                        <!-- Loader -->
+                                        <div v-if="isLotListsLoading" class="flex items-center">
+                                            <div class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"></div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div>
@@ -3349,8 +3358,9 @@ function useSessionStorage(key, state) {
 }
 
 
-const isHeatTreatmentPageLoading = ref(true)
-const loadingStep = ref('')
+const isHeatTreatmentPageLoading = ref(true);
+const loadingStep = ref('');
+const isLotListsLoading = ref(false);
 
 //Dev Controls ----------------- Allow Commands
 const isEditingExpired = ref(false); //This is for Time Start and Date Start ONLYY!!! (Now for clear layer data button as well)
@@ -4030,11 +4040,15 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
 
 const fetchAllLotNoData = async () => {
     try {
+        isLotListsLoading.value = true;
+
         const response = await axios.get("/api/initial-control-sheets/lot-all");
-        //console.log("All lot no: ", response.data); // All records with lot_no, newest first
         lotNoLists.value = response.data;
+
     } catch (err) {
         console.error("Failed to fetch lot_no data:", err);
+    } finally {
+        isLotListsLoading.value = false;
     }
 };
 
