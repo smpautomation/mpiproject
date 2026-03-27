@@ -4,49 +4,55 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
 
 class ChartUploadController extends Controller
 {
     public function store(Request $request)
     {
-        $base64 = $request->input('image');
-        $filename = $request->input('filename', 'chart_' . time() . '.png');
+        try {
+            $base64 = $request->input('image');
+            $filename = $request->input('filename', 'chart_' . time() . '.jpg'); // default to .jpg now
 
-        if (!$base64) {
-            return response()->json(['error' => 'No image data'], 400);
-        }
+            if (!$base64) {
+                return response()->json(['error' => 'No image data'], 400);
+            }
 
-        $base64 = str_replace('data:image/png;base64,', '', $base64);
-        $base64 = str_replace(' ', '+', $base64);
+            // Remove any data URI prefix (works for PNG or JPEG)
+            $base64 = preg_replace('#^data:image/\w+;base64,#i', '', $base64);
 
-        $dir = public_path('charts');
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
+            // Decode base64 safely
+            $data = base64_decode($base64, true);
+            if ($data === false) {
+                return response()->json(['error' => 'Invalid base64 data'], 400);
+            }
 
-        $savePath = $dir . '/' . $filename;
+            // Ensure directory exists
+            $dir = public_path('charts');
+            if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-        // Log what’s happening
-        /*Log::info('Checking file existence:', [
-            'savePath' => $savePath,
-            'exists' => file_exists($savePath) ? 'yes' : 'no'
-        ]);*/
+            $savePath = $dir . '/' . $filename;
 
-        if (file_exists($savePath)) {
-            //Log::info('Skipped saving — file already exists');
+            if (file_exists($savePath)) {
+                return response()->json([
+                    'message' => 'File already exists',
+                    'path' => "charts/{$filename}"
+                ], 200);
+            }
+
+            // Save file
+            file_put_contents($savePath, $data);
+
             return response()->json([
-                'message' => 'File already exists',
+                'message' => 'File saved successfully',
                 'path' => "charts/{$filename}"
-            ], 200);
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Upload failed',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        file_put_contents($savePath, base64_decode($base64));
-        //Log::info('File saved successfully:', ['path' => $savePath]);
-
-        return response()->json([
-            'message' => 'File saved successfully',
-            'path' => "charts/{$filename}"
-        ]);
     }
 
     public function storeSecondary(Request $request)

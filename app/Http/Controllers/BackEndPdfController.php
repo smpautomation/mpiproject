@@ -41,14 +41,18 @@ class BackEndPdfController extends Controller
 
     public function generateAndMerge($serial)
     {
-        $chartFilename = "chart_{$serial}.png";
-        $chartPath = public_path("charts/{$chartFilename}");
+        $extensions = ['png', 'jpg', 'jpeg'];
+        $chartFilename = null;
 
-        // Optional: check if image exists
-        if (!file_exists($chartPath)) {
-            // Fallback or skip image — up to you
-            $chartFilename = null;
+        foreach ($extensions as $ext) {
+            $filename = "chart_{$serial}.{$ext}";
+            $path = public_path("charts/{$filename}");
+            if (file_exists($path)) {
+                $chartFilename = $filename;
+                break; // stop at the first one found
+            }
         }
+
 
         $reportData = ReportData::where('tpm_data_serial', $serial)->first();
         if (!$reportData) {

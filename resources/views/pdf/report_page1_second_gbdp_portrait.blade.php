@@ -75,7 +75,7 @@
 </head>
 <body>
     <div style="float:left; width:25%;">
-        <img src="{{ public_path('photo/shinetsu.png') }}" alt="Logo" style="width:130px; height:20px; padding: 0px; margin: 0px;" />
+        <img src="{{ public_path('photo/shinetsu_try.png') }}" alt="Logo" style="width:130px; height:20px; padding: 0px; margin: 0px;" />
         <p style="font-size: 9px; padding-top: 3px; margin: 0px;">SHINETSU MAGNETICS PHILS., INC.</p>
     </div>
 

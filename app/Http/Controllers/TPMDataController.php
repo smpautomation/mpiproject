@@ -545,13 +545,19 @@ class TPMDataController extends Controller
 
     public function deleteChart($serial)
     {
-        // build full path
-        $path = public_path("charts/chart_{$serial}.png");
+        $extensions = ['png', 'jpg', 'jpeg'];
 
-        // delete only if it exists
-        if (file_exists($path)) {
-            unlink($path);
+        foreach ($extensions as $ext) {
+            $path = public_path("charts/chart_{$serial}.{$ext}");
+            if (file_exists($path)) {
+                unlink($path);
+                // Stop after first successful deletion
+                return true;
+            }
         }
+
+        // Nothing was deleted
+        return false;
     }
 
     public function deleteNsaChart($serial, $set)

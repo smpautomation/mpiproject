@@ -733,7 +733,7 @@
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
                     <div
-                        class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                        class="w-[600px] h-[520px] bg-white rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
                     >
                         <canvas
                             ref="myChartCanvas"
@@ -1832,6 +1832,18 @@ const checkAuthentication = async () => {
 
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
+Chart.register({
+    id: 'whiteBackground',
+    beforeDraw: (chart) => {
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over'; // draw behind chart
+        ctx.fillStyle = '#ffffff'; // white background
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.restore();
+    }
+});
+
 
 const userManageLogging = async (logEvent) => {
     try {
@@ -4033,11 +4045,10 @@ const renderChart = () => {
             });
             setTimeout(() => {
                 const canvas = myChartCanvas.value;
-                const imageData = canvas.toDataURL("image/png");
+                // Export JPEG directly (chart already has white background)
+                const imageData = canvas.toDataURL("image/jpeg", 0.5);
 
-                const csrfToken = document.querySelector(
-                    'meta[name="csrf-token"]',
-                )?.content;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
                 fetch("/upload-chart", {
                     method: "POST",
@@ -4047,16 +4058,15 @@ const renderChart = () => {
                     },
                     body: JSON.stringify({
                         image: imageData,
-                        filename: `chart_${serialNo.value}.png`,
+                        filename: `chart_${serialNo.value}.jpg`,
                     }),
                 })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        //console.log("Chart image saved at:", data.path);
-                        // Optional: store this filename in a hidden input or use it to trigger PDF render
-                    })
-                    .catch((err) => console.error("Chart upload failed:", err));
-            }, 1000); // Give Chart.js time to fully render
+                .then((response) => response.json())
+                .then((data) => {
+                    // Chart image saved successfully
+                })
+                .catch((err) => console.error("Chart upload failed:", err));
+            }, 1000);
         } catch (error) {
             console.error("Error initializing Chart.js:", error);
             userErrorLogging(
