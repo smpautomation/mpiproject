@@ -137,7 +137,6 @@ class TakefuMail extends Mailable
             }
 
             return $mail;
-
         } catch (\Throwable $e) {
             Log::error('Error building mail: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
@@ -205,5 +204,4 @@ class TakefuMail extends Mailable
             'layers' => array_keys($flaggedLayers),
         ]);
     }
-
 }

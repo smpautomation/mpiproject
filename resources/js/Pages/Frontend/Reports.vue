@@ -3649,18 +3649,23 @@
                             class="flex flex-row justify-center mt-5 space-x-4"
                         >
                             <div
-                                class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                            class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
                             >
-                                <img
-                                    v-if="currentSerialSelected"
-                                    :src="`/charts/chart_${currentSerialSelected}.png`"
-                                    alt="Chart"
-                                    class="object-contain w-full h-full"
-                                    style="
-                                        transform: scale(1);
-                                        transform-origin: top left;
-                                    "
-                                />
+                            <img
+                                v-if="currentSerialSelected"
+                                :src="`/charts/chart_${currentSerialSelected}.png`"
+                                alt="Chart"
+                                class="object-contain w-full h-full"
+                                style="transform: scale(1); transform-origin: top left;"
+                                @error="event => {
+                                if (!event.target.dataset.attempted) {
+                                    event.target.dataset.attempted = true;
+                                    event.target.src = `/charts/chart_${currentSerialSelected}.jpg`;
+                                } else if (event.target.src.endsWith('.jpg')) {
+                                    event.target.src = `/charts/chart_${currentSerialSelected}.jpeg`;
+                                }
+                                }"
+                            />
                             </div>
                             <!-- Side Content -->
                             <div
@@ -7354,6 +7359,17 @@ const fetchAllData = async () => {
         throw new Error("fetchAllData returned empty or invalid payload");
     }
 };
+
+function getChartSrc(serial) {
+    // Try png first, then jpg/jpeg fallback
+    const pngPath = `/charts/chart_${serial}.png`;
+    const jpgPath = `/charts/chart_${serial}.jpg`;
+    const jpegPath = `/charts/chart_${serial}.jpeg`;
+
+    // Note: This does not check file existence on server, only builds path
+    // If you want auto-fallback, you'll need a small API call to confirm which file exists
+    return pngPath; // default
+}
 
 const fetchMiasFactor_category = async () => {
     try {
