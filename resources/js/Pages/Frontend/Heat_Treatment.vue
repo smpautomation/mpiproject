@@ -31,10 +31,13 @@
                 class="absolute inset-0 z-50 flex flex-col items-center justify-start pt-24 bg-black/40 backdrop-blur-sm"
             >
                 <!-- Loader Card -->
-                <div class="bg-white rounded-lg shadow-xl px-6 py-5 flex flex-col items-center gap-3 min-w-[260px]">
-
+                <div
+                    class="bg-white rounded-lg shadow-xl px-6 py-5 flex flex-col items-center gap-3 min-w-[260px]"
+                >
                     <!-- Spinner -->
-                    <div class="w-10 h-10 border-4 border-gray-300 rounded-full border-t-cyan-500 animate-spin"></div>
+                    <div
+                        class="w-10 h-10 border-4 border-gray-300 rounded-full border-t-cyan-500 animate-spin"
+                    ></div>
 
                     <!-- Step text -->
                     <div class="text-sm font-medium text-center text-gray-700">
@@ -42,15 +45,22 @@
                     </div>
 
                     <!-- Progress bar (visual feedback) -->
-                    <div class="w-full h-1.5 bg-gray-200 rounded overflow-hidden">
-                        <div class="w-full h-full bg-cyan-500 animate-pulse"></div>
+                    <div
+                        class="w-full h-1.5 bg-gray-200 rounded overflow-hidden"
+                    >
+                        <div
+                            class="w-full h-full bg-cyan-500 animate-pulse"
+                        ></div>
                     </div>
                 </div>
             </div>
 
             <div
                 class="flex flex-col justify-start min-h-screen px-4 py-0 bg-gray-100"
-                :class="{ 'pointer-events-none select-none': isHeatTreatmentPageLoading }"
+                :class="{
+                    'pointer-events-none select-none':
+                        isHeatTreatmentPageLoading,
+                }"
             >
                 <!-- Main content -->
                 <div
@@ -60,31 +70,45 @@
                         class="flex items-center justify-between p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 bg-cyan-100 border-cyan-500"
                     >
                         <div>
-                            <strong>Note:</strong> For 1st & 2nd GBDP formats, select
-                            <span class="font-semibold">Mass Prod</span>,
+                            <strong>Note:</strong> For 1st & 2nd GBDP formats,
+                            select <span class="font-semibold">Mass Prod</span>,
                             <span class="font-semibold">Layer</span>, and
-                            <span class="font-semibold">Model</span>, then click the
-                            <span class="bg-cyan-500 text-white px-2 py-0.5 rounded"
+                            <span class="font-semibold">Model</span>, then click
+                            the
+                            <span
+                                class="bg-cyan-500 text-white px-2 py-0.5 rounded"
                                 >Apply 1st & 2nd GBDP</span
                             >
                             button in the
-                            <span class="font-semibold">Control Panel</span>. If button
-                            is disabled, the model is not yet registered.
+                            <span class="font-semibold">Control Panel</span>. If
+                            button is disabled, the model is not yet registered.
                         </div>
                         <button
                             class="ml-4 font-semibold text-blue-600 hover:underline"
-                            @click.prevent="$inertia.visit('/second_gbdp_models')"
+                            @click.prevent="
+                                $inertia.visit('/second_gbdp_models')
+                            "
                         >
                             Register Here
                         </button>
                     </div>
-                    <div class="flex items-start p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 border-cyan-500 bg-cyan-100">
+                    <div
+                        class="flex items-start p-4 mb-4 text-sm border-l-4 rounded-lg text-cyan-800 border-cyan-500 bg-cyan-100"
+                    >
                         <div>
                             <strong>Warning for Breaklot Cases:</strong>
                             Do not proceed to encode in the
-                            <span class="font-semibold">Coating Input Page</span> or apply
-                            <span class="font-semibold">1st &amp; 2nd GBDP</span> unless all intended
-                            <span class="font-semibold text-red-600">layers are fully assigned</span>.
+                            <span class="font-semibold"
+                                >Coating Input Page</span
+                            >
+                            or apply
+                            <span class="font-semibold"
+                                >1st &amp; 2nd GBDP</span
+                            >
+                            unless all intended
+                            <span class="font-semibold text-red-600"
+                                >layers are fully assigned</span
+                            >.
                         </div>
                     </div>
                     <div class="flex flex-row justify-center gap-0">
@@ -100,12 +124,16 @@
                                         class="w-1 h-8 rounded-full bg-gradient-to-b from-cyan-500 to-teal-500"
                                     ></div>
                                     <div>
-                                        <h2 class="text-xl font-bold text-gray-900">
+                                        <h2
+                                            class="text-xl font-bold text-gray-900"
+                                        >
                                             Mass Production Control Sheet
                                         </h2>
                                         <p class="text-sm text-gray-500">
-                                            Fill up all details below. Fields with
-                                            <span class="font-semibold text-red-500"
+                                            Fill up all details below. Fields
+                                            with
+                                            <span
+                                                class="font-semibold text-red-500"
                                                 >*</span
                                             >
                                             are required
@@ -120,7 +148,8 @@
                                     <label
                                         class="block mb-1 text-xs font-semibold text-gray-800"
                                     >
-                                        Furnace Name <span class="text-red-500">*</span>
+                                        Furnace Name
+                                        <span class="text-red-500">*</span>
                                     </label>
                                     <select
                                         v-model="mpcs.selectedFurnace"
@@ -171,7 +200,9 @@
                                     <label
                                         class="block mb-1 text-xs font-medium text-gray-700"
                                     >
-                                        Layer<span class="text-red-500"> *</span>
+                                        Layer<span class="text-red-500">
+                                            *</span
+                                        >
                                     </label>
                                     <select
                                         v-model="mpcs.selectedLayer"
@@ -204,9 +235,13 @@
                                     <label
                                         class="block mb-1 text-xs font-semibold text-gray-800"
                                         >9.5 Layer Set
-                                        <span class="text-red-500">*</span></label
+                                        <span class="text-red-500"
+                                            >*</span
+                                        ></label
                                     >
-                                    <div class="flex flex-col gap-4 md:flex-row">
+                                    <div
+                                        class="flex flex-col gap-4 md:flex-row"
+                                    >
                                         <label
                                             class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-800 transition-colors duration-150 border rounded-lg cursor-pointer hover:bg-yellow-50"
                                             :class="{
@@ -251,14 +286,20 @@
                             <!-- Group: Basic Info -->
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div>
-                                    <label class="block mb-1 text-xs font-medium text-gray-700">
-                                        Lot No.<span class="text-red-500"> *</span>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                    >
+                                        Lot No.<span class="text-red-500">
+                                            *</span
+                                        >
                                     </label>
 
                                     <div class="flex items-center gap-2">
                                         <select
                                             v-model="mpcs.lotNo"
-                                            :disabled="isDataShown || isLotListsLoading"
+                                            :disabled="
+                                                isDataShown || isLotListsLoading
+                                            "
                                             :class="[
                                                 'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
                                                 isDataShown || isLotListsLoading
@@ -267,11 +308,17 @@
                                             ]"
                                         >
                                             <option value="" disabled>
-                                                {{ isLotListsLoading ? 'Loading lots...' : 'Select Lot No' }}
+                                                {{
+                                                    isLotListsLoading
+                                                        ? "Loading lots..."
+                                                        : "Select Lot No"
+                                                }}
                                             </option>
 
                                             <option
-                                                v-for="(lot, index) in lotNoLists"
+                                                v-for="(
+                                                    lot, index
+                                                ) in lotNoLists"
                                                 :key="index"
                                                 :value="lot.lot_no"
                                             >
@@ -280,8 +327,13 @@
                                         </select>
 
                                         <!-- Loader -->
-                                        <div v-if="isLotListsLoading" class="flex items-center">
-                                            <div class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"></div>
+                                        <div
+                                            v-if="isLotListsLoading"
+                                            class="flex items-center"
+                                        >
+                                            <div
+                                                class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"
+                                            ></div>
                                         </div>
                                     </div>
                                 </div>
@@ -290,7 +342,9 @@
                                     <label
                                         class="block mb-1 text-xs font-medium text-gray-700"
                                     >
-                                        Model<span class="text-red-500"> *</span>
+                                        Model<span class="text-red-500">
+                                            *</span
+                                        >
                                     </label>
                                     <select
                                         v-model="mpcs.selectedModel"
@@ -333,7 +387,8 @@
                             <!-- Group: Prepared By -->
                             <div
                                 v-if="
-                                    (isExisting || isExisting_2ndGBDP) && !isDataShown
+                                    (isExisting || isExisting_2ndGBDP) &&
+                                    !isDataShown
                                 "
                                 class="flex flex-col gap-4 md:flex-row md:items-start whitespace-nowrap"
                             >
@@ -341,7 +396,8 @@
                                     v-if="
                                         !isEditingExpired ||
                                         (state.user &&
-                                            state.user.access_type == 'Automation')
+                                            state.user.access_type ==
+                                                'Automation')
                                     "
                                     class="mt-5"
                                 >
@@ -365,23 +421,32 @@
                                                 />
                                             </svg>
                                             <span
-                                                >Clear Layer Data disabled (Existing data on {{ clearLayerDisabledCause }})</span
+                                                >Clear Layer Data disabled
+                                                (Existing data on
+                                                {{
+                                                    clearLayerDisabledCause
+                                                }})</span
                                             >
                                         </div>
                                     </div>
                                     <div v-else>
                                         <!-- Clear Layer Button -->
                                         <button
-
                                             @click="deleteLayerData()"
                                             class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                                         >
-                                            Clear Layer {{ mpcs.selectedLayer }} Data
+                                            Clear Layer
+                                            {{ mpcs.selectedLayer }} Data
                                         </button>
                                     </div>
-
                                 </div>
-                                <div v-if="!isEditingExpired && !isClearLayerDataDisabled" class="mt-5">
+                                <div
+                                    v-if="
+                                        !isEditingExpired &&
+                                        !isClearLayerDataDisabled
+                                    "
+                                    class="mt-5"
+                                >
                                     <!-- Warning Note -->
                                     <div
                                         class="flex items-center flex-1 gap-2 p-2 text-sm text-red-700 bg-red-100 border-l-4 border-red-600 rounded-lg shadow-md"
@@ -401,9 +466,11 @@
                                             />
                                         </svg>
                                         <span
-                                            >Important: This action will clear other
-                                            layers sharing the same lot number, if there
-                                            are any. ({{ hoursLeftDisplay }})</span
+                                            >Important: This action will clear
+                                            other layers sharing the same lot
+                                            number, if there are any. ({{
+                                                hoursLeftDisplay
+                                            }})</span
                                         >
                                     </div>
                                 </div>
@@ -441,7 +508,9 @@
                                 <div
                                     class="w-full px-4 py-3 mt-4 bg-gray-100 border-l-4 rounded-md shadow-sm border-cyan-600"
                                 >
-                                    <p class="text-sm font-semibold text-gray-800">
+                                    <p
+                                        class="text-sm font-semibold text-gray-800"
+                                    >
                                         Detected Total Boxes:
                                         <span class="text-blue-700">{{
                                             totalBoxes
@@ -460,7 +529,8 @@
                                 <div
                                     v-if="
                                         isDataShown &&
-                                        (mpcs.moreThanTenBoxes || mpcs.breakLotMode)
+                                        (mpcs.moreThanTenBoxes ||
+                                            mpcs.breakLotMode)
                                     "
                                 >
                                     <label
@@ -510,8 +580,8 @@
                                         noMassProdData
                                             ? "The selected furnace and mass production does not exist."
                                             : isDataShown
-                                            ? "Click Change Data button to enable Manual Allocation."
-                                            : "Select a Furnace and Mass Production Name to enable Manual Layer Allocation."
+                                              ? "Click Change Data button to enable Manual Allocation."
+                                              : "Select a Furnace and Mass Production Name to enable Manual Layer Allocation."
                                     }}
                                 </p>
 
@@ -536,7 +606,10 @@
                         >
                             <div v-if="isDataShown">
                                 <div
-                                    v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode"
+                                    v-if="
+                                        !mpcs.moreThanTenBoxes &&
+                                        !mpcs.breakLotMode
+                                    "
                                     class="w-full px-5"
                                 >
                                     <table
@@ -719,7 +792,8 @@
                                 <div v-else class="w-full px-5">
                                     <!-- ================= MAIN 10 BOXES ================= -->
                                     <p class="mb-2 font-semibold text-gray-700">
-                                        Main Boxes - Layer {{ mpcs.selectedLayer }}
+                                        Main Boxes - Layer
+                                        {{ mpcs.selectedLayer }}
                                     </p>
                                     <table
                                         class="min-w-full mb-6 text-xs border border-collapse border-gray-200"
@@ -761,7 +835,9 @@
                                                 </td>
                                                 <td
                                                     v-for="box in visibleBoxes"
-                                                    :key="'main-coatingMC-' + box"
+                                                    :key="
+                                                        'main-coatingMC-' + box
+                                                    "
                                                     class="px-2 py-1 text-center border border-gray-300"
                                                 >
                                                     {{ mpcs.coatingMCNo }}
@@ -898,7 +974,9 @@
 
                                     <!-- ================= EXCESS BOXES ================= -->
                                     <div>
-                                        <p class="mb-2 font-semibold text-gray-700">
+                                        <p
+                                            class="mb-2 font-semibold text-gray-700"
+                                        >
                                             Excess Boxes - Layer
                                             {{ mpcs.selectedExcessLayer }}
                                         </p>
@@ -912,7 +990,10 @@
                                                     ></th>
                                                     <th
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-header-' + box"
+                                                        :key="
+                                                            'excess-header-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 font-semibold text-center border border-gray-300"
                                                     >
                                                         {{ box }}
@@ -928,7 +1009,10 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-model-' + box"
+                                                        :key="
+                                                            'excess-model-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
                                                         {{ mpcs.selectedModel }}
@@ -942,7 +1026,10 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-coatingMC-' + box"
+                                                        :key="
+                                                            'excess-coatingMC-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
                                                         {{ mpcs.coatingMCNo }}
@@ -956,7 +1043,9 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-lot-' + box"
+                                                        :key="
+                                                            'excess-lot-' + box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
                                                         {{ mpcs.lotNo }}
@@ -970,10 +1059,14 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-qty-' + box"
+                                                        :key="
+                                                            'excess-qty-' + box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
-                                                        {{ qtyValuesExcess[box] }}
+                                                        {{
+                                                            qtyValuesExcess[box]
+                                                        }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -984,10 +1077,14 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-ht-' + box"
+                                                        :key="
+                                                            'excess-ht-' + box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
-                                                        {{ htValuesExcess[box] }}
+                                                        {{
+                                                            htValuesExcess[box]
+                                                        }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -998,10 +1095,14 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-lt-' + box"
+                                                        :key="
+                                                            'excess-lt-' + box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
-                                                        {{ ltValuesExcess[box] }}
+                                                        {{
+                                                            ltValuesExcess[box]
+                                                        }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1012,10 +1113,17 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-weight-' + box"
+                                                        :key="
+                                                            'excess-weight-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
-                                                        {{ weightValuesExcess[box] }}
+                                                        {{
+                                                            weightValuesExcess[
+                                                                box
+                                                            ]
+                                                        }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1026,10 +1134,17 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-boxno-' + box"
+                                                        :key="
+                                                            'excess-boxno-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
-                                                        {{ boxNoValuesExcess[box] }}
+                                                        {{
+                                                            boxNoValuesExcess[
+                                                                box
+                                                            ]
+                                                        }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1040,7 +1155,10 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-coating-' + box"
+                                                        :key="
+                                                            'excess-coating-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
                                                         {{ mpcs.coating }}
@@ -1054,10 +1172,15 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-magnet-' + box"
+                                                        :key="
+                                                            'excess-magnet-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
-                                                        {{ mpcs.magnetPreparedBy }}
+                                                        {{
+                                                            mpcs.magnetPreparedBy
+                                                        }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1068,7 +1191,10 @@
                                                     </td>
                                                     <td
                                                         v-for="box in visibleExcessBoxes"
-                                                        :key="'excess-boxprep-' + box"
+                                                        :key="
+                                                            'excess-boxprep-' +
+                                                            box
+                                                        "
                                                         class="px-2 py-1 text-center border border-gray-300"
                                                     >
                                                         {{ mpcs.boxPreparedBy }}
@@ -1196,8 +1322,12 @@
                                             <div
                                                 class="p-5 border border-gray-200 shadow-lg bg-gradient-to-br from-gray-50 to-white rounded-xl"
                                             >
-                                                <div class="flex items-start space-x-4">
-                                                    <div class="flex-shrink-0 mt-1">
+                                                <div
+                                                    class="flex items-start space-x-4"
+                                                >
+                                                    <div
+                                                        class="flex-shrink-0 mt-1"
+                                                    >
                                                         <div
                                                             class="flex items-center justify-center w-8 h-8 rounded-lg shadow-md bg-gradient-to-br from-cyan-500 to-teal-500"
                                                         >
@@ -1214,19 +1344,24 @@
                                                             </svg>
                                                         </div>
                                                     </div>
-                                                    <div class="flex-1 space-y-2">
+                                                    <div
+                                                        class="flex-1 space-y-2"
+                                                    >
                                                         <p
                                                             class="text-sm leading-relaxed text-gray-700"
                                                         >
-                                                            No heat treatment data has
-                                                            been loaded yet. Click
+                                                            No heat treatment
+                                                            data has been loaded
+                                                            yet. Click
                                                             <span
                                                                 class="p-1 font-bold text-white rounded-lg bg-cyan-600"
                                                                 >Show Data</span
                                                             >
                                                             button.
                                                         </p>
-                                                        <div class="space-y-1.5">
+                                                        <div
+                                                            class="space-y-1.5"
+                                                        >
                                                             <div
                                                                 class="flex items-center space-x-2 text-sm text-gray-600"
                                                             >
@@ -1276,10 +1411,12 @@
                                                         <p
                                                             class="pt-1 text-xs italic text-gray-500"
                                                         >
-                                                            Once loaded, the table will
-                                                            display all relevant
-                                                            information including main
-                                                            and excess boxes.
+                                                            Once loaded, the
+                                                            table will display
+                                                            all relevant
+                                                            information
+                                                            including main and
+                                                            excess boxes.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1403,11 +1540,14 @@
                                     >
                                         Note: Only
                                         <span class="font-semibold"
-                                            >Cycle Pattern, Current Pattern, Date
-                                            Finish, Time Finish, Remarks</span
+                                            >Cycle Pattern, Current Pattern,
+                                            Date Finish, Time Finish,
+                                            Remarks</span
                                         >
                                         and
-                                        <span class="font-semibold">Graph Uploads</span>
+                                        <span class="font-semibold"
+                                            >Graph Uploads</span
+                                        >
                                         can be overwritten.
                                     </p>
 
@@ -1415,8 +1555,8 @@
                                         class="px-3 py-1 pl-2 mb-3 text-xs font-medium text-yellow-800 border-l-2 border-yellow-500"
                                         v-if="!isEditingExpired"
                                     >
-                                        ⚠ Time Start and Date Start can only be edited
-                                        within 24 hours.
+                                        ⚠ Time Start and Date Start can only be
+                                        edited within 24 hours.
                                     </p>
 
                                     <p
@@ -1469,7 +1609,9 @@
                                         <div>
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
-                                                >Cycle No<span class="text-red-500">
+                                                >Cycle No<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 ></label
                                             >
@@ -1487,7 +1629,9 @@
                                         <div>
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
-                                                >Pattern No<span class="text-red-500">
+                                                >Pattern No<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 ></label
                                             >
@@ -1515,7 +1659,9 @@
                                                 class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                             >
                                                 <option value="">Select</option>
-                                                <option value="PASS">PASS</option>
+                                                <option value="PASS">
+                                                    PASS
+                                                </option>
                                                 <option value="ABNORMAL">
                                                     ABNORMAL
                                                 </option>
@@ -1532,7 +1678,9 @@
                                                 class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                             >
                                                 <option value="">Select</option>
-                                                <option value="PASS">PASS</option>
+                                                <option value="PASS">
+                                                    PASS
+                                                </option>
                                                 <option value="ABNORMAL">
                                                     ABNORMAL
                                                 </option>
@@ -1544,14 +1692,17 @@
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
                                             >
-                                                Date Start<span class="text-red-500">
+                                                Date Start<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 >
                                             </label>
                                             <input
                                                 v-model="hti.dateStart"
                                                 :disabled="
-                                                    overwriteMode && isEditingExpired
+                                                    overwriteMode &&
+                                                    isEditingExpired
                                                 "
                                                 type="date"
                                                 class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
@@ -1562,14 +1713,17 @@
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
                                             >
-                                                Time Start<span class="text-red-500">
+                                                Time Start<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 >
                                             </label>
                                             <input
                                                 v-model="hti.timeStart"
                                                 :disabled="
-                                                    overwriteMode && isEditingExpired
+                                                    overwriteMode &&
+                                                    isEditingExpired
                                                 "
                                                 type="time"
                                                 class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
@@ -1579,7 +1733,9 @@
                                         <div>
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
-                                                >Loader<span class="text-red-500">
+                                                >Loader<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 ></label
                                             >
@@ -1597,7 +1753,9 @@
                                         <div>
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
-                                                >Partial No.<span class="text-red-500">
+                                                >Partial No.<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 ></label
                                             >
@@ -1672,7 +1830,9 @@
                                         <div>
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
-                                                >Box Cover<span class="text-red-500">
+                                                >Box Cover<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 ></label
                                             >
@@ -1710,7 +1870,9 @@
                                         <div>
                                             <label
                                                 class="block mb-1 text-xs font-medium text-gray-700"
-                                                >Encoded By<span class="text-red-500">
+                                                >Encoded By<span
+                                                    class="text-red-500"
+                                                >
                                                     *</span
                                                 ></label
                                             >
@@ -1807,17 +1969,19 @@
                                 </h2>
 
                                 <!-- Message -->
-                                <p class="text-sm text-gray-600 whitespace-nowrap">
-                                    Heat Treatment Information data and graph already
-                                    exists for this Mass Production.
+                                <p
+                                    class="text-sm text-gray-600 whitespace-nowrap"
+                                >
+                                    Heat Treatment Information data and graph
+                                    already exists for this Mass Production.
                                 </p>
 
                                 <!-- Extra note if activate2ndGBDP -->
                                 <div v-if="activate2ndGBDP" class="space-y-2">
                                     <p class="text-sm font-medium text-red-700">
-                                        The selected model is subjected to 1st and 2nd
-                                        GBDP format. Please click the orange button
-                                        called
+                                        The selected model is subjected to 1st
+                                        and 2nd GBDP format. Please click the
+                                        orange button called
                                         <span class="font-bold text-orange-600"
                                             >APPLY 1ST 2ND GBDP</span
                                         >.
@@ -1837,7 +2001,9 @@
                                                 :key="layer"
                                                 class="flex items-center justify-center w-12 h-12 text-xs font-bold rounded-lg"
                                                 :class="
-                                                    completedLayers.includes(layer)
+                                                    completedLayers.includes(
+                                                        layer,
+                                                    )
                                                         ? 'bg-green-500 text-white shadow-md'
                                                         : 'bg-gray-300 text-gray-700'
                                                 "
@@ -1851,13 +2017,16 @@
                                         <p
                                             class="mt-3 text-xs text-center text-gray-500"
                                         >
-                                            Each box represents a process layer (1 –
-                                            9.5).
-                                            <span class="font-semibold text-green-600"
+                                            Each box represents a process layer
+                                            (1 – 9.5).
+                                            <span
+                                                class="font-semibold text-green-600"
                                                 >Green</span
                                             >
-                                            indicates the layer is complete, while
-                                            <span class="font-semibold text-gray-600"
+                                            indicates the layer is complete,
+                                            while
+                                            <span
+                                                class="font-semibold text-gray-600"
                                                 >gray</span
                                             >
                                             indicates it is pending.
@@ -1879,7 +2048,9 @@
                             v-if="!heatTreatmentInformationDetected"
                             class="w-[30%] px-2 py-8 mx-auto ml-10 mr-10 space-y-8 bg-white border border-gray-300 shadow-xl rounded-2xl md:px-8"
                         >
-                            <h2 class="pb-1 font-bold text-gray-800 border-b text-md">
+                            <h2
+                                class="pb-1 font-bold text-gray-800 border-b text-md"
+                            >
                                 Heat Treatment Graph Upload
                                 <span class="text-xs text-gray-300"
                                     >(PNG, JPG and JPEG)</span
@@ -1927,7 +2098,9 @@
                             class="w-[20%] mr-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-cyan-500/40 shadow-[0_20px_50px_rgba(6,182,212,0.3),0_4px_15px_rgba(0,0,0,0.5)] rounded-3xl px-6 py-10 space-y-10 flex flex-col items-center ring-2 ring-cyan-400/20 backdrop-blur-xl"
                         >
                             <!-- Header: Cogwheel + Label -->
-                            <div class="flex items-center justify-center space-x-4">
+                            <div
+                                class="flex items-center justify-center space-x-4"
+                            >
                                 <!-- Glowing spinning cogwheel -->
                                 <div class="relative w-14 h-14">
                                     <div
@@ -2197,7 +2370,9 @@
                                                 clip-rule="evenodd"
                                             />
                                         </svg>
-                                        <span class="drop-shadow-md">APPLY 1ST 2ND GBDP</span>
+                                        <span class="drop-shadow-md"
+                                            >APPLY 1ST 2ND GBDP</span
+                                        >
                                     </span>
                                 </button>
 
@@ -2256,7 +2431,9 @@
                                                 clip-rule="evenodd"
                                             />
                                         </svg>
-                                        <span class="drop-shadow-md">CLEAR ALL</span>
+                                        <span class="drop-shadow-md"
+                                            >CLEAR ALL</span
+                                        >
                                     </span>
                                 </button>
                             </div>
@@ -2290,8 +2467,8 @@
                                 </svg>
                                 <p class="text-sm font-medium">
                                     Note: When finished, click the
-                                    <span class="font-bold">(×)</span> button at the
-                                    top-right corner to close this panel.
+                                    <span class="font-bold">(×)</span> button at
+                                    the top-right corner to close this panel.
                                 </p>
                             </div>
                             <!-- Close Button -->
@@ -2347,7 +2524,9 @@
                                                         class="px-2 py-1 border border-gray-300"
                                                     >
                                                         <input
-                                                            :value="htValues[box]"
+                                                            :value="
+                                                                htValues[box]
+                                                            "
                                                             @input="
                                                                 htValues[box] =
                                                                     $event.target.value.toUpperCase()
@@ -2389,7 +2568,9 @@
                                                         class="px-2 py-1 border border-gray-300"
                                                     >
                                                         <input
-                                                            :value="ltValues[box]"
+                                                            :value="
+                                                                ltValues[box]
+                                                            "
                                                             @input="
                                                                 ltValues[box] =
                                                                     $event.target.value.toUpperCase()
@@ -2434,9 +2615,15 @@
                                                         class="px-2 py-1 border border-gray-300"
                                                     >
                                                         <input
-                                                            :value="htValuesExcess[box]"
+                                                            :value="
+                                                                htValuesExcess[
+                                                                    box
+                                                                ]
+                                                            "
                                                             @input="
-                                                                htValuesExcess[box] =
+                                                                htValuesExcess[
+                                                                    box
+                                                                ] =
                                                                     $event.target.value.toUpperCase()
                                                             "
                                                             type="text"
@@ -2476,9 +2663,15 @@
                                                         class="px-2 py-1 border border-gray-300"
                                                     >
                                                         <input
-                                                            :value="ltValuesExcess[box]"
+                                                            :value="
+                                                                ltValuesExcess[
+                                                                    box
+                                                                ]
+                                                            "
                                                             @input="
-                                                                ltValuesExcess[box] =
+                                                                ltValuesExcess[
+                                                                    box
+                                                                ] =
                                                                     $event.target.value.toUpperCase()
                                                             "
                                                             type="text"
@@ -2494,7 +2687,10 @@
                         </div>
                     </Modal>
 
-                    <Modal :show="showModalCreate" @close="showModalCreate = false">
+                    <Modal
+                        :show="showModalCreate"
+                        @close="showModalCreate = false"
+                    >
                         <div
                             class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12"
                         >
@@ -2522,12 +2718,14 @@
 
                             <p class="mb-6 text-lg font-bold text-gray-800">
                                 Please review your inputs
-                                <span class="text-red-700">carefully</span> before
-                                submitting.
+                                <span class="text-red-700">carefully</span>
+                                before submitting.
                             </p>
 
                             <div
-                                v-if="!mpcs.moreThanTenBoxes && !mpcs.breakLotMode"
+                                v-if="
+                                    !mpcs.moreThanTenBoxes && !mpcs.breakLotMode
+                                "
                                 class="w-full px-5"
                             >
                                 <table
@@ -2904,7 +3102,9 @@
                                                 ></th>
                                                 <th
                                                     v-for="box in visibleExcessBoxes"
-                                                    :key="'excess-header-' + box"
+                                                    :key="
+                                                        'excess-header-' + box
+                                                    "
                                                     class="px-2 py-1 font-semibold text-center border border-gray-300"
                                                 >
                                                     {{ box }}
@@ -2934,7 +3134,10 @@
                                                 </td>
                                                 <td
                                                     v-for="box in visibleExcessBoxes"
-                                                    :key="'excess-coatingMC-' + box"
+                                                    :key="
+                                                        'excess-coatingMC-' +
+                                                        box
+                                                    "
                                                     class="px-2 py-1 text-center border border-gray-300"
                                                 >
                                                     {{ mpcs.coatingMCNo }}
@@ -3004,10 +3207,14 @@
                                                 </td>
                                                 <td
                                                     v-for="box in visibleExcessBoxes"
-                                                    :key="'excess-weight-' + box"
+                                                    :key="
+                                                        'excess-weight-' + box
+                                                    "
                                                     class="px-2 py-1 text-center border border-gray-300"
                                                 >
-                                                    {{ weightValuesExcess[box] }}
+                                                    {{
+                                                        weightValuesExcess[box]
+                                                    }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -3032,7 +3239,9 @@
                                                 </td>
                                                 <td
                                                     v-for="box in visibleExcessBoxes"
-                                                    :key="'excess-coating-' + box"
+                                                    :key="
+                                                        'excess-coating-' + box
+                                                    "
                                                     class="px-2 py-1 text-center border border-gray-300"
                                                 >
                                                     {{ mpcs.coating }}
@@ -3046,7 +3255,9 @@
                                                 </td>
                                                 <td
                                                     v-for="box in visibleExcessBoxes"
-                                                    :key="'excess-magnet-' + box"
+                                                    :key="
+                                                        'excess-magnet-' + box
+                                                    "
                                                     class="px-2 py-1 text-center border border-gray-300"
                                                 >
                                                     {{ mpcs.magnetPreparedBy }}
@@ -3060,7 +3271,9 @@
                                                 </td>
                                                 <td
                                                     v-for="box in visibleExcessBoxes"
-                                                    :key="'excess-boxprep-' + box"
+                                                    :key="
+                                                        'excess-boxprep-' + box
+                                                    "
                                                     class="px-2 py-1 text-center border border-gray-300"
                                                 >
                                                     {{ mpcs.boxPreparedBy }}
@@ -3075,7 +3288,9 @@
                                 v-if="!heatTreatmentInformationDetected"
                                 class="p-4 my-2 border border-gray-200"
                             >
-                                <div class="flex flex-row text-xs whitespace-nowrap">
+                                <div
+                                    class="flex flex-row text-xs whitespace-nowrap"
+                                >
                                     <div
                                         class="flex flex-col items-end gap-1 font-semibold"
                                     >
@@ -3087,12 +3302,20 @@
                                         <label>Current Pattern: </label>
                                     </div>
                                     <div class="flex flex-col gap-1 ml-5">
-                                        <span>{{ mpcs.selectedMassProd || "NA" }}</span>
-                                        <span>{{ initialFurnaceData || "NA" }}</span>
+                                        <span>{{
+                                            mpcs.selectedMassProd || "NA"
+                                        }}</span>
+                                        <span>{{
+                                            initialFurnaceData || "NA"
+                                        }}</span>
                                         <span>{{ hti.cycleNo || "NA" }}</span>
                                         <span>{{ hti.patternNo || "NA" }}</span>
-                                        <span>{{ hti.cyclePattern || "NA" }}</span>
-                                        <span>{{ hti.currentPattern || "NA" }}</span>
+                                        <span>{{
+                                            hti.cyclePattern || "NA"
+                                        }}</span>
+                                        <span>{{
+                                            hti.currentPattern || "NA"
+                                        }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
@@ -3114,8 +3337,12 @@
                                         <label>Unloader: </label>
                                     </div>
                                     <div class="flex flex-col gap-1 ml-5">
-                                        <span>{{ hti.dateFinish || "NA" }}</span>
-                                        <span>{{ hti.timeFinish || "NA" }}</span>
+                                        <span>{{
+                                            hti.dateFinish || "NA"
+                                        }}</span>
+                                        <span>{{
+                                            hti.timeFinish || "NA"
+                                        }}</span>
                                         <span>{{ hti.unloader || "NA" }}</span>
                                     </div>
                                     <div
@@ -3127,9 +3354,13 @@
                                         <label>Encoded By: </label>
                                     </div>
                                     <div class="flex flex-col gap-1 ml-5">
-                                        <span>{{ hti.boxCondition || "NA" }}</span>
+                                        <span>{{
+                                            hti.boxCondition || "NA"
+                                        }}</span>
                                         <span>{{ hti.boxCover || "NA" }}</span>
-                                        <span>{{ hti.boxArrangement || "NA" }}</span>
+                                        <span>{{
+                                            hti.boxArrangement || "NA"
+                                        }}</span>
                                         <span>{{ hti.encodedBy || "NA" }}</span>
                                     </div>
                                 </div>
@@ -3143,7 +3374,9 @@
                                 >
                                     <p>Cycle Graph File selected:</p>
                                     <span class="font-semibold">{{
-                                        (cycleGraphFile && cycleGraphFile.name) || "NA"
+                                        (cycleGraphFile &&
+                                            cycleGraphFile.name) ||
+                                        "NA"
                                     }}</span>
                                     <img
                                         :src="cycleGraphPreview"
@@ -3157,7 +3390,8 @@
                                 >
                                     <p>Actual Graph File selected:</p>
                                     <span class="font-semibold">{{
-                                        (actualGraphFile && actualGraphFile.name) ||
+                                        (actualGraphFile &&
+                                            actualGraphFile.name) ||
                                         "NA"
                                     }}</span>
                                     <img
@@ -3168,8 +3402,13 @@
                                 </div>
                             </div>
 
-                            <div v-if="isInitialLotNotSaved" class="p-4 mt-5 bg-white border border-gray-300 rounded-lg">
-                                <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                            <div
+                                v-if="isInitialLotNotSaved"
+                                class="p-4 mt-5 bg-white border border-gray-300 rounded-lg"
+                            >
+                                <div
+                                    class="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                                >
                                     <svg
                                         class="w-5 h-5 text-yellow-500"
                                         fill="none"
@@ -3186,9 +3425,17 @@
 
                                     <p>Important</p>
                                 </div>
-                                <p class="mt-1 text-xs leading-relaxed text-gray-600">
-                                    If this layer is intended for <span class="font-semibold text-red-600">breaklots</span>, this submission will be recorded as the
-                                    <span class="font-semibold text-red-600">initial lot</span>. The first model and lot number assigned to this layer.
+                                <p
+                                    class="mt-1 text-xs leading-relaxed text-gray-600"
+                                >
+                                    If this layer is intended for
+                                    <span class="font-semibold text-red-600"
+                                        >breaklots</span
+                                    >, this submission will be recorded as the
+                                    <span class="font-semibold text-red-600"
+                                        >initial lot</span
+                                    >. The first model and lot number assigned
+                                    to this layer.
                                 </p>
                             </div>
 
@@ -3209,7 +3456,10 @@
                                             : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
                                     ]"
                                 >
-                                    <span v-if="!isSaving" class="flex items-center">
+                                    <span
+                                        v-if="!isSaving"
+                                        class="flex items-center"
+                                    >
                                         Proceed
                                         <img
                                             src="/photo/arrow_proceed.png"
@@ -3218,7 +3468,10 @@
                                         />
                                     </span>
 
-                                    <span v-else class="flex items-center gap-2">
+                                    <span
+                                        v-else
+                                        class="flex items-center gap-2"
+                                    >
                                         <svg
                                             class="w-4 h-4 animate-spin"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -3249,7 +3502,6 @@
                 </div>
             </div>
         </div>
-
     </Frontend>
 </template>
 
@@ -3357,9 +3609,8 @@ function useSessionStorage(key, state) {
     );
 }
 
-
 const isHeatTreatmentPageLoading = ref(true);
-const loadingStep = ref('');
+const loadingStep = ref("");
 const isLotListsLoading = ref(false);
 
 //Dev Controls ----------------- Allow Commands
@@ -3384,8 +3635,8 @@ const isClearLayerDataDisabled = ref(false);
 const isBreaklot = ref(false);
 //Dev Controls ----------------- Allow Commands
 
-const clearLayerDisabledCause = ref('');
-const currentInitialLot = ref('');
+const clearLayerDisabledCause = ref("");
+const currentInitialLot = ref("");
 const heatTreatmentInformationDetected = ref(false);
 
 const cycleGraphFile = ref(null);
@@ -3555,24 +3806,20 @@ const finalizeLabel = computed(() => {
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE
 
 const checkInitialLot = async () => {
-    try{
-
+    try {
         const payload = {
             mass_prod: mpcs.selectedMassProd,
             furnace: mpcs.selectedFurnace,
             layer: mpcs.selectedLayer,
         };
 
-        const check = await axios.get(
-            '/api/breaklot-initial-lots-ht/exists',
-            {
-                params: {
-                    mass_prod: payload.mass_prod,
-                    furnace: payload.furnace,
-                    layer: payload.layer,
-                }
-            }
-        );
+        const check = await axios.get("/api/breaklot-initial-lots-ht/exists", {
+            params: {
+                mass_prod: payload.mass_prod,
+                furnace: payload.furnace,
+                layer: payload.layer,
+            },
+        });
 
         if (!check.data.exists) {
             isInitialLotNotSaved.value = true;
@@ -3581,51 +3828,53 @@ const checkInitialLot = async () => {
             isInitialLotNotSaved.value = false;
             currentInitialLot.value = null;
         }
-
-    }catch(error){
-        console.error('Failed to check initial lot', error);
+    } catch (error) {
+        console.error("Failed to check initial lot", error);
         isInitialLotNotSaved.value = false;
     }
-}
+};
 
 const checkBreaklot = async () => {
-    try{
-        const response = await axios.get('/api/check-breaklot',{
+    try {
+        const response = await axios.get("/api/check-breaklot", {
             params: {
                 mass_prod: mpcs.selectedMassProd,
                 furnace: mpcs.selectedFurnace,
                 layer: mpcs.selectedLayer,
                 model: mpcs.selectedModel,
                 lot_no: mpcs.lotNo,
-            }
+            },
         });
         isBreaklot.value = response.data.is_breaklot;
         //isExisting.value = response.data.is_existing;
-        console.log('isBreaklot: ', isBreaklot.value);
+        console.log("isBreaklot: ", isBreaklot.value);
         //console.log('isExisting: ', isExisting.value);
-    }catch(error){
-        console.error('Failed to check breaklot status', error);
+    } catch (error) {
+        console.error("Failed to check breaklot status", error);
     }
-}
+};
 
 const checkEncodedData = async () => {
-    try{
-        const response = await axios.get('/api/check-encoded-data', {
+    try {
+        const response = await axios.get("/api/check-encoded-data", {
             params: {
                 mass_prod: mpcs.selectedMassProd,
                 furnace: mpcs.selectedFurnace,
                 layer: mpcs.selectedLayer,
-            }
+            },
         });
 
         isClearLayerDataDisabled.value = response.data.exists;
         clearLayerDisabledCause.value = response.data.source;
-        console.log('Clear Layer data disabled: ', isClearLayerDataDisabled.value);
-        console.log('Clear Layer data cause: ', clearLayerDisabledCause.value);
-    }catch(error){
-        console.error('Failed to check encoded data', error);
+        console.log(
+            "Clear Layer data disabled: ",
+            isClearLayerDataDisabled.value,
+        );
+        console.log("Clear Layer data cause: ", clearLayerDisabledCause.value);
+    } catch (error) {
+        console.error("Failed to check encoded data", error);
     }
-}
+};
 
 const getMassProdData = async () => {
     //Function for getting the current seleceted Massprod
@@ -4044,7 +4293,6 @@ const fetchAllLotNoData = async () => {
 
         const response = await axios.get("/api/initial-control-sheets/lot-all");
         lotNoLists.value = response.data;
-
     } catch (err) {
         console.error("Failed to fetch lot_no data:", err);
     } finally {
@@ -4654,10 +4902,10 @@ const hoursLeftDisplay = computed(() => {
 });
 
 const saveInitialLot = async () => {
-    console.log('[triggered saveInitialLot]');
+    console.log("[triggered saveInitialLot]");
 
     try {
-        const response = await axios.post('/api/breaklot-initial-lots-ht', {
+        const response = await axios.post("/api/breaklot-initial-lots-ht", {
             mass_prod: mpcs.selectedMassProd,
             furnace: mpcs.selectedFurnace,
             layer: mpcs.selectedLayer,
@@ -4665,10 +4913,12 @@ const saveInitialLot = async () => {
             initial_lot: mpcs.lotNo,
         });
 
-        console.log('Successfully saved data to initial lots:', response.data);
-
+        console.log("Successfully saved data to initial lots:", response.data);
     } catch (error) {
-        console.error('Failed to save initial lot data on double gbdp heat treatment', error);
+        console.error(
+            "Failed to save initial lot data on double gbdp heat treatment",
+            error,
+        );
     }
 };
 
@@ -5004,11 +5254,11 @@ const saveToDatabase = async () => {
             await uploadGraphs();
         }
         toast.success("Data saved successfully!");
-        if(!isBreaklot.value){
+        if (!isBreaklot.value) {
             await updateFormatType();
         }
 
-        if(isInitialLotNotSaved.value){
+        if (isInitialLotNotSaved.value) {
             await saveInitialLot();
         }
         changeData();
@@ -5033,7 +5283,6 @@ const saveToDatabase = async () => {
             "Failed to save data. Please try again.",
         );
     } finally {
-        isSaving.value = false;
         clearAllAfterSave();
         await getMassProdData();
         await fetchExistingLayers();
@@ -5043,6 +5292,7 @@ const saveToDatabase = async () => {
         await getGraphPatterns();
         await get1st2ndGBDPModels();
         await checkBreaklot();
+        isSaving.value = false;
     }
 };
 
@@ -5348,7 +5598,8 @@ const uploadGraphs = async () => {
     }
 };
 
-const second_heat_treatment = () => { //goback
+const second_heat_treatment = () => {
+    //goback
     Inertia.visit("/second_heat_treatment", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
@@ -5417,42 +5668,41 @@ useSessionStorage("hti", hti);
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
 onMounted(async () => {
-    isHeatTreatmentPageLoading.value = true
+    isHeatTreatmentPageLoading.value = true;
 
-    const isAuthenticated = await checkAuthentication()
+    const isAuthenticated = await checkAuthentication();
     if (!isAuthenticated) {
-        isHeatTreatmentPageLoading.value = false
-        return
+        isHeatTreatmentPageLoading.value = false;
+        return;
     }
 
     try {
-        loadingStep.value = 'Loading furnace lists...';
+        loadingStep.value = "Loading furnace lists...";
         await getFurnaceLists();
 
-        loadingStep.value = 'Loading mass production data...';
+        loadingStep.value = "Loading mass production data...";
         await getMassProdLists();
 
-        loadingStep.value = 'Fetching lot numbers...';
+        loadingStep.value = "Fetching lot numbers...";
         await fetchAllLotNoData();
 
-        loadingStep.value = 'Loading graph patterns...';
+        loadingStep.value = "Loading graph patterns...";
         await getGraphPatterns();
 
-        loadingStep.value = 'Loading GBDP models...';
+        loadingStep.value = "Loading GBDP models...";
         await get1st2ndGBDPModels();
 
-        loadingStep.value = 'Finalizing...';
+        loadingStep.value = "Finalizing...";
         checkExpiration();
 
         intervalId = setInterval(() => {
-            checkExpiration()
-        }, 300000)
-
+            checkExpiration();
+        }, 300000);
     } finally {
-        isHeatTreatmentPageLoading.value = false
-        loadingStep.value = '';
+        isHeatTreatmentPageLoading.value = false;
+        loadingStep.value = "";
     }
-})
+});
 
 onUnmounted(() => {
     clearInterval(intervalId);

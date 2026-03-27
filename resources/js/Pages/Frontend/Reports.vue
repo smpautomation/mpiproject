@@ -1908,19 +1908,15 @@
                                         </tr>
                                     </template>
 
-
-
-
-
-
-
                                     <template
                                         v-if="
                                             showTsiData &&
-                                            (
-                                                noteReasonForReject.includes('- N.G iHc') ||
-                                                noteReasonForReject.includes('- iHc Below Target+500 Oe')
-                                            )
+                                            (noteReasonForReject.includes(
+                                                '- N.G iHc',
+                                            ) ||
+                                                noteReasonForReject.includes(
+                                                    '- iHc Below Target+500 Oe',
+                                                ))
                                         "
                                     >
                                         <!-- TSI Data Row 1: HASI-2 Data -->
@@ -1991,7 +1987,7 @@
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
                                             >
-                                               <p>23000</p>
+                                                <p>23000</p>
                                             </td>
                                             <td
                                                 colspan="4"
@@ -2032,7 +2028,7 @@
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
                                             >
-                                               <p>23000</p>
+                                                <p>23000</p>
                                             </td>
                                             <td
                                                 colspan="4"
@@ -2062,7 +2058,10 @@
                                             </td>
                                         </tr>
                                         <div
-                                            v-if="!confirmResetTsi && preparedByButton"
+                                            v-if="
+                                                !confirmResetTsi &&
+                                                preparedByButton
+                                            "
                                             class="text-center"
                                         >
                                             <button
@@ -2074,7 +2073,10 @@
                                         </div>
 
                                         <div
-                                            v-else-if="confirmResetTsi && preparedByButton"
+                                            v-else-if="
+                                                confirmResetTsi &&
+                                                preparedByButton
+                                            "
                                             class="flex items-center justify-center gap-2 mt-1"
                                         >
                                             <span
@@ -2100,14 +2102,15 @@
                                         </div>
                                     </template>
 
-
                                     <template
                                         v-if="
                                             showTsiData_default &&
-                                            (
-                                                noteReasonForReject.includes('- N.G iHc') ||
-                                                noteReasonForReject.includes('- iHc Below Target+500 Oe')
-                                            )
+                                            (noteReasonForReject.includes(
+                                                '- N.G iHc',
+                                            ) ||
+                                                noteReasonForReject.includes(
+                                                    '- iHc Below Target+500 Oe',
+                                                ))
                                         "
                                     >
                                         <tr class="text-center">
@@ -2128,13 +2131,10 @@
                                         <tr class="text-center">
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white"
-                                            >
-                                            </td>
+                                            ></td>
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white whitespace-nowrap"
-                                            >
-
-                                            </td>
+                                            ></td>
                                             <td
                                                 colspan="4"
                                                 class="px-1 py-[2px] text-blue-600 border-4 border-white"
@@ -2151,11 +2151,8 @@
                                         </tr>
                                     </template>
 
-
                                     <template v-if="showCpkFrom_iHc">
-                                        <tr
-                                            class="bg-blue-300"
-                                        >
+                                        <tr class="bg-blue-300">
                                             <th
                                                 rowspan="2"
                                                 colspan="2"
@@ -2172,7 +2169,8 @@
                                                 colspan="2"
                                                 class="px-4 py-2 text-white border-4 border-white whitespace-nowrap"
                                             >
-                                                Cpk &#8805; {{ cpkStandardValue }}
+                                                Cpk &#8805;
+                                                {{ cpkStandardValue }}
                                             </th>
                                             <!-- &#8805; is greater than equal to symbol -->
                                             <th
@@ -2182,9 +2180,7 @@
                                                 Remarks
                                             </th>
                                         </tr>
-                                        <tr
-                                            class="text-center"
-                                        >
+                                        <tr class="text-center">
                                             <td
                                                 class="px-1 py-[2px] text-blue-600 border-4 text-center border-white"
                                             >
@@ -2203,7 +2199,9 @@
                                             >
                                                 <input
                                                     type="number"
-                                                    v-model="reportCpkFrom_iHc_Cpk"
+                                                    v-model="
+                                                        reportCpkFrom_iHc_Cpk
+                                                    "
                                                     name="stdDev"
                                                     class="w-[5.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
                                                 />
@@ -2254,7 +2252,9 @@
                                             >
                                                 <input
                                                     type="number"
-                                                    v-model="reportCpkFrom_br_StdDev"
+                                                    v-model="
+                                                        reportCpkFrom_br_StdDev
+                                                    "
                                                     name="stdDev"
                                                     class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
                                                 />
@@ -2264,7 +2264,9 @@
                                             >
                                                 <input
                                                     type="number"
-                                                    v-model="reportCpkFrom_br_Cp"
+                                                    v-model="
+                                                        reportCpkFrom_br_Cp
+                                                    "
                                                     name="stdDev"
                                                     class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
                                                 />
@@ -2274,7 +2276,9 @@
                                             >
                                                 <input
                                                     type="number"
-                                                    v-model="reportCpkFrom_br_Cpk"
+                                                    v-model="
+                                                        reportCpkFrom_br_Cpk
+                                                    "
                                                     name="stdDev"
                                                     class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
                                                 />
@@ -2287,7 +2291,6 @@
                                             </td>
                                         </tr>
                                     </template>
-
 
                                     <template
                                         v-if="
@@ -3249,14 +3252,18 @@
                                     }"
                                 >
                                     <span
-                                        :class=" preparedByPerson_firstNameFontSize"
+                                        :class="
+                                            preparedByPerson_firstNameFontSize
+                                        "
                                         >{{ preparedByPerson_firstName }}</span
                                     >
                                     <span class="my-[6.5px]">{{
                                         reportPreparedByDate
                                     }}</span>
                                     <span
-                                        :class=" preparedByPerson_lastNameFontSize"
+                                        :class="
+                                            preparedByPerson_lastNameFontSize
+                                        "
                                         >{{ preparedByPerson_lastName }}</span
                                     >
                                 </span>
@@ -3649,23 +3656,34 @@
                             class="flex flex-row justify-center mt-5 space-x-4"
                         >
                             <div
-                            class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                                class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
                             >
-                            <img
-                                v-if="currentSerialSelected"
-                                :src="`/charts/chart_${currentSerialSelected}.png`"
-                                alt="Chart"
-                                class="object-contain w-full h-full"
-                                style="transform: scale(1); transform-origin: top left;"
-                                @error="event => {
-                                if (!event.target.dataset.attempted) {
-                                    event.target.dataset.attempted = true;
-                                    event.target.src = `/charts/chart_${currentSerialSelected}.jpg`;
-                                } else if (event.target.src.endsWith('.jpg')) {
-                                    event.target.src = `/charts/chart_${currentSerialSelected}.jpeg`;
-                                }
-                                }"
-                            />
+                                <img
+                                    v-if="currentSerialSelected"
+                                    :src="`/charts/chart_${currentSerialSelected}.png`"
+                                    alt="Chart"
+                                    class="object-contain w-full h-full"
+                                    style="
+                                        transform: scale(1);
+                                        transform-origin: top left;
+                                    "
+                                    @error="
+                                        (event) => {
+                                            if (
+                                                !event.target.dataset.attempted
+                                            ) {
+                                                event.target.dataset.attempted = true;
+                                                event.target.src = `/charts/chart_${currentSerialSelected}.jpg`;
+                                            } else if (
+                                                event.target.src.endsWith(
+                                                    '.jpg',
+                                                )
+                                            ) {
+                                                event.target.src = `/charts/chart_${currentSerialSelected}.jpeg`;
+                                            }
+                                        }
+                                    "
+                                />
                             </div>
                             <!-- Side Content -->
                             <div
@@ -3723,7 +3741,11 @@
                             <div>
                                 <p class="text-center">PROPERTY DATA</p>
                             </div>
-                            <div class="mb-4 text-center"><span class="text-xs text-gray-400">( {{ propD_tpmData.length }} rows )</span></div>
+                            <div class="mb-4 text-center">
+                                <span class="text-xs text-gray-400"
+                                    >( {{ propD_tpmData.length }} rows )</span
+                                >
+                            </div>
                             <div class="flex flex-row justify-center">
                                 <p class="mr-10">
                                     Mias. Employee:
@@ -4428,7 +4450,9 @@
                                             </p>
                                             <p class="whitespace-nowrap">
                                                 <span
-                                                    :class=" adjustColor_rejectInstructions"
+                                                    :class="
+                                                        adjustColor_rejectInstructions
+                                                    "
                                                 >
                                                     {{ rejectInstruction }}
                                                 </span>
@@ -4447,7 +4471,9 @@
                                                     class="text-xs font-semibold"
                                                 >
                                                     <span
-                                                        :class=" adjustColor_rejectiHc"
+                                                        :class="
+                                                            adjustColor_rejectiHc
+                                                        "
                                                         >{{
                                                             rejectiHcRemarks
                                                         }}</span
@@ -4455,7 +4481,9 @@
                                                 </p>
                                                 <p class="text-sm font-bold">
                                                     <span
-                                                        :class=" adjustColor_iHcValue"
+                                                        :class="
+                                                            adjustColor_iHcValue
+                                                        "
                                                         >{{
                                                             getHighestSampleVariance
                                                         }}</span
@@ -5225,7 +5253,6 @@ const showBHData_default = ref(false);
 const showROB = ref(false);
 const showTsiData = ref(false);
 const showTsiData_default = ref(false);
-
 
 const isLoading = ref(true);
 
@@ -6144,7 +6171,7 @@ const resetReportTsiData = async () => {
     reportTsi_samples.value = [];
 
     await saveReport();
-}
+};
 
 watchEffect(() => {
     const data = reportCoatingAmounts.value.filter(
@@ -6471,14 +6498,12 @@ watch(
 
 //For CPK From BR models
 watch(
-    [
-        reportCpkFrom_br_Cpk,
-        reportCpkFrom_br_remarks,
-        showCpkFrom_br,
-    ],
+    [reportCpkFrom_br_Cpk, reportCpkFrom_br_remarks, showCpkFrom_br],
     () => {
-
-        if (showCpkFrom_br.value === true && reportCpkFrom_br_Cpk.value !== null) {
+        if (
+            showCpkFrom_br.value === true &&
+            reportCpkFrom_br_Cpk.value !== null
+        ) {
             if (reportCpkFrom_br_Cpk.value < 1.0) {
                 //console.log('reportCpkFrom_br_Cpk is below 1.00 — setting NG/REJECT');
                 reportCpkFrom_br_remarks.value = "NG";
@@ -6717,7 +6742,9 @@ const checkSpecialJudgement = async () => {
     const model = jhCurveActualModel.value;
 
     const hasNGihc = noteReasonForReject.value.includes("- N.G iHc");
-    const hasIhcBelowTarget = noteReasonForReject.value.includes("- iHc Below Target+500 Oe");
+    const hasIhcBelowTarget = noteReasonForReject.value.includes(
+        "- iHc Below Target+500 Oe",
+    );
     isTTM_model.value = jhCurveActualModel.value.includes("TTM");
 
     // BH SEG Data
@@ -6738,7 +6765,7 @@ const checkSpecialJudgement = async () => {
         //console.log("[GX] GX enabled");
     }
 
-    if (hasIhcBelowTarget || hasNGihc){
+    if (hasIhcBelowTarget || hasNGihc) {
         //TSI Data
         if (
             specialModelsForTsiFormat.value.includes(model) &&
@@ -6761,7 +6788,6 @@ const checkSpecialJudgement = async () => {
     // === Logic Blocks ===
     //console.log('--- Logic Evaluation Start ---');
     console.log("Model:", model);
-
 
     // VT Data
     if (
@@ -6850,15 +6876,14 @@ const getControlSheetData = async () => {
                     layer: selectedLayer.value,
                     lotno: jhCurveLotNo.value,
                     model: jhCurveActualModel.value,
-                }
-            }
+                },
+            },
         );
 
         reportTotalQuantity.value = response.data.total_qty ?? 0;
 
-        console.log('Matched Key:', response.data.matched_key);
-        console.log('reportTotalQuantity:', reportTotalQuantity.value);
-
+        console.log("Matched Key:", response.data.matched_key);
+        console.log("reportTotalQuantity:", reportTotalQuantity.value);
     } catch (error) {
         console.log("Failed to get response Control Sheet Data: ", error);
 
@@ -8342,8 +8367,12 @@ const showReportData = async () => {
         //console.log("reportVT_remarks:", reportVT_remarks.value);
 
         reportTsi_samplesQty.value = tsi.sample_qty ?? 0;
-        reportTsi_GxResults.value = Array.isArray(tsi.gx_results) ? tsi.gx_results : [];
-        reportTsi_GyResults.value = Array.isArray(tsi.gy_results) ? tsi.gy_results : [];
+        reportTsi_GxResults.value = Array.isArray(tsi.gx_results)
+            ? tsi.gx_results
+            : [];
+        reportTsi_GyResults.value = Array.isArray(tsi.gy_results)
+            ? tsi.gy_results
+            : [];
         reportTsi_samples.value = Array.isArray(tsi.samples) ? tsi.samples : [];
 
         reportCpkFrom_iHc_StdDev.value = iHc_cpk.std_dev || "";
@@ -8790,11 +8819,11 @@ const undoStamp = async () => {
         );
 
         showModalUndoStamp.value = false;
-        if(currentUndoType.value == "prepared"){
+        if (currentUndoType.value == "prepared") {
             showPreparedByDefault.value = true;
             checkedByButton.value = false;
             showCheckedByDefault.value = true;
-        }else if(currentUndoType.value == "approved"){
+        } else if (currentUndoType.value == "approved") {
             showApprovedByDefault.value = true;
         }
         reportReset();
