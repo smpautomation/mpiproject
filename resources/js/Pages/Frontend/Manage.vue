@@ -35,7 +35,8 @@
                         </svg>
 
                         <p class="text-sm font-medium text-red-700">
-                            Mixed lot detected. Please review the uploaded files.
+                            Mixed lot detected. Please review the uploaded
+                            files.
                         </p>
                     </div>
 
@@ -733,7 +734,7 @@
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
                     <div
-                        class="w-[600px] h-[520px] bg-white rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                        class="w-[600px] h-[500px] bg-white rounded-xl flex items-center pr-10 pl-5 border-2 border-blue-900 justify-center"
                     >
                         <canvas
                             ref="myChartCanvas"
@@ -1448,7 +1449,9 @@
                                     </p>
                                     <p class="whitespace-nowrap">
                                         <span
-                                            :class=" adjustColor_rejectInstructions"
+                                            :class="
+                                                adjustColor_rejectInstructions
+                                            "
                                         >
                                             {{ rejectInstruction }}
                                         </span>
@@ -1833,17 +1836,16 @@ const checkAuthentication = async () => {
 // Register all Chart.js components using registerables
 Chart.register(...registerables);
 Chart.register({
-    id: 'whiteBackground',
+    id: "whiteBackground",
     beforeDraw: (chart) => {
         const ctx = chart.ctx;
         ctx.save();
-        ctx.globalCompositeOperation = 'destination-over'; // draw behind chart
-        ctx.fillStyle = '#ffffff'; // white background
+        ctx.globalCompositeOperation = "destination-over"; // draw behind chart
+        ctx.fillStyle = "#ffffff"; // white background
         ctx.fillRect(0, 0, chart.width, chart.height);
         ctx.restore();
-    }
+    },
 });
-
 
 const userManageLogging = async (logEvent) => {
     try {
@@ -2039,9 +2041,8 @@ const getFurnaceLists = async () => {
         const furnaceList = response.data;
 
         furnace_names.value = furnaceList
-            .map(item => item.furnace_name)
+            .map((item) => item.furnace_name)
             .sort((a, b) => b.localeCompare(a)); // descending
-
     } catch (error) {
         console.error("Error fetching mass prod lists", error);
         toast.error("Failed to get the furnace lists api error");
@@ -2990,23 +2991,27 @@ const saveToDatabase = async () => {
     layerTableRowLoading.value = true;
     // Lifted here for pre-validation
     const dataKeysValue = [
-        2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 27, 30, 33, 36,
-        39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 68, 71, 74, 76, 78,
-        81, 83, 86, 88, 91, 93, 96,
+        2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 27, 30, 33, 36, 39, 42, 45,
+        48, 51, 54, 57, 60, 63, 66, 68, 71, 74, 76, 78, 81, 83, 86, 88, 91, 93,
+        96,
     ];
     let baseLotCombo = null;
 
     for (const file of fileData.value) {
         const content = await file.text(); // simple, async read
         const parsedData = parseFileContent(content);
-        const rowCellTemp = dataKeysValue.map(i => parsedData[`data${i}`]).filter(Boolean);
+        const rowCellTemp = dataKeysValue
+            .map((i) => parsedData[`data${i}`])
+            .filter(Boolean);
 
         const currentLotCombo = `${rowCellTemp[4]}|${rowCellTemp[5]}|${rowCellTemp[6]}`;
 
         if (!baseLotCombo) {
             baseLotCombo = currentLotCombo; // first file sets standard
         } else if (baseLotCombo !== currentLotCombo) {
-            toast.error('Mixed lot detected. Please review the uploaded files.');
+            toast.error(
+                "Mixed lot detected. Please review the uploaded files.",
+            );
             showMixMatchError.value = true;
             return false; // stop everything before any save
         }
@@ -4048,7 +4053,9 @@ const renderChart = () => {
                 // Export JPEG directly (chart already has white background)
                 const imageData = canvas.toDataURL("image/jpeg", 0.5);
 
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+                const csrfToken = document.querySelector(
+                    'meta[name="csrf-token"]',
+                )?.content;
 
                 fetch("/upload-chart", {
                     method: "POST",
@@ -4061,11 +4068,11 @@ const renderChart = () => {
                         filename: `chart_${serialNo.value}.jpg`,
                     }),
                 })
-                .then((response) => response.json())
-                .then((data) => {
-                    // Chart image saved successfully
-                })
-                .catch((err) => console.error("Chart upload failed:", err));
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Chart image saved successfully
+                    })
+                    .catch((err) => console.error("Chart upload failed:", err));
             }, 1000);
         } catch (error) {
             console.error("Error initializing Chart.js:", error);
