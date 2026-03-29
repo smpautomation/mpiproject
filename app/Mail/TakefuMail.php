@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use App\Services\SmpEmailExportService;
+use Illuminate\Validation\ValidationException;
 use App\Models\MassProduction;
 
 class TakefuMail extends Mailable
@@ -139,11 +140,13 @@ class TakefuMail extends Mailable
             if ($totalSize > $maxSize) {
                 Log::warning("Attachment size exceeded: {$totalSize} bytes");
 
-                throw new \RuntimeException(
-                    'Attachments exceed 13 MB limit. Please use manual email sending and send attachments in appropriate portions.'
-                );
+                // throw a ValidationException so your API can return 422 with message
+                throw ValidationException::withMessages([
+                    'attachments' => [
+                        'Attachments exceed 13 MB limit. Please split files and send using Options → Send Email Manual.'
+                    ]
+                ]);
             }
-
             // -----------------------------
             // ATTACHMENT PHASE
             // -----------------------------
