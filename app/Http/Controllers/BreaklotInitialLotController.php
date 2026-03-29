@@ -90,6 +90,7 @@ class BreaklotInitialLotController extends Controller
         return response()->json([
             'exists'       => (bool) $row,
             'initial_lot'  => $row?->initial_lot, // null if not found
+            'initial_model' => $row?->initial_model,
         ]);
     }
 
@@ -151,6 +152,4 @@ class BreaklotInitialLotController extends Controller
             'sets'   => $sets,
         ]);
     }
-
-
 }

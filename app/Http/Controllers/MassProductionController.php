@@ -17,6 +17,7 @@ use App\Models\BreaklotInitialLot;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotSecondCoating;
 use App\Models\BreaklotFilmpasting;
+use App\Models\BreaklotSecondHeatTreatment;
 use App\Models\ExcessLayers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -1073,6 +1074,14 @@ class MassProductionController extends Controller
                 ->where('layer', $layer_no)
                 ->first();
 
+            $secondHeatTreatmentCompleted = false;
+            if ($layer_type === '1st and 2nd Gbdp') {
+                $secondHeatTreatmentCompleted = BreaklotSecondHeatTreatment::where('furnace', $furnace)
+                    ->where('mass_prod', $massprod)
+                    ->where('layer', $layer_no)
+                    ->exists();
+            }
+
             if ($mainLot) {
                 $layers[] = [
                     'layer_no' => $layer_no,
@@ -1081,6 +1090,7 @@ class MassProductionController extends Controller
                     'model' => $mainLot->initial_model,
                     'lot_no' => $mainLot->initial_lot,
                     'heat_treatment_completed' => !empty($layer_json),
+                    'second_heat_treatment_completed' => $secondHeatTreatmentCompleted,
                     'coating_completed' => true,
                     'mpi_completed' => TPMDataCategory::where('actual_model', $mainLot->initial_model)
                         ->where('jhcurve_lotno', $mainLot->initial_lot)
@@ -1105,6 +1115,7 @@ class MassProductionController extends Controller
                         'model' => $lot->model,
                         'lot_no' => $lot->lot_no,
                         'heat_treatment_completed' => !empty($layer_json),
+                        'second_heat_treatment_completed' => $secondHeatTreatmentCompleted,
                         'coating_completed' => true,
                         'mpi_completed' => TPMDataCategory::where('actual_model', $lot->model)
                             ->where('jhcurve_lotno', $lot->lot_no)

@@ -130,26 +130,23 @@ class GbdpSecondHeatTreatmentController extends Controller
             ->where('lot_no', $request->lot_no)
             ->exists();
 
-        // 2. BreaklotInitial (single query, reused)
-        $initialRecords = BreaklotInitialLotHt::where('furnace', $request->furnace)
+        // BreaklotInitial (strict)
+        $existsInInitial = BreaklotInitialLotHt::where('furnace', $request->furnace)
             ->where('mass_prod', $request->mass_prod)
             ->where('layer', $layerRaw)
-            ->get(['initial_model', 'initial_lot']);
+            ->where('initial_model', $request->model)
+            ->where('initial_lot', $request->lot_no)
+            ->exists();
 
-        // breaklot = any record exists
-        $isBreaklot = $initialRecords->isNotEmpty();
+        // GBDP Second HT
+        $existsInSecondGbdpHt = GbdpSecondHeatTreatment::where('furnace', $request->furnace)
+            ->where('mass_prod', $request->mass_prod)
+            ->where('layer', $layerRaw)
+            ->exists();
 
-        // existing = strict match inside initial records
-        $existsInInitial = false;
-
-        if (!$existsInBreaklotSecond && $isBreaklot) {
-            $existsInInitial = $initialRecords->contains(function ($item) use ($request) {
-                return $item->initial_model === $request->model &&
-                    $item->initial_lot === $request->lot_no;
-            });
-        }
-
-        $isExisting = $existsInBreaklotSecond || $existsInInitial;
+        // FINAL
+        $isBreaklot = $existsInInitial;
+        $isExisting = $existsInBreaklotSecond || $existsInSecondGbdpHt;
 
         return response()->json([
             'is_breaklot' => $isBreaklot,

@@ -58,7 +58,7 @@ class TakefuMail extends Mailable
 
             Log::info("Rendering email view...");
 
-            // Generate TXT exports before rendering view
+            // Generate TXT exports
             $parts = explode(' ', $this->massPro);
             $furnaceNo = $parts[0] ?? null;
             $massProd  = $parts[1] ?? null;
@@ -77,17 +77,78 @@ class TakefuMail extends Mailable
                 'customMessage' => $this->customMessage,
                 'massPro' => $this->massPro
             ])->render();
+
             Log::info("View rendered successfully. Length: " . strlen($html));
 
             $mail = $this->html($html)->subject($this->massPro . ' Reports');
 
-            $folderName = $this->massPro; // keep spaces
-            $directory = public_path("files/{$folderName}"); // same as your actual folders
+            // -----------------------------
+            // SIZE CALCULATION PHASE
+            // -----------------------------
+            $totalSize = 0;
+            $maxSize = 13 * 1024 * 1024; // 13 MB
+
+            $folderName = $this->massPro;
+            $directory = public_path("files/{$folderName}");
+
             if (!File::exists($directory)) {
                 throw new \RuntimeException("The folder for {$folderName} does not exist.");
             }
 
             $files = File::files($directory);
+
+            // PDF + TXT size
+            foreach ($files as $file) {
+                $path = $file->getRealPath();
+                $filename = strtolower($file->getFilename());
+
+                if (str_ends_with($filename, '.pdf') || str_ends_with($filename, '.txt')) {
+                    $totalSize += filesize($path);
+                }
+            }
+
+            // Uploaded Excel size
+            foreach ($this->additionalFiles as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $totalSize += $file->getSize();
+                }
+            }
+
+            // SMP Excel (generate + measure only)
+            $excelPath = null;
+
+            try {
+                $furnaceRaw = $parts[0] ?? '';
+                $massProd = $parts[1] ?? '';
+                $furnace = preg_replace('/^([A-Z])(\d+)$/', '$1-$2', strtoupper($furnaceRaw));
+
+                Log::info("Generating SMP Excel for furnace={$furnace}, massProd={$massProd}");
+
+                $excelPath = app(\App\Services\SmpEmailExportService::class)->export($massProd, $furnace);
+
+                if (File::exists($excelPath)) {
+                    $totalSize += filesize($excelPath);
+                } else {
+                    Log::warning("SMP Excel file not found at {$excelPath}");
+                }
+            } catch (\Throwable $e) {
+                Log::error("Failed to generate SMP Excel: " . $e->getMessage());
+            }
+
+            // FINAL GUARD
+            if ($totalSize > $maxSize) {
+                Log::warning("Attachment size exceeded: {$totalSize} bytes");
+
+                throw new \RuntimeException(
+                    'Attachments exceed 13 MB limit. Please use manual email sending and send attachments in appropriate portions.'
+                );
+            }
+
+            // -----------------------------
+            // ATTACHMENT PHASE
+            // -----------------------------
+
+            // PDF + TXT
             $pdfTxtAttached = 0;
 
             foreach ($files as $file) {
@@ -102,8 +163,9 @@ class TakefuMail extends Mailable
 
             Log::info("PDF/TXT attachments added: {$pdfTxtAttached}");
 
-            // --- Attach additional uploaded Excel files ---
+            // Uploaded Excel
             $uploadedAttached = 0;
+
             foreach ($this->additionalFiles as $file) {
                 if ($file instanceof \Illuminate\Http\UploadedFile) {
                     $mail->attach($file->getRealPath(), [
@@ -113,27 +175,13 @@ class TakefuMail extends Mailable
                     $uploadedAttached++;
                 }
             }
+
             Log::info("Additional uploaded Excel files attached: {$uploadedAttached}");
 
-            // Attach SMP Excel
-            try {
-                $parts = explode(' ', $this->massPro);
-                $furnaceRaw = $parts[0];        // "K40"
-                $massProd = $parts[1] ?? '';    // "501ST"
-                $furnace = preg_replace('/^([A-Z])(\d+)$/', '$1-$2', strtoupper($furnaceRaw)); // "K-40"
-
-                Log::info("Generating SMP Excel for furnace={$furnace}, massProd={$massProd}");
-
-                $excelPath = app(SmpEmailExportService::class)->export($massProd, $furnace);
-
-                if (File::exists($excelPath)) {
-                    $mail->attach($excelPath);
-                    Log::info("SMP Excel attached: {$excelPath}");
-                } else {
-                    Log::warning("SMP Excel file not found at {$excelPath}");
-                }
-            } catch (\Throwable $e) {
-                Log::error("Failed to generate/attach SMP Excel: " . $e->getMessage());
+            // SMP Excel attach
+            if ($excelPath && File::exists($excelPath)) {
+                $mail->attach($excelPath);
+                Log::info("SMP Excel attached: {$excelPath}");
             }
 
             return $mail;

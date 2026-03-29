@@ -132,7 +132,7 @@ class BreaklotCoatingController extends Controller
         if ($records->isNotEmpty()) {
             // Get the highest last-letter among all tables
             $maxLetter = $records
-                ->map(fn ($r) => substr($r->layer_code, -1))
+                ->map(fn($r) => substr($r->layer_code, -1))
                 ->max();
 
             $nextLetter = chr(ord($maxLetter) + 1);
@@ -153,44 +153,57 @@ class BreaklotCoatingController extends Controller
             'mass_prod' => 'required|string',
             'layer'     => 'required|string',
             'lot_no'    => 'required|string',
+            'model'     => 'required|string',
         ]);
 
-        $furnace   = $validated['furnace'];
-        $massProd  = $validated['mass_prod'];
-        $layer     = $validated['layer'];
-        $lotNo     = $validated['lot_no'];
+        $furnace  = $validated['furnace'];
+        $massProd = $validated['mass_prod'];
+        $layer    = $validated['layer'];
+        $lotNo    = $validated['lot_no'];
+        $model    = $validated['model'];
 
-        // Get all lot numbers from BreaklotCoating
-        $coatingLots = BreaklotCoating::where([
+        // 1. BreaklotCoating
+        $existsInCoating = BreaklotCoating::where([
             'furnace'   => $furnace,
             'mass_prod' => $massProd,
             'layer'     => $layer,
-        ])->pluck('lot_no')->toArray();
+            'lot_no'    => $lotNo,
+            'model'     => $model,
+        ])->exists();
 
-        $secondCoatingLots = BreaklotSecondCoating::where([
+        // 2. BreaklotSecondCoating
+        $existsInSecondCoating = BreaklotSecondCoating::where([
             'furnace'   => $furnace,
             'mass_prod' => $massProd,
             'layer'     => $layer,
-        ])->pluck('lot_no')->toArray();
+            'lot_no'    => $lotNo,
+            'model'     => $model,
+        ])->exists();
 
-        $filmPastingLots = BreaklotFilmpasting::where([
+        // 3. BreaklotFilmpasting
+        $existsInFilmpasting = BreaklotFilmpasting::where([
             'furnace'   => $furnace,
             'mass_prod' => $massProd,
             'layer'     => $layer,
-        ])->pluck('lot_no')->toArray();
+            'lot_no'    => $lotNo,
+            'model'     => $model,
+        ])->exists();
 
-        // Get all initial lots from BreaklotInitialLot
-        $initialLots = BreaklotInitialLot::where([
-            'furnace'   => $furnace,
-            'mass_prod' => $massProd,
-            'layer'     => $layer,
-        ])->pluck('initial_lot')->toArray();
+        // 4. BreaklotInitialLot (mapped columns)
+        $existsInInitial = BreaklotInitialLot::where([
+            'furnace'        => $furnace,
+            'mass_prod'      => $massProd,
+            'layer'          => $layer,
+            'initial_lot'    => $lotNo,
+            'initial_model'  => $model,
+        ])->exists();
 
-        // Merge both arrays
-        $allLots = array_merge($coatingLots, $initialLots, $secondCoatingLots, $filmPastingLots);
-
-        // Check if current lot exists
-        $exists = in_array($lotNo, $allLots);
+        // FINAL
+        $exists =
+            $existsInCoating ||
+            $existsInSecondCoating ||
+            $existsInFilmpasting ||
+            $existsInInitial;
 
         return response()->json([
             'exists' => $exists,
@@ -228,6 +241,4 @@ class BreaklotCoatingController extends Controller
             'exists' => $exists,
         ]);
     }
-
-
 }
