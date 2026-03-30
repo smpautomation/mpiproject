@@ -17,6 +17,7 @@ use App\Models\BreaklotInitialLot;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotSecondCoating;
 use App\Models\BreaklotFilmpasting;
+use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotSecondHeatTreatment;
 use App\Models\ExcessLayers;
 use Illuminate\Http\Request;
@@ -1068,11 +1069,19 @@ class MassProductionController extends Controller
             }
 
             // Breaklot scenario
-            // 1️⃣ Main lot from BreaklotInitialLot
-            $mainLot = BreaklotInitialLot::where('furnace', $furnace)
+            // 1️⃣ Main lot from BreaklotInitialLotHt (primary)
+            $mainLot = BreaklotInitialLotHt::where('furnace', $furnace)
                 ->where('mass_prod', $massprod)
                 ->where('layer', $layer_no)
                 ->first();
+
+            // 🔁 Fallback to BreaklotInitialLot if not found
+            if (!$mainLot) {
+                $mainLot = BreaklotInitialLot::where('furnace', $furnace)
+                    ->where('mass_prod', $massprod)
+                    ->where('layer', $layer_no)
+                    ->first();
+            }
 
             $secondHeatTreatmentCompleted = false;
             if ($layer_type === '1st and 2nd Gbdp') {

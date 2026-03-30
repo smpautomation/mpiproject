@@ -146,10 +146,12 @@ class GbdpSecondHeatTreatmentController extends Controller
 
         // FINAL
         $isBreaklot = $existsInInitial;
+        $isBreaklot2ndgbdp = $existsInInitial && ($existsInBreaklotSecond || $existsInSecondGbdpHt);
         $isExisting = $existsInBreaklotSecond || $existsInSecondGbdpHt;
 
         return response()->json([
             'is_breaklot' => $isBreaklot,
+            'is_breaklot_2ndgbdp' => $isBreaklot2ndgbdp,
             'is_existing' => $isExisting,
         ]);
     }
