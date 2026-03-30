@@ -3930,34 +3930,21 @@ const generateColor = (index) => {
 };
 
 const renderChart = () => {
-    // Ensure myChartCanvas is not null
     if (!myChartCanvas.value) {
         console.error("Canvas element is not available.");
         return;
     }
-    // Ensure the canvas is accessible
-    //console.log("Rendering chart with canvas:", myChartCanvas.value);
-
-    // Ensure datasets are available before creating the chart
-    //console.log("Datasets available for chart:", datasets.value);
 
     if (dataReady.value && myChartCanvas.value) {
         const ctx = myChartCanvas.value.getContext("2d");
 
-        // Check if the context is obtained
         if (!ctx) {
             console.error("Failed to get 2D context for canvas.");
             return;
         }
 
-        //console.log("2D Context obtained, proceeding to render the chart.");
-
-        //new updated offset 5/5/2025
         const x_offset = 2000;
         const y_offset = 1700;
-
-        //const x_offset = 2000;
-        //const y_offset = 4000;
 
         const chartDatasets = datasets.value.map((dataset, index) => {
             return {
@@ -3974,7 +3961,154 @@ const renderChart = () => {
             };
         });
 
-        //console.log("Final Chart Datasets:", chartDatasets);
+        // === SCALE REFERENCE PLUGIN (TOP-RIGHT + X SNAP FIXED, Y INVERTED, LABEL BELOW Y) ===
+        const scaleReferencePlugin = {
+            id: "scaleReference",
+            afterDraw(chart) {
+                const { ctx, scales } = chart;
+                const xScale = scales.x;
+                const yScale = scales.y;
+                if (!xScale || !yScale) return;
+
+                const arrowHeadSize = 4;
+                const inset = 15;
+
+                // --- Determine arrow lengths dynamically ---
+                const xLength = Math.min(
+                    xScale.width * 0.15,
+                    3 *
+                        (xScale.getPixelForValue(
+                            xScale.min + xScale.options.ticks.stepSize,
+                        ) -
+                            xScale.getPixelForValue(xScale.min)),
+                );
+                const yLength = Math.min(
+                    yScale.height * 0.15,
+                    3 *
+                        (yScale.getPixelForValue(yScale.min) -
+                            yScale.getPixelForValue(
+                                yScale.min + yScale.options.ticks.stepSize,
+                            )),
+                );
+
+                // --- Find nearest tick to bottom-right for X arrow ---
+                const targetPixelX =
+                    xScale.getPixelForValue(xScale.max) - inset;
+                let closestValue = xScale.ticks[0]; // use actual ticks for consistency
+                let minDistance = Infinity;
+                xScale.ticks.forEach((tick) => {
+                    const tickPixel = xScale.getPixelForValue(tick);
+                    const distance = Math.abs(tickPixel - targetPixelX);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestValue = tick;
+                    }
+                });
+
+                const baseX_X =
+                    xScale.getPixelForValue(closestValue) - xLength - inset;
+                const baseY_X = yScale.getPixelForValue(yScale.min) - inset; // bottom
+
+                ctx.save();
+                ctx.strokeStyle = "#000";
+                ctx.fillStyle = "#000";
+                ctx.lineWidth = 0.5;
+                ctx.font = "8px Arial";
+
+                // --- DRAW X ARROW ---
+                ctx.beginPath();
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + xLength, baseY_X);
+                ctx.stroke();
+
+                // Arrowheads X
+                ctx.beginPath();
+                ctx.moveTo(baseX_X + xLength, baseY_X);
+                ctx.lineTo(
+                    baseX_X + xLength - arrowHeadSize,
+                    baseY_X - arrowHeadSize / 2,
+                );
+                ctx.lineTo(
+                    baseX_X + xLength - arrowHeadSize,
+                    baseY_X + arrowHeadSize / 2,
+                );
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(
+                    baseX_X + arrowHeadSize,
+                    baseY_X - arrowHeadSize / 2,
+                );
+                ctx.lineTo(
+                    baseX_X + arrowHeadSize,
+                    baseY_X + arrowHeadSize / 2,
+                );
+                ctx.closePath();
+                ctx.fill();
+
+                // --- X LABEL ---
+                const xLabel = "4 kOe";
+                const xLabelWidth = ctx.measureText(xLabel).width;
+                const xLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+                ctx.fillText(
+                    xLabel,
+                    baseX_X + xLength / 2 - xLabelWidth / 2,
+                    baseY_X - xLabelOffsetY,
+                );
+
+                // --- DRAW Y ARROW (pointing upward from bottom) ---
+                const spacing = 15;
+                const baseX_Y = baseX_X + xLength + spacing;
+                const baseY_Y = baseY_X;
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_Y, baseY_Y);
+                ctx.lineTo(baseX_Y, baseY_Y - yLength);
+                ctx.stroke();
+
+                // Arrowheads Y
+                ctx.beginPath();
+                ctx.moveTo(baseX_Y, baseY_Y - yLength);
+                ctx.lineTo(
+                    baseX_Y - arrowHeadSize / 2,
+                    baseY_Y - yLength + arrowHeadSize,
+                );
+                ctx.lineTo(
+                    baseX_Y + arrowHeadSize / 2,
+                    baseY_Y - yLength + arrowHeadSize,
+                );
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_Y, baseY_Y);
+                ctx.lineTo(
+                    baseX_Y - arrowHeadSize / 2,
+                    baseY_Y - arrowHeadSize,
+                );
+                ctx.lineTo(
+                    baseX_Y + arrowHeadSize / 2,
+                    baseY_Y - arrowHeadSize,
+                );
+                ctx.closePath();
+                ctx.fill();
+
+                // --- Y LABEL ---
+                const yLabel = "4 kG";
+                const yLabelWidth = ctx.measureText(yLabel).width;
+                const yLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+                ctx.fillText(
+                    yLabel,
+                    baseX_Y - yLabelWidth / 2,
+                    baseY_Y - yLength - yLabelOffsetY,
+                );
+
+                ctx.restore();
+            },
+        };
+        // === END PLUGIN ===
 
         try {
             new Chart(ctx, {
@@ -3994,7 +4128,7 @@ const renderChart = () => {
                     },
                     plugins: {
                         legend: {
-                            display: false, // 👈 hides the legend completely
+                            display: false,
                         },
                         tooltip: {
                             callbacks: {
@@ -4015,13 +4149,13 @@ const renderChart = () => {
                                 text: "←  kOe  →",
                                 color: "#333",
                                 font: {
-                                    size: 14, // Increase font size
-                                    weight: "bold", // Make it bold
+                                    size: 14,
+                                    weight: "bold",
                                 },
                             },
                             ticks: {
-                                stepSize: 1000, // adjust this value
-                                display: false, // disables X-axis labels
+                                stepSize: 1000,
+                                display: false,
                             },
                         },
                         y: {
@@ -4036,22 +4170,23 @@ const renderChart = () => {
                                 text: "←  kG  →",
                                 color: "#333",
                                 font: {
-                                    size: 14, // Increase font size
-                                    weight: "bold", // Make it bold
+                                    size: 14,
+                                    weight: "bold",
                                 },
                             },
                             ticks: {
-                                stepSize: 1750, // adjust this value
-                                display: false, // disables X-axis labels
+                                stepSize: 1750,
+                                display: false,
                             },
                         },
                     },
                 },
+                plugins: [scaleReferencePlugin], // ← injected only
             });
+
             setTimeout(() => {
                 const canvas = myChartCanvas.value;
-                // Export JPEG directly (chart already has white background)
-                const imageData = canvas.toDataURL("image/jpeg", 0.5);
+                const imageData = canvas.toDataURL("image/jpeg", 0.7);
 
                 const csrfToken = document.querySelector(
                     'meta[name="csrf-token"]',
@@ -4069,9 +4204,7 @@ const renderChart = () => {
                     }),
                 })
                     .then((response) => response.json())
-                    .then((data) => {
-                        // Chart image saved successfully
-                    })
+                    .then(() => {})
                     .catch((err) => console.error("Chart upload failed:", err));
             }, 1000);
         } catch (error) {
@@ -4089,16 +4222,6 @@ const renderChart = () => {
         }
     } else {
         console.error(
-            "Chart cannot be rendered: Missing data or canvas context.",
-        );
-        userErrorLogging(
-            {
-                message: error.message,
-                code: error.code ?? null,
-                response: error.response?.data ?? null,
-                payload: error.response?.data ?? null,
-            },
-            "renderChart",
             "Chart cannot be rendered: Missing data or canvas context.",
         );
     }

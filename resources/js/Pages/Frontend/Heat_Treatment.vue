@@ -5254,6 +5254,9 @@ const saveToDatabase = async () => {
             await uploadGraphs();
         }
         toast.success("Data saved successfully!");
+
+        await checkBreaklot();
+
         if (!isBreaklot.value) {
             await updateFormatType();
         }
