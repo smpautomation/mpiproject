@@ -622,6 +622,7 @@ const filteredData = computed(() => {
                 return false;
             }
 
+            //const recordDateStr = recordDate.split(' ')[0]; old code
             const recordDateStr = recordDate?.slice(0, 10);
 
             if (from && recordDateStr < from) {

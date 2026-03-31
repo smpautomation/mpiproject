@@ -4152,7 +4152,7 @@ const renderChart = () => {
                             grid: {
                                 color: "rgba(0, 0, 0, 0.1)",
                             },
-                            title: {
+                            /*title: {
                                 display: true,
                                 text: "←  kOe  →",
                                 color: "#333",
@@ -4160,7 +4160,7 @@ const renderChart = () => {
                                     size: 14,
                                     weight: "bold",
                                 },
-                            },
+                            },*/
                             ticks: {
                                 stepSize: 1000,
                                 display: false,
@@ -4173,7 +4173,7 @@ const renderChart = () => {
                             grid: {
                                 color: "rgba(0, 0, 0, 0.1)",
                             },
-                            title: {
+                            /*title: {
                                 display: true,
                                 text: "←  kG  →",
                                 color: "#333",
@@ -4181,7 +4181,7 @@ const renderChart = () => {
                                     size: 14,
                                     weight: "bold",
                                 },
-                            },
+                            },*/
                             ticks: {
                                 stepSize: 1750,
                                 display: false,
