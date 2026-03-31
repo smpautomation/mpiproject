@@ -3961,7 +3961,7 @@ const renderChart = () => {
             };
         });
 
-        // === SCALE REFERENCE PLUGIN (TOP-RIGHT + X SNAP FIXED, Y INVERTED, LABEL BELOW Y) ===
+        // === SCALE REFERENCE PLUGIN (GRID-BASED, X 1.5 BOX, Y 0) ===
         const scaleReferencePlugin = {
             id: "scaleReference",
             afterDraw(chart) {
@@ -3970,112 +3970,105 @@ const renderChart = () => {
                 const yScale = scales.y;
                 if (!xScale || !yScale) return;
 
-                const arrowHeadSize = 4;
-                const inset = 15;
-
-                // ✅ Use ACTUAL rendered ticks (not stepSize)
-                const xTicks = xScale.ticks;
-                const yTicks = yScale.ticks;
-
-                if (xTicks.length < 2 || yTicks.length < 2) return;
-
-                const getTickValue = (tick) =>
-                    typeof tick === "object" ? tick.value : tick;
-
-                const xStep =
-                    xScale.getPixelForValue(getTickValue(xTicks[1])) -
-                    xScale.getPixelForValue(getTickValue(xTicks[0]));
-
-                const yStep =
-                    yScale.getPixelForValue(getTickValue(yTicks[0])) -
-                    yScale.getPixelForValue(getTickValue(yTicks[1]));
-
-                const xLength = Math.min(xScale.width * 0.15, 1.7 * xStep);
-                const yLength = Math.min(yScale.height * 0.15, -0 * yStep);
-
-                // ✅ Find nearest tick to bottom-right (stable)
-                const targetPixelX =
-                    xScale.getPixelForValue(xScale.max) - inset;
-
-                let closestValue = getTickValue(xTicks[0]);
-                let minDistance = Infinity;
-
-                xTicks.forEach((tick) => {
-                    const value = getTickValue(tick);
-                    const tickPixel = xScale.getPixelForValue(value);
-                    const distance = Math.abs(tickPixel - targetPixelX);
-
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestValue = value;
-                    }
-                });
-
-                const baseX_X =
-                    xScale.getPixelForValue(closestValue) - xLength - inset;
-                const baseY_X = yScale.getPixelForValue(yScale.min) - inset;
-
                 ctx.save();
                 ctx.strokeStyle = "#000";
                 ctx.fillStyle = "#000";
                 ctx.lineWidth = 0.5;
                 ctx.font = "8px Arial";
 
-                // --- X ARROW ---
-                ctx.beginPath();
-                ctx.moveTo(baseX_X, baseY_X);
-                ctx.lineTo(baseX_X + xLength, baseY_X);
-                ctx.stroke();
+                const arrowHeadSize = 4;
+                const inset = 30;
+                const spacing = 20; // distance between X and Y arrows
 
-                // Arrowheads X
-                ctx.beginPath();
-                ctx.moveTo(baseX_X + xLength, baseY_X);
-                ctx.lineTo(
-                    baseX_X + xLength - arrowHeadSize,
-                    baseY_X - arrowHeadSize / 2,
-                );
-                ctx.lineTo(
-                    baseX_X + xLength - arrowHeadSize,
-                    baseY_X + arrowHeadSize / 2,
-                );
-                ctx.closePath();
-                ctx.fill();
+                const getTickValue = (tick) =>
+                    typeof tick === "object" ? tick.value : tick;
 
-                ctx.beginPath();
-                ctx.moveTo(baseX_X, baseY_X);
-                ctx.lineTo(
-                    baseX_X + arrowHeadSize,
-                    baseY_X - arrowHeadSize / 2,
-                );
-                ctx.lineTo(
-                    baseX_X + arrowHeadSize,
-                    baseY_X + arrowHeadSize / 2,
-                );
-                ctx.closePath();
-                ctx.fill();
+                // --- X ARROW (snaps to nearest grid line) ---
+                if (xScale.ticks.length >= 2) {
+                    const xStep =
+                        xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
+                        xScale.getPixelForValue(getTickValue(xScale.ticks[0]));
+                    const xLength = 1.5 * xStep; // keep your original length
 
-                // --- X LABEL ---
-                const xLabel = "4 kOe";
-                const xLabelWidth = ctx.measureText(xLabel).width;
-                const xLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+                    const yBottomPixel = yScale.getPixelForValue(yScale.min);
+                    const targetPixelX =
+                        xScale.getPixelForValue(xScale.max) - inset;
 
-                ctx.fillText(
-                    xLabel,
-                    baseX_X + xLength / 2 - xLabelWidth / 2,
-                    baseY_X - xLabelOffsetY,
-                );
+                    // Find nearest tick to bottom-right for snapping
+                    let closestValue = getTickValue(xScale.ticks[0]);
+                    let minDistance = Infinity;
 
-                // --- Y ARROW ---
-                const spacing = 15;
-                const baseX_Y = baseX_X + xLength + spacing;
-                const baseY_Y = baseY_X;
+                    xScale.ticks.forEach((tick) => {
+                        const value = getTickValue(tick);
+                        const tickPixel = xScale.getPixelForValue(value);
+                        const distance = Math.abs(tickPixel - targetPixelX);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestValue = value;
+                        }
+                    });
+
+                    const baseX_X =
+                        xScale.getPixelForValue(closestValue) - xLength;
+                    const baseY_X = yBottomPixel - inset;
+
+                    // draw X line
+                    ctx.beginPath();
+                    ctx.moveTo(baseX_X, baseY_X);
+                    ctx.lineTo(baseX_X + xLength, baseY_X);
+                    ctx.stroke();
+
+                    // X arrowhead (right)
+                    ctx.beginPath();
+                    ctx.moveTo(baseX_X + xLength, baseY_X);
+                    ctx.lineTo(
+                        baseX_X + xLength - arrowHeadSize,
+                        baseY_X - arrowHeadSize / 2,
+                    );
+                    ctx.lineTo(
+                        baseX_X + xLength - arrowHeadSize,
+                        baseY_X + arrowHeadSize / 2,
+                    );
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // optional left arrowhead
+                    ctx.beginPath();
+                    ctx.moveTo(baseX_X, baseY_X);
+                    ctx.lineTo(
+                        baseX_X + arrowHeadSize,
+                        baseY_X - arrowHeadSize / 2,
+                    );
+                    ctx.lineTo(
+                        baseX_X + arrowHeadSize,
+                        baseY_X + arrowHeadSize / 2,
+                    );
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // X label
+                    const xLabel = "4 kOe";
+                    const xLabelWidth = ctx.measureText(xLabel).width;
+                    const xLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+                    ctx.fillText(
+                        xLabel,
+                        baseX_X + xLength / 2 - xLabelWidth / 2,
+                        baseY_X - xLabelOffsetY,
+                    );
+                }
+
+                // --- Y ARROW (keep original length, no snapping) ---
+                const yLength = -0.1; // keep your actual Y arrow length
+                const baseX_Y =
+                    xScale.getPixelForValue(xScale.max) - inset + spacing;
+                const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
 
                 ctx.beginPath();
                 ctx.moveTo(baseX_Y, baseY_Y);
                 ctx.lineTo(baseX_Y, baseY_Y - yLength);
                 ctx.stroke();
 
-                // Arrowheads Y
+                // Y arrowheads
                 ctx.beginPath();
                 ctx.moveTo(baseX_Y, baseY_Y - yLength);
                 ctx.lineTo(
@@ -4102,11 +4095,10 @@ const renderChart = () => {
                 ctx.closePath();
                 ctx.fill();
 
-                // --- Y LABEL ---
+                // Y label
                 const yLabel = "4 kG";
                 const yLabelWidth = ctx.measureText(yLabel).width;
                 const yLabelOffsetY = Math.max(6, arrowHeadSize * 2);
-
                 ctx.fillText(
                     yLabel,
                     baseX_Y - yLabelWidth / 2,
