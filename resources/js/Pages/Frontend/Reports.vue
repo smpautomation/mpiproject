@@ -3656,34 +3656,23 @@
                             class="flex flex-row justify-center mt-5 space-x-4"
                         >
                             <div
-                                class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center"
+                                class="w-[600px] h-[460px] bg-gray-50 rounded-xl flex items-center p-5 border-2 border-blue-900 justify-center"
                             >
                                 <img
-                                    v-if="currentSerialSelected"
-                                    :src="`/charts/chart_${currentSerialSelected}.png`"
+                                    v-if="currentSerialSelected && currentSrc"
+                                    :src="currentSrc"
                                     alt="Chart"
                                     class="object-contain w-full h-full"
                                     style="
                                         transform: scale(1);
                                         transform-origin: top left;
                                     "
-                                    @error="
-                                        (event) => {
-                                            if (
-                                                !event.target.dataset.attempted
-                                            ) {
-                                                event.target.dataset.attempted = true;
-                                                event.target.src = `/charts/chart_${currentSerialSelected}.jpg`;
-                                            } else if (
-                                                event.target.src.endsWith(
-                                                    '.jpg',
-                                                )
-                                            ) {
-                                                event.target.src = `/charts/chart_${currentSerialSelected}.jpeg`;
-                                            }
-                                        }
-                                    "
+                                    @error="handleImageError"
                                 />
+
+                                <div v-else class="text-sm text-gray-400">
+                                    No chart available
+                                </div>
                             </div>
                             <!-- Side Content -->
                             <div
@@ -6131,6 +6120,49 @@ const resetReportBHData = async () => {
 
 const confirmResetSeg = ref(false);
 const confirmResetTsi = ref(false);
+
+// IMAGE HANDLING --- IMAGE HANDLING ---  IMAGE HANDLING --- IMAGE HANDLING --- IMAGE HANDLING --- IMAGE HANDLING --- START
+
+// fallback chain
+const extensions = ["png", "jpg", "jpeg"];
+
+const currentSrc = ref(null);
+const attemptIndex = ref(0);
+
+const buildSrc = () => {
+    if (!currentSerialSelected.value) {
+        currentSrc.value = null;
+        return;
+    }
+
+    const ext = extensions[attemptIndex.value];
+    currentSrc.value = `/charts/chart_${currentSerialSelected.value}.${ext}`;
+};
+
+// react to ref directly
+watch(
+    currentSerialSelected,
+    () => {
+        attemptIndex.value = 0;
+        buildSrc();
+    },
+    { immediate: true },
+);
+
+const handleImageError = () => {
+    if (attemptIndex.value < extensions.length - 1) {
+        attemptIndex.value++;
+        buildSrc();
+    } else {
+        currentSrc.value = null;
+        console.warn(
+            "Chart image not found for serial:",
+            currentSerialSelected.value,
+        );
+    }
+};
+
+// IMAGE HANDLING --- IMAGE HANDLING ---  IMAGE HANDLING --- IMAGE HANDLING --- IMAGE HANDLING --- IMAGE HANDLING --- END
 
 const resetReportBHSegData = async () => {
     reportBHSeg_temp.value = 200;

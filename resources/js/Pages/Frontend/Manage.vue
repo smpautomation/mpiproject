@@ -3973,41 +3973,47 @@ const renderChart = () => {
                 const arrowHeadSize = 4;
                 const inset = 15;
 
-                // --- Determine arrow lengths dynamically ---
-                const xLength = Math.min(
-                    xScale.width * 0.15,
-                    3 *
-                        (xScale.getPixelForValue(
-                            xScale.min + xScale.options.ticks.stepSize,
-                        ) -
-                            xScale.getPixelForValue(xScale.min)),
-                );
-                const yLength = Math.min(
-                    yScale.height * 0.15,
-                    3 *
-                        (yScale.getPixelForValue(yScale.min) -
-                            yScale.getPixelForValue(
-                                yScale.min + yScale.options.ticks.stepSize,
-                            )),
-                );
+                // ✅ Use ACTUAL rendered ticks (not stepSize)
+                const xTicks = xScale.ticks;
+                const yTicks = yScale.ticks;
 
-                // --- Find nearest tick to bottom-right for X arrow ---
+                if (xTicks.length < 2 || yTicks.length < 2) return;
+
+                const getTickValue = (tick) =>
+                    typeof tick === "object" ? tick.value : tick;
+
+                const xStep =
+                    xScale.getPixelForValue(getTickValue(xTicks[1])) -
+                    xScale.getPixelForValue(getTickValue(xTicks[0]));
+
+                const yStep =
+                    yScale.getPixelForValue(getTickValue(yTicks[0])) -
+                    yScale.getPixelForValue(getTickValue(yTicks[1]));
+
+                const xLength = Math.min(xScale.width * 0.15, 1.7 * xStep);
+                const yLength = Math.min(yScale.height * 0.15, -0 * yStep);
+
+                // ✅ Find nearest tick to bottom-right (stable)
                 const targetPixelX =
                     xScale.getPixelForValue(xScale.max) - inset;
-                let closestValue = xScale.ticks[0]; // use actual ticks for consistency
+
+                let closestValue = getTickValue(xTicks[0]);
                 let minDistance = Infinity;
-                xScale.ticks.forEach((tick) => {
-                    const tickPixel = xScale.getPixelForValue(tick);
+
+                xTicks.forEach((tick) => {
+                    const value = getTickValue(tick);
+                    const tickPixel = xScale.getPixelForValue(value);
                     const distance = Math.abs(tickPixel - targetPixelX);
+
                     if (distance < minDistance) {
                         minDistance = distance;
-                        closestValue = tick;
+                        closestValue = value;
                     }
                 });
 
                 const baseX_X =
                     xScale.getPixelForValue(closestValue) - xLength - inset;
-                const baseY_X = yScale.getPixelForValue(yScale.min) - inset; // bottom
+                const baseY_X = yScale.getPixelForValue(yScale.min) - inset;
 
                 ctx.save();
                 ctx.strokeStyle = "#000";
@@ -4015,7 +4021,7 @@ const renderChart = () => {
                 ctx.lineWidth = 0.5;
                 ctx.font = "8px Arial";
 
-                // --- DRAW X ARROW ---
+                // --- X ARROW ---
                 ctx.beginPath();
                 ctx.moveTo(baseX_X, baseY_X);
                 ctx.lineTo(baseX_X + xLength, baseY_X);
@@ -4052,13 +4058,14 @@ const renderChart = () => {
                 const xLabel = "4 kOe";
                 const xLabelWidth = ctx.measureText(xLabel).width;
                 const xLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+
                 ctx.fillText(
                     xLabel,
                     baseX_X + xLength / 2 - xLabelWidth / 2,
                     baseY_X - xLabelOffsetY,
                 );
 
-                // --- DRAW Y ARROW (pointing upward from bottom) ---
+                // --- Y ARROW ---
                 const spacing = 15;
                 const baseX_Y = baseX_X + xLength + spacing;
                 const baseY_Y = baseY_X;
@@ -4099,6 +4106,7 @@ const renderChart = () => {
                 const yLabel = "4 kG";
                 const yLabelWidth = ctx.measureText(yLabel).width;
                 const yLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+
                 ctx.fillText(
                     yLabel,
                     baseX_Y - yLabelWidth / 2,
