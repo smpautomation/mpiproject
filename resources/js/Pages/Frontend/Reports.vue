@@ -3612,7 +3612,7 @@
                     </div>
                     <div>
                         <button
-                            v-if="onTestServer"
+                            v-if="automationAcess"
                             @click="
                                 finalizeReport(
                                     currentSerialSelected,

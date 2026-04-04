@@ -281,14 +281,4 @@ class FrontendController extends Controller
     {
         return Inertia::render('Frontend/Data_INS');
     }
-
-    public function generatePdf(Request $request)
-    {
-        // Capture the serialParam from the GET request
-        $serial = $request->get('serialParam');
-        // Return the Inertia response and pass both serialParam and ipAddress to the PreviewPdf.vue component
-        return Inertia::render('Frontend/PreviewPdf', [
-            'serialParam' => $serial,  // Pass serialParam as a prop to the PreviewPdf.vue component
-        ]);
-    }
 }
