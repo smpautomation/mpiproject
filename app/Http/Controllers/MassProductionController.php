@@ -1690,10 +1690,49 @@ class MassProductionController extends Controller
             }
         }
 
+        // --- 5. Delete matching BreaklotInitialLotHt rows ---
+        $deletedBreaklotRows = BreaklotInitialLotHt::where('mass_prod', $massProd)
+            ->where('furnace', $furnace)
+            ->where('layer', $layer)
+            ->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Layer deleted successfully',
-            'deleted_rows' => $deletedRows
+            'deleted_rows' => $deletedRows,
+            'deleted_breaklot_rows' => $deletedBreaklotRows
+        ]);
+    }
+
+    public function deleteExistingData(Request $request)
+    {
+        $massProd = $request->massprod;
+        $furnace  = $request->furnace;
+        $layer    = $request->layer;
+
+        // List of models to clean
+        $tables = [
+            Coating::class,
+            GbdpSecondCoating::class,
+            GbdpSecondHeatTreatment::class,
+            FilmPastingData::class,
+            BreaklotInitialLot::class,
+            BreaklotCoating::class,
+            BreaklotSecondCoating::class,
+            BreaklotFilmpasting::class,
+            BreaklotSecondHeatTreatment::class,
+        ];
+
+        foreach ($tables as $model) {
+            $model::where('mass_prod', $massProd)
+                ->where('furnace', $furnace)
+                ->where('layer', $layer)
+                ->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Existing data deleted successfully'
         ]);
     }
 

@@ -23,7 +23,6 @@
                 </button>
             </div>
         </div>
-
         <div class="relative">
             <!-- Overlay -->
             <div
@@ -111,6 +110,8 @@
                             >.
                         </div>
                     </div>
+
+
                     <div class="flex flex-row justify-center gap-0">
                         <div
                             v-if="!overwriteMode"
@@ -127,7 +128,7 @@
                                         <h2
                                             class="text-xl font-bold text-gray-900"
                                         >
-                                            Mass Production Control Sheet
+                                            Mass Production Control Sheets
                                         </h2>
                                         <p class="text-sm text-gray-500">
                                             Fill up all details below. Fields
@@ -439,7 +440,18 @@
                                             {{ mpcs.selectedLayer }} Data
                                         </button>
                                     </div>
+                                    <div v-if="state.user.access_type == 'Automation' && isClearLayerDataDisabled" class="mt-5">
+                                        <!-- Clear Layer Button -->
+                                        <button
+                                            @click="deleteExistingData()"
+                                            class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                        >
+                                            Clear Existing Layer
+                                            {{ mpcs.selectedLayer }} Data
+                                        </button>
+                                    </div>
                                 </div>
+
                                 <div
                                     v-if="
                                         !isEditingExpired &&
@@ -500,6 +512,7 @@
                                     </div>
                                 </div>
                             </div>
+
 
                             <!-- Group: Prepared By -->
                             <div
@@ -5651,6 +5664,45 @@ const deleteLayerData = async () => {
             },
             "deleteLayerData",
             "Failed to delete layer data.",
+        );
+    }
+};
+
+const deleteExistingData = async () => {
+    try {
+        const response = await axios.post(
+            "/api/mass-production/delete-existing-data",
+            {
+                massprod: mpcs.selectedMassProd,
+                furnace: mpcs.selectedFurnace,
+                layer: mpcs.selectedLayer,
+            },
+        );
+
+        if (response.data.success) {
+            isClearLayerDataDisabled.value = false;
+            toast.success(
+                `Layer ${mpcs.selectedLayer} data deleted successfully.`,
+            );
+            await fetchExistingLayers();
+            await userManageLogging(
+                `has removed existing data of layer ${mpcs.selectedLayer} data from ${mpcs.selectedMassProd} | ${mpcs.selectedFurnace} successfully.`,
+            );
+        } else {
+            toast.warning("No matching data found.");
+        }
+    } catch (error) {
+        console.error("Failed to delete layer data", error);
+        toast.error("Failed to delete layer data.");
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "deleteExistingData",
+            "Failed to delete existing data.",
         );
     }
 };

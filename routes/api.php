@@ -513,6 +513,8 @@ Route::post('/mass-production/grand-total-weight', [MassProductionController::cl
 
 Route::post('mass-production/delete-layer-data', [MassProductionController::class, 'deleteLayerData']);
 
+Route::post('mass-production/delete-existing-data', [MassProductionController::class, 'deleteExistingData']);
+
 //Insert new route for deletelayerdata
 
 Route::post('/initial-control-sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
