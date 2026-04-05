@@ -441,11 +441,11 @@
                     </p>
 
                     <p style="margin: 0 0 4px;">
-                        <span>{{ $nsaCategory->actual_model ?? null }}</span> ( {{ $tpmData->code_no }} )
+                        <span>{{ $tpmCat->actual_model ?? null }}</span> ( {{ $tpmData->code_no }} )
                     </p>
 
                     <p style="margin: 0 0 4px;">
-                        Lot # {{ $nsaCategory->jhcurve_lotno ?? null }}
+                        Lot # {{ $tpmCat->jhcurve_lotno ?? null }}
                     </p>
 
                     <p style="margin: 0 0 4px; color: rgb(65, 61, 252); font-size: 14px;">

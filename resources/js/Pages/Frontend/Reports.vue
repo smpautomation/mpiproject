@@ -4636,11 +4636,11 @@
                                         </p>
                                         <p>
                                             <span>{{
-                                                nsa_combinedData[current_setNo].category.actual_model
+                                                jhCurveActualModel
                                             }}</span>
                                             ({{ secAdd_propD_jhCurveCodeNo }})
                                         </p>
-                                        <p>Lot #: {{ nsa_combinedData[current_setNo].category.jhcurve_lotno }}</p>
+                                        <p>Lot #: {{ jhCurveLotNo }}</p>
                                         <p class="font-bold text-blue-600">
                                             {{ secAdd_propD_jhCurveRemarks }}
                                         </p>
@@ -7306,7 +7306,7 @@ const fetchAllData = async () => {
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
-                rejectInstruction.value = perform;
+                //rejectInstruction.value = perform; //Request by Ma'am Jhen to remove
             }
             if (ngiHk.value > 0) {
                 rejectOKNG.value.push(reject + " iHk" + "  ");
@@ -7314,7 +7314,7 @@ const fetchAllData = async () => {
                 rejectLotRemarks.value = rejectLotRemarks.value.filter(
                     (rejectLot) => rejectLot !== lotPass + "  ",
                 );
-                rejectInstruction.value = perform;
+                //rejectInstruction.value = perform; //Request by Ma'am Jhen to remove
             }
             if (ngBHMax.value > 0) {
                 rejectOKNG.value.push(reject + " BHMax" + "  ");
