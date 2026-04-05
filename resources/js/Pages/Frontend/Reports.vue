@@ -4636,11 +4636,11 @@
                                         </p>
                                         <p>
                                             <span>{{
-                                                nsa_combinedData[current_setNo].actual_model
+                                                nsa_combinedData[current_setNo].category.actual_model
                                             }}</span>
                                             ({{ secAdd_propD_jhCurveCodeNo }})
                                         </p>
-                                        <p>Lot #: {{ nsa_combinedData[current_setNo].jhcurve_lotno }}</p>
+                                        <p>Lot #: {{ nsa_combinedData[current_setNo].category.jhcurve_lotno }}</p>
                                         <p class="font-bold text-blue-600">
                                             {{ secAdd_propD_jhCurveRemarks }}
                                         </p>
