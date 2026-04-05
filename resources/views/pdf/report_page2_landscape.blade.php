@@ -324,11 +324,11 @@
                     </p>
 
                     <p style="margin: 0 0 4px;">
-                        <span>{{ $controlModel['A'] ?? $controlModel['B'] ?? null }}</span> ( {{ $tpmData->code_no }} )
+                        <span>{{ $tpmCat->actual_model ?? null }}</span> ( {{ $tpmData->code_no }} )
                     </p>
 
                     <p style="margin: 0 0 4px;">
-                        Lot # {{ $controlLotNo['A'] ?? $controlLotNo['B'] ?? null }}
+                        Lot # {{ $tpmCat->jhcurve_lotno ?? null }}
                     </p>
 
                     @if (!empty($noteReasonsSorted))

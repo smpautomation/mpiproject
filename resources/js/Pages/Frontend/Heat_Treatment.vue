@@ -447,7 +447,7 @@
                                             class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                                         >
                                             Clear Existing Layer
-                                            {{ mpcs.selectedLayer }} Data
+                                            {{ mpcs.selectedLayer }} Data (Automation only)
                                         </button>
                                     </div>
                                 </div>
