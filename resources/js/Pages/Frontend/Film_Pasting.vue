@@ -185,6 +185,43 @@
                     </div>
                 </div>
             </div>
+
+            <div
+                class="flex items-start p-4 mb-4 border-l-4 border-red-500 rounded-lg bg-gray-50"
+            >
+                <svg
+                    class="w-5 h-5 mt-0.5 mr-3 text-red-500 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v4m0 4h.01M10.29 3.86l-7.07 12.24A1 1 0 004.1 18h15.8a1 1 0 00.88-1.9L13.71 3.86a1 1 0 00-1.74 0z"
+                    />
+                </svg>
+
+                <div class="text-sm text-gray-800">
+                    <span class="font-semibold text-red-600"
+                        >Warning:</span
+                    >
+                    Do not encode any
+                    <span class="font-semibold text-red-600"
+                        >film pasting data</span
+                    >
+                    unless all layers in the
+                    <span class="font-semibold">control sheet</span> are
+                    fully assigned (Breaklot Cases). Proceeding with
+                    incomplete layers may result in inaccurate data and
+                    <span class="font-semibold text-red-600"
+                        >Clear Layer Data button</span
+                    >
+                    feature will also be disabled.
+                </div>
+            </div>
+
             <div class="flex flex-row gap-10 mt-10">
                 <div
                     class="max-w-4xl px-2 mx-auto space-y-2 bg-white border border-gray-200 shadow-xl rounded-2xl py-7 md:px-12"

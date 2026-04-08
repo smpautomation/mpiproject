@@ -296,45 +296,17 @@
                                     </label>
 
                                     <div class="flex items-center gap-2">
-                                        <select
+                                        <input
                                             v-model="mpcs.lotNo"
-                                            :disabled="
-                                                isDataShown || isLotListsLoading
-                                            "
-                                            :class="[
-                                                'w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg focus:ring-2',
-                                                isDataShown || isLotListsLoading
-                                                    ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300'
-                                                    : 'text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600',
-                                            ]"
-                                        >
-                                            <option value="" disabled>
-                                                {{
-                                                    isLotListsLoading
-                                                        ? "Loading lots..."
-                                                        : "Select Lot No"
-                                                }}
-                                            </option>
+                                            type="text"
+                                            :disabled="isDataShown"
+                                            class="w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600"
+                                            placeholder="Enter Lot No"
+                                        />
 
-                                            <option
-                                                v-for="(
-                                                    lot, index
-                                                ) in lotNoLists"
-                                                :key="index"
-                                                :value="lot.lot_no"
-                                            >
-                                                {{ lot.lot_no }}
-                                            </option>
-                                        </select>
-
-                                        <!-- Loader -->
-                                        <div
-                                            v-if="isLotListsLoading"
-                                            class="flex items-center"
-                                        >
-                                            <div
-                                                class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"
-                                            ></div>
+                                        <!-- Optional loader if you still need any async -->
+                                        <div v-if="isLotListsLoading" class="flex items-center">
+                                            <div class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -4300,6 +4272,8 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
     }
 };
 
+
+/*
 const fetchAllLotNoData = async () => {
     try {
         isLotListsLoading.value = true;
@@ -4312,6 +4286,8 @@ const fetchAllLotNoData = async () => {
         isLotListsLoading.value = false;
     }
 };
+*/
+
 
 const changeData = () => {
     const preserveKeys = [
@@ -5304,7 +5280,7 @@ const saveToDatabase = async () => {
         await fetchExistingLayers();
         await getFurnaceLists();
         await getMassProdLists();
-        await fetchAllLotNoData();
+        //await fetchAllLotNoData();
         await getGraphPatterns();
         await get1st2ndGBDPModels();
         await checkBreaklot();
@@ -5738,8 +5714,8 @@ onMounted(async () => {
         loadingStep.value = "Loading mass production data...";
         await getMassProdLists();
 
-        loadingStep.value = "Fetching lot numbers...";
-        await fetchAllLotNoData();
+        //loadingStep.value = "Fetching lot numbers...";
+        //await fetchAllLotNoData();
 
         loadingStep.value = "Loading graph patterns...";
         await getGraphPatterns();
