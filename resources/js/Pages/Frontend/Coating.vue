@@ -5104,19 +5104,16 @@ const getSelectedMassProdData = async () => {
         const response = await axios.get(
             `/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layer/${coatingInfo.selectedLayer}/layer-no`,
         );
-        const massProdLayerData = response.data.layer_data;
-        console.log("Mass Prod layer data: ", massProdLayerData);
-        coatingInfo.selectedModel =
-            massProdLayerData[0].data["A"] ||
-            massProdLayerData[0].data["B"] ||
-            null;
-        lotNoLists.value = response.data.layer_lot_lists;
-        lotNo.value = lotNoLists.value[0] || null; // fallback if array is empty
-        console.log("Mass Prod layer lot no lists: ", lotNoLists.value);
-        console.log(
-            "success response getSelectedMassProdData: ",
-            coatingInfo.totalMagnetWeight,
-        );
+
+        // Use explicit initial lot/model
+        lotNo.value = response.data.initial_lot;
+        coatingInfo.selectedModel = response.data.initial_model;
+
+        // Optional: still keep full lot list for dropdowns
+        lotNoLists.value = response.data.layer_lot_lists || [];
+
+        console.log("Selected Model: ", coatingInfo.selectedModel);
+        console.log("Selected Lot No: ", lotNo.value);
     } catch (error) {
         console.error("Failed to getSelectedMassProdData: ", error);
         await userErrorLogging(

@@ -876,7 +876,7 @@ class MassProductionController extends Controller
         ]);
     }
 
-    public function getLayerDataByLayerNo($furnace, $massprod, $layer)
+    public function getLayerDataByLayerNo($furnace, $massprod, $layer) //goback
     {
         Log::info('getLayerDataByLayerNo called', compact('furnace', 'massprod', 'layer'));
 
@@ -958,11 +958,22 @@ class MassProductionController extends Controller
             $layerLotModelPairs[$layerLotLists[$i]] = $layerModelLists[$i];
         }
 
+        // Fetch initial lot/model for this layer
+        $initialLotHt = BreaklotInitialLotHt::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->where('layer', $layer)
+            ->first();
+
+        $initialLot = $initialLotHt->initial_lot ?? null;
+        $initialModel = $initialLotHt->initial_model ?? null;
+
         return response()->json([
             'layer_column' => $layerColumn,
             'layer_data'   => $layerData,
             'layer_lot_lists'  => $layerLotLists,
             'lot_pairs' => $layerLotModelPairs,
+            'initial_lot' => $initialLot,
+            'initial_model' => $initialModel,
         ]);
     }
 
@@ -1100,7 +1111,10 @@ class MassProductionController extends Controller
                     'lot_no' => $mainLot->initial_lot,
                     'heat_treatment_completed' => !empty($layer_json),
                     'second_heat_treatment_completed' => $secondHeatTreatmentCompleted,
-                    'coating_completed' => true,
+                    'coating_completed' => Coating::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
                     'mpi_completed' => TPMDataCategory::where('actual_model', $mainLot->initial_model)
                         ->where('jhcurve_lotno', $mainLot->initial_lot)
                         ->where('massprod_name', $massprod)
@@ -1125,7 +1139,10 @@ class MassProductionController extends Controller
                         'lot_no' => $lot->lot_no,
                         'heat_treatment_completed' => !empty($layer_json),
                         'second_heat_treatment_completed' => $secondHeatTreatmentCompleted,
-                        'coating_completed' => true,
+                        'coating_completed' => Coating::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
                         'mpi_completed' => TPMDataCategory::where('actual_model', $lot->model)
                             ->where('jhcurve_lotno', $lot->lot_no)
                             ->where('massprod_name', $massprod)
