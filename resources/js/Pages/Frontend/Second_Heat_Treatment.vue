@@ -499,7 +499,7 @@
 
                     <!-- Cancel -->
                     <button
-                        @click="(Inertia.visit('heat_treatment'), clearAll())"
+                        @click="(router.visit('heat_treatment'), clearAll())"
                         class="px-4 py-2 text-sm font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-slate-500 to-slate-700 hover:from-slate-700 hover:to-white hover:text-black hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-slate-400 focus:ring-opacity-50"
                     >
                         CANCEL
@@ -730,7 +730,7 @@
 <script setup>
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, watch, reactive } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import axios from "axios";
 import Modal from "@/Components/Modal.vue";
 import { useAuth } from "@/Composables/useAuth.js";
@@ -750,14 +750,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
             return false; // Indicate not authenticated
         }
 
@@ -768,7 +768,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -1167,7 +1167,7 @@ const saveToDatabase = async () => {
         clearAll();
 
         toast.success("Data saved successfully!");
-        Inertia.visit("/heat_treatment");
+        router.visit("/heat_treatment");
     } catch (error) {
         console.error("Error saving data:", error);
         toast.error("Failed to save data. Please try again.");
@@ -1231,7 +1231,7 @@ const addtnl_saveToDatabase = async () => {
                 " successfully.",
         );
         clearAll(); // Clear all fields after successful save
-        Inertia.visit("/heat_treatment");
+        router.visit("/heat_treatment");
     } catch (error) {
         console.error("Error saving data:", error);
         toast.error("Failed to save data. Please try again.");

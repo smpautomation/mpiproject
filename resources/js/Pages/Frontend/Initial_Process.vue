@@ -82,7 +82,7 @@
                     </div>
 
                     <!-- Return Home Button -->
-                    <button @click="Inertia.visit('/')"
+                    <button @click="router.visit('/')"
                             class="px-3 py-1 text-xs font-semibold transition-colors duration-200 bg-blue-400 rounded-full hover:bg-blue-500">
                         Return Home
                     </button>
@@ -2669,7 +2669,7 @@
 
 <script setup>
 import { onMounted, ref, computed, reactive, watch, nextTick } from "vue";
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 import Modal from '@/Components/Modal.vue'
 import { useToast } from 'vue-toast-notification';
 import axios from 'axios';
@@ -2688,7 +2688,7 @@ const checkAuthentication = async () => {
         while (!state.user) {
             if (Date.now() - start > maxWait) {
                 console.error('User data failed to load in time. Redirecting...');
-                Inertia.visit('/'); // Redirect if user never loads
+                router.visit('/'); // Redirect if user never loads
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50));
@@ -2696,7 +2696,7 @@ const checkAuthentication = async () => {
 
         if (!state.isAuthenticated) {
             console.warn('User is not authenticated. Redirecting...');
-            Inertia.visit('/');
+            router.visit('/');
             return false;
         }
 
@@ -2705,7 +2705,7 @@ const checkAuthentication = async () => {
 
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/');
+        router.visit('/');
         return false;
     }
 };

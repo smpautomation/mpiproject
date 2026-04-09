@@ -42,7 +42,7 @@
 
                     <!-- Right: Action -->
                     <button
-                        @click="Inertia.visit('/manage')"
+                        @click="router.visit('/manage')"
                         class="px-3 py-1 text-xs font-medium text-red-600 transition border border-red-300 rounded-md hover:text-red-700 hover:bg-red-100"
                     >
                         Try again
@@ -1787,7 +1787,7 @@
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, nextTick, watch } from "vue";
 import { Chart, registerables } from "chart.js"; // Import all required components
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import Papa from "papaparse";
 import axios from "axios";
 import Modal from "@/Components/Modal.vue";
@@ -1809,14 +1809,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
 
             return false; // Indicate not authenticated
         }
@@ -1828,7 +1828,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -2378,7 +2378,7 @@ watch(selectedLayerCode, async (newVal, oldVal) => {
 
 const handleMiasFactorModalClose = () => {
     showMiasFactorError.value = false;
-    Inertia.visit("/manage");
+    router.visit("/manage");
 };
 
 const mias_factorData = async (factor, mias) => {

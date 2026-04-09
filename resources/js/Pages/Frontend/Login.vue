@@ -16,7 +16,6 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
 import DotsLoader from '@/Components/DotsLoader.vue';
 import axios from 'axios'
 

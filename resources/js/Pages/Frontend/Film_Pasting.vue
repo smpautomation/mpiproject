@@ -952,7 +952,7 @@
                         </button>
                         <!-- Coating -->
                         <button
-                            @click="Inertia.visit('/coating')"
+                            @click="router.visit('/coating')"
                             class="flex-1 px-4 py-3 text-lg font-bold text-white transition-all duration-300 transform shadow-md rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 hover:shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50"
                         >
                             COATING FORMAT
@@ -1175,7 +1175,7 @@
 <script setup>
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, watch, reactive } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import axios from "axios";
 import Modal from "@/Components/Modal.vue";
 import { useAuth } from "@/Composables/useAuth.js";
@@ -1195,7 +1195,7 @@ const checkAuthentication = async () => {
                 console.error(
                     "User data failed to load in time. Redirecting...",
                 );
-                Inertia.visit("/"); // Redirect if user never loads
+                router.visit("/"); // Redirect if user never loads
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50));
@@ -1203,7 +1203,7 @@ const checkAuthentication = async () => {
 
         if (!state.isAuthenticated) {
             console.warn("User is not authenticated. Redirecting...");
-            Inertia.visit("/");
+            router.visit("/");
             return false;
         }
 
@@ -1214,7 +1214,7 @@ const checkAuthentication = async () => {
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/");
+        router.visit("/");
         return false;
     }
 };

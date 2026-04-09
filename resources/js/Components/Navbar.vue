@@ -149,7 +149,7 @@
 import { Link } from '@inertiajs/vue3';
 import { useAuth } from '@/Composables/useAuth.js';
 import { computed, ref } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 
 const { state, logout } = useAuth();
 const mobileOpen = ref(false);
@@ -157,7 +157,7 @@ const mobileOpen = ref(false);
 const handleLogout = async () => {
     logUserLogout().then(() => {
         logout();
-        Inertia.visit('/');
+        router.visit('/');
     });
 };
 

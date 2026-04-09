@@ -84,9 +84,7 @@
                         </div>
                         <button
                             class="ml-4 font-semibold text-blue-600 hover:underline"
-                            @click.prevent="
-                                $inertia.visit('/second_gbdp_models')
-                            "
+                            @click="router.visit('/second_gbdp_models')"
                         >
                             Register Here
                         </button>
@@ -2364,7 +2362,7 @@
                                 <!-- GRAPH PATTERNS Button -->
                                 <button
                                     v-if="!overwriteMode"
-                                    @click="Inertia.visit('ht_graph_patterns')"
+                                    @click="router.visit('ht_graph_patterns')"
                                     class="group relative w-full py-3.5 text-sm font-bold text-white transition-all duration-300 transform shadow-lg rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 hover:shadow-cyan-500/60 hover:shadow-2xl hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 overflow-hidden"
                                 >
                                     <div
@@ -3493,7 +3491,7 @@
 <script setup>
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, watch, reactive, onUnmounted } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import axios from "axios";
 import Modal from "@/Components/Modal.vue";
 import { useAuth } from "@/Composables/useAuth.js";
@@ -3513,7 +3511,7 @@ const checkAuthentication = async () => {
                 console.error(
                     "User data failed to load in time. Redirecting...",
                 );
-                Inertia.visit("/"); // Redirect if user never loads
+                router.visit("/"); // Redirect if user never loads
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50));
@@ -3521,7 +3519,7 @@ const checkAuthentication = async () => {
 
         if (!state.isAuthenticated) {
             console.warn("User is not authenticated. Redirecting...");
-            Inertia.visit("/");
+            router.visit("/");
             return false;
         }
 
@@ -3532,7 +3530,7 @@ const checkAuthentication = async () => {
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/");
+        router.visit("/");
         return false;
     }
 };
@@ -5490,7 +5488,7 @@ const showBreakLotForm = () => {
         return;
     }
 
-    Inertia.visit("/ht_breaklots", {
+    router.visit("/ht_breaklots", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
             furnace: mpcs.selectedFurnace,
@@ -5592,7 +5590,7 @@ const uploadGraphs = async () => {
 
 const second_heat_treatment = () => {
     //goback
-    Inertia.visit("/second_heat_treatment", {
+    router.visit("/second_heat_treatment", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
             furnace: mpcs.selectedFurnace,

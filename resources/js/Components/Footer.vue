@@ -6,7 +6,7 @@
                 <div class="flex items-center gap-4 group">
                     <img
                         src="photo/AE.png"
-                        @click="Inertia.visit('/automation')"
+                        @click="router.visit('/automation')"
                         class="w-20 h-20 transition-all duration-300 ease-in-out group-hover:scale-110 filter brightness-100 group-hover:brightness-110"
                         alt="AE Logo"
                     />
@@ -38,5 +38,5 @@
 </template>
 
 <script setup>
-    import { Inertia } from '@inertiajs/inertia';
+    import { router } from '@inertiajs/vue3';
 </script>

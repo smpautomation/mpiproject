@@ -348,6 +348,138 @@
                     Next
                 </button>
             </div>
+
+            <button
+                v-if="cantFindData == false"
+                @click="cantFindData = true"
+                class="px-4 py-2 text-sm font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                >
+                Can't find report?
+            </button>
+
+            <div v-if="cantFindData" class="p-4 space-y-4">
+
+                <!-- 🔍 Search Panel -->
+                <div class="p-4 bg-white border rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-sm font-semibold text-gray-700">
+                            Search Old Reports
+                        </h2>
+
+                        <button
+                            @click="cantFindData = false"
+                            class="text-xs text-gray-500 hover:text-gray-700"
+                        >
+                            Close
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+
+                        <!-- Mass Production -->
+                        <div>
+                        <label class="block mb-1 text-xs font-medium text-gray-600">
+                            Mass Production Name
+                        </label>
+                        <input
+                            v-model="searchMassProd"
+                            type="text"
+                            @input="searchMassProd = searchMassProd.toUpperCase()"
+                            class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500"
+                            placeholder="Enter mass production"
+                        />
+                        </div>
+
+                        <!-- Furnace -->
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Furnace
+                            </label>
+                            <input
+                                v-model="searchFurnace"
+                                type="text"
+                                @input="searchFurnace = searchFurnace.toUpperCase()"
+                                class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500"
+                                placeholder="Enter furnace"
+                            />
+                        </div>
+
+                        <!-- Action -->
+                        <div class="flex items-end">
+                            <button
+                                @click="getSearchedData"
+                                type="button"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-cyan-500 rounded-lg hover:bg-cyan-600"
+                            >
+                                Search
+                            </button>
+                        </div>
+
+                    </div>
+                    </div>
+
+                    <!-- 📊 Table -->
+                    <div class="overflow-hidden bg-white border rounded-xl shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm text-left text-gray-700">
+
+                            <!-- Header -->
+                            <thead class="text-xs text-gray-600 uppercase bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-3">Serial No</th>
+                                    <th class="px-4 py-3">Furnace</th>
+                                    <th class="px-4 py-3">Mass Production</th>
+                                    <th class="px-4 py-3">Layer</th>
+                                    <th class="px-4 py-3">Model Name</th>
+                                    <th class="px-4 py-3">Lot No</th>
+                                    <th class="px-4 py-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+
+                            <!-- Body -->
+                            <tbody class="divide-y">
+
+                                <!-- Empty State -->
+                                <tr v-if="searchedDataList.length === 0">
+                                <td colspan="7" class="py-6 text-center text-gray-400">
+                                    No data found
+                                </td>
+                                </tr>
+
+                                <!-- Rows -->
+                                <tr
+                                v-for="(item) in searchedDataList"
+                                :key="item.serial_no"
+                                class="transition hover:bg-gray-50"
+                                >
+                                <td class="px-4 py-2 font-medium text-gray-800">
+                                    {{ item.serial_no }}
+                                </td>
+                                <td class="px-4 py-2">{{ item.furnace }}</td>
+                                <td class="px-4 py-2">{{ item.mass_prod }}</td>
+                                <td class="px-4 py-2">{{ item.layer ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ item.model_name ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ item.lot_no ?? '-' }}</td>
+
+                                <!-- Action -->
+                                <td class="px-4 py-2 text-center">
+                                    <button
+                                    @click="viewReport(item.serial_no)"
+                                    class="px-3 py-1 text-xs font-semibold text-white transition bg-cyan-600 rounded-md hover:bg-cyan-400"
+                                    >
+                                    View Report
+                                    </button>
+                                </td>
+                                </tr>
+
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
         </div>
     </Frontend>
 </template>
@@ -355,7 +487,7 @@
 <script setup>
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, watch } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import axios from "axios";
 import { useAuth } from "@/Composables/useAuth.js";
 
@@ -372,14 +504,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
 
             return false; // Indicate not authenticated
         }
@@ -391,7 +523,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -451,7 +583,7 @@ const userSerialDeleteLogging = async (logEvent) => {
 };
 
 const viewReport = (serial) => {
-    Inertia.visit("/reports", {
+    router.visit("/reports", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: { serialParam: serial, fromViewList: true }, // Passing the serialParam here
         preserveState: true,
@@ -499,6 +631,11 @@ const furnace_lists = ref([]);
 const selectedMassProd = ref("");
 const selectedFurnace = ref("");
 
+const searchMassProd = ref();
+const searchFurnace = ref();
+const searchedDataList = ref([]);
+const cantFindData = ref(false);
+
 const totalPages = computed(() => {
     return Math.ceil(filteredData.value.length / itemsPerPage) || 1;
 });
@@ -544,6 +681,23 @@ const getMassProdLists = async () => {
     }
 };
 
+const getSearchedData = async () => {
+    try {
+        const response = await axios.get('/api/search-old-view-list', {
+            params: {
+                search_mass_prod: searchMassProd.value,
+                search_furnace: searchFurnace.value
+            }
+        });
+        searchedDataList.value = response.data.data || [];
+    } catch (error) {
+        console.error('Failed to get searched data', error);
+        searchedDataList.value = [];
+    }
+};
+
+useSessionStorage("searchMassProd", searchMassProd);
+useSessionStorage("searchFurnace",searchFurnace);
 useSessionStorage("selectedMassProd", selectedMassProd);
 useSessionStorage("selectedFurnace", selectedFurnace);
 useSessionStorage("statusFilter", statusFilter);

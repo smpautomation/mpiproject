@@ -757,6 +757,7 @@
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
+import { router } from '@inertiajs/vue3'
 import { ref, onMounted } from 'vue';
 import DotsLoader from '@/Components/DotsLoader.vue';
 import Papa from 'papaparse';
@@ -775,14 +776,14 @@ const checkAuthentication = async () => {
         while (!state.user) {
             if (Date.now() - start > timeout) {
                 console.error('Auth timeout: user data failed to load.');
-                Inertia.visit('/'); // Redirect if not authenticated
+                router.visit('/'); // Redirect if not authenticated
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
+            router.visit('/'); // Redirect if not authenticated
 
             return false; // Indicate not authenticated
         }
@@ -794,7 +795,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
+        router.visit('/'); // Redirect on error
         return false; // Indicate not authenticated
     }
 };

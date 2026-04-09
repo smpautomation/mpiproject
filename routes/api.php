@@ -64,7 +64,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 Route::post('/viewlist-remastered', [TPMDataController::class, 'viewListRemastered']);
-
+Route::get('/search-old-view-list', [TPMDataController::class, 'searchedViewList']);
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);

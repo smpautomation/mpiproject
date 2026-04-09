@@ -948,7 +948,7 @@
                                         Retry
                                     </button>
                                     <button
-                                        @click="Inertia.visit('/furnace')"
+                                        @click="router.visit('/furnace')"
                                         class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-blue-500 rounded-md hover:bg-blue-600"
                                     >
                                         Go to Furnace Page
@@ -1013,8 +1013,7 @@ import {
     watchEffect,
     reactive,
 } from "vue";
-import { Inertia } from "@inertiajs/inertia";
-import { usePage } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import DotsLoader from "@/Components/DotsLoader.vue";
 import Modal from "@/Components/Modal.vue"; // adjust path if needed
 import axios from "axios";
@@ -1036,14 +1035,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
 
             return false; // Indicate not authenticated
         }
@@ -1055,7 +1054,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -1462,7 +1461,7 @@ watch([searchQuery, dateFrom, dateTo], () => {
 });
 
 const viewControlSheet = (massprod, furnace) => {
-    Inertia.visit("/control_sheet", {
+    router.visit("/control_sheet", {
         method: "get",
         data: { massProd: massprod, furnace: furnace },
         preserveState: true,
@@ -1471,7 +1470,7 @@ const viewControlSheet = (massprod, furnace) => {
 };
 
 const viewHTGraph = (massprod, furnace) => {
-    Inertia.visit("/htgraph", {
+    router.visit("/htgraph", {
         method: "get",
         data: { massProd: massprod, furnace: furnace },
         preserveScroll: true,
@@ -1480,7 +1479,7 @@ const viewHTGraph = (massprod, furnace) => {
 };
 
 const viewSMPData = (massprod, furnace) => {
-    Inertia.visit("/smpdata", {
+    router.visit("/smpdata", {
         method: "get",
         data: { massProd: massprod, furnace: furnace },
         preserveState: true,

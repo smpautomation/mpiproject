@@ -26,7 +26,7 @@
             </div>
             <button
                 v-if="errMsg"
-                @click="Inertia.visit('/massprod')"
+                @click="router.visit('/massprod')"
                 class="px-4 py-2 mt-2 text-red-800 transition duration-200 ease-out bg-red-100 border border-red-300 rounded hover:bg-red-200"
             >
                 ← Return
@@ -450,7 +450,7 @@
                 <div class="flex justify-start gap-6 mt-4">
                     <div>
                         <button
-                            @click="Inertia.visit('/massprod')"
+                            @click="router.visit('/massprod')"
                             class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
                         >
                             <svg
@@ -743,7 +743,7 @@
 <script setup>
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, watch } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import axios from "axios";
 import { useAuth } from "@/Composables/useAuth.js";
 import * as XLSX from "xlsx";
@@ -763,14 +763,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
             return false; // Indicate not authenticated
         }
 
@@ -781,7 +781,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -1451,7 +1451,7 @@ const getMpiReportLayerStatus = async () => {
 };
 
 const viewHTGraph = () => {
-    Inertia.visit("/htgraph", {
+    router.visit("/htgraph", {
         method: "get",
         data: {
             massProd: redirectedMassPro.value,
@@ -1463,7 +1463,7 @@ const viewHTGraph = () => {
 };
 
 const viewSMPData = () => {
-    Inertia.visit("/smpdata", {
+    router.visit("/smpdata", {
         method: "get",
         data: {
             massProd: redirectedMassPro.value,
@@ -1475,7 +1475,7 @@ const viewSMPData = () => {
 };
 
 const viewReport = (serial) => {
-    Inertia.visit("/reports", {
+    router.visit("/reports", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: { serialParam: serial, fromControlSheet: true }, // Passing the serialParam here
         preserveState: true,

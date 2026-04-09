@@ -275,7 +275,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { onMounted, ref, computed } from "vue";
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js'
 
@@ -290,7 +290,7 @@ const checkAuthentication = async () => {
         while (!state.user) {
             if (Date.now() - start > maxWait) {
                 console.error('User data failed to load in time. Redirecting...');
-                Inertia.visit('/'); // Redirect if user never loads
+                router.visit('/'); // Redirect if user never loads
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50));
@@ -298,7 +298,7 @@ const checkAuthentication = async () => {
 
         if (!state.isAuthenticated) {
             console.warn('User is not authenticated. Redirecting...');
-            Inertia.visit('/');
+            router.visit('/');
             return false;
         }
 
@@ -307,7 +307,7 @@ const checkAuthentication = async () => {
 
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/');
+        router.visit('/');
         return false;
     }
 };

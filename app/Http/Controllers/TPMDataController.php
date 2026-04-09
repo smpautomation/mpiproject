@@ -678,4 +678,50 @@ class TPMDataController extends Controller
             'last_page' => $paginatedSerials->lastPage(),
         ]);
     }
+
+    public function searchedViewList(Request $request)
+    {
+        $request->validate([
+            'search_mass_prod' => 'required|string',
+            'search_furnace'   => 'required|string',
+        ]);
+
+        $massProd = $request->input('search_mass_prod');
+        $furnace  = $request->input('search_furnace');
+
+        // 1️⃣ Fetch TPMData and enforce unique serial_no
+        $tpmData = TPMData::where('mass_prod', $massProd)
+            ->where('furnace', $furnace)
+            ->get()
+            ->unique('serial_no')
+            ->values();
+
+        // 2️⃣ Extract serials
+        $tpmSerials = $tpmData->pluck('serial_no');
+
+        // 3️⃣ Fetch related TPMDataCategory
+        $tpmCat = TPMDataCategory::whereIn('tpm_data_serial', $tpmSerials)->get();
+
+        // 4️⃣ Index by serial (assumes one row per serial)
+        $tpmCatMap = $tpmCat->keyBy('tpm_data_serial');
+
+        // 5️⃣ Merge
+        $mergedData = $tpmData->map(function ($tpm) use ($tpmCatMap) {
+            $tpmCategory = $tpmCatMap[$tpm->serial_no] ?? null;
+
+            return [
+                'serial_no' => $tpm->serial_no,
+                'furnace'   => $tpm->furnace,
+                'mass_prod' => $tpm->mass_prod,
+                'layer'     => $tpm->layer_no,
+
+                'model_name' => $tpmCategory->actual_model ?? null,
+                'lot_no'     => $tpmCategory->jhcurve_lotno ?? null,
+            ];
+        });
+
+        return response()->json([
+            'data' => $mergedData,
+        ]);
+    }
 }

@@ -59,7 +59,7 @@
         <div class="flex items-center justify-between p-4 mb-6 text-white rounded-lg shadow bg-cyan-500">
             <h1 class="text-lg font-semibold">{{ sectionTitle }}</h1>
             <div class="flex space-x-4">
-                <button @click="Inertia.visit('/')" class="px-3 py-1 rounded bg-cyan-400 hover:bg-cyan-300">Return Home</button>
+                <button @click="router.visit('/')" class="px-3 py-1 rounded bg-cyan-400 hover:bg-cyan-300">Return Home</button>
             </div>
         </div>
 
@@ -153,7 +153,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 
 const activeSection = ref('home');

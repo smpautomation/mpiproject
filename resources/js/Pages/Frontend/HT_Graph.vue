@@ -81,7 +81,7 @@
             <div class="flex justify-start gap-6 mt-8">
                 <div>
                     <button
-                        @click="Inertia.visit('/massprod')"
+                        @click="router.visit('/massprod')"
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-100 hover:text-black"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +115,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, watch } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js'
 
@@ -130,14 +130,14 @@ const checkAuthentication = async () => {
         while (!state.user) {
             if (Date.now() - start > timeout) {
                 console.error('Auth timeout: user data failed to load within 5 seconds.');
-                Inertia.visit('/'); // Redirect if not authenticated
+                router.visit('/'); // Redirect if not authenticated
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/'); // Redirect if not authenticated
+            router.visit('/'); // Redirect if not authenticated
             return false; // Indicate not authenticated
         }
 
@@ -148,7 +148,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/'); // Redirect on error
+        router.visit('/'); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -209,7 +209,7 @@ const downloadImage = (type) => {
 };
 
 const viewControlSheet = () => {
-    Inertia.visit('/control_sheet',{
+    router.visit('/control_sheet',{
         method: 'get',
         data: { massProd: redirectedMassPro.value, furnace: redirectedFurnace.value },
         preserveState: true,
@@ -218,7 +218,7 @@ const viewControlSheet = () => {
 }
 
 const viewSMPData = () => {
-    Inertia.visit('/smpdata',{
+    router.visit('/smpdata',{
         method: 'get',
         data: { massProd: redirectedMassPro.value, furnace: redirectedFurnace.value },
         preserveState: true,

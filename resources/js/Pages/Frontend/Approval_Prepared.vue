@@ -205,7 +205,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, watch } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 import { useAuth } from '@/Composables/useAuth.js';
 import DotsLoader from '@/Components/DotsLoader.vue';
 
@@ -219,14 +219,14 @@ const checkAuthentication = async () => {
         while (!state.user) {
             if (Date.now() - start > timeout) {
                 console.error('Auth timeout: user data failed to load.');
-                Inertia.visit('/');
+                router.visit('/');
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit('/');
+            router.visit('/');
             return false;
         }
 
@@ -236,7 +236,7 @@ const checkAuthentication = async () => {
         return true;
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/');
+        router.visit('/');
         return false;
     }
 };
@@ -376,7 +376,7 @@ const showReportData = async () => {
 
 /* ---------------- APPROVAL ACTIONS ---------------- */
 const viewReport = (serial) => {
-    Inertia.visit('/reports', {
+    router.visit('/reports', {
         method: 'get',
         data: { serialParam: serial, fromApproval_prepared: true },
         preserveState: true,

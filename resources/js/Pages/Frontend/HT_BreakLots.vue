@@ -573,7 +573,7 @@
 
                     <div v-if="layersInvolvedUserPick.length" class="flex justify-center mt-20 mb-10">
                         <button
-                            @click="Inertia.visit('/heat_treatment')"
+                            @click="router.visit('/heat_treatment')"
                             class="group relative mr-10 px-10 py-4 bg-gradient-to-r from-gray-600 via-gray-700 to-gray-800 bg-[length:200%_100%]
                                 hover:bg-[length:100%_100%] text-white font-bold text-lg rounded-2xl shadow-xl
                                 hover:shadow-[0_20px_45px_rgba(0,0,0,0.45)] transition-all duration-500
@@ -950,7 +950,7 @@
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { ref, computed, onMounted, watch, reactive } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import Modal from '@/Components/Modal.vue'
 import { useAuth } from '@/Composables/useAuth.js'
@@ -968,7 +968,7 @@ const checkAuthentication = async () => {
         while (!state.user) {
             if (Date.now() - start > maxWait) {
                 console.error('User data failed to load in time. Redirecting...');
-                Inertia.visit('/'); // Redirect if user never loads
+                router.visit('/'); // Redirect if user never loads
                 return false;
             }
             await new Promise(resolve => setTimeout(resolve, 50));
@@ -976,7 +976,7 @@ const checkAuthentication = async () => {
 
         if (!state.isAuthenticated) {
             console.warn('User is not authenticated. Redirecting...');
-            Inertia.visit('/');
+            router.visit('/');
             return false;
         }
 
@@ -985,7 +985,7 @@ const checkAuthentication = async () => {
 
     } catch (error) {
         console.error('Error checking authentication:', error);
-        Inertia.visit('/');
+        router.visit('/');
         return false;
     }
 };
@@ -1828,7 +1828,7 @@ const saveToDatabase = async () => {
         await userManageLogging(`has successfully created Layer ${firstLayerSelected.value} | ${mpcsbl.selectedFurnace} - ${mpcsbl.selectedMassProd}`);
         showConfirmationPanel.value = false;
         resetData();
-        Inertia.visit('/heat_treatment');
+        router.visit('/heat_treatment');
     } catch (err) {
         console.error('Save failed:', err);
         toast.error('Database save failed!');

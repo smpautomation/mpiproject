@@ -348,7 +348,7 @@
 <script setup>
 import Frontend from "@/Layouts/FrontendLayout.vue";
 import { ref, computed, onMounted, toRaw, watch } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import { useAuth } from "@/Composables/useAuth.js";
 import DotsLoader from "@/Components/DotsLoader.vue";
 
@@ -365,14 +365,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
 
             return false; // Indicate not authenticated
         }
@@ -384,7 +384,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -528,7 +528,7 @@ watch(
 const viewReport = (serial) => {
     saveReportChecked(serial);
     //console.log('Navigating to report with serial:', serial);
-    Inertia.visit("/reports", {
+    router.visit("/reports", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
             serialParam: serial,

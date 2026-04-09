@@ -3569,7 +3569,7 @@
 
                         <button
                             v-if="isFromViewList && !isFromApproval"
-                            @click="$inertia.visit('/view')"
+                            @click="backToViewList"
                             class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO VIEW LIST
@@ -5000,7 +5000,7 @@ import {
     watchEffect,
     reactive,
 } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import { usePage } from "@inertiajs/vue3";
 import DotsLoader from "@/Components/DotsLoader.vue";
 import Modal from "@/Components/Modal.vue";
@@ -5022,14 +5022,14 @@ const checkAuthentication = async () => {
                 console.error(
                     "Auth timeout: user data failed to load within 5 seconds.",
                 );
-                Inertia.visit("/"); // Redirect if not authenticated
+                router.visit("/"); // Redirect if not authenticated
                 return false;
             }
             await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
         }
 
         if (!state.isAuthenticated) {
-            Inertia.visit("/"); // Redirect if not authenticated
+            router.visit("/"); // Redirect if not authenticated
 
             return false; // Indicate not authenticated
         }
@@ -5059,7 +5059,7 @@ const checkAuthentication = async () => {
         return true; // Indicate authenticated
     } catch (error) {
         console.error("Error checking authentication:", error);
-        Inertia.visit("/"); // Redirect on error
+        router.visit("/"); // Redirect on error
         return false; // Indicate not authenticated
     }
 };
@@ -6204,6 +6204,10 @@ const resetReportTsiData = async () => {
 
     await saveReport();
 };
+
+const backToViewList = () => {
+    router.visit('/view');
+}
 
 watchEffect(() => {
     const data = reportCoatingAmounts.value.filter(
@@ -8736,7 +8740,7 @@ const saveReportUpdate = async (saveData, serial) => {
         showSelectionPanel.value = true;
         showReportMain.value = false;
         if (isFromViewList.value || isFromControlSheet.value) {
-            Inertia.visit("/reports");
+            router.visit("/reports");
         }
     }
 };
@@ -9311,7 +9315,7 @@ const sec_additional_redirect = (
 ) => {
     try {
         //console.log('Navigating to report with serial:', sec_serial);
-        Inertia.visit("/sec_additional", {
+        router.visit("/sec_additional", {
             method: "get",
             data: {
                 sec_serialParam: sec_serial,
@@ -9338,7 +9342,7 @@ const sec_additional_redirect = (
 
 const backToApprovalFunction = () => {
     //console.log('Navigating to report with serial:', serial);
-    Inertia.visit("/approval", {
+    router.visit("/approval", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: { filterStatus: filterStatus.value, fromReports: true }, // Passing the serialParam here
         preserveState: true,
@@ -9348,7 +9352,7 @@ const backToApprovalFunction = () => {
 
 const backToApprovalFunction_checked = () => {
     //console.log('Navigating to report with serial:', serial);
-    Inertia.visit("/approval_checked", {
+    router.visit("/approval_checked", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
             filterStatus_checked: filterStatus_checked.value,
@@ -9361,7 +9365,7 @@ const backToApprovalFunction_checked = () => {
 
 const backToApprovalFunction_prepared = () => {
     //console.log('Navigating to report with serial:', serial);
-    Inertia.visit("/approval_prepared", {
+    router.visit("/approval_prepared", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: { fromReports: true }, // Passing the serialParam here
         preserveState: true,
@@ -9371,7 +9375,7 @@ const backToApprovalFunction_prepared = () => {
 
 const goToControlSheet = () => {
     //console.log('Navigating to report with serial:', serial);
-    Inertia.visit("/control_sheet", {
+    router.visit("/control_sheet", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: {
             massProd: selectedMassProd.value,
