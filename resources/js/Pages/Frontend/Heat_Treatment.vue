@@ -3811,6 +3811,8 @@ const checkInitialLot = async () => {
             isInitialLotNotSaved.value = false;
             currentInitialLot.value = null;
         }
+
+        console.log('Initial Lot saved: ',isInitialLotNotSaved.value);
     } catch (error) {
         console.error("Failed to check initial lot", error);
         isInitialLotNotSaved.value = false;
@@ -4327,6 +4329,8 @@ const fetchAllLotDataBoxDetails = async () => {
         toast.warning("Please select Model and Lot number first");
         return;
     }
+
+    await checkInitialLot();
 
     try {
         const response = await axios.post(
