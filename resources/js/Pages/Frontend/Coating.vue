@@ -5369,7 +5369,6 @@ watch(
         // Fetch existing layers whenever any value changes
         await fetchExistingLayers();
         await getSelectedMassProdData();
-        await checkInitialLot();
 
         console.log(
             `Selected Furnace: ${newFurnace}, MassProd: ${newMassProd}, Layer: ${newLayer}, ` +
@@ -5652,6 +5651,9 @@ const autoFetchBreaklot = async () => {
 
 const fetchCoatingDataSummary = async () => {
     try {
+
+        await checkInitialLot();
+
         if (
             !coatingInfo.selectedFurnace ||
             !coatingInfo.selectedMassProd ||
@@ -5789,6 +5791,9 @@ const fetchCoatingDataSummary = async () => {
 
 const fetchCoatingData2ndGbdpSummary = async () => {
     try {
+
+        await checkInitialLot();
+
         if (
             !coatingInfo.selectedFurnace ||
             !coatingInfo.selectedMassProd ||
