@@ -876,7 +876,7 @@ class MassProductionController extends Controller
         ]);
     }
 
-    public function getLayerDataByLayerNo($furnace, $massprod, $layer) //goback
+    public function getLayerDataByLayerNo($furnace, $massprod, $layer)
     {
         Log::info('getLayerDataByLayerNo called', compact('furnace', 'massprod', 'layer'));
 
@@ -1095,8 +1095,13 @@ class MassProductionController extends Controller
             }
 
             $secondHeatTreatmentCompleted = false;
+            $secondHeatTreatmentBreaklotCompleted = false;
             if ($layer_type === '1st and 2nd Gbdp') {
-                $secondHeatTreatmentCompleted = BreaklotSecondHeatTreatment::where('furnace', $furnace)
+                $secondHeatTreatmentCompleted = GbdpSecondHeatTreatment::where('furnace', $furnace)
+                    ->where('mass_prod', $massprod)
+                    ->where('layer', $layer_no)
+                    ->exists();
+                $secondHeatTreatmentBreaklotCompleted = BreaklotSecondHeatTreatment::where('furnace', $furnace)
                     ->where('mass_prod', $massprod)
                     ->where('layer', $layer_no)
                     ->exists();
@@ -1112,6 +1117,10 @@ class MassProductionController extends Controller
                     'heat_treatment_completed' => !empty($layer_json),
                     'second_heat_treatment_completed' => $secondHeatTreatmentCompleted,
                     'coating_completed' => Coating::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
+                    'second_coating_completed' => GbdpSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massprod)
                         ->where('layer', $layer_no)
                         ->exists(),
@@ -1138,11 +1147,17 @@ class MassProductionController extends Controller
                         'model' => $lot->model,
                         'lot_no' => $lot->lot_no,
                         'heat_treatment_completed' => !empty($layer_json),
-                        'second_heat_treatment_completed' => $secondHeatTreatmentCompleted,
+                        'second_heat_treatment_completed' => $secondHeatTreatmentBreaklotCompleted,
                         'coating_completed' => Coating::where('furnace', $furnace)
-                        ->where('mass_prod', $massprod)
-                        ->where('layer', $layer_no)
-                        ->exists(),
+                            ->where('mass_prod', $massprod)
+                            ->where('layer', $layer_no)
+                            ->exists(),
+                        'second_coating_completed' => BreaklotSecondCoating::where('furnace', $furnace)
+                            ->where('mass_prod', $massprod)
+                            ->where('layer', $layer_no)
+                            ->where('model', $lot->model)
+                            ->where('lot_no', $lot->lot_no)
+                            ->exists(),
                         'mpi_completed' => TPMDataCategory::where('actual_model', $lot->model)
                             ->where('jhcurve_lotno', $lot->lot_no)
                             ->where('massprod_name', $massprod)
