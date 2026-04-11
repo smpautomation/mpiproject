@@ -461,7 +461,9 @@ class TxtExportService
                             ->first();
 
                         if ($gbdp) {
-                            $coating = json_decode($gbdp->coating_info_2ndgbdp, true);
+                            $coating = is_array($gbdp->coating_info_2ndgbdp)
+                                ? $gbdp->coating_info_2ndgbdp
+                                : json_decode($gbdp->coating_info_2ndgbdp, true);
                         }
                     }
                 } else {
@@ -482,7 +484,9 @@ class TxtExportService
                             ->first();
 
                         if ($blSecond) {
-                            $coating = json_decode($blSecond->coating_info_2ndgbdp, true);
+                            $coating = is_array($blSecond->coating_info_2ndgbdp)
+                                ? $blSecond->coating_info_2ndgbdp
+                                : json_decode($blSecond->coating_info_2ndgbdp, true);
                         }
                     }
                 }

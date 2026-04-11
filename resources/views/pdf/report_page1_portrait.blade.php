@@ -358,135 +358,179 @@
 
     </div>  <!-- End of border -->
 
-<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
-    <label class="bold" style="font-size: 10px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
+    <div style="padding: 0px; border: 1px solid black; margin-top: 0px;">
+        <label class="bold" style="font-size: 10px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
 
-    <div class="table-block">
-        <div class="table-row">
+        <div class="table-block">
+            <div class="table-row">
 
-            <!-- Column 1: Labels -->
-            <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
+                <!-- Column 1: Labels -->
+                <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
 
-                @php
-                    $rows = [
-                        ['Furnace Machine:', $heatTreatmentData->machine_no ?? null],
-                        ['CYCLE No:', $heatTreatmentData->cycle_no ?? null],
-                        ['BATCH CYCLE No:', $heatTreatmentData->batch_cycle_no ?? null],
-                        ['PATTERN No:', $heatTreatmentData->pattern_no ?? null],
-                        ['DATE START:', $heatTreatmentData->date_start ?? 'NA'],
-                        ['TIME START:', $heatTreatmentData->time_start ?? 'NA'],
-                        ['LOADER:', $heatTreatmentData->loader ?? null],
-                        ['DATE FINISH:', $heatTreatmentData->date_finished ?? 'NA'],
-                        ['TIME FINISH:', $heatTreatmentData->time_finished ?? 'NA'],
-                        ['UNLOADER:', $heatTreatmentData->unloader ?? null],
-                        ['Cycle Pattern:', $heatTreatmentData->cycle_pattern ?? null],
-                        ['Current Pattern:', $heatTreatmentData->current_pattern ?? null],
-                    ];
-                @endphp
+                    @php
+                        $rows = [
+                            ['Furnace Machine:', $heatTreatmentData->machine_no ?? null],
+                            ['CYCLE No:', $heatTreatmentData->cycle_no ?? null],
+                            ['BATCH CYCLE No:', $heatTreatmentData->batch_cycle_no ?? null],
+                            ['PATTERN No:', $heatTreatmentData->pattern_no ?? null],
+                            ['DATE START:', $heatTreatmentData->date_start ?? 'NA'],
+                            ['TIME START:', $heatTreatmentData->time_start ?? 'NA'],
+                            ['LOADER:', $heatTreatmentData->loader ?? null],
+                            ['DATE FINISH:', $heatTreatmentData->date_finished ?? 'NA'],
+                            ['TIME FINISH:', $heatTreatmentData->time_finished ?? 'NA'],
+                            ['UNLOADER:', $heatTreatmentData->unloader ?? null],
+                            ['Cycle Pattern:', $heatTreatmentData->cycle_pattern ?? null],
+                            ['Current Pattern:', $heatTreatmentData->current_pattern ?? null],
+                        ];
 
-                @foreach($rows as [$label, $value])
-                    <div class="table-row" style="display: table-row; vertical-align: top;">
-                        <!-- Label -->
-                        <div class="table-cell" style="display: table-cell; width: 40%; padding-right: 2px; height: 12px; line-height: 12px; vertical-align: top;">
-                            {{ $label }}
-                        </div>
-                        <!-- Value -->
-                        <div class="table-cell" style="display: table-cell; width: 60%; height: 12px; line-height: 12px; vertical-align: top; border-bottom: 1px solid black;">
-                            {{ $value }}
-                        </div>
-                    </div>
-                @endforeach
+                        $chunkSize = ceil(count($rows) / 3);
 
+                        $col1 = array_slice($rows, 0, $chunkSize);
+                        $col2 = array_slice($rows, $chunkSize, $chunkSize);
+                        $col3 = array_slice($rows, $chunkSize * 2);
+                    @endphp
+
+                    <table style="width: 100%; table-layout: fixed; font-size: 7px; line-height: 1;">
+                        <tr>
+
+                            <!-- COLUMN 1 -->
+                            <td style="width: 33.33%; vertical-align: top; padding-right: 4px;">
+                                @foreach($col1 as [$label, $value])
+                                    <div style="display: table; width: 100%;">
+                                        <div style="display: table-row;">
+                                            <div style="display: table-cell; width: 40%; vertical-align: top;">
+                                                {{ $label }}
+                                            </div>
+                                            <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
+                                                {{ $value }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </td>
+
+                            <!-- COLUMN 2 -->
+                            <td style="width: 33.33%; vertical-align: top; padding: 0 4px;">
+                                @foreach($col2 as [$label, $value])
+                                    <div style="display: table; width: 100%;">
+                                        <div style="display: table-row;">
+                                            <div style="display: table-cell; width: 40%; vertical-align: top;">
+                                                {{ $label }}
+                                            </div>
+                                            <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
+                                                {{ $value }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </td>
+
+                            <!-- COLUMN 3 -->
+                            <td style="width: 33.33%; vertical-align: top; padding-left: 4px;">
+                                @foreach($col3 as [$label, $value])
+                                    <div style="display: table; width: 100%;">
+                                        <div style="display: table-row;">
+                                            <div style="display: table-cell; width: 40%; vertical-align: top;">
+                                                {{ $label }}
+                                            </div>
+                                            <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
+                                                {{ $value }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </td>
+
+                        </tr>
+                    </table>
+
+                </div>
             </div>
+            <div class="table-row">
+                <!-- Column 3: Table -->
+                <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px; padding-bottom: 5px;">
+                    <table class="print-table">
+                        <thead>
+                            <tr>
+                                <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2">BOX No.</th>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
+                                <th>E</th>
+                                <th>F</th>
+                                <th>G</th>
+                                <th>H</th>
+                                <th>J</th>
+                                <th>K</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- Main layer row --}}
+                            <tr>
+                                <td style="margin: 0px; padding: 0px;">No. of Layer</td>
+                                <td>{{ $layer }}</td>
+                                <td>{{ $controlLotNo['A'] ?? null }}</td>
+                                <td>{{ $controlLotNo['B'] ?? null }}</td>
+                                <td>{{ $controlLotNo['C'] ?? null }}</td>
+                                <td>{{ $controlLotNo['D'] ?? null }}</td>
+                                <td>{{ $controlLotNo['E'] ?? null }}</td>
+                                <td>{{ $controlLotNo['F'] ?? null }}</td>
+                                <td>{{ $controlLotNo['G'] ?? null }}</td>
+                                <td>{{ $controlLotNo['H'] ?? null }}</td>
+                                <td>{{ $controlLotNo['J'] ?? null }}</td>
+                                <td>{{ $controlLotNo['K'] ?? null }}</td>
+                            </tr>
 
-            <!-- spacer -->
-            <div style="vertical-align: top; width: 25%;">&nbsp;</div>
-
-            <!-- Column 3: Table -->
-            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px;">
-                <table class="print-table">
-                    <thead>
-                        <tr>
-                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
-                        </tr>
-                        <tr>
-                            <th colspan="2">BOX No.</th>
-                            <th>A</th>
-                            <th>B</th>
-                            <th>C</th>
-                            <th>D</th>
-                            <th>E</th>
-                            <th>F</th>
-                            <th>G</th>
-                            <th>H</th>
-                            <th>J</th>
-                            <th>K</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- Main layer row --}}
-                        <tr>
-                            <td style="margin: 0px; padding: 0px;">No. of Layer</td>
-                            <td>{{ $layer }}</td>
-                            <td>{{ $controlLotNo['A'] ?? null }}</td>
-                            <td>{{ $controlLotNo['B'] ?? null }}</td>
-                            <td>{{ $controlLotNo['C'] ?? null }}</td>
-                            <td>{{ $controlLotNo['D'] ?? null }}</td>
-                            <td>{{ $controlLotNo['E'] ?? null }}</td>
-                            <td>{{ $controlLotNo['F'] ?? null }}</td>
-                            <td>{{ $controlLotNo['G'] ?? null }}</td>
-                            <td>{{ $controlLotNo['H'] ?? null }}</td>
-                            <td>{{ $controlLotNo['J'] ?? null }}</td>
-                            <td>{{ $controlLotNo['K'] ?? null }}</td>
-                        </tr>
-
-                        {{-- Excess layer rows --}}
-                        @if(!empty($controlLotNoExcess))
-                            @foreach($controlLotNoExcess as $excessLayerNo => $letters)
-                                <tr>
-                                    <td style="margin: 0px; padding: 0px;"></td>
-                                    <td>{{ $excessLayerNo }}</td>
-                                    <td>{{ $letters['A'] ?? null }}</td>
-                                    <td>{{ $letters['B'] ?? null }}</td>
-                                    <td>{{ $letters['C'] ?? null }}</td>
-                                    <td>{{ $letters['D'] ?? null }}</td>
-                                    <td>{{ $letters['E'] ?? null }}</td>
-                                    <td>{{ $letters['F'] ?? null }}</td>
-                                    <td>{{ $letters['G'] ?? null }}</td>
-                                    <td>{{ $letters['H'] ?? null }}</td>
-                                    <td>{{ $letters['J'] ?? null }}</td>
-                                    <td>{{ $letters['K'] ?? null }}</td>
-                                </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
+                            {{-- Excess layer rows --}}
+                            @if(!empty($controlLotNoExcess))
+                                @foreach($controlLotNoExcess as $excessLayerNo => $letters)
+                                    <tr>
+                                        <td style="margin: 0px; padding: 0px;"></td>
+                                        <td>{{ $excessLayerNo }}</td>
+                                        <td>{{ $letters['A'] ?? null }}</td>
+                                        <td>{{ $letters['B'] ?? null }}</td>
+                                        <td>{{ $letters['C'] ?? null }}</td>
+                                        <td>{{ $letters['D'] ?? null }}</td>
+                                        <td>{{ $letters['E'] ?? null }}</td>
+                                        <td>{{ $letters['F'] ?? null }}</td>
+                                        <td>{{ $letters['G'] ?? null }}</td>
+                                        <td>{{ $letters['H'] ?? null }}</td>
+                                        <td>{{ $letters['J'] ?? null }}</td>
+                                        <td>{{ $letters['K'] ?? null }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
         </div>
-    </div>
-    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-        <tr>
-            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
-            <td style="width: 100%;">
-                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
-                    <span style="display: inline-block; margin-bottom: -1px;">
-                        {{ $heatTreatmentData->mass_prod }} MASS PRODUCTION
-                    </span>
-                </div>
-                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
-                    <span style="display: inline-block; margin-bottom: -1px;">
-                        {{ implode(' / ', array_filter([
-                            $heatTreatmentData->remarks1,
-                            $heatTreatmentData->remarks2,
-                            $heatTreatmentData->remarks3
-                        ])) }}
-                    </span>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div> <!-- END of Border -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+            <tr>
+                <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
+                <td style="width: 100%;">
+                    <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
+                        <span style="display: inline-block; margin-bottom: -1px;">
+                            {{ $heatTreatmentData->mass_prod }} MASS PRODUCTION
+                        </span>
+                    </div>
+                    <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
+                        <span style="display: inline-block; margin-bottom: -1px;">
+                            {{ implode(' / ', array_filter([
+                                $heatTreatmentData->remarks1,
+                                $heatTreatmentData->remarks2,
+                                $heatTreatmentData->remarks3
+                            ])) }}
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div> <!-- END of Border -->
 
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
     <label class="bold" style="font-size: 10px; padding-left: 1px;">OVEN HEATING INFORMATION</label>

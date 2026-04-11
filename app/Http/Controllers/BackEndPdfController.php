@@ -176,6 +176,12 @@ class BackEndPdfController extends Controller
             ], 404);
         }
 
+        $secondHeatTreatment = GbdpSecondHeatTreatment::where([
+            'mass_prod' => $massprod,
+            'furnace'   => $furnace,
+            'layer'     => $layer,
+        ])->first();
+
         // Build column name dynamically
         $columnLayerData = 'layer_' . str_replace('.', '_', $layer);
         $columnLayerFormat = 'layer_' . str_replace('.', '_', $layer) . '_format_type';
@@ -612,7 +618,12 @@ class BackEndPdfController extends Controller
             'coatingDataValues' => $coatingDataValues ?? null,
             'secondGbdp2ndCoatingData' => $secondGbdpCoatingData['coating_data_2ndgbdp'] ?? null,
             'secondGbdp2ndCoatingInfo' => $secondGbdpCoatingData['coating_info_2ndgbdp'] ?? null,
+            'secondGbdp1stCoatingData' => $secondGbdpCoatingData['coating_data_1stgbdp'] ?? null,
+            'secondGbdp1stCoatingInfo' => $secondGbdpCoatingData['coating_info_1stgbdp'] ?? null,
             'secondGbdpCoatingData' => $secondGbdpCoatingData ?? null,
+            'secondGbdp1stHeatTreatmentData' => $secondHeatTreatment['gbdp_1st'] ?? null,
+            'secondGbdp2ndHeatTreatmentData' => $secondHeatTreatment['gbdp_2nd'] ?? null,
+            'secondGbdpHeatTreatmentData' => $secondHeatTreatment ?? null,
             'heatTreatmentData' => $massProdData, // pass heat treatment data to Blade
             'filmPastingData' => $filmPastingData ?? null,
             'filmPastingHLine' => $filmPastingHLineValues ?? null,
