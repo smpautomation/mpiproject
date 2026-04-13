@@ -115,12 +115,41 @@
 
         <div class="table-block">
             <div class="table-row">
-                <div class="table-cell">Coating Date:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->date ?? 'NA' }}</span></div>
-                <div class="table-cell">Coating Machine No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->machine_no ?? 'NA' }}</span></div>
-                <div class="table-cell">Slurry Lot No:</div>
-                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $coatingData->slurry_lot_no ?? 'NA' }}</span></div>
+                <div class="table-cell" style="white-space: nowrap;">
+                    Coating Date:
+                </div>
+
+                <div class="table-cell">
+                    <span class="underline" style="text-align: center;">
+                        {{ $coatingData->date ?? 'NA' }}
+                    </span>
+                </div>
+
+                <div class="table-cell" style="white-space: nowrap;">
+                    Coating Machine No:
+                </div>
+
+                <div class="table-cell">
+                    <span class="underline" style="text-align: center;">
+                        {{ $coatingData->machine_no ?? 'NA' }}
+                    </span>
+                </div>
+
+                <div class="table-cell" style="white-space: nowrap;">
+                    Slurry Lot No:
+                </div>
+
+                <div class="table-cell">
+                    <span class="underline" style="text-align: center;">
+                        @php
+                            $values = preg_split('/\s+/', $coatingData->slurry_lot_no ?? 'NA');
+                        @endphp
+
+                        @foreach($values as $val)
+                            <div style="line-height: 1;">{{ $val }}</div>
+                        @endforeach
+                    </span>
+                </div>
             </div>
 
             <div class="table-row">
