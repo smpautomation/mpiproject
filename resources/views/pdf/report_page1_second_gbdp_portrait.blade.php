@@ -108,9 +108,9 @@
         </p>
     </div>
 
-    <div style="clear:both; margin: 0px; padding: 0px;"></div> <!-- Break Line -->
+<div style="padding: 0px; margin-top: 0px;">
 
-    <table style="width: 100%; border-collapse: collapse; padding: 0px; margin: 0px;">
+    <table style="width: 100%; border-collapse: collapse; padding: 0px;">
         <tr>
             <!-- LEFT PANEL -->
             <td style="width: 50%; padding-right: 0px; padding-top: 0px;">
