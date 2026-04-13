@@ -122,7 +122,17 @@
                             <div class="table-cell">Coating Date:</div>
                             <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['date'] ?? 'NA' }}</span></div>
                             <div class="table-cell">Slurry Lot No:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['slurry_lot_no'] ?? 'NA' }}</span></div>
+                            <div class="table-cell">
+                                <span class="underline" style="text-align: center;">
+                                    @php
+                                        $values = explode(' ', $secondGbdp1stCoatingInfo['slurry_lot_no'] ?? 'NA');
+                                    @endphp
+
+                                    @foreach($values as $val)
+                                        {{ $val }}<br>
+                                    @endforeach
+                                </span>
+                            </div>
                         </div>
 
                         <div class="table-row" style="white-space: nowrap;">
@@ -311,7 +321,17 @@
                             <div class="table-cell">Coating Date:</div>
                             <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['date'] ?? 'NA' }}</span></div>
                             <div class="table-cell">Slurry Lot No:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['slurry_lot_no'] ?? 'NA' }}</span></div>
+                            <div class="table-cell">
+                                <span class="underline" style="text-align: center;">
+                                    @php
+                                        $values = explode(' ', $secondGbdp2ndCoatingInfo['slurry_lot_no'] ?? 'NA');
+                                    @endphp
+
+                                    @foreach($values as $val)
+                                        {{ $val }}<br>
+                                    @endforeach
+                                </span>
+                            </div>
                         </div>
 
                         <div class="table-row" style="white-space: nowrap;">
