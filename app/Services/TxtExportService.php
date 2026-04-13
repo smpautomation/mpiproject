@@ -115,8 +115,8 @@ class TxtExportService
                     'COATING' => '0',
                     'WT' => '0',
                     'BOX_NO' => '0',
-                    'MODEL_CODE' => '0',
-                    'RAW_MATERIAL_CODE' => '0',
+                    'MODEL_CODE' => '0000000',
+                    'RAW_MATERIAL_CODE' => '0000000',
                 ];
 
                 // Fill with real data from JSON

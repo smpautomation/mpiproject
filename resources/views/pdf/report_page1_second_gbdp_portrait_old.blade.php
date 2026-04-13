@@ -7,9 +7,9 @@
     <style>
         @page {
             size: A4 portrait;
-            margin-top: 5mm;
-            margin-left: 10mm;
-            margin-right: 10mm;
+            margin-top: 7mm;
+            margin-left: 15mm;
+            margin-right: 15mm;
         }
 
         body { //reset
@@ -85,7 +85,7 @@
 
     <div style="clear:both; padding: 0px; margin: 0px;"></div> <!-- Break Line -->
 
-    <div class="table-block" style="padding-bottom: 2px;">
+    <div class="table-block">
         <div class="table-row">
             <div class="table-cell" style="font-weight: bold;">Model: </div>
             <div class="table-cell"><span class="underline" style="text-align: center; font-weight: bold; font-size: 9px;">{{ $tpmCat->actual_model ?? null }}</span></div>
@@ -103,751 +103,403 @@
     <div style="clear:both; padding: 0px; margin: 0px;"></div> <!-- Break Line -->
 
     <div style="margin-bottom: 0px; padding: 0px; margin: 0px;">
-        <p style="margin: 0; padding: 0; white-space: nowrap; overflow: visible; background-color: #ccc; border: 1px solid black; text-align: center; font-weight: bold; font-size:12px;">
+        <p style="white-space: nowrap; overflow: visible; background-color: #ccc; border: 1px solid black; text-align: center; font-weight: bold; font-size:12px;">
             GBDP MAGNETIC PROPERTY INSPECTION REPORT
         </p>
     </div>
 
     <div style="clear:both; margin: 0px; padding: 0px;"></div> <!-- Break Line -->
 
-    <table style="width: 100%; border-collapse: collapse; padding: 0px; margin: 0px;">
-        <tr>
-            <!-- LEFT PANEL -->
-            <td style="width: 50%; padding-right: 0px; padding-top: 0px;">
-                <div style="padding: 0px; border: 1px solid black;">
-                    <label class="bold" style="font-size: 10px; padding-left: 2px;">1ST GBDP COATING INFORMATION</label>
+    <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+        <label class="bold" style="font-size: 10px; padding-left: 1px;">COATING INFORMATION</label>
 
-                    <div class="table-block">
-                        <div class="table-row" style="white-space: nowrap;">
-                            <div class="table-cell">Coating Date:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['date'] ?? 'NA' }}</span></div>
-                            <div class="table-cell">Slurry Lot No:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['slurry_lot_no'] ?? 'NA' }}</span></div>
-                        </div>
+        <div class="table-block">
+            <div class="table-row">
+                <div class="table-cell">Coating Date:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['date'] ?? 'NA' }}</span></div>
+                <div class="table-cell">Coating Machine No:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['machine_no'] ?? 'NA' }}</span></div>
+                <div class="table-cell">Slurry Lot No:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['slurry_lot_no'] ?? 'NA' }}</span></div>
+            </div>
 
-                        <div class="table-row" style="white-space: nowrap;">
-                            <div class="table-cell">MIN. TB CONTENT:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['min_tb_content'] ?? 'NA' }}</span></div>
-                            <div class="table-cell">Total Magnet Weight:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['total_magnet_weight'] ?? 'NA' }}</span></div>
-                        </div>
+            <div class="table-row">
+                <div class="table-cell">MIN. TB CONTENT:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['min_tb_content'] ?? 'NA' }}</span></div>
+                <div class="table-cell">Total Magnet Weight:</div>
+                <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['total_magnet_weight'] ?? 'NA' }}</span></div>
+            </div>
 
-                        <div class="table-row" style="white-space: nowrap;">
-                            <div class="table-cell">Coating M/C No:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp1stCoatingInfo['machine_no'] ?? 'NA' }}</span></div>
-                        </div>
+            <div class="table-row">
+                <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
+                <div class="table-cell"></div>
+                <div class="table-cell"></div>
+                <div class="table-cell"><br></div>
+                <div class="table-cell"></div>
+                <div class="table-cell"><br></div>
+            </div>
 
-                        <div class="table-row" style="white-space: nowrap;">
-                            <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
-                            <div class="table-cell"></div>
-                            <div class="table-cell"></div>
-                            <div class="table-cell"><br></div>
-                            <div class="table-cell"></div>
-                            <div class="table-cell"><br></div>
-                        </div>
+            <div class="table-row">
+                <p class="table-cell" style="font-size:7px;">UNIT    :    (µ g/mm2)</p>
+            </div>
+        </div> <!-- End of Coating Info -->
 
-                        <div class="table-row">
-                            <p class="table-cell" style="font-size:7px;">UNIT    :    (µ g/mm2)</p>
-                        </div>
-                    </div> <!-- End of Coating Info -->
+        @php
+            $lotNo = $secondGbdp2ndCoatingData['Lot no'] ?? null;
+            $concentrationData = $secondGbdp2ndCoatingData['Concentration Data'] ?? [];
+            $coatingAmountData = collect($secondGbdp2ndCoatingData['Coating Amount Data'] ?? [])->keyBy('no');
+            //$additionalSlurry = $secondGbdp2ndCoatingData['Additional Slurry Data'] ?? [];
 
-                    @php
-                        $lotNo = $secondGbdp1stCoatingData['Lot no'] ?? null;
-                        $concentrationData = $secondGbdp1stCoatingData['Concentration Data'] ?? [];
-                        $coatingAmountData = collect($secondGbdp1stCoatingData['Coating Amount Data'] ?? [])->keyBy('no');
-                        //$additionalSlurry = $secondGbdp2ndCoatingData['Additional Slurry Data'] ?? [];
+            $rows = [];
+            $currentNo = 1;
 
-                        $rows = [];
-                        $currentNo = 1;
+            foreach ($concentrationData as $range) {
+                // each "range" has modules (M-01 to M-05, then M-06)
+                $normalModules = array_filter($range['modules'], fn($m) => $m['module'] !== 'M-06');
+                $m6Modules     = array_filter($range['modules'], fn($m) => $m['module'] === 'M-06');
 
-                        foreach ($concentrationData as $range) {
-                            // each "range" has modules (M-01 to M-05, then M-06)
-                            $normalModules = array_filter($range['modules'], fn($m) => $m['module'] !== 'M-06');
-                            $m6Modules     = array_filter($range['modules'], fn($m) => $m['module'] === 'M-06');
+                foreach ($normalModules as $module) {
+                    // normal row with Lot/No/Coating
+                    $rows[] = [
+                        'lot' => $lotNo,
+                        'no' => $currentNo,
+                        'coating' => $coatingAmountData[$currentNo]['coating'] ?? null,
+                        'concentration' => $module['value'],
+                        'module' => $module['module'],
+                    ];
+                    $currentNo++;
+                }
 
-                            foreach ($normalModules as $module) {
-                                // normal row with Lot/No/Coating
-                                $rows[] = [
-                                    'lot' => $lotNo,
-                                    'no' => $currentNo,
-                                    'coating' => $coatingAmountData[$currentNo]['coating'] ?? null,
-                                    'concentration' => $module['value'],
-                                    'module' => $module['module'],
-                                ];
-                                $currentNo++;
-                            }
+                foreach ($m6Modules as $module) {
+                    // special row for M-06 (blank Lot/No/Coating)
+                    $rows[] = [
+                        'lot' => null,
+                        'no' => null,
+                        'coating' => null,
+                        'concentration' => $module['value'],
+                        'module' => 'M-06',
+                    ];
+                }
+            }
 
-                            foreach ($m6Modules as $module) {
-                                // special row for M-06 (blank Lot/No/Coating)
-                                $rows[] = [
-                                    'lot' => null,
-                                    'no' => null,
-                                    'coating' => null,
-                                    'concentration' => $module['value'],
-                                    'module' => 'M-06',
-                                ];
-                            }
-                        }
+            // now slice by 10 “No.” groups
+            $table1Rows = array_slice($rows, 0, 14); // first 10 No + M6 blanks
+            $table2Rows = array_slice($rows, 14, 14);
+            $table3Rows = array_slice($rows, 28, 14);
+        @endphp
 
-                        // now slice by 10 “No.” groups
-                        $table1Rows = array_slice($rows, 0, 14); // first 10 No + M6 blanks
-                        $table2Rows = array_slice($rows, 14, 14);
-                        $table3Rows = array_slice($rows, 28, 14);
-                    @endphp
-
-                    <div class="table-block">
-                        <div class="table-row">
-                            <div class="table-cell">
-                                <!-- 1st table -->
-                                <table class="print-table" style="margin-top:1px;">
-                                    <thead>
-                                        <tr>
-                                            <th>Lot No.</th>
-                                            <th>No.</th>
-                                            <th>Coating</th>
-                                            <th colspan="2">Concentration</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($table1Rows as $row)
-                                            <tr>
-                                                <td>{{ $row['lot'] }}</td>
-                                                <td>{{ $row['no'] }}</td>
-                                                <td>{{ $row['coating'] }}</td>
-                                                <td>{{ $row['concentration'] }}</td>
-                                                <td>{{ $row['module'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="table-cell">
-                                <!-- 2nd table -->
-                                <table class="print-table" style="margin-top:1px; padding-right: 5px;">
-                                    <thead>
-                                        <tr>
-                                            <th>Lot No.</th>
-                                            <th>No.</th>
-                                            <th>Coating</th>
-                                            <th colspan="2">Concentration</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($table2Rows as $row)
-                                            <tr>
-                                                <td>{{ $row['lot'] }}</td>
-                                                <td>{{ $row['no'] }}</td>
-                                                <td>{{ $row['coating'] }}</td>
-                                                <td>{{ $row['concentration'] }}</td>
-                                                <td>{{ $row['module'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div style="display: table; margin: 0 auto; border-spacing: 10px; padding: 0px;">
-                        <div style="display: table-row;">
-                            <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                                <table style="width: 100%; font-size: 7px; border-collapse: collapse; border: 1px solid black;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp1stCoatingInfo['maximum'] }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                                <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp1stCoatingInfo['minimum']  }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                                <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">AVERAGE:</td>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp1stCoatingInfo['average'] }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-                        <tr>
-                            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
-                            <td style="width: 100%;">
-                                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
-                                    <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ $secondGbdp1stCoatingInfo['remarks'] }}
-                                    </span>
-                                </div>
-                                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
-                            </td>
-                        </tr>
+        <div class="table-block">
+            <div class="table-row">
+                <div class="table-cell">
+                    <!-- 1st table -->
+                    <table class="print-table" style="margin-top:1px;">
+                        <thead>
+                            <tr>
+                                <th>Lot No.</th>
+                                <th>No.</th>
+                                <th>Coating</th>
+                                <th colspan="2">Concentration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($table1Rows as $row)
+                                <tr>
+                                    <td>{{ $row['lot'] }}</td>
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['coating'] }}</td>
+                                    <td>{{ $row['concentration'] }}</td>
+                                    <td>{{ $row['module'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
-            </td>
 
-            <!-- RIGHT PANEL -->
-            <td style="width: 50%; padding-right: 0px; padding-top: 0px;">
-                <div style="padding: 0px; border: 1px solid black;">
-                    <label class="bold" style="font-size: 10px; padding-left: 2px;">2ND GBDP COATING INFORMATION</label>
-
-                    <div class="table-block" style="white-space: nowrap;">
-                        <div class="table-row">
-                            <div class="table-cell">Coating Date:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['date'] ?? 'NA' }}</span></div>
-                            <div class="table-cell">Slurry Lot No:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['slurry_lot_no'] ?? 'NA' }}</span></div>
-                        </div>
-
-                        <div class="table-row" style="white-space: nowrap;">
-                            <div class="table-cell">MIN. TB CONTENT:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['min_tb_content'] ?? 'NA' }}</span></div>
-                            <div class="table-cell">Total Magnet Weight:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['total_magnet_weight'] ?? 'NA' }}</span></div>
-                        </div>
-
-                        <div class="table-row" style="white-space: nowrap;">
-                            <div class="table-cell">Coating M/C No:</div>
-                            <div class="table-cell"><span class="underline" style="text-align: center;">{{ $secondGbdp2ndCoatingInfo['machine_no'] ?? 'NA' }}</span></div>
-                        </div>
-
-                        <div class="table-row">
-                            <div class="table-cell bold" style="font-size: 9px;">COATING DATA:</div>
-                            <div class="table-cell"></div>
-                            <div class="table-cell"></div>
-                            <div class="table-cell"><br></div>
-                            <div class="table-cell"></div>
-                            <div class="table-cell"><br></div>
-                        </div>
-
-                        <div class="table-row">
-                            <p class="table-cell" style="font-size:7px;">UNIT    :    (µ g/mm2)</p>
-                        </div>
-                    </div> <!-- End of Coating Info -->
-
-                    @php
-                        $lotNo = $secondGbdp2ndCoatingData['Lot no'] ?? null;
-                        $concentrationData = $secondGbdp2ndCoatingData['Concentration Data'] ?? [];
-                        $coatingAmountData = collect($secondGbdp2ndCoatingData['Coating Amount Data'] ?? [])->keyBy('no');
-                        //$additionalSlurry = $secondGbdp2ndCoatingData['Additional Slurry Data'] ?? [];
-
-                        $rows = [];
-                        $currentNo = 1;
-
-                        foreach ($concentrationData as $range) {
-                            // each "range" has modules (M-01 to M-05, then M-06)
-                            $normalModules = array_filter($range['modules'], fn($m) => $m['module'] !== 'M-06');
-                            $m6Modules     = array_filter($range['modules'], fn($m) => $m['module'] === 'M-06');
-
-                            foreach ($normalModules as $module) {
-                                // normal row with Lot/No/Coating
-                                $rows[] = [
-                                    'lot' => $lotNo,
-                                    'no' => $currentNo,
-                                    'coating' => $coatingAmountData[$currentNo]['coating'] ?? null,
-                                    'concentration' => $module['value'],
-                                    'module' => $module['module'],
-                                ];
-                                $currentNo++;
-                            }
-
-                            foreach ($m6Modules as $module) {
-                                // special row for M-06 (blank Lot/No/Coating)
-                                $rows[] = [
-                                    'lot' => null,
-                                    'no' => null,
-                                    'coating' => null,
-                                    'concentration' => $module['value'],
-                                    'module' => 'M-06',
-                                ];
-                            }
-                        }
-
-                        // now slice by 10 “No.” groups
-                        $table1Rows = array_slice($rows, 0, 14); // first 10 No + M6 blanks
-                        $table2Rows = array_slice($rows, 14, 14);
-                        $table3Rows = array_slice($rows, 28, 14);
-                    @endphp
-
-                    <div class="table-block">
-                        <div class="table-row">
-                            <div class="table-cell">
-                                <!-- 1st table -->
-                                <table class="print-table" style="margin-top:1px;">
-                                    <thead>
-                                        <tr>
-                                            <th>Lot No.</th>
-                                            <th>No.</th>
-                                            <th>Coating</th>
-                                            <th colspan="2">Concentration</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($table1Rows as $row)
-                                            <tr>
-                                                <td>{{ $row['lot'] }}</td>
-                                                <td>{{ $row['no'] }}</td>
-                                                <td>{{ $row['coating'] }}</td>
-                                                <td>{{ $row['concentration'] }}</td>
-                                                <td>{{ $row['module'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="table-cell">
-                                <!-- 2nd table -->
-                                <table class="print-table" style="margin-top:1px; padding-right: 5px;">
-                                    <thead>
-                                        <tr>
-                                            <th>Lot No.</th>
-                                            <th>No.</th>
-                                            <th>Coating</th>
-                                            <th colspan="2">Concentration</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($table2Rows as $row)
-                                            <tr>
-                                                <td>{{ $row['lot'] }}</td>
-                                                <td>{{ $row['no'] }}</td>
-                                                <td>{{ $row['coating'] }}</td>
-                                                <td>{{ $row['concentration'] }}</td>
-                                                <td>{{ $row['module'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div style="display: table; margin: 0 auto; border-spacing: 10px; padding: 0px;">
-                        <div style="display: table-row;">
-                            <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                                <table style="width: 100%; font-size: 7px; border-collapse: collapse; border: 1px solid black;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['maximum'] }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                                <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['minimum']  }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
-                                <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">AVERAGE:</td>
-                                            <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['average'] }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-                        <tr>
-                            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
-                            <td style="width: 100%;">
-                                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
-                                    <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ $secondGbdp2ndCoatingInfo['remarks'] }}
-                                    </span>
-                                </div>
-                                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
-                            </td>
-                        </tr>
+                <div class="table-cell">
+                    <!-- 2nd table -->
+                    <table class="print-table" style="margin-top:1px;">
+                        <thead>
+                            <tr>
+                                <th>Lot No.</th>
+                                <th>No.</th>
+                                <th>Coating</th>
+                                <th colspan="2">Concentration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($table2Rows as $row)
+                                <tr>
+                                    <td>{{ $row['lot'] }}</td>
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['coating'] }}</td>
+                                    <td>{{ $row['concentration'] }}</td>
+                                    <td>{{ $row['module'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                </div>
+
+                <div class="table-cell">
+                    <!-- 3rd table -->
+                    <table class="print-table" style="margin-top:1px;">
+                        <thead>
+                            <tr>
+                                <th>Lot No.</th>
+                                <th>No.</th>
+                                <th>Coating</th>
+                                <th colspan="2">Concentration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($table2Rows as $row)
+                                <tr>
+                                    <td><br></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div> <!-- END of 3rd table -->
+
+                <div class="table-cell">
+                    <!-- 4rd table -->
+                    <table class="print-table" style="margin-top:1px;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">MODULE</th>
+                                <th colspan="3">ADDITIONAL SLURRY</th>
+                                <th rowspan="2">LITERS</th>
+                            </tr>
+                            <tr>
+                                <th>NEW</th>
+                                <th>HOMO</th>
+                                <th>TIME</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- End of 4th table -->
+            </div>
+        </div>
+
+        <div style="display: table; margin: 0 auto; border-spacing: 10px; padding: 0px;">
+            <div style="display: table-row;">
+                <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
+                    <table style="width: 100%; font-size: 7px; border-collapse: collapse; border: 1px solid black;">
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid black; padding: 2px 4px;">MAXIMUM:</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['maximum'] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
+                    <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid black; padding: 2px 4px;">MINIMUM:</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['minimum']  }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="display: table-cell; vertical-align: top; font-weight: bold; width: 33%;">
+                    <table style="width: 100%; font-size: 8px; border-collapse: collapse; border: 1px solid black;">
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid black; padding: 2px 4px;">AVERAGE:</td>
+                                <td style="border: 1px solid black; padding: 2px 4px;">{{ $secondGbdp2ndCoatingInfo['average'] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+            <tr>
+                <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
+                <td style="width: 100%;">
+                    <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px;">
+                        <span style="display: inline-block; margin-bottom: -1px;">
+                            {{ $secondGbdp2ndCoatingInfo['remarks'] }}
+                        </span>
+                    </div>
+                    <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px;"></div>
+                </td>
+            </tr>
+        </table>
+
+    </div>  <!-- End of border -->
+
+<div style="padding: 1px; border: 1px solid black; margin-top: 0px;">
+    <label class="bold" style="font-size: 10px; padding-left: 1px;">HEAT TREATMENT INFORMATION</label>
+
+    <div class="table-block">
+        <div class="table-row">
+
+            <!-- Column 1: Labels -->
+            <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
+
+                @php
+                    $rows = [
+                        ['Furnace Machine:', $heatTreatmentData->machine_no ?? null],
+                        ['CYCLE No:', $heatTreatmentData->cycle_no ?? null],
+                        ['BATCH CYCLE No:', $heatTreatmentData->batch_cycle_no ?? null],
+                        ['PATTERN No:', $heatTreatmentData->pattern_no ?? null],
+                        ['DATE START:', $heatTreatmentData->date_start ?? 'NA'],
+                        ['TIME START:', $heatTreatmentData->time_start ?? 'NA'],
+                        ['LOADER:', $heatTreatmentData->loader ?? null],
+                        ['DATE FINISH:', $heatTreatmentData->date_finished ?? 'NA'],
+                        ['TIME FINISH:', $heatTreatmentData->time_finished ?? 'NA'],
+                        ['UNLOADER:', $heatTreatmentData->unloader ?? null],
+                        ['Cycle Pattern:', $heatTreatmentData->cycle_pattern ?? null],
+                        ['Current Pattern:', $heatTreatmentData->current_pattern ?? null],
+                    ];
+                @endphp
+
+                @foreach($rows as [$label, $value])
+                    <div class="table-row" style="display: table-row; vertical-align: top;">
+                        <!-- Label -->
+                        <div class="table-cell" style="display: table-cell; width: 40%; padding-right: 2px; height: 12px; line-height: 12px; vertical-align: top;">
+                            {{ $label }}
+                        </div>
+                        <!-- Value -->
+                        <div class="table-cell" style="display: table-cell; width: 60%; height: 12px; line-height: 12px; vertical-align: top; border-bottom: 1px solid black;">
+                            {{ $value }}
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
+
+            <!-- spacer -->
+            <div style="vertical-align: top; width: 25%;">&nbsp;</div>
+
+            <!-- Column 3: Table -->
+            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px;">
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2">BOX No.</th>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>D</th>
+                            <th>E</th>
+                            <th>F</th>
+                            <th>G</th>
+                            <th>H</th>
+                            <th>J</th>
+                            <th>K</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- Main layer row --}}
+                        <tr>
+                            <td style="margin: 0px; padding: 0px;">No. of Layer</td>
+                            <td>{{ $layer }}</td>
+                            <td>{{ $controlLotNo['A'] ?? null }}</td>
+                            <td>{{ $controlLotNo['B'] ?? null }}</td>
+                            <td>{{ $controlLotNo['C'] ?? null }}</td>
+                            <td>{{ $controlLotNo['D'] ?? null }}</td>
+                            <td>{{ $controlLotNo['E'] ?? null }}</td>
+                            <td>{{ $controlLotNo['F'] ?? null }}</td>
+                            <td>{{ $controlLotNo['G'] ?? null }}</td>
+                            <td>{{ $controlLotNo['H'] ?? null }}</td>
+                            <td>{{ $controlLotNo['J'] ?? null }}</td>
+                            <td>{{ $controlLotNo['K'] ?? null }}</td>
+                        </tr>
+
+                        {{-- Excess layer rows --}}
+                        @if(!empty($controlLotNoExcess))
+                            @foreach($controlLotNoExcess as $excessLayerNo => $letters)
+                                <tr>
+                                    <td style="margin: 0px; padding: 0px;"></td>
+                                    <td>{{ $excessLayerNo }}</td>
+                                    <td>{{ $letters['A'] ?? null }}</td>
+                                    <td>{{ $letters['B'] ?? null }}</td>
+                                    <td>{{ $letters['C'] ?? null }}</td>
+                                    <td>{{ $letters['D'] ?? null }}</td>
+                                    <td>{{ $letters['E'] ?? null }}</td>
+                                    <td>{{ $letters['F'] ?? null }}</td>
+                                    <td>{{ $letters['G'] ?? null }}</td>
+                                    <td>{{ $letters['H'] ?? null }}</td>
+                                    <td>{{ $letters['J'] ?? null }}</td>
+                                    <td>{{ $letters['K'] ?? null }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+        <tr>
+            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
+            <td style="width: 100%;">
+                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
+                    <span style="display: inline-block; margin-bottom: -1px;">
+                        {{ $heatTreatmentData->mass_prod }} MASS PRODUCTION
+                    </span>
+                </div>
+                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
+                    <span style="display: inline-block; margin-bottom: -1px;">
+                        {{ implode(' / ', array_filter([
+                            $heatTreatmentData->remarks1,
+                            $heatTreatmentData->remarks2,
+                            $heatTreatmentData->remarks3
+                        ])) }}
+                    </span>
                 </div>
             </td>
         </tr>
     </table>
-
-<div style="padding: 0px; margin-top: 0px;">
-
-    <table style="width: 100%; border-collapse: collapse; padding: 0px;">
-        <tr>
-            <!-- LEFT PANEL -->
-            <td style="width: 50%; vertical-align: top; padding-right: 0px;">
-                <div style="padding: 1px; border: 1px solid black;">
-                    <label class="bold" style="font-size: 10px; padding-left: 1px;">1ST GBDP HEAT TREATMENT INFORMATION</label>
-
-                    <div class="table-block">
-                        <div class="table-row">
-
-                            <!-- Column 1: Labels -->
-                            <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
-
-                                @php
-                                    $rows = [
-                                        ['Furnace Machine:', $secondGbdp1stHeatTreatmentData['furnace_machine'] ?? 'NA'],
-                                        ['CYCLE No:', $secondGbdp1stHeatTreatmentData['cycle_no'] ?? 'NA'],
-                                        ['BATCH CYCLE No:', $secondGbdp1stHeatTreatmentData['batch_cycle_no'] ?? 'NA'],
-                                        ['PATTERN No:', $secondGbdp1stHeatTreatmentData['pattern_no'] ?? 'NA'],
-                                        ['DATE START:', $secondGbdp1stHeatTreatmentData['date_start'] ?? 'NA'],
-                                        ['TIME START:', $secondGbdp1stHeatTreatmentData['time_start'] ?? 'NA'],
-                                        ['DATE FINISH:', $secondGbdp1stHeatTreatmentData['date_finished'] ?? 'NA'],
-                                        ['TIME FINISH:', $secondGbdp1stHeatTreatmentData['time_finished'] ?? 'NA'],
-                                        ['Cycle Pattern:', $secondGbdp1stHeatTreatmentData['cycle_pattern'] ?? 'NA'],
-                                        ['Current Pattern:', $secondGbdp1stHeatTreatmentData['current_pattern'] ?? 'NA'],
-                                    ];
-
-                                    $chunkSize = ceil(count($rows) / 3);
-
-                                    $col1 = array_slice($rows, 0, $chunkSize);
-                                    $col2 = array_slice($rows, $chunkSize, $chunkSize);
-                                    $col3 = array_slice($rows, $chunkSize * 2);
-                                @endphp
-
-                                <table style="width: 100%; table-layout: fixed; font-size: 7px; line-height: 1; white-space: nowrap;">
-                                    <tr>
-
-                                        <!-- COLUMN 1 -->
-                                        <td style="width: 33.33%; vertical-align: top; padding-right: 4px;">
-                                            @foreach($col1 as [$label, $value])
-                                                <div style="display: table; width: 100%;">
-                                                    <div style="display: table-row;">
-                                                        <div style="display: table-cell; width: 40%; vertical-align: top;">
-                                                            {{ $label }}
-                                                        </div>
-                                                        <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
-                                                            {{ $value }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </td>
-
-                                        <!-- COLUMN 2 -->
-                                        <td style="width: 33.33%; vertical-align: top; padding: 0 4px;">
-                                            @foreach($col2 as [$label, $value])
-                                                <div style="display: table; width: 100%;">
-                                                    <div style="display: table-row;">
-                                                        <div style="display: table-cell; width: 40%; vertical-align: top;">
-                                                            {{ $label }}
-                                                        </div>
-                                                        <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
-                                                            {{ $value }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </td>
-
-                                        <!-- COLUMN 3 -->
-                                        <td style="width: 33.33%; vertical-align: top; padding-left: 4px;">
-                                            @foreach($col3 as [$label, $value])
-                                                <div style="display: table; width: 100%;">
-                                                    <div style="display: table-row;">
-                                                        <div style="display: table-cell; width: 40%; vertical-align: top;">
-                                                            {{ $label }}
-                                                        </div>
-                                                        <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
-                                                            {{ $value }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </td>
-
-                                    </tr>
-                                </table>
-
-                            </div>
-                        </div>
-                        <div class="table-row">
-                            <!-- Column 3: Table -->
-                            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px; padding-bottom: 5px; white-space: nowrap;">
-                                <table class="print-table">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">BOX No.</th>
-                                            <th>A</th>
-                                            <th>B</th>
-                                            <th>C</th>
-                                            <th>D</th>
-                                            <th>E</th>
-                                            <th>F</th>
-                                            <th>G</th>
-                                            <th>H</th>
-                                            <th>J</th>
-                                            <th>K</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{-- Main layer row --}}
-                                        <tr>
-                                            <td style="margin: 0px; padding: 0px;">No. of Layer</td>
-                                            <td>{{ $layer }}</td>
-                                            <td>{{ $controlLotNo['A'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['B'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['C'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['D'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['E'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['F'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['G'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['H'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['J'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['K'] ?? null }}</td>
-                                        </tr>
-
-                                        {{-- Excess layer rows --}}
-                                        @if(!empty($controlLotNoExcess))
-                                            @foreach($controlLotNoExcess as $excessLayerNo => $letters)
-                                                <tr>
-                                                    <td style="margin: 0px; padding: 0px;"></td>
-                                                    <td>{{ $excessLayerNo }}</td>
-                                                    <td>{{ $letters['A'] ?? null }}</td>
-                                                    <td>{{ $letters['B'] ?? null }}</td>
-                                                    <td>{{ $letters['C'] ?? null }}</td>
-                                                    <td>{{ $letters['D'] ?? null }}</td>
-                                                    <td>{{ $letters['E'] ?? null }}</td>
-                                                    <td>{{ $letters['F'] ?? null }}</td>
-                                                    <td>{{ $letters['G'] ?? null }}</td>
-                                                    <td>{{ $letters['H'] ?? null }}</td>
-                                                    <td>{{ $letters['J'] ?? null }}</td>
-                                                    <td>{{ $letters['K'] ?? null }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-                        <tr>
-                            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
-                            <td style="width: 100%;">
-                                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
-                                    <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ $heatTreatmentData->mass_prod }} MASS PRODUCTION
-                                    </span>
-                                </div>
-                                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
-                                    <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ implode(' / ', array_filter([
-                                            $heatTreatmentData->remarks1,
-                                            $heatTreatmentData->remarks2,
-                                            $heatTreatmentData->remarks3
-                                        ])) }}
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </td>
-
-            <!-- RIGHT PANEL -->
-            <td style="width: 50%; vertical-align: top; padding-left: 0px;">
-                <div style="padding: 1px; border: 1px solid black;">
-                    <label class="bold" style="font-size: 10px; padding-left: 1px;">2ND GBDP HEAT TREATMENT INFORMATION</label>
-
-                    <div class="table-block">
-                        <div class="table-row">
-
-                            <!-- Column 1: Labels -->
-                            <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
-
-                                @php
-                                    $rows = [
-                                        ['Furnace Machine:', $secondGbdp2ndHeatTreatmentData['furnace_machine'] ?? 'NA'],
-                                        ['CYCLE No:', $secondGbdp2ndHeatTreatmentData['cycle_no'] ?? 'NA'],
-                                        ['BATCH CYCLE No:', $secondGbdp2ndHeatTreatmentData['batch_cycle_no'] ?? 'NA'],
-                                        ['PATTERN No:', $secondGbdp2ndHeatTreatmentData['pattern_no'] ?? 'NA'],
-                                        ['DATE START:', $secondGbdp2ndHeatTreatmentData['date_start'] ?? 'NA'],
-                                        ['TIME START:', $secondGbdp2ndHeatTreatmentData['time_start'] ?? 'NA'],
-                                        ['DATE FINISH:', $secondGbdp2ndHeatTreatmentData['date_finished'] ?? 'NA'],
-                                        ['TIME FINISH:', $secondGbdp2ndHeatTreatmentData['time_finished'] ?? 'NA'],
-                                        ['Cycle Pattern:', $secondGbdp2ndHeatTreatmentData['cycle_pattern'] ?? 'NA'],
-                                        ['Current Pattern:', $secondGbdp2ndHeatTreatmentData['current_pattern'] ?? 'NA'],
-                                    ];
-
-                                    $chunkSize = ceil(count($rows) / 3);
-
-                                    $col1 = array_slice($rows, 0, $chunkSize);
-                                    $col2 = array_slice($rows, $chunkSize, $chunkSize);
-                                    $col3 = array_slice($rows, $chunkSize * 2);
-                                @endphp
-
-                                <table style="width: 100%; table-layout: fixed; font-size: 7px; line-height: 1; white-space: nowrap;">
-                                    <tr>
-
-                                        <!-- COLUMN 1 -->
-                                        <td style="width: 33.33%; vertical-align: top; padding-right: 4px;">
-                                            @foreach($col1 as [$label, $value])
-                                                <div style="display: table; width: 100%;">
-                                                    <div style="display: table-row;">
-                                                        <div style="display: table-cell; width: 40%; vertical-align: top;">
-                                                            {{ $label }}
-                                                        </div>
-                                                        <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
-                                                            {{ $value }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </td>
-
-                                        <!-- COLUMN 2 -->
-                                        <td style="width: 33.33%; vertical-align: top; padding: 0 4px;">
-                                            @foreach($col2 as [$label, $value])
-                                                <div style="display: table; width: 100%;">
-                                                    <div style="display: table-row;">
-                                                        <div style="display: table-cell; width: 40%; vertical-align: top;">
-                                                            {{ $label }}
-                                                        </div>
-                                                        <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
-                                                            {{ $value }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </td>
-
-                                        <!-- COLUMN 3 -->
-                                        <td style="width: 33.33%; vertical-align: top; padding-left: 4px;">
-                                            @foreach($col3 as [$label, $value])
-                                                <div style="display: table; width: 100%;">
-                                                    <div style="display: table-row;">
-                                                        <div style="display: table-cell; width: 40%; vertical-align: top;">
-                                                            {{ $label }}
-                                                        </div>
-                                                        <div style="display: table-cell; width: 60%; vertical-align: top; border-bottom: 1px solid black;">
-                                                            {{ $value }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </td>
-
-                                    </tr>
-                                </table>
-
-                            </div>
-                        </div>
-                        <div class="table-row">
-                            <!-- Column 3: Table -->
-                            <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px; padding-bottom: 5px; white-space: nowrap;">
-                                <table class="print-table">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">BOX No.</th>
-                                            <th>A</th>
-                                            <th>B</th>
-                                            <th>C</th>
-                                            <th>D</th>
-                                            <th>E</th>
-                                            <th>F</th>
-                                            <th>G</th>
-                                            <th>H</th>
-                                            <th>J</th>
-                                            <th>K</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{-- Main layer row --}}
-                                        <tr>
-                                            <td style="margin: 0px; padding: 0px;">No. of Layer</td>
-                                            <td>{{ $layer }}</td>
-                                            <td>{{ $controlLotNo['A'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['B'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['C'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['D'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['E'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['F'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['G'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['H'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['J'] ?? null }}</td>
-                                            <td>{{ $controlLotNo['K'] ?? null }}</td>
-                                        </tr>
-
-                                        {{-- Excess layer rows --}}
-                                        @if(!empty($controlLotNoExcess))
-                                            @foreach($controlLotNoExcess as $excessLayerNo => $letters)
-                                                <tr>
-                                                    <td style="margin: 0px; padding: 0px;"></td>
-                                                    <td>{{ $excessLayerNo }}</td>
-                                                    <td>{{ $letters['A'] ?? null }}</td>
-                                                    <td>{{ $letters['B'] ?? null }}</td>
-                                                    <td>{{ $letters['C'] ?? null }}</td>
-                                                    <td>{{ $letters['D'] ?? null }}</td>
-                                                    <td>{{ $letters['E'] ?? null }}</td>
-                                                    <td>{{ $letters['F'] ?? null }}</td>
-                                                    <td>{{ $letters['G'] ?? null }}</td>
-                                                    <td>{{ $letters['H'] ?? null }}</td>
-                                                    <td>{{ $letters['J'] ?? null }}</td>
-                                                    <td>{{ $letters['K'] ?? null }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-                        <tr>
-                            <td style="width: 50px; vertical-align: top; font-weight: bold;">Remarks:</td>
-                            <td style="width: 100%;">
-                                <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
-                                    <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ $heatTreatmentData->mass_prod }} MASS PRODUCTION
-                                    </span>
-                                </div>
-                                <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
-                                    <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ implode(' / ', array_filter([
-                                            $heatTreatmentData->remarks1,
-                                            $heatTreatmentData->remarks2,
-                                            $heatTreatmentData->remarks3
-                                        ])) }}
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </td>
-        </tr>
-    </table>
-
 </div> <!-- END of Border -->
 
 <div style="padding: 1px; border: 1px solid black; margin-top: 0px;">

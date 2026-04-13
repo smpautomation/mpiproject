@@ -190,6 +190,7 @@ class BackEndPdfController extends Controller
         $gbdp_report_format_type = $massProdData->$columnLayerFormat ?? null;
         $control_sheet_data = $massProdData->$columnLayerData ?? null;
 
+
         if (!$gbdp_report_format_type) {
             return response()->json([
                 'status' => false,
@@ -202,6 +203,9 @@ class BackEndPdfController extends Controller
         $controlArray = json_decode($control_sheet_data, true) ?? [];
         $modelRow = collect($controlArray)->firstWhere('rowTitle', 'MODEL:')['data'] ?? [];
         $lotRow   = collect($controlArray)->firstWhere('rowTitle', 'LT. No.:')['data'] ?? [];
+
+
+        //continue here
 
         // Count unique model+lot pairs
         $uniquePairs = [];
@@ -299,6 +303,7 @@ class BackEndPdfController extends Controller
                 'message' => "Control sheet data is invalid"
             ], 404);
         }
+
 
         // Map rowTitles to clean variable names
         $cs = [];
