@@ -113,8 +113,8 @@
     <table style="width: 100%; border-collapse: collapse; padding: 0px;">
         <tr>
             <!-- LEFT PANEL -->
-            <td style="width: 50%; padding-right: 0px; padding-top: 0px;">
-                <div style="padding: 0px; border: 1px solid black;">
+            <td style="width: 50%; vertical-align: top; padding-right: 0px;">
+                <div style="padding: 1px; border: 1px solid black;">
                     <label class="bold" style="font-size: 10px; padding-left: 2px;">1ST GBDP COATING INFORMATION</label>
 
                     <div class="table-block">
@@ -302,8 +302,8 @@
             </td>
 
             <!-- RIGHT PANEL -->
-            <td style="width: 50%; padding-right: 0px; padding-top: 0px;">
-                <div style="padding: 0px; border: 1px solid black;">
+            <td style="width: 50%; vertical-align: top; padding-left: 0px;">
+                <div style="padding: 1px; border: 1px solid black;">
                     <label class="bold" style="font-size: 10px; padding-left: 2px;">2ND GBDP COATING INFORMATION</label>
 
                     <div class="table-block" style="white-space: nowrap;">
