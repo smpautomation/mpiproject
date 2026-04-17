@@ -46,7 +46,7 @@
                                     <th class="px-1 py-3 whitespace-nowrap">Plant</th>
                                     <th class="px-1 py-3 whitespace-nowrap">Access&nbsp;Type</th>
                                     <th class="px-1 py-3 whitespace-nowrap">Role</th>
-                                    <th v-if="state.user.access_type && state.user.access_type === 'Automation'" class="px-1 py-3 text-center whitespace-nowrap">
+                                    <th v-if="state.user && state.user?.access_type === 'Automation'" class="px-1 py-3 text-center whitespace-nowrap">
                                         Change&nbsp;Judgement
                                     </th>
                                 </tr>
@@ -117,7 +117,7 @@
                                         </div>
                                     </td>
 
-                                    <td v-if="state.user && state.user.access_type === 'Automation'" class="flex justify-center gap-1 px-1 py-2 text-center whitespace-nowrap">
+                                    <td v-if="state.user && state.user?.access_type === 'Automation'" class="flex justify-center gap-1 px-1 py-2 text-center whitespace-nowrap">
                                         <!-- Allow button -->
                                         <button
                                             @click="allowChangeJudgement(user)"

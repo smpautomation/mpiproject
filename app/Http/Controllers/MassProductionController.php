@@ -1120,6 +1120,10 @@ class MassProductionController extends Controller
                         ->where('mass_prod', $massprod)
                         ->where('layer', $layer_no)
                         ->exists(),
+                    'filmpasting_completed' => FilmPastingData::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->exists(),
                     'second_coating_completed' => GbdpSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massprod)
                         ->where('layer', $layer_no)
@@ -1153,6 +1157,12 @@ class MassProductionController extends Controller
                             ->where('layer', $layer_no)
                             ->exists(),
                         'second_coating_completed' => BreaklotSecondCoating::where('furnace', $furnace)
+                            ->where('mass_prod', $massprod)
+                            ->where('layer', $layer_no)
+                            ->where('model', $lot->model)
+                            ->where('lot_no', $lot->lot_no)
+                            ->exists(),
+                        'filmpasting_completed' => BreaklotSecondCoating::where('furnace', $furnace)
                             ->where('mass_prod', $massprod)
                             ->where('layer', $layer_no)
                             ->where('model', $lot->model)

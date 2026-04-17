@@ -281,4 +281,10 @@ class FrontendController extends Controller
     {
         return Inertia::render('Frontend/Data_INS');
     }
+
+    public function data_editor()
+    {
+        return Inertia::render('Frontend/Data_Editor');
+    }
+
 }
