@@ -1949,6 +1949,9 @@ const fetchFilmPastingDataSummary = async () => {
         }
 
         isFilmPasteDataShown.value = true;
+
+        await checkExistingAdditional();
+
     } catch (error) {
         if (error.response && error.response.status === 404) {
             toast.warning("No record exists for this model and lot no");
