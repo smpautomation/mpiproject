@@ -23,6 +23,7 @@ use App\Http\Controllers\StandardDataController;
 use App\Http\Controllers\MiasFactorController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\RobModelController;
+use App\Http\Controllers\HisModelController;
 use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
@@ -382,6 +383,7 @@ Route::apiResource('ttmnc-models', TtmncModelController::class);
 Route::apiResource('bh-models', BhModelController::class);
 Route::apiResource('rob-models', RobModelController::class);
 Route::apiResource('cpk-br-models', CpkBrModelsController::class);
+Route::apiResource('his-models', HisModelController::class);
 
 Route::apiResource('ht-graph-patterns', HtGraphPatternsController::class);
 Route::apiResource('furnace-data', FurnaceDataController::class);

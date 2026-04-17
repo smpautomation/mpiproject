@@ -575,10 +575,12 @@
             <div class="table-cell">
                 @php
                     $showGX = $flags['showGX'] ?? false;
+                    $showGS = $flags['showGS'] ?? false;
                     $isSpecialGX = $flags['isSpecialGX'] ?? false;
                     $noteReasons = $noteReasonsSorted ?? [];
                     $hasNGihc = in_array('- N.G iHc', $noteReasons);
                     $gx = $modelData['gx'] ?? [];
+                    $gs = $modelData['gs'] ?? [];
                 @endphp
                 @php
                     $showROB = $flags['showROB'] ?? false;
@@ -622,11 +624,11 @@
 
                         {{-- iHc GM --}}
                         <tr>
-                            <td rowspan="{{ ($showGX && ($hasNGihc || $isSpecialGX)) ? 2 : 1 }}">
+                            <td rowspan="{{ ($showGX  && ($hasNGihc || $isSpecialGX)) || $showGS ? 2 : 1 }}">
                                 iHc (Oe)
                             </td>
                             <td>
-                                @if($showGX && ($hasNGihc || $isSpecialGX))
+                                @if(($showGX && ($hasNGihc || $isSpecialGX)) || $showGS)
                                     GM
                                 @endif
                                 {{ $magneticProperty['ihcStandard'] ?? '-' }}
@@ -651,11 +653,22 @@
                         </tr>
                         @endif
 
+                        {{-- iHc GS --}}
+                        @if($showGS)
+                        <tr>
+                            <td>GS {{ $gs['iHcStandard'] ?? '-' }}</td>
+                            <td>{{ $gs['iHcAverage'] ?? '-' }}</td>
+                            <td>{{ $gs['iHcMaximum'] ?? '-' }}</td>
+                            <td>{{ $gs['iHcMinimum'] ?? '-' }}</td>
+                            <td>{{ $gs['iHcVariance'] ?? '-' }}</td>
+                        </tr>
+                        @endif
+
                         {{-- iHk GM --}}
                         <tr>
-                            <td rowspan="{{ ($showGX && ($hasNGihc || $isSpecialGX)) ? 2 : 1 }}">iHk (Oe)</td>
+                            <td rowspan="{{ ($showGX && ($hasNGihc || $isSpecialGX)) || $showGS ? 2 : 1 }}">iHk (Oe)</td>
                             <td>
-                                @if($showGX && ($hasNGihc || $isSpecialGX))
+                                @if(($showGX && ($hasNGihc || $isSpecialGX)) || $showGS)
                                     GM
                                 @endif
                                 {{ $magneticProperty['ihkStandard'] ?? '-' }}
@@ -680,6 +693,16 @@
                         </tr>
                         @endif
 
+                        {{-- iHk GS --}}
+                        @if($showGS)
+                        <tr>
+                            <td>GS -</td>
+                            <td>{{ $gs['iHkAverage'] ?? '-' }}</td>
+                            <td>{{ $gs['iHkMaximum'] ?? '-' }}</td>
+                            <td>{{ $gs['iHkMinimum'] ?? '-' }}</td>
+                            <td>{{ $gs['iHkVariance'] ?? '-' }}</td>
+                        </tr>
+                        @endif
 
                         @php
                             $showROB = $flags['showROB'] ?? false;

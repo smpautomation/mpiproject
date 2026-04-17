@@ -251,6 +251,15 @@ class TxtExportService
         // Remove "2ND GBDP" and anything after it
         $value = preg_replace('/\s*2ND\s*GBDP.*$/i', '', $value);
 
+        // Remove REPROCESS / RE-PROCESS (any case, both variants)
+        $value = preg_replace('/\bRE[-\s]?PROCESS\b/i', '', $value);
+
+        // Remove parentheses (both open and close, and anything inside already remains untouched)
+        $value = str_replace(['(', ')'], '', $value);
+
+        // Normalize spaces again after removals
+        $value = preg_replace('/\s+/', ' ', trim($value));
+
         return trim($value);
     }
 

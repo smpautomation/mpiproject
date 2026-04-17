@@ -830,7 +830,7 @@
                                                     specialModelsForGxFormat.includes(
                                                         jhCurveActualModel,
                                                     )) &&
-                                                showGX
+                                                showGX || showHIS
                                                     ? 2
                                                     : 1
                                             "
@@ -841,7 +841,7 @@
                                         <td
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
                                         >
-                                            <span v-if="showGX">GM </span
+                                            <span v-if="showGX || showHIS">GM </span
                                             >{{ inspectioniHcStandard }}
                                         </td>
                                         <td
@@ -925,6 +925,57 @@
                                             {{ reportGX_iHcVariance }}
                                         </td>
                                     </tr>
+                                    <tr
+                                        v-if="showHIS"
+                                        class="text-center"
+                                    >
+                                        <td
+                                            class="text-blue-600 border-4 border-white"
+                                        >
+                                            <span v-if="showHIS">GS </span>
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHcStandard"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="text-blue-600 border-4 border-white"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHcAverage"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="text-blue-600 border-4 border-white"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHcMaximum"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="text-blue-600 border-4 border-white"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHcMinimum"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="text-blue-600 border-4 border-white"
+                                        >
+                                            {{ reportGS_iHcVariance }}
+                                        </td>
+                                    </tr>
                                     <tr class="text-center">
                                         <td
                                             :rowspan="
@@ -934,7 +985,7 @@
                                                     specialModelsForGxFormat.includes(
                                                         jhCurveActualModel,
                                                     )) &&
-                                                showGX
+                                                showGX || showHIS
                                                     ? 2
                                                     : 1
                                             "
@@ -945,7 +996,7 @@
                                         <td
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
                                         >
-                                            <span v-if="showGX">GM </span
+                                            <span v-if="showGX || showHIS">GM </span
                                             >{{ inspectioniHkStandard }}
                                         </td>
                                         <td
@@ -1022,6 +1073,52 @@
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
                                         >
                                             {{ reportGX_iHkVariance }}
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        v-if="showHIS"
+                                        class="text-center"
+                                    >
+                                        <td
+                                            class="px-4 py-2 text-blue-600 border-4 border-white"
+                                        >
+                                            <span v-if="showHIS">GS </span> - - -
+                                            - -
+                                        </td>
+                                        <td
+                                            class="px-4 py-2 text-blue-600 border-4 border-white"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHkAverage"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="px-4 py-2 text-blue-600 border-4 border-white"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHkMaximum"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="px-4 py-2 text-blue-600 border-4 border-white"
+                                        >
+                                            <input
+                                                type="number"
+                                                v-model="reportGS_iHkMinimum"
+                                                name="stdDev"
+                                                class="w-[4.5rem] h-[1.5rem] py-[14px] mt-1 text-sm border border-gray-300 rounded-md bg-white text-gray-800 hover:border-blue-400 hover:ring-1 hover:ring-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-white transition duration-200 ease-in-out"
+                                            />
+                                        </td>
+                                        <td
+                                            class="px-4 py-2 text-blue-600 border-4 border-white"
+                                        >
+                                            {{ reportGS_iHkVariance }}
                                         </td>
                                     </tr>
 
@@ -5234,6 +5331,7 @@ const showVTData_default = ref(false);
 const showCpkFrom_iHc = ref(false);
 const showCpkFrom_br = ref(false);
 const showGX = ref(false);
+const showHIS = ref(false);
 const isBhSegFormat = ref(false);
 const showBHDataSeg = ref(false);
 const showBHDataSeg_default = ref(false);
@@ -5256,6 +5354,7 @@ const MODELS_SHOW_CPK_BR = ref([]);
 const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
+const MODELS_SHOW_HIS = ref([]);
 
 const undoHistory = ref([]);
 const undoHistoryLoading = ref(false);
@@ -5316,6 +5415,16 @@ const reportGX_iHkAverage = ref(0);
 const reportGX_iHkMaximum = ref(0);
 const reportGX_iHkMinimum = ref(0);
 const reportGX_iHkVariance = ref(0);
+
+const reportGS_iHcStandard = ref(0);
+const reportGS_iHcAverage = ref(0);
+const reportGS_iHcMaximum = ref(0);
+const reportGS_iHcMinimum = ref(0);
+const reportGS_iHcVariance = ref(0);
+const reportGS_iHkAverage = ref(0);
+const reportGS_iHkMaximum = ref(0);
+const reportGS_iHkMinimum = ref(0);
+const reportGS_iHkVariance = ref(0);
 
 const reportBH_data = ref("NA");
 const reportBH_dataStandard = ref(0);
@@ -6420,6 +6529,38 @@ watch(
     { immediate: true },
 );
 
+
+//FOR GS - HIS models
+watch(
+    [
+        reportGS_iHcMinimum,
+        reportGS_iHcStandard,
+        reportSMPJudgement,
+        showHIS,
+        reportGS_iHcAverage,
+        reportGS_iHcMaximum,
+    ],
+    () => {
+        //console.log('Watch triggered for GX iHc evaluation');
+        ///console.log('showGX:', showGX.value);
+        //console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
+        //console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
+
+        if (showHIS.value === true &&
+            reportGS_iHcMinimum.value !== null &&
+            reportGS_iHcStandard.value !== null
+        ) {
+            if (reportGS_iHcMinimum.value < reportGS_iHcStandard.value) {
+                //console.log('GX iHc minimum is below standard — setting NG/REJECT');
+                reportSMPJudgement.value = "REJECT";
+            }
+        } else {
+            //console.log('GX display not active — skipping GX iHc check');
+        }
+    },
+    { immediate: true },
+);
+
 // FOR BH - models
 watch(
     [
@@ -6568,6 +6709,7 @@ const reportReset = () => {
     show1x1x1Data_withoutCorner.value = false;
     showBHData.value = false;
     showGX.value = false;
+    showHIS.value = false;
     showVTData.value = false;
     showCpkFrom_iHc.value = false;
     showCpkFrom_br.value = false;
@@ -6774,6 +6916,9 @@ const checkSpecialJudgement = async () => {
     const fetchAllROB = responseGetROBData.data;
     MODELS_SHOW_ROB.value = fetchAllROB.map((item) => item.model_name);
     //console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
+    const responseGetHISData = await axios.get("/api/his-models");
+    const fetchAllHIS = responseGetHISData.data;
+    MODELS_SHOW_HIS.value = fetchAllHIS.map((item) => item.model_name);
 
     const model = jhCurveActualModel.value;
 
@@ -6799,6 +6944,10 @@ const checkSpecialJudgement = async () => {
     if (specialModelsForGxFormat.value.includes(model)) {
         showGX.value = true;
         //console.log("[GX] GX enabled");
+    }
+
+    if (MODELS_SHOW_HIS.value.includes(model)){
+        showHIS.value = true;
     }
 
     if (hasIhcBelowTarget || hasNGihc) {
@@ -8359,6 +8508,7 @@ const showReportData = async () => {
         //console.log("VT Data: ",VT);
         const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || "{}");
         const GX = JSON.parse(filterBySerial[0].data_GX_info || "{}");
+        const GS = JSON.parse(filterBySerial[0].data_GS_info || "{}");
         const bh = JSON.parse(filterBySerial[0].data_bh_info || "{}");
         const ROB = JSON.parse(filterBySerial[0].data_ROB_info || "{}");
         const bhSeg = JSON.parse(filterBySerial[0].data_bh_seg_info || "{}");
@@ -8424,6 +8574,16 @@ const showReportData = async () => {
         reportGX_iHkMaximum.value = GX.iHkMaximum || 0;
         reportGX_iHkMinimum.value = GX.iHkMinimum || 0;
         reportGX_iHkVariance.value = GX.iHkMaximum - GX.iHkMinimum || 0;
+
+        reportGS_iHcStandard.value = GS.iHcStandard || 0;
+        reportGS_iHcAverage.value = GS.iHcAverage || 0;
+        reportGS_iHcMaximum.value = GS.iHcMaximum || 0;
+        reportGS_iHcMinimum.value = GS.iHcMinimum || 0;
+        reportGS_iHcVariance.value = GS.iHcMaximum - GS.iHcMinimum || 0;
+        reportGS_iHkAverage.value = GS.iHkAverage || 0;
+        reportGS_iHkMaximum.value = GS.iHkMaximum || 0;
+        reportGS_iHkMinimum.value = GS.iHkMinimum || 0;
+        reportGS_iHkVariance.value = GS.iHkMaximum - GS.iHkMinimum || 0;
 
         reportBH_data.value = bh.data || "";
         reportBH_dataStandard.value = bh.dataStandard || "";
@@ -8614,6 +8774,17 @@ const saveReport = async () => {
             iHkMaximum: reportGX_iHkMaximum.value,
             iHkMinimum: reportGX_iHkMinimum.value,
             iHkVariance: reportGX_iHkVariance.value,
+        }),
+        data_GS_info: JSON.stringify({
+            iHcStandard: reportGS_iHcStandard.value,
+            iHcAverage: reportGS_iHcAverage.value,
+            iHcMaximum: reportGS_iHcMaximum.value,
+            iHcMinimum: reportGS_iHcMinimum.value,
+            iHcVariance: reportGS_iHcVariance.value,
+            iHkAverage: reportGS_iHkAverage.value,
+            iHkMaximum: reportGS_iHkMaximum.value,
+            iHkMinimum: reportGS_iHkMinimum.value,
+            iHkVariance: reportGS_iHkVariance.value,
         }),
         data_bh_info: JSON.stringify({
             data: reportBH_data.value,

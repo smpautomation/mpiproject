@@ -24,6 +24,7 @@ use App\Models\GxModel;
 use App\Models\TtmncModel;
 use App\Models\BhModel;
 use App\Models\RobModel;
+use App\Models\HisModel;
 use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotInitialLot;
@@ -480,6 +481,7 @@ class BackEndPdfController extends Controller
         $dROB       = json_decode($reportData->data_ROB_info ?? '[]', true);
         $dBHSeg     = json_decode($reportData->data_bh_seg_info ?? '[]', true);
         $dTsi       = json_decode($reportData->data_tsi_info ?? '[]', true);
+        $dGS        = json_decode($reportData->data_GS_info ?? '[]', true);
 
         $model = $tpmCategories->actual_model ?? '';
         $noteReasons = $noteReasonRaw;
@@ -492,6 +494,7 @@ class BackEndPdfController extends Controller
         $MODELS_1X1X1_NO_CORNER = TtmncModel::pluck('model_name')->toArray();
         $MODELS_SHOW_BH      = BhModel::pluck('model_name')->toArray();
         $MODELS_SHOW_ROB     = RobModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_GS      = HisModel::pluck('model_name')->toArray();
 
         $showROB           = in_array($model, $MODELS_SHOW_ROB);
         $hasNGihc          = in_array('- N.G iHc', $noteReasons);
@@ -499,6 +502,7 @@ class BackEndPdfController extends Controller
 
         $showCpkFrom_iHc = $hasNGihc && in_array($model, $MODELS_SHOW_CPK);
         $showGX          = (($hasNGihc && in_array($model, $MODELS_SHOW_GX))) || in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
+        $showGS          = in_array($model, $MODELS_SHOW_GS);
         $isSpecialGX     = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
         $showTsi         = (($hasNGihc || $hasIhcBelowTarget) && in_array($model, $MODELS_SPECIAL_TSI));
         $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
@@ -675,6 +679,7 @@ class BackEndPdfController extends Controller
                 'showVTData_default' => $showVTData_default,
                 'showCpkFrom_iHc' => $showCpkFrom_iHc,
                 'showGX' => $showGX,
+                'showGS' => $showGS,
                 'isSpecialGX' => $isSpecialGX,
                 'showBHData' => $showBHData,
                 'show1x1x1Data_withoutCorner' => $show1x1x1Data_withoutCorner,
@@ -692,6 +697,7 @@ class BackEndPdfController extends Controller
                 'd1x1x1' => $d1x1x1,
                 'bhSeg' => $dBHSeg,
                 'dTsi' => $dTsi,
+                'gs' => $dGS,
             ],
             'nsaData'       => $nsaData,
             'nsaGroups'     => $nsaGroups,

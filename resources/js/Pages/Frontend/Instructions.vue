@@ -2,40 +2,79 @@
   <Frontend>
     <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
 
-    <div v-if="showSelectionPanel" class="flex flex-col items-center justify-start min-h-screen pt-[70px] mx-auto space-y-6 bg-gray-100">
-        <p class="px-6 py-3 mb-8 text-2xl font-bold tracking-wide text-blue-800 uppercase bg-blue-100 border border-blue-200 shadow-sm sm:text-3xl rounded-xl">
-            SPECIAL INSTRUCTIONS / JUDGEMENTS
-        </p>
-        <div class="grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <button @click="showVTPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                VT MODELS
-            </button>
+        <div v-if="showSelectionPanel" class="flex flex-col items-center justify-start min-h-screen pt-[70px] mx-auto space-y-6 bg-gray-100">
 
-            <button @click="showCPKIHCPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                CPK IHC MODELS
-            </button>
+            <!-- Header -->
+            <p class="px-6 py-3 mb-8 text-2xl font-bold tracking-wide text-blue-800 uppercase bg-blue-100 border border-blue-200 shadow-sm sm:text-3xl rounded-xl">
+                SPECIAL INSTRUCTIONS / JUDGEMENTS
+            </p>
 
-            <button @click="showGXPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                GX MODELS
-            </button>
+            <!-- Grid -->
+            <div class="grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-            <button @click="showTTMNCPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                1X1X1 MODELS (NO CORNER)
-            </button>
+                <!-- CARD -->
+                <div
+                    v-for="(item, index) in models"
+                    :key="index"
+                    class="relative group"
+                >
 
-            <button @click="showBHPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                BH MODELS
-            </button>
+                    <!-- Main Button -->
+                    <button
+                        @click="openPanel(item.panel)"
+                        class="w-full p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    >
+                        {{ item.name }}
+                    </button>
 
-            <button @click="showROBPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                ROB BH TRACER MODELS
-            </button>
+                    <!-- Preview Trigger -->
+                    <button
+                        @click.stop="openImage(item.image)"
+                        class="absolute z-20 flex items-center justify-center w-9 h-9 transition-all bg-white border rounded-full shadow-md top-2 right-2 border-slate-200 text-slate-500 hover:bg-cyan-500 hover:text-white group/preview"
+                    >
+                        <!-- Pulse -->
+                        <span class="absolute inline-flex w-full h-full rounded-full bg-cyan-400 opacity-20 animate-ping group-hover/preview:hidden"></span>
 
-            <button @click="showCPKBRPanel = true, showSelectionPanel = false" class="p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                CPK BR MODELS
-            </button>
+                        <!-- Icon -->
+                        <svg class="relative w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h8v12H4z" />
+                        </svg>
+
+                        <!-- Preview Bubble -->
+                        <div class="absolute z-30 hidden group-hover:block left-full ml-3 top-1/2 -translate-y-1/2">
+                            <div class="bg-white p-2 rounded-lg shadow-xl border w-48">
+                                <img :src="item.image" class="w-full h-auto object-contain rounded" />
+                            </div>
+
+                            <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white rotate-45 border-r border-b -translate-y-1/2"></div>
+                        </div>
+                    </button>
+
+                </div>
+            </div>
+            </div>
+
+            <!-- IMAGE MODAL -->
+            <div
+            v-if="showImageModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+            @click="closeImage"
+            >
+            <div class="relative max-w-4xl p-4 bg-white rounded-lg shadow-2xl" @click.stop>
+
+                <!-- Close Button -->
+                <button
+                    @click="closeImage"
+                    class="absolute text-gray-500 top-2 right-2 hover:text-gray-800"
+                >
+                    ✕
+                </button>
+
+                <!-- Image -->
+                <img :src="activeImage" class="max-h-[80vh] w-auto rounded" />
+            </div>
         </div>
-    </div>
 
     <button
         v-if="!showSelectionPanel"
@@ -247,6 +286,8 @@
           </div>
         </div>
       </div>
+
+
 
     <!-- GX MODELS Table Section -->
       <div
@@ -748,6 +789,106 @@
         </div>
       </div>
 
+      <!-- HIS MODELS Table Section -->
+      <div
+        v-if="showHISPanel"
+        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
+      >
+        <!-- Table -->
+        <div>
+          <h2 class="mb-4 text-2xl font-semibold text-gray-800">HIS GS MODELS</h2>
+          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
+            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-3 text-left border-b">Date</th>
+                <th class="px-4 py-3 text-left border-b">Model Name</th>
+                <th class="px-4 py-3 text-left border-b">Encoded By</th>
+                <th class="px-4 py-3 text-left border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="his in hisModels"
+                :key="his.id"
+                class="transition border-b hover:bg-gray-50 last:border-b-0"
+              >
+                <td class="px-4 py-3">{{ new Date(his.created_at).toISOString().slice(0, 10) }}</td>
+                <td class="px-4 py-3">{{ his.model_name }}</td>
+                <td class="px-4 py-3">{{ his.encoded_by }}</td>
+                <td class="px-4 py-3">
+                  <button
+                    @click="his_startEditing(his)"
+                    class="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Edit Model
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New -->
+        <div class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="his_newRecord.model_name"
+              type="text"
+              @input="his_newRecord.model_name = his_newRecord.model_name.toUpperCase()"
+              placeholder="Model Name"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+            <input
+              v-model="his_newRecord.encoded_by"
+              type="text"
+              @input="his_newRecord.encoded_by = his_newRecord.encoded_by.toUpperCase()"
+              placeholder="Encoded By"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+          </div>
+          <button
+            @click="his_addRecord"
+            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
+          >
+            Add
+          </button>
+        </div>
+
+        <!-- Edit Record -->
+        <div v-if="his_editingRecord" class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="his_editingRecord.model_name"
+              type="text"
+              @input="his_editingRecord.model_name = his_editingRecord.model_name.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+            <input
+              v-model="his_editingRecord.encoded_by"
+              type="text"
+              @input="his_editingRecord.encoded_by = his_editingRecord.encoded_by.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+          </div>
+          <div class="space-x-3">
+            <button
+              @click="his_updateRecord"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+            >
+              Update
+            </button>
+            <button
+              @click="his_editingRecord = null"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
 
 
     </div>
@@ -822,6 +963,59 @@ const showTTMNCPanel = ref(false);
 const showBHPanel = ref(false);
 const showROBPanel = ref(false);
 const showCPKBRPanel = ref(false);
+const showHISPanel = ref(false);
+
+// IMAGE MODAL STATE
+const showImageModal = ref(false);
+const activeImage = ref(null);
+
+// DATA SOURCE (controls everything)
+const models = [
+    { name: 'VT MODELS', panel: 'showVTPanel', image: '/photo/vt_models.png' },
+    { name: 'CPK IHC MODELS', panel: 'showCPKIHCPanel', image: '/photo/cpk_ihc_models.png' },
+    { name: 'GX MODELS', panel: 'showGXPanel', image: '/photo/gx_models.png' },
+    { name: '1X1X1 MODELS (NO CORNER)', panel: 'showTTMNCPanel', image: '/photo/no_corner_models.png' },
+    { name: 'BH MODELS', panel: 'showBHPanel', image: '/photo/bh_models.png' },
+    { name: 'ROB BH TRACER MODELS', panel: 'showROBPanel', image: '/photo/rob_tracer_models.png' },
+    { name: 'CPK BR MODELS', panel: 'showCPKBRPanel', image: '/photo/cpk_br_models.png' },
+    { name: 'HIS MODELS', panel: 'showHISPanel', image: '/photo/gs_models.png' },
+];
+
+// PANEL NAVIGATION
+const openPanel = (panelName) => {
+    showSelectionPanel.value = false;
+
+    // reset all panels
+    showVTPanel.value = false;
+    showCPKIHCPanel.value = false;
+    showGXPanel.value = false;
+    showTTMNCPanel.value = false;
+    showBHPanel.value = false;
+    showROBPanel.value = false;
+    showCPKBRPanel.value = false;
+    showHISPanel.value = false;
+
+    // activate selected panel
+    if (panelName === 'showVTPanel') showVTPanel.value = true;
+    if (panelName === 'showCPKIHCPanel') showCPKIHCPanel.value = true;
+    if (panelName === 'showGXPanel') showGXPanel.value = true;
+    if (panelName === 'showTTMNCPanel') showTTMNCPanel.value = true;
+    if (panelName === 'showBHPanel') showBHPanel.value = true;
+    if (panelName === 'showROBPanel') showROBPanel.value = true;
+    if (panelName === 'showCPKBRPanel') showCPKBRPanel.value = true;
+    if (panelName === 'showHISPanel') showHISPanel.value = true;
+}
+
+// IMAGE HANDLING
+const openImage = (image) => {
+    activeImage.value = image;
+    showImageModal.value = true;
+}
+
+const closeImage = () => {
+    showImageModal.value = false;
+    activeImage.value = null;
+}
 
 const vtModels = ref([]); // all fetched records
 const cpkihcModels = ref([]);
@@ -830,6 +1024,7 @@ const ttmncModels = ref([]);
 const bhModels = ref([]);
 const robModels = ref([]);
 const cpkbrModels = ref([]);
+const hisModels = ref([]);
 
 const vt_newRecord = ref({ model_name: '', encoded_by: ''});
 const cpkihc_newRecord = ref({ model_name: '', encoded_by: ''});
@@ -838,6 +1033,7 @@ const ttmnc_newRecord = ref({ model_name: '', encoded_by: ''});
 const bh_newRecord = ref({ model_name: '', encoded_by: ''});
 const rob_newRecord = ref({ model_name: '', encoded_by: ''});
 const cpkbr_newRecord = ref({ model_name: '', encoded_by: ''});
+const his_newRecord = ref({ model_name: '', encoded_by: '' });
 
 const vt_editingRecord = ref(null);
 const cpkihc_editingRecord = ref(null);
@@ -846,6 +1042,7 @@ const ttmnc_editingRecord = ref(null);
 const bh_editingRecord = ref(null);
 const rob_editingRecord = ref(null);
 const cpkbr_editingRecord = ref(null);
+const his_editingRecord = ref(null);
 
 const backButton = () => {
     showSelectionPanel.value = true;
@@ -856,6 +1053,7 @@ const backButton = () => {
     showGXPanel.value = false;
     showTTMNCPanel.value = false;
     showCPKBRPanel.value = false;
+    showHISPanel.value = false;
 }
 
 const vt_startEditing = (record) => {
@@ -884,6 +1082,10 @@ const rob_startEditing = (record) => {
 
 const cpkbr_startEditing = (record) => {
     cpkbr_editingRecord.value = { ...record };
+}
+
+const his_startEditing = (record) => {
+    his_editingRecord.value = { ...record };
 }
 
 // Add record
@@ -955,6 +1157,15 @@ const cpkbr_addRecord = async () => {
   cpkbr_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
+const his_addRecord = async () => {
+  if (!his_newRecord.value.model_name || !his_newRecord.value.encoded_by) return;
+
+  await axios.post('/api/his-models', his_newRecord.value);
+  await userInstructionsLogging(`has successfully added ${his_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await loadData();
+  his_newRecord.value = { model_name: '', encoded_by: ''};
+};
+
 
 // Update record
 const vt_updateRecord = async () => {
@@ -1009,6 +1220,13 @@ const cpkbr_updateRecord = async () => {
     await loadData();
 };
 
+const his_updateRecord = async () => {
+    await axios.put(`/api/his-models/${his_editingRecord.value.id}`, his_editingRecord.value);
+    await userInstructionsLogging(`has successfully edited ${his_editingRecord.value.model_name} to the data list instructions of CPK BR Models`);
+    his_editingRecord.value = null;
+    await loadData();
+};
+
 const loadData = async () => {
   try {
     const responseGetVTData = await axios.get('/api/vt-models');
@@ -1025,6 +1243,8 @@ const loadData = async () => {
     robModels.value = responseGetROBData.data;
     const responseGetCPKBRData = await axios.get('/api/cpk-br-models');
     cpkbrModels.value = responseGetCPKBRData.data;
+    const responseGetHISData = await axios.get('/api/his-models');
+    hisModels.value = responseGetHISData.data;
   } catch (e) {
     console.error('Failed to load responseGetVTData: ', e);
   }
