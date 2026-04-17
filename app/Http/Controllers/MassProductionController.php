@@ -1162,7 +1162,7 @@ class MassProductionController extends Controller
                             ->where('model', $lot->model)
                             ->where('lot_no', $lot->lot_no)
                             ->exists(),
-                        'filmpasting_completed' => BreaklotSecondCoating::where('furnace', $furnace)
+                        'filmpasting_completed' => BreaklotFilmpasting::where('furnace', $furnace)
                             ->where('mass_prod', $massprod)
                             ->where('layer', $layer_no)
                             ->where('model', $lot->model)
