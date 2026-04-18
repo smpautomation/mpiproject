@@ -1249,7 +1249,7 @@ const checkBreaklot = async () => {
                 lot_no: selectedLotNo.value,
             },
         });
-        isBreaklot.value = response.data.is_breaklot_2ndgbdp;
+        isBreaklot.value = response.data.is_breaklot;
         isExisting.value = response.data.is_existing;
         console.log("isBreaklot: ", isBreaklot.value);
         console.log("isExisting: ", isExisting.value);
