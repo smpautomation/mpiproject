@@ -188,18 +188,6 @@
                     class="w-full px-4 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
-
-                <!-- Encoded By -->
-                <div class="flex flex-col w-full">
-                    <label class="mb-1 text-sm font-semibold text-gray-700">Encoded By</label>
-                    <input
-                    type="text"
-                    v-model="encodedBy"
-                    @input="encodedBy = encodedBy.toUpperCase()"
-                    placeholder="Enter name..."
-                    class="w-full px-4 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
                 </div>
 
                 <!-- Actions -->
@@ -314,7 +302,7 @@ const showConfirm = ref(false);
 //Toggles
 
 const furnaceNo = ref();
-const encodedBy = ref();
+//const encodedBy = ref();
 const furnaceDataLists = ref([]);
 const searchQuery = ref("");
 const deleteTargetId = ref(null);
@@ -329,7 +317,7 @@ const filteredFurnaceData = computed(() => {
 });
 
 const submitForm = () => {
-    if(furnaceNo.value == '' || encodedBy.value == '' || furnaceNo.value == null || encodedBy.value == null){
+    if(furnaceNo.value == '' || furnaceNo.value == null ){
         toast.warning('Please fill up all fiends.');
         return;
     }
@@ -343,14 +331,14 @@ const saveToDatabase = async () => {
     try {
         const response = await axios.post('/api/furnace-data', {
             furnace_name: furnaceNo.value,
-            encoded_by: encodedBy.value,
+            encoded_by: state.user.firstName + " " + state.user.surname,
         });
 
         console.log('Saved To Database:', response.data);
         toast.success('Saved Successfully');
-
+        const encodedBy = state.user.firstName + " " + state.user.surname;
         await userManageLogging(
-            'created Furnace: ' + furnaceNo.value + ' Encoded by: ' + encodedBy.value + ' successfully.'
+            'created Furnace: ' + furnaceNo.value + ' Encoded by: ' + encodedBy + ' successfully.'
         );
 
     } catch (error) {
@@ -409,6 +397,10 @@ const deleteFurnace = async () => {
 };
 
 onMounted(async() => {
+    const isAuthenticated = await checkAuthentication();
+    if (!isAuthenticated) {
+        return; // Stop execution if not authenticated
+    }
     await getFurnaceLists();
 });
 

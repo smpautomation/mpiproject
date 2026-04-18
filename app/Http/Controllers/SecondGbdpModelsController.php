@@ -16,6 +16,7 @@ class SecondGbdpModelsController extends Controller
     {
         $validated = $request->validate([
             'model_name' => 'nullable|string|max:255',
+            'encoded_by' => 'nullable|string|max:255',
         ]);
 
         return SecondGbdpModels::create($validated);
@@ -32,6 +33,7 @@ class SecondGbdpModelsController extends Controller
 
         $validated = $request->validate([
             'model_name' => 'nullable|string|max:255',
+            'encoded_by' => 'nullable|string|max:255',
         ]);
 
         $secondGBDP->update($validated);

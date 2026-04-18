@@ -17,7 +17,8 @@
                 1st and 2nd GBDP Model Records
             </h1>
             <p class="text-sm text-gray-500">
-                View all created models for 1st and 2nd GBDP with their creation date.
+                Register new models for 1st and 2nd GBDP only.
+                Only 2ND GBDP-compatible models are permitted in this module.
             </p>
             </div>
 
@@ -47,6 +48,7 @@
                         <tr>
                             <th class="px-6 py-3 text-sm font-semibold text-left text-gray-700 uppercase">Date</th>
                             <th class="px-6 py-3 text-sm font-semibold text-left text-gray-700 uppercase">Model</th>
+                            <th class="px-6 py-3 text-sm font-semibold text-left text-gray-700 uppercase">Encoded By</th>
                             <th class="px-6 py-3 text-sm font-semibold text-left text-gray-700 uppercase">Actions</th>
                         </tr>
                     </thead>
@@ -61,6 +63,9 @@
                             </td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900">
                                 {{ model.model_name }}
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                                {{ model.encoded_by }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-700">
                                 <button
@@ -301,6 +306,7 @@ const saveToDatabase = async () => {
     try {
         const response = await axios.post('/api/second-gbdp-models',{
             model_name: modelName.value,
+            encoded_by: state.user.firstName + " " + state.user.surname,
         });
         console.log('Saved To Database: ', response.data);
         toast.success('Saved Successfully');
@@ -354,6 +360,10 @@ const deleteFurnace = async () => {
 };
 
 onMounted(async() => {
+    const isAuthenticated = await checkAuthentication();
+    if (!isAuthenticated) {
+        return; // Stop execution if not authenticated
+    }
     await getModelLists();
 });
 
