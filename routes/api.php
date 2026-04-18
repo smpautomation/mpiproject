@@ -48,6 +48,7 @@ use App\Http\Controllers\ErrorLogsController;
 use App\Http\Controllers\InitialControlSheetController;
 use App\Http\Controllers\InitialCoatingController;
 use App\Http\Controllers\InitialFilmPastingController;
+use App\Http\Controllers\BreaklotAddtnlFormatTypeController;
 use App\Http\Controllers\CpkBrModelsController;
 use App\Mail\TakefuMail_Manual;
 use App\Models\InitialFilmPasting;
@@ -581,7 +582,6 @@ Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::cl
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
 Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
 
-
 Route::apiResource('mass-production', MassProductionController::class);
 Route::apiResource('break-lot-coating', BreaklotCoatingController::class);
 Route::apiResource('break-lot-second-coating', BreaklotSecondCoatingController::class);
@@ -596,3 +596,4 @@ Route::apiResource('initial-coating', InitialCoatingController::class);
 Route::apiResource('initial-film-pasting', InitialFilmPastingController::class);
 Route::apiResource('stamp-undo-history', StampUndoHistoryController::class);
 Route::apiResource('second_heat_treatment', GbdpSecondHeatTreatmentController::class);
+Route::apiResource('breaklot_addtnl_format_types', BreaklotAddtnlFormatTypeController::class);

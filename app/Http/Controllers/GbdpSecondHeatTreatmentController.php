@@ -7,6 +7,7 @@ use App\Models\BreaklotSecondHeatTreatment;
 use App\Models\BreaklotInitialLotHt;
 use App\Models\MassProduction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GbdpSecondHeatTreatmentController extends Controller
 {
@@ -134,9 +135,16 @@ class GbdpSecondHeatTreatmentController extends Controller
         $existsInInitial = BreaklotInitialLotHt::where('furnace', $request->furnace)
             ->where('mass_prod', $request->mass_prod)
             ->where('layer', $layerRaw)
-            ->where('initial_model', $request->model)
-            ->where('initial_lot', $request->lot_no)
             ->exists();
+
+        Log::info('checkBreaklot - existsInInitial check', [
+            'furnace' => $request->furnace,
+            'mass_prod' => $request->mass_prod,
+            'layer' => $layerRaw,
+            'model' => $request->model,
+            'lot_no' => $request->lot_no,
+            'existsInInitial' => $existsInInitial,
+        ]);
 
         // GBDP Second HT
         $existsInSecondGbdpHt = GbdpSecondHeatTreatment::where('furnace', $request->furnace)

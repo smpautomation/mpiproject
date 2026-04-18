@@ -1276,6 +1276,7 @@ const isAdditionalExisting = ref(false);
 
 const layers = ref(["1", "2", "3", "4", "5", "6", "7", "8", "9", "9.5"]);
 const isExists = ref(false);
+const isBreaklot = ref(false);
 const existingLayers = ref([]);
 const available_layers = ref([]);
 const completedLayers = ref([]);
@@ -1474,7 +1475,11 @@ const addtnl_saveToDatabase = async () => {
         );
         console.log(response.data);
         toast.success("Data successfully saved.");
-        await updateFormatType();
+        if (!isBreaklot.value) {
+            await updateFormatType();
+        }else{
+            await breaklotAddtnlFormatType();
+        }
     } catch (error) {
         toast.error("Failed to save additional film pasting data");
         await userErrorLogging(
@@ -1526,7 +1531,11 @@ const saveToDatabase = async () => {
             await saveInitialLot();
         }
         toast.success("Data successfully saved.");
-        await updateFormatType();
+        if (!isBreaklot.value) {
+            await updateFormatType();
+        }else{
+            await breaklotAddtnlFormatType();
+        }
     } catch (error) {
         toast.error("Failed to save film pasting data");
         await userErrorLogging(
@@ -1546,6 +1555,26 @@ const saveToDatabase = async () => {
         await fetchAvailableLayers();
         await fetchExistingLayers();
         clearAll();
+    }
+};
+
+const checkBreaklot = async () => {
+    try {
+        const response = await axios.get("/api/check-breaklot", {
+            params: {
+                furnace: filmPastingInfo.selectedFurnace,
+                mass_prod: filmPastingInfo.selected_mass_prod,
+                layer: String(filmPastingInfo.selected_layer),
+                model: filmPasteModel.value,
+                lot_no: filmPasteLotNo.value,
+            },
+        });
+        isBreaklot.value = response.data.is_breaklot_2ndgbdp;
+        //isExisting.value = response.data.is_existing;
+        console.log("isBreaklot: ", isBreaklot.value);
+        //console.log("isExisting: ", isExisting.value);
+    } catch (error) {
+        console.error("Failed to check breaklot status", error);
     }
 };
 
@@ -1582,6 +1611,35 @@ const updateFormatType = async () => {
         );
     }
 };
+
+const breaklotAddtnlFormatType = async() => {
+    try{
+        const response = await axios.post('/api/breaklot_addtnl_format_types', {
+            furnace: filmPastingInfo.selectedFurnace,
+            mass_prod: filmPastingInfo.selected_mass_prod,
+            layer: String(filmPastingInfo.selected_layer),
+            model: filmPasteModel.value,
+            lot_no: filmPasteLotNo.value,
+            format_type: "Film Pasting",
+        });
+
+        console.log('Successfully added format type for additional breaklots: ', response.data);
+
+    }catch(error){
+        console.error('Failed to update format type for additional breaklot', error);
+        toast.error('Failed to update breaklot additional format type');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "breaklotAddtnlFormatType",
+            "Failed to update format type for additional breaklot",
+        );
+    }
+}
 
 const clearAll = () => {
     Object.assign(filmPastingInfo, {
@@ -1789,6 +1847,7 @@ const checkExistingAdditional = async () => {
                     furnace: filmPastingInfo.selectedFurnace,
                     layer: filmPastingInfo.selected_layer,
                     lot_no: filmPasteLotNo.value,
+                    model: filmPasteModel.value,
                 },
             },
         );
@@ -1802,6 +1861,9 @@ const checkExistingAdditional = async () => {
     } catch (error) {
         console.error("Failed to check existing additionals", error);
         toast.error("Failed to verify Lot Number.");
+        console.log('STATUS:', error.response?.status);
+        console.log('HEADERS:', error.response?.headers);
+        console.log('DATA:', error.response?.data);
     }
 };
 
@@ -1951,6 +2013,7 @@ const fetchFilmPastingDataSummary = async () => {
         isFilmPasteDataShown.value = true;
 
         await checkExistingAdditional();
+        await checkBreaklot();
 
     } catch (error) {
         if (error.response && error.response.status === 404) {
@@ -2054,6 +2117,7 @@ onMounted(async () => {
     }
     await getMassProdLists();
     await getFurnaceLists();
+    await checkBreaklot();
 });
 </script>
 

@@ -1516,7 +1516,7 @@ const formatLayerDataForDatabase = (layer) => {
     ];
 };
 
-const updateFormatType = async () => { // Update format type of Mass Productions Table //goback
+const updateFormatType = async () => { // Update format type of Mass Productions Table
     const layerKey = firstLayerSelected.value === '9.5' ? 'layer_9_5_format_type' : `layer_${firstLayerSelected.value}_format_type`;
 
     const dataPayload = {
@@ -1540,6 +1540,48 @@ const updateFormatType = async () => { // Update format type of Mass Productions
             },
             "updateFormatType",
             "Failed to update format type"
+        );
+    }
+}
+
+const breaklotAddtnlFormatType = async() => {
+    try{
+        /*
+        console.log({
+            furnace: mpcsbl.selectedFurnace,
+            mass_prod: mpcsbl.selectedMassProd,
+            layer: String(firstLayerSelected.value),
+            model: mpcsbl.selectedModel,
+            lot_no: mpcsbl.lotNo,
+            format_type: "Normal",
+        });
+        */
+        const response = await axios.post('/api/breaklot_addtnl_format_types', {
+            furnace: mpcsbl.selectedFurnace,
+            mass_prod: mpcsbl.selectedMassProd,
+            layer: String(firstLayerSelected.value),
+            model: mpcsbl.selectedModel,
+            lot_no: mpcsbl.lotNo,
+            format_type: "Normal",
+        });
+
+        console.log('Successfully added format type for additional breaklots: ', response.data);
+
+    }catch(error){
+        console.error('Failed to update format type for additional breaklot', error);
+        toast.error('Failed to update breaklot additional format type');
+        //console.log('STATUS:', error.response?.status);
+        //console.log('HEADERS:', error.response?.headers);
+        //console.log('DATA:', error.response?.data);
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "breaklotAddtnlFormatType",
+            "Failed to update format type for additional breaklot",
         );
     }
 }
@@ -1740,7 +1782,7 @@ const checkBreaklot = async () => {
             params: {
                 mass_prod: mpcsbl.selectedMassProd,
                 furnace: mpcsbl.selectedFurnace,
-                layer: firstLayerSelected.value,
+                layer: String(firstLayerSelected.value),
                 model: mpcsbl.selectedModel,
                 lot_no: mpcsbl.lotNo,
             }
@@ -1774,16 +1816,22 @@ const saveInitialLot = async () => {
 };
 
 const saveToDatabase = async () => {
+    console.log('---SAVE TO DATABASE----');
     if (!selectedCoordinates.value.length) return;
 
     try {
 
-         if(isInitialLotNotSaved.value){
+        if(isInitialLotNotSaved.value){
             await saveInitialLot();
         }
+
         if(!isBreaklot.value){
             await updateFormatType();
+        }else{
+            console.log('BREAKLOT DETECTED');
+            await breaklotAddtnlFormatType();
         }
+
         // --- Normalize & identify layers ---
         const sortedLayers = [...layersInvolvedUserPick.value]
             .map(l => Number(l))

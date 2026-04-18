@@ -19,6 +19,7 @@ use App\Models\BreaklotSecondCoating;
 use App\Models\BreaklotFilmpasting;
 use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotSecondHeatTreatment;
+use App\Models\BreaklotAddtnlFormatType;
 use App\Models\ExcessLayers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -1144,15 +1145,55 @@ class MassProductionController extends Controller
                     ->get();
 
                 foreach ($additionalLots as $lot) {
+
+                    $additionalType = BreaklotAddtnlFormatType::where('furnace', $furnace)
+                        ->where('mass_prod', $massprod)
+                        ->where('layer', $layer_no)
+                        ->where('model', $lot->model)
+                        ->where('lot_no', $lot->lot_no)
+                        ->value('format_type');
+
+                    if (!$additionalType) {
+
+                        // Check Film Pasting first (highest priority)
+                        $hasFilmPasting = BreaklotFilmpasting::where('furnace', $furnace)
+                            ->where('mass_prod', $massprod)
+                            ->where('layer', $layer_no)
+                            ->where('model', $lot->model)
+                            ->where('lot_no', $lot->lot_no)
+                            ->exists();
+
+                        if ($hasFilmPasting) {
+                            $additionalType = 'Film Pasting';
+                        } elseif (stripos($lot->model, '2ND GBDP') !== false) {
+                            $additionalType = '1st and 2nd Gbdp';
+                        } else {
+                            $additionalType = 'Normal';
+                        }
+
+                        BreaklotAddtnlFormatType::updateOrCreate(
+                            [
+                                'furnace' => $furnace,
+                                'mass_prod' => $massprod,
+                                'layer' => (string) $layer_no,
+                                'model' => $lot->model,
+                                'lot_no' => $lot->lot_no,
+                            ],
+                            [
+                                'format_type' => $additionalType,
+                            ]
+                        );
+                    }
+
                     $layers[] = [
                         'layer_no' => $layer_no,
                         'lot_type' => 'additional',
-                        'type' => $layer_type,
+                        'type' => $additionalType,
                         'model' => $lot->model,
                         'lot_no' => $lot->lot_no,
                         'heat_treatment_completed' => !empty($layer_json),
                         'second_heat_treatment_completed' => $secondHeatTreatmentBreaklotCompleted,
-                        'coating_completed' => Coating::where('furnace', $furnace)
+                        'coating_completed' => BreaklotCoating::where('furnace', $furnace)
                             ->where('mass_prod', $massprod)
                             ->where('layer', $layer_no)
                             ->exists(),
@@ -1738,11 +1779,20 @@ class MassProductionController extends Controller
             ->where('layer', $layer)
             ->delete();
 
+        $deletedBreaklotAddtnlRows = BreaklotAddtnlFormatType::where('mass_prod', $massProd)
+            ->where('furnace', $furnace)
+            ->where('layer', (string) $layer)
+            ->delete();
+
+        $totalDeleted = $deletedRows + $deletedBreaklotRows + $deletedBreaklotAddtnlRows;
+
         return response()->json([
             'success' => true,
             'message' => 'Layer deleted successfully',
             'deleted_rows' => $deletedRows,
-            'deleted_breaklot_rows' => $deletedBreaklotRows
+            'deleted_breaklot_rows' => $deletedBreaklotRows,
+            'deleted_breaklot_addtnl_rows' => $deletedBreaklotAddtnlRows,
+            'total_deleted' => $totalDeleted,
         ]);
     }
 

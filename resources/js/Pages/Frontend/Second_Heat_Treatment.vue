@@ -787,6 +787,22 @@ const userManageLogging = async (logEvent) => {
     }
 };
 
+const userErrorLogging = async (details, triggerFunction, title) => {
+    try {
+        const response = await axios.post("/api/error-logs", {
+            user: state.user.firstName + " " + state.user.surname,
+            title: title,
+            details: details,
+            trigger_function: triggerFunction,
+            section: "Second Heat Treatment",
+        });
+
+        //console.log('userErrorLogging-data: ',responseUserLogin.data);
+    } catch (error) {
+        console.error("userErrorLogging post request failed: ", error);
+    }
+};
+
 // Utility: Save and load to sessionStorage
 function useSessionStorage(key, state) {
     // Load existing session value
@@ -1108,6 +1124,8 @@ const saveInitialLot = async () => {
 };
 
 const saveToDatabase = async () => {
+    await checkBreaklot();
+
     // 🔒 SNAPSHOT (immutable during execution)
     const snapshot = {
         furnace: selectedFurnace.value,
@@ -1157,6 +1175,8 @@ const saveToDatabase = async () => {
 
         if (!isBreaklot.value) {
             await updateFormatType();
+        }else{
+            await breaklotAddtnlFormatType();
         }
 
         await userManageLogging(
@@ -1175,6 +1195,7 @@ const saveToDatabase = async () => {
 };
 
 const addtnl_saveToDatabase = async () => {
+    await checkBreaklot();
     // Base payload
     const dataPayload = {
         furnace: selectedFurnace.value,
@@ -1221,6 +1242,8 @@ const addtnl_saveToDatabase = async () => {
         toast.success("Data saved successfully!");
         if (!isBreaklot.value) {
             await updateFormatType();
+        }else{
+            await breaklotAddtnlFormatType();
         }
         showModalCreate.value = false;
         await userManageLogging(
@@ -1281,6 +1304,35 @@ const updateFormatType = async () => {
         console.log("Failed to update format type");
     }
 };
+
+const breaklotAddtnlFormatType = async() => {
+    try{
+        const response = await axios.post('/api/breaklot_addtnl_format_types', {
+            furnace: mpcsbl.selectedFurnace,
+            mass_prod: mpcsbl.selectedMassProd,
+            layer: firstLayerSelected.value,
+            model: mpcsbl.selectedModel,
+            lot_no: mpcsbl.lotNo,
+            format_type: "1st and 2nd Gbdp",
+        });
+
+        console.log('Successfully added format type for additional breaklots: ', response.data);
+
+    }catch(error){
+        console.error('Failed to update format type for additional breaklot', error);
+        toast.error('Failed to update breaklot additional format type');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "breaklotAddtnlFormatType",
+            "Failed to update format type for additional breaklot",
+        );
+    }
+}
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 

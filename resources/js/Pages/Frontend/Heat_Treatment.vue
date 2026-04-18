@@ -421,7 +421,6 @@
                                         </button>
                                     </div>
                                 </div>
-
                                 <div
                                     v-if="
                                         !isEditingExpired &&
@@ -5250,6 +5249,8 @@ const saveToDatabase = async () => {
 
         if (!isBreaklot.value) {
             await updateFormatType();
+        }else{
+            await breaklotAddtnlFormatType();
         }
 
         if (isInitialLotNotSaved.value) {
@@ -5537,6 +5538,35 @@ const updateFormatType = async () => {
         );
     }
 };
+
+const breaklotAddtnlFormatType = async() => {
+    try{
+        const response = await axios.post('/api/breaklot_addtnl_format_types', {
+            furnace: mpcs.selectedFurnace,
+            mass_prod: mpcs.selectedMassProd,
+            layer: String(mpcs.selectedLayer),
+            model: mpcs.selectedModel,
+            lot_no: mpcs.lotNo,
+            format_type: "Normal",
+        });
+
+        console.log('Successfully added format type for additional breaklots: ', response.data);
+
+    }catch(error){
+        console.error('Failed to update format type for additional breaklot', error);
+        toast.error('Failed to update breaklot additional format type');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "breaklotAddtnlFormatType",
+            "Failed to update format type for additional breaklot",
+        );
+    }
+}
 
 const uploadGraphs = async () => {
     if (!mpcs.selectedMassProd || !mpcs.selectedFurnace) return;
