@@ -156,7 +156,7 @@
                     <input
                         type="text"
                         v-model="modelName"
-                        @input="modelName = modelName.toUpperCase().replace(/[^A-Z0-9]/g, '')"
+                        @input="modelName = modelName.toUpperCase().replace(/[^A-Z0-9 ]/g, '')"
                         placeholder="ex. TIC0755G"
                         class="w-full px-4 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
