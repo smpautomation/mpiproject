@@ -1,122 +1,141 @@
 <template>
     <Frontend>
         <div class="w-full space-y-6">
-            <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div class="flex flex-row">
 
-                <!-- Title -->
-                <h2 class="mb-6 text-sm font-semibold tracking-wide text-gray-800 uppercase">
-                    Data Editor
-                </h2>
 
-                <!-- Furnace -->
-                <div class="mb-4">
-                    <label class="block mb-1 text-xs font-medium text-gray-600">
-                        Furnace
-                    </label>
-                    <select
-                        v-model="selectedFurnace"
-                        class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+
+                    <!-- Title -->
+                    <h2 class="mb-6 text-sm font-semibold tracking-wide text-gray-800 uppercase">
+                        Data Editor
+                    </h2>
+
+                    <!-- Furnace -->
+                    <div class="mb-4">
+                        <label class="block mb-1 text-xs font-medium text-gray-600">
+                            Furnace
+                        </label>
+                        <select
+                            v-model="selectedFurnace"
+                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                        >
+                            <option
+                                v-for="item in furnace_names"
+                                :key="item"
+                                :value="item"
+                            >
+                                {{ item }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Mass Production -->
+                    <div class="mb-4">
+                        <label class="block mb-1 text-xs font-medium text-gray-600">
+                            Mass Production Name
+                        </label>
+                        <input
+                            v-model="selectedMassProd"
+                            type="text"
+                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                            placeholder="Enter name..."
+                        />
+                    </div>
+
+                    <!-- Layer -->
+                    <div class="mb-6">
+                        <label class="block mb-1 text-xs font-medium text-gray-600">
+                            Layer
+                        </label>
+                        <select
+                            v-model="selectedLayer"
+                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                        >
+                            <option
+                                v-for="item in layers"
+                                :key="item"
+                                :value="item"
+                            >
+                                {{ item }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Action -->
+                    <button
+                        class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.99]"
                     >
-                        <option
-                            v-for="item in furnace_names"
-                            :key="item"
-                            :value="item"
-                        >
-                            {{ item }}
-                        </option>
-                    </select>
-                </div>
-
-                <!-- Mass Production -->
-                <div class="mb-4">
-                    <label class="block mb-1 text-xs font-medium text-gray-600">
-                        Mass Production Name
-                    </label>
-                    <input
-                        v-model="selectedMassProd"
-                        type="text"
-                        class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
-                        placeholder="Enter name..."
-                    />
-                </div>
-
-                <!-- Layer -->
-                <div class="mb-6">
-                    <label class="block mb-1 text-xs font-medium text-gray-600">
-                        Layer
-                    </label>
-                    <select
-                        v-model="selectedLayer"
-                        class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
-                    >
-                        <option
-                            v-for="item in layers"
-                            :key="item"
-                            :value="item"
-                        >
-                            {{ item }}
-                        </option>
-                    </select>
-                </div>
-
-                <!-- Action -->
-                <button
-                    @click="proceedButton"
-                    class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.99]"
-                >
-                    Proceed
-                </button>
-
-            </div>
-
-            <div class="w-full max-w-lg p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-
-                <!-- Header -->
-                <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase">
-                    Choose an Action
-                </h2>
-
-                <div class="space-y-4">
-
-                    <!-- DANGEROUS ACTION -->
-                    <div class="p-4 border border-gray-300 rounded-md bg-gray-50">
-
-                        <p class="mb-3 text-sm text-gray-800">
-                            <span class="font-semibold text-black">Delete LAYER data (FULL RESET)</span><br>
-                            <span class="text-xs text-gray-600">
-                                This will reset all mass production data for the selected layer, including coating and film pasting (if they exist). Initial process data will remain untouched.
-                            </span>
-                        </p>
-
-                        <button
-                            class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
-                            @click="proceedFullReset"
-                        >
-                            Proceed
-                        </button>
+                        Check/Validate
+                    </button>
 
                     </div>
 
-                    <!-- SAFE ACTION -->
-                    <div class="p-4 border border-gray-300 rounded-md bg-white">
 
-                        <p class="mb-3 text-sm text-gray-800">
-                            <span class="font-semibold">Modify Cycle No Only</span><br>
-                            <span class="text-xs text-gray-500">
-                                Adjust cycle no without affecting production data.
-                            </span>
-                        </p>
 
-                        <button
-                            class="px-4 py-2 text-sm font-medium text-gray-800 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 active:scale-[0.98]"
-                            @click="openCycleEditor"
-                        >
-                            Proceed
-                        </button>
+                    <div class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
 
+                        <!-- Header -->
+                        <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase">
+                            Choose an Action
+                        </h2>
+
+                        <div class="space-y-4">
+
+                            <!-- DANGEROUS ACTION -->
+                            <div class="p-4 border border-gray-300 rounded-md bg-gray-50">
+
+                                <p class="mb-3 text-sm text-gray-800">
+                                    <span class="font-semibold text-black">Delete LAYER data (FULL RESET)</span><br>
+
+                                    <span class="text-xs text-gray-600">
+                                        This action will permanently reset all mass production data for the selected layer,
+                                        including coating and film pasting (if present). All linked additional lots within this layer group will also be removed.
+                                        Initial process data will remain untouched.
+                                    </span>
+
+                                    <br>
+
+                                    <span class="text-xs text-red-600 font-medium">
+                                        Warning: This affects all connected lots under the same layer grouping.
+                                        It is strongly recommended to review the Control Sheet page before proceeding after deletion.
+                                    </span>
+                                </p>
+
+                                <button
+                                    class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                                    @click="proceedButton"
+                                >
+                                    Proceed
+                                </button>
+
+                            </div>
+
+                            <!-- SAFE ACTION -->
+                            <div class="p-4 border border-gray-300 rounded-md bg-white">
+
+                                <p class="mb-3 text-sm text-gray-800">
+                                    <span class="font-semibold">Modify Cycle No Only</span><br>
+                                    <span class="text-xs text-gray-500">
+                                        Adjust cycle no without affecting production data.
+                                    </span>
+                                </p>
+
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-800 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 active:scale-[0.98]"
+                                    @click="openCycleEditor"
+                                >
+                                    Proceed
+                                </button>
+
+                            </div>
+                        </div>
                     </div>
+
+
+
                 </div>
-            </div>
+
 
 
 
@@ -269,6 +288,14 @@ const getFurnaceLists = async () => {
         );
     }
 };
+
+const checkValidate = async() => {
+    try{
+
+    }catch(error){
+        console.error('Failed to check / validate selected data.');
+    }
+}
 
 
 const proceedButton = async() =>{

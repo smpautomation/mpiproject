@@ -6405,7 +6405,7 @@ watch(
 );
 
 //For Data 1x1x1 without corner - models AAW-0935G, AAW-0934G
-watch(
+/*watch(
     [
         reportSurface_cpk,
         reportCore_cpk,
@@ -6446,7 +6446,7 @@ watch(
         }
     },
     { immediate: true },
-);
+);*/
 
 watch(
     [
@@ -6594,7 +6594,6 @@ watch(
     { immediate: true },
 );
 
-//For TTM Models
 watch(
     [
         reportCpk,
@@ -6611,66 +6610,59 @@ watch(
         show1x1x1Data_Corner,
     ],
     () => {
-        //console.log('Watch triggered for isTTM_model or reportCpk');
-        //console.log('isTTM_model:', isTTM_model.value);
-        //console.log('reportCpk:', reportCpk.value);
 
         if (isTTM_model.value === true && reportCpk.value !== null) {
-            if (reportCpk.value < 1.0) {
-                //console.log('reportCpk is below 1.00 — setting NG/REJECT');
-                reportCpkRemarks.value = "NG";
-            } else {
-                //console.log('reportCpk is 1.00 or higher — setting OK/HOLD');
-                reportCpkRemarks.value = "OK";
+
+            // --- Overall CPK ---
+            reportCpkRemarks.value = reportCpk.value < 1.0 ? "NG" : "OK";
+
+            // --- Guard condition ---
+            if (
+                !noteReasonForReject.value.includes("- N.G iHc") ||
+                show1x1x1Data_withoutCorner.value !== true
+            ) {
+                return;
             }
 
-            if (
-                noteReasonForReject.value.includes("- N.G iHc") &&
-                show1x1x1Data_withoutCorner.value === true &&
-                show1x1x1Data_Corner.value === false
-            ) {
-                if (
-                    reportSurface_cpk.value < cpkStandardValue.value ||
-                    reportCore_cpk.value < cpkStandardValue.value
-                ) {
-                    //console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
-                    reportSurface_remarks.value = "NG";
-                    reportCore_remarks.value = "NG";
-                    reportSMPJudgement.value = "REJECT";
-                } else {
-                    //console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
-                    reportCore_remarks.value = "OK";
-                    reportSurface_remarks.value = "OK";
-                    reportSMPJudgement.value = "HOLD";
-                }
-            } else if (
-                noteReasonForReject.value.includes("- N.G iHc") &&
-                show1x1x1Data_withoutCorner.value === true &&
-                show1x1x1Data_Corner.value === true
-            ) {
-                if (
-                    reportCorner_cpk.value < cpkStandardValue.value ||
-                    reportSurface_cpk.value < cpkStandardValue.value ||
-                    reportCore_cpk.value < cpkStandardValue.value
-                ) {
-                    //console.log('Surface, Core and Corner CPK below 1.33 — setting NG/REJECT');
-                    reportSurface_remarks.value = "NG";
-                    reportCore_remarks.value = "NG";
-                    reportCorner_remarks.value = "NG";
-                    reportSMPJudgement.value = "REJECT";
-                } else {
-                    //console.log('Surface, Core and Corner CPK 1.33 or higher — setting OK/HOLD');
-                    reportCore_remarks.value = "OK";
-                    reportSurface_remarks.value = "OK";
-                    reportCorner_remarks.value = "OK";
-                    reportSMPJudgement.value = "HOLD";
-                }
+            const standard = cpkStandardValue.value;
+
+            // --- WITHOUT CORNER ---
+            if (show1x1x1Data_Corner.value === false) {
+
+                const surfaceNG = reportSurface_cpk.value < standard;
+                const coreNG    = reportCore_cpk.value < standard;
+
+                // Per-metric truth
+                reportSurface_remarks.value = surfaceNG ? "NG" : "OK";
+                reportCore_remarks.value    = coreNG ? "NG" : "OK";
+
+                // Overall judgement
+                reportSMPJudgement.value = (surfaceNG || coreNG)
+                    ? "REJECT"
+                    : "HOLD";
             }
-        } else {
-            //console.log('isTTM_model is false — skipping TTM CPK check');
+
+            // --- WITH CORNER ---
+            else if (show1x1x1Data_Corner.value === true) {
+
+                const surfaceNG = reportSurface_cpk.value < standard;
+                const coreNG    = reportCore_cpk.value < standard;
+                const cornerNG  = reportCorner_cpk.value < standard;
+
+                // Per-metric truth
+                reportSurface_remarks.value = surfaceNG ? "NG" : "OK";
+                reportCore_remarks.value    = coreNG ? "NG" : "OK";
+                reportCorner_remarks.value  = cornerNG ? "NG" : "OK";
+
+                // Overall judgement
+                reportSMPJudgement.value = (surfaceNG || coreNG || cornerNG)
+                    ? "REJECT"
+                    : "HOLD";
+            }
         }
+
     },
-    { immediate: true },
+    { immediate: true }
 );
 
 //For CPK From BR models
