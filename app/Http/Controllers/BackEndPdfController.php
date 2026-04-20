@@ -630,8 +630,8 @@ class BackEndPdfController extends Controller
             'secondGbdp1stCoatingData' => $secondGbdpCoatingData['coating_data_1stgbdp'] ?? null,
             'secondGbdp1stCoatingInfo' => $secondGbdpCoatingData['coating_info_1stgbdp'] ?? null,
             'secondGbdpCoatingData' => $secondGbdpCoatingData ?? null,
-            'secondGbdp1stHeatTreatmentData' => $secondHeatTreatment['gbdp_1st'] ?? null,
-            'secondGbdp2ndHeatTreatmentData' => $secondHeatTreatment['gbdp_2nd'] ?? null,
+            'secondGbdp1stHeatTreatmentData' => $secondHeatTreatment?->gbdp_1st,
+            'secondGbdp2ndHeatTreatmentData' => $secondHeatTreatment?->gbdp_2nd,
             'secondGbdpHeatTreatmentData' => $secondHeatTreatment ?? null,
             'heatTreatmentData' => $massProdData, // pass heat treatment data to Blade
             'filmPastingData' => $filmPastingData ?? null,

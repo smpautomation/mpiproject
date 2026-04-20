@@ -546,17 +546,19 @@
                             <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
 
                                 @php
+                                    $data = $secondGbdp1stHeatTreatmentData ?? [];
+
                                     $rows = [
-                                        ['Furnace Machine:', $secondGbdp1stHeatTreatmentData['furnace_machine'] ?? 'NA'],
-                                        ['CYCLE No:', $secondGbdp1stHeatTreatmentData['cycle_no'] ?? 'NA'],
-                                        ['BATCH CYCLE No:', $secondGbdp1stHeatTreatmentData['batch_cycle_no'] ?? 'NA'],
-                                        ['PATTERN No:', $secondGbdp1stHeatTreatmentData['pattern_no'] ?? 'NA'],
-                                        ['DATE START:', $secondGbdp1stHeatTreatmentData['date_start'] ?? 'NA'],
-                                        ['TIME START:', $secondGbdp1stHeatTreatmentData['time_start'] ?? 'NA'],
-                                        ['DATE FINISH:', $secondGbdp1stHeatTreatmentData['date_finished'] ?? 'NA'],
-                                        ['TIME FINISH:', $secondGbdp1stHeatTreatmentData['time_finished'] ?? 'NA'],
-                                        ['Cycle Pattern:', $secondGbdp1stHeatTreatmentData['cycle_pattern'] ?? 'NA'],
-                                        ['Current Pattern:', $secondGbdp1stHeatTreatmentData['current_pattern'] ?? 'NA'],
+                                        ['Furnace Machine:', $data['furnace_machine'] ?? 'NA'],
+                                        ['CYCLE No:', $data['cycle_no'] ?? 'NA'],
+                                        ['BATCH CYCLE No:', $data['batch_cycle_no'] ?? 'NA'],
+                                        ['PATTERN No:', $data['pattern_no'] ?? 'NA'],
+                                        ['DATE START:', $data['date_start'] ?? 'NA'],
+                                        ['TIME START:', $data['time_start'] ?? 'NA'],
+                                        ['DATE FINISH:', $data['date_finished'] ?? 'NA'],
+                                        ['TIME FINISH:', $data['time_finished'] ?? 'NA'],
+                                        ['Cycle Pattern:', $data['cycle_pattern'] ?? 'NA'],
+                                        ['Current Pattern:', $data['current_pattern'] ?? 'NA'],
                                     ];
 
                                     $chunkSize = ceil(count($rows) / 3);
@@ -721,17 +723,19 @@
                             <div class="table" style="display: table; vertical-align: top; width: 100%; table-layout: fixed; font-size: 4px; line-height: 1; padding-right: 10px;">
 
                                 @php
+                                    $data = $secondGbdp2ndHeatTreatmentData ?? [];
+
                                     $rows = [
-                                        ['Furnace Machine:', $secondGbdp2ndHeatTreatmentData['furnace_machine'] ?? 'NA'],
-                                        ['CYCLE No:', $secondGbdp2ndHeatTreatmentData['cycle_no'] ?? 'NA'],
-                                        ['BATCH CYCLE No:', $secondGbdp2ndHeatTreatmentData['batch_cycle_no'] ?? 'NA'],
-                                        ['PATTERN No:', $secondGbdp2ndHeatTreatmentData['pattern_no'] ?? 'NA'],
-                                        ['DATE START:', $secondGbdp2ndHeatTreatmentData['date_start'] ?? 'NA'],
-                                        ['TIME START:', $secondGbdp2ndHeatTreatmentData['time_start'] ?? 'NA'],
-                                        ['DATE FINISH:', $secondGbdp2ndHeatTreatmentData['date_finished'] ?? 'NA'],
-                                        ['TIME FINISH:', $secondGbdp2ndHeatTreatmentData['time_finished'] ?? 'NA'],
-                                        ['Cycle Pattern:', $secondGbdp2ndHeatTreatmentData['cycle_pattern'] ?? 'NA'],
-                                        ['Current Pattern:', $secondGbdp2ndHeatTreatmentData['current_pattern'] ?? 'NA'],
+                                        ['Furnace Machine:', $data['furnace_machine'] ?? 'NA'],
+                                        ['CYCLE No:', $data['cycle_no'] ?? 'NA'],
+                                        ['BATCH CYCLE No:', $data['batch_cycle_no'] ?? 'NA'],
+                                        ['PATTERN No:', $data['pattern_no'] ?? 'NA'],
+                                        ['DATE START:', $data['date_start'] ?? 'NA'],
+                                        ['TIME START:', $data['time_start'] ?? 'NA'],
+                                        ['DATE FINISH:', $data['date_finished'] ?? 'NA'],
+                                        ['TIME FINISH:', $data['time_finished'] ?? 'NA'],
+                                        ['Cycle Pattern:', $data['cycle_pattern'] ?? 'NA'],
+                                        ['Current Pattern:', $data['current_pattern'] ?? 'NA'],
                                     ];
 
                                     $chunkSize = ceil(count($rows) / 3);

@@ -50,6 +50,7 @@ use App\Http\Controllers\InitialCoatingController;
 use App\Http\Controllers\InitialFilmPastingController;
 use App\Http\Controllers\BreaklotAddtnlFormatTypeController;
 use App\Http\Controllers\CpkBrModelsController;
+use App\Http\Controllers\DataEditorLogsController;
 use App\Mail\TakefuMail_Manual;
 use App\Models\InitialFilmPasting;
 use Illuminate\Support\Facades\Route;
@@ -449,6 +450,7 @@ Route::get('/mass-production-monitoring/{furnace}/{massprod}', [MassProductionCo
 //[MassProductionController::class, 'getLayerModel']);
 Route::get('/mass-production/get-layer-model', [MassProductionController::class, 'getLayerModel']);
 
+Route::get('/check-validate-data-editor', [MassProductionController::class, 'checkValidateMassProduction']);
 
 //Route::get('/mass-productions/{massprod}/layer/{layerNumber}/lotno',
 //[MassProductionController::class, 'getLayerLotno']);
@@ -597,3 +599,4 @@ Route::apiResource('initial-film-pasting', InitialFilmPastingController::class);
 Route::apiResource('stamp-undo-history', StampUndoHistoryController::class);
 Route::apiResource('second_heat_treatment', GbdpSecondHeatTreatmentController::class);
 Route::apiResource('breaklot_addtnl_format_types', BreaklotAddtnlFormatTypeController::class);
+Route::apiResource('data_editor_logs', DataEditorLogsController::class);

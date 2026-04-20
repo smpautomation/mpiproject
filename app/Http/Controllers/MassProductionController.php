@@ -2282,4 +2282,34 @@ class MassProductionController extends Controller
             'missing_layers' => $missingLayers,
         ]);
     }
+
+    public function checkValidateMassProduction(Request $request)
+    {
+        $validated = $request->validate([
+            'mass_prod' => 'required|string',
+            'furnace'   => 'required|string',
+            'layer'     => 'required|string',
+        ]);
+
+        $massProd = $validated['mass_prod'];
+        $furnace = $validated['furnace'];
+        $layer = $validated['layer'];
+
+        $normalizedLayer = str_replace('.', '_', $layer);
+        $layerColumn = 'layer_' . $normalizedLayer;
+
+        $massProdData = MassProduction::where('mass_prod', $massProd)
+                ->where('furnace', $furnace)
+                ->first();
+
+        $massProdLayerData = $massProdData && !empty($massProdData->$layerColumn);
+
+        $massProdExists = $massProdLayerData;
+
+        return response()->json([
+            'mass_prod_exists' => $massProdExists,
+        ]);
+
+    }
+
 }
