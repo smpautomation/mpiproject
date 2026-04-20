@@ -627,11 +627,16 @@
                         <div class="table-row">
                             <!-- Column 3: Table -->
                             <div class="table-cell" style="vertical-align: top; width: 60%; padding-right:5px; padding-bottom: 5px; white-space: nowrap;">
-                                <table class="print-table">
+
+                                <table class="print-table" style="width: 100%; border-collapse: collapse;">
+
                                     <thead>
                                         <tr>
-                                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">MAGNET BOX LOCATION</th>
+                                            <th colspan="{{ isset($controlLotNo['L']) && $controlLotNo['L'] ? 13 : 12 }}">
+                                                MAGNET BOX LOCATION
+                                            </th>
                                         </tr>
+
                                         <tr>
                                             <th colspan="2">BOX No.</th>
                                             <th>A</th>
@@ -646,10 +651,15 @@
                                             <th>K</th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
+
                                         {{-- Main layer row --}}
                                         <tr>
-                                            <td style="margin: 0px; padding: 0px;">No. of Layer</td>
+                                            <td style="white-space: normal !important; font-size: 7px !important; line-height: 1 !important; padding: 0 !important; margin: 0 !important;">
+                                                No. of Layer
+                                            </td>
+
                                             <td>{{ $layer }}</td>
                                             <td>{{ $controlLotNo['A'] ?? null }}</td>
                                             <td>{{ $controlLotNo['B'] ?? null }}</td>
@@ -667,7 +677,10 @@
                                         @if(!empty($controlLotNoExcess))
                                             @foreach($controlLotNoExcess as $excessLayerNo => $letters)
                                                 <tr>
-                                                    <td style="margin: 0px; padding: 0px;"></td>
+
+                                                    <td style="white-space: normal !important; font-size: 7px !important; line-height: 1 !important; padding: 0 !important; margin: 0 !important;">
+                                                    </td>
+
                                                     <td>{{ $excessLayerNo }}</td>
                                                     <td>{{ $letters['A'] ?? null }}</td>
                                                     <td>{{ $letters['B'] ?? null }}</td>
@@ -679,11 +692,15 @@
                                                     <td>{{ $letters['H'] ?? null }}</td>
                                                     <td>{{ $letters['J'] ?? null }}</td>
                                                     <td>{{ $letters['K'] ?? null }}</td>
+
                                                 </tr>
                                             @endforeach
                                         @endif
+
                                     </tbody>
+
                                 </table>
+
                             </div>
                         </div>
                     </div>
