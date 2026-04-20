@@ -181,16 +181,18 @@ class BackEndPdfController extends Controller
         $secondHeatTreatment = GbdpSecondHeatTreatment::where([
             'mass_prod' => $massprod,
             'furnace'   => $furnace,
-            'layer'     => $layer,
+            'layer'     => (string) $layer,
         ])->first();
 
-        Log::info('GbdpSecondHeatTreatment lookup result', [
-            'mass_prod' => $massprod,
-            'furnace'   => $furnace,
-            'layer'     => $layer,
-            'found'     => $secondHeatTreatment ? true : false,
-            'data'      => $secondHeatTreatment,
-        ]);
+
+        $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
+            ? json_decode($secondHeatTreatment->gbdp_1st, true)
+            : $secondHeatTreatment->gbdp_1st;
+
+        $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
+            ? json_decode($secondHeatTreatment->gbdp_2nd, true)
+            : $secondHeatTreatment->gbdp_2nd;
+
 
         // Build column name dynamically
         $columnLayerData = 'layer_' . str_replace('.', '_', $layer);
@@ -639,8 +641,8 @@ class BackEndPdfController extends Controller
             'secondGbdp1stCoatingData' => $secondGbdpCoatingData['coating_data_1stgbdp'] ?? null,
             'secondGbdp1stCoatingInfo' => $secondGbdpCoatingData['coating_info_1stgbdp'] ?? null,
             'secondGbdpCoatingData' => $secondGbdpCoatingData ?? null,
-            'secondGbdp1stHeatTreatmentData' => $secondHeatTreatment?->gbdp_1st,
-            'secondGbdp2ndHeatTreatmentData' => $secondHeatTreatment?->gbdp_2nd,
+            'secondGbdp1stHeatTreatmentData' => $secondGbdp1st,
+            'secondGbdp2ndHeatTreatmentData' => $secondGbdp2nd,
             'secondGbdpHeatTreatmentData' => $secondHeatTreatment ?? null,
             'heatTreatmentData' => $massProdData, // pass heat treatment data to Blade
             'filmPastingData' => $filmPastingData ?? null,
