@@ -655,7 +655,7 @@
                                     <tbody>
 
                                         {{-- Main layer row --}}
-                                        <tr>
+                                        <tr style="font-size: 8px !important;">
                                             <td style="white-space: normal !important; font-size: 7px !important; line-height: 1 !important; padding: 0 !important; margin: 0 !important;">
                                                 No. of Layer
                                             </td>
@@ -676,7 +676,7 @@
                                         {{-- Excess layer rows --}}
                                         @if(!empty($controlLotNoExcess))
                                             @foreach($controlLotNoExcess as $excessLayerNo => $letters)
-                                                <tr>
+                                                <tr style="font-size: 8px !important;">
 
                                                     <td style="white-space: normal !important; font-size: 7px !important; line-height: 1 !important; padding: 0 !important; margin: 0 !important;">
                                                     </td>
@@ -848,7 +848,7 @@
 
                                     <tbody>
                                         {{-- Main layer row --}}
-                                        <tr>
+                                        <tr style="font-size: 8px !important;">
                                             <td style="white-space: normal !important; font-size: 7px !important; line-height: 1 !important; padding: 0 !important; margin: 0 !important;">
                                                 No. of Layer
                                             </td>
@@ -869,7 +869,7 @@
                                         {{-- Excess layer rows --}}
                                         @if(!empty($controlLotNoExcess))
                                             @foreach($controlLotNoExcess as $excessLayerNo => $letters)
-                                                <tr>
+                                                <tr style="font-size: 8px !important;">
                                                     <td style="white-space: normal !important; font-size: 7px !important; line-height: 1 !important; padding: 0 !important; margin: 0 !important;">
                                                     </td>
 
