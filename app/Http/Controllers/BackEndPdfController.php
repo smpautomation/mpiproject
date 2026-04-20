@@ -30,6 +30,7 @@ use App\Models\BreaklotCoating;
 use App\Models\BreaklotInitialLot;
 use App\Models\BreaklotSecondCoating;
 use App\Models\BreaklotFilmpasting;
+use Illuminate\Support\Facades\Log;
 
 class BackEndPdfController extends Controller
 {
@@ -182,6 +183,14 @@ class BackEndPdfController extends Controller
             'furnace'   => $furnace,
             'layer'     => $layer,
         ])->first();
+
+        Log::info('GbdpSecondHeatTreatment lookup result', [
+            'mass_prod' => $massprod,
+            'furnace'   => $furnace,
+            'layer'     => $layer,
+            'found'     => $secondHeatTreatment ? true : false,
+            'data'      => $secondHeatTreatment,
+        ]);
 
         // Build column name dynamically
         $columnLayerData = 'layer_' . str_replace('.', '_', $layer);
