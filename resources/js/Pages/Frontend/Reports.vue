@@ -6213,6 +6213,7 @@ const showReportButton = async () => {
     await waitForFlag();
     showReportMain.value = true;
 };
+
 const confirmReset = ref(false);
 const resetReportBHData = async () => {
     reportBH_data.value = "NA";
@@ -6964,7 +6965,7 @@ const checkSpecialJudgement = async () => {
 
     // === Logic Blocks ===
     //console.log('--- Logic Evaluation Start ---');
-    console.log("Model:", model);
+    //console.log("Model:", model);
 
     // VT Data
     if (
@@ -7059,11 +7060,11 @@ const getControlSheetData = async () => {
 
         reportTotalQuantity.value = response.data.total_qty ?? 0;
 
-        console.log("Matched Key:", response.data.matched_key);
-        console.log("reportTotalQuantity:", reportTotalQuantity.value);
+        //console.log("Matched Key:", response.data.matched_key);
+        //console.log("reportTotalQuantity:", reportTotalQuantity.value);
     } catch (error) {
-        console.log("Failed to get response Control Sheet Data: ", error);
-
+        //console.log("Failed to get response Control Sheet Data: ", error);
+        console.error('Failed to get response more error details:', error.response?.data || error);
         reportTotalQuantity.value = 0; // fail safe
 
         await userErrorLogging(
@@ -7096,7 +7097,7 @@ const getUndoHistory = async () => {
 
         undoHistory.value = response.data;
 
-        console.log("Undo history fetched successfully.", response.data);
+        //console.log("Undo history fetched successfully.", response.data);
     } catch (error) {
         undoHistoryError.value = error.response?.data?.message || error.message;
         console.error("Failed to fetch undo history:", error);
@@ -7561,7 +7562,7 @@ const fetchAllData = async () => {
         throw new Error("fetchAllData returned empty or invalid payload");
     }
 };
-
+/*
 function getChartSrc(serial) {
     // Try png first, then jpg/jpeg fallback
     const pngPath = `/charts/chart_${serial}.png`;
@@ -7571,7 +7572,7 @@ function getChartSrc(serial) {
     // Note: This does not check file existence on server, only builds path
     // If you want auto-fallback, you'll need a small API call to confirm which file exists
     return pngPath; // default
-}
+}*/
 
 const fetchMiasFactor_category = async () => {
     try {
@@ -7695,7 +7696,7 @@ const getSecAllSetsData = async () => {
         // Load data for that set via API
         await nsa_showData(current_setNo.value);
     } catch (error) {
-        console.warn("Error fetching SEC data ->", error);
+        //console.warn("Error fetching SEC data ->", error);
         secDataBySet.value = {};
         availableSetNumbers.value = [];
         isSecAdditional.value = false;
@@ -7747,12 +7748,14 @@ const nsa_showData = async (setNo = current_setNo.value) => {
         console.log("DEGUG setData: ", nsaCat);
 
         // Extract aggregate ID as before
-        filteredAggregateID.value = setData.filter(
+        const agg = setData.find(
             (item) =>
                 item.nsa_serial == currentSerialSelected.value &&
                 item.nsa_set == setNo,
         );
-        nsaData_aggID.value = filteredAggregateID.value[0]?.id || null;
+
+        filteredAggregateID.value = agg ? [agg] : [];
+        nsaData_aggID.value = agg?.id || null;
 
         // Fill the prop values for display
         secAdd_propD_jhCurveFurnaceName.value =
@@ -7761,72 +7764,133 @@ const nsa_showData = async (setNo = current_setNo.value) => {
             setData[0]?.code_no ?? "No data found";
         secAdd_propD_jhCurveRemarks.value = setData[0]?.set_name ?? "";
 
-        // Map all the individual arrays for averages, max, min, etc.
-        nsa_getAllIDValues.value = setData.map((item) => item.id);
-        nsa_getAllBrValues.value = setData.map((item) => item.Br || null);
-        nsa_getAllBrRemarks.value = setData.map(
-            (item) => item.remark?.Br_remarks ?? null,
-        );
-        nsa_getAlliHcValues.value = setData.map((item) => item.iHc || null);
-        nsa_getAlliHcRemarks.value = setData.map(
-            (item) => item.remark?.iHc_remarks ?? null,
-        );
-        nsa_getAlliHkValues.value = setData.map((item) => item.iHk || null);
-        nsa_getAlliHkRemarks.value = setData.map(
-            (item) => item.remark?.iHk_remarks ?? null,
-        );
-        nsa_getAllBHMaxValues.value = setData.map((item) => item.BHMax || null);
-        nsa_getAllBHMaxRemarks.value = setData.map(
-            (item) => item.remark?.BHMax_remarks ?? null,
-        );
-        nsa_getAlliHr95Values.value = setData.map((item) => item.iHr95 || null);
-        nsa_getAlliHr95Remarks.value = setData.map(
-            (item) => item.remark?.iHr95_remarks ?? null,
-        );
-        nsa_getAlliHr98Values.value = setData.map((item) => item.iHr98 || null);
-        nsa_getAlliHr98Remarks.value = setData.map(
-            (item) => item.remark?.iHr98_remarks ?? null,
-        );
-        nsa_getAlliHciHkValues.value = setData.map(
-            (item) => item.iHkiHc || null,
-        );
-        nsa_getAlliHciHkRemarks.value = setData.map(
-            (item) => item.remark?.iHkiHc_remarks ?? null,
-        );
-        nsa_getAllBr4paiValues.value = setData.map(
-            (item) => item.Br4pai || null,
-        );
-        nsa_getAllBr4paiRemarks.value = setData.map(
-            (item) => item.remark?.Br4pai_remarks ?? null,
-        );
-        nsa_getAllbHcValues.value = setData.map((item) => item.bHc || null);
-        nsa_getAllbHcRemarks.value = setData.map(
-            (item) => item.remark?.bHc_remarks ?? null,
-        );
-        nsa_getAllSquarenessValues.value = setData.map(
-            (item) => item.Squareness ?? null,
-        );
-        nsa_getAllSquarenessRemarks.value = setData.map(
-            (item) => item.remark?.Squareness_remarks ?? null,
-        );
-        nsa_getAll4paildValues.value = setData.map(
-            (item) => item["4paiId"] || null,
-        );
-        nsa_getAll4paildRemarks.value = setData.map(
-            (item) => item.remark?.["4paiId_remarks"] ?? null,
-        );
-        nsa_getAll4pailsValues.value = setData.map(
-            (item) => item["4paiIs"] || null,
-        );
-        nsa_getAll4pailsRemarks.value = setData.map(
-            (item) => item.remark?.["4paiIs_remarks"] ?? null,
-        );
-        nsa_getAll4pailaValues.value = setData.map(
-            (item) => item["4paiIa"] || null,
-        );
-        nsa_getAll4pailaRemarks.value = setData.map(
-            (item) => item.remark?.["4paiIa_remarks"] ?? null,
-        );
+
+        const ids = [];
+        const br = [];
+        const brRemarks = [];
+
+        const ihc = [];
+        const ihcRemarks = [];
+
+        const ihk = [];
+        const ihkRemarks = [];
+
+        const bhMax = [];
+        const bhMaxRemarks = [];
+
+        const ihr95 = [];
+        const ihr95Remarks = [];
+
+        const ihr98 = [];
+        const ihr98Remarks = [];
+
+        const ihcihk = [];
+        const ihcihkRemarks = [];
+
+        const br4pai = [];
+        const br4paiRemarks = [];
+
+        const bhc = [];
+        const bhcRemarks = [];
+
+        const squareness = [];
+        const squarenessRemarks = [];
+
+        const paiId = [];
+        const paiIdRemarks = [];
+
+        const paiIs = [];
+        const paiIsRemarks = [];
+
+        const paiIa = [];
+        const paiIaRemarks = [];
+
+        for (let i = 0; i < setData.length; i++) {
+            const item = setData[i];
+            const r = item.remark || {};
+
+            ids.push(item.id);
+
+            br.push(item.Br ?? null);
+            brRemarks.push(r.Br_remarks ?? null);
+
+            ihc.push(item.iHc ?? null);
+            ihcRemarks.push(r.iHc_remarks ?? null);
+
+            ihk.push(item.iHk ?? null);
+            ihkRemarks.push(r.iHk_remarks ?? null);
+
+            bhMax.push(item.BHMax ?? null);
+            bhMaxRemarks.push(r.BHMax_remarks ?? null);
+
+            ihr95.push(item.iHr95 ?? null);
+            ihr95Remarks.push(r.iHr95_remarks ?? null);
+
+            ihr98.push(item.iHr98 ?? null);
+            ihr98Remarks.push(r.iHr98_remarks ?? null);
+
+            ihcihk.push(item.iHkiHc ?? null);
+            ihcihkRemarks.push(r.iHkiHc_remarks ?? null);
+
+            br4pai.push(item.Br4pai ?? null);
+            br4paiRemarks.push(r.Br4pai_remarks ?? null);
+
+            bhc.push(item.bHc ?? null);
+            bhcRemarks.push(r.bHc_remarks ?? null);
+
+            squareness.push(item.Squareness ?? null);
+            squarenessRemarks.push(r.Squareness_remarks ?? null);
+
+            paiId.push(item["4paiId"] ?? null);
+            paiIdRemarks.push(r["4paiId_remarks"] ?? null);
+
+            paiIs.push(item["4paiIs"] ?? null);
+            paiIsRemarks.push(r["4paiIs_remarks"] ?? null);
+
+            paiIa.push(item["4paiIa"] ?? null);
+            paiIaRemarks.push(r["4paiIa_remarks"] ?? null);
+        }
+
+        nsa_getAllIDValues.value = ids;
+
+        nsa_getAllBrValues.value = br;
+        nsa_getAllBrRemarks.value = brRemarks;
+
+        nsa_getAlliHcValues.value = ihc;
+        nsa_getAlliHcRemarks.value = ihcRemarks;
+
+        nsa_getAlliHkValues.value = ihk;
+        nsa_getAlliHkRemarks.value = ihkRemarks;
+
+        nsa_getAllBHMaxValues.value = bhMax;
+        nsa_getAllBHMaxRemarks.value = bhMaxRemarks;
+
+        nsa_getAlliHr95Values.value = ihr95;
+        nsa_getAlliHr95Remarks.value = ihr95Remarks;
+
+        nsa_getAlliHr98Values.value = ihr98;
+        nsa_getAlliHr98Remarks.value = ihr98Remarks;
+
+        nsa_getAlliHciHkValues.value = ihcihk;
+        nsa_getAlliHciHkRemarks.value = ihcihkRemarks;
+
+        nsa_getAllBr4paiValues.value = br4pai;
+        nsa_getAllBr4paiRemarks.value = br4paiRemarks;
+
+        nsa_getAllbHcValues.value = bhc;
+        nsa_getAllbHcRemarks.value = bhcRemarks;
+
+        nsa_getAllSquarenessValues.value = squareness;
+        nsa_getAllSquarenessRemarks.value = squarenessRemarks;
+
+        nsa_getAll4paildValues.value = paiId;
+        nsa_getAll4paildRemarks.value = paiIdRemarks;
+
+        nsa_getAll4pailsValues.value = paiIs;
+        nsa_getAll4pailsRemarks.value = paiIsRemarks;
+
+        nsa_getAll4pailaValues.value = paiIa;
+        nsa_getAll4pailaRemarks.value = paiIaRemarks;
 
         //get average function
         const calculateAverage = (array) => {
@@ -8343,53 +8407,57 @@ const showReportData = async () => {
         isReportDataReady.value = false;
         const response = await axios.get(`/api/reportdata/`);
         //console.log("Getting report data API result: ", response.data.data);
-        const filterBySerial = response.data.data.filter(
-            (column) => column.tpm_data_serial == currentSerialSelected.value,
-        ); // filter by serial
-        //console.log("Filtered data: ", filterBySerial);
+        const data = response.data.data;
+        const record = data.find(
+            (column) => column.tpm_data_serial == currentSerialSelected.value
+        );
 
-        reportModel.value = filterBySerial[0].model;
+        console.log("Record Show report data : ", record);
+
+        if (!record) return;
+
+        reportModel.value = record.model;
         reportPulseTracerMachineNo.value =
-            filterBySerial[0].pulse_tracer_machine_number;
-        reportMaterialCode.value = filterBySerial[0].material_code;
-        reportDate.value = filterBySerial[0].date;
-        reportPartialNo.value = filterBySerial[0].partial_number;
-        reportShift.value = filterBySerial[0]["shift"];
-        //reportTotalQuantity.value = filterBySerial[0].total_quantity;
-        reportOperator.value = filterBySerial[0].operator;
-        reportLength.value = filterBySerial[0].length;
-        reportWidth.value = filterBySerial[0].width;
-        reportThickness.value = filterBySerial[0].thickness;
-        reportMaterialGrade.value = filterBySerial[0].material_grade;
-        reportMPISampleQty.value = filterBySerial[0].mpi_sample_quantity;
-        reportRemarks.value = filterBySerial[0].remarks;
-        reportRemarks2.value = filterBySerial[0].remarks2;
-        reportRemarks3.value = filterBySerial[0].remarks3;
-        reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
-        modifiedSMPJudgement.value = filterBySerial[0].modified_smp_judgement;
-        preparedByPerson.value = filterBySerial[0].prepared_by;
-        checkedByPerson.value = filterBySerial[0].checked_by;
-        approvedByPerson.value = filterBySerial[0].approved_by;
-        reportPreparedByDate.value = filterBySerial[0].prepared_by_date
-            ? filterBySerial[0].prepared_by_date.split(" ")[0]
+            record.pulse_tracer_machine_number;
+        reportMaterialCode.value = record.material_code;
+        reportDate.value = record.date;
+        reportPartialNo.value = record.partial_number;
+        reportShift.value = record["shift"];
+        //reportTotalQuantity.value = record.total_quantity;
+        reportOperator.value = record.operator;
+        reportLength.value = record.length;
+        reportWidth.value = record.width;
+        reportThickness.value = record.thickness;
+        reportMaterialGrade.value = record.material_grade;
+        reportMPISampleQty.value = record.mpi_sample_quantity;
+        reportRemarks.value = record.remarks;
+        reportRemarks2.value = record.remarks2;
+        reportRemarks3.value = record.remarks3;
+        reportExistingSMPJudgement.value = record.smp_judgement;
+        modifiedSMPJudgement.value = record.modified_smp_judgement;
+        preparedByPerson.value = record.prepared_by;
+        checkedByPerson.value = record.checked_by;
+        approvedByPerson.value = record.approved_by;
+        reportPreparedByDate.value = record.prepared_by_date
+            ? record.prepared_by_date.split(" ")[0]
             : "";
-        reportCheckedByDate.value = filterBySerial[0].checked_by_date
-            ? filterBySerial[0].checked_by_date.split(" ")[0]
+        reportCheckedByDate.value = record.checked_by_date
+            ? record.checked_by_date.split(" ")[0]
             : "";
-        reportApprovedByDate.value = filterBySerial[0].approved_by_date
-            ? filterBySerial[0].approved_by_date.split(" ")[0]
+        reportApprovedByDate.value = record.approved_by_date
+            ? record.approved_by_date.split(" ")[0]
             : "";
 
-        report_isFinalized.value = filterBySerial[0].is_finalized == 1;
+        report_isFinalized.value = record.is_finalized == 1;
         //console.log("Report is finalized: ", report_isFinalized.value);
-        isBhSegFormat.value = filterBySerial[0].is_bh_format_seg == 1;
+        isBhSegFormat.value = record.is_bh_format_seg == 1;
 
-        isAutomotive.value = filterBySerial[0].withCarmark == 1;
+        isAutomotive.value = record.withCarmark == 1;
         //console.log("With carmark value: ",isAutomotive.value);
-        coatingCompleted.value = filterBySerial[0].coating_completed == 1;
+        coatingCompleted.value = record.coating_completed == 1;
         //console.log("Coating completed value: ",coatingCompleted.value);
         heatTreatmentCompleted.value =
-            filterBySerial[0].heat_treatment_completed == 1;
+            record.heat_treatment_completed == 1;
         //console.log("Heat treatment completed value: ",heatTreatmentCompleted.value);
 
         //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
@@ -8397,47 +8465,47 @@ const showReportData = async () => {
         reportOvenMachineNo.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].oven_machine_no;
+                : record.oven_machine_no;
         reportTimeLoading.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].time_loading;
+                : record.time_loading;
         reportTimeUnloading.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].time_unloading;
+                : record.time_unloading;
         reportTemperature_TimeLoading.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].temp_time_loading;
+                : record.temp_time_loading;
         reportTemperature_TimeUnloading.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].temp_time_unloading;
+                : record.temp_time_unloading;
         reportDate_OvenInfo.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].date_oven_info;
+                : record.date_oven_info;
         reportShift_OvenInfo.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].shift_oven_info;
+                : record.shift_oven_info;
         reportOperator_OvenInfo.value =
             inspectionOvenMachineNo.value === 0
                 ? "N/A"
-                : filterBySerial[0].operator_oven_info;
+                : record.operator_oven_info;
 
-        reportStdDev.value = filterBySerial[0].std_dev;
+        reportStdDev.value = record.std_dev;
         //console.log('reportStdDev:', reportStdDev.value);
-        reportCp.value = filterBySerial[0].cp;
+        reportCp.value = record.cp;
         //console.log('reportCp:', reportCp.value);
-        reportCpk.value = filterBySerial[0].cpk;
+        reportCpk.value = record.cpk;
         //console.log('reportCpk:', reportCpk.value);
-        reportCpkRemarks.value = filterBySerial[0].br_cpk_remarks;
+        reportCpkRemarks.value = record.br_cpk_remarks;
         //console.log('reportCpkRemarks:', reportCpkRemarks.value);
 
         const noteRejectReasons = JSON.parse(
-            filterBySerial[0].note_reason_reject,
+            record.note_reason_reject,
         );
         //console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
         propD_rejectReasons.value = noteRejectReasons;
@@ -8456,33 +8524,33 @@ const showReportData = async () => {
 
         //console.log("Report Data Model", reportModel.value);
 
-        const magneticProperty = JSON.parse(
-            filterBySerial[0].magnetic_property_data,
+        const mp = JSON.parse(
+            record.magnetic_property_data || "{}"
         );
-        //console.log("Magnetic Property: ", magneticProperty);
+        //console.log("Magnetic Property: ", mp);
         // Extracting BR, IHC, and IHK properties
 
         // BR values
         reportBrStandard.value = inspectionBrStandard.value;
-        reportBrAverage.value = magneticProperty.brAverage;
-        reportBrMaximum.value = magneticProperty.brMaximum;
-        reportBrMinimum.value = magneticProperty.brMinimum;
+        reportBrAverage.value = mp.brAverage;
+        reportBrMaximum.value = mp.brMaximum;
+        reportBrMinimum.value = mp.brMinimum;
 
         // IHC values
         reportihcStandard.value = inspectioniHcStandard.value;
-        reportihcAverage.value = magneticProperty.ihcAverage;
-        reportihcMaximum.value = magneticProperty.ihcMaximum;
-        reportihcMinimum.value = magneticProperty.ihcMinimum;
+        reportihcAverage.value = mp.ihcAverage;
+        reportihcMaximum.value = mp.ihcMaximum;
+        reportihcMinimum.value = mp.ihcMinimum;
 
         // IHK values
         reportihkStandard.value = inspectioniHkStandard.value;
-        reportihkAverage.value = magneticProperty.ihkAverage;
-        reportihkMaximum.value = magneticProperty.ihkMaximum;
-        reportihkMinimum.value = magneticProperty.ihkMinimum;
+        reportihkAverage.value = mp.ihkAverage;
+        reportihkMaximum.value = mp.ihkMaximum;
+        reportihkMinimum.value = mp.ihkMinimum;
 
         //IHR95 and IHR98 value
-        reportihr95Minimum.value = magneticProperty.ihr95Minimum;
-        reportihr98Minimum.value = magneticProperty.ihr98Minimum;
+        reportihr95Minimum.value = mp.ihr95Minimum;
+        reportihr98Minimum.value = mp.ihr98Minimum;
 
         // Convert strings to numbers before performing subtraction
         reportBrVariance.value =
@@ -8495,16 +8563,16 @@ const showReportData = async () => {
             parseFloat(reportihkMaximum.value) -
             parseFloat(reportihkMinimum.value);
 
-        const oneby = JSON.parse(filterBySerial[0].data_1x1x1_info || "{}");
-        const VT = JSON.parse(filterBySerial[0].data_VT_info || "{}");
+        const oneby = JSON.parse(record.data_1x1x1_info || "{}");
+        const VT = JSON.parse(record.data_VT_info || "{}");
         //console.log("VT Data: ",VT);
-        const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || "{}");
-        const GX = JSON.parse(filterBySerial[0].data_GX_info || "{}");
-        const GS = JSON.parse(filterBySerial[0].data_GS_info || "{}");
-        const bh = JSON.parse(filterBySerial[0].data_bh_info || "{}");
-        const ROB = JSON.parse(filterBySerial[0].data_ROB_info || "{}");
-        const bhSeg = JSON.parse(filterBySerial[0].data_bh_seg_info || "{}");
-        const tsi = JSON.parse(filterBySerial[0].data_tsi_info || "{}");
+        const iHc_cpk = JSON.parse(record.data_iHc_cpk_info || "{}");
+        const GX = JSON.parse(record.data_GX_info || "{}");
+        const GS = JSON.parse(record.data_GS_info || "{}");
+        const bh = JSON.parse(record.data_bh_info || "{}");
+        const ROB = JSON.parse(record.data_ROB_info || "{}");
+        const bhSeg = JSON.parse(record.data_bh_seg_info || "{}");
+        const tsi = JSON.parse(record.data_tsi_info || "{}");
 
         reportCorner.value = oneby.corner || "";
         reportCorner_average.value = oneby.corner_average || "";
@@ -8647,6 +8715,9 @@ const showReportData = async () => {
 
         //console.log("Entering Evaluation for Reject reasons...");
         await evaluateAllRejectReasons();
+
+        await Promise.resolve();
+
         await checkApprovalStates();
         await checkSpecialJudgement();
         saveReportButtonVisibility();
@@ -9271,6 +9342,8 @@ const checkApprovalStates = async () => {
             (column) => column.tpm_data_serial == currentSerialSelected.value,
         );
 
+        console.log("Show filterby serial data: ", filterBySerial[0]);
+
         const prepared_by_firstname = filterBySerial[0]?.prepared_by_firstname;
         const prepared_by_surname = filterBySerial[0]?.prepared_by_surname;
         const checked_by_firstname = filterBySerial[0]?.checked_by_firstname;
@@ -9333,101 +9406,91 @@ const checkApprovalStates = async () => {
 };
 
 const evaluateAllRejectReasons = async () => {
-    //console.log("Have already entered Evalation for Reject reasons...");
 
     // force some async delay for testing
-    await new Promise((res) => setTimeout(res, 100));
+    //await new Promise((res) => setTimeout(res, 100));
+    // removed intentional delay (not needed in production)
 
+    // keep original guard behavior EXACTLY
     if (!noteReasonForReject.value || noteReasonForReject.value.length === 0) {
-        noteReasonForReject.value = []; // Reset before evaluation
 
-        //console.log('Evaluating rejection reasons part1...');
+        // reset exactly as original
+        noteReasonForReject.value = []
 
-        if (getAlliHkiHcNG.value.includes("1")) {
-            //console.log('Condition met: getAlliHkiHcNG includes "1"');
-            noteReasonForReject.value.push("- N.G iHc-iHk");
-            withAdditionalSampleForRemarks.value = true;
+        // snapshot reactive sources ONCE (memory stabilization)
+        const ihkiHcNG = getAlliHkiHcNG.value;
+        const br4paiNG = getAllBr4paiNG.value;
+        const bhMaxNG = getAllBHMaxNG.value;
+        const bhcNG = getAllbHcNG.value;
+        const ihr95NG = getAlliHr95NG.value;
+        const ihr98NG = getAlliHr98NG.value;
+
+        if (ihkiHcNG.includes("1")) {
+            noteReasonForReject.value.push("- N.G iHc-iHk")
+            withAdditionalSampleForRemarks.value = true
         }
 
-        if (getAllBr4paiNG.value.includes("1")) {
-            //console.log('Condition met: getAllBr4paiNG includes "1"');
-            noteReasonForReject.value.push("- N.G Br-4PIa");
-            withAdditionalSampleForRemarks.value = true;
+        if (br4paiNG.includes("1")) {
+            noteReasonForReject.value.push("- N.G Br-4PIa")
+            withAdditionalSampleForRemarks.value = true
         }
 
-        if (getAllBHMaxNG.value.includes("1")) {
-            //console.log('Condition met: getAllBHMaxNG includes "1"');
-            noteReasonForReject.value.push("- N.G BH(max)");
-            withAdditionalSampleForRemarks.value = true;
+        if (bhMaxNG.includes("1")) {
+            noteReasonForReject.value.push("- N.G BH(max)")
+            withAdditionalSampleForRemarks.value = true
         }
 
-        if (getAllbHcNG.value.includes("1")) {
-            //console.log('Condition met: getAllbHcNG includes "1"');
-            noteReasonForReject.value.push("- N.G bHc");
-            withAdditionalSampleForRemarks.value = true;
+        if (bhcNG.includes("1")) {
+            noteReasonForReject.value.push("- N.G bHc")
+            withAdditionalSampleForRemarks.value = true
         }
-
-        //console.log('Final Rejection Reasons part 1:', noteReasonForReject.value);
-
-        //console.log("Evaluating rejection reasons part2...");
 
         if (reportBrMinimum.value < inspectionBrStandard_lower.value) {
-            //console.log(`LOW BR: ${reportBrMinimum.value} < ${inspectionBrStandard_lower.value}`);
-            noteReasonForReject.value.push("- LOW BR");
+            noteReasonForReject.value.push("- LOW BR")
         }
 
         if (reportBrMaximum.value > inspectionBrStandard_higher.value) {
-            //console.log(
-            ///    `HIGH BR: ${reportBrMaximum.value} > ${inspectionBrStandard_higher.value}`,
-            //);
-            //noteReasonForReject.value.push("- HIGH BR");
+            // intentionally kept as-is (no push)
         }
 
         if (reportihcMinimum.value < inspectioniHcStandard.value) {
-            //console.log(`N.G iHc: ${reportihcMinimum.value} < ${inspectioniHcStandard.value}`);
-            withAdditionalSampleForRemarks.value = true;
-            //console.log("This is NG IHC triggered and the value is currently: ",withAdditionalSampleForRemarks.value);
-            noteReasonForReject.value.push("- N.G iHc");
+            withAdditionalSampleForRemarks.value = true
+            noteReasonForReject.value.push("- N.G iHc")
         } else if (
             reportihcMinimum.value <
             Number(inspectioniHcStandard.value) + 500
         ) {
-            //console.log(`iHc Below Target+500 Oe: ${reportihcMinimum.value} < ${Number(inspectioniHcStandard.value) + 500}`);
-            noteReasonForReject.value.push("- iHc Below Target+500 Oe");
-            withAdditionalSampleForRemarks.value = true;
+            noteReasonForReject.value.push("- iHc Below Target+500 Oe")
+            withAdditionalSampleForRemarks.value = true
         }
 
         if (reportihkMinimum.value < inspectioniHkStandard.value) {
-            //console.log(`N.G iHk: ${reportihkMinimum.value} < ${inspectioniHkStandard.value}`);
-            noteReasonForReject.value.push("- N.G iHk");
-            withAdditionalSampleForRemarks.value = true;
+            noteReasonForReject.value.push("- N.G iHk")
+            withAdditionalSampleForRemarks.value = true
         }
 
         if (
             reportihr95Minimum.value <
                 Number(inspectioniHcStandard.value) - 750 &&
-            getAlliHr95NG.value.includes("1")
+            ihr95NG.includes("1")
         ) {
-            //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
-            noteReasonForReject.value.push("- N.G Hr95");
-            withAdditionalSampleForRemarks.value = true;
+            noteReasonForReject.value.push("- N.G Hr95")
+            withAdditionalSampleForRemarks.value = true
         }
 
         if (
             reportihr98Minimum.value <
                 Number(inspectioniHcStandard.value) - 1250 &&
-            getAlliHr98NG.value.includes("1")
+            ihr98NG.includes("1")
         ) {
-            //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
-            noteReasonForReject.value.push("- N.G Hr98");
-            withAdditionalSampleForRemarks.value = true;
+            noteReasonForReject.value.push("- N.G Hr98")
+            withAdditionalSampleForRemarks.value = true
         }
 
-        //console.log('Final Rejection Reasons part 2:', noteReasonForReject.value);
     } else {
-        //console.log('Skipping rejection evaluation: Reasons already exist.');
+        // skipping
     }
-};
+}
 
 const addCarmark = async () => {
     try {
@@ -9552,9 +9615,9 @@ const goToControlSheet = () => {
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
     await checkAuthentication();
-    await checkApprovalStates();
-    await getUndoHistory();
+    //await checkApprovalStates();
     //await test_nsa_showData();
+    //await getUndoHistory();
     if (
         (props.serialParam && props.fromApproval) ||
         (props.serialParam && props.fromApproval_checked) ||
@@ -9563,7 +9626,7 @@ onMounted(async () => {
         props.fromControlSheet
     ) {
         await checkAuthentication();
-        await checkApprovalStates();
+        //await checkApprovalStates();
         currentSerialSelected.value = props.serialParam;
 
         // This ensures reactivity is flushed before running the report logic
@@ -9573,6 +9636,7 @@ onMounted(async () => {
     } else {
         fetchSerial();
     }
+    await getUndoHistory();
 });
 </script>
 

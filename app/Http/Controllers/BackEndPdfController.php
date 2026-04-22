@@ -184,14 +184,30 @@ class BackEndPdfController extends Controller
             'layer'     => (string) $layer,
         ])->first();
 
+        if($secondHeatTreatment){
+            $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
+                ? json_decode($secondHeatTreatment->gbdp_1st, true)
+                : $secondHeatTreatment->gbdp_1st;
 
-        $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
-            ? json_decode($secondHeatTreatment->gbdp_1st, true)
-            : $secondHeatTreatment->gbdp_1st;
+            $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
+                ? json_decode($secondHeatTreatment->gbdp_2nd, true)
+                : $secondHeatTreatment->gbdp_2nd;
 
-        $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
-            ? json_decode($secondHeatTreatment->gbdp_2nd, true)
-            : $secondHeatTreatment->gbdp_2nd;
+
+            $gbdp1stFurnace = $secondGbdp1st['furnace_machine'] ?? null;
+            $gbdp1stMassProd = $secondGbdp1st['batch_cycle_no'] ?? null;
+
+            $massProd1stGbdpData = null;
+
+            if ($gbdp1stFurnace && $gbdp1stMassProd) {
+                $massProd1stGbdpData = MassProduction::query()
+                    ->where('mass_prod', $gbdp1stMassProd)
+                    ->where('furnace', $gbdp1stFurnace)
+                    ->first();
+            }
+        }
+
+
 
 
         // Build column name dynamically
@@ -641,10 +657,11 @@ class BackEndPdfController extends Controller
             'secondGbdp1stCoatingData' => $secondGbdpCoatingData['coating_data_1stgbdp'] ?? null,
             'secondGbdp1stCoatingInfo' => $secondGbdpCoatingData['coating_info_1stgbdp'] ?? null,
             'secondGbdpCoatingData' => $secondGbdpCoatingData ?? null,
-            'secondGbdp1stHeatTreatmentData' => $secondGbdp1st,
-            'secondGbdp2ndHeatTreatmentData' => $secondGbdp2nd,
+            'secondGbdp1stHeatTreatmentData' => $secondGbdp1st ?? null,
+            'secondGbdp2ndHeatTreatmentData' => $secondGbdp2nd ?? null,
             'secondGbdpHeatTreatmentData' => $secondHeatTreatment ?? null,
             'heatTreatmentData' => $massProdData, // pass heat treatment data to Blade
+            'heatTreatment1stGbdpData' => $massProd1stGbdpData ?? null,
             'filmPastingData' => $filmPastingData ?? null,
             'filmPastingHLine' => $filmPastingHLineValues ?? null,
             'filmPastingTLine' => $filmPastingTLineValues ?? null,
