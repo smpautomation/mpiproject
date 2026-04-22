@@ -6405,50 +6405,6 @@ watch(
     { immediate: true },
 );
 
-//For Data 1x1x1 without corner - models AAW-0935G, AAW-0934G
-/*watch(
-    [
-        reportSurface_cpk,
-        reportCore_cpk,
-        reportSurface_remarks,
-        reportCore_remarks,
-        reportSMPJudgement,
-        show1x1x1Data_withoutCorner,
-    ],
-    () => {
-        //console.log('Watch triggered for 1x1x1 without corner evaluation');
-        //console.log('noteReasonForReject:', noteReasonForReject.value);
-        //console.log('show1x1x1Data_withoutCorner:', show1x1x1Data_withoutCorner.value);
-        //console.log('reportSurface_cpk:', reportSurface_cpk.value);
-        //console.log('reportCore_cpk:', reportCore_cpk.value);
-
-        if (
-            noteReasonForReject.value.includes("- N.G iHc") &&
-            show1x1x1Data_withoutCorner.value === true &&
-            reportSurface_cpk.value !== null &&
-            reportCore_cpk.value !== null
-        ) {
-            if (
-                reportSurface_cpk.value < cpkStandardValue.value ||
-                reportCore_cpk.value < cpkStandardValue.value
-            ) {
-                //console.log('Surface and Core CPK below 1.33 — setting NG/REJECT');
-                reportSurface_remarks.value = "NG";
-                reportCore_remarks.value = "NG";
-                reportSMPJudgement.value = "REJECT";
-            } else {
-                //console.log('Surface and Core CPK 1.33 or higher — setting OK/HOLD');
-                reportCore_remarks.value = "OK";
-                reportSurface_remarks.value = "OK";
-                reportSMPJudgement.value = "HOLD";
-            }
-        } else {
-            //console.log('Conditions not met for 1x1x1 CPK check — skipping');
-        }
-    },
-    { immediate: true },
-);*/
-
 watch(
     [
         reportCpkFrom_iHc_Cpk,

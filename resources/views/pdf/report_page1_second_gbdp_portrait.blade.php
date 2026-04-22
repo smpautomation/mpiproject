@@ -710,15 +710,15 @@
                             <td style="width: 100%;">
                                 <div style="border-bottom: 1px solid black; height: 9px; line-height: 9px; text-align: center;">
                                     <span style="display: inline-block; margin-bottom: -1px;">
-                                        {{ $heatTreatment1stGbdpData->mass_prod }} MASS PRODUCTION
+                                        {{ $data['batch_cycle_no'] ?? 'NA' }} MASS PRODUCTION
                                     </span>
                                 </div>
                                 <div style="border-bottom: 1px solid black; height: 9px; margin-bottom: 5px; text-align: center;">
                                     <span style="display: inline-block; margin-bottom: -1px;">
                                         {{ implode(' / ', array_filter([
-                                            $heatTreatment1stGbdpData->remarks1,
-                                            $heatTreatment1stGbdpData->remarks2,
-                                            $heatTreatment1stGbdpData->remarks3
+                                            $heatTreatmentData->remarks1,
+                                            $heatTreatmentData->remarks2,
+                                            $heatTreatmentData->remarks3
                                         ])) }}
                                     </span>
                                 </div>
