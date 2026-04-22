@@ -8368,7 +8368,7 @@ const showReportData = async () => {
             (column) => column.tpm_data_serial == currentSerialSelected.value
         );
 
-        console.log("Record Show report data : ", record);
+        //console.log("Record Show report data : ", record);
 
         if (!record) return;
 
@@ -9298,7 +9298,7 @@ const checkApprovalStates = async () => {
             (column) => column.tpm_data_serial == currentSerialSelected.value,
         );
 
-        console.log("Show filterby serial data: ", filterBySerial[0]);
+        //console.log("Show filterby serial data: ", filterBySerial[0]);
 
         const prepared_by_firstname = filterBySerial[0]?.prepared_by_firstname;
         const prepared_by_surname = filterBySerial[0]?.prepared_by_surname;
