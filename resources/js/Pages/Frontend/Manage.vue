@@ -3039,27 +3039,54 @@ const saveToDatabase = async () => {
                     .filter(Boolean);
 
                 //-------------------------------------GRAPH
-                const xValues = [];
-                const yValues = [];
+                const xValues = Array(numberOfRows).fill(null);
+                const yValues = Array(numberOfRows).fill(null);
+
                 for (const key in parsedData) {
                     if (
-                        parsedData.hasOwnProperty(key) &&
-                        key.startsWith("data") &&
-                        parseInt(key.replace("data", ""), 10) >= 150 && //Adjust
-                        parseInt(key.replace("data", ""), 10) <= numberOfRows
+                        !Object.prototype.hasOwnProperty.call(parsedData, key) ||
+                        !key.startsWith("data")
                     ) {
-                        const [x, y] = parsedData[key].split(",").map(Number);
+                        continue;
+                    }
 
-                        // Custom condition: x must be less than 100 and y must be greater than -1000
-                        if (x >= 10000 || y <= -1000) {
-                            // If x >= 100 or y <= -1000, skip the data
-                            //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
-                            continue; // Skip this iteration if condition is not met
+                    const index = parseInt(key.replace("data", ""), 10);
+
+                    if (index < 150 || index > numberOfRows) {
+                        continue;
+                    }
+
+                    const raw = parsedData[key];
+
+                    if (!raw) {
+                        xValues[index] = null;
+                        yValues[index] = null;
+                        continue;
+                    }
+
+                    const [xRaw, yRaw] = raw.split(",").map(Number);
+
+                    // =========================
+                    // Excel-style validation layer
+                    // =========================
+
+                    const isInvalid =
+                        Number.isNaN(xRaw) ||
+                        Number.isNaN(yRaw) ||
+                        xRaw >= 100 ||     // ← FIXED (Excel rule)
+                        yRaw <= -1000;
+
+                        if (isInvalid) {
+                            xValues[index] = null;
+                            yValues[index] = null;
+                            continue;
                         }
 
-                        xValues.push(x);
-                        yValues.push(y);
-                    }
+                    // =========================
+                    // PUSH VALID DATA
+                    // =========================
+                    xValues[index] = xRaw;
+                    yValues[index] = yRaw;
                 }
 
                 xAxis.value = xValues;
@@ -3067,9 +3094,6 @@ const saveToDatabase = async () => {
 
                 xJsonOutput.value = JSON.stringify(xValues, null, 2);
                 yJsonOutput.value = JSON.stringify(yValues, null, 2);
-
-                //console.log('X Axis JSON:', xJsonOutput.value);
-                //console.log('Y Axis JSON:', yJsonOutput.value);
 
                 //-------------------------------------GRAPH END
 
@@ -3852,45 +3876,68 @@ const fetchDataCreateGraph = async () => {
             "/api/tpmdata?serial=" + serialNo.value,
         );
 
-        // Log the response structure to check
-        //console.log("API Response:", response.data);
+        const tableRows = response.data.data;
 
-        const tableRows = response.data.data; // Assuming API returns an array of rows
-
-        // Check if tableRows is not undefined or null before proceeding
-        if (!tableRows) {
+        if (!Array.isArray(tableRows) || tableRows.length === 0) {
             throw new Error("No data found in tpmData");
         }
 
-        // Parse each row and dynamically generate datasets
-        datasets.value = tableRows.map((row, index) => ({
-            xAxis: JSON.parse(row.x || "[]"), // Parse x values
-            yAxis: JSON.parse(row.y || "[]"), // Parse y values
-            color: generateColor(index), // Assign a unique color
-        }));
-        //showGraphAndTables.value = true;  // Set this to true after data is loaded
+        datasets.value = tableRows.map((row, index) => {
+            let x = [];
+            let y = [];
 
-        // Set dataReady to true once the data is ready
-        dataReady.value = true;
-        //console.log("dataReady ", dataReady.value);
-        // Ensure DOM updates before rendering
-        nextTick(() => {
-            //console.log("myChartCanvas reference:", myChartCanvas.value);
-            if (myChartCanvas.value) {
-                renderChart(); // Proceed to render the chart if the canvas is available
-            } else {
-                console.error("Canvas element is not available.");
+            try {
+                x = JSON.parse(row.x ?? "[]");
+                y = JSON.parse(row.y ?? "[]");
+            } catch (e) {
+                console.warn("Corrupt dataset at row:", index, e);
+                x = [];
+                y = [];
             }
+
+            // =========================
+            // Excel alignment safeguard
+            // ensures consistent structure even if DB is messy
+            // =========================
+            const maxLen = Math.max(x.length, y.length);
+
+            const normalizedX = Array(maxLen).fill(null);
+            const normalizedY = Array(maxLen).fill(null);
+
+            for (let i = 0; i < maxLen; i++) {
+                normalizedX[i] = x[i] ?? null;
+                normalizedY[i] = y[i] ?? null;
+            }
+
+            return {
+                xAxis: normalizedX,
+                yAxis: normalizedY,
+                color: generateColor(index),
+            };
         });
+
+        dataReady.value = true;
+
+        await nextTick();
+
+        if (!myChartCanvas.value) {
+            console.error("Canvas element is not available.");
+            return;
+        }
+
+        renderChart();
+
     } catch (err) {
         error.value = err;
+
         console.error("Error fetching data:", err);
+
         await userErrorLogging(
             {
-                message: error.message,
-                code: error.code ?? null,
-                response: error.response?.data ?? null,
-                payload: error.response?.data ?? null,
+                message: err?.message ?? "Unknown error",
+                code: err?.code ?? null,
+                response: err?.response?.data ?? null,
+                payload: err?.response?.data ?? null,
             },
             "fetchDataCreateGraph",
             "Error fetching graph data",
@@ -3935,296 +3982,279 @@ const renderChart = () => {
         return;
     }
 
-    if (dataReady.value && myChartCanvas.value) {
-        const ctx = myChartCanvas.value.getContext("2d");
+    if (!dataReady.value) {
+        console.error("Chart cannot be rendered: Missing data.");
+        return;
+    }
 
-        if (!ctx) {
-            console.error("Failed to get 2D context for canvas.");
-            return;
+    const ctx = myChartCanvas.value.getContext("2d");
+
+    if (!ctx) {
+        console.error("Failed to get 2D context for canvas.");
+        return;
+    }
+
+    // =========================
+    // EXCEL OFFSET RULES (DATA LAYER ONLY)
+    // =========================
+    const offsets = [
+        0, 2000, 4000, 6000, 8000,
+        10000, 12000, 14000, 16000, 18000,
+        20000, 22000, 24000, 26000, 28000,
+        30000, 32000, 34000, 36000, 38000,
+    ];
+
+    const chartDatasets = datasets.value.map((dataset, index) => {
+        const offset = offsets[index]; // STRICT: no fallback
+
+        const points = [];
+
+        for (let i = 0; i < dataset.xAxis.length; i++) {
+            const x = dataset.xAxis[i];
+            const y = dataset.yAxis[i];
+
+            // =========================
+            // EXCEL: NA BEHAVIOR
+            // =========================
+            if (x === null || y === null) {
+                points.push({ x: null, y: null });
+                continue;
+            }
+
+            // =========================
+            // EXCEL VALIDATION RULE
+            // =========================
+            if (x >= 10000 || y <= -1000) {
+                points.push({ x: null, y: null });
+                continue;
+            }
+
+            // =========================
+            // EXCEL OFFSET APPLICATION (SYMMETRIC MODEL)
+            // =========================
+            points.push({
+                x: x + offset,
+                y: y - offset, // IMPORTANT: mirrors Excel behavior
+            });
         }
 
-        const x_offset = 2000;
-        const y_offset = 1700;
+        return {
+            label: `Dataset ${index + 1}`,
+            data: points,
+            borderColor: dataset.color,
+            borderWidth: 2,
+            fill: false,
+            pointRadius: 0,
+            tension: 0.6,
+        };
+    });
 
-        const chartDatasets = datasets.value.map((dataset, index) => {
-            return {
-                label: `Dataset ${index + 1}`,
-                data: dataset.xAxis.map((x, i) => ({
-                    x: x + index * x_offset,
-                    y: (dataset.yAxis[i] || 0) - index * y_offset,
-                })),
-                borderColor: dataset.color,
-                borderWidth: 2,
-                fill: false,
-                pointBackgroundColor: dataset.color,
-                pointBorderColor: dataset.color,
-            };
-        });
+    // =========================
+    // DESTROY OLD INSTANCE (SAFE)
+    // =========================
+    if (window.__chartInstance) {
+        window.__chartInstance.destroy();
+    }
 
-        // === SCALE REFERENCE PLUGIN (GRID-BASED, X 1.5 BOX, Y 0) ===
-        const scaleReferencePlugin = {
-            id: "scaleReference",
-            afterDraw(chart) {
-                const { ctx, scales } = chart;
-                const xScale = scales.x;
-                const yScale = scales.y;
-                if (!xScale || !yScale) return;
+    // =========================
+    // SCALE REFERENCE PLUGIN (UNCHANGED)
+    // =========================
+    const scaleReferencePlugin = {
+        id: "scaleReference",
+        afterDraw(chart) {
+            const { ctx, scales } = chart;
+            const xScale = scales.x;
+            const yScale = scales.y;
+            if (!xScale || !yScale) return;
 
-                ctx.save();
-                ctx.strokeStyle = "#000";
-                ctx.fillStyle = "#000";
-                ctx.lineWidth = 0.5;
-                ctx.font = "8px Arial";
+            ctx.save();
+            ctx.strokeStyle = "#000";
+            ctx.fillStyle = "#000";
+            ctx.lineWidth = 0.5;
+            ctx.font = "8px Arial";
 
-                const arrowHeadSize = 4;
-                const inset = 30;
-                const spacing = 20; // distance between X and Y arrows
+            const arrowHeadSize = 4;
+            const inset = 30;
+            const spacing = 20;
 
-                const getTickValue = (tick) =>
-                    typeof tick === "object" ? tick.value : tick;
+            const getTickValue = (tick) =>
+                typeof tick === "object" ? tick.value : tick;
 
-                // --- X ARROW (snaps to nearest grid line) ---
-                if (xScale.ticks.length >= 2) {
-                    const xStep =
-                        xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
-                        xScale.getPixelForValue(getTickValue(xScale.ticks[0]));
-                    const xLength = 1.5 * xStep; // keep your original length
+            // =========================
+            // X AXIS
+            // =========================
+            if (xScale.ticks.length >= 2) {
+                const xStep =
+                    xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
+                    xScale.getPixelForValue(getTickValue(xScale.ticks[0]));
 
-                    const yBottomPixel = yScale.getPixelForValue(yScale.min);
-                    const targetPixelX =
-                        xScale.getPixelForValue(xScale.max) - inset;
+                const xLength = 1.5 * xStep;
+                const yBottomPixel = yScale.getPixelForValue(yScale.min);
+                const targetPixelX =
+                    xScale.getPixelForValue(xScale.max) - inset;
 
-                    // Find nearest tick to bottom-right for snapping
-                    let closestValue = getTickValue(xScale.ticks[0]);
-                    let minDistance = Infinity;
+                let closestValue = getTickValue(xScale.ticks[0]);
+                let minDistance = Infinity;
 
-                    xScale.ticks.forEach((tick) => {
-                        const value = getTickValue(tick);
-                        const tickPixel = xScale.getPixelForValue(value);
-                        const distance = Math.abs(tickPixel - targetPixelX);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestValue = value;
-                        }
-                    });
+                xScale.ticks.forEach((tick) => {
+                    const value = getTickValue(tick);
+                    const tickPixel = xScale.getPixelForValue(value);
+                    const distance = Math.abs(tickPixel - targetPixelX);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestValue = value;
+                    }
+                });
 
-                    const baseX_X =
-                        xScale.getPixelForValue(closestValue) - xLength;
-                    const baseY_X = yBottomPixel - inset;
-
-                    // draw X line
-                    ctx.beginPath();
-                    ctx.moveTo(baseX_X, baseY_X);
-                    ctx.lineTo(baseX_X + xLength, baseY_X);
-                    ctx.stroke();
-
-                    // X arrowhead (right)
-                    ctx.beginPath();
-                    ctx.moveTo(baseX_X + xLength, baseY_X);
-                    ctx.lineTo(
-                        baseX_X + xLength - arrowHeadSize,
-                        baseY_X - arrowHeadSize / 2,
-                    );
-                    ctx.lineTo(
-                        baseX_X + xLength - arrowHeadSize,
-                        baseY_X + arrowHeadSize / 2,
-                    );
-                    ctx.closePath();
-                    ctx.fill();
-
-                    // optional left arrowhead
-                    ctx.beginPath();
-                    ctx.moveTo(baseX_X, baseY_X);
-                    ctx.lineTo(
-                        baseX_X + arrowHeadSize,
-                        baseY_X - arrowHeadSize / 2,
-                    );
-                    ctx.lineTo(
-                        baseX_X + arrowHeadSize,
-                        baseY_X + arrowHeadSize / 2,
-                    );
-                    ctx.closePath();
-                    ctx.fill();
-
-                    // X label
-                    const xLabel = "4 kOe";
-                    const xLabelWidth = ctx.measureText(xLabel).width;
-                    const xLabelOffsetY = Math.max(6, arrowHeadSize * 2);
-                    ctx.fillText(
-                        xLabel,
-                        baseX_X + xLength / 2 - xLabelWidth / 2,
-                        baseY_X - xLabelOffsetY,
-                    );
-                }
-
-                // --- Y ARROW (keep original length, no snapping) ---
-                const yLength = -0.1; // keep your actual Y arrow length
-                const baseX_Y =
-                    xScale.getPixelForValue(xScale.max) - inset + spacing;
-                const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
+                const baseX_X =
+                    xScale.getPixelForValue(closestValue) - xLength;
+                const baseY_X = yBottomPixel - inset;
 
                 ctx.beginPath();
-                ctx.moveTo(baseX_Y, baseY_Y);
-                ctx.lineTo(baseX_Y, baseY_Y - yLength);
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + xLength, baseY_X);
                 ctx.stroke();
 
-                // Y arrowheads
+                // X arrowhead (right side)
                 ctx.beginPath();
-                ctx.moveTo(baseX_Y, baseY_Y - yLength);
-                ctx.lineTo(
-                    baseX_Y - arrowHeadSize / 2,
-                    baseY_Y - yLength + arrowHeadSize,
-                );
-                ctx.lineTo(
-                    baseX_Y + arrowHeadSize / 2,
-                    baseY_Y - yLength + arrowHeadSize,
-                );
+                ctx.moveTo(baseX_X + xLength, baseY_X);
+                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X + arrowHeadSize / 2);
                 ctx.closePath();
                 ctx.fill();
 
+                // LEFT arrowhead
                 ctx.beginPath();
-                ctx.moveTo(baseX_Y, baseY_Y);
-                ctx.lineTo(
-                    baseX_Y - arrowHeadSize / 2,
-                    baseY_Y - arrowHeadSize,
-                );
-                ctx.lineTo(
-                    baseX_Y + arrowHeadSize / 2,
-                    baseY_Y - arrowHeadSize,
-                );
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X + arrowHeadSize / 2);
                 ctx.closePath();
                 ctx.fill();
 
-                // Y label
-                const yLabel = "4 kG";
-                const yLabelWidth = ctx.measureText(yLabel).width;
-                const yLabelOffsetY = Math.max(6, arrowHeadSize * 2);
+                const xLabel = "4 kOe";
+                const xLabelWidth = ctx.measureText(xLabel).width;
+
                 ctx.fillText(
-                    yLabel,
-                    baseX_Y - yLabelWidth / 2,
-                    baseY_Y - yLength - yLabelOffsetY,
+                    xLabel,
+                    baseX_X + xLength / 2 - xLabelWidth / 2,
+                    baseY_X - 10,
                 );
+            }
 
-                ctx.restore();
-            },
-        };
-        // === END PLUGIN ===
+            // =========================
+            // Y AXIS
+            // =========================
+            const yLength = -0.1;
+            const baseX_Y =
+                xScale.getPixelForValue(xScale.max) - inset + spacing;
+            const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
 
-        try {
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    datasets: chartDatasets.map((dataset) => ({
-                        ...dataset,
-                        pointRadius: 0,
-                        tension: 0.6,
-                    })),
-                },
-                options: {
-                    responsive: true,
-                    animation: {
-                        duration: 1000,
-                        easing: "easeOutQuart",
-                    },
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => `Value: ${context.raw.y}`,
-                            },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            type: "linear",
-                            position: "bottom",
-                            grace: "5%",
-                            grid: {
-                                color: "rgba(0, 0, 0, 0.1)",
-                            },
-                            /*title: {
-                                display: true,
-                                text: "←  kOe  →",
-                                color: "#333",
-                                font: {
-                                    size: 14,
-                                    weight: "bold",
-                                },
-                            },*/
-                            ticks: {
-                                stepSize: 1000,
-                                display: false,
-                            },
-                        },
-                        y: {
-                            type: "linear",
-                            position: "left",
-                            grace: "5%",
-                            grid: {
-                                color: "rgba(0, 0, 0, 0.1)",
-                            },
-                            /*title: {
-                                display: true,
-                                text: "←  kG  →",
-                                color: "#333",
-                                font: {
-                                    size: 14,
-                                    weight: "bold",
-                                },
-                            },*/
-                            ticks: {
-                                stepSize: 1750,
-                                display: false,
-                            },
-                        },
-                    },
-                },
-                plugins: [scaleReferencePlugin], // ← injected only
-            });
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y);
+            ctx.lineTo(baseX_Y, baseY_Y - yLength);
+            ctx.stroke();
 
-            setTimeout(() => {
-                const canvas = myChartCanvas.value;
-                const imageData = canvas.toDataURL("image/jpeg", 0.7);
+            // TOP arrowhead
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y - yLength);
+            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.closePath();
+            ctx.fill();
 
-                const csrfToken = document.querySelector(
-                    'meta[name="csrf-token"]',
-                )?.content;
+            // BOTTOM arrowhead
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y);
+            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+            ctx.closePath();
+            ctx.fill();
 
-                fetch("/upload-chart", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken || "",
-                    },
-                    body: JSON.stringify({
-                        image: imageData,
-                        filename: `chart_${serialNo.value}.jpg`,
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then(() => {})
-                    .catch((err) => console.error("Chart upload failed:", err));
-            }, 1000);
-        } catch (error) {
-            console.error("Error initializing Chart.js:", error);
-            userErrorLogging(
-                {
-                    message: error.message,
-                    code: error.code ?? null,
-                    response: error.response?.data ?? null,
-                    payload: error.response?.data ?? null,
-                },
-                "fetchDataCreateGraph",
-                "Error fetching graph data",
+            const yLabel = "4 kG";
+            const yLabelWidth = ctx.measureText(yLabel).width;
+
+            ctx.fillText(
+                yLabel,
+                baseX_Y - yLabelWidth / 2,
+                baseY_Y - 10,
             );
-        }
-    } else {
-        console.error(
-            "Chart cannot be rendered: Missing data or canvas context.",
+
+            ctx.restore();
+        },
+    };
+
+    // =========================
+    // CREATE CHART
+    // =========================
+    window.__chartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+            datasets: chartDatasets,
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 1000,
+                easing: "easeOutQuart",
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) =>
+                            `Value: ${context.raw?.y ?? "NA"}`,
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    type: "linear",
+                    position: "bottom",
+                    grid: { color: "rgba(0, 0, 0, 0.1)" },
+                    ticks: {
+                        stepSize: 2000,
+                        display: false,
+                    },
+                },
+                y: {
+                    type: "linear",
+                    position: "left",
+                    grid: { color: "rgba(0, 0, 0, 0.1)" },
+                    ticks: {
+                        stepSize: 2000,
+                        display: false,
+                    },
+                },
+            },
+        },
+        plugins: [scaleReferencePlugin],
+    });
+
+    // =========================
+    // EXPORT IMAGE
+    // =========================
+    setTimeout(() => {
+        const canvas = myChartCanvas.value;
+        const imageData = canvas.toDataURL("image/jpeg", 0.7);
+
+        const csrfToken = document.querySelector(
+            'meta[name="csrf-token"]',
+        )?.content;
+
+        fetch("/upload-chart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken || "",
+            },
+            body: JSON.stringify({
+                image: imageData,
+                filename: `chart_${serialNo.value}.jpg`,
+            }),
+        }).catch((err) =>
+            console.error("Chart upload failed:", err),
         );
-    }
+    }, 1000);
 };
 
 // Define props that Inertia will pass to the component

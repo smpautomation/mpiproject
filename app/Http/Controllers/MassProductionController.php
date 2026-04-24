@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class MassProductionController extends Controller
 {
@@ -1828,6 +1829,186 @@ class MassProductionController extends Controller
         ]);
     }
 
+    public function deleteLayerFull(Request $request)
+    {
+        $validated = $request->validate([
+            'massprod' => 'required|string',
+            'furnace'  => 'required|string',
+            'layer'    => 'required|string',
+        ]);
+
+        $massProd = $validated['massprod'];
+        $furnace  = $validated['furnace'];
+        $layer    = $validated['layer'];
+
+        try {
+
+            return DB::transaction(function () use ($massProd, $furnace, $layer) {
+
+                // Normalize layer column safely
+                $normalizedLayer = str_replace('.', '_', trim($layer));
+                $column = 'layer_' . $normalizedLayer;
+
+                $mp = MassProduction::where('mass_prod', $massProd)
+                    ->where('furnace', $furnace)
+                    ->first();
+
+                if (!$mp) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Mass Production not found'
+                    ], 404);
+                }
+
+                // Extract MODEL / LOT pairs
+                $layerData = json_decode($mp->$column, true);
+                $uniquePairs = [];
+
+                if (!empty($layerData)) {
+                    $modelRow = null;
+                    $lotRow   = null;
+
+                    foreach ($layerData as $row) {
+                        if (($row['rowTitle'] ?? null) === 'MODEL:') {
+                            $modelRow = $row['data'] ?? [];
+                        }
+
+                        if (($row['rowTitle'] ?? null) === 'LT. No.:') {
+                            $lotRow = $row['data'] ?? [];
+                        }
+                    }
+
+                    if ($modelRow && $lotRow) {
+                        foreach ($modelRow as $box => $modelValue) {
+                            $lotValue = $lotRow[$box] ?? null;
+
+                            if ($modelValue && $lotValue) {
+                                $uniquePairs["{$modelValue}|{$lotValue}"] = true;
+                            }
+                        }
+                    }
+                }
+
+                // Null the layer
+                $mp->$column = null;
+                $mp->save();
+
+                $deletedExcess = 0;
+
+                // Delete Excess Layers
+                if (!empty($uniquePairs)) {
+
+                    $excessLayers = ExcessLayers::where('mass_prod', $massProd)
+                        ->where('furnace', $furnace)
+                        ->get();
+
+                    foreach ($excessLayers as $excess) {
+
+                        $layerDataExcess = is_array($excess->layer_data)
+                            ? $excess->layer_data
+                            : json_decode($excess->layer_data, true);
+
+                        $shouldDelete = false;
+
+                        if (!empty($layerDataExcess)) {
+
+                            $exModel = null;
+                            $exLot   = null;
+
+                            foreach ($layerDataExcess as $row) {
+                                if (($row['rowTitle'] ?? null) === 'MODEL:') {
+                                    $exModel = $row['data'] ?? [];
+                                }
+
+                                if (($row['rowTitle'] ?? null) === 'LT. No.:') {
+                                    $exLot = $row['data'] ?? [];
+                                }
+                            }
+
+                            if ($exModel && $exLot) {
+                                foreach ($exModel as $box => $modelValue) {
+                                    $lotValue = $exLot[$box] ?? null;
+
+                                    if (isset($uniquePairs["{$modelValue}|{$lotValue}"])) {
+                                        $shouldDelete = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if ($shouldDelete) {
+                            $excess->delete();
+                            $deletedExcess++;
+                        }
+                    }
+                }
+
+                // Breaklot deletes
+                $deletedBreaklotInitial = BreaklotInitialLotHt::where('mass_prod', $massProd)
+                    ->where('furnace', $furnace)
+                    ->where('layer', $layer)
+                    ->delete();
+
+                $deletedBreaklotAddtnl = BreaklotAddtnlFormatType::where('mass_prod', $massProd)
+                    ->where('furnace', $furnace)
+                    ->where('layer', (string) $layer)
+                    ->delete();
+
+                // Existing table cleanup
+                $tables = [
+                    Coating::class,
+                    GbdpSecondCoating::class,
+                    GbdpSecondHeatTreatment::class,
+                    FilmPastingData::class,
+                    BreaklotInitialLot::class,
+                    BreaklotCoating::class,
+                    BreaklotSecondCoating::class,
+                    BreaklotFilmpasting::class,
+                    BreaklotSecondHeatTreatment::class,
+                ];
+
+                $deletedExisting = 0;
+
+                foreach ($tables as $model) {
+                    $deletedExisting += $model::where('mass_prod', $massProd)
+                        ->where('furnace', $furnace)
+                        ->where('layer', $layer)
+                        ->delete();
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Layer fully deleted successfully',
+                    'deleted_excess_layers' => $deletedExcess,
+                    'deleted_breaklot_initial' => $deletedBreaklotInitial,
+                    'deleted_breaklot_addtnl' => $deletedBreaklotAddtnl,
+                    'deleted_existing_rows' => $deletedExisting,
+                    'total_deleted' =>
+                        $deletedExcess +
+                        $deletedBreaklotInitial +
+                        $deletedBreaklotAddtnl +
+                        $deletedExisting,
+                ]);
+            });
+
+        } catch (\Throwable $e) {
+
+            Log::error('Layer full deletion failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'massProd' => $massProd ?? null,
+                'furnace' => $furnace ?? null,
+                'layer' => $layer ?? null,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Deletion failed'
+            ], 500);
+        }
+    }
+
     public function getAssociatedModel(Request $request)
     {
         $validated = $request->validate([
@@ -2288,28 +2469,51 @@ class MassProductionController extends Controller
         $validated = $request->validate([
             'mass_prod' => 'required|string',
             'furnace'   => 'required|string',
-            'layer'     => 'required|string',
+            'layer'     => 'nullable|string',
         ]);
 
         $massProd = $validated['mass_prod'];
-        $furnace = $validated['furnace'];
-        $layer = $validated['layer'];
-
-        $normalizedLayer = str_replace('.', '_', $layer);
-        $layerColumn = 'layer_' . $normalizedLayer;
+        $furnace  = $validated['furnace'];
+        $layer    = $validated['layer'] ?? null;
 
         $massProdData = MassProduction::where('mass_prod', $massProd)
-                ->where('furnace', $furnace)
-                ->first();
+            ->where('furnace', $furnace)
+            ->first();
 
-        $massProdLayerData = $massProdData && !empty($massProdData->$layerColumn);
+        $layers = [];
 
-        $massProdExists = $massProdLayerData;
+        if ($massProdData) {
+            foreach ($massProdData->getAttributes() as $column => $value) {
+
+                // STRICT match: layer number only (no suffix like .serial or .format.type)
+                if (preg_match('/^layer_\d+(_\d+)?$/', $column) && !empty($value)) {
+
+                    $raw = str_replace('layer_', '', $column);
+                    $normalized = str_replace('_', '.', $raw);
+
+                    $layers[] = $normalized;
+                }
+            }
+
+            $layers = array_values(array_unique($layers));
+            sort($layers, SORT_NATURAL);
+        }
+
+        $massProdExists = false;
+
+        if ($massProdData && $layer) {
+            $normalizedLayer = str_replace('.', '_', $layer);
+            $layerColumn = 'layer_' . $normalizedLayer;
+
+            $massProdExists = !empty($massProdData->$layerColumn);
+        } else {
+            $massProdExists = (bool) $massProdData;
+        }
 
         return response()->json([
             'mass_prod_exists' => $massProdExists,
+            'available_layers' => $layers,
         ]);
-
     }
 
 }

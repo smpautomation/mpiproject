@@ -4700,7 +4700,7 @@
                             <div class="flex justify-center mt-5 space-x-4">
                                 <!-- Chart -->
                                 <div
-                                    class="w-[600px] h-[480px] bg-gray-50 rounded-xl flex items-center justify-center pr-5 border-2 border-blue-900"
+                                    class="w-[700px] h-[500px] p-4 bg-gray-50 rounded-xl flex items-center justify-center pr-5 border-2 border-blue-900"
                                 >
                                     <img
                                         v-if="currentSerialSelected"
@@ -4709,7 +4709,7 @@
                                         class="object-contain w-full h-full"
                                         style="
                                             transform: scale(1);
-                                            transform-origin: top left;
+                                            transform-origin: top right;
                                         "
                                     />
                                 </div>

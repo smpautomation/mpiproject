@@ -292,24 +292,40 @@
                     <p class="px-4 py-2 ml-10 text-xl text-white border-2 shadow-lg animate-pulse rounded-xl bg-gradient-to-br from-blue-600/80 to-blue-600/40 backdrop-blur-lg">Set #: {{ highest_setNo }} </p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
-                    <div class="w-[600px] h-[520px] bg-blue-100 rounded-xl flex items-center pr-5 border-2 border-blue-900 justify-center">
-                        <canvas ref="myChartCanvas" width="800" height="600" style="transform: scale(1); transform-origin: top left;"></canvas>
+                    <div
+                        class="w-[600px] h-[500px] bg-white rounded-xl flex items-center pr-10 pl-5 border-2 border-blue-900 justify-center"
+                    >
+                        <canvas
+                            ref="myChartCanvas"
+                            width="800"
+                            height="600"
+                            style="
+                                transform: scale(1);
+                                transform-origin: top left;
+                            "
+                        ></canvas>
                     </div>
+
                     <!-- Side Content -->
-                    <div class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4">
+                    <div
+                        class="w-[350px] h-[420px] bg-blue-200 rounded-xl border-2 border-blue-900 flex justify-center items-start p-4"
+                    >
                         <div class="flex flex-col items-start space-y-2">
                             <p>
                                 SMP Lot (
                                 <span>{{ currentMassProdSelected }}</span>
                                 Mass Production )
                             </p>
+
                             <p>
                                 Furnace Cycle No. : {{ jhCurveFurnaceName }}
                             </p>
+
                             <p>
                                 <span>{{ jhCurveActualModel }}</span>
                                 ( {{ jhCurveModel }} )
                             </p>
+
                             <p>
                                 Lot # {{ jhCurveLotNo }}
                             </p>
@@ -398,7 +414,7 @@
                 </div>
 
                 <div class="flex items-center justify-center mt-10">
-                    <button @click="Inertia.reload()" class="flex items-center gap-2 px-4 py-2 font-semibold text-white transition duration-300 bg-blue-600 rounded shadow-md hover:bg-blue-700">
+                    <button @click="router.visit(`/sec_additional?sec_furnace=${currentFurnaceSelected}&sec_layer=${currentLayerSelected}&sec_massProd=${currentMassProdSelected}&sec_serialParam=${currentSerialSelected}`)" class="flex items-center gap-2 px-4 py-2 font-semibold text-white transition duration-300 bg-blue-600 rounded shadow-md hover:bg-blue-700">
                         <span>UPLOAD AGAIN</span>
                         <span class="w-[16px] h-[15px] inline-block bg-no-repeat bg-center"
                             :style="{
@@ -1086,40 +1102,62 @@ const saveToDatabase = async () => {
                     .map((i) => parsedData[`data${i}`])
                     .filter(Boolean);
 
-            //-------------------------------------GRAPH
-                const xValues = [];
-                const yValues = [];
-                for (const key in parsedData) {
-                    if (
-                        parsedData.hasOwnProperty(key) &&
-                        key.startsWith('data') &&
-                        parseInt(key.replace('data', ''), 10) >= 150 && //Adjust
-                        parseInt(key.replace('data', ''), 10) <= numberOfRows
-                    ) {
-                        const [x, y] = parsedData[key].split(',').map(Number);
+                    //-------------------------------------GRAPH
+                    const xValues = Array(numberOfRows).fill(null);
+                    const yValues = Array(numberOfRows).fill(null);
 
-                            // Custom condition: x must be less than 100 and y must be greater than -1000
-                        if (x >= 100 || y <= -1000) { // If x >= 100 or y <= -1000, skip the data
-                            //console.log(`Skipping data: x = ${x}, y = ${y} due to condition.`);
-                            continue; // Skip this iteration if condition is not met
+                    for (const key in parsedData) {
+                        if (
+                            !Object.prototype.hasOwnProperty.call(parsedData, key) ||
+                            !key.startsWith("data")
+                        ) {
+                            continue;
                         }
 
-                        xValues.push(x);
-                        yValues.push(y);
+                        const index = parseInt(key.replace("data", ""), 10);
+
+                        if (index < 150 || index > numberOfRows) {
+                            continue;
+                        }
+
+                        const raw = parsedData[key];
+
+                        if (!raw) {
+                            xValues[index] = null;
+                            yValues[index] = null;
+                            continue;
+                        }
+
+                        const [xRaw, yRaw] = raw.split(",").map(Number);
+
+                        // =========================
+                        // EXCEL-STYLE VALIDATION (STRICT)
+                        // =========================
+                        const isInvalid =
+                            Number.isNaN(xRaw) ||
+                            Number.isNaN(yRaw) ||
+                            xRaw >= 100 ||     // ← CRITICAL: Excel cutoff
+                            yRaw <= -1000;
+
+                        if (isInvalid) {
+                            xValues[index] = null;
+                            yValues[index] = null;
+                            continue;
+                        }
+
+                        // =========================
+                        // PRESERVE INDEX (NO PUSH)
+                        // =========================
+                        xValues[index] = xRaw;
+                        yValues[index] = yRaw;
                     }
-                }
 
+                    xAxis.value = xValues;
+                    yAxis.value = yValues;
 
-                xAxis.value = xValues;
-                yAxis.value = yValues;
-
-                xJsonOutput.value = JSON.stringify(xValues, null, 2);
-                yJsonOutput.value = JSON.stringify(yValues, null, 2);
-
-                //console.log('X Axis JSON:', xJsonOutput.value);
-                //console.log('Y Axis JSON:', yJsonOutput.value);
-
-                //-------------------------------------GRAPH END
+                    xJsonOutput.value = JSON.stringify(xValues, null, 2);
+                    yJsonOutput.value = JSON.stringify(yValues, null, 2);
+                    //-------------------------------------GRAPH END
 
                 rowCell.value = newRowValues;
 
@@ -1794,84 +1832,102 @@ const fetchDataCreateGraph = async () => {
     try {
         const response = await axios.get("/api/nsadata");
 
-        // Log the response structure to check
-        //console.log("API Response:", response.data);
-        const nsaData = response.data.data["NSAData"] || [];
-        //console.log('tpm data: ',nsaData);
-        const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-        //console.log('tpm data filtered by serial: ',nsafilteredData);
-        const tableRows = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
-        //console.log('tpm data filtered by set_no and serial: ',tableRows);
+        const nsaData = response.data.data?.NSAData ?? [];
 
-        const allData = tableRows;
-
-        const compareZone = (a, b) => { //Sorting ensures the plotted lines in graph is in order (proper sequence based on zone column)
-            const parse = (zone) => {
-                const match = zone.match(/^(\d+)([A-Z]+)(\d+)$/i);
-                if (!match) return { n1: 0, s: zone, n2: 0 };
-
-                return {
-                    n1: parseInt(match[1], 10),   // first number
-                    s: match[2],                  // letters
-                    n2: parseInt(match[3], 10),   // last number
-                };
-            };
-
-            const A = parse(a.zone);
-            const B = parse(b.zone);
-
-            // 1) compare first number
-            if (A.n1 !== B.n1) return A.n1 - B.n1;
-
-            // 2) compare letters
-            if (A.s !== B.s) return A.s.localeCompare(B.s);
-
-            // 3) compare last number
-            return A.n2 - B.n2;
-        };
-
-        if (Array.isArray(allData) && allData.length > 0) {
-            // Step 1: Find the highest set_no
-            const maxSetNo = Math.max(...allData.map(item => item.set_no));
-            // Step 2: Filter the data to only those with the highest set_no
-            filteredNSADataForGraph.value = allData
-                .filter(item => item.set_no === maxSetNo)
-                .sort(compareZone);
-            //console.log('Filtered data with highest set_no:', filteredNSADataForGraph.value);
-        } else {
-            //console.log('No data found or data is not an array.');
-        }
-
-        // Check if tableRows is not undefined or null before proceeding
-        if (!filteredNSADataForGraph.value) {
+        if (!Array.isArray(nsaData) || nsaData.length === 0) {
             throw new Error("No data found in nsaData");
         }
 
-        // Parse each row and dynamically generate datasets
-        datasets.value = filteredNSADataForGraph.value.map((row, index) => ({
-            xAxis: JSON.parse(row.x || "[]"), // Parse x values
-            yAxis: JSON.parse(row.y || "[]"), // Parse y values
-            color: generateColor(index), // Assign a unique color
-        }));
+        const baseData = nsaData.filter(
+            item =>
+                item.serial_no == currentSerialSelected.value &&
+                item.set_no == highest_setNo.value
+        );
 
-        // Set dataReady to true once the data is ready
-        dataReady.value = true;
-        //console.log("dataReady ", dataReady.value);
-        // Ensure DOM updates before rendering
-        nextTick(() => {
-            //console.log("myChartCanvas reference:", myChartCanvas.value);
-            if (myChartCanvas.value) {
-                renderChart();  // Proceed to render the chart if the canvas is available
-            } else {
-                console.error("Canvas element is not available.");
+        if (!Array.isArray(baseData) || baseData.length === 0) {
+            throw new Error("No NSA data found after filtering");
+        }
+
+        // =========================
+        // FRONTEND ORDERING (ZONE SORT)
+        // =========================
+        const compareZone = (a, b) => {
+            const A = a.zone ?? "";
+            const B = b.zone ?? "";
+
+            const numA = parseInt(A.match(/^\d+/)?.[0] ?? "0", 10);
+            const numB = parseInt(B.match(/^\d+/)?.[0] ?? "0", 10);
+
+            if (numA !== numB) return numA - numB;
+
+            // IMPORTANT: full string tie-breaker (this is what you were missing)
+            return A.localeCompare(B);
+        };
+
+        const sortedBaseData = [...baseData].sort(compareZone);
+
+        // =========================
+        // DATASET BUILD (UNCHANGED LOGIC)
+        // =========================
+        datasets.value = sortedBaseData.map((row, index) => {
+            let x = [];
+            let y = [];
+
+            try {
+                x = JSON.parse(row.x ?? "[]");
+                y = JSON.parse(row.y ?? "[]");
+            } catch (e) {
+                console.warn("Corrupt dataset at row:", index, e);
+                x = [];
+                y = [];
             }
+
+            const maxLen = Math.max(x.length, y.length);
+
+            const normalizedX = Array(maxLen).fill(null);
+            const normalizedY = Array(maxLen).fill(null);
+
+            for (let i = 0; i < maxLen; i++) {
+                normalizedX[i] = x[i] ?? null;
+                normalizedY[i] = y[i] ?? null;
+            }
+
+            return {
+                xAxis: normalizedX,
+                yAxis: normalizedY,
+                color: generateColor(index),
+            };
         });
-        layerTableRowLoading.value = false;
+
+        dataReady.value = true;
+
+        await nextTick();
+
+        if (!myChartCanvas.value) {
+            console.error("Canvas element is not available.");
+            return;
+        }
+
+        renderChart();
+
     } catch (err) {
         error.value = err;
+
         console.error("Error fetching data:", err);
-    } finally{
-        showGraphAndTables.value = true;  // Set this to true after data is loaded
+
+        await userErrorLogging(
+            {
+                message: err?.message ?? "Unknown error",
+                code: err?.code ?? null,
+                response: err?.response?.data ?? null,
+                payload: err?.response?.data ?? null,
+            },
+            "fetchDataCreateGraph",
+            "Error fetching graph data",
+        );
+    } finally {
+        showGraphAndTables.value = true;
+        layerTableRowLoading.value = false;
         showLoadingForGraphAndTables.value = false;
         await autoDeleteNullData();
     }
@@ -1922,31 +1978,200 @@ const renderChart = () => {
         return;
     }
 
-    const x_offset = 2000;
-    const y_offset = 1700;
+    // =========================
+    // EXCEL OFFSET RULES (DATA LAYER ONLY)
+    // =========================
+    const offsets = [
+        0, 2000, 4000, 6000, 8000,
+        10000, 12000, 14000, 16000, 18000,
+        20000, 22000, 24000, 26000, 28000,
+        30000, 32000, 34000, 36000, 38000,
+    ];
 
-    const chartDatasets = datasets.value.map((dataset, index) => ({
-        label: `Dataset ${index + 1}`,
-        data: dataset.xAxis.map((x, i) => ({
-            x: x + index * x_offset,
-            y: (dataset.yAxis[i] || 0) - index * y_offset,
-        })),
-        borderColor: dataset.color,
-        borderWidth: 2,
-        fill: false,
-        pointBackgroundColor: dataset.color,
-        pointBorderColor: dataset.color,
-    }));
+    const chartDatasets = datasets.value.map((dataset, index) => {
+        const offset = offsets[index] ?? index * 2000;
+
+        const points = [];
+
+        for (let i = 0; i < dataset.xAxis.length; i++) {
+            const x = dataset.xAxis[i];
+            const y = dataset.yAxis[i];
+
+            // =========================
+            // EXCEL NA BEHAVIOR
+            // =========================
+            if (x === null || y === null) {
+                points.push({ x: null, y: null });
+                continue;
+            }
+
+            // =========================
+            // EXCEL VALIDATION RULE
+            // =========================
+            if (x >= 10000 || y <= -1000) {
+                points.push({ x: null, y: null });
+                continue;
+            }
+
+            // =========================
+            // APPLY OFFSET
+            // =========================
+            points.push({
+                x: x + offset,
+                y: y - offset,
+            });
+        }
+
+        return {
+            label: `Dataset ${index + 1}`,
+            data: points,
+            borderColor: dataset.color,
+            borderWidth: 2,
+            fill: false,
+            pointRadius: 0,
+            tension: 0.6,
+        };
+    });
+
+    // =========================
+    // SAFE CHART INSTANCE CONTROL
+    // =========================
+    if (window.__chartInstance) {
+        window.__chartInstance.destroy();
+    }
+
+    // =========================
+    // SCALE REFERENCE PLUGIN (UNCHANGED)
+    // =========================
+    const scaleReferencePlugin = {
+        id: "scaleReference",
+        afterDraw(chart) {
+            const { ctx, scales } = chart;
+            const xScale = scales.x;
+            const yScale = scales.y;
+            if (!xScale || !yScale) return;
+
+            ctx.save();
+            ctx.strokeStyle = "#000";
+            ctx.fillStyle = "#000";
+            ctx.lineWidth = 0.5;
+            ctx.font = "8px Arial";
+
+            const arrowHeadSize = 4;
+            const inset = 30;
+            const spacing = 20;
+
+            const getTickValue = (tick) =>
+                typeof tick === "object" ? tick.value : tick;
+
+            // =========================
+            // X AXIS
+            // =========================
+            if (xScale.ticks.length >= 2) {
+                const xStep =
+                    xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
+                    xScale.getPixelForValue(getTickValue(xScale.ticks[0]));
+
+                const xLength = 1.5 * xStep;
+                const yBottomPixel = yScale.getPixelForValue(yScale.min);
+                const targetPixelX =
+                    xScale.getPixelForValue(xScale.max) - inset;
+
+                let closestValue = getTickValue(xScale.ticks[0]);
+                let minDistance = Infinity;
+
+                xScale.ticks.forEach((tick) => {
+                    const value = getTickValue(tick);
+                    const tickPixel = xScale.getPixelForValue(value);
+                    const distance = Math.abs(tickPixel - targetPixelX);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestValue = value;
+                    }
+                });
+
+                const baseX_X =
+                    xScale.getPixelForValue(closestValue) - xLength;
+                const baseY_X = yBottomPixel - inset;
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + xLength, baseY_X);
+                ctx.stroke();
+
+                // X arrowhead (right side)
+                ctx.beginPath();
+                ctx.moveTo(baseX_X + xLength, baseY_X);
+                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                ctx.closePath();
+                ctx.fill();
+
+                // LEFT arrowhead
+                ctx.beginPath();
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                ctx.closePath();
+                ctx.fill();
+
+                const xLabel = "4 kOe";
+                const xLabelWidth = ctx.measureText(xLabel).width;
+
+                ctx.fillText(
+                    xLabel,
+                    baseX_X + xLength / 2 - xLabelWidth / 2,
+                    baseY_X - 10,
+                );
+            }
+
+            // =========================
+            // Y AXIS
+            // =========================
+            const yLength = -0.1;
+            const baseX_Y =
+                xScale.getPixelForValue(xScale.max) - inset + spacing;
+            const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
+
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y);
+            ctx.lineTo(baseX_Y, baseY_Y - yLength);
+            ctx.stroke();
+
+            // TOP arrowhead
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y - yLength);
+            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.closePath();
+            ctx.fill();
+
+            // BOTTOM arrowhead
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y);
+            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+            ctx.closePath();
+            ctx.fill();
+
+            const yLabel = "4 kG";
+            const yLabelWidth = ctx.measureText(yLabel).width;
+
+            ctx.fillText(
+                yLabel,
+                baseX_Y - yLabelWidth / 2,
+                baseY_Y - 10,
+            );
+
+            ctx.restore();
+        },
+    };
 
     try {
-        new Chart(ctx, {
+        window.__chartInstance = new Chart(ctx, {
             type: "line",
             data: {
-                datasets: chartDatasets.map(dataset => ({
-                    ...dataset,
-                    pointRadius: 0,
-                    tension: 0.6,
-                })),
+                datasets: chartDatasets,
             },
             options: {
                 responsive: true,
@@ -1955,12 +2180,11 @@ const renderChart = () => {
                     easing: "easeOutQuart",
                 },
                 plugins: {
-                    legend: {
-                        display: false,
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: (context) => `Value: ${context.raw.y}`,
+                            label: (context) =>
+                                `Value: ${context.raw?.y ?? "NA"}`,
                         },
                     },
                 },
@@ -1968,58 +2192,28 @@ const renderChart = () => {
                     x: {
                         type: "linear",
                         position: "bottom",
-                        grace: "5%",
                         grid: { color: "rgba(0, 0, 0, 0.1)" },
-                        title: {
-                            display: true,
-                            text: "←  kOe  →",
-                            color: "#333",
-                            font: { size: 14, weight: "bold" },
+                        ticks: {
+                            stepSize: 2000,
+                            display: false,
                         },
-                        ticks: { stepSize: 1000, display: false },
                     },
                     y: {
                         type: "linear",
                         position: "left",
-                        grace: "5%",
                         grid: { color: "rgba(0, 0, 0, 0.1)" },
-                        title: {
-                            display: true,
-                            text: "←  kG  →",
-                            color: "#333",
-                            font: { size: 14, weight: "bold" },
+                        ticks: {
+                            stepSize: 2000,
+                            display: false,
                         },
-                        ticks: { stepSize: 1750, display: false },
                     },
                 },
             },
+            plugins: [scaleReferencePlugin],
         });
-
-        setTimeout(() => {
-            const canvas = myChartCanvas.value;
-            const imageData = canvas.toDataURL("image/png");
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-            fetch("/upload-chart-sec", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken || "",
-                },
-                body: JSON.stringify({
-                    image: imageData,
-                    filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // File saved successfully
-            })
-            .catch(err => console.error("Chart upload failed:", err));
-        }, 1000); // Wait for chart to render fully
     } catch (error) {
         console.error("Error initializing Chart.js:", error);
+
         userErrorLogging(
             {
                 message: error.message,
@@ -2027,11 +2221,36 @@ const renderChart = () => {
                 response: error.response?.data ?? null,
                 payload: error.response?.data ?? null,
             },
-            "fetchDataCreateGraph",
-            "Error fetching graph data"
+            "renderChart",
+            "Error rendering graph",
         );
     }
+
+    // =========================
+    // EXPORT IMAGE
+    // =========================
+    setTimeout(() => {
+        const canvas = myChartCanvas.value;
+        const imageData = canvas.toDataURL("image/png");
+
+        const csrfToken = document.querySelector(
+            'meta[name="csrf-token"]',
+        )?.content;
+
+        fetch("/upload-chart-sec", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken || "",
+            },
+            body: JSON.stringify({
+                image: imageData,
+                filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`,
+            }),
+        }).catch(err => console.error("Chart upload failed:", err));
+    }, 1000);
 };
+
 
 const autoDeleteNullData = async () => {
     //console.log('[autoDeleteNullData] Starting...');

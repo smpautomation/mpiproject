@@ -90,14 +90,21 @@ class UserController extends Controller
             'employee_id' => 'nullable|string|max:255|unique:users,employee_id,' . $user->id,
             'password' => 'sometimes|required|string|min:8|confirmed',
             'access_type' => 'sometimes|required|string|max:255',
-            'change_judgement_access' => 'sometimes|in:yes,no'
+            'change_judgement_access' => 'sometimes|in:yes,no',
+            'is_editing_allowed' => 'sometimes|boolean',
         ]);
 
-        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type','change_judgement_access'] as $field) {
+        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type','change_judgement_access', 'is_editing_allowed'] as $field) {
             if (isset($validated[$field])) {
                 $user->$field = $validated[$field];
             }
         }
+
+        // special handling (boolean cast)
+        if (array_key_exists('is_editing_allowed', $validated)) {
+            $user->is_editing_allowed = (bool) $validated['is_editing_allowed'];
+        }
+
 
         if (isset($validated['password'])) {
             $user->password = Hash::make($validated['password']);

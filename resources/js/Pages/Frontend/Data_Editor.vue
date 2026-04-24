@@ -1,293 +1,830 @@
 <template>
     <Frontend>
         <div class="w-full space-y-6">
-            <div class="flex flex-row">
-
-
-                <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-
-                    <!-- Title -->
-                    <h2 class="mb-6 text-sm font-semibold tracking-wide text-gray-800 uppercase">
-                        Select Mass Production Data
-                    </h2>
-
-                    <!-- Furnace -->
-                    <div class="mb-4">
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Furnace
-                        </label>
-                        <select
-                            v-model="selectedFurnace"
-                            :disabled="isValidationSuccess"
-                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
-                        >
-                            <option
-                                v-for="item in furnace_names"
-                                :key="item"
-                                :value="item"
-                            >
-                                {{ item }}
-                            </option>
-                        </select>
+            <div class="flex flex-col">
+                <div class="flex float-left ml-5 mt-5">
+                    <!-- your other content here -->
+                    <div
+                        v-if="state.user && state.user.is_editing_allowed == 1"
+                        class="px-3 py-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-md shadow-sm"
+                    >
+                        <span class="w-2 h-2 mr-2 bg-green-500 rounded-full inline-block"></span>
+                        User Admin Detected
                     </div>
-
-                    <!-- Mass Production -->
-                    <div class="mb-4">
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Mass Production Name
-                        </label>
-                        <input
-                            v-model="selectedMassProd"
-                            type="text"
-                            @input="selectedMassProd = selectedMassProd.toUpperCase()"
-                            :disabled="isValidationSuccess"
-                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
-                            placeholder="Enter name..."
-                        />
+                    <div
+                        v-else
+                        class="px-3 py-1 text-xs font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md shadow-sm"
+                    >
+                        <span class="w-2 h-2 mr-2 bg-yellow-500 rounded-full inline-block"></span>
+                        User Requestor only
                     </div>
-
-                    <!-- Layer -->
-                    <div class="mb-6">
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Layer
-                        </label>
-                        <select
-                            v-model="selectedLayer"
-                            :disabled="isValidationSuccess"
-                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled: cursor-not-allowed"
-                        >
-                            <option
-                                v-for="item in layers"
-                                :key="item"
-                                :value="item"
-                            >
-                                {{ item }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div v-if="!isCorrectiveActionCompleted">
-                        <!-- Action -->
-                        <button
-                            v-if="isValidationSuccess"
-                            @click="cancelValidate"
-                            class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md hover:bg-red-600 active:scale-[0.99]"
-                        >
-                            Cancel
-                        </button>
-
-                        <!-- Action -->
-                        <button
-                            v-else
-                            @click="checkValidate"
-                            class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.99]"
-                        >
-                            Check/Validate
-                        </button>
-                    </div>
-
-
-                    <div v-if="isValidationSuccess" class="mt-10">
-                        <p class="text-xs text-gray-500">Selected data: </p> Layer <strong>{{ selectedLayer }}</strong> of <strong>{{ selectedFurnace }} {{ selectedMassProd }}</strong>
-                    </div>
-
                 </div>
 
-                <div v-if="isValidationSuccess" class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
-                    <!-- Header -->
-                    <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase ">
-                        Fill in the fields
-                    </h2>
-
-                    <!-- Reason -->
-                    <div class="mb-4">
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Reason for data modification:
-                        </label>
-
-                        <textarea
-                            v-model="userReason"
-                            rows="3"
-                            :disabled="isCorrectiveActionCompleted"
-                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
-                            placeholder="Explain why the data needs to be modified..."
-                        ></textarea>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Corrective Action (steps taken to ensure this issue does not happen again):
-                        </label>
-
-                        <textarea
-                            v-model="userCorrectiveAction"
-                            rows="4"
-                            :disabled="isCorrectiveActionCompleted"
-                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
-                            placeholder="Describe preventive steps taken..."
-                        ></textarea>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Verified by (Superior / PIC / Shift Leader):
-                        </label>
-                        <input
-                            v-model="userVerifiedBy"
-                            type="text"
-                            :disabled="isCorrectiveActionCompleted"
-                            class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
-                            placeholder="Enter verifier name..."
-                        />
-                    </div>
-
-                    <label class="flex items-start text-xs text-gray-600 mb-4">
-                        <input :disabled="isCorrectiveActionCompleted" type="checkbox" v-model="userVerified" class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
-                        <span v-if="state.user && state.user.access_type">
-                            I, <strong>{{ state.user.firstName }} {{ state.user.surname }}</strong>, confirm that this modification has been reviewed and approved by the responsible supervisor/PIC.
-                            I understand that all changes are logged and subject to audit review.
-                        </span>
-                    </label>
-                    <div class="flex float-right">
-                        <!-- Action -->
-                        <button
-                            v-if="isCorrectiveActionCompleted"
-                            @click="cancelSubmitForm"
-                            class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md hover:bg-red-600 active:scale-[0.99]"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            v-else
-                            class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
-                            @click="submitForm"
-                        >
-                            Next
-                        </button>
-                    </div>
-
+                <div v-if="!isValidationSuccess && state.user && state.user.is_editing_allowed == 1" class="flex flex-row">
+                    <button
+                        v-if="openDataEditorPanel"
+                        class="ml-5 mt-5 px-4 py-2 text-sm font-semibold text-black transition bg-gray-200 rounded-md hover:bg-gray-300 active:scale-[0.98]"
+                        @click="closeDataEditor"
+                    >
+                        Close Editor
+                    </button>
+                    <button
+                        v-else
+                        class="ml-5 mt-5 px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                        @click="proceedToDataEditor"
+                    >
+                        Modify Data
+                    </button>
                 </div>
 
-                <div v-if="isValidationSuccess && isCorrectiveActionCompleted" class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
+                <div v-if="openDataEditorPanel" class="flex flex-row">
 
-                    <!-- Header -->
-                    <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase">
-                        Choose an Action
-                    </h2>
+                    <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
 
-                    <div class="space-y-4">
+                        <!-- Title -->
+                        <h2 class="mb-6 text-sm font-semibold tracking-wide text-gray-800 uppercase">
+                            Select Mass Production Data
+                        </h2>
 
-                        <!-- DANGEROUS ACTION -->
-                        <div class="p-4 border border-gray-300 rounded-md bg-gray-50">
 
-                            <p class="mb-3 text-sm text-gray-800">
-                                <span class="font-semibold text-black">Delete LAYER data (FULL RESET)</span><br>
 
-                                <span class="text-xs text-gray-600">
-                                    This action will permanently reset all mass production data for the selected layer,
-                                    including coating and film pasting (if present). All linked additional lots within this layer group will also be removed.
-                                    Initial process data will remain untouched.
-                                </span>
+                        <!-- Furnace -->
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Furnace
+                            </label>
+                            <select
+                                v-model="selectedFurnace"
+                                :disabled="isValidationSuccess"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                                <option
+                                    v-for="item in furnace_names"
+                                    :key="item"
+                                    :value="item"
+                                >
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
 
-                                <br>
+                        <!-- Mass Production -->
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Mass Production Name
+                            </label>
+                            <input
+                                v-model="selectedMassProd"
+                                type="text"
+                                @input="selectedMassProd = selectedMassProd.toUpperCase()"
+                                :disabled="isValidationSuccess"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                placeholder="Enter name..."
+                            />
+                        </div>
 
-                                <span class="text-xs text-red-600 font-medium">
-                                    Warning: This affects all connected lots under the same layer grouping.
-                                    It is strongly recommended to review the Control Sheet page before proceeding after deletion.
-                                </span>
-                            </p>
+                        <!-- Layer -->
+                        <div v-if="!htInfoEditingOnly" class="mb-6">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Layer
+                            </label>
 
+                            <select
+                                v-model="selectedLayer"
+                                :disabled="isValidationSuccess"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                                <option value="" disabled>
+                                    Select layer
+                                </option>
+
+                                <option
+                                    v-for="item in availableLayers"
+                                    :key="item"
+                                    :value="item"
+                                >
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <label v-if="!isValidationSuccess" class="flex float-right mb-6 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                v-model="htInfoEditingOnly"
+                                class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                            <span class="text-xs text-gray-500">Heat Treatment Info editing only</span>
+                        </label>
+
+                        <div v-if="!isCorrectiveActionCompleted">
+                            <!-- Action -->
                             <button
+                                v-if="isValidationSuccess"
+                                @click="cancelValidate"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md hover:bg-red-600 active:scale-[0.99]"
+                            >
+                                Cancel
+                            </button>
+
+                            <!-- Action -->
+                            <button
+                                v-else
+                                @click="checkValidate"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.99]"
+                            >
+                                Check/Validate
+                            </button>
+                        </div>
+
+
+                        <div v-if="isValidationSuccess" class="mt-10">
+
+                            <div v-if="htInfoEditingOnly">
+                                <p class="text-xs text-gray-500">Selected data:</p>
+                                <strong>{{ selectedFurnace }} {{ selectedMassProd }}</strong>
+                            </div>
+
+                            <div v-else>
+                                <p class="text-xs text-gray-500">Selected data:</p>
+                                Layer <strong>{{ selectedLayer }}</strong> of <strong>{{ selectedFurnace }} {{ selectedMassProd }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div v-if="isValidationSuccess" class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
+                        <!-- Header -->
+                        <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase ">
+                            Fill in the fields
+                        </h2>
+
+                        <!-- Reason -->
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Reason for data modification:
+                            </label>
+
+                            <textarea
+                                v-model="userReason"
+                                rows="3"
+                                :disabled="isCorrectiveActionCompleted"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                placeholder="Explain why the data needs to be modified..."
+                            ></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Corrective Action (steps taken to ensure this issue does not happen again):
+                            </label>
+
+                            <textarea
+                                v-model="userCorrectiveAction"
+                                rows="4"
+                                :disabled="isCorrectiveActionCompleted"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                placeholder="Describe preventive steps taken..."
+                            ></textarea>
+                        </div>
+
+                        <label class="flex items-start text-xs text-gray-600 mb-4">
+                            <input :disabled="isCorrectiveActionCompleted" type="checkbox" v-model="userVerified" class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+                            <span v-if="state.user && state.user.access_type">
+                                I, <strong>{{ state.user.firstName }} {{ state.user.surname }}</strong>, confirm that this modification has been reviewed and approved by the responsible supervisor/PIC.
+                                I understand that all changes are logged and subject to audit review.
+                            </span>
+                        </label>
+                        <div class="flex float-right">
+                            <!-- Action -->
+                            <button
+                                v-if="isCorrectiveActionCompleted"
+                                @click="cancelSubmitForm"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md hover:bg-red-600 active:scale-[0.99]"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                v-else
                                 class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
-                                @click="proceedButton"
+                                @click="submitForm"
                             >
-                                Proceed
+                                Next
                             </button>
-
                         </div>
 
-                        <!-- SAFE ACTION -->
-                        <div class="p-4 border border-gray-300 rounded-md bg-white">
+                    </div>
 
-                            <p class="mb-3 text-sm text-gray-800">
-                                <span class="font-semibold">Modify Cycle No Only</span><br>
-                                <span class="text-xs text-gray-500">
-                                    Adjust cycle no without affecting production data.
-                                </span>
-                            </p>
+                    <div v-if="isValidationSuccess && isCorrectiveActionCompleted" class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
+
+                        <!-- Header -->
+                        <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase">
+                            Choose an Action
+                        </h2>
+
+                        <div class="space-y-4">
+
+                            <!-- DANGEROUS ACTION -->
+                            <div v-if="!htInfoEditingOnly" class="p-4 border border-gray-300 rounded-md bg-gray-50">
+
+                                <p class="mb-3 text-sm text-gray-800">
+                                    <span class="font-semibold text-black">Delete LAYER data (FULL RESET)</span><br>
+
+                                    <span class="text-xs text-gray-600">
+                                        This action will permanently reset all mass production data for the selected layer,
+                                        including coating and film pasting (if present). All linked additional lots within this layer group will also be removed.
+                                        Initial process data will remain untouched.
+                                    </span>
+
+                                    <br>
+
+                                    <span class="text-xs text-red-600 font-medium">
+                                        Warning: This affects all connected lots under the same layer grouping.
+                                        It is strongly recommended to review the Control Sheet page before proceeding after deletion.
+                                    </span>
+                                </p>
+
+                                <button
+                                    class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                                    @click="proceedButton"
+                                >
+                                    Proceed
+                                </button>
+
+                            </div>
+
+                            <!-- SAFE ACTION -->
+                            <div v-if="htInfoEditingOnly" class="p-5 border border-gray-200 rounded-md bg-white space-y-4">
+
+                                <!-- Header -->
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">
+                                        Modify Cycle No Only
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        This will update cycle number without affecting production data.
+                                    </p>
+                                </div>
+
+                                <!-- Input -->
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-600">
+                                        New Cycle No
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        v-model="newCycleNo"
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                                    />
+                                </div>
+
+                                <!-- Action -->
+                                <div class="flex justify-end">
+                                    <button
+                                        @click="proceedButtonCycleNo"
+                                        class="px-4 py-2 text-sm font-medium text-gray-800 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 active:scale-[0.98]"
+                                    >
+                                        Proceed
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div
+                    v-if="showProceedDeleteLayerData"
+                    class="fixed inset-0 z-50 flex items-center justify-center"
+                >
+                    <!-- Backdrop -->
+                    <div
+                        class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                        @click="showProceedDeleteLayerData = false"
+                    ></div>
+
+                    <!-- Panel -->
+                    <div class="relative z-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-xl">
+
+                        <!-- Title -->
+                        <h2 class="mb-4 text-sm font-semibold text-gray-800 uppercase">
+                            Confirm Action
+                        </h2>
+
+                        <!-- Message -->
+                        <p class="mb-6 text-sm leading-relaxed text-gray-700">
+                            You are about to delete ALL data related to
+                            <span class="font-semibold">{{ selectedFurnace }} {{ selectedMassProd }}</span>
+                            at Layer
+                            <span class="font-semibold">{{ selectedLayer }}</span>.
+                            <br><br>
+                            This action cannot be undone. Proceed?
+                        </p>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-3">
 
                             <button
-                                class="px-4 py-2 text-sm font-medium text-gray-800 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 active:scale-[0.98]"
-                                @click="openCycleEditor"
+                                @click="showProceedDeleteLayerData = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
                             >
-                                Proceed
+                                Cancel
                             </button>
 
+                            <button
+                                @click="deleteLayerDataFinal"
+                                class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                            >
+                                Yes, Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div
+                    v-if="showProceedUpdateCycleNo"
+                    class="fixed inset-0 z-50 flex items-center justify-center"
+                >
+                    <!-- Backdrop -->
+                    <div
+                        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        @click="showProceedUpdateCycleNo = false"
+                    ></div>
+
+                    <!-- Panel -->
+                    <div class="relative z-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-xl space-y-6">
+
+                        <!-- WARNING HEADER -->
+                        <div class="p-3 border border-red-200 rounded-md bg-red-50">
+                            <p class="text-sm font-bold text-red-700 uppercase">
+                                ⚠ Critical Action - Review Carefully
+                            </p>
+                            <p class="text-xs text-red-600 mt-1">
+                                You are about to modify production data. This change is permanent and cannot be undone.
+                            </p>
+                        </div>
+
+                        <!-- CURRENT VALUE -->
+                        <div class="p-3 border border-gray-200 rounded-md bg-gray-50">
+                            <p class="text-xs text-gray-500">CURRENT VALUE (will be replaced)</p>
+                            <p class="text-lg font-bold text-gray-900">
+                                {{ cycleNoToEdit }}
+                            </p>
+                        </div>
+
+                        <!-- TARGET CONTEXT -->
+                        <div class="text-sm text-gray-700">
+                            <p class="text-xs text-gray-500">Mass Production Target</p>
+                            <p class="font-semibold text-gray-900">
+                                {{ selectedFurnace }} {{ selectedMassProd }}
+                            </p>
+                        </div>
+
+                        <!-- NEW VALUE (HIGHLIGHTED STRONGLY) -->
+                        <div class="p-4 border-2 border-black rounded-md bg-white">
+                            <p class="text-xs text-gray-500 uppercase">NEW VALUE (will overwrite current)</p>
+
+                            <p class="text-2xl font-extrabold text-black mt-1">
+                                {{ newCycleNo }}
+                            </p>
+
+                            <p class="text-xs text-red-600 mt-2 font-medium">
+                                ▲ This value will replace the CURRENT cycle number above
+                            </p>
+                        </div>
+
+                        <!-- FINAL WARNING -->
+                        <p class="text-xs text-red-500 font-medium">
+                            Proceed only if you have verified the values above.
+                        </p>
+
+                        <!-- ACTIONS -->
+                        <div class="flex justify-end gap-3 pt-2">
+
+                            <button
+                                @click="showProceedUpdateCycleNo = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                @click="editCycleNo"
+                                class="px-4 py-2 text-sm font-bold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                            >
+                                CONFIRM UPDATE
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--REQUESTOR SECTION -------- REQUESTOR SECTION -------- REQUESTOR SECTION -------- REQUESTOR SECTION -------- REQUESTOR SECTION --------  REQUESTOR SECTION -------- REQUESTOR SECTION ------- -->
+
+                <div v-if="state.user && state.user.is_editing_allowed == 0" class="flex flex-row">
+
+                    <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+
+                        <!-- Title -->
+                        <h2 class="mb-6 text-sm font-semibold tracking-wide text-gray-800 uppercase">
+                            Select Mass Production Data
+                        </h2>
+
+                        <!-- Furnace -->
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Furnace
+                            </label>
+                            <select
+                                v-model="selectedFurnace"
+                                :disabled="req_isValidationSuccess"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                                <option
+                                    v-for="item in furnace_names"
+                                    :key="item"
+                                    :value="item"
+                                >
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Mass Production -->
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Mass Production Name
+                            </label>
+                            <input
+                                v-model="selectedMassProd"
+                                type="text"
+                                @input="selectedMassProd = selectedMassProd.toUpperCase()"
+                                :disabled="req_isValidationSuccess"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                placeholder="Enter name..."
+                            />
+                        </div>
+
+                        <!-- Layer -->
+                        <div v-if="!req_htInfoEditingOnly" class="mb-6">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Layer
+                            </label>
+
+                            <select
+                                v-model="selectedLayer"
+                                :disabled="req_isValidationSuccess"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                                <option value="" disabled>
+                                    Select layer
+                                </option>
+
+                                <option
+                                    v-for="item in availableLayers"
+                                    :key="item"
+                                    :value="item"
+                                >
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <label v-if="!req_isValidationSuccess" class="flex float-right mb-6 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                v-model="req_htInfoEditingOnly"
+                                class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                            <span class="text-xs text-gray-500">Heat Treatment Info editing only</span>
+                        </label>
+
+                        <div v-if="!req_isCorrectiveActionCompleted">
+                            <!-- Action -->
+                            <button
+                                v-if="req_isValidationSuccess"
+                                @click="req_cancelValidate"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md hover:bg-red-600 active:scale-[0.99]"
+                            >
+                                Cancel
+                            </button>
+
+                            <!-- Action -->
+                            <button
+                                v-else
+                                @click="req_checkValidate"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.99]"
+                            >
+                                Check/Validate
+                            </button>
+                        </div>
+
+
+                        <div v-if="req_isValidationSuccess" class="mt-10">
+
+                            <div v-if="req_htInfoEditingOnly">
+                                <p class="text-xs text-gray-500">Selected data:</p>
+                                <strong>{{ selectedFurnace }} {{ selectedMassProd }}</strong>
+                            </div>
+
+                            <div v-else>
+                                <p class="text-xs text-gray-500">Selected data:</p>
+                                Layer <strong>{{ selectedLayer }}</strong> of <strong>{{ selectedFurnace }} {{ selectedMassProd }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div v-if="req_isValidationSuccess" class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
+                        <!-- Header -->
+                        <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase ">
+                            Fill in the fields
+                        </h2>
+
+                        <!-- Reason -->
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Reason for data modification:
+                            </label>
+
+                            <textarea
+                                v-model="userReason"
+                                rows="3"
+                                :disabled="req_isCorrectiveActionCompleted"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                placeholder="Explain why the data needs to be modified..."
+                            ></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                Corrective Action (steps taken to ensure this issue does not happen again):
+                            </label>
+
+                            <textarea
+                                v-model="userCorrectiveAction"
+                                rows="4"
+                                :disabled="req_isCorrectiveActionCompleted"
+                                class="w-full px-3 py-2 text-sm text-gray-800 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                placeholder="Describe preventive steps taken..."
+                            ></textarea>
+                        </div>
+
+                        <label class="flex items-start text-xs text-gray-600 mb-4">
+                            <input :disabled="req_isCorrectiveActionCompleted" type="checkbox" v-model="userVerified" class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+                            <span v-if="state.user && state.user.access_type">
+                                I, <strong>{{ state.user.firstName }} {{ state.user.surname }}</strong>, hereby submit this modification for review by the responsible supervisor/PIC.
+                                I understand that this request will be logged and subject to audit and approval before any changes are applied.
+                            </span>
+                        </label>
+                        <div class="flex float-right">
+                            <!-- Action -->
+                            <button
+                                v-if="req_isCorrectiveActionCompleted"
+                                @click="req_cancelSubmitForm"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md hover:bg-red-600 active:scale-[0.99]"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                v-else
+                                class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                                @click="req_submitForm"
+                            >
+                                Next
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div v-if="req_isValidationSuccess && req_isCorrectiveActionCompleted" class="w-full max-w-lg p-6 bg-white border border-gray-200 ml-10 mt-10 rounded-lg shadow-sm">
+
+                        <!-- Header -->
+                        <h2 class="mb-4 text-sm font-semibold tracking-wide text-gray-800 uppercase">
+                            Choose an Action
+                        </h2>
+
+                        <div class="space-y-4">
+
+                            <!-- DANGEROUS ACTION -->
+                            <div v-if="!req_htInfoEditingOnly" class="p-4 border border-gray-300 rounded-md bg-gray-50">
+
+                                <p class="mb-3 text-sm text-gray-800">
+                                    <span class="font-semibold text-black">Delete LAYER data (FULL RESET)</span><br>
+
+                                    <span class="text-xs text-gray-600">
+                                        This action will permanently reset all mass production data for the selected layer,
+                                        including coating and film pasting (if present). All linked additional lots within this layer group will also be removed.
+                                        Initial process data will remain untouched.
+                                    </span>
+
+                                    <br>
+
+                                    <span class="text-xs text-red-600 font-medium">
+                                        Warning: This affects all connected lots under the same layer grouping.
+                                        It is strongly recommended to review the Control Sheet page before proceeding after deletion.
+                                    </span>
+                                </p>
+
+                                <button
+                                    class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                                    @click="req_proceedButton"
+                                >
+                                    Proceed
+                                </button>
+
+                            </div>
+
+                            <!-- SAFE ACTION -->
+                            <div v-if="req_htInfoEditingOnly" class="p-5 border border-gray-200 rounded-md bg-white space-y-4">
+
+                                <!-- Header -->
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">
+                                        Modify Cycle No Only
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        This will update cycle number without affecting production data.
+                                    </p>
+                                </div>
+
+                                <!-- Input -->
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-gray-600">
+                                        New Cycle No
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        v-model="newCycleNo"
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                                    />
+                                </div>
+
+                                <!-- Action -->
+                                <div class="flex justify-end">
+                                    <button
+                                        @click="req_proceedButtonCycleNo"
+                                        class="px-4 py-2 text-sm font-medium text-gray-800 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 active:scale-[0.98]"
+                                    >
+                                        Proceed
+                                    </button>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
 
-            </div>
-
-
-            <div
-                v-if="showProceedConfirmPanel"
-                class="fixed inset-0 z-50 flex items-center justify-center"
-            >
-                <!-- Backdrop -->
                 <div
-                    class="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                    @click="showProceedConfirmPanel = false"
-                ></div>
+                    v-if="req_showProceedDeleteLayerData"
+                    class="fixed inset-0 z-50 flex items-center justify-center"
+                >
+                    <!-- Backdrop -->
+                    <div
+                        class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                        @click="req_showProceedDeleteLayerData = false"
+                    ></div>
 
-                <!-- Panel -->
-                <div class="relative z-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-xl">
+                    <!-- Panel -->
+                    <div class="relative z-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-xl">
 
-                    <!-- Title -->
-                    <h2 class="mb-4 text-sm font-semibold text-gray-800 uppercase">
-                        Confirm Action
-                    </h2>
+                        <!-- Title -->
+                        <h2 class="mb-4 text-sm font-semibold text-gray-800 uppercase">
+                            Submit Deletion Request
+                        </h2>
 
-                    <!-- Message -->
-                    <p class="mb-6 text-sm leading-relaxed text-gray-700">
-                        You are about to delete ALL data related to
-                        <span class="font-semibold">{{ selectedFurnace }} {{ selectedMassProd }}</span>
-                        at Layer
-                        <span class="font-semibold">{{ selectedLayer }}</span>.
-                        <br><br>
-                        This action cannot be undone. Proceed?
-                    </p>
+                        <!-- Message -->
+                        <p class="mb-6 text-sm leading-relaxed text-gray-700">
+                            You are about to submit a request to remove all data related to
+                            <span class="font-semibold">{{ selectedFurnace }} {{ selectedMassProd }}</span>
+                            at Layer
+                            <span class="font-semibold">{{ selectedLayer }}</span>.
+                            <br><br>
+                            This request will be reviewed by the responsible supervisor/PIC.
+                            No data will be deleted unless the request is approved.
+                        </p>
 
-                    <!-- Actions -->
-                    <div class="flex justify-end gap-3">
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-3">
 
-                        <button
-                            @click="showProceedConfirmPanel = false"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
-                        >
-                            Cancel
-                        </button>
+                            <button
+                                @click="req_showProceedDeleteLayerData = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                            >
+                                Cancel
+                            </button>
 
-                        <button
-                            @click="deleteLayerData"
-                            class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
-                        >
-                            Yes, Delete
-                        </button>
+                            <button
+                                @click="req_deleteLayerDataFinal"
+                                class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                            >
+                                Submit Request
+                            </button>
+
+                        </div>
 
                     </div>
-
                 </div>
+
+
+                <div
+                    v-if="req_showProceedUpdateCycleNo"
+                    class="fixed inset-0 z-50 flex items-center justify-center"
+                >
+                    <!-- Backdrop -->
+                    <div
+                        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        @click="req_showProceedUpdateCycleNo = false"
+                    ></div>
+
+                    <!-- Panel -->
+                    <div class="relative z-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-xl space-y-6">
+
+                        <!-- HEADER -->
+                        <div class="p-3 border border-amber-200 rounded-md bg-amber-50">
+                            <p class="text-sm font-bold text-amber-700 uppercase">
+                                Submit Update Request
+                            </p>
+                            <p class="text-xs text-amber-700 mt-1">
+                                This will send a request to modify the cycle number. No changes will be applied until approved.
+                            </p>
+                        </div>
+
+                        <!-- CURRENT VALUE -->
+                        <div class="p-3 border border-gray-200 rounded-md bg-gray-50">
+                            <p class="text-xs text-gray-500">Current Cycle No</p>
+                            <p class="text-lg font-bold text-gray-900">
+                                {{ cycleNoToEdit }}
+                            </p>
+                        </div>
+
+                        <!-- TARGET CONTEXT -->
+                        <div class="text-sm text-gray-700">
+                            <p class="text-xs text-gray-500">Mass Production</p>
+                            <p class="font-semibold text-gray-900">
+                                {{ selectedFurnace }} {{ selectedMassProd }}
+                            </p>
+                        </div>
+
+                        <!-- REQUESTED VALUE -->
+                        <div class="p-4 border-2 border-black rounded-md bg-white">
+                            <p class="text-xs text-gray-500 uppercase">Requested New Cycle No</p>
+
+                            <p class="text-2xl font-extrabold text-black mt-1">
+                                {{ newCycleNo }}
+                            </p>
+
+                            <p class="text-xs text-gray-600 mt-2 font-medium">
+                                This value will replace the current cycle number upon approval.
+                            </p>
+                        </div>
+
+                        <!-- FINAL NOTE -->
+                        <p class="text-xs text-gray-600">
+                            Please review the details carefully before submitting the request.
+                        </p>
+
+                        <!-- ACTIONS -->
+                        <div class="flex justify-end gap-3 pt-2">
+
+                            <button
+                                @click="req_showProceedUpdateCycleNo = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                @click="req_editCycleNo"
+                                class="px-4 py-2 text-sm font-bold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                            >
+                                Submit Request
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
             </div>
-
-
         </div>
     </Frontend>
 </template>
 
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, nextTick, useSSRContext } from "vue";
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { useAuth } from '@/Composables/useAuth.js'
@@ -384,18 +921,29 @@ function useSessionStorage(key, state) {
     );
 }
 
-const showProceedConfirmPanel = ref(false);
+const showProceedDeleteLayerData = ref(false);
+const showProceedUpdateCycleNo = ref(false);
 const isValidationSuccess = ref(false);
 const isCorrectiveActionCompleted = ref(false);
+const htInfoEditingOnly = ref(false);
+const openDataEditorPanel = ref(false);
+
+const req_showProceedDeleteLayerData = ref(false);
+const req_showProceedUpdateCycleNo = ref(false);
+const req_isValidationSuccess = ref(false);
+const req_isCorrectiveActionCompleted = ref(false);
+const req_htInfoEditingOnly = ref(false);
 
 const userReason = ref();
 const userCorrectiveAction = ref();
-const userVerifiedBy = ref();
 const userVerified = ref(false);
 
 const selectedFurnace = ref();
 const selectedMassProd = ref();
 const selectedLayer = ref();
+const availableLayers = ref([]);
+const cycleNoToEdit = ref();
+const newCycleNo = ref();
 
 const fetchedModel = ref();
 const fetchedLotNo = ref();
@@ -426,20 +974,51 @@ const getFurnaceLists = async () => {
     }
 };
 
+watch([selectedFurnace, selectedMassProd], ([furnace, massProd]) => {
+    if (furnace && massProd) {
+        nextTick(() => {
+            checkAvailableLayers();
+        });
+    }
+});
+
+const checkAvailableLayers = async() => {
+    try{
+
+        const response = await axios.get('/api/check-validate-data-editor', {
+            params: {
+                mass_prod: selectedMassProd.value,
+                furnace: selectedFurnace.value,
+            }
+        });
+
+        availableLayers.value = response.data.available_layers ?? [];
+        console.log("Available layers: ", availableLayers.value);
+    }catch(error){
+        console.error("Failed to check avaialable layers", error);
+    }
+}
+
 const checkValidate = async() => {
     try{
-        if(!selectedFurnace.value || !selectedMassProd.value || !selectedLayer.value){
+        if(!selectedFurnace.value || !selectedMassProd.value || (htInfoEditingOnly.value && !selectedLayer.value)){
             toast.warning('Please make sure all fields are selected');
             return;
         }
 
-        const response = await axios.get('/api/check-validate-data-editor',{
+        const response = await axios.get('/api/check-validate-data-editor', {
             params: {
                 mass_prod: selectedMassProd.value,
                 furnace: selectedFurnace.value,
-                layer: String(selectedLayer.value),
+                ...(htInfoEditingOnly.value && { layer: String(selectedLayer.value) }), //Include layer only if htInfoEditingOnly is true
             }
         });
+
+        console.log("Mass Prod: ", selectedMassProd.value);
+        console.log("Furnace: ", selectedFurnace.value);
+        console.log("Selected Layer: ", selectedLayer.value);
+        console.log("htInfoEditingOnly: ", htInfoEditingOnly.value);
+        console.log("Response: ", response.data);
 
         isValidationSuccess.value = response.data.mass_prod_exists;
 
@@ -454,28 +1033,111 @@ const checkValidate = async() => {
     }
 }
 
+const req_checkValidate = async() => {
+    try{
+        if(!selectedFurnace.value || !selectedMassProd.value || (req_htInfoEditingOnly.value && !selectedLayer.value)){
+            toast.warning('Please make sure all fields are selected');
+            return;
+        }
+
+        const response = await axios.get('/api/check-validate-data-editor', {
+            params: {
+                mass_prod: selectedMassProd.value,
+                furnace: selectedFurnace.value,
+                ...(req_htInfoEditingOnly.value && { layer: String(selectedLayer.value) }), //Include layer only if htInfoEditingOnly is true
+            }
+        });
+
+        console.log("Mass Prod: ", selectedMassProd.value);
+        console.log("Furnace: ", selectedFurnace.value);
+        console.log("Selected Layer: ", selectedLayer.value);
+        console.log("htInfoEditingOnly: ", htInfoEditingOnly.value);
+        console.log("Response: ", response.data);
+
+        req_isValidationSuccess.value = response.data.mass_prod_exists;
+
+        if(req_isValidationSuccess.value){
+            toast.success('Validation Success');
+        }else{
+            toast.error('The selected data does not exists in the database');
+        }
+
+    }catch(error){
+        console.error('Validation check failed:', error.response?.data || error);
+    }
+}
+
+
 const cancelValidate = async() => {
     isValidationSuccess.value = false;
+}
+
+const req_cancelValidate = async() => {
+    req_isValidationSuccess.value = false;
+}
+
+const proceedToDataEditor = () => {
+    openDataEditorPanel.value = true;
+}
+
+const closeDataEditor = () => {
+    openDataEditorPanel.value = false;
 }
 
 const cancelSubmitForm = async() => {
     isCorrectiveActionCompleted.value = false;
 }
 
+const req_cancelSubmitForm = async() => {
+    req_isCorrectiveActionCompleted.value = false;
+}
 
-
-const proceedButton = async() =>{
+const proceedButton = async() => {
 
     if(!selectedFurnace.value && !selectedLayer.value && !selectedMassProd.value){
         toast.warning('Fill all fields before proceeding.');
         return;
     }
 
-    showProceedConfirmPanel.value = true;
+    showProceedDeleteLayerData.value = true;
+}
+
+const req_proceedButton = async() => {
+
+    if(!selectedFurnace.value && !selectedLayer.value && !selectedMassProd.value){
+        toast.warning('Fill all fields before proceeding.');
+        return;
+    }
+
+    req_showProceedDeleteLayerData.value = true;
+}
+
+const proceedButtonCycleNo = async() => {
+    try{
+        const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`);
+        //console.log('Mass Production data result: ', response.data);
+        const mp = response.data;
+        cycleNoToEdit.value = mp.cycle_no;
+        showProceedUpdateCycleNo.value = true;
+    }catch(error){
+        console.error('Failed to do initial checking for heat treatment information cycle no due to ', error);
+    }
+}
+
+const req_proceedButtonCycleNo = async() => {
+    try{
+        const response = await axios.get(`/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`);
+        //console.log('Mass Production data result: ', response.data);
+        const mp = response.data;
+        cycleNoToEdit.value = mp.cycle_no;
+        req_showProceedUpdateCycleNo.value = true;
+    }catch(error){
+        console.error('Failed to do initial checking for heat treatment information cycle no due to ', error);
+    }
 }
 
 const submitForm = async() => {
-    if(!userReason.value || !userCorrectiveAction.value || !userVerifiedBy.value ||!userVerified.value){
+    if(!userReason.value || !userCorrectiveAction.value ||!userVerified.value){
         toast.warning('Fill all fields before proceeding.');
         return;
     }
@@ -484,10 +1146,21 @@ const submitForm = async() => {
 
 }
 
-const deleteLayerData = async () => {
+const req_submitForm = async() => {
+    if(!userReason.value || !userCorrectiveAction.value ||!userVerified.value){
+        toast.warning('Fill all fields before proceeding.');
+        return;
+    }
+
+    req_isCorrectiveActionCompleted.value = true;
+
+}
+
+
+const deleteLayerDataFinal = async () => {
     try {
         const response = await axios.post(
-            "/api/mass-production/delete-layer-data",
+            "/api/mass-production/delete-layer-full",
             {
                 massprod: selectedMassProd.value,
                 furnace: selectedFurnace.value,
@@ -496,30 +1169,72 @@ const deleteLayerData = async () => {
         );
 
         if (response.data.success) {
-            await saveLog(`has removed Layer ${selectedLayer.value} data from ${selectedMassProd.value} ${selectedFurnace.value}`);
-            toast.success(
-                `Layer ${selectedLayer.value} data deleted successfully.`,
+
+            const total = response.data.total_deleted ?? 0;
+
+            await saveLog(
+                `has fully removed Layer ${selectedLayer.value} data from ${selectedMassProd.value} ${selectedFurnace.value}. Total deleted: ${total}`
             );
-            await userManageLogging(
-                `has removed Layer ${selectedLayer.value} data from ${selectedMassProd.value} | ${selectedFurnace.value} successfully.`,
-            );
+
+            toast.success(response.data.message || "Layer deleted successfully.");
+
             resetPage();
+
         } else {
-            toast.warning("No matching data found.");
+            toast.warning(response.data.message || "No matching data found.");
         }
+
     } catch (error) {
         console.error("Failed to delete layer data", error);
+
         toast.error("Failed to delete layer data.");
+
         await userErrorLogging(
             {
                 message: error.message,
                 code: error.code ?? null,
                 response: error.response?.data ?? null,
-                payload: error.response?.data ?? null,
             },
-            "deleteLayerData",
+            "deleteLayerFull",
             "Failed to delete layer data.",
         );
+    }
+};
+
+const req_deleteLayerDataFinal = async() => {
+    try{
+        const response = await axios.get('');
+    }catch(error){
+        console.error('Failed to submit delete layer data request due to', error);
+    }
+}
+
+const editCycleNo = async () => {
+    try {
+        const response = await axios.patch(
+            `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`,
+            {
+                cycle_no: cycleNo.value
+            }
+        );
+
+        toast.success('Cycle No updated successfully');
+
+    } catch (error) {
+        console.error('Failed to modify/update cycle no due to:', error);
+        toast.error('Update failed');
+    }
+};
+
+const req_editCycleNo = async () => {
+    try {
+        const response = await axios.get('');
+
+        toast.success('Cycle No modification request sent successfully');
+
+    } catch (error) {
+        console.error('Failed to request modification for cycle no due to:', error);
+        toast.error('Update failed');
     }
 };
 
@@ -531,12 +1246,11 @@ const saveLog = async(log) => {
             layer: String(selectedLayer.value),
             user_reason: userReason.value,
             user_corrective_action: userCorrectiveAction.value,
-            user_verified_by: userVerifiedBy.value,
             user_confirmation: userVerified.value,
             log_remarks: log,
         });
 
-        toast.success('Data logged successfully');
+        //toast.success('Data logged successfully');
         console.log('Data saved successfully', response.data);
 
     }catch(error){
@@ -546,12 +1260,11 @@ const saveLog = async(log) => {
 }
 
 const resetPage = () => {
-    showProceedConfirmPanel.value = false;
+    showProceedDeleteLayerData.value = false;
     isValidationSuccess.value = false;
     isCorrectiveActionCompleted.value = false;
     userReason.value = null;
     userCorrectiveAction.value = null;
-    userVerifiedBy.value = null;
     userVerified.value = null;
 }
 
@@ -562,8 +1275,8 @@ useSessionStorage("selectedMassProd", selectedMassProd);
 useSessionStorage("selectedLayer", selectedLayer);
 useSessionStorage("userReason", userReason);
 useSessionStorage("userCorrectiveAction", userCorrectiveAction);
-useSessionStorage("userVerifiedBy", userVerifiedBy);
 useSessionStorage("userVerified", userVerified);
+useSessionStorage("openDataEditorPanel",openDataEditorPanel);
 
 onMounted(async() => {
     const isAuthenticated = await checkAuthentication();
