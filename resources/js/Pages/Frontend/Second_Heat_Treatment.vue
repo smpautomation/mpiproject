@@ -1186,7 +1186,7 @@ const saveToDatabase = async () => {
             await saveInitialLot();
         }
 
-        if (!isBreaklot.value) {
+        if (isInitialLot.value) {
             await updateFormatType();
         }else{
             await breaklotAddtnlFormatType();
