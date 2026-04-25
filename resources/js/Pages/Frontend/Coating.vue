@@ -5335,7 +5335,6 @@ watch(lotNo, async (lot) => {
     if (!lot) return;
     await getAdditionalModel();
     await checkExistingAdditional();
-    await checkHt2ndGbdp();
     await getModelLists();
 });
 
@@ -5655,6 +5654,7 @@ const fetchCoatingDataSummary = async () => {
     try {
 
         await checkInitialLot();
+        await checkHt2ndGbdp();
 
         if (
             !coatingInfo.selectedFurnace ||
@@ -5795,6 +5795,7 @@ const fetchCoatingData2ndGbdpSummary = async () => {
     try {
 
         await checkInitialLot();
+        await checkHt2ndGbdp();
 
         if (
             !coatingInfo.selectedFurnace ||
