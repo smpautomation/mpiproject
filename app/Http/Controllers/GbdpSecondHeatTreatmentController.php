@@ -193,6 +193,13 @@ class GbdpSecondHeatTreatmentController extends Controller
                 ->exists();
         }
 
+        $existsInInitialLot = BreaklotInitialLotHt::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->where('layer', $layer)
+            ->where('model', $inputModel)
+            ->where('lot_no', $inputLot)
+            ->exists();
+
         $existsInSecondGbdpHt = GbdpSecondHeatTreatment::where('furnace', $furnace)
             ->where('mass_prod', $massProd)
             ->where('layer', $layer)
@@ -212,9 +219,10 @@ class GbdpSecondHeatTreatmentController extends Controller
         }
 
         return response()->json([
-            'is_breaklot'   => $isBreaklot,
-            'is_existing'   => $isExisting,
-            'do_not_proceed'=> $doNotProceed,
+            'is_breaklot'       => $isBreaklot,
+            'is_existing'       => $isExisting,
+            'is_initial_lot'    => $existsInInitialLot,
+            'do_not_proceed'    => $doNotProceed,
         ]);
     }
 

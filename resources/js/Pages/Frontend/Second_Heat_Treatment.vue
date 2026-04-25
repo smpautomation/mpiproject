@@ -841,6 +841,7 @@ const heatTreatmentInformationDetected = ref(false);
 
 const isBreaklot = ref(false);
 const isExisting = ref(false);
+const isInitialLot = ref(false);
 const doNotProceed = ref(false);
 const showModalCreate = ref(false);
 const selectedLayer_fetch = ref();
@@ -1063,7 +1064,16 @@ const finalize = () => {
                 !gbdp_1st.dateStart ||
                 !gbdp_1st.timeStart ||
                 !gbdp_1st.dateFinish ||
-                !gbdp_1st.timeFinish
+                !gbdp_1st.timeFinish ||
+
+                !gbdp_2nd.cycleNo ||
+                !gbdp_2nd.patternNo ||
+                !gbdp_2nd.cyclePattern ||
+                !gbdp_2nd.currentPattern ||
+                !gbdp_2nd.dateStart ||
+                !gbdp_2nd.timeStart ||
+                !gbdp_2nd.dateFinish ||
+                !gbdp_2nd.timeFinish
             ) {
                 toast.error(
                     "Please fill in all required Heat Treatment Info fields.",
@@ -1243,7 +1253,7 @@ const addtnl_saveToDatabase = async () => {
         );
         console.log("Data saved successfully:", response.data);
         toast.success("Data saved successfully!");
-        if (!isBreaklot.value) {
+        if (!isInitialLot.value) {
             await updateFormatType();
         }else{
             await breaklotAddtnlFormatType();
@@ -1277,6 +1287,7 @@ const checkBreaklot = async () => {
         });
         isBreaklot.value = response.data.is_breaklot;
         isExisting.value = response.data.is_existing;
+        isInitialLot.value = response.data.is_initial_lot;
         doNotProceed.value = response.data.do_not_proceed;
         console.log("isBreaklot: ", isBreaklot.value);
         console.log("isExisting: ", isExisting.value);
@@ -1312,11 +1323,11 @@ const updateFormatType = async () => {
 const breaklotAddtnlFormatType = async() => {
     try{
         const response = await axios.post('/api/breaklot_addtnl_format_types', {
-            furnace: mpcsbl.selectedFurnace,
-            mass_prod: mpcsbl.selectedMassProd,
-            layer: firstLayerSelected.value,
-            model: mpcsbl.selectedModel,
-            lot_no: mpcsbl.lotNo,
+            furnace: selectedFurnace.value,
+            mass_prod: selectedMassProd.value,
+            layer: selectedLayer.value,
+            model: selectedModel.value,
+            lot_no: selectedLotNo.value,
             format_type: "1st and 2nd Gbdp",
         });
 
