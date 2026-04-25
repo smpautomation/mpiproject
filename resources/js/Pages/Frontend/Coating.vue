@@ -4457,7 +4457,7 @@ const checkExistingAdditional = async () => {
         }
     } catch (error) {
         console.error("Failed to check existing additionals", error);
-        toast.error("Failed to verify Lot Number.");
+        //toast.error("Failed to verify Lot Number.");
     }
 };
 
@@ -5369,6 +5369,8 @@ watch(
         // Fetch existing layers whenever any value changes
         await fetchExistingLayers();
         await getSelectedMassProdData();
+        await checkInitialLot();
+
 
         console.log(
             `Selected Furnace: ${newFurnace}, MassProd: ${newMassProd}, Layer: ${newLayer}, ` +

@@ -1193,7 +1193,10 @@ class MassProductionController extends Controller
                         'model' => $lot->model,
                         'lot_no' => $lot->lot_no,
                         'heat_treatment_completed' => !empty($layer_json),
-                        'second_heat_treatment_completed' => $secondHeatTreatmentBreaklotCompleted,
+                        'second_heat_treatment_completed' => BreaklotSecondHeatTreatment::where('furnace', $furnace)
+                            ->where('mass_prod', $massprod)
+                            ->where('layer', $layer_no)
+                            ->exists(),
                         'coating_completed' => BreaklotCoating::where('furnace', $furnace)
                             ->where('mass_prod', $massprod)
                             ->where('layer', $layer_no)

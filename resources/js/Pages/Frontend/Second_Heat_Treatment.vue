@@ -482,18 +482,20 @@
                 <div class="flex flex-row items-center space-x-4">
                     <button
                         @click="finalize"
-                        :disabled="isExisting"
+                        :disabled="isExisting || doNotProceed"
                         class="px-4 py-2 text-sm font-bold transition-all duration-300 transform rounded-xl focus:outline-none focus:ring-4 focus:ring-opacity-50"
                         :class="
-                            isExisting
+                            (isExisting || doNotProceed)
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
                                 : 'text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 hover:shadow-xl hover:scale-105 active:scale-95 shadow-md focus:ring-teal-400'
                         "
                     >
                         {{
-                            isExisting
-                                ? "THE SELECTED DATA ALREADY EXISTS"
-                                : "SUBMIT"
+                            doNotProceed
+                                ? "DATA DOES NOT EXIST IN CONTROL SHEET"
+                                : isExisting
+                                    ? "THE SELECTED DATA ALREADY EXISTS"
+                                    : "SUBMIT"
                         }}
                     </button>
 
@@ -839,6 +841,7 @@ const heatTreatmentInformationDetected = ref(false);
 
 const isBreaklot = ref(false);
 const isExisting = ref(false);
+const doNotProceed = ref(false);
 const showModalCreate = ref(false);
 const selectedLayer_fetch = ref();
 const selectedMassProd_fetch = ref();
@@ -1124,7 +1127,7 @@ const saveInitialLot = async () => {
 };
 
 const saveToDatabase = async () => {
-    await checkBreaklot();
+    //await checkBreaklot();
 
     // 🔒 SNAPSHOT (immutable during execution)
     const snapshot = {
@@ -1195,7 +1198,7 @@ const saveToDatabase = async () => {
 };
 
 const addtnl_saveToDatabase = async () => {
-    await checkBreaklot();
+    //await checkBreaklot();
     // Base payload
     const dataPayload = {
         furnace: selectedFurnace.value,
@@ -1272,8 +1275,9 @@ const checkBreaklot = async () => {
                 lot_no: selectedLotNo.value,
             },
         });
-        isBreaklot.value = response.data.is_breaklot_2ndgbdp;
+        isBreaklot.value = response.data.is_breaklot;
         isExisting.value = response.data.is_existing;
+        doNotProceed.value = response.data.do_not_proceed;
         console.log("isBreaklot: ", isBreaklot.value);
         console.log("isExisting: ", isExisting.value);
     } catch (error) {
@@ -1350,9 +1354,9 @@ onMounted(async () => {
     await getFurnaceLists();
     await getGraphPatterns();
     await getCurrentMassProdData();
-    await checkBreaklot();
     await checkInitialLot();
     //await get1st2ndGBDPModels();
+    await checkBreaklot();
 });
 </script>
 

@@ -113,54 +113,109 @@ class GbdpSecondHeatTreatmentController extends Controller
 
     public function checkBreaklot(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'furnace'   => 'required|string|max:255',
             'mass_prod' => 'required|string|max:255',
             'layer'     => 'required',
-            'model'     => 'required|string|max:255',
-            'lot_no'    => 'required|string|max:255'
+
+            'model'     => 'sometimes|nullable|string|max:255',
+            'lot_no'    => 'sometimes|nullable|string|max:255',
         ]);
 
-        $layerRaw = (string) $request->layer;
+        $furnace  = $validated['furnace'];
+        $massProd = $validated['mass_prod'];
+        $layer    = trim($validated['layer']);
 
-        // 1. BreaklotSecond (strict)
-        $existsInBreaklotSecond = BreaklotSecondHeatTreatment::where('furnace', $request->furnace)
-            ->where('mass_prod', $request->mass_prod)
-            ->where('layer', $layerRaw)
-            ->where('model', $request->model)
-            ->where('lot_no', $request->lot_no)
+        $normalizedLayer = str_replace('.', '_', $layer);
+        $column = 'layer_' . $normalizedLayer;
+
+        $prod = MassProduction::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->first();
+
+        if (!$prod || empty($prod->$column)) {
+            return response()->json([
+                'is_breaklot'   => false,
+                'is_existing'   => false,
+                'do_not_proceed'=> false,
+            ]);
+        }
+
+        $layerData = json_decode($prod->$column, true);
+
+        if (!is_array($layerData)) {
+            return response()->json([
+                'is_breaklot'   => false,
+                'is_existing'   => false,
+                'do_not_proceed'=> false,
+            ]);
+        }
+
+        $modelRow = [];
+        $lotRow   = [];
+
+        foreach ($layerData as $row) {
+            if (($row['rowTitle'] ?? null) === 'MODEL:') {
+                $modelRow = $row['data'] ?? [];
+            }
+
+            if (($row['rowTitle'] ?? null) === 'LT. No.:') {
+                $lotRow = $row['data'] ?? [];
+            }
+        }
+
+        $pairs = [];
+
+        foreach ($modelRow as $box => $model) {
+            $lot = $lotRow[$box] ?? null;
+
+            $model = trim((string) $model);
+            $lot   = trim((string) $lot);
+
+            if ($model !== '' && $lot !== '') {
+                $pairs["{$model}|{$lot}"] = true;
+            }
+        }
+
+        $isBreaklot = count($pairs) > 1;
+
+        $inputModel = $validated['model'] ?? null;
+        $inputLot   = $validated['lot_no'] ?? null;
+
+        $existsInBreaklotSecond = false;
+
+        if ($inputModel && $inputLot) {
+            $existsInBreaklotSecond = BreaklotSecondHeatTreatment::where('furnace', $furnace)
+                ->where('mass_prod', $massProd)
+                ->where('layer', $layer)
+                ->where('model', $inputModel)
+                ->where('lot_no', $inputLot)
+                ->exists();
+        }
+
+        $existsInSecondGbdpHt = GbdpSecondHeatTreatment::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->where('layer', $layer)
             ->exists();
 
-        // BreaklotInitial (strict)
-        $existsInInitial = BreaklotInitialLotHt::where('furnace', $request->furnace)
-            ->where('mass_prod', $request->mass_prod)
-            ->where('layer', $layerRaw)
-            ->exists();
-
-        Log::info('checkBreaklot - existsInInitial check', [
-            'furnace' => $request->furnace,
-            'mass_prod' => $request->mass_prod,
-            'layer' => $layerRaw,
-            'model' => $request->model,
-            'lot_no' => $request->lot_no,
-            'existsInInitial' => $existsInInitial,
-        ]);
-
-        // GBDP Second HT
-        $existsInSecondGbdpHt = GbdpSecondHeatTreatment::where('furnace', $request->furnace)
-            ->where('mass_prod', $request->mass_prod)
-            ->where('layer', $layerRaw)
-            ->exists();
-
-        // FINAL
-        $isBreaklot = $existsInInitial;
-        $isBreaklot2ndgbdp = $existsInInitial && ($existsInBreaklotSecond || $existsInSecondGbdpHt);
         $isExisting = $existsInBreaklotSecond || $existsInSecondGbdpHt;
 
+        // NEW RULE: validate pair existence in derived dataset
+        $doNotProceed = false;
+
+        if ($inputModel && $inputLot) {
+            $key = "{$inputModel}|{$inputLot}";
+
+            if (!isset($pairs[$key])) {
+                $doNotProceed = true;
+            }
+        }
+
         return response()->json([
-            'is_breaklot' => $isBreaklot,
-            'is_breaklot_2ndgbdp' => $isBreaklot2ndgbdp,
-            'is_existing' => $isExisting,
+            'is_breaklot'   => $isBreaklot,
+            'is_existing'   => $isExisting,
+            'do_not_proceed'=> $doNotProceed,
         ]);
     }
+
 }

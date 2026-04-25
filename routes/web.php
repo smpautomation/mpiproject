@@ -51,7 +51,6 @@ Route::get('/film_pasting', [FrontendController::class, 'filmPasting'])->name('f
 Route::get('/approval_checked', [FrontendController::class, 'approval_checked'])->name('approval_checked');
 Route::get('/approval_prepared', [FrontendController::class, 'approval_prepared'])->name('approval_prepared');
 Route::get('/data_editor', [FrontendController::class, 'data_editor'])->name('data_editor');
-
 Route::get('/generate-pdf', [PdfController::class, 'generate']);
 
 
