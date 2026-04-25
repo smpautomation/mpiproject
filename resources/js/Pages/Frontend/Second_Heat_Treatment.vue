@@ -1253,7 +1253,7 @@ const addtnl_saveToDatabase = async () => {
         );
         console.log("Data saved successfully:", response.data);
         toast.success("Data saved successfully!");
-        if (!isInitialLot.value) {
+        if (isInitialLot.value) {
             await updateFormatType();
         }else{
             await breaklotAddtnlFormatType();
