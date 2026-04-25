@@ -15,6 +15,10 @@
                             Options
                         </h2>
 
+                        <div>
+                            {{ isInitialLot }}
+                        </div>
+
                         <!-- Body -->
                         <div class="flex items-center space-x-4">
                             <!-- Icon -->
@@ -668,7 +672,7 @@
                             </button>
 
                             <button
-                                v-if="isBreaklot"
+                                v-if="!isInitialLot"
                                 @click="addtnl_saveToDatabase()"
                                 class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden"
                             >
@@ -1186,11 +1190,7 @@ const saveToDatabase = async () => {
             await saveInitialLot();
         }
 
-        if (isInitialLot.value) {
-            await updateFormatType();
-        }else{
-            await breaklotAddtnlFormatType();
-        }
+        await updateFormatType();
 
         await userManageLogging(
             `created 2nd Gbdp HT Data for Mass Prod: ${snapshot.mass_prod} Layer: ${snapshot.layer} successfully.`,
@@ -1253,11 +1253,9 @@ const addtnl_saveToDatabase = async () => {
         );
         console.log("Data saved successfully:", response.data);
         toast.success("Data saved successfully!");
-        if (isInitialLot.value) {
-            await updateFormatType();
-        }else{
-            await breaklotAddtnlFormatType();
-        }
+
+        await breaklotAddtnlFormatType();
+
         showModalCreate.value = false;
         await userManageLogging(
             "created 2nd Gbdp HT Data for Mass Prod: " +

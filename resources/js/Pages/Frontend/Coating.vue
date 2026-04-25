@@ -4444,6 +4444,7 @@ const checkExistingAdditional = async () => {
                     mass_prod: coatingInfo.selectedMassProd,
                     furnace: coatingInfo.selectedFurnace,
                     layer: coatingInfo.selectedLayer,
+                    model: coatingInfo.selectedModel,
                     lot_no: lotNo.value,
                 },
             },
@@ -5654,6 +5655,7 @@ const fetchCoatingDataSummary = async () => {
     try {
 
         await checkInitialLot();
+        //await checkExistingAdditional();
         //await checkHt2ndGbdp();
 
         if (
@@ -5796,6 +5798,7 @@ const fetchCoatingData2ndGbdpSummary = async () => {
 
         await checkInitialLot();
         await checkHt2ndGbdp();
+        //await checkExistingAdditional();
 
         if (
             !coatingInfo.selectedFurnace ||
