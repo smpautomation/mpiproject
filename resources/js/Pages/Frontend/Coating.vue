@@ -5654,7 +5654,7 @@ const fetchCoatingDataSummary = async () => {
     try {
 
         await checkInitialLot();
-        await checkHt2ndGbdp();
+        //await checkHt2ndGbdp();
 
         if (
             !coatingInfo.selectedFurnace ||
