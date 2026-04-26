@@ -1979,7 +1979,7 @@ const renderChart = () => {
     }
 
     // =========================
-    // EXCEL OFFSET RULES (DATA LAYER ONLY)
+    // DATA PREPARATION
     // =========================
     const offsets = [
         0, 2000, 4000, 6000, 8000,
@@ -1991,36 +1991,17 @@ const renderChart = () => {
     const chartDatasets = datasets.value.map((dataset, index) => {
         const offset = offsets[index] ?? index * 2000;
 
-        const points = [];
-
-        for (let i = 0; i < dataset.xAxis.length; i++) {
-            const x = dataset.xAxis[i];
+        const points = dataset.xAxis.map((x, i) => {
             const y = dataset.yAxis[i];
 
-            // =========================
-            // EXCEL NA BEHAVIOR
-            // =========================
-            if (x === null || y === null) {
-                points.push({ x: null, y: null });
-                continue;
-            }
+            if (x === null || y === null) return { x: null, y: null };
+            if (x >= 10000 || y <= -1000) return { x: null, y: null };
 
-            // =========================
-            // EXCEL VALIDATION RULE
-            // =========================
-            if (x >= 10000 || y <= -1000) {
-                points.push({ x: null, y: null });
-                continue;
-            }
-
-            // =========================
-            // APPLY OFFSET
-            // =========================
-            points.push({
+            return {
                 x: x + offset,
                 y: y - offset,
-            });
-        }
+            };
+        });
 
         return {
             label: `Dataset ${index + 1}`,
@@ -2034,14 +2015,14 @@ const renderChart = () => {
     });
 
     // =========================
-    // SAFE CHART INSTANCE CONTROL
+    // DESTROY OLD INSTANCE
     // =========================
     if (window.__chartInstance) {
         window.__chartInstance.destroy();
     }
 
     // =========================
-    // SCALE REFERENCE PLUGIN (UNCHANGED)
+    // SCALE PLUGIN (UNCHANGED)
     // =========================
     const scaleReferencePlugin = {
         id: "scaleReference",
@@ -2064,9 +2045,6 @@ const renderChart = () => {
             const getTickValue = (tick) =>
                 typeof tick === "object" ? tick.value : tick;
 
-            // =========================
-            // X AXIS
-            // =========================
             if (xScale.ticks.length >= 2) {
                 const xStep =
                     xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
@@ -2090,95 +2068,88 @@ const renderChart = () => {
                     }
                 });
 
-                const baseX_X =
+                const baseX =
                     xScale.getPixelForValue(closestValue) - xLength;
-                const baseY_X = yBottomPixel - inset;
+                const baseY = yBottomPixel - inset;
 
                 ctx.beginPath();
-                ctx.moveTo(baseX_X, baseY_X);
-                ctx.lineTo(baseX_X + xLength, baseY_X);
+                ctx.moveTo(baseX, baseY);
+                ctx.lineTo(baseX + xLength, baseY);
                 ctx.stroke();
 
-                // X arrowhead (right side)
                 ctx.beginPath();
-                ctx.moveTo(baseX_X + xLength, baseY_X);
-                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
-                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                ctx.moveTo(baseX + xLength, baseY);
+                ctx.lineTo(baseX + xLength - arrowHeadSize, baseY - arrowHeadSize / 2);
+                ctx.lineTo(baseX + xLength - arrowHeadSize, baseY + arrowHeadSize / 2);
                 ctx.closePath();
                 ctx.fill();
 
-                // LEFT arrowhead
                 ctx.beginPath();
-                ctx.moveTo(baseX_X, baseY_X);
-                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
-                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                ctx.moveTo(baseX, baseY);
+                ctx.lineTo(baseX + arrowHeadSize, baseY - arrowHeadSize / 2);
+                ctx.lineTo(baseX + arrowHeadSize, baseY + arrowHeadSize / 2);
                 ctx.closePath();
                 ctx.fill();
 
-                const xLabel = "4 kOe";
-                const xLabelWidth = ctx.measureText(xLabel).width;
-
-                ctx.fillText(
-                    xLabel,
-                    baseX_X + xLength / 2 - xLabelWidth / 2,
-                    baseY_X - 10,
-                );
+                const label = "4 kOe";
+                const w = ctx.measureText(label).width;
+                ctx.fillText(label, baseX + xLength / 2 - w / 2, baseY - 10);
             }
-
-            // =========================
-            // Y AXIS
-            // =========================
-            const yLength = -0.1;
-            const baseX_Y =
-                xScale.getPixelForValue(xScale.max) - inset + spacing;
-            const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
-
-            ctx.beginPath();
-            ctx.moveTo(baseX_Y, baseY_Y);
-            ctx.lineTo(baseX_Y, baseY_Y - yLength);
-            ctx.stroke();
-
-            // TOP arrowhead
-            ctx.beginPath();
-            ctx.moveTo(baseX_Y, baseY_Y - yLength);
-            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
-            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
-            ctx.closePath();
-            ctx.fill();
-
-            // BOTTOM arrowhead
-            ctx.beginPath();
-            ctx.moveTo(baseX_Y, baseY_Y);
-            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - arrowHeadSize);
-            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - arrowHeadSize);
-            ctx.closePath();
-            ctx.fill();
-
-            const yLabel = "4 kG";
-            const yLabelWidth = ctx.measureText(yLabel).width;
-
-            ctx.fillText(
-                yLabel,
-                baseX_Y - yLabelWidth / 2,
-                baseY_Y - 10,
-            );
 
             ctx.restore();
         },
     };
 
+    // =========================
+    // CAPTURE PLUGIN (FINAL)
+    // =========================
+    let captured = false;
+
+    const capturePlugin = {
+        id: "capture",
+        afterDraw(chart) {
+            if (captured) return;
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+
+                    chart.resize();
+                    chart.update();
+
+                    const imageData = chart.canvas.toDataURL("image/png");
+
+                    const csrfToken = document.querySelector(
+                        'meta[name="csrf-token"]',
+                    )?.content;
+
+                    fetch("/upload-chart-sec", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrfToken || "",
+                        },
+                        body: JSON.stringify({
+                            image: imageData,
+                            filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`,
+                        }),
+                    }).catch(err => console.error("Chart upload failed:", err));
+
+                    captured = true;
+                });
+            });
+        },
+    };
+
+    // =========================
+    // INIT CHART
+    // =========================
     try {
         window.__chartInstance = new Chart(ctx, {
             type: "line",
-            data: {
-                datasets: chartDatasets,
-            },
+            data: { datasets: chartDatasets },
             options: {
                 responsive: true,
-                animation: {
-                    duration: 1000,
-                    easing: "easeOutQuart",
-                },
+                animation: false,
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -2191,25 +2162,17 @@ const renderChart = () => {
                 scales: {
                     x: {
                         type: "linear",
-                        position: "bottom",
-                        grid: { color: "rgba(0, 0, 0, 0.1)" },
-                        ticks: {
-                            stepSize: 2000,
-                            display: false,
-                        },
+                        grid: { color: "rgba(0,0,0,0.1)" },
+                        ticks: { stepSize: 2000, display: false },
                     },
                     y: {
                         type: "linear",
-                        position: "left",
-                        grid: { color: "rgba(0, 0, 0, 0.1)" },
-                        ticks: {
-                            stepSize: 2000,
-                            display: false,
-                        },
+                        grid: { color: "rgba(0,0,0,0.1)" },
+                        ticks: { stepSize: 2000, display: false },
                     },
                 },
             },
-            plugins: [scaleReferencePlugin],
+            plugins: [scaleReferencePlugin, capturePlugin],
         });
     } catch (error) {
         console.error("Error initializing Chart.js:", error);
@@ -2225,30 +2188,6 @@ const renderChart = () => {
             "Error rendering graph",
         );
     }
-
-    // =========================
-    // EXPORT IMAGE
-    // =========================
-    setTimeout(() => {
-        const canvas = myChartCanvas.value;
-        const imageData = canvas.toDataURL("image/png");
-
-        const csrfToken = document.querySelector(
-            'meta[name="csrf-token"]',
-        )?.content;
-
-        fetch("/upload-chart-sec", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken || "",
-            },
-            body: JSON.stringify({
-                image: imageData,
-                filename: `chart_${currentSerialSelected.value}_set${highest_setNo.value}.png`,
-            }),
-        }).catch(err => console.error("Chart upload failed:", err));
-    }, 1000);
 };
 
 

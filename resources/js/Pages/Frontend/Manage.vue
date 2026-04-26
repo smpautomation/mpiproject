@@ -3988,14 +3988,13 @@ const renderChart = () => {
     }
 
     const ctx = myChartCanvas.value.getContext("2d");
-
     if (!ctx) {
         console.error("Failed to get 2D context for canvas.");
         return;
     }
 
     // =========================
-    // EXCEL OFFSET RULES (DATA LAYER ONLY)
+    // EXCEL OFFSET RULES
     // =========================
     const offsets = [
         0, 2000, 4000, 6000, 8000,
@@ -4005,38 +4004,24 @@ const renderChart = () => {
     ];
 
     const chartDatasets = datasets.value.map((dataset, index) => {
-        const offset = offsets[index]; // STRICT: no fallback
+        const offset = offsets[index] ?? index * 2000;
 
-        const points = [];
-
-        for (let i = 0; i < dataset.xAxis.length; i++) {
-            const x = dataset.xAxis[i];
+        const points = dataset.xAxis.map((x, i) => {
             const y = dataset.yAxis[i];
 
-            // =========================
-            // EXCEL: NA BEHAVIOR
-            // =========================
             if (x === null || y === null) {
-                points.push({ x: null, y: null });
-                continue;
+                return { x: null, y: null };
             }
 
-            // =========================
-            // EXCEL VALIDATION RULE
-            // =========================
             if (x >= 10000 || y <= -1000) {
-                points.push({ x: null, y: null });
-                continue;
+                return { x: null, y: null };
             }
 
-            // =========================
-            // EXCEL OFFSET APPLICATION (SYMMETRIC MODEL)
-            // =========================
-            points.push({
+            return {
                 x: x + offset,
-                y: y - offset, // IMPORTANT: mirrors Excel behavior
-            });
-        }
+                y: y - offset,
+            };
+        });
 
         return {
             label: `Dataset ${index + 1}`,
@@ -4050,14 +4035,27 @@ const renderChart = () => {
     });
 
     // =========================
-    // DESTROY OLD INSTANCE (SAFE)
+    // CLEAN INSTANCE CONTROL
     // =========================
     if (window.__chartInstance) {
         window.__chartInstance.destroy();
     }
 
     // =========================
-    // SCALE REFERENCE PLUGIN (UNCHANGED)
+    // RENDER SYNC FLAG
+    // =========================
+    let chartRendered = false;
+    let captureDone = false;
+
+    const renderCompletePlugin = {
+        id: "renderComplete",
+        afterDraw() {
+            chartRendered = true;
+        },
+    };
+
+    // =========================
+    // SCALE OVERLAY (UNCHANGED LOGIC)
     // =========================
     const scaleReferencePlugin = {
         id: "scaleReference",
@@ -4080,9 +4078,7 @@ const renderChart = () => {
             const getTickValue = (tick) =>
                 typeof tick === "object" ? tick.value : tick;
 
-            // =========================
             // X AXIS
-            // =========================
             if (xScale.ticks.length >= 2) {
                 const xStep =
                     xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
@@ -4090,8 +4086,7 @@ const renderChart = () => {
 
                 const xLength = 1.5 * xStep;
                 const yBottomPixel = yScale.getPixelForValue(yScale.min);
-                const targetPixelX =
-                    xScale.getPixelForValue(xScale.max) - inset;
+                const targetPixelX = xScale.getPixelForValue(xScale.max) - inset;
 
                 let closestValue = getTickValue(xScale.ticks[0]);
                 let minDistance = Infinity;
@@ -4106,8 +4101,7 @@ const renderChart = () => {
                     }
                 });
 
-                const baseX_X =
-                    xScale.getPixelForValue(closestValue) - xLength;
+                const baseX_X = xScale.getPixelForValue(closestValue) - xLength;
                 const baseY_X = yBottomPixel - inset;
 
                 ctx.beginPath();
@@ -4115,7 +4109,6 @@ const renderChart = () => {
                 ctx.lineTo(baseX_X + xLength, baseY_X);
                 ctx.stroke();
 
-                // X arrowhead (right side)
                 ctx.beginPath();
                 ctx.moveTo(baseX_X + xLength, baseY_X);
                 ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
@@ -4123,7 +4116,6 @@ const renderChart = () => {
                 ctx.closePath();
                 ctx.fill();
 
-                // LEFT arrowhead
                 ctx.beginPath();
                 ctx.moveTo(baseX_X, baseY_X);
                 ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
@@ -4137,16 +4129,13 @@ const renderChart = () => {
                 ctx.fillText(
                     xLabel,
                     baseX_X + xLength / 2 - xLabelWidth / 2,
-                    baseY_X - 10,
+                    baseY_X - 10
                 );
             }
 
-            // =========================
             // Y AXIS
-            // =========================
             const yLength = -0.1;
-            const baseX_Y =
-                xScale.getPixelForValue(xScale.max) - inset + spacing;
+            const baseX_Y = xScale.getPixelForValue(xScale.max) - inset + spacing;
             const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
 
             ctx.beginPath();
@@ -4154,7 +4143,6 @@ const renderChart = () => {
             ctx.lineTo(baseX_Y, baseY_Y - yLength);
             ctx.stroke();
 
-            // TOP arrowhead
             ctx.beginPath();
             ctx.moveTo(baseX_Y, baseY_Y - yLength);
             ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
@@ -4162,7 +4150,6 @@ const renderChart = () => {
             ctx.closePath();
             ctx.fill();
 
-            // BOTTOM arrowhead
             ctx.beginPath();
             ctx.moveTo(baseX_Y, baseY_Y);
             ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - arrowHeadSize);
@@ -4176,7 +4163,7 @@ const renderChart = () => {
             ctx.fillText(
                 yLabel,
                 baseX_Y - yLabelWidth / 2,
-                baseY_Y - 10,
+                baseY_Y - 10
             );
 
             ctx.restore();
@@ -4193,10 +4180,7 @@ const renderChart = () => {
         },
         options: {
             responsive: true,
-            animation: {
-                duration: 1000,
-                easing: "easeOutQuart",
-            },
+            animation: false,
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -4227,34 +4211,51 @@ const renderChart = () => {
                 },
             },
         },
-        plugins: [scaleReferencePlugin],
+        plugins: [scaleReferencePlugin, renderCompletePlugin],
     });
 
     // =========================
-    // EXPORT IMAGE
+    // FINAL CAPTURE (FRAME-SYNCHRONIZED)
     // =========================
-    setTimeout(() => {
-        const canvas = myChartCanvas.value;
-        const imageData = canvas.toDataURL("image/jpeg", 0.7);
+    const waitForRender = () => {
+        if (captureDone) return;
 
-        const csrfToken = document.querySelector(
-            'meta[name="csrf-token"]',
-        )?.content;
+        if (!chartRendered) {
+            requestAnimationFrame(waitForRender);
+            return;
+        }
 
-        fetch("/upload-chart", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken || "",
-            },
-            body: JSON.stringify({
-                image: imageData,
-                filename: `chart_${serialNo.value}.jpg`,
-            }),
-        }).catch((err) =>
-            console.error("Chart upload failed:", err),
-        );
-    }, 1000);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                const canvas = myChartCanvas.value;
+                if (!canvas) return;
+
+                const imageData = canvas.toDataURL("image/jpeg", 0.7);
+
+                const csrfToken = document.querySelector(
+                    'meta[name="csrf-token"]'
+                )?.content;
+
+                fetch("/upload-chart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken || "",
+                    },
+                    body: JSON.stringify({
+                        image: imageData,
+                        filename: `chart_${serialNo.value}.jpg`,
+                    }),
+                }).catch((err) =>
+                    console.error("Chart upload failed:", err)
+                );
+
+                captureDone = true;
+            });
+        });
+    };
+
+    waitForRender();
 };
 
 // Define props that Inertia will pass to the component
