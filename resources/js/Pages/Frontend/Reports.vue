@@ -2529,7 +2529,8 @@
                                         </tr>
                                         <!-- Reset Button with Confirmation -->
                                         <div
-                                            v-if="!confirmReset"
+                                            v-if="!confirmReset &&
+                                                preparedByButton"
                                             class="text-center"
                                         >
                                             <button
@@ -2542,7 +2543,8 @@
 
                                         <!-- Confirmation Prompt -->
                                         <div
-                                            v-else
+                                            v-else-if="confirmReset &&
+                                                preparedByButton"
                                             class="flex items-center justify-center gap-2 mt-1"
                                         >
                                             <span
@@ -3027,7 +3029,8 @@
                                             </td>
                                         </tr>
                                         <div
-                                            v-if="!confirmResetSeg"
+                                            v-if="!confirmResetSeg &&
+                                                preparedByButton"
                                             class="text-center"
                                         >
                                             <button
@@ -3039,7 +3042,10 @@
                                         </div>
 
                                         <div
-                                            v-else
+                                            v-else-if="
+                                                confirmResetSeg &&
+                                                preparedByButton
+                                            "
                                             class="flex items-center justify-center gap-2 mt-1"
                                         >
                                             <span
@@ -3488,6 +3494,10 @@
                                         Waiting for stamp...
                                     </span>
                                 </div>
+
+
+
+
                                 <span
                                     v-show="approvedByStampPhoto"
                                     class="flex flex-col items-center justify-center w-40 h-40 text-2xl font-extrabold text-center text-red-600 bg-center bg-no-repeat"
@@ -5276,6 +5286,7 @@ const showPreparedByDefault = ref(true);
 
 const preparedByStampConfirmation = ref(false);
 const checkedByStampConfirmation = ref(false);
+const approvedByStampConfirmation = ref(false);
 
 const preparedByButton = ref(false);
 const checkedByButton = ref(false);
@@ -6230,6 +6241,7 @@ const resetReportBHData = async () => {
 
 const confirmResetSeg = ref(false);
 const confirmResetTsi = ref(false);
+const confirmResetVt = ref(false);
 
 // IMAGE HANDLING --- IMAGE HANDLING ---  IMAGE HANDLING --- IMAGE HANDLING --- IMAGE HANDLING --- IMAGE HANDLING --- START
 
@@ -6306,6 +6318,8 @@ const resetReportBHSegData = async () => {
     await saveReport();
 };
 
+
+
 const resetReportTsiData = async () => {
     reportTsi_samplesQty.value = 0;
     reportTsi_GxResults.value = [];
@@ -6326,6 +6340,17 @@ const isBHFail = computed(() => {
         reportBH_results.value.length === 0 ||
         reportBH_results.value.some(
             (sample) => sample < reportBH_dataStandard.value
+        )
+    );
+});
+
+const isVTHFail = computed(() => {
+    if (!showVTData.value) return false;
+
+    return (
+        reportVT_iHcResults.value.length === 0 ||
+        reportVT_iHcResults.value.some(
+            (sample) => sample < reportVT_iHc.value
         )
     );
 });
@@ -6383,37 +6408,19 @@ watchEffect(() => {
 
 //FOR VT - models DNS-0A54G, MIE-0751G, MIS-0766G
 watch(
-    [
-        reportVT_iHcResults,
-        reportVT_iHc,
-        reportVT_remarks,
-        reportSMPJudgement,
-        showVTData,
-    ],
-    () => {
-        if (
-            noteReasonForReject.value.includes("- N.G iHc") &&
-            showVTData.value === true
-        ) {
-            if (
-                reportVT_iHcResults.value.length == 0 ||
-                reportVT_iHcResults.value.some(
-                    (sample) => sample < reportVT_iHc.value,
-                )
-            ) {
-                //console.log('One or more samples below threshold — NG');
-                reportVT_remarks.value = "NG";
-                reportSMPJudgement.value = "REJECT";
-            } else {
-                //console.log('All samples OK');
-                reportVT_remarks.value = "OK";
-                reportSMPJudgement.value = "HOLD";
-            }
+    isVTHFail,
+    (fail) => {
+        if (!noteReasonForReject.value.includes("- N.G iHc")) return;
+
+        if (fail) {
+            reportVT_remarks.value = "NG";
+            reportSMPJudgement.value = "REJECT";
         } else {
-            //console.warn('Conditions not met: skipping check');
+            reportVT_remarks.value = "OK";
+            reportSMPJudgement.value = "HOLD";
         }
     },
-    { immediate: true },
+    { immediate: true }
 );
 
 watch(
@@ -8386,7 +8393,7 @@ const showReportData = async () => {
         reportRemarks3.value = record.remarks3;
         reportExistingSMPJudgement.value = record.smp_judgement;
         modifiedSMPJudgement.value = record.modified_smp_judgement;
-        reportSMPJudgement.value = record.smp_judgement;
+        //reportSMPJudgement.value = record.smp_judgement;
         preparedByPerson.value = record.prepared_by;
         checkedByPerson.value = record.checked_by;
         approvedByPerson.value = record.approved_by;
