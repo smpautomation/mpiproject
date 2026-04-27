@@ -19,7 +19,10 @@ return new class extends Migration
             $table->string('current_data');
             $table->string('new_data');
             $table->string('target_column');
+            $table->text('reason');
+            $table->text('corrective_action');
             $table->string('request_by');
+            $table->string('status');
         });
     }
 

@@ -12,7 +12,7 @@ class LayerDeleteRequestController extends Controller
      */
     public function index()
     {
-        //
+        return LayerDeleteRequest::all();
     }
 
     /**
@@ -28,7 +28,19 @@ class LayerDeleteRequestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod'         => 'required|string',
+            'furnace'           => 'required|string',
+            'layer'             => 'required|string',
+            'reason'            => 'required|string',
+            'corrective_action' => 'required|string',
+            'request_by'        => 'required|string',
+            'status'            => 'required|string'
+        ]);
+
+        $record = LayerDeleteRequest::create($validated);
+
+        return response()->json($record, 201);
     }
 
     /**

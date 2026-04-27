@@ -12,52 +12,47 @@ class FieldEditRequestController extends Controller
      */
     public function index()
     {
-        //
+        return FieldEditRequest::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'mass_prod'         => 'required|string',
+            'furnace'           => 'required|string',
+            'current_data'      => 'required|string',
+            'new_data'          => 'required|string',
+            'target_column'     => 'required|string',
+            'reason'            => 'required|string',
+            'corrective_action' => 'required|string',
+            'request_by'        => 'required|string',
+            'status'            => 'required|string'
+        ]);
+
+        $record = FieldEditRequest::create($validated);
+
+        return response()->json($record, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(FieldEditRequest $fieldEditRequest)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(FieldEditRequest $fieldEditRequest)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, FieldEditRequest $fieldEditRequest)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(FieldEditRequest $fieldEditRequest)
     {
         //

@@ -37,6 +37,23 @@
                     </button>
                 </div>
 
+                <div v-else class="flex flex-row">
+                    <button
+                        v-if="req_openDataEditorPanel"
+                        class="ml-5 mt-5 px-4 py-2 text-sm font-semibold text-black transition bg-gray-200 rounded-md hover:bg-gray-300 active:scale-[0.98]"
+                        @click="req_closeDataEditor"
+                    >
+                        Show Pending List
+                    </button>
+                    <button
+                        v-else
+                        class="ml-5 mt-5 px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                        @click="req_proceedToDataEditor"
+                    >
+                        Show Request Form
+                    </button>
+                </div>
+
                 <div v-if="openDataEditorPanel" class="flex flex-row">
 
                     <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -429,7 +446,7 @@
 
                 <!--REQUESTOR SECTION -------- REQUESTOR SECTION -------- REQUESTOR SECTION -------- REQUESTOR SECTION -------- REQUESTOR SECTION --------  REQUESTOR SECTION -------- REQUESTOR SECTION ------- -->
 
-                <div v-if="state.user && state.user.is_editing_allowed == 0" class="flex flex-row">
+                <div v-if="(state.user && state.user.is_editing_allowed == 0) && req_openDataEditorPanel" class="flex flex-row">
 
                     <div class="mt-10 ml-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
 
@@ -805,7 +822,7 @@
                             </button>
 
                             <button
-                                @click="req_editCycleNo"
+                                @click="req_editCycleNo()"
                                 class="px-4 py-2 text-sm font-bold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
                             >
                                 Submit Request
@@ -815,6 +832,273 @@
 
                     </div>
                 </div>
+
+
+                <div v-if="!openDataEditorPanel && !req_openDataEditorPanel" class="flex flex-row gap-4 mt-10">
+
+                    <!-- DELETE REQUESTS -->
+                    <div class="w-1/2 ml-5">
+                        <h2 class="mb-1 text-[11px] font-semibold text-gray-700">
+                            Pending List (Delete Request)
+                        </h2>
+
+                        <div class="overflow-hidden border border-gray-300 rounded-md">
+                            <table class="w-full text-[11px] text-left text-gray-700">
+                                <thead class="bg-gray-100 border-b text-[10px] uppercase tracking-wide">
+                                    <tr>
+                                        <th class="px-2 py-1">Furnace</th>
+                                        <th class="px-2 py-1">MP</th>
+                                        <th class="px-2 py-1">Reason</th>
+                                        <th class="px-2 py-1">Action</th>
+                                        <th class="px-2 py-1">By</th>
+                                        <th class="px-2 py-1">Status</th>
+                                        <th class="px-2 py-1">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr
+                                        v-for="item in deleteRequestLists"
+                                        :key="item.id"
+                                        class="border-b hover:bg-gray-50"
+                                    >
+                                        <td class="px-2 py-1">{{ item.furnace }}</td>
+                                        <td class="px-2 py-1">{{ item.mass_prod }}</td>
+                                        <td class="px-2 py-1 truncate max-w-[120px]">{{ item.reason }}</td>
+                                        <td class="px-2 py-1 truncate max-w-[120px]">{{ item.corrective_action }}</td>
+                                        <td class="px-2 py-1">{{ item.request_by }}</td>
+                                        <td class="px-2 py-1 font-medium text-gray-800">
+                                            {{ item.status }}
+                                        </td>
+                                        <td class="px-2 py-1 space-x-2">
+                                            <button
+                                                @click="openRequestModal(item)"
+                                                class="text-[10px] px-2 py-1 bg-black text-white rounded hover:bg-gray-800"
+                                            >
+                                                View
+                                            </button>
+                                            <button
+                                                v-if="state.user && state.user.is_editing_allowed == 1"
+                                                @click="openApproveModal(item)"
+                                                class="text-[10px] px-2 py-1 bg-white text-black rounded hover:bg-gray-200 border border-gray-400"
+                                            >
+                                                Approve
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <tr v-if="!deleteRequestLists.length">
+                                        <td colspan="6" class="px-2 py-3 text-center text-gray-400">
+                                            No pending requests
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- EDIT REQUESTS -->
+                    <div class="w-1/2 mr-5">
+                        <h2 class="mb-1 text-[11px] font-semibold text-gray-700">
+                            Pending List (Edit Request)
+                        </h2>
+
+                        <div class="overflow-hidden border border-gray-300 rounded-md">
+                            <table class="w-full text-[11px] text-left text-gray-700">
+                                <thead class="bg-gray-100 border-b text-[10px] uppercase tracking-wide">
+                                    <tr>
+                                        <th class="px-2 py-1">Furnace</th>
+                                        <th class="px-2 py-1">MP</th>
+                                        <th class="px-2 py-1">Reason</th>
+                                        <th class="px-2 py-1">Action</th>
+                                        <th class="px-2 py-1">Current</th>
+                                        <th class="px-2 py-1">New</th>
+                                        <th class="px-2 py-1">By</th>
+                                        <th class="px-2 py-1">Status</th>
+                                        <th class="px-2 py-1">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr
+                                        v-for="item in editRequestLists"
+                                        :key="item.id"
+                                        class="border-b hover:bg-gray-50"
+                                    >
+                                        <td class="px-2 py-1">{{ item.furnace }}</td>
+                                        <td class="px-2 py-1">{{ item.mass_prod }}</td>
+                                        <td class="px-2 py-1 truncate max-w-[120px]">{{ item.reason }}</td>
+                                        <td class="px-2 py-1 truncate max-w-[120px]">{{ item.corrective_action }}</td>
+                                        <td class="px-2 py-1">{{ item.current_data }}</td>
+                                        <td class="px-2 py-1">{{ item.new_data }}</td>
+                                        <td class="px-2 py-1">{{ item.request_by }}</td>
+                                        <td class="px-2 py-1 font-medium text-gray-800">
+                                            {{ item.status }}
+                                        </td>
+                                        <td class="px-2 py-1 space-x-2">
+                                            <button
+                                                @click="openRequestModal(item)"
+                                                class="text-[10px] px-2 py-1 bg-black text-white rounded hover:bg-gray-800"
+                                            >
+                                                View
+                                            </button>
+                                            <button
+                                                v-if="state.user && state.user.is_editing_allowed == 1"
+                                                @click="openApproveModal(item)"
+                                                class="text-[10px] px-2 py-1 bg-white text-black rounded hover:bg-gray-200 border border-gray-400"
+                                            >
+                                                Approve
+                                            </button>
+                                        </td>
+
+                                    </tr>
+
+                                    <tr v-if="!editRequestLists.length">
+                                        <td colspan="8" class="px-2 py-3 text-center text-gray-400">
+                                            No pending requests
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div
+                    v-if="showRequestModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+                >
+                    <div class="w-[500px] bg-white rounded-md shadow-lg border border-gray-300">
+
+                        <!-- HEADER -->
+                        <div class="flex items-center justify-between px-4 py-2 border-b">
+                            <h3 class="text-sm font-semibold text-gray-800">
+                                Request Details
+                            </h3>
+                            <button
+                                @click="closeRequestModal"
+                                class="text-gray-500 hover:text-black text-sm"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="p-4 text-xs text-gray-700 space-y-2">
+
+                            <div><span class="font-semibold">Furnace:</span> {{ selectedRequest.furnace }}</div>
+                            <div><span class="font-semibold">Mass Production:</span> {{ selectedRequest.mass_prod }}</div>
+
+                            <div v-if="selectedRequest.current_data">
+                                <span class="font-semibold">Current Data:</span>
+                                {{ selectedRequest.current_data }}
+                            </div>
+
+                            <div v-if="selectedRequest.layer">
+                                <span class="font-semibold">Target Layer:</span>
+                                {{ selectedRequest.layer }}
+                            </div>
+
+                            <div v-if="selectedRequest.new_data">
+                                <span class="font-semibold">New Value:</span>
+                                {{ selectedRequest.new_data }}
+                            </div>
+
+                            <div>
+                                <span class="font-semibold">Reason:</span>
+                                <div class="mt-1 p-2 bg-gray-50 border rounded text-[11px]">
+                                    {{ selectedRequest.reason }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="font-semibold">Corrective Action:</span>
+                                <div class="mt-1 p-2 bg-gray-50 border rounded text-[11px]">
+                                    {{ selectedRequest.corrective_action }}
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between pt-2 text-[11px] text-gray-600">
+                                <span><strong>Requested By:</strong> {{ selectedRequest.request_by }}</span>
+                                <span><strong>Status:</strong> {{ selectedRequest.status }}</span>
+                            </div>
+
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="flex justify-end px-4 py-2 border-t">
+                            <button
+                                @click="closeRequestModal"
+                                class="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800"
+                            >
+                                Close
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+
+                <div
+                    v-if="showApproveModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+                >
+                    <div class="w-[380px] bg-white rounded-md border border-gray-300 shadow-lg">
+
+                        <!-- HEADER -->
+                        <div class="px-4 py-2 border-b">
+                            <h3 class="text-sm font-semibold text-gray-800">
+                                Confirm Approval
+                            </h3>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="p-4 text-xs text-gray-700 space-y-2">
+                            <p>
+                                You are about to approve this request.
+                            </p>
+
+                            <div class="p-2 bg-gray-50 border rounded text-[11px] space-y-1">
+                                <div><strong>Furnace:</strong> {{ selectedApproveItem?.furnace }}</div>
+                                <div><strong>MP:</strong> {{ selectedApproveItem?.mass_prod }}</div>
+                                <div v-if="selectedApproveItem?.current_data">
+                                    <strong>Current:</strong> {{ selectedApproveItem.current_data }}
+                                </div>
+                                <div v-if="selectedApproveItem?.new_data">
+                                    <strong>New:</strong> {{ selectedApproveItem.new_data }}
+                                </div>
+                            </div>
+
+                            <p class="text-[11px] text-gray-500">
+                                This action cannot be undone.
+                            </p>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="flex justify-end gap-2 px-4 py-2 border-t">
+                            <button
+                                @click="closeApproveModal"
+                                class="px-3 py-1 text-xs border border-gray-400 rounded hover:bg-gray-100"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                @click="confirmApprove"
+                                class="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+
 
 
             </div>
@@ -927,6 +1211,7 @@ const isValidationSuccess = ref(false);
 const isCorrectiveActionCompleted = ref(false);
 const htInfoEditingOnly = ref(false);
 const openDataEditorPanel = ref(false);
+const req_openDataEditorPanel = ref(false);
 
 const req_showProceedDeleteLayerData = ref(false);
 const req_showProceedUpdateCycleNo = ref(false);
@@ -945,34 +1230,71 @@ const availableLayers = ref([]);
 const cycleNoToEdit = ref();
 const newCycleNo = ref();
 
+const deleteRequestLists = ref([]);
+const editRequestLists = ref([]);
+
 const fetchedModel = ref();
 const fetchedLotNo = ref();
 
 const furnace_names = ref([]);
 const layers = ref(["1", "2", "3", "4", "5", "6", "7", "8", "9", "9.5"]);
 
+const selectedRequest = ref(null);
+const showRequestModal = ref(false);
 
-const getFurnaceLists = async () => {
+const openRequestModal = (item) => {
+    selectedRequest.value = item;
+    showRequestModal.value = true;
+};
+
+const closeRequestModal = () => {
+    showRequestModal.value = false;
+    selectedRequest.value = null;
+};
+
+const showApproveModal = ref(false);
+const selectedApproveItem = ref(null);
+const approveType = ref(null);
+
+const openApproveModal = (item, type) => {
+    selectedApproveItem.value = item;
+    approveType.value = type;
+    showApproveModal.value = true;
+};
+
+const closeApproveModal = () => {
+    showApproveModal.value = false;
+    selectedApproveItem.value = null;
+    approveType.value = null;
+};
+
+const confirmApprove = async () => {
+    if (!selectedApproveItem.value) return;
+
     try {
-        const response = await axios.get("/api/furnace-data");
-        const furnaceList = response.data;
-        furnace_names.value = furnaceList.map((item) => item.furnace_name);
-        //console.log("List of mass prods: ",furnace_names.value);
-    } catch (error) {
-        //console.error('Error fetching mass prod lists',error);
-        toast.error("Failed to get the furnace lists api error");
-        await userErrorLogging(
-            {
-                message: error.message,
-                code: error.code ?? null,
-                response: error.response?.data ?? null,
-                payload: error.response?.data ?? null,
-            },
-            "getFurnaceLists",
-            "Failed to get the furnace lists api error",
-        );
+        if (approveType.value === 'delete') {
+            selectedMassProd.value = selectedApproveItem.value.mass_prod;
+            selectedFurnace.value = selectedApproveItem.value.furnace;
+            selectedLayer.value = selectedApproveItem.value.layer;
+
+            await deleteLayerDataFinal();
+        }
+
+        if (approveType.value === 'edit') {
+            selectedMassProd.value = selectedApproveItem.value.mass_prod;
+            selectedFurnace.value = selectedApproveItem.value.furnace;
+            cycleNo.value = selectedApproveItem.value.new_data;
+
+            await editCycleNo();
+        }
+
+        closeApproveModal();
+
+    } catch (err) {
+        console.error('Approval process failed:', err);
     }
 };
+
 
 watch([selectedFurnace, selectedMassProd], ([furnace, massProd]) => {
     if (furnace && massProd) {
@@ -1080,8 +1402,16 @@ const proceedToDataEditor = () => {
     openDataEditorPanel.value = true;
 }
 
+const req_proceedToDataEditor = () => {
+    req_openDataEditorPanel.value = true;
+}
+
 const closeDataEditor = () => {
     openDataEditorPanel.value = false;
+}
+
+const req_closeDataEditor = () => {
+    req_openDataEditorPanel.value = false;
 }
 
 const cancelSubmitForm = async() => {
@@ -1179,7 +1509,8 @@ const deleteLayerDataFinal = async () => {
             toast.success(response.data.message || "Layer deleted successfully.");
 
             resetPage();
-
+            await getDeleteRequests();
+            await getEditRequests();
         } else {
             toast.warning(response.data.message || "No matching data found.");
         }
@@ -1202,11 +1533,26 @@ const deleteLayerDataFinal = async () => {
 };
 
 const req_deleteLayerDataFinal = async() => {
-    try{
-        const response = await axios.get('');
-    }catch(error){
-        console.error('Failed to submit delete layer data request due to', error);
-    }
+    try {
+        const response = await axios.post('/api/layer-delete-request', {
+            mass_prod: selectedMassProd.value,
+            furnace: selectedFurnace.value,
+            layer: selectedLayer.value,
+            reason: userReason.value,
+            corrective_action: userCorrectiveAction.value,
+            request_by: state.user.firstName + ' ' + state.user.surname,
+            status: 'Pending'
+        });
+            toast.success('Delete layer request sent successfully');
+            console.log('Request sent successfully', response.data);
+            req_showProceedDeleteLayerData.value = false;
+            resetPage();
+            await getDeleteRequests();
+            await getEditRequests();
+        } catch (error) {
+            console.error('Failed to request modification for cycle no due to:', error);
+            toast.error('Modify Request failed');
+        }
 }
 
 const editCycleNo = async () => {
@@ -1228,13 +1574,28 @@ const editCycleNo = async () => {
 
 const req_editCycleNo = async () => {
     try {
-        const response = await axios.get('');
+
+        const response = await axios.post('/api/field-edit-request', {
+            mass_prod: selectedMassProd.value,
+            furnace: selectedFurnace.value,
+            current_data: cycleNoToEdit.value,
+            new_data: newCycleNo.value,
+            target_column: 'cycle_no',
+            reason: userReason.value,
+            corrective_action: userCorrectiveAction.value,
+            request_by: state.user.firstName + ' ' + state.user.surname,
+            status: 'Pending'
+        });
 
         toast.success('Cycle No modification request sent successfully');
-
+        console.log('Request sent successfully', response.data);
+        req_showProceedUpdateCycleNo.value = false;
+        resetPage();
+        await getDeleteRequests();
+        await getEditRequests();
     } catch (error) {
         console.error('Failed to request modification for cycle no due to:', error);
-        toast.error('Update failed');
+        toast.error('Modify Request failed');
     }
 };
 
@@ -1243,7 +1604,6 @@ const saveLog = async(log) => {
         const response = await axios.post('/api/data_editor_logs', {
             mass_prod: selectedMassProd.value,
             furnace: selectedFurnace.value,
-            layer: String(selectedLayer.value),
             user_reason: userReason.value,
             user_corrective_action: userCorrectiveAction.value,
             user_confirmation: userVerified.value,
@@ -1266,7 +1626,55 @@ const resetPage = () => {
     userReason.value = null;
     userCorrectiveAction.value = null;
     userVerified.value = null;
+    req_showProceedDeleteLayerData.value = false;
+    req_isValidationSuccess.value = false;
+    req_isCorrectiveActionCompleted.value = false;
+    req_showProceedUpdateCycleNo.value = false;
 }
+
+const getDeleteRequests = async() => {
+    try{
+        const response = await axios.get('/api/layer-delete-request');
+        console.log('Delete Request lists: ', response.data);
+        deleteRequestLists.value = response.data || [];
+    }catch(error){
+        console.error('Failed to fetch delete requests data due to ', error);
+        toast.error('Failed to get Delete Request Lists');
+    }
+}
+
+const getEditRequests = async() => {
+    try{
+        const response = await axios.get('/api/field-edit-request');
+        console.log('Edit Request lists: ', response.data);
+        editRequestLists.value = response.data || [];
+    }catch(error){
+        console.error('Failed to fetch edit requests data due to ', error);
+        toast.error('Failed to get Edit Request Lists');
+    }
+}
+
+const getFurnaceLists = async () => {
+    try {
+        const response = await axios.get("/api/furnace-data");
+        const furnaceList = response.data;
+        furnace_names.value = furnaceList.map((item) => item.furnace_name);
+        //console.log("List of mass prods: ",furnace_names.value);
+    } catch (error) {
+        //console.error('Error fetching mass prod lists',error);
+        toast.error("Failed to get the furnace lists api error");
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getFurnaceLists",
+            "Failed to get the furnace lists api error",
+        );
+    }
+};
 
 //SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- ]
 
@@ -1285,7 +1693,8 @@ onMounted(async() => {
     }
 
     await getFurnaceLists();
-
+    await getDeleteRequests();
+    await getEditRequests();
 });
 
 </script>

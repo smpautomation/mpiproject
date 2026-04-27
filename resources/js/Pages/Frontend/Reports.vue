@@ -6319,6 +6319,17 @@ const backToViewList = () => {
     router.visit('/view');
 }
 
+const isBHFail = computed(() => {
+    if (!showBHData.value) return false;
+
+    return (
+        reportBH_results.value.length === 0 ||
+        reportBH_results.value.some(
+            (sample) => sample < reportBH_dataStandard.value
+        )
+    );
+});
+
 watchEffect(() => {
     const data = reportCoatingAmounts.value.filter(
         (n) => typeof n === "number" && !isNaN(n),
@@ -6520,35 +6531,19 @@ watch(
 
 // FOR BH - models
 watch(
-    [
-        reportBH_results,
-        reportBH_dataStandard,
-        reportSMPJudgement,
-        reportBH_remarks,
-        showBHData,
-    ],
-    () => {
-        if (
-            noteReasonForReject.value.includes("- N.G iHc") &&
-            showBHData.value === true
-        ) {
-            if (
-                reportBH_results.value.length === 0 ||
-                reportBH_results.value.some(
-                    (sample) => sample < reportBH_dataStandard.value,
-                )
-            ) {
-                reportBH_remarks.value = "NG";
-                reportSMPJudgement.value = "REJECT";
-            } else {
-                reportBH_remarks.value = "OK";
-                reportSMPJudgement.value = "HOLD";
-            }
+    isBHFail,
+    (fail) => {
+        if (!noteReasonForReject.value.includes("- N.G iHc")) return;
+
+        if (fail) {
+            reportBH_remarks.value = "NG";
+            reportSMPJudgement.value = "REJECT";
         } else {
-            //console.warn('Conditions not met: skipping BH check');
+            reportBH_remarks.value = "OK";
+            reportSMPJudgement.value = "HOLD";
         }
     },
-    { immediate: true },
+    { immediate: true }
 );
 
 watch(
@@ -8391,6 +8386,7 @@ const showReportData = async () => {
         reportRemarks3.value = record.remarks3;
         reportExistingSMPJudgement.value = record.smp_judgement;
         modifiedSMPJudgement.value = record.modified_smp_judgement;
+        reportSMPJudgement.value = record.smp_judgement;
         preparedByPerson.value = record.prepared_by;
         checkedByPerson.value = record.checked_by;
         approvedByPerson.value = record.approved_by;

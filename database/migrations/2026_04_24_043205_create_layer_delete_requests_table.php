@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('mass_prod');
             $table->string('furnace');
             $table->string('layer');
+            $table->text('reason');
+            $table->text('corrective_action');
             $table->string('request_by');
+            $table->string('status');
         });
     }
 

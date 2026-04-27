@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FieldEditRequestController;
+use App\Http\Controllers\LayerDeleteRequestController;
 use App\Http\Controllers\HtMassProDataController;
 use App\Http\Controllers\StampUndoHistoryController;
 use App\Http\Controllers\UserController;
@@ -581,6 +583,8 @@ Route::get('/check-control-sheet-layers', [MassProductionController::class, 'che
 
 Route::get('/check-encoded-data', [MassProductionController::class, 'checkEncodedData']);
 
+Route::get('/update-mass-production-field', [MassProductionController::class, 'updateHtField']);
+
 Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class, 'checkDuplicateLot']);
 Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
@@ -602,3 +606,5 @@ Route::apiResource('stamp-undo-history', StampUndoHistoryController::class);
 Route::apiResource('second_heat_treatment', GbdpSecondHeatTreatmentController::class);
 Route::apiResource('breaklot_addtnl_format_types', BreaklotAddtnlFormatTypeController::class);
 Route::apiResource('data_editor_logs', DataEditorLogsController::class);
+Route::apiResource('field-edit-request', FieldEditRequestController::class);
+Route::apiResource('layer-delete-request', LayerDeleteRequestController::class);
