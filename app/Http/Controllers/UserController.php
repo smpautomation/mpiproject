@@ -48,7 +48,8 @@ class UserController extends Controller
             'employee_id' => 'nullable|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'access_type' => 'nullable|string|max:255',
-            'change_judgement_access' => 'nullable|string|max:255'
+            'change_judgement_access' => 'nullable|string|max:255',
+            'is_editing_allowed' => 'nullable|boolean'
         ]);
 
         $user = User::create([
@@ -61,6 +62,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'access_type' => $validated['access_type'] ?? null,
             'change_judgement_access' => $validated['change_judgement_access'] ?? null,
+            'is_editing_allowed' => $validated['is_editing_allowed'] ?? null
         ]);
 
         return response()->json([

@@ -49,7 +49,18 @@ class FieldEditRequestController extends Controller
 
     public function update(Request $request, FieldEditRequest $fieldEditRequest)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'required|string',
+        ]);
+
+        $fieldEditRequest->update([
+            'status' => $validated['status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Status updated successfully',
+            'data' => $fieldEditRequest
+        ]);
     }
 
 

@@ -64,7 +64,18 @@ class LayerDeleteRequestController extends Controller
      */
     public function update(Request $request, LayerDeleteRequest $layerDeleteRequest)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'required|string',
+        ]);
+
+        $layerDeleteRequest->update([
+            'status' => $validated['status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Status updated successfully',
+            'data' => $layerDeleteRequest
+        ]);
     }
 
     /**

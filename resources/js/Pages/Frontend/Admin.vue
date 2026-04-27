@@ -49,6 +49,9 @@
                                     <th v-if="state.user && state.user?.access_type === 'Automation'" class="px-1 py-3 text-center whitespace-nowrap">
                                         Change&nbsp;Judgement
                                     </th>
+                                    <th v-if="state.user && state.user?.access_type === 'Automation'" class="px-1 py-3 text-center whitespace-nowrap">
+                                        Admin&nbsp;Editor
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -138,6 +141,31 @@
                                             @click="revokeChangeJudgement(user)"
                                             class="px-3 py-1 text-xs font-semibold text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                                             :disabled="user.change_judgement_access !== 'yes'"
+                                        >
+                                            Revoke
+                                        </button>
+                                    </td>
+                                    <td v-if="state.user && state.user?.access_type === 'Automation'" class="gap-1 px-1 py-2 text-center whitespace-nowrap">
+                                        <!-- Allow button -->
+                                        <button
+                                            @click="allowAdminEditor(user)"
+                                            :class="[
+                                                'px-3 py-1 text-xs font-semibold rounded-md transition focus:outline-none focus:ring-2',
+                                                user.is_editing_allowed === 1
+                                                    ? 'bg-gray-500 text-white cursor-not-allowed focus:ring-gray-400'
+                                                    : 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-400'
+                                            ]"
+                                            :disabled="user.is_editing_allowed === 1"
+                                        >
+                                            {{ user.is_editing_allowed === 1 ? 'Admin Granted' : 'Allow Access' }}
+                                        </button>
+
+                                        <!-- Revoke button -->
+                                        <button
+                                            v-if="user.is_editing_allowed === 1"
+                                            @click="revokeAdminEditor(user)"
+                                            class="px-3 py-1 ml-1 text-xs font-semibold text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                            :disabled="user.is_editing_allowed !== 1"
                                         >
                                             Revoke
                                         </button>
@@ -443,6 +471,26 @@ const allowChangeJudgement = async (user) => {
     }
 };
 
+const allowAdminEditor = async (user) => {
+    try {
+        const response = await axios.put(`/api/users/${user.id}`, {
+            is_editing_allowed: 1
+        });
+
+        // Update local state immediately
+        user.is_editing_allowed = 1;
+
+        await userAdminLogging(
+            `Granted admin editor access to ${user.firstName} ${user.surname}`
+        );
+    } catch (error) {
+        console.error(
+            `Error granting admin editor access for ${user.username}:`,
+            error
+        );
+    }
+};
+
 const revokeChangeJudgement = async (user) => {
     try {
         await axios.put(`/api/users/${user.id}`, {
@@ -458,6 +506,26 @@ const revokeChangeJudgement = async (user) => {
     } catch (error) {
         console.error(
             `Error revoking change judgement access for ${user.username}:`,
+            error
+        );
+    }
+};
+
+const revokeAdminEditor = async (user) => {
+    try {
+        await axios.put(`/api/users/${user.id}`, {
+            is_editing_allowed: 0
+        });
+
+        // Update local state immediately
+        user.is_editing_allowed = 0;
+
+        await userAdminLogging(
+            `Revoked admin editor access for ${user.firstName} ${user.surname}`
+        );
+    } catch (error) {
+        console.error(
+            `Error revoking admin editor access for ${user.username}:`,
             error
         );
     }

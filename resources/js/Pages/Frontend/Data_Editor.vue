@@ -37,7 +37,7 @@
                     </button>
                 </div>
 
-                <div v-else class="flex flex-row">
+                <div v-if="!req_isValidationSuccess && state.user && state.user.is_editing_allowed == 0" class="flex flex-row">
                     <button
                         v-if="req_openDataEditorPanel"
                         class="ml-5 mt-5 px-4 py-2 text-sm font-semibold text-black transition bg-gray-200 rounded-md hover:bg-gray-300 active:scale-[0.98]"
@@ -103,7 +103,7 @@
                         <!-- Layer -->
                         <div v-if="!htInfoEditingOnly" class="mb-6">
                             <label class="block mb-1 text-xs font-medium text-gray-600">
-                                Layer
+                                Layer  (layer){{ selectedLayer }}
                             </label>
 
                             <select
@@ -850,7 +850,7 @@
                                         <th class="px-2 py-1">MP</th>
                                         <th class="px-2 py-1">Reason</th>
                                         <th class="px-2 py-1">Action</th>
-                                        <th class="px-2 py-1">By</th>
+                                        <th class="px-2 py-1">Request By</th>
                                         <th class="px-2 py-1">Status</th>
                                         <th class="px-2 py-1">Action</th>
                                     </tr>
@@ -858,7 +858,7 @@
 
                                 <tbody>
                                     <tr
-                                        v-for="item in deleteRequestLists"
+                                        v-for="item in paginatedDeleteRequests"
                                         :key="item.id"
                                         class="border-b hover:bg-gray-50"
                                     >
@@ -867,19 +867,27 @@
                                         <td class="px-2 py-1 truncate max-w-[120px]">{{ item.reason }}</td>
                                         <td class="px-2 py-1 truncate max-w-[120px]">{{ item.corrective_action }}</td>
                                         <td class="px-2 py-1">{{ item.request_by }}</td>
-                                        <td class="px-2 py-1 font-medium text-gray-800">
-                                            {{ item.status }}
+                                        <td class="px-2 py-1 font-medium">
+                                            <span
+                                                class="px-2 py-0.5 rounded text-[10px]"
+                                                :class="{
+                                                    'bg-amber-100 text-amber-800': item.status === 'Pending',
+                                                    'bg-green-100 text-green-800': item.status === 'Approved'
+                                                }"
+                                            >
+                                                {{ item.status }}
+                                            </span>
                                         </td>
                                         <td class="px-2 py-1 space-x-2">
                                             <button
-                                                @click="openRequestModal(item)"
+                                                @click="openRequestModal(item, 'delete')"
                                                 class="text-[10px] px-2 py-1 bg-black text-white rounded hover:bg-gray-800"
                                             >
                                                 View
                                             </button>
                                             <button
-                                                v-if="state.user && state.user.is_editing_allowed == 1"
-                                                @click="openApproveModal(item)"
+                                                v-if="canApprove(item)"
+                                                @click="openApproveModal(item, 'delete')"
                                                 class="text-[10px] px-2 py-1 bg-white text-black rounded hover:bg-gray-200 border border-gray-400"
                                             >
                                                 Approve
@@ -894,6 +902,27 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="flex items-center justify-between px-2 py-2 text-[10px] text-gray-600">
+                            <button
+                                @click="deleteCurrentPage--"
+                                :disabled="deleteCurrentPage === 1"
+                                class="px-2 py-1 border rounded disabled:opacity-30"
+                            >
+                                Prev
+                            </button>
+
+                            <span>
+                                Page {{ deleteCurrentPage }} / {{ deleteTotalPages }}
+                            </span>
+
+                            <button
+                                @click="deleteCurrentPage++"
+                                :disabled="deleteCurrentPage === deleteTotalPages"
+                                class="px-2 py-1 border rounded disabled:opacity-30"
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
 
@@ -913,7 +942,7 @@
                                         <th class="px-2 py-1">Action</th>
                                         <th class="px-2 py-1">Current</th>
                                         <th class="px-2 py-1">New</th>
-                                        <th class="px-2 py-1">By</th>
+                                        <th class="px-2 py-1">Request By</th>
                                         <th class="px-2 py-1">Status</th>
                                         <th class="px-2 py-1">Action</th>
                                     </tr>
@@ -921,7 +950,7 @@
 
                                 <tbody>
                                     <tr
-                                        v-for="item in editRequestLists"
+                                        v-for="item in paginatedEditRequests"
                                         :key="item.id"
                                         class="border-b hover:bg-gray-50"
                                     >
@@ -932,19 +961,27 @@
                                         <td class="px-2 py-1">{{ item.current_data }}</td>
                                         <td class="px-2 py-1">{{ item.new_data }}</td>
                                         <td class="px-2 py-1">{{ item.request_by }}</td>
-                                        <td class="px-2 py-1 font-medium text-gray-800">
-                                            {{ item.status }}
+                                        <td class="px-2 py-1 font-medium">
+                                            <span
+                                                class="px-2 py-0.5 rounded text-[10px]"
+                                                :class="{
+                                                    'bg-amber-100 text-amber-800': item.status === 'Pending',
+                                                    'bg-green-100 text-green-800': item.status === 'Approved'
+                                                }"
+                                            >
+                                                {{ item.status }}
+                                            </span>
                                         </td>
                                         <td class="px-2 py-1 space-x-2">
                                             <button
-                                                @click="openRequestModal(item)"
+                                                @click="openRequestModal(item, 'edit')"
                                                 class="text-[10px] px-2 py-1 bg-black text-white rounded hover:bg-gray-800"
                                             >
                                                 View
                                             </button>
                                             <button
-                                                v-if="state.user && state.user.is_editing_allowed == 1"
-                                                @click="openApproveModal(item)"
+                                                v-if="canApprove(item)"
+                                                @click="openApproveModal(item, 'edit')"
                                                 class="text-[10px] px-2 py-1 bg-white text-black rounded hover:bg-gray-200 border border-gray-400"
                                             >
                                                 Approve
@@ -960,6 +997,27 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="flex items-center justify-between px-2 py-2 text-[10px] text-gray-600">
+                            <button
+                                @click="editCurrentPage--"
+                                :disabled="editCurrentPage === 1"
+                                class="px-2 py-1 border rounded disabled:opacity-30"
+                            >
+                                Prev
+                            </button>
+
+                            <span>
+                                Page {{ editCurrentPage }} / {{ editTotalPages }}
+                            </span>
+
+                            <button
+                                @click="editCurrentPage++"
+                                :disabled="editCurrentPage === editTotalPages"
+                                class="px-2 py-1 border rounded disabled:opacity-30"
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
 
@@ -1059,12 +1117,15 @@
                         <!-- BODY -->
                         <div class="p-4 text-xs text-gray-700 space-y-2">
                             <p>
-                                You are about to approve this request.
+                                You are about to approve this <span v-if="selectedApproveItem?.layer" class="semi-bold text-red-600">delete</span> <span v-else class="semi-bold text-red-600">edit</span> request.
                             </p>
 
                             <div class="p-2 bg-gray-50 border rounded text-[11px] space-y-1">
                                 <div><strong>Furnace:</strong> {{ selectedApproveItem?.furnace }}</div>
                                 <div><strong>MP:</strong> {{ selectedApproveItem?.mass_prod }}</div>
+                                <div v-if="selectedApproveItem?.layer">
+                                    <strong>Target Layer:</strong> {{ selectedApproveItem.layer }}
+                                </div>
                                 <div v-if="selectedApproveItem?.current_data">
                                     <strong>Current:</strong> {{ selectedApproveItem.current_data }}
                                 </div>
@@ -1225,7 +1286,7 @@ const userVerified = ref(false);
 
 const selectedFurnace = ref();
 const selectedMassProd = ref();
-const selectedLayer = ref();
+const selectedLayer = ref(null);
 const availableLayers = ref([]);
 const cycleNoToEdit = ref();
 const newCycleNo = ref();
@@ -1241,6 +1302,49 @@ const layers = ref(["1", "2", "3", "4", "5", "6", "7", "8", "9", "9.5"]);
 
 const selectedRequest = ref(null);
 const showRequestModal = ref(false);
+
+const deleteCurrentPage = ref(1);
+const deletePerPage = 10;
+const editCurrentPage = ref(1);
+const editPerPage = 10;
+
+const sortedEditRequests = computed(() => {
+    return [...editRequestLists.value].sort((a, b) => {
+        if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+        if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+});
+
+const sortedDeleteRequests = computed(() => {
+    return [...deleteRequestLists.value].sort((a, b) => {
+        if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+        if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+});
+
+const paginatedEditRequests = computed(() => {
+    const start = (editCurrentPage.value - 1) * editPerPage;
+    return sortedEditRequests.value.slice(start, start + editPerPage);
+});
+
+const paginatedDeleteRequests = computed(() => {
+    const start = (deleteCurrentPage.value - 1) * deletePerPage;
+    return sortedDeleteRequests.value.slice(start, start + deletePerPage);
+});
+
+const editTotalPages = computed(() => {
+    return Math.ceil(sortedEditRequests.value.length / editPerPage);
+});
+
+const deleteTotalPages = computed(() => {
+    return Math.ceil(sortedDeleteRequests.value.length / deletePerPage);
+});
+
+
 
 const openRequestModal = (item) => {
     selectedRequest.value = item;
@@ -1277,15 +1381,15 @@ const confirmApprove = async () => {
             selectedFurnace.value = selectedApproveItem.value.furnace;
             selectedLayer.value = selectedApproveItem.value.layer;
 
-            await deleteLayerDataFinal();
+            await deleteLayerDataFinal(selectedApproveItem.value.id);
         }
 
         if (approveType.value === 'edit') {
             selectedMassProd.value = selectedApproveItem.value.mass_prod;
             selectedFurnace.value = selectedApproveItem.value.furnace;
-            cycleNo.value = selectedApproveItem.value.new_data;
+            newCycleNo.value = selectedApproveItem.value.new_data;
 
-            await editCycleNo();
+            await editCycleNo(selectedApproveItem.value.id);
         }
 
         closeApproveModal();
@@ -1295,6 +1399,17 @@ const confirmApprove = async () => {
     }
 };
 
+const canApprove = (item) => {
+    if (!state.user) return false;
+
+    const isAllowed = Number(state.user.is_editing_allowed) === 1;
+    const isPending = item.status === 'Pending';
+
+    return isAllowed && isPending;
+};
+
+
+//Watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers
 
 watch([selectedFurnace, selectedMassProd], ([furnace, massProd]) => {
     if (furnace && massProd) {
@@ -1303,6 +1418,15 @@ watch([selectedFurnace, selectedMassProd], ([furnace, massProd]) => {
         });
     }
 });
+
+watch(sortedDeleteRequests, () => {
+    if (deleteCurrentPage.value > deleteTotalPages.value) {
+        deleteCurrentPage.value = deleteTotalPages.value || 1;
+    }
+});
+
+
+//Watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers -------------- watchers
 
 const checkAvailableLayers = async() => {
     try{
@@ -1323,7 +1447,7 @@ const checkAvailableLayers = async() => {
 
 const checkValidate = async() => {
     try{
-        if(!selectedFurnace.value || !selectedMassProd.value || (htInfoEditingOnly.value && !selectedLayer.value)){
+        if(!selectedFurnace.value || !selectedMassProd.value || (!htInfoEditingOnly.value && !selectedLayer.value)){
             toast.warning('Please make sure all fields are selected');
             return;
         }
@@ -1332,7 +1456,7 @@ const checkValidate = async() => {
             params: {
                 mass_prod: selectedMassProd.value,
                 furnace: selectedFurnace.value,
-                ...(htInfoEditingOnly.value && { layer: String(selectedLayer.value) }), //Include layer only if htInfoEditingOnly is true
+                ...(!htInfoEditingOnly.value && { layer: String(selectedLayer.value) }), //Include layer only if htInfoEditingOnly is true
             }
         });
 
@@ -1357,7 +1481,7 @@ const checkValidate = async() => {
 
 const req_checkValidate = async() => {
     try{
-        if(!selectedFurnace.value || !selectedMassProd.value || (req_htInfoEditingOnly.value && !selectedLayer.value)){
+        if(!selectedFurnace.value || !selectedMassProd.value || (!req_htInfoEditingOnly.value && !selectedLayer.value)){
             toast.warning('Please make sure all fields are selected');
             return;
         }
@@ -1366,7 +1490,7 @@ const req_checkValidate = async() => {
             params: {
                 mass_prod: selectedMassProd.value,
                 furnace: selectedFurnace.value,
-                ...(req_htInfoEditingOnly.value && { layer: String(selectedLayer.value) }), //Include layer only if htInfoEditingOnly is true
+                ...(!req_htInfoEditingOnly.value && { layer: String(selectedLayer.value) }), //Include layer only if htInfoEditingOnly is true
             }
         });
 
@@ -1487,7 +1611,7 @@ const req_submitForm = async() => {
 }
 
 
-const deleteLayerDataFinal = async () => {
+const deleteLayerDataFinal = async (requestId) => {
     try {
         const response = await axios.post(
             "/api/mass-production/delete-layer-full",
@@ -1507,6 +1631,8 @@ const deleteLayerDataFinal = async () => {
             );
 
             toast.success(response.data.message || "Layer deleted successfully.");
+
+            await updateDeletePendingList(requestId, 'Approved');
 
             resetPage();
             await getDeleteRequests();
@@ -1555,16 +1681,20 @@ const req_deleteLayerDataFinal = async() => {
         }
 }
 
-const editCycleNo = async () => {
+const editCycleNo = async (requestId) => {
     try {
         const response = await axios.patch(
             `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`,
             {
-                cycle_no: cycleNo.value
+                cycle_no: newCycleNo.value
             }
         );
 
         toast.success('Cycle No updated successfully');
+        console.log('Cycle No edited successfully: ', response.data);
+        await updateEditPendingList(requestId, 'Approved');
+        await getDeleteRequests();
+        await getEditRequests();
 
     } catch (error) {
         console.error('Failed to modify/update cycle no due to:', error);
@@ -1596,6 +1726,34 @@ const req_editCycleNo = async () => {
     } catch (error) {
         console.error('Failed to request modification for cycle no due to:', error);
         toast.error('Modify Request failed');
+    }
+};
+
+const updateEditPendingList = async (id, statusResult) => {
+    try {
+        await axios.patch(`/api/field-edit-request/${id}`, {
+            status: statusResult,
+        });
+
+        toast.success('Request status updated');
+
+    } catch (error) {
+        console.error('Failed to update pending list status due to', error);
+        toast.error('Failed to update request status');
+    }
+};
+
+const updateDeletePendingList = async (id, statusResult) => {
+    try {
+        await axios.patch(`/api/layer-delete-request/${id}`, {
+            status: statusResult,
+        });
+
+        toast.success('Request status updated');
+
+    } catch (error) {
+        console.error('Failed to update pending list status due to', error);
+        toast.error('Failed to update request status');
     }
 };
 
@@ -1680,11 +1838,9 @@ const getFurnaceLists = async () => {
 
 useSessionStorage("selectedFurnace", selectedFurnace);
 useSessionStorage("selectedMassProd", selectedMassProd);
-useSessionStorage("selectedLayer", selectedLayer);
 useSessionStorage("userReason", userReason);
 useSessionStorage("userCorrectiveAction", userCorrectiveAction);
 useSessionStorage("userVerified", userVerified);
-useSessionStorage("openDataEditorPanel",openDataEditorPanel);
 
 onMounted(async() => {
     const isAuthenticated = await checkAuthentication();
