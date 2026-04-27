@@ -151,18 +151,18 @@
                                             @click="allowAdminEditor(user)"
                                             :class="[
                                                 'px-3 py-1 text-xs font-semibold rounded-md transition focus:outline-none focus:ring-2',
-                                                user.is_editing_allowed === 1
+                                                user.is_editing_allowed == 1
                                                     ? 'bg-gray-500 text-white cursor-not-allowed focus:ring-gray-400'
                                                     : 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-400'
                                             ]"
-                                            :disabled="user.is_editing_allowed === 1"
+                                            :disabled="user.is_editing_allowed == 1"
                                         >
-                                            {{ user.is_editing_allowed === 1 ? 'Admin Granted' : 'Allow Access' }}
+                                            {{ user.is_editing_allowed == 1 ? 'Admin Granted' : 'Allow Access' }}
                                         </button>
 
                                         <!-- Revoke button -->
                                         <button
-                                            v-if="user.is_editing_allowed === 1"
+                                            v-if="user.is_editing_allowed == 1"
                                             @click="revokeAdminEditor(user)"
                                             class="px-3 py-1 ml-1 text-xs font-semibold text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                                             :disabled="user.is_editing_allowed !== 1"
