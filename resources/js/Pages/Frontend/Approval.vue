@@ -417,6 +417,34 @@ const userFinalizedLogging = async (logEvent) => {
     }
 };
 
+// Utility: Save and load to sessionStorage
+function useSessionStorage(key, state) {
+    // Load existing session value
+    const saved = sessionStorage.getItem(key);
+    if (saved !== null) {
+        try {
+            const parsed = JSON.parse(saved);
+            if (typeof state === "object" && "value" in state) {
+                state.value = parsed;
+            } else {
+                Object.assign(state, parsed);
+            }
+        } catch {
+            /* ignore parse errors */
+        }
+    }
+
+    // Watch and persist changes
+    watch(
+        state,
+        (val) => {
+            sessionStorage.setItem(key, JSON.stringify(val));
+        },
+        { deep: true },
+    );
+}
+// General Vari
+
 // UI
 
 const statusFilter = ref("ALL");
@@ -757,6 +785,8 @@ const confirmationApprove = async () => {
         showApproveButton.value = true;
     }
 };
+
+useSessionStorage("currentPage", currentPage);
 
 onMounted(async () => {
     await checkAuthentication();

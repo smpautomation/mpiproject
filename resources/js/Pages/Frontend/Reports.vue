@@ -6658,7 +6658,7 @@ watch(
 
 //For CPK From BR models
 watch(
-    [reportCpkFrom_br_Cpk, reportCpkFrom_br_remarks, showCpkFrom_br],
+    [reportCpkFrom_br_Cpk, reportCpkFrom_br_remarks, showCpkFrom_br, reportSMPJudgement],
     () => {
         if (
             showCpkFrom_br.value === true &&
@@ -6667,9 +6667,11 @@ watch(
             if (reportCpkFrom_br_Cpk.value < 1.0) {
                 //console.log('reportCpkFrom_br_Cpk is below 1.00 — setting NG/REJECT');
                 reportCpkFrom_br_remarks.value = "NG";
+                reportSMPJudgement.value = "REJECT";
             } else {
                 //console.log('reportCpkFrom_br_Cpk is 1.00 or higher — setting OK/HOLD');
                 reportCpkFrom_br_remarks.value = "OK";
+                reportSMPJudgement.value = "HOLD";
             }
         } else {
             //console.log('showCpkFrom_br is false — skipping CPK BR check');
@@ -8493,6 +8495,7 @@ const showReportData = async () => {
         const VT = JSON.parse(filterBySerial[0].data_VT_info || "{}");
         //console.log("VT Data: ",VT);
         const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || "{}");
+        const br_cpk = JSON.parse(filterBySerial[0].data_br_cpk_info || "{}");
         const GX = JSON.parse(filterBySerial[0].data_GX_info || "{}");
         const GS = JSON.parse(filterBySerial[0].data_GS_info || "{}");
         const bh = JSON.parse(filterBySerial[0].data_bh_info || "{}");
@@ -8550,6 +8553,11 @@ const showReportData = async () => {
         reportCpkFrom_iHc_StdDev.value = iHc_cpk.std_dev || "";
         reportCpkFrom_iHc_Cpk.value = iHc_cpk.cpk || "";
         reportCpkFrom_iHc_remarks.value = iHc_cpk.remarks || "";
+
+        reportCpkFrom_br_StdDev.value = br_cpk.std_dev || "";
+        reportCpkFrom_br_Cpk.value = br_cpk.cpk || "";
+        reportCpkFrom_br_Cp.value = br_cpk.cp || "";
+        reportCpkFrom_br_remarks.value = br_cpk.remarks || "";
 
         reportGX_iHcStandard.value = GX.iHcStandard || 0;
         reportGX_iHcAverage.value = GX.iHcAverage || 0;
@@ -8745,6 +8753,12 @@ const saveReport = async () => {
             std_dev: reportCpkFrom_iHc_StdDev.value,
             cpk: reportCpkFrom_iHc_Cpk.value,
             remarks: reportCpkFrom_iHc_remarks.value,
+        }),
+        data_br_cpk_info: JSON.stringify({
+            std_dev: reportCpkFrom_br_StdDev.value,
+            cpk: reportCpkFrom_br_Cpk.value,
+            cp: reportCpkFrom_br_Cp.value,
+            remarks: reportCpkFrom_br_remarks.value,
         }),
         data_GX_info: JSON.stringify({
             iHcStandard: reportGX_iHcStandard.value,

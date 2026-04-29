@@ -20,6 +20,7 @@ use App\Models\NSAAggregateFunctions;
 use App\Models\NSACategory;
 use App\Models\VtModel;
 use App\Models\CpkIhcModel;
+use App\Models\CpkBrModels;
 use App\Models\GxModel;
 use App\Models\TtmncModel;
 use App\Models\BhModel;
@@ -503,6 +504,7 @@ class BackEndPdfController extends Controller
         $d1x1x1     = json_decode($reportData->data_1x1x1_info ?? '[]', true);
         $dVT        = json_decode($reportData->data_VT_info ?? '[]', true);
         $diHc_cpk   = json_decode($reportData->data_iHc_cpk_info ?? '[]', true);
+        $dBr_cpk   = json_decode($reportData->data_br_cpk_info ?? '[]', true);
         $dGX        = json_decode($reportData->data_GX_info ?? '[]', true);
         $dBH        = json_decode($reportData->data_bh_info ?? '[]', true);
         $dROB       = json_decode($reportData->data_ROB_info ?? '[]', true);
@@ -517,6 +519,7 @@ class BackEndPdfController extends Controller
         $MODELS_SPECIAL_TSI = ['TSI0817G'];
         $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
         $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_BR     = CpkBrModels::pluck('model_name')->toArray();
         $MODELS_SHOW_GX      = GxModel::pluck('model_name')->toArray();
         $MODELS_1X1X1_NO_CORNER = TtmncModel::pluck('model_name')->toArray();
         $MODELS_SHOW_BH      = BhModel::pluck('model_name')->toArray();
@@ -528,6 +531,7 @@ class BackEndPdfController extends Controller
         $hasIhcBelowTarget = in_array('- iHc Below Target+500 Oe', $noteReasons);
 
         $showCpkFrom_iHc = $hasNGihc && in_array($model, $MODELS_SHOW_CPK);
+        $showCpkFrom_br  = $hasNGihc && in_array($model, $MODELS_SHOW_BR);
         $showGX          = (($hasNGihc && in_array($model, $MODELS_SHOW_GX))) || in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
         $showGS          = in_array($model, $MODELS_SHOW_GS);
         $isSpecialGX     = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
