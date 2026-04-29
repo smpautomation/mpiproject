@@ -2022,7 +2022,7 @@ const renderChart = () => {
     }
 
     // =========================
-    // SCALE PLUGIN (UNCHANGED)
+    // SCALE OVERLAY (UNCHANGED LOGIC)
     // =========================
     const scaleReferencePlugin = {
         id: "scaleReference",
@@ -2045,6 +2045,7 @@ const renderChart = () => {
             const getTickValue = (tick) =>
                 typeof tick === "object" ? tick.value : tick;
 
+            // X AXIS
             if (xScale.ticks.length >= 2) {
                 const xStep =
                     xScale.getPixelForValue(getTickValue(xScale.ticks[1])) -
@@ -2052,8 +2053,7 @@ const renderChart = () => {
 
                 const xLength = 1.5 * xStep;
                 const yBottomPixel = yScale.getPixelForValue(yScale.min);
-                const targetPixelX =
-                    xScale.getPixelForValue(xScale.max) - inset;
+                const targetPixelX = xScale.getPixelForValue(xScale.max) - inset;
 
                 let closestValue = getTickValue(xScale.ticks[0]);
                 let minDistance = Infinity;
@@ -2068,37 +2068,75 @@ const renderChart = () => {
                     }
                 });
 
-                const baseX =
-                    xScale.getPixelForValue(closestValue) - xLength;
-                const baseY = yBottomPixel - inset;
+                const baseX_X = xScale.getPixelForValue(closestValue) - xLength;
+                const baseY_X = yBottomPixel - inset;
 
                 ctx.beginPath();
-                ctx.moveTo(baseX, baseY);
-                ctx.lineTo(baseX + xLength, baseY);
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + xLength, baseY_X);
                 ctx.stroke();
 
                 ctx.beginPath();
-                ctx.moveTo(baseX + xLength, baseY);
-                ctx.lineTo(baseX + xLength - arrowHeadSize, baseY - arrowHeadSize / 2);
-                ctx.lineTo(baseX + xLength - arrowHeadSize, baseY + arrowHeadSize / 2);
+                ctx.moveTo(baseX_X + xLength, baseY_X);
+                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X + arrowHeadSize / 2);
                 ctx.closePath();
                 ctx.fill();
 
                 ctx.beginPath();
-                ctx.moveTo(baseX, baseY);
-                ctx.lineTo(baseX + arrowHeadSize, baseY - arrowHeadSize / 2);
-                ctx.lineTo(baseX + arrowHeadSize, baseY + arrowHeadSize / 2);
+                ctx.moveTo(baseX_X, baseY_X);
+                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X + arrowHeadSize / 2);
                 ctx.closePath();
                 ctx.fill();
 
-                const label = "4 kOe";
-                const w = ctx.measureText(label).width;
-                ctx.fillText(label, baseX + xLength / 2 - w / 2, baseY - 10);
+                const xLabel = "4 kOe";
+                const xLabelWidth = ctx.measureText(xLabel).width;
+
+                ctx.fillText(
+                    xLabel,
+                    baseX_X + xLength / 2 - xLabelWidth / 2,
+                    baseY_X - 10
+                );
             }
+
+            // Y AXIS
+            const yLength = -0.1;
+            const baseX_Y = xScale.getPixelForValue(xScale.max) - inset + spacing;
+            const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
+
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y);
+            ctx.lineTo(baseX_Y, baseY_Y - yLength);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y - yLength);
+            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX_Y, baseY_Y);
+            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+            ctx.closePath();
+            ctx.fill();
+
+            const yLabel = "4 kG";
+            const yLabelWidth = ctx.measureText(yLabel).width;
+
+            ctx.fillText(
+                yLabel,
+                baseX_Y - yLabelWidth / 2,
+                baseY_Y - 10
+            );
 
             ctx.restore();
         },
     };
+
 
     // =========================
     // CAPTURE PLUGIN (FINAL)
