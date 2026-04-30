@@ -5452,6 +5452,7 @@ const MODELS_SHOW_ROB = ref([]);
 const MODELS_SHOW_HIS = ref([]);
 
 const undoHistory = ref([]);
+const hasUndoHistory = ref(false);
 const undoHistoryLoading = ref(false);
 const undoHistoryError = ref(null);
 
@@ -7091,6 +7092,33 @@ const getUndoHistory = async () => {
         undoHistory.value = response.data;
 
         console.log("Undo history fetched successfully.", response.data);
+        //toast.info("This report has undo history.");
+    } catch (error) {
+        undoHistoryError.value = error.response?.data?.message || error.message;
+        console.error("Failed to fetch undo history:", error);
+    } finally {
+        undoHistoryLoading.value = false;
+    }
+};
+
+const checkUndoHistory = async () => {
+
+    try {
+        const serialNo = currentSerialSelected.value;
+
+        if (!serialNo) {
+            throw new Error("Serial number is missing.");
+        }
+
+        const response = await axios.get(
+            `/api/stamp-undo-history/by-serial/${serialNo}`,
+        );
+
+        hasUndoHistory.value = Array.isArray(response.data) && response.data.length > 0;
+
+        if(hasUndoHistory.value){
+            toast.info("UNDO HISTORY detected for this record.");
+        }
     } catch (error) {
         undoHistoryError.value = error.response?.data?.message || error.message;
         console.error("Failed to fetch undo history:", error);
@@ -9557,7 +9585,6 @@ const goToControlSheet = () => {
 onMounted(async () => {
     await checkAuthentication();
     await checkApprovalStates();
-    await getUndoHistory();
     //await test_nsa_showData();
     if (
         (props.serialParam && props.fromApproval) ||
@@ -9574,9 +9601,12 @@ onMounted(async () => {
         await Promise.resolve();
 
         await generateReport();
+        await checkUndoHistory();
     } else {
         fetchSerial();
     }
+
+
 });
 </script>
 

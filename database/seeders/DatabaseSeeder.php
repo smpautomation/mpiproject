@@ -41,7 +41,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            MassProductionSeeder::class,
+            DataEditorSeeder::class,
+            FurnaceSeeder::class,
         ]);
     }
 }

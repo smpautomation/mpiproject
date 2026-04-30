@@ -12,10 +12,12 @@ class FurnaceDataFactory extends Factory
 {
     public function definition(): array
     {
+        $number = $this->faker->numberBetween(10, 99);
+
         return [
-            'furnace_id' => $this->faker->randomNumber(),
-            'furnace_name' => $this->faker->word(),
-            'description' => $this->faker->sentence()
+            'furnace_name' => 'K-' . $this->faker->unique()->numberBetween(10, 99),
+            'description' => $this->faker->sentence(),
+            'encoded_by' => $this->faker->name(),
         ];
     }
 }

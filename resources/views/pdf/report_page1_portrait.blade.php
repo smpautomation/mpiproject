@@ -1085,6 +1085,31 @@
                             </tr>
                         @endif
 
+                        @if ($flags['showCpkFrom_br'])
+                            @php
+                                $ihcBr = $modelData['ihc_br'] ?? [];
+                            @endphp
+
+                            <tr>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0;"></th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">STD DEV</th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0; font-family: DejaVu Sans, sans-serif;">
+                                    Cp
+                                </th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0; font-family: DejaVu Sans, sans-serif;">
+                                    Cpk ≥ 1.33
+                                </th>
+                                <th style="border: 1px solid #000; background-color: #f0f0f0;">Remarks</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="border: 1px solid #000; background-color: #f0f0f0;">Computation of Cpk from iHc</th>
+                                <td style="border: 1px solid #000; text-align: center;">{{ $ihcBr['std_dev'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000; text-align: center;">{{ $ihcBr['cp'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000; text-align: center;">{{ $ihcBr['cpk'] ?? 'NA' }}</td>
+                                <td style="border: 1px solid #000; text-align: center;">{{ $ihcBr['remarks'] ?? 'NA' }}</td>
+                            </tr>
+                        @endif
+
                         @if ($flags['showBHData'])
                             @php
                                 $bh = $modelData['bh'] ?? [];
