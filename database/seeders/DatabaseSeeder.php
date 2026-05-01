@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DataEditorSeeder::class,
             FurnaceSeeder::class,
+            InitialControlSheetSeeder::class,
         ]);
     }
 }

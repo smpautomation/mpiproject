@@ -109,7 +109,6 @@
                         </div>
                     </div>
 
-
                     <div class="flex flex-row justify-center gap-0">
                         <div
                             v-if="!overwriteMode"
@@ -298,13 +297,18 @@
                                             v-model="mpcs.lotNo"
                                             type="text"
                                             :disabled="isDataShown"
-                                            class="w-full text-xs font-semibold transition-all duration-150 rounded-lg shadow-lg text-yellow-900 border-2 border-yellow-500 bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600"
+                                            class="w-full text-xs font-semibold text-yellow-900 transition-all duration-150 border-2 border-yellow-500 rounded-lg shadow-lg bg-yellow-50 focus:ring-yellow-400 focus:border-yellow-600"
                                             placeholder="Enter Lot No"
                                         />
 
                                         <!-- Optional loader if you still need any async -->
-                                        <div v-if="isLotListsLoading" class="flex items-center">
-                                            <div class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"></div>
+                                        <div
+                                            v-if="isLotListsLoading"
+                                            class="flex items-center"
+                                        >
+                                            <div
+                                                class="w-4 h-4 border-2 rounded-full border-cyan-500 border-t-transparent animate-spin"
+                                            ></div>
                                         </div>
                                     </div>
                                 </div>
@@ -410,14 +414,22 @@
                                             {{ mpcs.selectedLayer }} Data
                                         </button>
                                     </div>
-                                    <div v-if="state.user.access_type == 'Automation' && isClearLayerDataDisabled" class="mt-5">
+                                    <div
+                                        v-if="
+                                            state.user.access_type ==
+                                                'Automation' &&
+                                            isClearLayerDataDisabled
+                                        "
+                                        class="mt-5"
+                                    >
                                         <!-- Clear Layer Button -->
                                         <button
                                             @click="deleteExistingData()"
                                             class="flex-1 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                                         >
                                             Clear Existing Layer
-                                            {{ mpcs.selectedLayer }} Data (Automation only)
+                                            {{ mpcs.selectedLayer }} Data
+                                            (Automation only)
                                         </button>
                                     </div>
                                 </div>
@@ -481,7 +493,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             <!-- Group: Prepared By -->
                             <div
@@ -3811,7 +3822,7 @@ const checkInitialLot = async () => {
             currentInitialLot.value = null;
         }
 
-        console.log('Initial Lot saved: ',isInitialLotNotSaved.value);
+        console.log("Initial Lot saved: ", isInitialLotNotSaved.value);
     } catch (error) {
         console.error("Failed to check initial lot", error);
         isInitialLotNotSaved.value = false;
@@ -4271,7 +4282,6 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
     }
 };
 
-
 /*
 const fetchAllLotNoData = async () => {
     try {
@@ -4286,7 +4296,6 @@ const fetchAllLotNoData = async () => {
     }
 };
 */
-
 
 const changeData = () => {
     const preserveKeys = [
@@ -5249,7 +5258,7 @@ const saveToDatabase = async () => {
 
         if (!isBreaklot.value) {
             await updateFormatType();
-        }else{
+        } else {
             await breaklotAddtnlFormatType();
         }
 
@@ -5539,9 +5548,9 @@ const updateFormatType = async () => {
     }
 };
 
-const breaklotAddtnlFormatType = async() => {
-    try{
-        const response = await axios.post('/api/breaklot_addtnl_format_types', {
+const breaklotAddtnlFormatType = async () => {
+    try {
+        const response = await axios.post("/api/breaklot_addtnl_format_types", {
             furnace: mpcs.selectedFurnace,
             mass_prod: mpcs.selectedMassProd,
             layer: String(mpcs.selectedLayer),
@@ -5550,11 +5559,16 @@ const breaklotAddtnlFormatType = async() => {
             format_type: "Normal",
         });
 
-        console.log('Successfully added format type for additional breaklots: ', response.data);
-
-    }catch(error){
-        console.error('Failed to update format type for additional breaklot', error);
-        toast.error('Failed to update breaklot additional format type');
+        console.log(
+            "Successfully added format type for additional breaklots: ",
+            response.data,
+        );
+    } catch (error) {
+        console.error(
+            "Failed to update format type for additional breaklot",
+            error,
+        );
+        toast.error("Failed to update breaklot additional format type");
         await userErrorLogging(
             {
                 message: error.message,
@@ -5566,7 +5580,7 @@ const breaklotAddtnlFormatType = async() => {
             "Failed to update format type for additional breaklot",
         );
     }
-}
+};
 
 const uploadGraphs = async () => {
     if (!mpcs.selectedMassProd || !mpcs.selectedFurnace) return;

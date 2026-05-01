@@ -17,5 +17,4 @@ class FurnaceSeeder extends Seeder
             ->count(80)
             ->create();
     }
-
 }
