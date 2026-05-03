@@ -525,7 +525,12 @@ const navItems = [
             {
                 label: "Data Editor",
                 route: "data_editor",
-                access: ["Automation", "Coating", "Heat Treatment"],
+                access: [
+                    "Automation",
+                    "Coating",
+                    "Heat Treatment",
+                    "Final Approver",
+                ],
             },
         ],
     },
