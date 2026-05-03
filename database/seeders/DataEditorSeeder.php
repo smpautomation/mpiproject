@@ -15,6 +15,10 @@ class DataEditorSeeder extends Seeder
     public function run(): void
     {
         FieldEditRequest::factory()
+            ->count(1)
+            ->create();
+
+        LayerDeleteRequest::factory()
             ->count(10)
             ->create();
     }

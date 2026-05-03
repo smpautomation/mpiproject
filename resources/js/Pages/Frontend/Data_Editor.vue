@@ -376,6 +376,10 @@
                                     <input
                                         type="text"
                                         v-model="newCycleNo"
+                                        @input="
+                                            newCycleNo =
+                                                newCycleNo.toUpperCase()
+                                        "
                                         class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
                                     />
                                 </div>
@@ -440,7 +444,7 @@
                             </button>
 
                             <button
-                                @click="deleteLayerDataFinal"
+                                @click="deleteLayerDataFinalDirect"
                                 class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
                             >
                                 Yes, Delete
@@ -531,7 +535,7 @@
                             </button>
 
                             <button
-                                @click="editCycleNo"
+                                @click="editCycleNoDirect"
                                 class="px-4 py-2 text-sm font-bold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
                             >
                                 CONFIRM UPDATE
@@ -1047,7 +1051,9 @@
                                 >
                                     <tr>
                                         <th class="px-2 py-1">Furnace</th>
-                                        <th class="px-2 py-1">MP</th>
+                                        <th class="px-2 py-1">
+                                            Mass Production
+                                        </th>
                                         <th class="px-2 py-1">Reason</th>
                                         <th class="px-2 py-1">Action</th>
                                         <th class="px-2 py-1">Request By</th>
@@ -1125,6 +1131,18 @@
                                             >
                                                 Approved
                                             </button>
+                                            <button
+                                                v-if="canApprove(item)"
+                                                @click="
+                                                    openRejectModal(
+                                                        item,
+                                                        'delete',
+                                                    )
+                                                "
+                                                class="text-[10px] px-2 py-1 bg-white text-red-600 rounded hover:bg-gray-200 border border-red-300"
+                                            >
+                                                Reject
+                                            </button>
                                         </td>
                                     </tr>
 
@@ -1186,9 +1204,13 @@
                                 >
                                     <tr>
                                         <th class="px-2 py-1">Furnace</th>
-                                        <th class="px-2 py-1">MP</th>
+                                        <th class="px-2 py-1">
+                                            Mass Production
+                                        </th>
                                         <th class="px-2 py-1">Reason</th>
-                                        <th class="px-2 py-1">Action</th>
+                                        <th class="px-2 py-1">
+                                            Corrective Action
+                                        </th>
                                         <th class="px-2 py-1">Current</th>
                                         <th class="px-2 py-1">New</th>
                                         <th class="px-2 py-1">Request By</th>
@@ -1318,6 +1340,155 @@
                                 @click="editCurrentPage++"
                                 :disabled="editCurrentPage === editTotalPages"
                                 class="px-2 py-1 border rounded disabled:opacity-30"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="showHistoryPanel">
+                    <button
+                        @click="showHistoryPanelButtonClose"
+                        class="ml-5 mt-10 px-4 py-2 text-sm font-semibold text-black transition bg-gray-200 rounded-md hover:bg-gray-300 active:scale-[0.98]"
+                    >
+                        Hide History
+                    </button>
+                </div>
+                <div v-else>
+                    <button
+                        @click="showHistoryPanelButton"
+                        class="ml-5 mt-10 px-4 py-2 text-sm font-semibold text-black transition bg-gray-200 rounded-md hover:bg-gray-300 active:scale-[0.98]"
+                    >
+                        Show History
+                    </button>
+                </div>
+
+                <div
+                    v-if="showHistoryPanel"
+                    class="mx-10 my-10 overflow-hidden text-xs bg-white border border-gray-200 rounded-md"
+                >
+                    <div class="px-3 py-2 font-medium text-white bg-gray-900">
+                        Data Editor History
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-[11px] table-fixed">
+                            <thead class="text-gray-600 bg-gray-100">
+                                <tr class="uppercase whitespace-nowrap">
+                                    <th class="px-2 py-1 w-[140px]">
+                                        Date & Time
+                                    </th>
+                                    <th class="px-2 py-1 w-[80px]">
+                                        Mass Production
+                                    </th>
+                                    <th class="px-2 py-1 w-[60px]">Furnace</th>
+                                    <th class="px-2 py-1 w-[50px]">Layer</th>
+                                    <th class="px-2 py-1 w-[120px]">Reason</th>
+                                    <th class="px-2 py-1 w-[120px]">
+                                        Corrective Action
+                                    </th>
+                                    <th class="px-2 py-1 w-[100px]">
+                                        Requestor
+                                    </th>
+                                    <th class="px-2 py-1 w-[100px]">
+                                        Approver
+                                    </th>
+                                    <th class="w-auto px-2 py-1">Remarks</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-100">
+                                <tr
+                                    v-for="item in paginatedHistory"
+                                    :key="item.id"
+                                    class="text-center hover:bg-gray-50"
+                                >
+                                    <!-- Date -->
+                                    <td
+                                        class="px-2 py-1 font-medium text-gray-900 whitespace-nowrap"
+                                    >
+                                        {{
+                                            new Date(
+                                                item.created_at,
+                                            ).toLocaleDateString() +
+                                            " " +
+                                            new Date(
+                                                item.created_at,
+                                            ).toLocaleTimeString()
+                                        }}
+                                    </td>
+
+                                    <!-- Tight columns -->
+                                    <td
+                                        class="px-2 py-1 font-medium text-gray-900 whitespace-nowrap"
+                                    >
+                                        {{ item.mass_prod }}
+                                    </td>
+
+                                    <td class="px-2 py-1 whitespace-nowrap">
+                                        {{ item.furnace }}
+                                    </td>
+
+                                    <td class="px-2 py-1 whitespace-nowrap">
+                                        {{ item.layer ?? "NA" }}
+                                    </td>
+
+                                    <!-- PRIORITY: Reason -->
+                                    <td
+                                        class="px-2 py-1 text-gray-600 text-center whitespace-normal break-words w-[250px]"
+                                    >
+                                        {{ item.user_reason }}
+                                    </td>
+
+                                    <!-- PRIORITY: Corrective Action -->
+                                    <td
+                                        class="px-2 py-1 text-gray-600 text-center whitespace-normal break-words w-[250px]"
+                                    >
+                                        {{ item.user_corrective_action }}
+                                    </td>
+
+                                    <!-- Tight -->
+                                    <td class="px-2 py-1 whitespace-nowrap">
+                                        {{ item.requested_by }}
+                                    </td>
+
+                                    <td class="px-2 py-1 whitespace-nowrap">
+                                        {{ item.approved_by }}
+                                    </td>
+
+                                    <!-- PRIORITY: Remarks -->
+                                    <td
+                                        class="px-2 py-1 text-gray-500 text-center whitespace-normal break-words w-[200px]"
+                                    >
+                                        {{ item.log_remarks }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div
+                        class="flex items-center justify-between px-3 py-2 border-t border-gray-200 bg-gray-50"
+                    >
+                        <!-- Left info -->
+                        <div class="text-[11px] text-gray-600">
+                            Page {{ historyPage }} of {{ historyTotalPages }}
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="flex gap-1">
+                            <button
+                                class="px-2 py-1 text-[11px] border rounded disabled:opacity-40"
+                                :disabled="historyPage === 1"
+                                @click="historyPage--"
+                            >
+                                Prev
+                            </button>
+
+                            <button
+                                class="px-2 py-1 text-[11px] border rounded disabled:opacity-40"
+                                :disabled="historyPage === historyTotalPages"
+                                @click="historyPage++"
                             >
                                 Next
                             </button>
@@ -1684,6 +1855,7 @@ function useSessionStorage(key, state) {
     );
 }
 
+const showHistoryPanel = ref(false);
 const showProceedDeleteLayerData = ref(false);
 const showProceedUpdateCycleNo = ref(false);
 const isValidationSuccess = ref(false);
@@ -1702,6 +1874,8 @@ const userReason = ref();
 const userCorrectiveAction = ref();
 const userVerified = ref(false);
 
+const dataEditorHistory = ref([]);
+
 const selectedFurnace = ref();
 const selectedMassProd = ref();
 const selectedLayer = ref(null);
@@ -1711,6 +1885,20 @@ const newCycleNo = ref();
 
 const deleteRequestLists = ref([]);
 const editRequestLists = ref([]);
+
+const historyPage = ref(1);
+const historyPerPage = ref(10);
+
+const paginatedHistory = computed(() => {
+    const start = (historyPage.value - 1) * historyPerPage.value;
+    const end = start + historyPerPage.value;
+
+    return dataEditorHistory.value.slice(start, end);
+});
+
+const historyTotalPages = computed(() => {
+    return Math.ceil(dataEditorHistory.value.length / historyPerPage.value);
+});
 
 const fetchedModel = ref();
 const fetchedLotNo = ref();
@@ -1842,6 +2030,7 @@ const confirmReject = async () => {
             resetPage();
             await getDeleteRequests();
             await getEditRequests();
+            await getDataLogsHistory();
         }
 
         if (rejectType.value === "edit") {
@@ -1852,6 +2041,7 @@ const confirmReject = async () => {
             resetPage();
             await getDeleteRequests();
             await getEditRequests();
+            await getDataLogsHistory();
         }
 
         closeRejectModal();
@@ -2011,12 +2201,20 @@ const req_closeDataEditor = () => {
     req_openDataEditorPanel.value = false;
 };
 
-const cancelSubmitForm = async () => {
+const cancelSubmitForm = () => {
     isCorrectiveActionCompleted.value = false;
 };
 
-const req_cancelSubmitForm = async () => {
+const req_cancelSubmitForm = () => {
     req_isCorrectiveActionCompleted.value = false;
+};
+
+const showHistoryPanelButton = () => {
+    showHistoryPanel.value = true;
+};
+
+const showHistoryPanelButtonClose = () => {
+    showHistoryPanel.value = false;
 };
 
 const proceedButton = async () => {
@@ -2046,6 +2244,11 @@ const req_proceedButton = async () => {
 };
 
 const proceedButtonCycleNo = async () => {
+    if (!newCycleNo.value) {
+        toast.warning("Please enter New Cycle no");
+        return;
+    }
+
     try {
         const response = await axios.get(
             `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`,
@@ -2105,6 +2308,52 @@ const req_submitForm = async () => {
     req_isCorrectiveActionCompleted.value = true;
 };
 
+const deleteLayerDataFinalDirect = async () => {
+    try {
+        const response = await axios.post(
+            "/api/mass-production/delete-layer-full",
+            {
+                massprod: selectedMassProd.value,
+                furnace: selectedFurnace.value,
+                layer: selectedLayer.value,
+            },
+        );
+
+        if (response.data.success) {
+            const total = response.data.total_deleted ?? 0;
+
+            await saveLog(
+                `has fully removed Layer ${selectedLayer.value} data from ${selectedFurnace.value} ${selectedMassProd.value}. Total deleted: ${total}`,
+            );
+
+            toast.success(
+                response.data.message || "Layer deleted successfully.",
+            );
+
+            resetPage();
+            await getDeleteRequests();
+            await getEditRequests();
+            await getDataLogsHistory();
+        } else {
+            toast.warning(response.data.message || "No matching data found.");
+        }
+    } catch (error) {
+        console.error("Failed to delete layer data", error);
+
+        toast.error("Failed to delete layer data.");
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+            },
+            "deleteLayerFull",
+            "Failed to delete layer data.",
+        );
+    }
+};
+
 const deleteLayerDataFinal = async (requestId) => {
     try {
         const response = await axios.post(
@@ -2120,7 +2369,7 @@ const deleteLayerDataFinal = async (requestId) => {
             const total = response.data.total_deleted ?? 0;
 
             await saveLog(
-                `has fully removed Layer ${selectedLayer.value} data from ${selectedMassProd.value} ${selectedFurnace.value}. Total deleted: ${total}`,
+                `has fully removed Layer ${selectedLayer.value} data from ${selectedFurnace.value} ${selectedMassProd.value}. Total deleted: ${total}`,
             );
 
             toast.success(
@@ -2128,10 +2377,10 @@ const deleteLayerDataFinal = async (requestId) => {
             );
 
             await updateDeletePendingList(requestId, "Approved");
-
-            resetPage();
             await getDeleteRequests();
             await getEditRequests();
+            await getDataLogsHistory();
+            resetPage();
         } else {
             toast.warning(response.data.message || "No matching data found.");
         }
@@ -2169,12 +2418,41 @@ const req_deleteLayerDataFinal = async () => {
         resetPage();
         await getDeleteRequests();
         await getEditRequests();
+        await getDataLogsHistory();
     } catch (error) {
         console.error(
             "Failed to request modification for cycle no due to:",
             error,
         );
         toast.error("Modify Request failed");
+    }
+};
+
+const editCycleNoDirect = async () => {
+    try {
+        const response = await axios.patch(
+            `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}`,
+            {
+                cycle_no: newCycleNo.value,
+            },
+        );
+
+        if (response.data) {
+            toast.success("Cycle No updated successfully");
+            console.log("Cycle No edited successfully: ", response.data);
+            await saveLog(
+                `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
+            );
+            await getDeleteRequests();
+            await getEditRequests();
+            await getDataLogsHistory();
+            resetPage();
+        } else {
+            toast.warning(response.data.message || "No matching data found.");
+        }
+    } catch (error) {
+        console.error("Failed to modify/update cycle no due to:", error);
+        toast.error("Update failed");
     }
 };
 
@@ -2187,11 +2465,20 @@ const editCycleNo = async (requestId) => {
             },
         );
 
-        toast.success("Cycle No updated successfully");
-        console.log("Cycle No edited successfully: ", response.data);
-        await updateEditPendingList(requestId, "Approved");
-        await getDeleteRequests();
-        await getEditRequests();
+        if (response.data) {
+            toast.success("Cycle No updated successfully");
+            console.log("Cycle No edited successfully: ", response.data);
+            await saveLog(
+                `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
+            );
+            await updateEditPendingList(requestId, "Approved");
+            await getDeleteRequests();
+            await getEditRequests();
+            await getDataLogsHistory();
+            resetPage();
+        } else {
+            toast.warning(response.data.message || "No matching data found.");
+        }
     } catch (error) {
         console.error("Failed to modify/update cycle no due to:", error);
         toast.error("Update failed");
@@ -2218,6 +2505,7 @@ const req_editCycleNo = async () => {
         resetPage();
         await getDeleteRequests();
         await getEditRequests();
+        await getDataLogsHistory();
     } catch (error) {
         console.error(
             "Failed to request modification for cycle no due to:",
@@ -2261,11 +2549,13 @@ const saveLog = async (log) => {
             user_reason: userReason.value,
             user_corrective_action: userCorrectiveAction.value,
             user_confirmation: userVerified.value,
+            requested_by: state.user.firstName + " " + state.user.surname,
+            approved_by: state.user.firstName + " " + state.user.surname,
             log_remarks: log,
         });
 
         //toast.success('Data logged successfully');
-        console.log("Data saved successfully", response.data);
+        console.log("Data logs saved successfully", response.data);
     } catch (error) {
         console.error("Failed to save data editor logs", error);
         toast.error("Failed to save editor logs");
@@ -2283,6 +2573,7 @@ const resetPage = () => {
     req_isValidationSuccess.value = false;
     req_isCorrectiveActionCompleted.value = false;
     req_showProceedUpdateCycleNo.value = false;
+    showProceedUpdateCycleNo.value = false;
 };
 
 const getDeleteRequests = async () => {
@@ -2329,6 +2620,31 @@ const getFurnaceLists = async () => {
     }
 };
 
+const getDataLogsHistory = async () => {
+    try {
+        const response = await axios.get("/api/data_editor_logs");
+        dataEditorHistory.value = response.data;
+        if (dataEditorHistory.value) {
+            console.log(
+                "Successfully fetched data editor history: ",
+                dataEditorHistory.value,
+            );
+        }
+    } catch (error) {
+        toast.error("Failed to get the furnace lists api error");
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getDataLogsHistory",
+            "Failed to get the data editor history lists api error",
+        );
+    }
+};
+
 //SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- ]
 
 useSessionStorage("selectedFurnace", selectedFurnace);
@@ -2346,5 +2662,6 @@ onMounted(async () => {
     await getFurnaceLists();
     await getDeleteRequests();
     await getEditRequests();
+    await getDataLogsHistory();
 });
 </script>
