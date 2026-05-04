@@ -109,7 +109,7 @@
                                                 "
                                                 class="px-1 py-3 text-center whitespace-nowrap"
                                             >
-                                                Admin&nbsp;Editor
+                                                HT&nbsp;Admin&nbsp;Access
                                             </th>
                                         </tr>
                                     </thead>
