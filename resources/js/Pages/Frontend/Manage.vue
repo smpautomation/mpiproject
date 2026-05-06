@@ -53,7 +53,7 @@
                 v-if="toggleManageForm"
                 class="max-w-5xl p-8 mx-auto mb-8 border shadow-2xl bg-white/95 backdrop-blur-sm border-teal-200/50 rounded-xl"
             >
-                <div class="grid grid-cols-1 gap-6 mb-10 md:grid-cols-3">
+                <div class="grid grid-cols-1 gap-6 mb-2 md:grid-cols-3">
                     <div class="relative">
                         <label
                             class="block mb-2 text-sm font-medium text-gray-700"
@@ -111,6 +111,16 @@
                         </select>
                     </div>
                 </div>
+
+                <div v-if="canViewControlSheet">
+                    <button
+                        @click="goToControlSheet"
+                        class="px-4 py-2 my-4 text-sm font-extrabold text-white rounded-lg shadow-md bg-cyan-700 text-md hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-900"
+                    >
+                        VIEW CONTROL SHEET
+                    </button>
+                </div>
+
                 <p
                     v-if="showUploadTPMFiles"
                     class="mb-6 text-xl font-semibold text-gray-800"
@@ -2160,6 +2170,9 @@ const fetchLayerModelAndLotno = async () => {
         //console.error("Error fetching layer model or lotno:", error);
         toast.error("Failed to fetch layer data.");
 
+        jhCurveActualModel.value = null;
+        jhCurveLotNo.value = null;
+
         await userErrorLogging(
             {
                 message: error.message,
@@ -2645,6 +2658,15 @@ const adjustColor_iHcValue = computed(() => {
     }
 });
 
+const canViewControlSheet = computed(() => {
+    return (
+        selectedMassProd.value &&
+        selectedFurnace.value &&
+        jhCurveActualModel.value &&
+        jhCurveLotNo.value
+    );
+});
+
 //UI Dynamic Color adjustments end
 
 //Serial Generation
@@ -3044,7 +3066,10 @@ const saveToDatabase = async () => {
 
                 for (const key in parsedData) {
                     if (
-                        !Object.prototype.hasOwnProperty.call(parsedData, key) ||
+                        !Object.prototype.hasOwnProperty.call(
+                            parsedData,
+                            key,
+                        ) ||
                         !key.startsWith("data")
                     ) {
                         continue;
@@ -3073,14 +3098,14 @@ const saveToDatabase = async () => {
                     const isInvalid =
                         Number.isNaN(xRaw) ||
                         Number.isNaN(yRaw) ||
-                        xRaw >= 100 ||     // ← FIXED (Excel rule)
+                        xRaw >= 100 || // ← FIXED (Excel rule)
                         yRaw <= -1000;
 
-                        if (isInvalid) {
-                            xValues[index] = null;
-                            yValues[index] = null;
-                            continue;
-                        }
+                    if (isInvalid) {
+                        xValues[index] = null;
+                        yValues[index] = null;
+                        continue;
+                    }
 
                     // =========================
                     // PUSH VALID DATA
@@ -3926,7 +3951,6 @@ const fetchDataCreateGraph = async () => {
         }
 
         renderChart();
-
     } catch (err) {
         error.value = err;
 
@@ -3997,10 +4021,8 @@ const renderChart = () => {
     // EXCEL OFFSET RULES
     // =========================
     const offsets = [
-        0, 2000, 4000, 6000, 8000,
-        10000, 12000, 14000, 16000, 18000,
-        20000, 22000, 24000, 26000, 28000,
-        30000, 32000, 34000, 36000, 38000,
+        0, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000,
+        22000, 24000, 26000, 28000, 30000, 32000, 34000, 36000, 38000,
     ];
 
     const chartDatasets = datasets.value.map((dataset, index) => {
@@ -4086,7 +4108,8 @@ const renderChart = () => {
 
                 const xLength = 1.5 * xStep;
                 const yBottomPixel = yScale.getPixelForValue(yScale.min);
-                const targetPixelX = xScale.getPixelForValue(xScale.max) - inset;
+                const targetPixelX =
+                    xScale.getPixelForValue(xScale.max) - inset;
 
                 let closestValue = getTickValue(xScale.ticks[0]);
                 let minDistance = Infinity;
@@ -4111,15 +4134,27 @@ const renderChart = () => {
 
                 ctx.beginPath();
                 ctx.moveTo(baseX_X + xLength, baseY_X);
-                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
-                ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                ctx.lineTo(
+                    baseX_X + xLength - arrowHeadSize,
+                    baseY_X - arrowHeadSize / 2,
+                );
+                ctx.lineTo(
+                    baseX_X + xLength - arrowHeadSize,
+                    baseY_X + arrowHeadSize / 2,
+                );
                 ctx.closePath();
                 ctx.fill();
 
                 ctx.beginPath();
                 ctx.moveTo(baseX_X, baseY_X);
-                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
-                ctx.lineTo(baseX_X + arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                ctx.lineTo(
+                    baseX_X + arrowHeadSize,
+                    baseY_X - arrowHeadSize / 2,
+                );
+                ctx.lineTo(
+                    baseX_X + arrowHeadSize,
+                    baseY_X + arrowHeadSize / 2,
+                );
                 ctx.closePath();
                 ctx.fill();
 
@@ -4129,13 +4164,14 @@ const renderChart = () => {
                 ctx.fillText(
                     xLabel,
                     baseX_X + xLength / 2 - xLabelWidth / 2,
-                    baseY_X - 10
+                    baseY_X - 10,
                 );
             }
 
             // Y AXIS
             const yLength = -0.1;
-            const baseX_Y = xScale.getPixelForValue(xScale.max) - inset + spacing;
+            const baseX_Y =
+                xScale.getPixelForValue(xScale.max) - inset + spacing;
             const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
 
             ctx.beginPath();
@@ -4145,8 +4181,14 @@ const renderChart = () => {
 
             ctx.beginPath();
             ctx.moveTo(baseX_Y, baseY_Y - yLength);
-            ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
-            ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+            ctx.lineTo(
+                baseX_Y - arrowHeadSize / 2,
+                baseY_Y - yLength + arrowHeadSize,
+            );
+            ctx.lineTo(
+                baseX_Y + arrowHeadSize / 2,
+                baseY_Y - yLength + arrowHeadSize,
+            );
             ctx.closePath();
             ctx.fill();
 
@@ -4160,11 +4202,7 @@ const renderChart = () => {
             const yLabel = "4 kG";
             const yLabelWidth = ctx.measureText(yLabel).width;
 
-            ctx.fillText(
-                yLabel,
-                baseX_Y - yLabelWidth / 2,
-                baseY_Y - 10
-            );
+            ctx.fillText(yLabel, baseX_Y - yLabelWidth / 2, baseY_Y - 10);
 
             ctx.restore();
         },
@@ -4185,8 +4223,7 @@ const renderChart = () => {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: (context) =>
-                            `Value: ${context.raw?.y ?? "NA"}`,
+                        label: (context) => `Value: ${context.raw?.y ?? "NA"}`,
                     },
                 },
             },
@@ -4233,7 +4270,7 @@ const renderChart = () => {
                 const imageData = canvas.toDataURL("image/jpeg", 0.7);
 
                 const csrfToken = document.querySelector(
-                    'meta[name="csrf-token"]'
+                    'meta[name="csrf-token"]',
                 )?.content;
 
                 fetch("/upload-chart", {
@@ -4246,9 +4283,7 @@ const renderChart = () => {
                         image: imageData,
                         filename: `chart_${serialNo.value}.jpg`,
                     }),
-                }).catch((err) =>
-                    console.error("Chart upload failed:", err)
-                );
+                }).catch((err) => console.error("Chart upload failed:", err));
 
                 captureDone = true;
             });
@@ -4256,6 +4291,19 @@ const renderChart = () => {
     };
 
     waitForRender();
+};
+
+const goToControlSheet = () => {
+    //console.log('Navigating to report with serial:', serial);
+    router.visit("/control_sheet", {
+        method: "get", // You can keep 'get' since we are not modifying any data
+        data: {
+            massProd: selectedMassProd.value,
+            furnace: selectedFurnace.value,
+        }, // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 // Define props that Inertia will pass to the component
@@ -4273,30 +4321,32 @@ useSessionStorage("selectedMassProd", selectedMassProd);
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
-    // Log the value to check if it's being passed correctly
-    //console.log('Serial Param in Manage.vue:', props.manageSerialParam);
-    if (
+    const hasSerialFlow =
         props.manageSerialParam &&
         props.manageMassProd &&
         props.manageLayer &&
-        props.manageFurnace
-    ) {
-        // If serialParam has a value, do not fetch serial
+        props.manageFurnace;
+
+    const hasLayerFlow =
+        props.manageMassProd && props.manageLayer && props.manageFurnace;
+
+    if (hasSerialFlow) {
         serialNo.value = props.manageSerialParam;
         selectedMassProd.value = props.manageMassProd;
         currentLayerNo.value = props.manageLayer;
         selectedFurnace.value = props.manageFurnace;
+
         toggleManageForm.value = false;
         showGraphAndTables.value = true;
         showUploadData.value = false;
-        //console.log("Showdiv graphs ",showGraphAndTables.value);
+
         await fetchMiasFactor_category();
         await fetchLayerModelAndLotno();
         await showAllData();
-        //console.log('serialParam is provided, skipping fetchSerial.');
-    } else {
-        // If serialParam does not have a value, proceed with fetchSerial
-        //fetchFurnaces();
+    } else if (hasLayerFlow) {
+        selectedMassProd.value = props.manageMassProd;
+        selectedFurnace.value = props.manageFurnace;
+        currentLayerNo.value = props.manageLayer;
     }
 
     await checkAuthentication();

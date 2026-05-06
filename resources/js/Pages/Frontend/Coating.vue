@@ -936,7 +936,7 @@
                                         ]"
                                     >
                                         <option
-                                            v-for="(lot) in model_names"
+                                            v-for="lot in model_names"
                                             :key="lot.model_name"
                                             :value="lot.model_name"
                                         >
@@ -2254,6 +2254,16 @@
                                     }}</span>
                                     <span>{{
                                         coatingInfo.timeFinished || "NA"
+                                    }}</span>
+                                </div>
+                                <div
+                                    class="flex flex-col items-end gap-1 pl-2 ml-2 font-semibold border-l border-gray-200"
+                                >
+                                    <label>Remarks: </label>
+                                </div>
+                                <div class="flex flex-col gap-1 ml-5">
+                                    <span>{{
+                                        coatingInfo.remarks || "NA"
                                     }}</span>
                                 </div>
                             </div>
@@ -5371,7 +5381,6 @@ watch(
         await getSelectedMassProdData();
         await checkInitialLot();
 
-
         console.log(
             `Selected Furnace: ${newFurnace}, MassProd: ${newMassProd}, Layer: ${newLayer}, ` +
                 `isExists: ${isExists.value}, isExists_2ndGBDP: ${isExists_2ndGBDP.value}`,
@@ -5653,7 +5662,6 @@ const autoFetchBreaklot = async () => {
 
 const fetchCoatingDataSummary = async () => {
     try {
-
         await checkInitialLot();
         //await checkExistingAdditional();
         //await checkHt2ndGbdp();
@@ -5795,7 +5803,6 @@ const fetchCoatingDataSummary = async () => {
 
 const fetchCoatingData2ndGbdpSummary = async () => {
     try {
-
         await checkInitialLot();
         await checkHt2ndGbdp();
         //await checkExistingAdditional();

@@ -551,12 +551,17 @@
                                 :class="{
                                     'cursor-pointer hover:bg-green-50':
                                         lot.status === 'green',
-                                    'cursor-not-allowed opacity-70':
-                                        lot.status !== 'green',
+                                    'cursor-pointer hover:bg-yellow-50':
+                                        lot.status === 'yellow',
                                 }"
                                 @click="
-                                    lot.status === 'green' &&
-                                    viewReport(lot.serial)
+                                    lot.status === 'green'
+                                        ? viewReport(lot.serial)
+                                        : viewJhCurveGenerator(
+                                              redirectedMassPro,
+                                              redirectedFurnace,
+                                              layer,
+                                          )
                                 "
                                 @mouseenter="hoveredLot = `${layer}-${index}`"
                                 @mouseleave="hoveredLot = null"
@@ -1392,7 +1397,7 @@ const getPerLotData = async () => {
         );
 
         lotRows.value = response.data;
-        console.log("All Data per lot:", lotRows.value);
+        //console.log("All Data per lot:", lotRows.value);
     } catch (error) {
         console.error("Failed to get control sheet lot per data", error);
     }
@@ -1441,7 +1446,7 @@ const getMpiReportLayerStatus = async () => {
 
         mpiLayerStatus.value = normalizedLayers;
 
-        console.log("Dynamic MPI layer status:", mpiLayerStatus.value);
+        //console.log("Dynamic MPI layer status:", mpiLayerStatus.value);
     } catch (error) {
         console.error("Failed to get MPI Report layer status", error);
         mpiLayerStatus.value = {};
@@ -1478,6 +1483,20 @@ const viewReport = (serial) => {
     router.visit("/reports", {
         method: "get", // You can keep 'get' since we are not modifying any data
         data: { serialParam: serial, fromControlSheet: true }, // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
+const viewJhCurveGenerator = (massProd, furnace, layer) => {
+    router.visit("/manage", {
+        method: "get",
+        data: {
+            manageMassProd: massProd,
+            manageFurnace: furnace,
+            manageLayer: layer,
+            manageSerialParam: null, // keep consistent with old flow
+        },
         preserveState: true,
         preserveScroll: true,
     });
