@@ -70,6 +70,9 @@ use Illuminate\Http\Request;
 
 Route::post('/viewlist-remastered', [TPMDataController::class, 'viewListRemastered']);
 Route::get('/search-old-view-list', [TPMDataController::class, 'searchedViewList']);
+
+Route::get('/tpmdata/view-list', [TPMDataController::class, 'viewList']);
+
 Route::get('/tpmdata', [TPMDataController::class, 'index']);
 Route::get('/tpmdata/{id}', [TPMDataController::class, 'show']);
 Route::get('/tpmboxes/{id}', [TPMDataController::class, 'showBoxes']);
@@ -83,6 +86,9 @@ Route::delete('/tpmdata/{id}', [TPMDataController::class, 'destroy']);
 Route::delete('/tpmdata/{serial}/delete-chart', [TPMDataController::class, 'deleteChart']);
 Route::delete('/tpmdata/{serial}/{set}/delete-nsa-chart', [TPMDataController::class, 'deleteNsaChart']);
 Route::get('/tpmdata/max-serial', [TPMDataController::class, 'getMaxSerialForMonth']);
+
+
+Route::get('/reportdata/by-serial', [ReportDataController::class, 'getBySerial']);
 
 Route::get('/reportdata', [ReportDataController::class, 'index']);
 Route::get('/reportdata/{id}', [ReportDataController::class, 'show']);
@@ -439,6 +445,8 @@ Route::get('/coating-pending-check', [CoatingController::class, 'checkPending'])
 Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
 Route::get('/coating/get-data-breaklot', [CoatingController::class, 'getCoatingDataBreaklot']);
+
+Route::get('/get-coating-remarks', [CoatingController::class, 'getCoatingRemarks']);
 
 Route::get('/approve-list-checked', [ReportDataController::class, 'getViewListChecked']);
 

@@ -40,7 +40,7 @@
 
                     <!-- Step text -->
                     <div class="text-sm font-medium text-center text-gray-700">
-                        {{ loadingStep }}
+                        {{ loadingStepCoating }}
                     </div>
 
                     <!-- Progress bar (visual feedback) -->
@@ -57,8 +57,7 @@
             <div
                 class="flex flex-col justify-start min-h-screen px-4 py-0 bg-gray-100"
                 :class="{
-                    'pointer-events-none select-none':
-                        isHeatTreatmentPageLoading,
+                    'pointer-events-none select-none': isCoatingPageLoading,
                 }"
             >
                 <div
@@ -3872,30 +3871,27 @@ const { state } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-        const start = Date.now();
-        const maxWait = 5000; // 5 seconds
+        // still loading → do nothing
+        if (state.loading) return false;
 
-        while (!state.user) {
-            if (Date.now() - start > maxWait) {
-                console.error(
-                    "User data failed to load in time. Redirecting...",
-                );
-                router.visit("/"); // Redirect if user never loads
-                return false;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 50));
-        }
-
+        // not authenticated → safe redirect
         if (!state.isAuthenticated) {
-            console.warn("User is not authenticated. Redirecting...");
             router.visit("/");
             return false;
         }
 
-        console.log(
-            "USER AUTHENTICATED!",
-            `${state.user.firstName} ${state.user.surname}`,
-        );
+        console.warn("USER AUTHENTICATED!");
+
+        const user = state.user;
+
+        if (user) {
+            console.warn(
+                "Name:",
+                `${user.firstName ?? ""} ${user.surname ?? ""}`,
+            );
+            console.warn("Access:", user.access_type);
+        }
+
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
@@ -3965,7 +3961,8 @@ function useSessionStorage(key, state) {
 const bypassValidation = ref(false);
 //Dev Controls ----------------- Allow Commands
 const isCoatingPageLoading = ref(false);
-const loadingStep = ref("");
+const loadingStepCoating = ref("");
+
 // General Variables --------- General Variables
 
 //Toggle Control
@@ -5013,8 +5010,8 @@ const checkIncompleteLayers = async () => {
         });
         isLayersIncomplete.value = response.data.is_incomplete;
         incompleteLayers.value = response.data.missing_layers;
-        console.log("IsLayersIncomplate: ", isLayersIncomplete.value);
-        console.log("Incomplete Layers: ", incompleteLayers.value);
+        //console.log("IsLayersIncomplate: ", isLayersIncomplete.value);
+        //console.log("Incomplete Layers: ", incompleteLayers.value);
     } catch (error) {
         console.error("Failed to check incomplete layers", error);
     }
@@ -5071,7 +5068,7 @@ const getMassProdLists = async () => {
                 return Number(aNum) - Number(bNum);
             });
 
-        console.log("List of mass prods: ", massProdList);
+        //console.log("List of mass prods: ", massProdList);
     } catch (error) {
         //console.error('Error fetching mass prod lists', error);
         toast.error("Failed to get the mass prod lists api error");
@@ -5123,8 +5120,8 @@ const getSelectedMassProdData = async () => {
         // Optional: still keep full lot list for dropdowns
         lotNoLists.value = response.data.layer_lot_lists || [];
 
-        console.log("Selected Model: ", coatingInfo.selectedModel);
-        console.log("Selected Lot No: ", lotNo.value);
+        //console.log("Selected Model: ", coatingInfo.selectedModel);
+        //console.log("Selected Lot No: ", lotNo.value);
     } catch (error) {
         console.error("Failed to getSelectedMassProdData: ", error);
         await userErrorLogging(
@@ -5230,17 +5227,17 @@ const fetchExistingLayers = async () => {
             `/api/coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`,
         );
         existingLayers.value = response1.data.completed_layers;
-        console.log("Existing Layers for Coating:", existingLayers.value);
+        //console.log("Existing Layers for Coating:", existingLayers.value);
 
         // 2nd Coating
         const response2 = await axios.get(
             `/api/second-coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`,
         );
         existingLayers_2ndGBDP.value = response2.data.completed_layers;
-        console.log(
+        /*console.log(
             "Existing Layers for 2nd Coating:",
             existingLayers_2ndGBDP.value,
-        );
+        );*/
 
         // Initial check after fetching
         if (coatingInfo.selectedLayer) {
@@ -5285,7 +5282,7 @@ const fetchAvailableLayers = async () => {
             `/api/mass-production/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/completed-layers-coating`,
         );
         available_layers.value = response.data.completed_layers;
-        console.log("Available Layers: ", available_layers.value);
+        //console.log("Available Layers: ", available_layers.value);
         coatingNoMassProdData.value = false;
     } catch (error) {
         console.error(error);
@@ -5316,9 +5313,9 @@ const fetchLayerModel = async () => {
                 },
             },
         );
-        console.log("Fetched Model: ", response.data.model);
+        //console.log("Fetched Model: ", response.data.model);
         fetchedModelValue.value = response.data.model;
-        console.log("Activation: ", activate2ndGBDP.value);
+        //console.log("Activation: ", activate2ndGBDP.value);
         isModelMissing.value = false; // reset in case it was true before
     } catch (error) {
         fetchedModelValue.value = null;
@@ -5381,16 +5378,16 @@ watch(
         await getSelectedMassProdData();
         await checkInitialLot();
 
-        console.log(
+        /*console.log(
             `Selected Furnace: ${newFurnace}, MassProd: ${newMassProd}, Layer: ${newLayer}, ` +
                 `isExists: ${isExists.value}, isExists_2ndGBDP: ${isExists_2ndGBDP.value}`,
-        );
+        );*/
     },
 );
 
 const activate2ndGBDP = computed(() => {
     const model = coatingInfo.selectedModel;
-    console.log("Recomputing GBDP check for model:", model);
+    //console.log("Recomputing GBDP check for model:", model);
     if (!model) return false;
     return firstSecondGBDP_models.value.includes(model.trim());
 });
@@ -5974,26 +5971,62 @@ useSessionStorage("lotNo", lotNo);
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
+const usePerfTracker = (label = "TOTAL") => {
+    const marks = {};
+
+    const start = (name) => {
+        marks[name] = performance.now();
+    };
+
+    const end = (name) => {
+        const t = performance.now() - marks[name];
+        console.log(`${name}: ${t.toFixed(2)}ms`);
+    };
+
+    const totalStart = () => start(label);
+    const totalEnd = () => end(label);
+
+    return { start, end, totalStart, totalEnd };
+};
+
 onMounted(async () => {
+    const perf = usePerfTracker("TOTAL_COATING_LOAD");
+
+    perf.totalStart();
+
     isCoatingPageLoading.value = true;
-    const isAuthenticated = await checkAuthentication();
-    if (!isAuthenticated) {
-        isCoatingPageLoading.value = false;
-        return;
-    }
 
     try {
-        loadingStep.value = "Loading mass prod lists...";
+        perf.start("checkAuthentication");
+        const isAuthenticated = await checkAuthentication();
+        perf.end("checkAuthentication");
+
+        if (!isAuthenticated) return;
+
+        loadingStepCoating.value = "Loading production data...";
+        perf.start("getMassProdLists");
         await getMassProdLists();
-        loadingStep.value = "Loading furnace lists...";
+        perf.end("getMassProdLists");
+
+        loadingStepCoating.value = "Loading furnace data...";
+        perf.start("getFurnaceLists");
         await getFurnaceLists();
-        loadingStep.value = "Loading 1st & 2nd gbdp models...";
+        perf.end("getFurnaceLists");
+
+        loadingStepCoating.value = "Loading model data...";
+        perf.start("get1st2ndGBDPModels");
         await get1st2ndGBDPModels();
-        loadingStep.value = "Checking incomplete layers...";
+        perf.end("get1st2ndGBDPModels");
+
+        loadingStepCoating.value = "Validating layer data...";
+        perf.start("checkIncompleteLayers");
         await checkIncompleteLayers();
+        perf.end("checkIncompleteLayers");
     } finally {
         isCoatingPageLoading.value = false;
-        loadingStep.value = "";
+        loadingStepCoating.value = "";
+
+        perf.totalEnd();
     }
 });
 </script>

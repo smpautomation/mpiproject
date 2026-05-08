@@ -353,14 +353,13 @@
                 v-if="cantFindData == false"
                 @click="cantFindData = true"
                 class="px-4 py-2 text-sm font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700"
-                >
+            >
                 Can't find report?
             </button>
 
             <div v-if="cantFindData" class="p-4 space-y-4">
-
                 <!-- 🔍 Search Panel -->
-                <div class="p-4 bg-white border rounded-xl shadow-sm">
+                <div class="p-4 bg-white border shadow-sm rounded-xl">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-sm font-semibold text-gray-700">
                             Search Old Reports
@@ -375,30 +374,38 @@
                     </div>
 
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-
                         <!-- Mass Production -->
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-600">
-                            Mass Production Name
-                        </label>
-                        <input
-                            v-model="searchMassProd"
-                            type="text"
-                            @input="searchMassProd = searchMassProd.toUpperCase()"
-                            class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500"
-                            placeholder="Enter mass production"
-                        />
+                            <label
+                                class="block mb-1 text-xs font-medium text-gray-600"
+                            >
+                                Mass Production Name
+                            </label>
+                            <input
+                                v-model="searchMassProd"
+                                type="text"
+                                @input="
+                                    searchMassProd =
+                                        searchMassProd.toUpperCase()
+                                "
+                                class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500"
+                                placeholder="Enter mass production"
+                            />
                         </div>
 
                         <!-- Furnace -->
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                            <label
+                                class="block mb-1 text-xs font-medium text-gray-600"
+                            >
                                 Furnace
                             </label>
                             <input
                                 v-model="searchFurnace"
                                 type="text"
-                                @input="searchFurnace = searchFurnace.toUpperCase()"
+                                @input="
+                                    searchFurnace = searchFurnace.toUpperCase()
+                                "
                                 class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500"
                                 placeholder="Enter furnace"
                             />
@@ -409,22 +416,26 @@
                             <button
                                 @click="getSearchedData"
                                 type="button"
-                                class="w-full px-4 py-2 text-sm font-semibold text-white transition bg-cyan-500 rounded-lg hover:bg-cyan-600"
+                                class="w-full px-4 py-2 text-sm font-semibold text-white transition rounded-lg bg-cyan-500 hover:bg-cyan-600"
                             >
                                 Search
                             </button>
                         </div>
-
                     </div>
-                    </div>
+                </div>
 
-                    <!-- 📊 Table -->
-                    <div class="overflow-hidden bg-white border rounded-xl shadow-sm">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-sm text-left text-gray-700">
-
+                <!-- 📊 Table -->
+                <div
+                    class="overflow-hidden bg-white border shadow-sm rounded-xl"
+                >
+                    <div class="overflow-x-auto">
+                        <table
+                            class="min-w-full text-sm text-left text-gray-700"
+                        >
                             <!-- Header -->
-                            <thead class="text-xs text-gray-600 uppercase bg-gray-100">
+                            <thead
+                                class="text-xs text-gray-600 uppercase bg-gray-100"
+                            >
                                 <tr>
                                     <th class="px-4 py-3">Serial No</th>
                                     <th class="px-4 py-3">Furnace</th>
@@ -432,54 +443,66 @@
                                     <th class="px-4 py-3">Layer</th>
                                     <th class="px-4 py-3">Model Name</th>
                                     <th class="px-4 py-3">Lot No</th>
-                                    <th class="px-4 py-3 text-center">Action</th>
+                                    <th class="px-4 py-3 text-center">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
 
                             <!-- Body -->
                             <tbody class="divide-y">
-
                                 <!-- Empty State -->
                                 <tr v-if="searchedDataList.length === 0">
-                                <td colspan="7" class="py-6 text-center text-gray-400">
-                                    No data found
-                                </td>
+                                    <td
+                                        colspan="7"
+                                        class="py-6 text-center text-gray-400"
+                                    >
+                                        No data found
+                                    </td>
                                 </tr>
 
                                 <!-- Rows -->
                                 <tr
-                                v-for="(item) in searchedDataList"
-                                :key="item.serial_no"
-                                class="transition hover:bg-gray-50"
+                                    v-for="item in searchedDataList"
+                                    :key="item.serial_no"
+                                    class="transition hover:bg-gray-50"
                                 >
-                                <td class="px-4 py-2 font-medium text-gray-800">
-                                    {{ item.serial_no }}
-                                </td>
-                                <td class="px-4 py-2">{{ item.furnace }}</td>
-                                <td class="px-4 py-2">{{ item.mass_prod }}</td>
-                                <td class="px-4 py-2">{{ item.layer ?? '-' }}</td>
-                                <td class="px-4 py-2">{{ item.model_name ?? '-' }}</td>
-                                <td class="px-4 py-2">{{ item.lot_no ?? '-' }}</td>
-
-                                <!-- Action -->
-                                <td class="px-4 py-2 text-center">
-                                    <button
-                                    @click="viewReport(item.serial_no)"
-                                    class="px-3 py-1 text-xs font-semibold text-white transition bg-cyan-600 rounded-md hover:bg-cyan-400"
+                                    <td
+                                        class="px-4 py-2 font-medium text-gray-800"
                                     >
-                                    View Report
-                                    </button>
-                                </td>
-                                </tr>
+                                        {{ item.serial_no }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ item.furnace }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ item.mass_prod }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ item.layer ?? "-" }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ item.model_name ?? "-" }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ item.lot_no ?? "-" }}
+                                    </td>
 
+                                    <!-- Action -->
+                                    <td class="px-4 py-2 text-center">
+                                        <button
+                                            @click="viewReport(item.serial_no)"
+                                            class="px-3 py-1 text-xs font-semibold text-white transition rounded-md bg-cyan-600 hover:bg-cyan-400"
+                                        >
+                                            View Report
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
-                            </table>
-                        </div>
+                        </table>
                     </div>
                 </div>
-
-
-
+            </div>
         </div>
     </Frontend>
 </template>
@@ -496,35 +519,32 @@ const { state } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-        const start = Date.now();
-        const timeout = 500; // 5 seconds
+        // still loading → do nothing
+        if (state.loading) return false;
 
-        while (!state.user) {
-            if (Date.now() - start > timeout) {
-                console.error(
-                    "Auth timeout: user data failed to load within 5 seconds.",
-                );
-                router.visit("/"); // Redirect if not authenticated
-                return false;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
-        }
-
+        // not authenticated → safe redirect
         if (!state.isAuthenticated) {
-            router.visit("/"); // Redirect if not authenticated
-
-            return false; // Indicate not authenticated
+            router.visit("/");
+            return false;
         }
 
         console.warn("USER AUTHENTICATED!");
-        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
-        console.warn("Access: ", state.user.access_type);
 
-        return true; // Indicate authenticated
+        const user = state.user;
+
+        if (user) {
+            console.warn(
+                "Name:",
+                `${user.firstName ?? ""} ${user.surname ?? ""}`,
+            );
+            console.warn("Access:", user.access_type);
+        }
+
+        return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
-        router.visit("/"); // Redirect on error
-        return false; // Indicate not authenticated
+        router.visit("/");
+        return false;
     }
 };
 
@@ -643,15 +663,33 @@ const totalPages = computed(() => {
 // Fetch data
 const viewAllSerialedLayers = async () => {
     try {
-        const response = await axios.get("/api/tpmdata");
-        const rawData = response.data.data?.tpmData || {};
-        //console.log("Show respone raw data: ",response.data);
-        tpmData.value = Object.entries(rawData)
-            .map(([serial, data]) => ({ serial: Number(serial), ...data }))
-            .sort((a, b) => b.serial - a.serial); // Sort DESC by serial
-        //console.log('[Fetched Data]:', tpmData.value);
-        //totalPages.value = Math.ceil(tpmData.value.length / itemsPerPage);
-        //console.log(totalPages.value);
+        console.time("API view data");
+
+        const response = await axios.get("/api/tpmdata/view-list", {
+            params: {
+                search: searchQuery.value,
+                status: statusFilter.value,
+                mass_prod: selectedMassProd.value,
+                furnace: selectedFurnace.value,
+                from: vl_dateFrom.value,
+                to: vl_dateTo.value,
+                per_page: itemsPerPage,
+                page: currentPage.value,
+            },
+        });
+
+        console.timeEnd("API view data");
+
+        const result = response.data.data;
+
+        console.log("View list result: ", result);
+
+        // direct assignment (NO transformation)
+        tpmData.value = result.data;
+
+        // backend-controlled pagination
+        totalPages.value = result.last_page;
+        currentPage.value = result.current_page;
     } catch (error) {
         console.error("[Error Fetching Data]:", error);
     }
@@ -683,33 +721,18 @@ const getMassProdLists = async () => {
 
 const getSearchedData = async () => {
     try {
-        const response = await axios.get('/api/search-old-view-list', {
+        const response = await axios.get("/api/search-old-view-list", {
             params: {
                 search_mass_prod: searchMassProd.value,
-                search_furnace: searchFurnace.value
-            }
+                search_furnace: searchFurnace.value,
+            },
         });
         searchedDataList.value = response.data.data || [];
     } catch (error) {
-        console.error('Failed to get searched data', error);
+        console.error("Failed to get searched data", error);
         searchedDataList.value = [];
     }
 };
-
-useSessionStorage("searchMassProd", searchMassProd);
-useSessionStorage("searchFurnace",searchFurnace);
-useSessionStorage("selectedMassProd", selectedMassProd);
-useSessionStorage("selectedFurnace", selectedFurnace);
-useSessionStorage("statusFilter", statusFilter);
-useSessionStorage("vl_dateFrom", vl_dateFrom);
-useSessionStorage("vl_dateTo", vl_dateTo);
-
-onMounted(async () => {
-    await checkAuthentication();
-    await viewAllSerialedLayers();
-    await getMassProdLists();
-    await getFurnaceLists();
-});
 
 // Search + filter
 const filteredData = computed(() => {
@@ -851,4 +874,29 @@ const deleteRow = async (serial) => {
         confirmDeleteFor.value = null;
     }
 };
+
+useSessionStorage("searchMassProd", searchMassProd);
+useSessionStorage("searchFurnace", searchFurnace);
+useSessionStorage("selectedMassProd", selectedMassProd);
+useSessionStorage("selectedFurnace", selectedFurnace);
+useSessionStorage("statusFilter", statusFilter);
+useSessionStorage("vl_dateFrom", vl_dateFrom);
+useSessionStorage("vl_dateTo", vl_dateTo);
+
+onMounted(async () => {
+    console.time("TOTAL LOAD TIME");
+    console.time("Checking Authentication");
+    await checkAuthentication();
+    console.timeEnd("Checking Authentication");
+    console.time("Viewing all serialized layers");
+    await viewAllSerialedLayers();
+    console.timeEnd("Viewing all serialized layers");
+    console.time("Getting mass prod lists");
+    await getMassProdLists();
+    console.timeEnd("Getting mass prod lists");
+    console.time("Getting furnace lists");
+    await getFurnaceLists();
+    console.timeEnd("Getting furnace lists");
+    console.timeEnd("TOTAL LOAD TIME");
+});
 </script>

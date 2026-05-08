@@ -137,7 +137,7 @@ class GbdpSecondHeatTreatmentController extends Controller
             return response()->json([
                 'is_breaklot'   => false,
                 'is_existing'   => false,
-                'do_not_proceed'=> false,
+                'do_not_proceed' => false,
             ]);
         }
 
@@ -147,7 +147,7 @@ class GbdpSecondHeatTreatmentController extends Controller
             return response()->json([
                 'is_breaklot'   => false,
                 'is_existing'   => false,
-                'do_not_proceed'=> false,
+                'do_not_proceed' => false,
             ]);
         }
 
@@ -209,7 +209,7 @@ class GbdpSecondHeatTreatmentController extends Controller
             ->where('layer', $layer)
             ->exists();
 
-        $isExisting = $existsInBreaklotSecond || $existsInSecondGbdpHt;
+        $isExisting = $existsInBreaklotSecond;
 
         // NEW RULE: validate pair existence in derived dataset
         $doNotProceed = false;
@@ -229,5 +229,4 @@ class GbdpSecondHeatTreatmentController extends Controller
             'do_not_proceed'    => $doNotProceed,
         ]);
     }
-
 }

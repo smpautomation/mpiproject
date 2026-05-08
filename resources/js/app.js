@@ -6,6 +6,7 @@ import { router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createApp, h } from 'vue';
+import { useAuth } from "@/Composables/useAuth.js";
 import axios from 'axios';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
@@ -59,19 +60,34 @@ HTMLCanvasElement.prototype.getContext = function(type, options) {
 // ============================================
 
 createInertiaApp({
-  title: (title) => title ? `${title} GBDP-MPIOnlineSystem` : 'GBDP-MPIOnlineSystem',
+  title: (title) =>
+    title
+      ? `${title} GBDP-MPIOnlineSystem`
+      : 'GBDP-MPIOnlineSystem',
+
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.vue`,
       import.meta.glob('./Pages/**/*.vue')
     ),
+
   setup({ el, App, props, plugin }) {
-    return createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(ZiggyVue)
-      .use(ToastPlugin)
-      .mount(el);
+
+    const { init } = useAuth()
+
+    return init().finally(() => {
+
+      createApp({
+        render: () => h(App, props),
+      })
+        .use(plugin)
+        .use(ZiggyVue)
+        .use(ToastPlugin)
+        .mount(el)
+
+    })
   },
+
   progress: {
     color: '#4B5563',
   },

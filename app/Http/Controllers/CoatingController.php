@@ -7,6 +7,7 @@ use App\Models\BreaklotSecondCoating;
 use App\Models\Coating;
 use App\Models\CoatingPending;
 use App\Models\GbdpSecondCoating;
+use App\Models\BreaklotInitialLotHt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -226,5 +227,125 @@ class CoatingController extends Controller
         return response()->json([
             'completed_layers' => $layers,
         ]);
+    }
+
+    public function getCoatingRemarks(Request $request)
+    {
+        $request->validate([
+            'furnace'   => 'required|string',
+            'mass_prod' => 'required|string',
+            'layer'     => 'required|string',
+            'model'     => 'required|string',
+            'lot_no'    => 'required|string',
+        ]);
+
+        $massProd = $request->mass_prod;
+        $furnace  = $request->furnace;
+        $layer    = $request->layer;
+        $model    = $request->model;
+        $lotNo    = $request->lot_no;
+
+        $response = [
+            'found_coating_remarks' => false,
+            'remarks' => null,
+        ];
+
+        $matchesLongAging = function ($text) {
+            return is_string($text) && stripos($text, 'long aging') !== false;
+        };
+
+        $safeJsonRemarks = function ($json) {
+            if (empty($json) || !is_string($json)) {
+                return null;
+            }
+
+            $data = json_decode($json, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return null;
+            }
+
+            return $data['remarks'] ?? null;
+        };
+
+        // 1. Gate check
+        $initialLot = BreaklotInitialLotHt::where([
+            'mass_prod'      => $massProd,
+            'furnace'        => $furnace,
+            'layer'          => $layer,
+            'initial_model'  => $model,
+            'initial_lot'    => $lotNo,
+        ])->first();
+
+        if ($initialLot) {
+
+            // 2. Coating (highest priority)
+            $coating = Coating::where([
+                'mass_prod' => $massProd,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+            ])->first();
+
+            if ($coating && $matchesLongAging($coating->remarks)) {
+                return response()->json([
+                    'found_coating_remarks' => true,
+                    'remarks' => $coating->remarks,
+                ]);
+            }
+
+            // 3. GBDP second coating (JSON safe)
+            $gbdp = GbdpSecondCoating::where([
+                'mass_prod' => $massProd,
+                'furnace'   => $furnace,
+                'layer'     => $layer,
+            ])->first();
+
+            $gbdpRemarks = $safeJsonRemarks($gbdp->coating_info_2ndgbdp ?? null);
+
+            if ($matchesLongAging($gbdpRemarks)) {
+                return response()->json([
+                    'found_coating_remarks' => true,
+                    'remarks' => $gbdpRemarks,
+                ]);
+            }
+
+            return response()->json($response);
+        }
+
+        // 4. BreaklotCoating fallback
+        $breaklot = BreaklotCoating::where([
+            'mass_prod' => $massProd,
+            'furnace'   => $furnace,
+            'layer'     => $layer,
+            'model'     => $model,
+            'lot_no'    => $lotNo,
+        ])->first();
+
+        if ($breaklot && $matchesLongAging($breaklot->remarks)) {
+            return response()->json([
+                'found_coating_remarks' => true,
+                'remarks' => $breaklot->remarks,
+            ]);
+        }
+
+        // 5. BreaklotSecondCoating fallback (JSON safe)
+        $breaklotSecond = BreaklotSecondCoating::where([
+            'mass_prod' => $massProd,
+            'furnace'   => $furnace,
+            'layer'     => $layer,
+            'model'     => $model,
+            'lot_no'    => $lotNo,
+        ])->first();
+
+        $breaklotRemarks = $safeJsonRemarks($breaklotSecond->coating_info_2ndgbdp ?? null);
+
+        if ($matchesLongAging($breaklotRemarks)) {
+            return response()->json([
+                'found_coating_remarks' => true,
+                'remarks' => $breaklotRemarks,
+            ]);
+        }
+
+        return response()->json($response);
     }
 }

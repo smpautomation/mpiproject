@@ -3513,30 +3513,27 @@ const { state } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-        const start = Date.now();
-        const maxWait = 5000; // 5 seconds
+        // still loading → do nothing
+        if (state.loading) return false;
 
-        while (!state.user) {
-            if (Date.now() - start > maxWait) {
-                console.error(
-                    "User data failed to load in time. Redirecting...",
-                );
-                router.visit("/"); // Redirect if user never loads
-                return false;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 50));
-        }
-
+        // not authenticated → safe redirect
         if (!state.isAuthenticated) {
-            console.warn("User is not authenticated. Redirecting...");
             router.visit("/");
             return false;
         }
 
-        console.log(
-            "USER AUTHENTICATED!",
-            `${state.user.firstName} ${state.user.surname}`,
-        );
+        console.warn("USER AUTHENTICATED!");
+
+        const user = state.user;
+
+        if (user) {
+            console.warn(
+                "Name:",
+                `${user.firstName ?? ""} ${user.surname ?? ""}`,
+            );
+            console.warn("Access:", user.access_type);
+        }
+
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
@@ -4151,8 +4148,8 @@ const getGraphPatterns = async () => {
 
         console.log("Graph Patterns:", graph_patterns.value);
     } catch (error) {
-        console.error("Error fetching graph patterns", error);
-        toast.error("Failed to get graph patterns.");
+        //console.error("Error fetching graph patterns", error);
+        //toast.error("Failed to get graph patterns.");
         graph_patterns.value = null;
 
         await userErrorLogging(
@@ -5744,40 +5741,73 @@ useSessionStorage("hti", hti);
 
 // APPLYING Browser Session ----------------- APPLYING Browser Session
 
+const usePerfTracker = (label = "TOTAL") => {
+    const marks = {};
+
+    const start = (name) => {
+        marks[name] = performance.now();
+    };
+
+    const end = (name) => {
+        const t = performance.now() - marks[name];
+        console.log(`${name}: ${t.toFixed(2)}ms`);
+    };
+
+    const totalStart = () => start(label);
+    const totalEnd = () => end(label);
+
+    return { start, end, totalStart, totalEnd };
+};
+
 onMounted(async () => {
+    const perf = usePerfTracker("TOTAL_HEAT_TREATMENT_LOAD");
+
+    perf.totalStart();
+
     isHeatTreatmentPageLoading.value = true;
 
-    const isAuthenticated = await checkAuthentication();
-    if (!isAuthenticated) {
-        isHeatTreatmentPageLoading.value = false;
-        return;
-    }
-
     try {
-        loadingStep.value = "Loading furnace lists...";
+        perf.start("checkAuthentication");
+        const isAuthenticated = await checkAuthentication();
+        perf.end("checkAuthentication");
+
+        if (!isAuthenticated) return;
+
+        loadingStep.value = "Loading furnace data...";
+        perf.start("getFurnaceLists");
         await getFurnaceLists();
+        perf.end("getFurnaceLists");
 
-        loadingStep.value = "Loading mass production data...";
+        loadingStep.value = "Loading production data...";
+        perf.start("getMassProdLists");
         await getMassProdLists();
-
-        //loadingStep.value = "Fetching lot numbers...";
-        //await fetchAllLotNoData();
+        perf.end("getMassProdLists");
 
         loadingStep.value = "Loading graph patterns...";
+        perf.start("getGraphPatterns");
         await getGraphPatterns();
+        perf.end("getGraphPatterns");
 
-        loadingStep.value = "Loading GBDP models...";
+        loadingStep.value = "Loading model data...";
+        perf.start("get1st2ndGBDPModels");
         await get1st2ndGBDPModels();
+        perf.end("get1st2ndGBDPModels");
 
-        loadingStep.value = "Finalizing...";
+        loadingStep.value = "Finalizing data...";
+        perf.start("checkExpiration");
         checkExpiration();
+        perf.end("checkExpiration");
 
+        perf.start("intervalSetup");
         intervalId = setInterval(() => {
             checkExpiration();
         }, 300000);
+        perf.end("intervalSetup");
     } finally {
         isHeatTreatmentPageLoading.value = false;
         loadingStep.value = "";
+
+        perf.totalEnd();
     }
 });
 

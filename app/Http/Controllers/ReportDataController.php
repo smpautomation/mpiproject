@@ -13,60 +13,59 @@ class ReportDataController extends Controller
 {
     public function index(Request $request)
     {
-        try{
+        try {
             $serial_no = $request->query("serial");
-            if($serial_no){
+            if ($serial_no) {
                 $reportData = ReportData::where('tpm_data_serial', $serial_no)->get();
-                if(!$reportData->isEmpty()){
+                if (!$reportData->isEmpty()) {
                     return response()->json([
                         'status' => true,
                         'message' => "Report Data with Serial: {$serial_no} fetched successfully",
-                        'data'=> $reportData
+                        'data' => $reportData
                     ], 200);
-                }else{
+                } else {
                     return response()->json([
                         'status' => false,
-                        'message'=> "Report Data with Serial: {$serial_no} cannot be found"
+                        'message' => "Report Data with Serial: {$serial_no} cannot be found"
                     ], 500);
                 }
-            }else{
+            } else {
                 $reportData = ReportData::all();
                 return response()->json([
                     'status' => true,
                     'message' => 'Report Data fetched successfully',
-                    'data'=> $reportData
+                    'data' => $reportData
                 ], 200);
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message'=> "Report Data could not be fetched",
-                "error"=> $e->getMessage()
+                'message' => "Report Data could not be fetched",
+                "error" => $e->getMessage()
             ], 500);
         }
     }
     public function show($id)
     {
-        try{
+        try {
             $reportData = ReportData::find($id);
-            if(!empty($reportData)){
+            if (!empty($reportData)) {
                 return response()->json([
-                    "status"=> true,
-                    "message"=> "Report Data with ID: {$id} fetched successfully",
-                    "data"=> $reportData
+                    "status" => true,
+                    "message" => "Report Data with ID: {$id} fetched successfully",
+                    "data" => $reportData
                 ], 200);
-            }else{
+            } else {
                 return response()->json([
-                    "status"=> false,
-                    "message"=> "Report Data with ID: {$id} not found",
+                    "status" => false,
+                    "message" => "Report Data with ID: {$id} not found",
                 ], 404);
             }
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message'=> "Report Data could not be fetched",
-                "error"=> $e->getMessage()
+                'message' => "Report Data could not be fetched",
+                "error" => $e->getMessage()
             ], 500);
         }
     }
@@ -74,12 +73,12 @@ class ReportDataController extends Controller
     {
         DB::beginTransaction();
 
-        try{
+        try {
             $reportDataInputs = [
                 "model" => $request->input("model"),
                 "material_code" => $request->input("material_code"),
                 "partial_number" => $request->input("partial_number"),
-                "total_quantity"=> $request->input("total_quantity"),
+                "total_quantity" => $request->input("total_quantity"),
                 "pulse_tracer_machine_number" => $request->input("pulse_tracer_machine_number"),
                 "date" => $request->input("date"),
                 "shift" => $request->input("shift"),
@@ -89,20 +88,20 @@ class ReportDataController extends Controller
                 "width" => $request->input("width"),
                 "thickness" => $request->input("thickness"),
                 "material_grade" => $request->input("material_grade"),
-                "mpi_sample_quantity"=> $request->input("mpi_sample_quantity"),
-                "std_dev"=> $request->input("std_dev"),
-                "cpu"=> $request->input("cpu"),
-                "cpl"=> $request->input("cpl"),
-                "cpk"=> $request->input("cpk"),
-                "br_cpk_remarks"=> $request->input("br_cpk_remarks"),
-                "remarks"=> $request->input("remarks"),
+                "mpi_sample_quantity" => $request->input("mpi_sample_quantity"),
+                "std_dev" => $request->input("std_dev"),
+                "cpu" => $request->input("cpu"),
+                "cpl" => $request->input("cpl"),
+                "cpk" => $request->input("cpk"),
+                "br_cpk_remarks" => $request->input("br_cpk_remarks"),
+                "remarks" => $request->input("remarks"),
                 "remarks_display" => $request->input("remarks_display"),
-                "smp_judgement"=> $request->input("smp_judgement"),
-                "prepared_by"=> $request->input("prepared_by"),
-                "checked_by"=> $request->input("checked_by"),
+                "smp_judgement" => $request->input("smp_judgement"),
+                "prepared_by" => $request->input("prepared_by"),
+                "checked_by" => $request->input("checked_by"),
                 "approved_by" => $request->input("approved_by"),
-                "prepared_by_date"=> $request->input("prepared_by_date"),
-                "checked_by_date"=> $request->input("checked_by_date"),
+                "prepared_by_date" => $request->input("prepared_by_date"),
+                "checked_by_date" => $request->input("checked_by_date"),
                 "approved_by_date" => $request->input("approved_by_date"),
                 "note_reason_reject" => $request->input("note_reason_reject"),
                 "oven_machine_no" => $request->input("oven_machine_no"),
@@ -125,7 +124,7 @@ class ReportDataController extends Controller
                 'message' => 'Report Data saved successfully',
                 'data' => $reportData
             ], 201);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
@@ -150,7 +149,6 @@ class ReportDataController extends Controller
                 'message' => 'Report Data updated successfully',
                 'data' => $reportData
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -162,14 +160,14 @@ class ReportDataController extends Controller
     }
     public function destroy($id)
     {
-        try{
-            $reportData = ReportData::where('serial_no',$id)->get();
+        try {
+            $reportData = ReportData::where('serial_no', $id)->get();
             $reportData->delete();
             return response()->json([
                 'status' => true,
                 'message' => 'tmp Data deleted successfully'
             ], 200);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Error deleting tmp Data',
@@ -300,9 +298,9 @@ class ReportDataController extends Controller
     {
         // Step 1: Get all serials where prepared_by_date is not null or empty
         $serials = ReportData::whereNull('prepared_by_date') // null values
-        ->orWhere('prepared_by_date', '')                // empty strings
-        ->pluck('tpm_data_serial')
-        ->toArray();
+            ->orWhere('prepared_by_date', '')                // empty strings
+            ->pluck('tpm_data_serial')
+            ->toArray();
 
         $serials = array_map('strval', $serials);
 
@@ -394,6 +392,38 @@ class ReportDataController extends Controller
         ]);
     }
 
+    public function getBySerial(Request $request)
+    {
+        try {
+            $serial = $request->query('serial');
 
+            if (!$serial) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Serial is required'
+                ], 400);
+            }
 
+            $reportData = ReportData::where('tpm_data_serial', $serial)->get();
+
+            if ($reportData->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "No report data found for serial: {$serial}"
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => "Report data fetched successfully",
+                'data' => $reportData
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => "Failed to fetch report data",
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

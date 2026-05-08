@@ -1,6 +1,44 @@
 import { reactive, readonly } from 'vue'
 import axios from 'axios'
 
+let initialized = false;
+let initPromise = null;
+
+async function init() {
+
+    if (initialized) return state;
+
+    if (initPromise) return initPromise;
+
+    state.loading = true;
+
+    initPromise = (async () => {
+        try {
+
+            const { data } = await axios.get('/api/user', {
+                withCredentials: true
+            });
+
+            state.user = data;
+            state.isAuthenticated = true;
+
+        } catch (error) {
+
+            state.user = null;
+            state.isAuthenticated = false;
+
+        } finally {
+
+            state.loading = false;
+            initialized = true;
+        }
+
+        return state;
+    })();
+
+    return initPromise;
+}
+
 const state = reactive({
     user: null,
     isAuthenticated: false,
@@ -50,6 +88,7 @@ export function useAuth() {
         login,
         logout,
         fetchUser,
+        init,
     }
 }
 

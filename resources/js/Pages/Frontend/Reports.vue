@@ -178,7 +178,6 @@
                 >
                     {{ reportErrorMessage }}
                 </div>
-                <DotsLoader v-show="showReportLoading" class="z-10 mt-8" />
                 <div
                     v-show="showReportMain"
                     class="flex flex-col justify-center py-10 mx-20 mt-10 mb-20 align-middle bg-blue-100 shadow-2xl rounded-3xl"
@@ -274,6 +273,7 @@
                             </p>
                         </div>
                         <div
+                            v-if="!showReportLoading"
                             class="flex flex-col items-center justify-between w-full gap-4 p-6 transition border shadow-lg sm:flex-row bg-white/30 border-white/50 rounded-xl backdrop-blur-md hover:shadow-xl hover:border-white/70"
                         >
                             <!-- Serial -->
@@ -333,6 +333,60 @@
                                     >
                                     </span>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- REPORT LOADER (UNDER MAIN CONTENT) -->
+                        <div
+                            v-show="showReportLoading"
+                            class="flex items-center justify-center px-5 mx-5 mb-6 overflow-hidden shadow py-15 bg-gradient-to-r from-blue-100 via-sky-100 to-blue-100 rounded-xl"
+                        >
+                            <!-- MAGNETIC FIELD CORE -->
+                            <div
+                                class="relative flex items-center justify-center w-4 h-4 mr-3"
+                            >
+                                <!-- outer energy wave -->
+                                <span
+                                    class="absolute w-full h-full border border-blue-400 rounded-full animate-ping opacity-30"
+                                ></span>
+
+                                <!-- rotating field ring -->
+                                <span
+                                    class="absolute w-full h-full border-2 rounded-full border-sky-500 animate-spin opacity-60"
+                                ></span>
+
+                                <!-- inner counter-spin ring -->
+                                <span
+                                    class="absolute w-3 h-3 border border-blue-600 rounded-full animate-spin opacity-80"
+                                    style="
+                                        animation-direction: reverse;
+                                        animation-duration: 1.2s;
+                                    "
+                                ></span>
+
+                                <!-- core nucleus -->
+                                <span
+                                    class="w-2 h-2 bg-blue-700 rounded-full shadow-md"
+                                ></span>
+                            </div>
+
+                            <!-- FLOW TEXT -->
+                            <span
+                                class="text-xs font-medium tracking-wide text-blue-800 whitespace-nowrap"
+                            >
+                                Syncing magnetic inspection layers...
+                            </span>
+
+                            <!-- RIGHT SIDE MICRO PARTICLES -->
+                            <div class="relative flex ml-3 space-x-1">
+                                <span
+                                    class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce"
+                                ></span>
+                                <span
+                                    class="w-1.5 h-1.5 bg-sky-500 rounded-full animate-bounce delay-150"
+                                ></span>
+                                <span
+                                    class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce delay-300"
+                                ></span>
                             </div>
                         </div>
                     </div>
@@ -824,13 +878,14 @@
                                     <tr class="text-center">
                                         <td
                                             :rowspan="
-                                                (noteReasonForReject.includes(
+                                                ((noteReasonForReject.includes(
                                                     '- N.G iHc',
                                                 ) ||
                                                     specialModelsForGxFormat.includes(
                                                         jhCurveActualModel,
                                                     )) &&
-                                                showGX || showHIS
+                                                    showGX) ||
+                                                showHIS
                                                     ? 2
                                                     : 1
                                             "
@@ -841,7 +896,8 @@
                                         <td
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
                                         >
-                                            <span v-if="showGX || showHIS">GM </span
+                                            <span v-if="showGX || showHIS"
+                                                >GM </span
                                             >{{ inspectioniHcStandard }}
                                         </td>
                                         <td
@@ -925,10 +981,7 @@
                                             {{ reportGX_iHcVariance }}
                                         </td>
                                     </tr>
-                                    <tr
-                                        v-if="showHIS"
-                                        class="text-center"
-                                    >
+                                    <tr v-if="showHIS" class="text-center">
                                         <td
                                             class="text-blue-600 border-4 border-white"
                                         >
@@ -979,13 +1032,14 @@
                                     <tr class="text-center">
                                         <td
                                             :rowspan="
-                                                (noteReasonForReject.includes(
+                                                ((noteReasonForReject.includes(
                                                     '- N.G iHc',
                                                 ) ||
                                                     specialModelsForGxFormat.includes(
                                                         jhCurveActualModel,
                                                     )) &&
-                                                showGX || showHIS
+                                                    showGX) ||
+                                                showHIS
                                                     ? 2
                                                     : 1
                                             "
@@ -996,7 +1050,8 @@
                                         <td
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
                                         >
-                                            <span v-if="showGX || showHIS">GM </span
+                                            <span v-if="showGX || showHIS"
+                                                >GM </span
                                             >{{ inspectioniHkStandard }}
                                         </td>
                                         <td
@@ -1075,15 +1130,12 @@
                                             {{ reportGX_iHkVariance }}
                                         </td>
                                     </tr>
-                                    <tr
-                                        v-if="showHIS"
-                                        class="text-center"
-                                    >
+                                    <tr v-if="showHIS" class="text-center">
                                         <td
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
                                         >
-                                            <span v-if="showHIS">GS </span> - - -
-                                            - -
+                                            <span v-if="showHIS">GS </span> - -
+                                            - - -
                                         </td>
                                         <td
                                             class="px-4 py-2 text-blue-600 border-4 border-white"
@@ -3580,7 +3632,8 @@
                                     state.user.access_type === 'Automation')
                             "
                             @click="saveReport"
-                            class="px-4 py-2 mt-4 text-sm font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95"
+                            :disabled="showReportLoading"
+                            class="px-4 py-2 mt-4 text-sm font-extrabold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-xl disabled:cursor-not-allowed disabled:bg-gray-500 rounded-xl hover:bg-green-400 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-600 active:scale-95"
                         >
                             {{
                                 reportExistingSMPJudgement !== null
@@ -3599,7 +3652,8 @@
                                     selectedFurnace,
                                 )
                             "
-                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            :disabled="showReportLoading"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl disabled:cursor-not-allowed disabled:bg-gray-500 rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY ADDITIONAL
                         </button>
@@ -3611,7 +3665,8 @@
                                     report_isFinalized,
                                 )
                             "
-                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
+                            :disabled="showReportLoading"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-yellow-600 transition duration-300 ease-in-out transform border border-yellow-400 shadow-xl disabled:cursor-not-allowed disabled:bg-gray-500 rounded-xl hover:text-white hover:bg-yellow-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-600 active:scale-95"
                         >
                             View PDF Report
                         </button>
@@ -5111,53 +5166,41 @@ const { state } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-        const start = Date.now();
-        const timeout = 1000; // 10 seconds
-
-        while (!state.user) {
-            if (Date.now() - start > timeout) {
-                console.error(
-                    "Auth timeout: user data failed to load within 5 seconds.",
-                );
-                router.visit("/"); // Redirect if not authenticated
-                return false;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
+        console.time("Checking authentication");
+        // auth still resolving
+        if (state.loading) {
+            return false;
         }
 
-        if (!state.isAuthenticated) {
-            router.visit("/"); // Redirect if not authenticated
-
-            return false; // Indicate not authenticated
+        // auth resolved but no user
+        if (!state.isAuthenticated || !state.user) {
+            router.visit("/");
+            return false;
         }
+
+        const user = state.user;
 
         console.warn("USER AUTHENTICATED!");
-        console.warn("Name: ", state.user.firstName + " " + state.user.surname);
-        console.warn("Access: ", state.user.access_type);
+        console.warn("Name:", `${user.firstName ?? ""} ${user.surname ?? ""}`);
+        console.warn("Access:", user.access_type);
 
-        greetingsWindowFirstName.value = state.user.firstName;
-        greetingsWindowLastName.value = state.user.surname;
+        greetingsWindowFirstName.value = user.firstName ?? "";
+        greetingsWindowLastName.value = user.surname ?? "";
 
-        if (state.user.access_type === "Coating") {
-            coatingAccess.value = true;
-        } else if (state.user.access_type === "Heat Treatment") {
-            heatTreatmentAccess.value = true;
-        } else {
-            coatingAccess.value = false;
-            heatTreatmentAccess.value = false;
-        }
+        coatingAccess.value = user.access_type === "Coating";
 
-        if (state.user.access_type === "Automation") {
-            automationAcess.value = true;
-        } else {
-            automationAcess.value = false;
-        }
+        heatTreatmentAccess.value = user.access_type === "Heat Treatment";
 
-        return true; // Indicate authenticated
+        automationAcess.value = user.access_type === "Automation";
+
+        return true;
+        console.timeEnd("Checking authentication");
     } catch (error) {
         console.error("Error checking authentication:", error);
-        router.visit("/"); // Redirect on error
-        return false; // Indicate not authenticated
+
+        router.visit("/");
+
+        return false;
     }
 };
 
@@ -5206,8 +5249,9 @@ const userErrorLogging = async (details, triggerFunction, title) => {
 };
 
 const vtStatus = computed(() => {
-    const hasRejectReason =
-        (noteReasonForReject.value || "").includes("- N.G iHc");
+    const hasRejectReason = (noteReasonForReject.value || "").includes(
+        "- N.G iHc",
+    );
 
     if (!hasRejectReason || !showVTData.value) {
         return null;
@@ -5217,8 +5261,7 @@ const vtStatus = computed(() => {
     const threshold = reportVT_iHc.value;
 
     const hasInvalid =
-        results.length === 0 ||
-        results.some(sample => sample < threshold);
+        results.length === 0 || results.some((sample) => sample < threshold);
 
     if (hasInvalid) {
         return {
@@ -5236,10 +5279,8 @@ const vtStatus = computed(() => {
 const isGXActive = computed(() => {
     return (
         showGX.value === true &&
-        (
-            noteReasonForReject.value?.includes("- N.G iHc") ||
-            specialModelsForGxFormat.value.includes(jhCurveActualModel.value)
-        )
+        (noteReasonForReject.value?.includes("- N.G iHc") ||
+            specialModelsForGxFormat.value.includes(jhCurveActualModel.value))
     );
 });
 
@@ -5270,7 +5311,7 @@ const gxJudgement = computed(() => {
 const isBHActive = computed(() => {
     return (
         showBHData.value === true &&
-        (noteReasonForReject.value?.includes("- N.G iHc"))
+        noteReasonForReject.value?.includes("- N.G iHc")
     );
 });
 
@@ -5284,7 +5325,7 @@ const isBHValid = computed(() => {
 
     if (results.length === 0) return false;
 
-    return !results.some(sample => sample < standard);
+    return !results.some((sample) => sample < standard);
 });
 
 const bhJudgement = computed(() => {
@@ -5316,8 +5357,6 @@ const timeOfDay = computed(() => {
     if (hour < 18) return "Afternoon";
     return "Evening";
 });
-
-
 
 const onTestServer = ref(false);
 
@@ -5506,32 +5545,28 @@ const reportGX_iHcStandard = ref(0);
 const reportGX_iHcAverage = ref(0);
 const reportGX_iHcMaximum = ref(0);
 const reportGX_iHcMinimum = ref(0);
-const reportGX_iHcVariance = computed(() =>
-    (reportGX_iHcMaximum.value ?? 0) -
-    (reportGX_iHcMinimum.value ?? 0)
+const reportGX_iHcVariance = computed(
+    () => (reportGX_iHcMaximum.value ?? 0) - (reportGX_iHcMinimum.value ?? 0),
 );
 const reportGX_iHkAverage = ref(0);
 const reportGX_iHkMaximum = ref(0);
 const reportGX_iHkMinimum = ref(0);
-const reportGX_iHkVariance = computed(() =>
-    (reportGX_iHkMaximum.value ?? 0) -
-    (reportGX_iHkMinimum.value ?? 0)
+const reportGX_iHkVariance = computed(
+    () => (reportGX_iHkMaximum.value ?? 0) - (reportGX_iHkMinimum.value ?? 0),
 );
 
 const reportGS_iHcStandard = ref(0);
 const reportGS_iHcAverage = ref(0);
 const reportGS_iHcMaximum = ref(0);
 const reportGS_iHcMinimum = ref(0);
-const reportGS_iHcVariance = computed(() =>
-    (reportGS_iHcMaximum.value ?? 0) -
-    (reportGS_iHcMinimum.value ?? 0)
+const reportGS_iHcVariance = computed(
+    () => (reportGS_iHcMaximum.value ?? 0) - (reportGS_iHcMinimum.value ?? 0),
 );
 const reportGS_iHkAverage = ref(0);
 const reportGS_iHkMaximum = ref(0);
 const reportGS_iHkMinimum = ref(0);
-const reportGS_iHkVariance = computed(() =>
-    (reportGS_iHkMaximum.value ?? 0) -
-    (reportGS_iHkMinimum.value ?? 0)
+const reportGS_iHkVariance = computed(
+    () => (reportGS_iHkMaximum.value ?? 0) - (reportGS_iHkMinimum.value ?? 0),
 );
 
 const reportBH_data = ref("NA");
@@ -5650,6 +5685,8 @@ const reportNotificationMessage = ref("");
 
 const tpmDataQuantity = ref(0);
 const withAdditionalSampleForRemarks = ref(false);
+
+const fetchedCoatingRemarks = ref(null);
 
 //general variables end
 
@@ -6423,8 +6460,8 @@ const resetReportTsiData = async () => {
 };
 
 const backToViewList = () => {
-    router.visit('/view');
-}
+    router.visit("/view");
+};
 
 watchEffect(() => {
     const data = reportCoatingAmounts.value.filter(
@@ -6492,7 +6529,7 @@ watch(
             reportSMPJudgement.value = val.judgement;
         }
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 watch(
@@ -6537,9 +6574,8 @@ watch(
         if (!val) return;
         reportSMPJudgement.value = val;
     },
-    { immediate: true }
+    { immediate: true },
 );
-
 
 //FOR GS - HIS models
 watch(
@@ -6557,7 +6593,8 @@ watch(
         //console.log('reportGX_iHcMinimum:', reportGX_iHcMinimum.value);
         //console.log('reportGX_iHcStandard:', reportGX_iHcStandard.value);
 
-        if (showHIS.value === true &&
+        if (
+            showHIS.value === true &&
             reportGS_iHcMinimum.value !== null &&
             reportGS_iHcStandard.value !== null
         ) {
@@ -6580,10 +6617,9 @@ watch(
 
         reportSMPJudgement.value = val;
 
-        reportBH_remarks.value =
-            val === "REJECT" ? "NG" : "OK";
+        reportBH_remarks.value = val === "REJECT" ? "NG" : "OK";
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 watch(
@@ -6602,9 +6638,7 @@ watch(
         show1x1x1Data_Corner,
     ],
     () => {
-
         if (isTTM_model.value === true && reportCpk.value !== null) {
-
             // --- Overall CPK ---
             reportCpkRemarks.value = reportCpk.value < 1.0 ? "NG" : "OK";
 
@@ -6620,46 +6654,46 @@ watch(
 
             // --- WITHOUT CORNER ---
             if (show1x1x1Data_Corner.value === false) {
-
                 const surfaceNG = reportSurface_cpk.value < standard;
-                const coreNG    = reportCore_cpk.value < standard;
+                const coreNG = reportCore_cpk.value < standard;
 
                 // Per-metric truth
                 reportSurface_remarks.value = surfaceNG ? "NG" : "OK";
-                reportCore_remarks.value    = coreNG ? "NG" : "OK";
+                reportCore_remarks.value = coreNG ? "NG" : "OK";
 
                 // Overall judgement
-                reportSMPJudgement.value = (surfaceNG || coreNG)
-                    ? "REJECT"
-                    : "HOLD";
+                reportSMPJudgement.value =
+                    surfaceNG || coreNG ? "REJECT" : "HOLD";
             }
 
             // --- WITH CORNER ---
             else if (show1x1x1Data_Corner.value === true) {
-
                 const surfaceNG = reportSurface_cpk.value < standard;
-                const coreNG    = reportCore_cpk.value < standard;
-                const cornerNG  = reportCorner_cpk.value < standard;
+                const coreNG = reportCore_cpk.value < standard;
+                const cornerNG = reportCorner_cpk.value < standard;
 
                 // Per-metric truth
                 reportSurface_remarks.value = surfaceNG ? "NG" : "OK";
-                reportCore_remarks.value    = coreNG ? "NG" : "OK";
-                reportCorner_remarks.value  = cornerNG ? "NG" : "OK";
+                reportCore_remarks.value = coreNG ? "NG" : "OK";
+                reportCorner_remarks.value = cornerNG ? "NG" : "OK";
 
                 // Overall judgement
-                reportSMPJudgement.value = (surfaceNG || coreNG || cornerNG)
-                    ? "REJECT"
-                    : "HOLD";
+                reportSMPJudgement.value =
+                    surfaceNG || coreNG || cornerNG ? "REJECT" : "HOLD";
             }
         }
-
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 //For CPK From BR models
 watch(
-    [reportCpkFrom_br_Cpk, reportCpkFrom_br_remarks, showCpkFrom_br, reportSMPJudgement],
+    [
+        reportCpkFrom_br_Cpk,
+        reportCpkFrom_br_remarks,
+        showCpkFrom_br,
+        reportSMPJudgement,
+    ],
     () => {
         if (
             showCpkFrom_br.value === true &&
@@ -6805,59 +6839,78 @@ const generateReport = async () => {
     };
 
     try {
+        showReportMain.value = true;
         const overallStart = Date.now();
 
+        // ─────────────────────────────
+        // UI STATE (batch early)
+        // ─────────────────────────────
         showReportLoading.value = true;
         showReportContent.value = true;
         showSelectionPanel.value = false;
 
+        // ─────────────────────────────
+        // PARALLELIZE INDEPENDENT WORK
+        // ─────────────────────────────
         let stepStart = Date.now();
-        await fetchAllData();
-        logTime("fetchAllData", stepStart);
+
+        const fetchTask = fetchAllData();
+        const reportTask = showReportData();
+
+        await Promise.all([fetchTask, reportTask]);
+
+        logTime("fetchAllData + showReportData", stepStart);
 
         showReportProceedButtons.value = false;
 
+        // ─────────────────────────────
+        // REMOVE POLLING COMPLETELY
+        // replace with direct state dependency
+        // ─────────────────────────────
         stepStart = Date.now();
-        await showReportData();
-        logTime("showReportData", stepStart);
 
-        stepStart = Date.now();
-        const waitForFlag = (timeout = 8000) => {
-            return new Promise((resolve, reject) => {
-                const start = Date.now();
-                const check = () => {
-                    if (isReportDataReady.value) return resolve();
-                    if (Date.now() - start >= timeout) {
-                        console.error("Timeout: Report data not ready");
-                        return reject(
-                            new Error("Timeout waiting for report data"),
-                        );
-                    }
-                    setTimeout(check, 50);
-                };
-                check();
+        if (!isReportDataReady.value) {
+            await new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    reject(new Error("Timeout waiting for report data"));
+                }, 5000);
+
+                const stop = watch(
+                    isReportDataReady,
+                    (val) => {
+                        if (val) {
+                            clearTimeout(timeout);
+                            stop();
+                            resolve();
+                        }
+                    },
+                    { immediate: true },
+                );
             });
-        };
-        await waitForFlag();
-        logTime("waitForFlag", stepStart);
+        }
 
-        stepStart = Date.now();
-        await new Promise((r) => setTimeout(r, 50)); // tiny tick delay
-        logTime("tick delay", stepStart);
+        logTime("waitForFlag (refactored)", stepStart);
 
+        // ─────────────────────────────
+        // REMOVE ARTIFICIAL DELAY
+        // ─────────────────────────────
         showReportLoading.value = false;
-        showReportMain.value = true;
+
+        await getCoatingRemarks();
 
         logTime("generateReport total", overallStart);
     } catch (error) {
         showReportLoading.value = false;
+
         reportErrorMessage.value =
             "Failed to generate report. Please try again.";
+
         setTimeout(() => {
             reportErrorMessage.value = "";
             showReportContent.value = false;
             showSelectionPanel.value = true;
         }, 2000);
+
         console.error("generateReport failed:", error.message);
 
         await userErrorLogging(
@@ -6933,7 +6986,7 @@ const checkSpecialJudgement = async () => {
         //console.log("[GX] GX enabled");
     }
 
-    if (MODELS_SHOW_HIS.value.includes(model)){
+    if (MODELS_SHOW_HIS.value.includes(model)) {
         showHIS.value = true;
     }
 
@@ -6959,7 +7012,7 @@ const checkSpecialJudgement = async () => {
 
     // === Logic Blocks ===
     //console.log('--- Logic Evaluation Start ---');
-    console.log("Model:", model);
+    //console.log("Model:", model);
 
     // VT Data
     if (
@@ -7054,8 +7107,8 @@ const getControlSheetData = async () => {
 
         reportTotalQuantity.value = response.data.total_qty ?? 0;
 
-        console.log("Matched Key:", response.data.matched_key);
-        console.log("reportTotalQuantity:", reportTotalQuantity.value);
+        //console.log("Matched Key:", response.data.matched_key);
+        //console.log("reportTotalQuantity:", reportTotalQuantity.value);
     } catch (error) {
         console.log("Failed to get response Control Sheet Data: ", error);
 
@@ -7102,7 +7155,6 @@ const getUndoHistory = async () => {
 };
 
 const checkUndoHistory = async () => {
-
     try {
         const serialNo = currentSerialSelected.value;
 
@@ -7114,9 +7166,10 @@ const checkUndoHistory = async () => {
             `/api/stamp-undo-history/by-serial/${serialNo}`,
         );
 
-        hasUndoHistory.value = Array.isArray(response.data) && response.data.length > 0;
+        hasUndoHistory.value =
+            Array.isArray(response.data) && response.data.length > 0;
 
-        if(hasUndoHistory.value){
+        if (hasUndoHistory.value) {
             toast.info("UNDO HISTORY detected for this record.");
         }
     } catch (error) {
@@ -7129,10 +7182,12 @@ const checkUndoHistory = async () => {
 
 const fetchAllData = async () => {
     try {
+        console.time("FETCH ALL DATA TIME");
         const serial = currentSerialSelected.value;
         if (!serial) throw new Error("No serial selected.");
-
+        console.time("API");
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
+        console.timeEnd("API");
         let TPM_Data = responseTpm.data.data[0];
         let TPM_Data2 = responseTpm.data.data;
         let tpmCat = TPM_Data.category;
@@ -7170,99 +7225,159 @@ const fetchAllData = async () => {
         fetchActualModel.value = jhCurveActualModel.value;
         jhCurveLotNo.value = tpmCat.jhcurve_lotno;
         //propD_miasEmp.value = tomCat.
+        console.time("Get control sheet data");
         await getControlSheetData();
+        console.timeEnd("Get control sheet data");
+        console.time("JUDGEMENT FLAGS");
         setJudgmentFlags(modelData);
+        console.timeEnd("JUDGEMENT FLAGS");
+        console.time("Resolve Furnace and layer");
         await resolveFurnaceAndLayer(modelData[0]);
-
+        console.timeEnd("Resolve Furnace and layer");
         parseAggregates(rawData);
 
         const modelMatched = await matchInspectionModel(fetchActualModel.value);
         if (!modelMatched) return;
 
-        // Extract individual values from tpmData for aggregate
-        getAllIDValues.value = propD_tpmData.value.map((item) => item.id);
-        getAllBrValues.value = propD_tpmData.value.map(
-            (item) => item.Br || null,
-        );
-        getAllBrRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.Br_remarks || null,
-        );
-        getAlliHcValues.value = propD_tpmData.value.map(
-            (item) => item.iHc || null,
-        );
-        getAlliHcRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.iHc_remarks || null,
-        );
-        getAlliHkValues.value = propD_tpmData.value.map(
-            (item) => item.iHk || null,
-        );
-        getAlliHkRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.iHk_remarks || null,
-        );
-        getAllBHMaxValues.value = propD_tpmData.value.map(
-            (item) => item.BHMax || null,
-        );
-        getAllBHMaxRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.BHMax_remarks || null,
-        );
-        getAlliHr95Values.value = propD_tpmData.value.map(
-            (item) => item.iHr95 || null,
-        );
-        getAlliHr95Remarks.value = propD_tpmData.value.map(
-            (item) => item.remark.iHr95_remarks || null,
-        );
-        getAlliHr98Values.value = propD_tpmData.value.map(
-            (item) => item.iHr98 || null,
-        );
-        getAlliHr98Remarks.value = propD_tpmData.value.map(
-            (item) => item.remark.iHr98_remarks || null,
-        );
-        getAlliHciHkValues.value = propD_tpmData.value.map(
-            (item) => item.iHkiHc || null,
-        );
-        getAlliHciHkRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.iHkiHc_remarks || null,
-        );
-        getAllBr4paiValues.value = propD_tpmData.value.map(
-            (item) => item.Br4pai || null,
-        );
-        getAllBr4paiRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.Br4pai_remarks || null,
-        );
-        getAllbHcValues.value = propD_tpmData.value.map(
-            (item) => item.bHc || null,
-        );
-        getAllbHcRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.bHc_remarks || null,
-        );
-        getAllSquarenessValues.value = propD_tpmData.value.map(
-            (item) => item.Squareness || null,
-        );
-        getAllSquarenessRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark.Squareness_remarks || null,
-        );
-        getAll4paildValues.value = propD_tpmData.value.map(
-            (item) => item["4paiId"] || null,
-        );
-        getAll4paildRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark["4paiId_remarks"] || null,
-        );
-        getAll4pailsValues.value = propD_tpmData.value.map(
-            (item) => item["4paiIs"] || null,
-        );
-        getAll4pailsRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark["4paiIs_remarks"] || null,
-        );
-        getAll4pailaValues.value = propD_tpmData.value.map(
-            (item) => item["4paiIa"] || null,
-        );
-        getAll4pailaRemarks.value = propD_tpmData.value.map(
-            (item) => item.remark["4paiIa_remarks"] || null,
-        );
+        console.time("EXTRACTION");
+        // Temporary non-reactive arrays
+        const ids = [];
+
+        const brValues = [];
+        const brRemarks = [];
+
+        const iHcValues = [];
+        const iHcRemarks = [];
+
+        const iHkValues = [];
+        const iHkRemarks = [];
+
+        const bhMaxValues = [];
+        const bhMaxRemarks = [];
+
+        const iHr95Values = [];
+        const iHr95Remarks = [];
+
+        const iHr98Values = [];
+        const iHr98Remarks = [];
+
+        const iHkiHcValues = [];
+        const iHkiHcRemarks = [];
+
+        const br4paiValues = [];
+        const br4paiRemarks = [];
+
+        const bHcValues = [];
+        const bHcRemarks = [];
+
+        const squarenessValues = [];
+        const squarenessRemarks = [];
+
+        const paiIdValues = [];
+        const paiIdRemarks = [];
+
+        const paiIsValues = [];
+        const paiIsRemarks = [];
+
+        const paiIaValues = [];
+        const paiIaRemarks = [];
+
+        // SINGLE LOOP ONLY
+        for (const item of TPM_Data2) {
+            const remark = item.remark || {};
+
+            ids.push(item.id);
+
+            brValues.push(item.Br || null);
+            brRemarks.push(remark.Br_remarks || null);
+
+            iHcValues.push(item.iHc || null);
+            iHcRemarks.push(remark.iHc_remarks || null);
+
+            iHkValues.push(item.iHk || null);
+            iHkRemarks.push(remark.iHk_remarks || null);
+
+            bhMaxValues.push(item.BHMax || null);
+            bhMaxRemarks.push(remark.BHMax_remarks || null);
+
+            iHr95Values.push(item.iHr95 || null);
+            iHr95Remarks.push(remark.iHr95_remarks || null);
+
+            iHr98Values.push(item.iHr98 || null);
+            iHr98Remarks.push(remark.iHr98_remarks || null);
+
+            iHkiHcValues.push(item.iHkiHc || null);
+            iHkiHcRemarks.push(remark.iHkiHc_remarks || null);
+
+            br4paiValues.push(item.Br4pai || null);
+            br4paiRemarks.push(remark.Br4pai_remarks || null);
+
+            bHcValues.push(item.bHc || null);
+            bHcRemarks.push(remark.bHc_remarks || null);
+
+            squarenessValues.push(item.Squareness || null);
+            squarenessRemarks.push(remark.Squareness_remarks || null);
+
+            paiIdValues.push(item["4paiId"] || null);
+            paiIdRemarks.push(remark["4paiId_remarks"] || null);
+
+            paiIsValues.push(item["4paiIs"] || null);
+            paiIsRemarks.push(remark["4paiIs_remarks"] || null);
+
+            paiIaValues.push(item["4paiIa"] || null);
+            paiIaRemarks.push(remark["4paiIa_remarks"] || null);
+        }
+        console.timeEnd("EXTRACTION");
+
+        console.time("REACTIVE_ASSIGN");
+        // ONE reactive assignment batch
+
+        getAllIDValues.value = ids;
+
+        getAllBrValues.value = brValues;
+        getAllBrRemarks.value = brRemarks;
+
+        getAlliHcValues.value = iHcValues;
+        getAlliHcRemarks.value = iHcRemarks;
+
+        getAlliHkValues.value = iHkValues;
+        getAlliHkRemarks.value = iHkRemarks;
+
+        getAllBHMaxValues.value = bhMaxValues;
+        getAllBHMaxRemarks.value = bhMaxRemarks;
+
+        getAlliHr95Values.value = iHr95Values;
+        getAlliHr95Remarks.value = iHr95Remarks;
+
+        getAlliHr98Values.value = iHr98Values;
+        getAlliHr98Remarks.value = iHr98Remarks;
+
+        getAlliHciHkValues.value = iHkiHcValues;
+        getAlliHciHkRemarks.value = iHkiHcRemarks;
+
+        getAllBr4paiValues.value = br4paiValues;
+        getAllBr4paiRemarks.value = br4paiRemarks;
+
+        getAllbHcValues.value = bHcValues;
+        getAllbHcRemarks.value = bHcRemarks;
+
+        getAllSquarenessValues.value = squarenessValues;
+        getAllSquarenessRemarks.value = squarenessRemarks;
+
+        getAll4paildValues.value = paiIdValues;
+        getAll4paildRemarks.value = paiIdRemarks;
+
+        getAll4pailsValues.value = paiIsValues;
+        getAll4pailsRemarks.value = paiIsRemarks;
+
+        getAll4pailaValues.value = paiIaValues;
+        getAll4pailaRemarks.value = paiIaRemarks;
+
+        console.timeEnd("REACTIVE_ASSIGN");
 
         //console.log('gettheIDs: ', getAllIDValues.value);
         //console.log('tpmRemarks: ', tpmRemarks.value);
-
+        console.time("Calculations");
         //get average function
         const calculateAverage = (array) => {
             // Convert numeric strings to numbers and filter out invalid values
@@ -7347,6 +7462,8 @@ const fetchAllData = async () => {
             return numbers.reduce((sum, num) => sum + num, 0);
         };
 
+        console.timeEnd("Calculations");
+        console.time("ExecuteCalculations");
         //average values
         aveBr.value = calculateAverage(getAllBrValues.value);
         aveiHc.value = calculateAverage(getAlliHcValues.value);
@@ -7421,6 +7538,10 @@ const fetchAllData = async () => {
         getHighestSampleVariance.value = getMaxValue(
             sampleWithVariancesAsString,
         );
+
+        console.timeEnd("ExecuteCalculations");
+
+        console.time("Condition logic for NG Remarks");
 
         //Conditions for NG remarks
 
@@ -7531,9 +7652,19 @@ const fetchAllData = async () => {
             }
         }
 
-        await getSecAllSetsData();
-        await fetchMiasFactor_category();
+        console.timeEnd("Condition logic for NG Remarks");
 
+        console.time("SEC SETS DATA RENDER");
+
+        await getSecAllSetsData();
+
+        console.timeEnd("SEC SETS DATA RENDER");
+
+        console.time("Fetch mias factor category");
+        await fetchMiasFactor_category();
+        console.timeEnd("Fetch mias factor category");
+
+        console.time("Creating report");
         // Build the patch data object
         const repData = {
             length: inspectionLength.value,
@@ -7566,6 +7697,8 @@ const fetchAllData = async () => {
         await createReport(repData, serial);
 
         isLoading.value = false;
+        console.timeEnd("Creating report");
+        console.timeEnd("FETCH ALL DATA TIME");
     } catch (error) {
         await userErrorLogging(
             {
@@ -7586,16 +7719,32 @@ const fetchAllData = async () => {
     }
 };
 
-function getChartSrc(serial) {
-    // Try png first, then jpg/jpeg fallback
-    const pngPath = `/charts/chart_${serial}.png`;
-    const jpgPath = `/charts/chart_${serial}.jpg`;
-    const jpegPath = `/charts/chart_${serial}.jpeg`;
+const getCoatingRemarks = async () => {
+    try {
+        const response = await axios.get("/api/get-coating-remarks", {
+            params: {
+                mass_prod: selectedMassProd.value,
+                furnace: selectedFurnace.value,
+                layer: selectedLayer.value,
+                model: jhCurveActualModel.value,
+                lot_no: jhCurveLotNo.value,
+            },
+        });
 
-    // Note: This does not check file existence on server, only builds path
-    // If you want auto-fallback, you'll need a small API call to confirm which file exists
-    return pngPath; // default
-}
+        fetchedCoatingRemarks.value = response.data;
+
+        if (response.data?.found_coating_remarks) {
+            /*console.log(
+                "successfully fetched coating remarks: ",
+                response.data,
+            );*/
+        } else {
+            console.log("No long aging remarks detected");
+        }
+    } catch (error) {
+        console.error("Failed to get coating remarks due to ", error);
+    }
+};
 
 const fetchMiasFactor_category = async () => {
     try {
@@ -7649,34 +7798,6 @@ const fetchMiasFactor = async () => {
     }
 };
 
-/*const getSecHighestSetValue = async() => {
-    try{
-        const responseCheckNsa = await axios.get("/api/nsadata");
-        //console.log('response check NSA: ',responseCheckNsa.data.data);
-        const nsaData = responseCheckNsa.data.data["NSAData"] || [];
-        //console.log('NSA data: ',nsaData);
-        const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-        //console.log('NSA data filtered by serial: ',nsafilteredData);
-
-        if(nsafilteredData.length > 0) {
-            const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
-            current_setNo.value = maxSetNo;
-            isSecAdditional.value = true;
-            toast.info('SEC additional data is detected in this report');
-        } else {
-            isSecAdditional.value = false;
-            toast.warning('No SEC additional data detected in this report');
-            console.warn('No matching NSA data for this serial number.');
-        }
-
-        console.log('Highest set value: ', current_setNo.value);
-        await nsa_showData();
-
-    }catch(error){
-        console.warn("404 No data detected or another error check here -> ",error)
-    }
-}*/
-
 const secDataBySet = ref({}); // { set_no: [array of items] }
 const availableSetNumbers = ref([]); // To know which sets exist for the serial
 
@@ -7719,7 +7840,7 @@ const getSecAllSetsData = async () => {
         // Load data for that set via API
         await nsa_showData(current_setNo.value);
     } catch (error) {
-        console.warn("Error fetching SEC data ->", error);
+        //console.warn("Error fetching SEC data ->", error);
         secDataBySet.value = {};
         availableSetNumbers.value = [];
         isSecAdditional.value = false;
@@ -8002,210 +8123,6 @@ const nsa_showData = async (setNo = current_setNo.value) => {
     }
 };
 
-/*const test_nsa_showData = async() => {
-
-    try {
-        const responseNSARemarks = await axios.get("/api/nsadata?serial=" + currentSerialSelected.value + "&set=" + current_setNo.value); // Adjust this URL to your API endpoint
-        console.log('responseNSARemarks - API Response showallData:', responseNSARemarks.data);
-        //gg
-        console.log('Serial No value = ', currentSerialSelected.value);
-
-        // Extract arrays from the response
-        nsaData.value = responseNSARemarks.data.data || [];
-        console.log('showAllData nsa data: ',nsaData.value);
-        const getAggregateID = responseNSARemarks.data[0];
-        //console.log("Data for getting aggregate ID: ",getAggregateID);
-        const filteredAggregateID_first = getAggregateID.filter(item => item.nsa_serial == currentSerialSelected.value);
-        //console.log("Filtered aggregate with serial_no:", filteredAggregateID.value);
-        filteredAggregateID.value = filteredAggregateID_first.filter(item => item.nsa_set == current_setNo.value);
-        //console.log("Filtered aggregate with set_no:", filteredAggregateID.value);
-        nsaData_aggID.value = filteredAggregateID.value[0].id;
-        //console.log("aggregate ID to be patched: ",nsaData_aggID.value);
-        //const nsaRemarks = response.data.data["remarks"] || [];
-        //console.log('showAllData nsa remarks: ',nsaRemarks);
-
-        // Combine the arrays
-        nsa_combinedData.value = nsaData.value;
-        //console.log('Combined Data: ', combinedData.value);
-
-        secAdd_propD_jhCurveFurnaceName.value = nsaData.value[0].sintering_furnace_no || "No data found";
-        secAdd_propD_jhCurveModel.value = nsaData.value[0].code_no || "No data found";
-
-        // Extract individual values from nsaData for aggregate
-        getAllIDValues.value = nsa_combinedData.value.map(item => item.id);
-        getAllBrValues.value = nsa_combinedData.value.map(item => item.Br || null);
-        getAllBrRemarks.value = nsa_combinedData.value.map(item => item.remark.Br_remarks || null);
-        getAlliHcValues.value = nsa_combinedData.value.map(item => item.iHc || null);
-        getAlliHcRemarks.value = nsa_combinedData.value.map(item => item.remark.iHc_remarks || null);
-        getAlliHkValues.value = nsa_combinedData.value.map(item => item.iHk || null);
-        getAlliHkRemarks.value = nsa_combinedData.value.map(item => item.remark.iHk_remarks || null);
-        getAllBHMaxValues.value = nsa_combinedData.value.map(item => item.BHMax || null);
-        getAllBHMaxRemarks.value = nsa_combinedData.value.map(item => item.remark.BHMax_remarks || null);
-        getAlliHr95Values.value = nsa_combinedData.value.map(item => item.iHr95 || null);
-        getAlliHr95Remarks.value = nsa_combinedData.value.map(item => item.remark.iHr95_remarks || null);
-        getAlliHr98Values.value = nsa_combinedData.value.map(item => item.iHr98 || null);
-        getAlliHr98Remarks.value = nsa_combinedData.value.map(item => item.remark.iHr98_remarks || null);
-        getAlliHciHkValues.value = nsa_combinedData.value.map(item => item.iHkiHc || null);
-        getAlliHciHkRemarks.value = nsa_combinedData.value.map(item => item.remark.iHkiHc_remarks || null);
-        getAllBr4paiValues.value = nsa_combinedData.value.map(item => item.Br4pai || null);
-        getAllBr4paiRemarks.value = nsa_combinedData.value.map(item => item.remark.Br4pai_remarks || null);
-        getAllbHcValues.value = nsa_combinedData.value.map(item => item.bHc || null);
-        getAllbHcRemarks.value = nsa_combinedData.value.map(item => item.remark.bHc_remarks || null);
-        getAllSquarenessValues.value = nsa_combinedData.value.map(item => item.Squareness || null);
-        getAllSquarenessRemarks.value = nsa_combinedData.value.map(item => item.remark.Squareness_remarks || null);
-        getAll4paildValues.value = nsa_combinedData.value.map(item => item["4paiId"] || null);
-        getAll4paildRemarks.value = nsa_combinedData.value.map(item => item.remark["4paiId_remarks"] || null);
-        getAll4pailsValues.value = nsa_combinedData.value.map(item => item["4paiIs"] || null);
-        getAll4pailsRemarks.value = nsa_combinedData.value.map(item => item.remark["4paiIs_remarks"] || null);
-        getAll4pailaValues.value = nsa_combinedData.value.map(item => item["4paiIa"] || null);
-        getAll4pailaRemarks.value = nsa_combinedData.value.map(item => item.remark["4paiIa_remarks"] || null);
-
-        //console.log('gettheIDs: ', getAllIDValues.value);
-        //console.log('tpmRemarks: ', tpmRemarks.value);
-
-        //get average function
-        const calculateAverage = (array) => {
-            // Convert numeric strings to numbers and filter out invalid values
-            const numbers = array
-                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
-                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
-
-            // If no valid numbers, return 0
-            if (numbers.length === 0) return 0;
-
-            // Calculate the sum and divide by the count
-            const sum = numbers.reduce((total, value) => total + value, 0);
-            const average = sum / numbers.length;
-
-            // Check the maximum number of decimals present in the input
-            const maxDecimals = Math.max(
-                ...numbers.map(value => {
-                    const parts = value.toString().split(".");
-                    return parts[1] ? parts[1].length : 0; // Length of the decimal part
-                })
-            );
-
-            // Round the average to match the maximum number of decimals in the input
-            const factor = Math.pow(10, maxDecimals);
-            return Math.round(average * factor) / factor;
-        };
-        //get maximum function
-        const getMaxValue = (array) => {
-            // Convert numeric strings to numbers and filter out invalid values
-            const numbers = array
-                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
-                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
-
-            // If no valid numbers, return null
-            if (numbers.length === 0) return null;
-
-            // Return the highest value using Math.max
-            return Math.max(...numbers);
-        };
-        //get minimum function
-        const getMinValue = (array) => {
-            // Convert numeric strings to numbers and filter out invalid values
-            const numbers = array
-                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
-                .filter(value => !isNaN(value)); // Exclude invalid numbers (NaN)
-
-            // If no valid numbers, return null
-            if (numbers.length === 0) return null;
-
-            // Return the lowest value using Math.min
-            return Math.min(...numbers);
-        };
-        //get Sample with Variance data
-        const calculateVariance = (numericStringsArray, maxValue) => {
-            // Convert the array of numeric strings to numbers
-            const numbers = numericStringsArray
-                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
-                .filter(value => !isNaN(value)); // Filter out invalid numbers
-
-            // Subtract each value from maxValue and return the resulting array
-            return numbers.map(num => maxValue - num);
-        };
-
-        // Function to sum up all the data in an array
-        const calculateSum = (numericStringsArray) => {
-            // Convert the array of numeric strings to numbers
-            const numbers = numericStringsArray
-                .map(value => (typeof value === 'number' ? value : parseFloat(value)))
-                .filter(value => !isNaN(value)); // Filter out invalid numbers
-
-            // Sum up all the valid numbers in the array
-            return numbers.reduce((sum, num) => sum + num, 0);
-        };
-
-
-        //average values
-        aveBr.value = calculateAverage(getAllBrValues.value);
-        aveiHc.value = calculateAverage(getAlliHcValues.value);
-        aveiHk.value = calculateAverage(getAlliHkValues.value);
-        aveBHMax.value = calculateAverage(getAllBHMaxValues.value);
-        aveiHr95.value = calculateAverage(getAlliHr95Values.value);
-        aveiHr98.value = calculateAverage(getAlliHr98Values.value);
-        aveiHciHk.value = calculateAverage(getAlliHciHkValues.value);
-        aveBr4pai.value = calculateAverage(getAllBr4paiValues.value);
-        avebHc.value = calculateAverage(getAllbHcValues.value);
-        aveSquareness.value = calculateAverage(getAllSquarenessValues.value);
-        ave4paild.value = calculateAverage(getAll4paildValues.value);
-        ave4pails.value = calculateAverage(getAll4pailsValues.value);
-        ave4paila.value = calculateAverage(getAll4pailaValues.value);
-
-        //console.log("iHciHk average value: ", aveiHciHk.value);
-
-        // Minimum values
-        minBr.value = getMinValue(getAllBrValues.value);
-        miniHc.value = getMinValue(getAlliHcValues.value);
-        miniHk.value = getMinValue(getAlliHkValues.value);
-        minBHMax.value = getMinValue(getAllBHMaxValues.value);
-        miniHr95.value = getMinValue(getAlliHr95Values.value);
-        miniHr98.value = getMinValue(getAlliHr98Values.value);
-        miniHciHk.value = getMinValue(getAlliHciHkValues.value);
-        minBr4pai.value = getMinValue(getAllBr4paiValues.value);
-        minbHc.value = getMinValue(getAllbHcValues.value);
-        minSquareness.value = getMinValue(getAllSquarenessValues.value);
-        min4paild.value = getMinValue(getAll4paildValues.value);
-        min4pails.value = getMinValue(getAll4pailsValues.value);
-        min4paila.value = getMinValue(getAll4pailaValues.value);
-
-        // Maximum values
-        maxBr.value = getMaxValue(getAllBrValues.value);
-        maxiHc.value = getMaxValue(getAlliHcValues.value);
-        maxiHk.value = getMaxValue(getAlliHkValues.value);
-        maxBHMax.value = getMaxValue(getAllBHMaxValues.value);
-        maxiHr95.value = getMaxValue(getAlliHr95Values.value);
-        maxiHr98.value = getMaxValue(getAlliHr98Values.value);
-        maxiHciHk.value = getMaxValue(getAlliHciHkValues.value);
-        maxBr4pai.value = getMaxValue(getAllBr4paiValues.value);
-        maxbHc.value = getMaxValue(getAllbHcValues.value);
-        maxSquareness.value = getMaxValue(getAllSquarenessValues.value);
-        max4paild.value = getMaxValue(getAll4paildValues.value);
-        max4pails.value = getMaxValue(getAll4pailsValues.value);
-        max4paila.value = getMaxValue(getAll4pailaValues.value);
-
-        //NG count values
-        ngBr.value = calculateSum(getAllBrRemarks.value);
-        ngiHc.value = calculateSum(getAlliHcRemarks.value);
-        ngiHk.value = calculateSum(getAlliHkRemarks.value);
-        ngBHMax.value = calculateSum(getAllBHMaxRemarks.value);
-        ngiHr95.value = calculateSum(getAlliHr95Remarks.value);
-        ngiHr98.value = calculateSum(getAlliHr98Remarks.value);
-        ngiHciHk.value = calculateSum(getAlliHciHkRemarks.value);
-        ngBr4pai.value = calculateSum(getAllBr4paiRemarks.value);
-        ngbHc.value = calculateSum(getAllbHcRemarks.value);
-        ngSquareness.value = calculateSum(getAllSquarenessRemarks.value);
-        ng4paild.value = calculateSum(getAll4paildRemarks.value);
-        ng4pails.value = calculateSum(getAll4pailsRemarks.value);
-        ng4paila.value = calculateSum(getAll4pailaRemarks.value);
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return;
-    }
-};*/
-
 // SUPPORT FUNCTIONS
 
 const throwError = (msg) => {
@@ -8365,104 +8282,87 @@ const createReport = async (reportData, serial) => {
 const showReportData = async () => {
     try {
         isReportDataReady.value = false;
-        const response = await axios.get(`/api/reportdata/`);
-        //console.log("Getting report data API result: ", response.data.data);
-        const filterBySerial = response.data.data.filter(
-            (column) => column.tpm_data_serial == currentSerialSelected.value,
-        ); // filter by serial
-        //console.log("Filtered data: ", filterBySerial);
+        const response = await axios.get(`/api/reportdata/by-serial`, {
+            params: {
+                serial: currentSerialSelected.value,
+            },
+        });
 
-        reportModel.value = filterBySerial[0].model;
-        reportPulseTracerMachineNo.value =
-            filterBySerial[0].pulse_tracer_machine_number;
-        reportMaterialCode.value = filterBySerial[0].material_code;
-        reportDate.value = filterBySerial[0].date;
-        reportPartialNo.value = filterBySerial[0].partial_number;
-        reportShift.value = filterBySerial[0]["shift"];
-        //reportTotalQuantity.value = filterBySerial[0].total_quantity;
-        reportOperator.value = filterBySerial[0].operator;
-        reportLength.value = filterBySerial[0].length;
-        reportWidth.value = filterBySerial[0].width;
-        reportThickness.value = filterBySerial[0].thickness;
-        reportMaterialGrade.value = filterBySerial[0].material_grade;
-        reportMPISampleQty.value = filterBySerial[0].mpi_sample_quantity;
-        reportRemarks.value = filterBySerial[0].remarks;
-        reportRemarks2.value = filterBySerial[0].remarks2;
-        reportRemarks3.value = filterBySerial[0].remarks3;
-        reportExistingSMPJudgement.value = filterBySerial[0].smp_judgement;
-        modifiedSMPJudgement.value = filterBySerial[0].modified_smp_judgement;
-        preparedByPerson.value = filterBySerial[0].prepared_by;
-        checkedByPerson.value = filterBySerial[0].checked_by;
-        approvedByPerson.value = filterBySerial[0].approved_by;
-        reportPreparedByDate.value = filterBySerial[0].prepared_by_date
-            ? filterBySerial[0].prepared_by_date.split(" ")[0]
-            : "";
-        reportCheckedByDate.value = filterBySerial[0].checked_by_date
-            ? filterBySerial[0].checked_by_date.split(" ")[0]
-            : "";
-        reportApprovedByDate.value = filterBySerial[0].approved_by_date
-            ? filterBySerial[0].approved_by_date.split(" ")[0]
-            : "";
+        const row = response.data.data[0];
+        //console.log("Report data response: ", row);
+        await nextTick(() => {
+            reportModel.value = row.model;
+            reportPulseTracerMachineNo.value = row.pulse_tracer_machine_number;
+            reportMaterialCode.value = row.material_code;
+            reportDate.value = row.date;
+            reportPartialNo.value = row.partial_number;
+            reportShift.value = row["shift"];
 
-        report_isFinalized.value = filterBySerial[0].is_finalized == 1;
-        //console.log("Report is finalized: ", report_isFinalized.value);
-        isBhSegFormat.value = filterBySerial[0].is_bh_format_seg == 1;
+            reportOperator.value = row.operator;
+            reportLength.value = row.length;
+            reportWidth.value = row.width;
+            reportThickness.value = row.thickness;
+            reportMaterialGrade.value = row.material_grade;
+            reportMPISampleQty.value = row.mpi_sample_quantity;
 
-        isAutomotive.value = filterBySerial[0].withCarmark == 1;
-        //console.log("With carmark value: ",isAutomotive.value);
-        coatingCompleted.value = filterBySerial[0].coating_completed == 1;
-        //console.log("Coating completed value: ",coatingCompleted.value);
-        heatTreatmentCompleted.value =
-            filterBySerial[0].heat_treatment_completed == 1;
-        //console.log("Heat treatment completed value: ",heatTreatmentCompleted.value);
+            reportRemarks.value = row.remarks;
+            reportRemarks2.value = row.remarks2;
+            reportRemarks3.value = row.remarks3;
 
-        //Request to AUTO 'N/A' all oven fields if no oven - 5/31/2025
+            reportExistingSMPJudgement.value = row.smp_judgement;
+            modifiedSMPJudgement.value = row.modified_smp_judgement;
 
-        reportOvenMachineNo.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].oven_machine_no;
-        reportTimeLoading.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].time_loading;
-        reportTimeUnloading.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].time_unloading;
-        reportTemperature_TimeLoading.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].temp_time_loading;
-        reportTemperature_TimeUnloading.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].temp_time_unloading;
-        reportDate_OvenInfo.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].date_oven_info;
-        reportShift_OvenInfo.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].shift_oven_info;
-        reportOperator_OvenInfo.value =
-            inspectionOvenMachineNo.value === 0
-                ? "N/A"
-                : filterBySerial[0].operator_oven_info;
+            preparedByPerson.value = row.prepared_by;
+            checkedByPerson.value = row.checked_by;
+            approvedByPerson.value = row.approved_by;
 
-        reportStdDev.value = filterBySerial[0].std_dev;
-        //console.log('reportStdDev:', reportStdDev.value);
-        reportCp.value = filterBySerial[0].cp;
-        //console.log('reportCp:', reportCp.value);
-        reportCpk.value = filterBySerial[0].cpk;
-        //console.log('reportCpk:', reportCpk.value);
-        reportCpkRemarks.value = filterBySerial[0].br_cpk_remarks;
-        //console.log('reportCpkRemarks:', reportCpkRemarks.value);
+            reportPreparedByDate.value = row.prepared_by_date
+                ? row.prepared_by_date.split(" ")[0]
+                : "";
 
-        const noteRejectReasons = JSON.parse(
-            filterBySerial[0].note_reason_reject,
-        );
+            reportCheckedByDate.value = row.checked_by_date
+                ? row.checked_by_date.split(" ")[0]
+                : "";
+
+            reportApprovedByDate.value = row.approved_by_date
+                ? row.approved_by_date.split(" ")[0]
+                : "";
+
+            report_isFinalized.value = row.is_finalized == 1;
+            isBhSegFormat.value = row.is_bh_format_seg == 1;
+
+            isAutomotive.value = row.withCarmark == 1;
+            coatingCompleted.value = row.coating_completed == 1;
+            heatTreatmentCompleted.value = row.heat_treatment_completed == 1;
+
+            const ovenNA = inspectionOvenMachineNo.value === 0;
+            reportOvenMachineNo.value = ovenNA ? "N/A" : row.oven_machine_no;
+            reportTimeLoading.value = ovenNA ? "N/A" : row.time_loading;
+            reportTimeUnloading.value = ovenNA ? "N/A" : row.time_unloading;
+
+            reportTemperature_TimeLoading.value = ovenNA
+                ? "N/A"
+                : row.temp_time_loading;
+            reportTemperature_TimeUnloading.value = ovenNA
+                ? "N/A"
+                : row.temp_time_unloading;
+
+            reportDate_OvenInfo.value = ovenNA ? "N/A" : row.date_oven_info;
+            reportShift_OvenInfo.value = ovenNA ? "N/A" : row.shift_oven_info;
+            reportOperator_OvenInfo.value = ovenNA
+                ? "N/A"
+                : row.operator_oven_info;
+
+            reportStdDev.value = row.std_dev;
+            reportCp.value = row.cp;
+            reportCpk.value = row.cpk;
+            reportCpkRemarks.value = row.br_cpk_remarks;
+        });
+
+        const rawReject = row.note_reason_reject;
+
+        const noteRejectReasons = rawReject ? JSON.parse(rawReject) : [];
+
         //console.log("Parsed noteRejectReasons from DB:", noteRejectReasons);
         propD_rejectReasons.value = noteRejectReasons;
         if (noteRejectReasons && Array.isArray(noteRejectReasons)) {
@@ -8480,9 +8380,10 @@ const showReportData = async () => {
 
         //console.log("Report Data Model", reportModel.value);
 
-        const magneticProperty = JSON.parse(
-            filterBySerial[0].magnetic_property_data,
-        );
+        const rawMP = row.magnetic_property_data;
+
+        const magneticProperty = rawMP ? JSON.parse(rawMP) : {};
+
         //console.log("Magnetic Property: ", magneticProperty);
         // Extracting BR, IHC, and IHK properties
 
@@ -8519,17 +8420,17 @@ const showReportData = async () => {
             parseFloat(reportihkMaximum.value) -
             parseFloat(reportihkMinimum.value);
 
-        const oneby = JSON.parse(filterBySerial[0].data_1x1x1_info || "{}");
-        const VT = JSON.parse(filterBySerial[0].data_VT_info || "{}");
+        const oneby = JSON.parse(row.data_1x1x1_info || "{}");
+        const VT = JSON.parse(row.data_VT_info || "{}");
         //console.log("VT Data: ",VT);
-        const iHc_cpk = JSON.parse(filterBySerial[0].data_iHc_cpk_info || "{}");
-        const br_cpk = JSON.parse(filterBySerial[0].data_br_cpk_info || "{}");
-        const GX = JSON.parse(filterBySerial[0].data_GX_info || "{}");
-        const GS = JSON.parse(filterBySerial[0].data_GS_info || "{}");
-        const bh = JSON.parse(filterBySerial[0].data_bh_info || "{}");
-        const ROB = JSON.parse(filterBySerial[0].data_ROB_info || "{}");
-        const bhSeg = JSON.parse(filterBySerial[0].data_bh_seg_info || "{}");
-        const tsi = JSON.parse(filterBySerial[0].data_tsi_info || "{}");
+        const iHc_cpk = JSON.parse(row.data_iHc_cpk_info || "{}");
+        const br_cpk = JSON.parse(row.data_br_cpk_info || "{}");
+        const GX = JSON.parse(row.data_GX_info || "{}");
+        const GS = JSON.parse(row.data_GS_info || "{}");
+        const bh = JSON.parse(row.data_bh_info || "{}");
+        const ROB = JSON.parse(row.data_ROB_info || "{}");
+        const bhSeg = JSON.parse(row.data_bh_seg_info || "{}");
+        const tsi = JSON.parse(row.data_tsi_info || "{}");
 
         reportCorner.value = oneby.corner || "";
         reportCorner_average.value = oneby.corner_average || "";
@@ -9298,6 +9199,7 @@ const confirmCheckedByStamp = async () => {
 
 const checkApprovalStates = async () => {
     try {
+        console.time("APPROVAL CHECK");
         const response = await axios.get(`/api/reportdata/`);
         const filterBySerial = response.data.data.filter(
             (column) => column.tpm_data_serial == currentSerialSelected.value,
@@ -9359,6 +9261,8 @@ const checkApprovalStates = async () => {
             approvedByButton.value = false;
             showApprovedByDefault.value = false;
         }
+
+        console.timeEnd("APPROVAL CHECK");
     } catch (error) {
         console.error("ERROR Getting report data API result: ", error);
     }
@@ -9583,30 +9487,66 @@ const goToControlSheet = () => {
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
-    await checkAuthentication();
-    await checkApprovalStates();
-    //await test_nsa_showData();
-    if (
-        (props.serialParam && props.fromApproval) ||
-        (props.serialParam && props.fromApproval_checked) ||
-        (props.serialParam && props.fromApproval_prepared) ||
-        props.fromViewList ||
-        props.fromControlSheet
-    ) {
-        await checkAuthentication();
-        await checkApprovalStates();
+    const marks = {};
+    const startMeasure = (l) => (marks[l] = performance.now());
+    const endMeasure = (l) =>
+        console.log(`${l}: ${(performance.now() - marks[l]).toFixed(2)}ms`);
+
+    try {
+        startMeasure("TOTAL_MOUNT");
+
+        // ─────────────────────────────
+        // PARALLEL BOOTSTRAP (BIG WIN)
+        // ─────────────────────────────
+        startMeasure("bootstrap_parallel");
+
+        const authTask = checkAuthentication();
+
+        await authTask;
+
+        endMeasure("bootstrap_parallel");
+
+        // ─────────────────────────────
+        // ROUTE DECISION
+        // ─────────────────────────────
+        const shouldAutoGenerate =
+            (props.serialParam && props.fromApproval) ||
+            (props.serialParam && props.fromApproval_checked) ||
+            (props.serialParam && props.fromApproval_prepared) ||
+            props.fromViewList ||
+            props.fromControlSheet;
+
+        if (!shouldAutoGenerate) {
+            startMeasure("fetchSerial");
+            await fetchSerial();
+            endMeasure("fetchSerial");
+
+            endMeasure("TOTAL_MOUNT");
+            return;
+        }
+
+        // ─────────────────────────────
+        // STATE SET (NO NEED FOR nextTick)
+        // ─────────────────────────────
         currentSerialSelected.value = props.serialParam;
 
-        // This ensures reactivity is flushed before running the report logic
-        await Promise.resolve();
+        showReportMain.value = true;
 
+        // ─────────────────────────────
+        // CORE REPORT FLOW (SERIAL ONLY HERE)
+        // ─────────────────────────────
+        startMeasure("generateReport");
         await generateReport();
+        endMeasure("generateReport");
+
+        startMeasure("checkUndoHistory");
         await checkUndoHistory();
-    } else {
-        fetchSerial();
+        endMeasure("checkUndoHistory");
+
+        endMeasure("TOTAL_MOUNT");
+    } catch (error) {
+        console.error("onMounted failed:", error);
     }
-
-
 });
 </script>
 
