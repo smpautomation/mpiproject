@@ -38,14 +38,12 @@ class HtGraphPatternsController extends Controller
                 'message' => 'Pattern created successfully.',
                 'data' => $pattern,
             ], 201);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
                 'errors' => $e->errors(),
             ], 422);
-
         } catch (QueryException $e) {
             // MySQL duplicate key error code = 1062
             if (($e->errorInfo[1] ?? null) == 1062) {
@@ -194,7 +192,7 @@ class HtGraphPatternsController extends Controller
 
     public function listGraphs()
     {
-        $patterns = HtGraphPatterns::all()->map(function($pattern) {
+        $patterns = HtGraphPatterns::all()->map(function ($pattern) {
             $folder = public_path('htgraph_patterns');
 
             // Scan for files starting with pattern_<pattern_no>
@@ -221,7 +219,7 @@ class HtGraphPatternsController extends Controller
         return response()->json($patterns);
     }
 
-    public function getHours($patternNo)
+    public function getHours($patternNo, $furnaceNo)
     {
         // Validate the parameter manually
         if (!is_numeric($patternNo)) {
@@ -229,7 +227,9 @@ class HtGraphPatternsController extends Controller
         }
 
         // Fetch the record
-        $pattern = HtGraphPatterns::where('pattern_no', $patternNo)->first();
+        $pattern = HtGraphPatterns::where('pattern_no', $patternNo)
+            ->where('furnace_no', $furnaceNo)
+            ->first();
 
         if (!$pattern) {
             return response()->json(['error' => 'Pattern not found.'], 404);
@@ -256,5 +256,4 @@ class HtGraphPatternsController extends Controller
             'patterns' => $patterns,
         ]);
     }
-
 }
