@@ -2123,14 +2123,14 @@ const fetchRejectFromReportData = async () => {
 };
 
 const fetchLayerModelAndLotno = async () => {
-    console.log(
+    /*console.log(
         "Entering fetchLayerModelAndLotno function | MassProd: ",
         selectedMassProd.value,
         "Furnace: ",
         selectedFurnace.value,
         " Layer: ",
         currentLayerNo.value,
-    );
+    );*/
 
     if (
         !selectedMassProd.value ||
@@ -2244,7 +2244,7 @@ const getSelectedMassProdData = async () => {
             `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer/${currentLayerNo.value}/layer-no`,
         );
         const massProdLayerData = response.data.layer_data;
-        console.log("Mass Prod layer data: ", massProdLayerData);
+        //console.log("Mass Prod layer data: ", massProdLayerData);
         lotNoLists.value = response.data.layer_lot_lists;
     } catch (error) {
         //console.error('Failed to getSelectedMassProdData: ',error);
@@ -2329,7 +2329,7 @@ const checkExistingAdditional = async () => {
             },
         );
 
-        console.log("Result: ", response.data, additionalLot.value);
+        //console.log("Result: ", response.data, additionalLot.value);
 
         // Update reactive state
         isAdditionalExisting.value = response.data.exists;
@@ -3370,7 +3370,7 @@ const saveToTpmCategory = async () => {
                 massprod_name: selectedMassProd.value,
             },
         );
-        console.log("API PATCHED category: ", responsePatchCategory);
+        //console.log("API PATCHED category: ", responsePatchCategory);
     } catch (error) {
         console.error("Error fetching API Response saveToTpmCategory:", error);
         await userErrorLogging(

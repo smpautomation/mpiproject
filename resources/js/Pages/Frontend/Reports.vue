@@ -3653,7 +3653,7 @@
                                 )
                             "
                             :disabled="showReportLoading"
-                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl disabled:cursor-not-allowed disabled:bg-gray-500 rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-red-700 transition duration-300 ease-in-out transform border border-red-700 shadow-xl disabled:text-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500 rounded-xl hover:text-white hover:bg-red-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-600 active:scale-95"
                         >
                             APPLY ADDITIONAL
                         </button>
@@ -3722,7 +3722,8 @@
                         <button
                             v-if="isFromViewList && !isFromApproval"
                             @click="backToViewList"
-                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            :disabled="showReportLoading"
+                            class="px-4 py-2 mt-4 ml-5 text-sm font-extrabold text-white bg-gray-500 rounded-lg shadow-md disabled:cursor-not-allowed disabled:bg-gray-500 text-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900"
                         >
                             BACK TO VIEW LIST
                         </button>

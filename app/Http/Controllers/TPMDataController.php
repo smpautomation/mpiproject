@@ -747,6 +747,18 @@ class TPMDataController extends Controller
             |--------------------------------------------------------------------------
             */
 
+            if ($request->filled('search')) {
+
+                $search = $request->search;
+
+                $serialQuery->whereIn('serial_no', function ($q) use ($search) {
+                    $q->select('tpm_data_serial')
+                        ->from('tpm_data_category')
+                        ->where('actual_model', 'like', "%{$search}%")
+                        ->orWhere('jhcurve_lotno', 'like', "%{$search}%");
+                });
+            }
+
             if ($request->filled('mass_prod')) {
                 $serialQuery->where('mass_prod', $request->mass_prod);
             }
