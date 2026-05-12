@@ -6913,7 +6913,9 @@ const checkSpecialJudgement = async () => {
     const hasIhcBelowTarget = noteReasonForReject.value.includes(
         "- iHc Below Target+500 Oe",
     );
-    isTTM_model.value = jhCurveActualModel.value.includes("TTM");
+    isTTM_model.value = jhCurveActualModel.value
+        ?.trim()
+        .startsWith("TTM");
 
     // BH SEG Data
 
@@ -6987,7 +6989,7 @@ const checkSpecialJudgement = async () => {
     }
 
     // 1x1x1 Data (TTM)
-    if (model.includes("TTM")) {
+    if (model?.trim().startsWith("TTM")) {
         show1x1x1Data_withoutCorner.value = true;
         show1x1x1Data_Corner.value = true;
         //console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
