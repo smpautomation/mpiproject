@@ -996,6 +996,7 @@ const calc_dateTimeFinish = async (
 
         const url = `/api/pattern-hours/${encodeURIComponent(patternNo)}/${encodeURIComponent(furnaceNo)}`;
 
+        /*
         console.log("[API CALL]", url);
 
         console.log("[ROUTE DEBUG]", {
@@ -1004,9 +1005,11 @@ const calc_dateTimeFinish = async (
             url
         });
 
+        */
+
         const response = await axios.get(url);
 
-        console.log("[API RESPONSE]", response.data);
+        //console.log("[API RESPONSE]", response.data);
 
         const patternHours = response.data.pattern_no_hours;
 

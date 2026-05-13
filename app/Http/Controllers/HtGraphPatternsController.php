@@ -241,11 +241,11 @@ class HtGraphPatternsController extends Controller
             ]);
 
         } catch (\Throwable $e) {
-            Log::error('getHours failed', [
+            /*Log::error('getHours failed', [
                 'error' => $e->getMessage(),
                 'patternNo' => $patternNo,
                 'furnaceNo' => $furnaceNo,
-            ]);
+            ]); */
 
             return response()->json([
                 'error' => 'Internal server error'
