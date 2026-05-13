@@ -558,7 +558,7 @@ class BackEndPdfController extends Controller
         // 1x1x1 Data Conditions
         $show1x1x1Data_withoutCorner = false;
         $show1x1x1Data_Corner        = false;
-        $isTTM_model                 = str_contains($model, 'TTM');
+        $isTTM_model = str_starts_with(trim($model), 'TTM');
 
         if ($isTTM_model && $hasNGihc) {
             $show1x1x1Data_withoutCorner = true;
