@@ -973,28 +973,50 @@ const calc_dateTimeFinish = async (
     timeStart,
 ) => {
     try {
+        // ─────────────────────────────
+        // INPUT TRACE
+        // ─────────────────────────────
+        console.log("[calc_dateTimeFinish INPUT]", {
+            furnaceNo,
+            patternNo,
+            dateStart,
+            timeStart,
+        });
+
         // Guard 1: required inputs
         if (!furnaceNo || !patternNo || !dateStart || !timeStart) {
-            console.warn("Missing required inputs for date calculation.");
+            console.warn("[BLOCKED] Missing inputs", {
+                furnaceNo,
+                patternNo,
+                dateStart,
+                timeStart,
+            });
             return;
         }
 
-        const response = await axios.get(
-            `/api/pattern-hours/${patternNo}/${furnaceNo}`,
-        );
+        const url = `/api/pattern-hours/${patternNo}/${furnaceNo}`;
+
+        console.log("[API CALL]", url);
+
+        const response = await axios.get(url);
+
+        console.log("[API RESPONSE]", response.data);
+
         const patternHours = response.data.pattern_no_hours;
 
         // Guard 2: invalid pattern hours
         if (patternHours == null || isNaN(patternHours)) {
-            console.error("No valid hours found for this pattern.");
+            console.error("[INVALID HOURS]", patternHours);
             return;
         }
 
         const startDateTime = new Date(`${dateStart}T${timeStart}`);
 
+        console.log("[START DATETIME]", startDateTime);
+
         // Guard 3: invalid date construction
         if (isNaN(startDateTime.getTime())) {
-            console.error("Invalid start date/time:", dateStart, timeStart);
+            console.error("[INVALID DATE]", { dateStart, timeStart });
             return;
         }
 
@@ -1002,7 +1024,8 @@ const calc_dateTimeFinish = async (
             startDateTime.getTime() + patternHours * 60 * 60 * 1000,
         );
 
-        // Display (unchanged)
+        console.log("[FINISH DATETIME]", finishDateTime);
+
         const formattedFinish = finishDateTime.toLocaleString("en-US", {
             weekday: "short",
             year: "numeric",
@@ -1016,7 +1039,6 @@ const calc_dateTimeFinish = async (
 
         estimated_DateTimeFinish.value = formattedFinish;
 
-        // DB-safe format
         const mysqlDateTime =
             finishDateTime.getFullYear() +
             "-" +
@@ -1030,13 +1052,19 @@ const calc_dateTimeFinish = async (
             ":" +
             String(finishDateTime.getSeconds()).padStart(2, "0");
 
+        console.log("[PATCH MASS PROD]", {
+            furnace: redirectedFurnace.value,
+            massProd: redirectedMassPro.value,
+            mysqlDateTime,
+        });
+
         await axios.patch(
             `/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}`,
             { estimated_completion: mysqlDateTime },
         );
     } catch (error) {
         console.error(
-            "Failed to calculate/update estimated completion:",
+            "[calc_dateTimeFinish FAILED]",
             error.response?.data || error.message,
         );
     }
