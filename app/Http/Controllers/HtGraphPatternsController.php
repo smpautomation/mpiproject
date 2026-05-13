@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class HtGraphPatternsController extends Controller
 {
@@ -221,25 +222,35 @@ class HtGraphPatternsController extends Controller
 
     public function getHours($patternNo, $furnaceNo)
     {
-        // Validate the parameter manually
-        if (!is_numeric($patternNo)) {
-            return response()->json(['error' => 'Pattern number must be numeric.'], 422);
+        try {
+            if (!$patternNo || !$furnaceNo) {
+                return response()->json(['error' => 'Missing parameters'], 422);
+            }
+
+            $pattern = HtGraphPatterns::where('pattern_no', $patternNo)
+                ->where('furnace_no', $furnaceNo)
+                ->first();
+
+            if (!$pattern) {
+                return response()->json(['error' => 'Pattern not found'], 404);
+            }
+
+            return response()->json([
+                'pattern_no' => $pattern->pattern_no,
+                'pattern_no_hours' => $pattern->pattern_no_hours,
+            ]);
+
+        } catch (\Throwable $e) {
+            /*Log::error('getHours failed', [
+                'error' => $e->getMessage(),
+                'patternNo' => $patternNo,
+                'furnaceNo' => $furnaceNo,
+            ]); */
+
+            return response()->json([
+                'error' => 'Internal server error'
+            ], 500);
         }
-
-        // Fetch the record
-        $pattern = HtGraphPatterns::where('pattern_no', $patternNo)
-            ->where('furnace_no', $furnaceNo)
-            ->first();
-
-        if (!$pattern) {
-            return response()->json(['error' => 'Pattern not found.'], 404);
-        }
-
-        // Return the hours
-        return response()->json([
-            'pattern_no' => $pattern->pattern_no,
-            'pattern_no_hours' => $pattern->pattern_no_hours,
-        ]);
     }
 
     public function getAssociatedPattern(Request $request)
