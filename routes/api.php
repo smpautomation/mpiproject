@@ -433,7 +433,7 @@ Route::get('/check-latest-masspro-upload', [HtMassProDataController::class, 'che
 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
-Route::get('/pattern-hours/{patternNo}', [HtGraphPatternsController::class, 'getHours']);
+Route::get('/pattern-hours/{patternNo}/{furnaceNo}', [HtGraphPatternsController::class, 'getHours']);
 Route::get('htgraph-patterns/related-lists', [HtGraphPatternsController::class, 'getAssociatedPattern']);
 
 Route::patch('/patterns/{id}/update', [HtGraphPatternsController::class, 'update']);

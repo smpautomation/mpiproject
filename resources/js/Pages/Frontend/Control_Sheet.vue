@@ -971,15 +971,22 @@ const highlightableRows = [
     "Box prepared by:",
 ];
 
-const calc_dateTimeFinish = async (patternNo, dateStart, timeStart) => {
+const calc_dateTimeFinish = async (
+    furnaceNo,
+    patternNo,
+    dateStart,
+    timeStart,
+) => {
     try {
         // Guard 1: required inputs
-        if (!patternNo || !dateStart || !timeStart) {
+        if (!furnaceNo || !patternNo || !dateStart || !timeStart) {
             console.warn("Missing required inputs for date calculation.");
             return;
         }
 
-        const response = await axios.get(`/api/pattern-hours/${patternNo}`);
+        const response = await axios.get(
+            `/api/pattern-hours/${patternNo}/${furnaceNo}`,
+        );
         const patternHours = response.data.pattern_no_hours;
 
         // Guard 2: invalid pattern hours
@@ -1212,6 +1219,7 @@ const getMassProdData = async (massprod, furnace) => {
         htVal.remarks3 = mp.remarks3 || "";
 
         await calc_dateTimeFinish(
+            htVal.machineNo,
             htVal.patternNo,
             htVal.dateStart,
             htVal.timeStart,

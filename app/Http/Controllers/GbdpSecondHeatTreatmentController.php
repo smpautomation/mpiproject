@@ -209,7 +209,7 @@ class GbdpSecondHeatTreatmentController extends Controller
             ->where('layer', $layer)
             ->exists();
 
-        $isExisting = $existsInBreaklotSecond;
+        $isExisting = $existsInBreaklotSecond || ($existsInSecondGbdpHt && $existsInInitialLot);
 
         // NEW RULE: validate pair existence in derived dataset
         $doNotProceed = false;
