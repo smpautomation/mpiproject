@@ -823,18 +823,18 @@ useSessionStorage("vl_dateTo", vl_dateTo);
 
 onMounted(async () => {
     console.time("TOTAL LOAD TIME");
-    console.time("Checking Authentication");
+
     await checkAuthentication();
-    console.timeEnd("Checking Authentication");
-    console.time("Viewing all serialized layers");
-    await viewAllSerialedLayers();
-    console.timeEnd("Viewing all serialized layers");
-    console.time("Getting mass prod lists");
-    await getMassProdLists();
-    console.timeEnd("Getting mass prod lists");
-    console.time("Getting furnace lists");
-    await getFurnaceLists();
-    console.timeEnd("Getting furnace lists");
+
+    console.time("Initial API batch");
+
+    await Promise.all([
+        viewAllSerialedLayers(),
+        getMassProdLists(),
+        getFurnaceLists(),
+    ]);
+
+    console.timeEnd("Initial API batch");
     console.timeEnd("TOTAL LOAD TIME");
 });
 </script>

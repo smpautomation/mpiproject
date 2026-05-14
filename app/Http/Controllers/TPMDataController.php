@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class TPMDataController extends Controller
 {
@@ -731,187 +732,215 @@ class TPMDataController extends Controller
 
             $perPage = (int) ($request->per_page ?? 20);
 
+            $cacheKey = 'view_list_' . md5(json_encode([
+                'search' => $request->search,
+                'mass_prod' => $request->mass_prod,
+                'furnace' => $request->furnace,
+                'status' => $request->status,
+                'from' => $request->from,
+                'to' => $request->to,
+                'page' => $request->page,
+                'per_page' => $perPage,
+            ]));
+
             /*
             |--------------------------------------------------------------------------
             | 1. SERIAL-LEVEL PAGINATION (NO DUPLICATION POSSIBLE)
             |--------------------------------------------------------------------------
             */
-            $serialQuery = TPMData::query()
-                ->select('serial_no')
-                ->groupBy('serial_no')
-                ->orderByRaw('MAX(created_at) DESC');
+            return Cache::remember($cacheKey, 20, function () use ($request, $perPage) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | 2. FILTERS (SERIAL LEVEL SAFE)
-            |--------------------------------------------------------------------------
-            */
+                $serialQuery = TPMData::query()
+                    ->select('serial_no')
+                    ->groupBy('serial_no')
+                    ->orderByRaw('MAX(created_at) DESC');
 
-            if ($request->filled('search')) {
+                /*
+                |--------------------------------------------------------------------------
+                | 2. FILTERS (SERIAL LEVEL SAFE)
+                |--------------------------------------------------------------------------
+                */
 
-                $search = $request->search;
+                if ($request->filled('search')) {
 
-                $serialQuery->whereIn('serial_no', function ($q) use ($search) {
-                    $q->select('tpm_data_serial')
-                        ->from('tpm_data_category')
-                        ->where('actual_model', 'like', "%{$search}%")
-                        ->orWhere('jhcurve_lotno', 'like', "%{$search}%");
-                });
-            }
+                    $search = $request->search;
 
-            if ($request->filled('mass_prod')) {
-                $serialQuery->where('mass_prod', $request->mass_prod);
-            }
+                    $serialQuery->whereIn('serial_no', function ($q) use ($search) {
+                        $q->select('tpm_data_serial')
+                            ->from('tpm_data_category')
+                            ->where('actual_model', 'like', "%{$search}%")
+                            ->orWhere('jhcurve_lotno', 'like', "%{$search}%");
+                    });
+                }
 
-            if ($request->filled('furnace')) {
-                $serialQuery->where('furnace', $request->furnace);
-            }
+                if ($request->filled('mass_prod')) {
+                    $serialQuery->where('mass_prod', $request->mass_prod);
+                }
 
-            /*
-            |--------------------------------------------------------------------------
-            | 3. DATE FILTER (REPORT EXISTS)
-            |--------------------------------------------------------------------------
-            */
-            if ($request->filled('from') || $request->filled('to')) {
+                if ($request->filled('furnace')) {
+                    $serialQuery->where('furnace', $request->furnace);
+                }
 
-                $serialQuery->whereExists(function ($q) use ($request) {
-                    $q->selectRaw(1)
-                        ->from('report_data')
-                        ->whereColumn('report_data.tpm_data_serial', 'tpm_data.serial_no');
+                /*
+                |--------------------------------------------------------------------------
+                | 3. DATE FILTER (REPORT EXISTS)
+                |--------------------------------------------------------------------------
+                */
+                if ($request->filled('from') || $request->filled('to')) {
 
-                    if ($request->filled('from')) {
-                        $q->whereDate('report_data.updated_at', '>=', $request->from);
-                    }
+                    $serialQuery->whereExists(function ($q) use ($request) {
+                        $q->selectRaw(1)
+                            ->from('report_data')
+                            ->whereColumn('report_data.tpm_data_serial', 'tpm_data.serial_no');
 
-                    if ($request->filled('to')) {
-                        $q->whereDate('report_data.updated_at', '<=', $request->to);
-                    }
-                });
-            }
+                        if ($request->filled('from')) {
+                            $q->whereDate('report_data.updated_at', '>=', $request->from);
+                        }
 
-            /*
-            |--------------------------------------------------------------------------
-            | 4. STATUS FILTER (EXISTS = SCALABLE)
-            |--------------------------------------------------------------------------
-            */
-            if ($request->filled('status')) {
+                        if ($request->filled('to')) {
+                            $q->whereDate('report_data.updated_at', '<=', $request->to);
+                        }
+                    });
+                }
 
-                $status = $request->status;
+                /*
+                |--------------------------------------------------------------------------
+                | 4. STATUS FILTER (EXISTS = SCALABLE)
+                |--------------------------------------------------------------------------
+                */
+                if ($request->filled('status')) {
 
-                $serialQuery->whereExists(function ($q) use ($status) {
-                    $q->selectRaw(1)
-                        ->from('report_data')
-                        ->whereColumn('report_data.tpm_data_serial', 'tpm_data.serial_no');
+                    $status = $request->status;
 
-                    switch ($status) {
+                    $serialQuery->whereExists(function ($q) use ($status) {
+                        $q->selectRaw(1)
+                            ->from('report_data')
+                            ->whereColumn('report_data.tpm_data_serial', 'tpm_data.serial_no');
 
-                        case 'COMPLETED':
-                            $q->whereNotNull('report_data.approved_by_firstname');
-                            break;
+                        switch ($status) {
 
-                        case 'PENDING':
-                            $q->whereNull('report_data.approved_by_firstname')
-                                ->whereNotNull('report_data.prepared_by_firstname')
-                                ->whereNotNull('report_data.checked_by_firstname');
-                            break;
+                            case 'COMPLETED':
+                                $q->whereNotNull('report_data.approved_by_firstname');
+                                break;
 
-                        case 'PREPARED_PENDING':
-                            $q->whereNull('report_data.prepared_by_firstname')
-                                ->whereNull('report_data.checked_by_firstname')
-                                ->whereNull('report_data.approved_by_firstname');
-                            break;
+                            case 'PENDING':
+                                $q->whereNull('report_data.approved_by_firstname')
+                                    ->whereNotNull('report_data.prepared_by_firstname')
+                                    ->whereNotNull('report_data.checked_by_firstname');
+                                break;
 
-                        case 'CHECKED_PENDING':
-                            $q->whereNull('report_data.checked_by_firstname')
-                                ->whereNull('report_data.approved_by_firstname')
-                                ->whereNotNull('report_data.prepared_by_firstname');
-                            break;
+                            case 'PREPARED_PENDING':
+                                $q->whereNull('report_data.prepared_by_firstname')
+                                    ->whereNull('report_data.checked_by_firstname')
+                                    ->whereNull('report_data.approved_by_firstname');
+                                break;
 
-                        case 'FINALIZED_PENDING':
-                            $q->where('report_data.is_finalized', false)
-                                ->whereNotNull('report_data.prepared_by_firstname')
-                                ->whereNotNull('report_data.checked_by_firstname')
-                                ->whereNotNull('report_data.approved_by_firstname');
-                            break;
+                            case 'CHECKED_PENDING':
+                                $q->whereNull('report_data.checked_by_firstname')
+                                    ->whereNull('report_data.approved_by_firstname')
+                                    ->whereNotNull('report_data.prepared_by_firstname');
+                                break;
 
-                        case 'COATING_PENDING':
-                            $q->where('report_data.coating_completed', false);
-                            break;
+                            case 'FINALIZED_PENDING':
+                                $q->where('report_data.is_finalized', false)
+                                    ->whereNotNull('report_data.prepared_by_firstname')
+                                    ->whereNotNull('report_data.checked_by_firstname')
+                                    ->whereNotNull('report_data.approved_by_firstname');
+                                break;
 
-                        case 'HEAT_TREATMENT_PENDING':
-                            $q->where('report_data.heat_treatment_completed', false);
-                            break;
-                    }
-                });
-            }
+                            case 'COATING_PENDING':
+                                $q->where('report_data.coating_completed', false);
+                                break;
 
-            /*
-            |--------------------------------------------------------------------------
-            | 5. PAGINATE SERIALS ONLY
-            |--------------------------------------------------------------------------
-            */
-            $paginated = $serialQuery->paginate($perPage);
+                            case 'HEAT_TREATMENT_PENDING':
+                                $q->where('report_data.heat_treatment_completed', false);
+                                break;
+                        }
+                    });
+                }
 
-            $serials = $paginated->pluck('serial_no');
+                /*
+                |--------------------------------------------------------------------------
+                | 5. PAGINATE SERIALS ONLY
+                |--------------------------------------------------------------------------
+                */
+                $paginated = $serialQuery->paginate($perPage);
 
-            /*
-            |--------------------------------------------------------------------------
-            | 6. FETCH TPM DATA (LATEST ROW PER SERIAL USAGE ONLY)
-            |--------------------------------------------------------------------------
-            */
-            $tpmRows = TPMData::whereIn('serial_no', $serials)
-                ->orderByDesc('created_at')
-                ->get()
-                ->groupBy('serial_no');
+                $serials = $paginated->pluck('serial_no');
 
-            /*
-            |--------------------------------------------------------------------------
-            | 7. CATEGORY (1 PER SERIAL)
-            |--------------------------------------------------------------------------
-            */
-            $categories = TPMDataCategory::whereIn('tpm_data_serial', $serials)
-                ->get()
-                ->groupBy('tpm_data_serial');
+                /*
+                |--------------------------------------------------------------------------
+                | 6. FETCH TPM DATA (LATEST ROW PER SERIAL USAGE ONLY)
+                |--------------------------------------------------------------------------
+                */
+                $tpmRows = TPMData::whereIn('serial_no', $serials)
+                    ->select('id','serial_no','mass_prod','layer_no','sintering_furnace_no','Tracer','created_at')
+                    ->orderByDesc('created_at')
+                    ->get()
+                    ->groupBy('serial_no');
 
-            /*
-            |--------------------------------------------------------------------------
-            | 8. REPORT (1 PER SERIAL)
-            |--------------------------------------------------------------------------
-            */
-            $reports = ReportData::whereIn('tpm_data_serial', $serials)
-                ->get()
-                ->groupBy('tpm_data_serial');
+                /*
+                |--------------------------------------------------------------------------
+                | 7. CATEGORY (1 PER SERIAL)
+                |--------------------------------------------------------------------------
+                */
+                $categories = TPMDataCategory::whereIn('tpm_data_serial', $serials)
+                    ->select('id','tpm_data_serial','actual_model','jhcurve_lotno')
+                    ->get()
+                    ->groupBy('tpm_data_serial');
 
-            /*
-            |--------------------------------------------------------------------------
-            | 9. BUILD FINAL SERIAL OBJECT (NO ARRAYS)
-            |--------------------------------------------------------------------------
-            */
-            $result = [];
+                /*
+                |--------------------------------------------------------------------------
+                | 8. REPORT (1 PER SERIAL)
+                |--------------------------------------------------------------------------
+                */
+                $reports = ReportData::whereIn('tpm_data_serial', $serials)
+                    ->select(
+                        'id',
+                        'tpm_data_serial',
+                        'updated_at',
+                        'smp_judgement',
+                        'approved_by_firstname',
+                        'prepared_by_firstname',
+                        'checked_by_firstname',
+                        'is_finalized',
+                        'is_emailed'
+                    )
+                    ->get()
+                    ->groupBy('tpm_data_serial');
 
-            foreach ($serials as $serial) {
+                /*
+                |--------------------------------------------------------------------------
+                | 9. BUILD FINAL SERIAL OBJECT (NO ARRAYS)
+                |--------------------------------------------------------------------------
+                */
+                $result = [];
 
-                $result[$serial] = [
-                    'serial_no' => $serial,
+                foreach ($serials as $serial) {
 
-                    'latest_tpm' => $tpmRows[$serial]?->first() ?? null,
+                    $result[$serial] = [
+                        'serial_no' => $serial,
 
-                    'category' => $categories[$serial]?->first() ?? null,
+                        'latest_tpm' => $tpmRows[$serial]?->first() ?? null,
 
-                    'report' => $reports[$serial]?->first() ?? null,
-                ];
-            }
+                        'category' => $categories[$serial]?->first() ?? null,
 
-            /*
-            |--------------------------------------------------------------------------
-            | 10. RESPONSE
-            |--------------------------------------------------------------------------
-            */
-            return response()->json([
-                'status' => true,
-                'data' => $result,
-                'pagination' => $paginated
-            ]);
+                        'report' => $reports[$serial]?->first() ?? null,
+                    ];
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | 10. RESPONSE
+                |--------------------------------------------------------------------------
+                */
+                return response()->json([
+                    'status' => true,
+                    'data' => $result,
+                    'pagination' => $paginated
+                ]);
+            });
+
         } catch (\Exception $e) {
 
             return response()->json([
