@@ -570,11 +570,13 @@
                                     "
                                 >
                                     {{
-                                        noMassProdData
-                                            ? "The selected furnace and mass production does not exist."
-                                            : isDataShown
-                                              ? "Click Change Data button to enable Manual Allocation."
-                                              : "Select a Furnace and Mass Production Name to enable Manual Layer Allocation."
+                                        !heatTreatmentInformationDetected
+                                            ? "Enter heat treatment information data first before manually allocating data"
+                                            : noMassProdData
+                                                ? "The selected furnace and mass production does not exist."
+                                                : isDataShown
+                                                    ? "Click Change Data button to enable Manual Allocation."
+                                                    : "Select a Furnace and Mass Production Name to enable Manual Layer Allocation."
                                     }}
                                 </p>
 
@@ -584,7 +586,8 @@
                                         !mpcs.selectedFurnace ||
                                         !mpcs.selectedMassProd ||
                                         isDataShown ||
-                                        noMassProdData
+                                        noMassProdData || 
+                                        !heatTreatmentInformationDetected
                                     "
                                     class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
                                 >
