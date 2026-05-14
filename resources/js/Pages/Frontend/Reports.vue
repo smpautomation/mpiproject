@@ -3624,7 +3624,7 @@
                                     state.user.access_type ===
                                         'Checking Approver' ||
                                     state.user.access_type ===
-                                        'Hybrid Approver' ||
+                                        'PrepCheck Approver' ||
                                     state.user.access_type ===
                                         'Bypass Approver' ||
                                     state.user.access_type ===
@@ -5345,7 +5345,7 @@ const saveReportButtonVisibility = () => {
         !checkedByPerson_firstName.value &&
         (state.user.access_type === "Preparation Approver" ||
             state.user.access_type === "Checking Approver" ||
-            state.user.access_type === "Hybrid Approver" ||
+            state.user.access_type === "PrepCheck Approver" ||
             state.user.access_type === "Bypass Approver")
     ) {
         showReportSaveButton.value = true;
@@ -9227,7 +9227,7 @@ const checkApprovalStates = async () => {
         if (
             state.user.access_type &&
             (state.user.access_type === "Preparation Approver" ||
-                state.user.access_type === "Hybrid Approver" ||
+                state.user.access_type === "PrepCheck Approver" ||
                 state.user.access_type === "Bypass Approver" ||
                 state.user.access_type === "Automation")
         ) {
@@ -9239,7 +9239,7 @@ const checkApprovalStates = async () => {
             state.user.access_type &&
             prepared_by_firstname &&
             (state.user.access_type === "Checking Approver" ||
-                state.user.access_type === "Hybrid Approver" ||
+                state.user.access_type === "PrepCheck Approver" ||
                 state.user.access_type === "Bypass Approver" ||
                 state.user.access_type === "Automation")
         ) {

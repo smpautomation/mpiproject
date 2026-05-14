@@ -34,7 +34,7 @@ class UserFactory extends Factory
                 'Basic User',
                 'Preparation Approver',
                 'Checking Approver',
-                'Hybrid Approver',
+                'PrepCheck Approver',
                 'Bypass Approver',
                 'Proxy Approver',
                 'Final Approver'

@@ -167,6 +167,11 @@
                                                         Basic User
                                                     </option>
                                                     <option
+                                                        value="PrepCheck Approver"
+                                                    >
+                                                        PrepCheck Approver
+                                                    </option>
+                                                    <option
                                                         value="Checking Approver"
                                                     >
                                                         Checking Approver
@@ -404,10 +409,13 @@
                                         View List, Admin (Approved By Stamp
                                         only)
                                     </li>
+                                    <li>
+                                        <strong>PrepCheck Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)
+                                    </li>
+
                                     <!--
-                        <li><strong>Hybrid Approver</strong> → All except Approval/Admin (Prepared By & Checked By Stamping)</li>
-                        <li><strong>Bypass Approver</strong> → All except Admin (All stamps: Prepared, Checked, Approved)</li>
-                        -->
+                                        <li><strong>Bypass Approver</strong> → All except Admin (All stamps: Prepared, Checked, Approved)</li>
+                                        -->
                                 </ul>
                             </div>
                         </div>
@@ -531,8 +539,7 @@
                     </div>
                 </div>
             </div>
-            <!-- End of Logs Panel
-             <button v-if="state.user && state.user.access_type == 'Automation'" @click="fixStampIssue" class="p-2 font-extrabold text-red-900 transition-transform duration-75 bg-yellow-500 rounded-lg active:scale-95 hover:bg-yellow-400 active:shadow-xl active:brightness-100">Fix Stamp Issue</button> -->
+        
         </div>
     </Frontend>
 </template>
@@ -882,59 +889,6 @@ const filteredLogs = computed(() => {
 
     return logs;
 });
-
-const fixStampIssue = async () => {
-    const responseReport = await axios.get(`/api/reportdata`);
-    //console.log('responseReport-data get request: ',responseReport.data);
-    const rows = responseReport.data.data;
-    reportData.value = rows;
-    //console.log('reportData array: ',reportData.value);
-    //console.log(Array.isArray(rows));
-    for (const row of rows) {
-        const payload = {};
-
-        if (row.prepared_by) {
-            const parts = row.prepared_by.trim().split(/\s+/); // chop into pieces for each phrase separated by space
-            const surname = parts.pop(); //pop removes the last part
-            const firstname = parts.join(" ");
-            payload.prepared_by_firstname = firstname;
-            payload.prepared_by_surname = surname;
-        }
-
-        if (row.checked_by) {
-            const parts = row.checked_by.trim().split(/\s+/);
-            const surname = parts.pop();
-            const firstname = parts.join(" ");
-            payload.checked_by_firstname = firstname;
-            payload.checked_by_surname = surname;
-        }
-
-        if (row.approved_by) {
-            const parts = row.checked_by.trim().split(/\s+/);
-            const surname = parts.pop();
-            const firstname = parts.join(" ");
-            payload.approved_by_firstname = firstname;
-            payload.approved_by_surname = surname;
-        }
-
-        if (Object.keys(payload).length > 0 && row.tpm_data_serial) {
-            try {
-                let numberOfFix = Object.keys(payload).length / 2;
-                const resultPatchFix = await axios.patch(
-                    `/api/reportdata/${row.tpm_data_serial}`,
-                    payload,
-                );
-                console.log(`Detected ${numberOfFix} rows of data affected`);
-                console.log(
-                    "Stamp issue FIXED successfully no errors",
-                    resultPatchFix,
-                );
-            } catch (error) {
-                console.error("Fix Patch failed: ", error);
-            }
-        }
-    }
-};
 
 onMounted(async () => {
     await checkAuthentication();
