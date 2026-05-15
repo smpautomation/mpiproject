@@ -6866,12 +6866,10 @@ const generateReport = async () => {
         // ─────────────────────────────
         let stepStart = Date.now();
 
-        const fetchTask = fetchAllData();
-        const reportTask = showReportData();
+        await fetchAllData();
+        await showReportData();
 
-        await Promise.all([fetchTask, reportTask]);
-
-        logTime("fetchAllData + showReportData", stepStart);
+        //logTime("fetchAllData + showReportData", stepStart);
 
         showReportProceedButtons.value = false;
 
@@ -8230,6 +8228,7 @@ const parseAggregates = (raw) => {
 };
 
 const matchInspectionModel = async (model) => {
+    console.log("Entered Match inspection model");
     const res = await axios.get("/api/inspectiondata");
     const data = res.data?.data || [];
     inspectionDataList.value = data;
@@ -8261,6 +8260,8 @@ const matchInspectionModel = async (model) => {
     inspectionShift_OvenInfo.value = found.shift;
     inspectionOperator_OvenInfo.value = found.operator;
     inspectionAutomotive.value = found.is_automotive;
+
+    console.log(inspectionOvenMachineNo.value);
 
     //console.log("OVEN MACHINE NO: ", inspectionOvenMachineNo.value);
 
@@ -8353,6 +8354,7 @@ const showReportData = async () => {
             heatTreatmentCompleted.value = row.heat_treatment_completed == 1;
 
             const ovenNA = inspectionOvenMachineNo.value === 0;
+            console.log("Oven NA: ", ovenNA);
             reportOvenMachineNo.value = ovenNA ? "N/A" : row.oven_machine_no;
             reportTimeLoading.value = ovenNA ? "N/A" : row.time_loading;
             reportTimeUnloading.value = ovenNA ? "N/A" : row.time_unloading;
