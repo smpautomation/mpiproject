@@ -3217,6 +3217,17 @@
                                 </p>
                             </div>
                         </div>
+                        <div v-if="fetchedCoatingRemarks?.found" class="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800 flex items-center gap-2">
+                            <span class="text-amber-500">⚠</span>
+
+                            <span>
+                                <span class="font-semibold">Long aging detected:</span>
+                                Coating remarks —
+                                <span class="font-medium">
+                                    {{ fetchedCoatingRemarks?.remarks ?? 'N/A' }}
+                                </span>
+                            </span>
+                        </div>
                     </div>
 
                     <!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE --><!-- SMP JUDGEMENT STARTS HERE -->
@@ -5167,7 +5178,7 @@ const { state } = useAuth();
 // Function to check authentication
 const checkAuthentication = async () => {
     try {
-        console.time("Checking authentication");
+        //console.time("Checking authentication");
         // auth still resolving
         if (state.loading) {
             return false;
@@ -5195,7 +5206,7 @@ const checkAuthentication = async () => {
         automationAcess.value = user.access_type === "Automation";
 
         return true;
-        console.timeEnd("Checking authentication");
+        //console.timeEnd("Checking authentication");
     } catch (error) {
         console.error("Error checking authentication:", error);
 
@@ -6331,14 +6342,14 @@ const preparedByPerson_lastNameFontSize = computed(() => {
     return getFontSize(preparedByPerson_lastName.value);
 });
 
-const exitReport = () => {
+const exitReport = async () => {
     //fetchAllData();
     //showReportData();
     showReportContent.value = false;
     showSelectionPanel.value = true;
     showReportProceedButtons.value = true;
     showReportMain.value = false;
-    fetchSerial();
+    await fetchSerial();
     reportReset();
 };
 
@@ -7188,9 +7199,9 @@ const fetchAllData = async () => {
         console.time("FETCH ALL DATA TIME");
         const serial = currentSerialSelected.value;
         if (!serial) throw new Error("No serial selected.");
-        console.time("API");
+        //console.time("API");
         const responseTpm = await axios.get(`/api/tpmdata?serial=${serial}`);
-        console.timeEnd("API");
+        //console.timeEnd("API");
         let TPM_Data = responseTpm.data.data[0];
         let TPM_Data2 = responseTpm.data.data;
         let tpmCat = TPM_Data.category;
@@ -7228,21 +7239,21 @@ const fetchAllData = async () => {
         fetchActualModel.value = jhCurveActualModel.value;
         jhCurveLotNo.value = tpmCat.jhcurve_lotno;
         //propD_miasEmp.value = tomCat.
-        console.time("Get control sheet data");
+        //console.time("Get control sheet data");
         await getControlSheetData();
-        console.timeEnd("Get control sheet data");
-        console.time("JUDGEMENT FLAGS");
+        //console.timeEnd("Get control sheet data");
+        //console.time("JUDGEMENT FLAGS");
         setJudgmentFlags(modelData);
-        console.timeEnd("JUDGEMENT FLAGS");
-        console.time("Resolve Furnace and layer");
+        //console.timeEnd("JUDGEMENT FLAGS");
+        //console.time("Resolve Furnace and layer");
         await resolveFurnaceAndLayer(modelData[0]);
-        console.timeEnd("Resolve Furnace and layer");
+        //console.timeEnd("Resolve Furnace and layer");
         parseAggregates(rawData);
 
         const modelMatched = await matchInspectionModel(fetchActualModel.value);
         if (!modelMatched) return;
 
-        console.time("EXTRACTION");
+        //console.time("EXTRACTION");
         // Temporary non-reactive arrays
         const ids = [];
 
@@ -7330,9 +7341,9 @@ const fetchAllData = async () => {
             paiIaValues.push(item["4paiIa"] || null);
             paiIaRemarks.push(remark["4paiIa_remarks"] || null);
         }
-        console.timeEnd("EXTRACTION");
+        //console.timeEnd("EXTRACTION");
 
-        console.time("REACTIVE_ASSIGN");
+        //console.time("REACTIVE_ASSIGN");
         // ONE reactive assignment batch
 
         getAllIDValues.value = ids;
@@ -7376,11 +7387,11 @@ const fetchAllData = async () => {
         getAll4pailaValues.value = paiIaValues;
         getAll4pailaRemarks.value = paiIaRemarks;
 
-        console.timeEnd("REACTIVE_ASSIGN");
+        //console.timeEnd("REACTIVE_ASSIGN");
 
         //console.log('gettheIDs: ', getAllIDValues.value);
         //console.log('tpmRemarks: ', tpmRemarks.value);
-        console.time("Calculations");
+        //console.time("Calculations");
         //get average function
         const calculateAverage = (array) => {
             // Convert numeric strings to numbers and filter out invalid values
@@ -7465,8 +7476,8 @@ const fetchAllData = async () => {
             return numbers.reduce((sum, num) => sum + num, 0);
         };
 
-        console.timeEnd("Calculations");
-        console.time("ExecuteCalculations");
+        //console.timeEnd("Calculations");
+        //console.time("ExecuteCalculations");
         //average values
         aveBr.value = calculateAverage(getAllBrValues.value);
         aveiHc.value = calculateAverage(getAlliHcValues.value);
@@ -7542,9 +7553,9 @@ const fetchAllData = async () => {
             sampleWithVariancesAsString,
         );
 
-        console.timeEnd("ExecuteCalculations");
+        //console.timeEnd("ExecuteCalculations");
 
-        console.time("Condition logic for NG Remarks");
+        //console.time("Condition logic for NG Remarks");
 
         //Conditions for NG remarks
 
@@ -7655,19 +7666,19 @@ const fetchAllData = async () => {
             }
         }
 
-        console.timeEnd("Condition logic for NG Remarks");
+        //console.timeEnd("Condition logic for NG Remarks");
 
-        console.time("SEC SETS DATA RENDER");
+        //console.time("SEC SETS DATA RENDER");
 
         await getSecAllSetsData();
 
-        console.timeEnd("SEC SETS DATA RENDER");
+        //console.timeEnd("SEC SETS DATA RENDER");
 
-        console.time("Fetch mias factor category");
+        //console.time("Fetch mias factor category");
         await fetchMiasFactor_category();
-        console.timeEnd("Fetch mias factor category");
+        //console.timeEnd("Fetch mias factor category");
 
-        console.time("Creating report");
+        //console.time("Creating report");
         // Build the patch data object
         const repData = {
             length: inspectionLength.value,
@@ -7700,7 +7711,7 @@ const fetchAllData = async () => {
         await createReport(repData, serial);
 
         isLoading.value = false;
-        console.timeEnd("Creating report");
+        //console.timeEnd("Creating report");
         console.timeEnd("FETCH ALL DATA TIME");
     } catch (error) {
         await userErrorLogging(
@@ -7734,13 +7745,16 @@ const getCoatingRemarks = async () => {
             },
         });
 
-        fetchedCoatingRemarks.value = response.data;
+        fetchedCoatingRemarks.value = {
+            remarks: response.data?.remarks,
+            found: response.data?.found_coating_remarks
+        };
 
         if (response.data?.found_coating_remarks) {
-            /*console.log(
+            console.log(
                 "successfully fetched coating remarks: ",
                 response.data,
-            );*/
+            );
         } else {
             console.log("No long aging remarks detected");
         }
@@ -9202,7 +9216,7 @@ const confirmCheckedByStamp = async () => {
 
 const checkApprovalStates = async () => {
     try {
-        console.time("APPROVAL CHECK");
+        //console.time("APPROVAL CHECK");
         const response = await axios.get(`/api/reportdata/`);
         const filterBySerial = response.data.data.filter(
             (column) => column.tpm_data_serial == currentSerialSelected.value,
@@ -9265,7 +9279,7 @@ const checkApprovalStates = async () => {
             showApprovedByDefault.value = false;
         }
 
-        console.timeEnd("APPROVAL CHECK");
+        //console.timeEnd("APPROVAL CHECK");
     } catch (error) {
         console.error("ERROR Getting report data API result: ", error);
     }
@@ -9542,9 +9556,9 @@ onMounted(async () => {
         await generateReport();
         endMeasure("generateReport");
 
-        startMeasure("checkUndoHistory");
+        //startMeasure("checkUndoHistory");
         await checkUndoHistory();
-        endMeasure("checkUndoHistory");
+        //endMeasure("checkUndoHistory");
 
         endMeasure("TOTAL_MOUNT");
     } catch (error) {
