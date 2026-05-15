@@ -8989,33 +8989,22 @@ const undoStamp = async () => {
 // Function to fetch serial data
 const fetchSerial = async () => {
     try {
-        const response = await axios.get("/api/tpmdata");
-        //console.log("API Response fetchSerial-data:", response.data);
 
-        // Grab the raw tpmData object
-        const rawTpmData = response.data.data["tpmData"] || {};
+        const response = await axios.get("/api/tpmdata-fetch-serials");
 
-        // Assign it to tpmData for future access
-        tpmData.value = rawTpmData;
+        serialList.value = response.data.data ?? [];
+        console.log("Serials: ", serialList.value);
 
-        // Extract the serial numbers (object keys)
-        serialList.value = Object.keys(rawTpmData);
-
-        // Sort in descending order
-        serialList.value = serialList.value.sort(
-            (a, b) => Number(b) - Number(a),
-        );
-
-        // Set default selected serial
         if (serialList.value.length > 0) {
             currentSerialSelected.value = serialList.value[0];
         }
 
-        //console.log("Serials ↓", serialList.value);
     } catch (error) {
+
         console.error("Error fetching serial data:", error);
     }
 };
+
 // Fetching the serial start end
 
 // Define the prop that will receive the serialParam

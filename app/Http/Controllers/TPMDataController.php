@@ -950,4 +950,32 @@ class TPMDataController extends Controller
             ], 500);
         }
     }
+
+    public function fetchSerials()
+    {
+        try {
+
+           $serials = ReportData::query()
+            ->select('tpm_data_serial')
+            ->whereNotNull('tpm_data_serial')
+            ->groupBy('tpm_data_serial')
+            ->orderByRaw('MAX(created_at) DESC')
+            ->pluck('tpm_data_serial')
+            ->values();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Serials retrieved successfully',
+                'data' => $serials
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to retrieve serials',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

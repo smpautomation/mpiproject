@@ -87,6 +87,8 @@ Route::delete('/tpmdata/{serial}/delete-chart', [TPMDataController::class, 'dele
 Route::delete('/tpmdata/{serial}/{set}/delete-nsa-chart', [TPMDataController::class, 'deleteNsaChart']);
 Route::get('/tpmdata/max-serial', [TPMDataController::class, 'getMaxSerialForMonth']);
 
+Route::get('/tpmdata-fetch-serials', [TPMDataController::class, 'fetchSerials']);
+
 
 Route::get('/reportdata/by-serial', [ReportDataController::class, 'getBySerial']);
 
