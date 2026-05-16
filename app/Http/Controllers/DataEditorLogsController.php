@@ -23,10 +23,9 @@ class DataEditorLogsController extends Controller
         $validated = $request->validate([
             'mass_prod' => 'required|string|max:255',
             'furnace' => 'required|string|max:255',
-            'layer' => 'string|max:255',
+            'layer' => 'nullable|string|max:255',
             'user_reason' => 'required|string',
             'user_corrective_action' => 'required|string',
-            'user_confirmation' => 'required|boolean',
             'requested_by' => 'required|string',
             'approved_by' => 'required|string',
             'log_remarks' => 'required|string',
@@ -50,7 +49,7 @@ class DataEditorLogsController extends Controller
         $validated = $request->validate([
             'mass_prod' => 'required|string|max:255',
             'furnace' => 'required|string|max:255',
-            'layer' => 'string|max:255',
+            'layer' => 'nullable|string|max:255',
             'user_reason' => 'required|string',
             'user_corrective_action' => 'required|string',
             'user_confirmation' => 'required|boolean',

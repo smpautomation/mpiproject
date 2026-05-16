@@ -1129,7 +1129,7 @@
                                                 "
                                                 class="text-[10px] px-2 py-1 bg-white text-black rounded hover:bg-gray-200 border border-gray-400"
                                             >
-                                                Approved
+                                                Approve
                                             </button>
                                             <button
                                                 v-if="canApprove(item)"
@@ -2000,6 +2000,9 @@ const confirmApprove = async () => {
             selectedMassProd.value = selectedApproveItem.value.mass_prod;
             selectedFurnace.value = selectedApproveItem.value.furnace;
             selectedLayer.value = selectedApproveItem.value.layer;
+            userCorrectiveAction.value = selectedApproveItem.value.corrective_action;
+            userReason.value = selectedApproveItem.value.reason;
+            userVerified.value = true;
 
             await deleteLayerDataFinal(selectedApproveItem.value.id);
         }
@@ -2008,6 +2011,9 @@ const confirmApprove = async () => {
             selectedMassProd.value = selectedApproveItem.value.mass_prod;
             selectedFurnace.value = selectedApproveItem.value.furnace;
             newCycleNo.value = selectedApproveItem.value.new_data;
+            userCorrectiveAction.value = selectedApproveItem.value.corrective_action;
+            userReason.value = selectedApproveItem.value.reason;
+            userVerified.value = true;
 
             await editCycleNo(selectedApproveItem.value.id);
         }
@@ -2542,22 +2548,39 @@ const updateDeletePendingList = async (id, statusResult) => {
 };
 
 const saveLog = async (log) => {
-    try {
-        const response = await axios.post("/api/data_editor_logs", {
-            mass_prod: selectedMassProd.value,
-            furnace: selectedFurnace.value,
-            user_reason: userReason.value,
-            user_corrective_action: userCorrectiveAction.value,
-            user_confirmation: userVerified.value,
-            requested_by: state.user.firstName + " " + state.user.surname,
-            approved_by: state.user.firstName + " " + state.user.surname,
-            log_remarks: log,
-        });
+    const payload = {
+        mass_prod: selectedMassProd.value,
+        furnace: selectedFurnace.value,
+        layer: selectedLayer.value,
+        user_reason: userReason.value,
+        user_corrective_action: userCorrectiveAction.value,
+        user_confirmation: userVerified.value,
+        requested_by:
+            state.user.firstName + " " + state.user.surname,
+        approved_by:
+            state.user.firstName + " " + state.user.surname,
+        log_remarks: log,
+    };
 
-        //toast.success('Data logged successfully');
-        console.log("Data logs saved successfully", response.data);
+    try {
+        console.log("saveLog payload:", payload);
+
+        const response = await axios.post(
+            "/api/data_editor_logs",
+            payload
+        );
+
+        console.log(
+            "Data logs saved successfully",
+            response.data
+        );
+
     } catch (error) {
-        console.error("Failed to save data editor logs", error);
+        console.error(
+            "Failed to save data editor logs",
+            error.response?.data || error
+        );
+
         toast.error("Failed to save editor logs");
     }
 };
