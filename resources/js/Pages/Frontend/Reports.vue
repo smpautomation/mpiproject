@@ -5501,6 +5501,7 @@ const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
 const MODELS_SHOW_HIS = ref([]);
+const MODELS_1X1x1 = ref(['AAW0935G', 'AAW0934G']);
 
 const undoHistory = ref([]);
 const hasUndoHistory = ref(false);
@@ -7051,15 +7052,16 @@ const checkSpecialJudgement = async () => {
         //console.log('[BH] Showing default BH layout (sample qty = 0)');
     }
 
-    // 1x1x1 Data (TTM)
-    if (model?.trim().startsWith("TTM")) {
+    // 1x1x1 Data (TTM + specific models)
+    if (
+        model?.trim().startsWith("TTM") ||
+        MODELS_1X1X1.value.includes(model?.trim())
+    ) {
         show1x1x1Data_withoutCorner.value = true;
         show1x1x1Data_Corner.value = true;
-        //console.log('[TTM] Model includes TTM → Enabling 1x1x1 sections');
 
-        if (MODELS_1X1X1_NO_CORNER.value.includes(model)) {
+        if (MODELS_1X1X1_NO_CORNER.value.includes(model?.trim())) {
             show1x1x1Data_Corner.value = false;
-            //console.log('[TTM] Corner data disabled for this model');
         }
     }
 

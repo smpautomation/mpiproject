@@ -743,23 +743,12 @@ class TPMDataController extends Controller
                 'per_page' => $perPage,
             ]));
 
-            /*
-            |--------------------------------------------------------------------------
-            | 1. SERIAL-LEVEL PAGINATION (NO DUPLICATION POSSIBLE)
-            |--------------------------------------------------------------------------
-            */
             return Cache::remember($cacheKey, 20, function () use ($request, $perPage) {
 
                 $serialQuery = TPMData::query()
                     ->select('serial_no')
                     ->groupBy('serial_no')
                     ->orderByRaw('MAX(created_at) DESC');
-
-                /*
-                |--------------------------------------------------------------------------
-                | 2. FILTERS (SERIAL LEVEL SAFE)
-                |--------------------------------------------------------------------------
-                */
 
                 if ($request->filled('search')) {
 
@@ -781,11 +770,6 @@ class TPMDataController extends Controller
                     $serialQuery->where('furnace', $request->furnace);
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | 3. DATE FILTER (REPORT EXISTS)
-                |--------------------------------------------------------------------------
-                */
                 if ($request->filled('from') || $request->filled('to')) {
 
                     $serialQuery->whereExists(function ($q) use ($request) {
@@ -803,11 +787,6 @@ class TPMDataController extends Controller
                     });
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | 4. STATUS FILTER (EXISTS = SCALABLE)
-                |--------------------------------------------------------------------------
-                */
                 if ($request->filled('status')) {
 
                     $status = $request->status;
@@ -859,41 +838,22 @@ class TPMDataController extends Controller
                     });
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | 5. PAGINATE SERIALS ONLY
-                |--------------------------------------------------------------------------
-                */
                 $paginated = $serialQuery->paginate($perPage);
 
                 $serials = $paginated->pluck('serial_no');
 
-                /*
-                |--------------------------------------------------------------------------
-                | 6. FETCH TPM DATA (LATEST ROW PER SERIAL USAGE ONLY)
-                |--------------------------------------------------------------------------
-                */
                 $tpmRows = TPMData::whereIn('serial_no', $serials)
                     ->select('id','serial_no','mass_prod','layer_no','sintering_furnace_no','Tracer','created_at')
                     ->orderByDesc('created_at')
                     ->get()
                     ->groupBy('serial_no');
 
-                /*
-                |--------------------------------------------------------------------------
-                | 7. CATEGORY (1 PER SERIAL)
-                |--------------------------------------------------------------------------
-                */
                 $categories = TPMDataCategory::whereIn('tpm_data_serial', $serials)
                     ->select('id','tpm_data_serial','actual_model','jhcurve_lotno')
                     ->get()
                     ->groupBy('tpm_data_serial');
 
-                /*
-                |--------------------------------------------------------------------------
-                | 8. REPORT (1 PER SERIAL)
-                |--------------------------------------------------------------------------
-                */
+
                 $reports = ReportData::whereIn('tpm_data_serial', $serials)
                     ->select(
                         'id',
@@ -909,11 +869,6 @@ class TPMDataController extends Controller
                     ->get()
                     ->groupBy('tpm_data_serial');
 
-                /*
-                |--------------------------------------------------------------------------
-                | 9. BUILD FINAL SERIAL OBJECT (NO ARRAYS)
-                |--------------------------------------------------------------------------
-                */
                 $result = [];
 
                 foreach ($serials as $serial) {
@@ -929,11 +884,6 @@ class TPMDataController extends Controller
                     ];
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | 10. RESPONSE
-                |--------------------------------------------------------------------------
-                */
                 return response()->json([
                     'status' => true,
                     'data' => $result,
