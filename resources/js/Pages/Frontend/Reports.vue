@@ -5501,7 +5501,7 @@ const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
 const MODELS_SHOW_HIS = ref([]);
-const MODELS_1X1x1 = ref(['AAW0935G', 'AAW0934G']);
+const MODELS_1X1X1 = ref(['AAW0935G', 'AAW0934G']);
 
 const undoHistory = ref([]);
 const hasUndoHistory = ref(false);
