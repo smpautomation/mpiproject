@@ -1302,12 +1302,17 @@
                     <td style="width: 4%;"></td>
 
                     @php
-                        $judgement = strtoupper(trim($reportData->smp_judgement));
+                        $resolvedJudgement = !empty(trim($reportData->modified_smp_judgement ?? ''))
+                            ? $reportData->modified_smp_judgement
+                            : ($reportData->smp_judgement ?? '');
+
+                        $judgement = strtoupper(trim($resolvedJudgement));
+
                         $stampPath = match ($judgement) {
                             'REJECT' => public_path('photo/reject_stamp.png'),
                             'HOLD'   => public_path('photo/hold_stamp.png'),
-                            '', null, 'NULL' => public_path('photo/template.png'),
-                            default   => public_path('photo/pass_stamp.png'),
+                            '', 'NULL' => public_path('photo/template.png'),
+                            default  => public_path('photo/pass_stamp.png'),
                         };
                     @endphp
 
