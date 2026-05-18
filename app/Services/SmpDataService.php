@@ -230,7 +230,6 @@ class SmpDataService
                 'HT_Trouble' => $massProdData->current_pattern === 'PASS' ? 'NO' : 'YES',
                 'Special_Instruction' => $smpData->special_instruction ?? ''
             ];
-
             if ($formatType === 'Film Pasting') {
                 $rowData = array_merge($rowData, [
                     'Film_Coating_Amount' => $filmPastingData->film_coating_amount ?? '',
