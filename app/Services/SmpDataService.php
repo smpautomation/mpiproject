@@ -7,13 +7,11 @@ use App\Models\TPMData;
 use App\Models\TPMDataCategory;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotSecondCoating;
-use App\Models\BreaklotInitialLot;
 use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotFilmpasting;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\Coating;
-use App\Models\GbdpSecondCoating;
 use App\Models\SmpData;
 use App\Models\FilmPastingData;
 use Illuminate\Support\Facades\Log;
@@ -55,31 +53,6 @@ class SmpDataService
             ->where('mass_prod', $massProd)
             ->get()
             ->keyBy(fn($c) => $c->layer);
-
-        // fallback to GBDP if empty
-        if ($coatings->isEmpty()) {
-
-            $coatings = GbdpSecondCoating::where('furnace', $furnace)
-                ->where('mass_prod', $massProd)
-                ->get()
-                ->map(function ($row) {
-
-                    $data = json_decode($row->coating_info_2ndgbdp, true);
-
-                    return (object) [
-                        'layer' => $row->layer,
-                        'date' => $data['date'] ?? '',
-                        'average' => $data['average'] ?? '',
-                        'maximum' => $data['maximum'] ?? '',
-                        'minimum' => $data['minimum'] ?? '',
-                        'remarks' => $data['remarks'] ?? '',
-                        'machine_no' => $data['machine_no'] ?? '',
-                        'min_tb_content' => $data['min_tb_content'] ?? '',
-                        'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
-                    ];
-                })
-                ->keyBy(fn($c) => $c->layer);
-        }
 
         // Step 1: Build unique Model+Lot mapping per layer
         $mappedRows = [];
@@ -173,66 +146,22 @@ class SmpDataService
             $isInitialLot = !$isBreaklot || $initialLotCheck;
 
             // Coating fallback
-           if ($isInitialLot) {
-
-                Log::info('COATING fallback: INITIAL LOT', [
-                    'furnace' => $furnace,
-                    'mass_prod' => $massProd,
-                    'layer_number' => $layerNumber,
-                ]);
-
-                $coating = $coatings[(string) $layerNumber] ?? null;
-
-                Log::info('COATING initial lot result', [
-                    'found' => $coating ? true : false,
-                ]);
-
+            if ($isInitialLot) {
+                $coating = $coatings[$layerNumber] ?? null;
             } else {
-
-                Log::info('COATING fallback: BREAKLOT PATH', [
-                    'furnace' => $furnace,
-                    'mass_prod' => $massProd,
-                    'layer_ordinal' => $layerOrdinal,
-                    'model' => $model,
-                    'lot_no' => $lotNo,
-                ]);
-
                 $coating = BreaklotCoating::where('furnace', $furnace)
                     ->where('mass_prod', $massProd)
                     ->where('layer', $layerOrdinal)
                     ->where('model', $model)
                     ->where('lot_no', $lotNo)
                     ->first();
-
-                Log::info('BreaklotCoating result', [
-                    'found' => $coating ? true : false,
-                ]);
-
                 if (!$coating) {
-                    // BreaklotSecondCoating fallback only
-                    $breaklot = BreaklotSecondCoating::where('furnace', $furnace)
+                    $coating = BreaklotSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massProd)
                         ->where('layer', $layerOrdinal)
                         ->where('model', $model)
                         ->where('lot_no', $lotNo)
                         ->first();
-
-                    if ($breaklot && !empty($breaklot->coating_info_2ndgbdp)) {
-                        $data = json_decode($breaklot->coating_info_2ndgbdp, true);
-
-                        if ($data) {
-                            $coating = (object) [
-                                'date' => $data['date'] ?? '',
-                                'average' => $data['average'] ?? '',
-                                'maximum' => $data['maximum'] ?? '',
-                                'minimum' => $data['minimum'] ?? '',
-                                'remarks' => $data['remarks'] ?? '',
-                                'machine_no' => $data['machine_no'] ?? '',
-                                'min_tb_content' => $data['min_tb_content'] ?? '',
-                                'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
-                            ];
-                        }
-                    }
                 }
             }
 
