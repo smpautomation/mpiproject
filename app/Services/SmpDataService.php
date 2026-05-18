@@ -161,6 +161,15 @@ class SmpDataService
                         ->where('mass_prod', $massProd)
                         ->where('layer', $layerOrdinal)
                         ->first();
+
+                    if ($coating && $coating->coating_info_2ndgbdp) {
+                        $coatingInfo = json_decode($coating->coating_info_2ndgbdp, true);
+
+                        $coating->min_tb_content = $coatingInfo['min_tb_content'] ?? '';
+                        $coating->maximum = $coatingInfo['maximum'] ?? '';
+                        $coating->minimum = $coatingInfo['minimum'] ?? '';
+                        $coating->average = $coatingInfo['average'] ?? '';
+                    }
                 }
             } else {
                 $coating = BreaklotCoating::where('furnace', $furnace)
