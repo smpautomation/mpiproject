@@ -12,6 +12,7 @@ use App\Models\BreaklotFilmpasting;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\Coating;
+use App\Models\GbdpSecondCoating;
 use App\Models\SmpData;
 use App\Models\FilmPastingData;
 use Illuminate\Support\Facades\Log;
@@ -156,12 +157,55 @@ class SmpDataService
                     ->where('lot_no', $lotNo)
                     ->first();
                 if (!$coating) {
-                    $coating = BreaklotSecondCoating::where('furnace', $furnace)
+                    // 1. GBDP Second Coating (PRIMARY fallback)
+                    $gbdp = GbdpSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massProd)
                         ->where('layer', $layerOrdinal)
-                        ->where('model', $model)
-                        ->where('lot_no', $lotNo)
                         ->first();
+
+                    if ($gbdp && !empty($gbdp->coating_info_2ndgbdp)) {
+                        $data = json_decode($gbdp->coating_info_2ndgbdp, true);
+
+                        if ($data) {
+                            $coating = (object) [
+                                'date' => $data['date'] ?? '',
+                                'average' => $data['average'] ?? '',
+                                'maximum' => $data['maximum'] ?? '',
+                                'minimum' => $data['minimum'] ?? '',
+                                'remarks' => $data['remarks'] ?? '',
+                                'machine_no' => $data['machine_no'] ?? '',
+                                'min_tb_content' => $data['min_tb_content'] ?? '',
+                                'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
+                            ];
+                        }
+                    }
+
+                    // 2. BreaklotSecondCoating (fallback if GBDP missing)
+                    if (!$coating) {
+                        $breaklot = BreaklotSecondCoating::where('furnace', $furnace)
+                            ->where('mass_prod', $massProd)
+                            ->where('layer', $layerOrdinal)
+                            ->where('model', $model)
+                            ->where('lot_no', $lotNo)
+                            ->first();
+
+                        if ($breaklot && !empty($breaklot->coating_info_2ndgbdp)) {
+                            $data = json_decode($breaklot->coating_info_2ndgbdp, true);
+
+                            if ($data) {
+                                $coating = (object) [
+                                    'date' => $data['date'] ?? '',
+                                    'average' => $data['average'] ?? '',
+                                    'maximum' => $data['maximum'] ?? '',
+                                    'minimum' => $data['minimum'] ?? '',
+                                    'remarks' => $data['remarks'] ?? '',
+                                    'machine_no' => $data['machine_no'] ?? '',
+                                    'min_tb_content' => $data['min_tb_content'] ?? '',
+                                    'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
+                                ];
+                            }
+                        }
+                    }
                 }
             }
 
