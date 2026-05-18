@@ -215,8 +215,18 @@ class SmpDataService
                 'Batches' => $batchesCount,
                 'Total_Lot_Qty' => $mapped['total_qty'],
                 'Date' => $coating->date ?? '',
-                'M_C' => $coating->machine_no ?? '',
-                'Magnet_Weight' => $coating->total_magnet_weight ?? '',
+                    !empty($filmPastingData->date)
+                            ? $filmPastingData->date
+                            : ($coating->date ?? ''),
+                'M_C' =>
+                    !empty($filmPastingData->machine_no)
+                        ? $filmPastingData->machine_no
+                        : ($coating->machine_no ?? ''),
+
+                'Magnet_Weight' =>
+                    !empty($filmPastingData->total_magnet_weight)
+                        ? $filmPastingData->total_magnet_weight
+                        : ($coating->total_magnet_weight ?? ''),
                 'iHc_Target' => $magProp['ihcStandard'] ?? '',
                 'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? '' : '',
                 'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? '' : '',
