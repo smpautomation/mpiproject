@@ -517,6 +517,7 @@ class BackEndPdfController extends Controller
 
         $MODELS_SPECIAL_ROB_FOR_GX = ['ROB0C79G'];
         $MODELS_SPECIAL_TSI = ['TSI0817G'];
+        $MODELS_1X1X1 = ['AAW0935G', 'AAW0934G'];
         $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
         $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_BR     = CpkBrModels::pluck('model_name')->toArray();
@@ -560,11 +561,14 @@ class BackEndPdfController extends Controller
         $show1x1x1Data_Corner        = false;
         $isTTM_model = str_starts_with(trim($model), 'TTM');
 
-        if ($isTTM_model && $hasNGihc) {
+        $isWhitelistedModel = in_array(trim($model), $MODELS_1X1X1);
+
+        if (($isTTM_model || $isWhitelistedModel) && $hasNGihc) {
+
             $show1x1x1Data_withoutCorner = true;
             $show1x1x1Data_Corner = true;
 
-            if (in_array($model, $MODELS_1X1X1_NO_CORNER)) {
+            if (in_array(trim($model), $MODELS_1X1X1_NO_CORNER)) {
                 $show1x1x1Data_Corner = false;
             }
         }
@@ -806,7 +810,7 @@ class BackEndPdfController extends Controller
             $cs_model_final = $cs_model['A'] ?? $cs_model['B'] ?? null;
             $cs_lt_no_final = $cs_lt_no['A'] ?? $cs_lt_no['B'] ?? null;
         }
-        
+
         $resolvedJudgement = !empty(trim($reportData->modified_smp_judgement ?? ''))
             ? $reportData->modified_smp_judgement
             : ($reportData->smp_judgement ?? '');
