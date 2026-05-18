@@ -5351,6 +5351,54 @@ const bhJudgement = computed(() => {
     return "HOLD";
 });
 
+const isCpkActive = computed(() => {
+    const model = jhCurveActualModel.value?.trim();
+
+    const isTTM = isTTM_model.value === true;
+    const isWhitelisted = MODELS_1X1X1.value.includes(model);
+
+    const baseCondition =
+        noteReasonForReject.value?.includes("- N.G iHc") &&
+        show1x1x1Data_withoutCorner.value === true;
+
+    const cpkCondition =
+        isWhitelisted
+            ? true
+            : reportCpk.value !== null;
+
+    return (isTTM || isWhitelisted) && baseCondition && cpkCondition;
+});
+
+const surfaceNG = computed(() =>
+    isCpkActive.value &&
+    reportSurface_cpk.value !== null &&
+    reportSurface_cpk.value < cpkStandardValue.value
+);
+
+const coreNG = computed(() =>
+    isCpkActive.value &&
+    reportCore_cpk.value !== null &&
+    reportCore_cpk.value < cpkStandardValue.value
+);
+
+const cornerNG = computed(() =>
+    isCpkActive.value &&
+    show1x1x1Data_Corner.value === true &&
+    reportCorner_cpk.value !== null &&
+    reportCorner_cpk.value < cpkStandardValue.value
+);
+
+const cpkJudgement = computed(() => {
+    if (!isCpkActive.value) return null;
+
+    const hasFailure =
+        surfaceNG.value ||
+        coreNG.value ||
+        cornerNG.value;
+
+    return hasFailure ? "REJECT" : "HOLD";
+});
+
 const saveReportButtonVisibility = () => {
     if (
         !checkedByPerson_firstName.value &&
@@ -5501,7 +5549,7 @@ const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
 const MODELS_SHOW_HIS = ref([]);
-const MODELS_1X1X1 = ref(['AAW0935G', 'AAW0934G']);
+const MODELS_1X1X1 = ref(['AAW0935G', 'AAW0934G', 'TIC0281G']);
 
 const undoHistory = ref([]);
 const hasUndoHistory = ref(false);
@@ -6636,67 +6684,15 @@ watch(
 );
 
 watch(
-    [
-        reportCpk,
-        reportCpkRemarks,
-        reportSurface_cpk,
-        reportCore_cpk,
-        reportCorner_cpk,
-        reportSMPJudgement,
-        reportSurface_remarks,
-        reportCore_remarks,
-        reportCorner_remarks,
-        isTTM_model,
-        show1x1x1Data_withoutCorner,
-        show1x1x1Data_Corner,
-    ],
+    [surfaceNG, coreNG, cornerNG, cpkJudgement],
     () => {
-        if (isTTM_model.value === true && reportCpk.value !== null) {
-            // --- Overall CPK ---
-            reportCpkRemarks.value = reportCpk.value < 1.0 ? "NG" : "OK";
+        reportSurface_remarks.value = surfaceNG.value ? "NG" : "OK";
+        reportCore_remarks.value = coreNG.value ? "NG" : "OK";
+        reportCorner_remarks.value = cornerNG.value ? "NG" : "OK";
 
-            // --- Guard condition ---
-            if (
-                !noteReasonForReject.value.includes("- N.G iHc") ||
-                show1x1x1Data_withoutCorner.value !== true
-            ) {
-                return;
-            }
-
-            const standard = cpkStandardValue.value;
-
-            // --- WITHOUT CORNER ---
-            if (show1x1x1Data_Corner.value === false) {
-                const surfaceNG = reportSurface_cpk.value < standard;
-                const coreNG = reportCore_cpk.value < standard;
-
-                // Per-metric truth
-                reportSurface_remarks.value = surfaceNG ? "NG" : "OK";
-                reportCore_remarks.value = coreNG ? "NG" : "OK";
-
-                // Overall judgement
-                reportSMPJudgement.value =
-                    surfaceNG || coreNG ? "REJECT" : "HOLD";
-            }
-
-            // --- WITH CORNER ---
-            else if (show1x1x1Data_Corner.value === true) {
-                const surfaceNG = reportSurface_cpk.value < standard;
-                const coreNG = reportCore_cpk.value < standard;
-                const cornerNG = reportCorner_cpk.value < standard;
-
-                // Per-metric truth
-                reportSurface_remarks.value = surfaceNG ? "NG" : "OK";
-                reportCore_remarks.value = coreNG ? "NG" : "OK";
-                reportCorner_remarks.value = cornerNG ? "NG" : "OK";
-
-                // Overall judgement
-                reportSMPJudgement.value =
-                    surfaceNG || coreNG || cornerNG ? "REJECT" : "HOLD";
-            }
-        }
+        reportSMPJudgement.value = cpkJudgement.value;
     },
-    { immediate: true },
+    { immediate: true }
 );
 
 //For CPK From BR models
