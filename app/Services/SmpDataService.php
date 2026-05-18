@@ -180,7 +180,7 @@ class SmpDataService
                     'layer_number' => $layerNumber,
                 ]);
 
-                $coating = $coatings[$layerNumber] ?? null;
+                $coating = $coatings[(string) $layerNumber] ?? null;
 
                 Log::info('COATING initial lot result', [
                     'found' => $coating ? true : false,
