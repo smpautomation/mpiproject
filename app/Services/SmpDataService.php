@@ -260,6 +260,25 @@ class SmpDataService
         }
 
         Log::info("Flattened layers count: " . count($flattenedLayers));
+
+        Log::info("COATING DEBUG SNAPSHOT", [
+            'furnace' => $furnace,
+            'mass_prod' => $massProd,
+            'coatings_loaded' => $coatings->map(function ($c) {
+                return [
+                    'layer' => $c->layer,
+                    'min_tb_content' => $c->min_tb_content ?? null,
+                    'max' => $c->maximum ?? null,
+                    'min' => $c->minimum ?? null,
+                ];
+            })->values()->all(),
+        ]);
+
+        Log::info("LAYER COATING ASSIGNMENT CHECK", [
+            'mapped_rows_layers' => collect($mappedRows)->pluck('layer')->values()->all(),
+            'coating_keys_available' => $coatings->keys()->values()->all(),
+        ]);
+
         return $flattenedLayers;
     }
 }
