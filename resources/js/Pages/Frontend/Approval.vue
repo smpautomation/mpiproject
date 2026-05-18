@@ -170,19 +170,23 @@
                                         class="px-4 py-2 text-lg font-semibold text-center whitespace-nowrap"
                                         :class="{
                                             'text-red-600':
-                                                report.smp_judgement ===
-                                                    'REJECT' ||
-                                                report.smp_judgement === 'HOLD',
+                                                (report.modified_smp_judgement ?? report.smp_judgement) === 'REJECT' ||
+                                                (report.modified_smp_judgement ?? report.smp_judgement) === 'HOLD',
+
                                             'text-green-600':
-                                                report.smp_judgement === 'OK',
+                                                (report.modified_smp_judgement ?? report.smp_judgement) === 'PASSED',
+
                                             'text-gray-600': ![
                                                 'REJECT',
                                                 'HOLD',
-                                                'OK',
-                                            ].includes(report.smp_judgement),
+                                            ].includes(report.modified_smp_judgement ?? report.smp_judgement),
                                         }"
                                     >
-                                        {{ report.smp_judgement }}
+                                        {{
+                                            report.modified_smp_judgement?.trim()
+                                                ? report.modified_smp_judgement
+                                                : (report.smp_judgement ?? '')
+                                        }}
                                     </td>
                                     <td
                                         class="px-4 py-2 text-center whitespace-nowrap"

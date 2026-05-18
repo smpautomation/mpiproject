@@ -231,7 +231,9 @@
                                     class="px-2 py-1 text-sm text-center bg-white rounded-sm"
                                 >
                                     {{
-                                        item.report?.smp_judgement || "NO DATA"
+                                        item.report?.modified_smp_judgement?.trim()
+                                            ? item.report.modified_smp_judgement
+                                            : (item.report?.smp_judgement?.trim() || "NO DATA")
                                     }}
                                 </div>
                             </td>

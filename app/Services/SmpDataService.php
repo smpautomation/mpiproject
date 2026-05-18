@@ -224,7 +224,9 @@ class SmpDataService
                 'Remarks' => (is_array($remarksDecoded) && count($remarksDecoded) > 0)
                     ? implode("\n", $remarksDecoded)
                     : (!empty($remarksDecoded) ? $remarksDecoded : 'NONE'),
-                'Status' => $reportData->smp_judgement ?? '',
+                'Status' => !empty(trim($reportData->modified_smp_judgement ?? ''))
+                    ? $reportData->modified_smp_judgement
+                    : ($reportData->smp_judgement ?? ''),
                 'HT_Trouble' => $massProdData->current_pattern === 'PASS' ? 'NO' : 'YES',
                 'Special_Instruction' => $smpData->special_instruction ?? ''
             ];

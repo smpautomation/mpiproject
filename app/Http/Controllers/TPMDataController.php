@@ -860,6 +860,7 @@ class TPMDataController extends Controller
                         'tpm_data_serial',
                         'updated_at',
                         'smp_judgement',
+                        'modified_smp_judgement',
                         'approved_by_firstname',
                         'prepared_by_firstname',
                         'checked_by_firstname',
