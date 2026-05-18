@@ -55,6 +55,31 @@ class SmpDataService
             ->get()
             ->keyBy(fn($c) => $c->layer);
 
+        // fallback to GBDP if empty
+        if ($coatings->isEmpty()) {
+
+            $coatings = GbdpSecondCoating::where('furnace', $furnace)
+                ->where('mass_prod', $massProd)
+                ->get()
+                ->map(function ($row) {
+
+                    $data = json_decode($row->coating_info_2ndgbdp, true);
+
+                    return (object) [
+                        'layer' => $row->layer,
+                        'date' => $data['date'] ?? '',
+                        'average' => $data['average'] ?? '',
+                        'maximum' => $data['maximum'] ?? '',
+                        'minimum' => $data['minimum'] ?? '',
+                        'remarks' => $data['remarks'] ?? '',
+                        'machine_no' => $data['machine_no'] ?? '',
+                        'min_tb_content' => $data['min_tb_content'] ?? '',
+                        'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
+                    ];
+                })
+                ->keyBy(fn($c) => $c->layer);
+        }
+
         // Step 1: Build unique Model+Lot mapping per layer
         $mappedRows = [];
         foreach ($layersData as $layerCol => $layerArray) {
@@ -183,34 +208,18 @@ class SmpDataService
                 ]);
 
                 if (!$coating) {
-
-                    // 1. GBDP Second Coating
-                    Log::info('GBDP SECOND COATING lookup START', [
-                        'furnace' => $furnace,
-                        'mass_prod' => $massProd,
-                        'layer' => $layerOrdinal,
-                    ]);
-
-                    $gbdp = GbdpSecondCoating::where('furnace', $furnace)
+                    // BreaklotSecondCoating fallback only
+                    $breaklot = BreaklotSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massProd)
                         ->where('layer', $layerOrdinal)
+                        ->where('model', $model)
+                        ->where('lot_no', $lotNo)
                         ->first();
 
-                    Log::info('GBDP SECOND COATING result', [
-                        'found' => $gbdp ? true : false,
-                        'has_json' => !empty($gbdp->coating_info_2ndgbdp ?? null),
-                    ]);
-
-                    if ($gbdp && !empty($gbdp->coating_info_2ndgbdp)) {
-
-                        Log::info('GBDP SECOND COATING JSON FOUND');
-
-                        $data = json_decode($gbdp->coating_info_2ndgbdp, true);
+                    if ($breaklot && !empty($breaklot->coating_info_2ndgbdp)) {
+                        $data = json_decode($breaklot->coating_info_2ndgbdp, true);
 
                         if ($data) {
-
-                            Log::info('GBDP SECOND COATING JSON PARSED', $data);
-
                             $coating = (object) [
                                 'date' => $data['date'] ?? '',
                                 'average' => $data['average'] ?? '',
@@ -221,31 +230,6 @@ class SmpDataService
                                 'min_tb_content' => $data['min_tb_content'] ?? '',
                                 'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
                             ];
-                        }
-                    }
-
-                    // 2. BreaklotSecondCoating fallback
-                    if (!$coating) {
-
-                        Log::info('BREAKLOT SECOND COATING fallback START');
-
-                        $breaklot = BreaklotSecondCoating::where('furnace', $furnace)
-                            ->where('mass_prod', $massProd)
-                            ->where('layer', $layerOrdinal)
-                            ->where('model', $model)
-                            ->where('lot_no', $lotNo)
-                            ->first();
-
-                        Log::info('BREAKLOT SECOND COATING result', [
-                            'found' => $breaklot ? true : false,
-                            'has_json' => !empty($breaklot->coating_info_2ndgbdp ?? null),
-                        ]);
-
-                        if ($breaklot && !empty($breaklot->coating_info_2ndgbdp)) {
-
-                            $data = json_decode($breaklot->coating_info_2ndgbdp, true);
-
-                            Log::info('BREAKLOT SECOND COATING JSON PARSED', $data ?? []);
                         }
                     }
                 }
