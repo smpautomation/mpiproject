@@ -164,7 +164,18 @@ class SmpDataService
 
             // Coating fallback
             if ($isInitialLot) {
-                $coating = $coatings[$layerNumber] ?? null;
+                Log::info("COATING LOOKUP", [
+                    'layerNumber_raw' => $layerNumber,
+                    'layerNumber_type' => gettype($layerNumber),
+                    'available_keys' => $coatings->keys()->values()->all(),
+                ]);
+
+                $coating = $coatings->get($layerNumber);
+
+                Log::info("COATING RESULT", [
+                    'found' => $coating ? true : false,
+                    'layer' => $layerNumber,
+                ]);
             } else {
                 $coating = BreaklotCoating::where('furnace', $furnace)
                     ->where('mass_prod', $massProd)
