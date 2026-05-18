@@ -8,6 +8,7 @@ use App\Models\TPMDataCategory;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotSecondCoating;
 use App\Models\BreaklotInitialLot;
+use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotFilmpasting;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
@@ -163,7 +164,7 @@ class SmpDataService
             $isBreaklot = collect($mappedRows)->where('layer', $layerNumber)->count() > 1;
 
             // Check if initial lot in breaklot
-            $initialLotCheck = BreaklotInitialLot::where('furnace', $furnace)
+            $initialLotCheck = BreaklotInitialLotHt::where('furnace', $furnace)
                 ->where('mass_prod', $massProd)
                 ->where('layer', $layerOrdinal)
                 ->where('initial_model', $model)
