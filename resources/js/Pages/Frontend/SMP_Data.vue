@@ -402,7 +402,7 @@ const getMassProdData = async () => { //Function for getting the current selecte
         const response = await axios.get(`/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}/smp-data`);
         console.log('Mass Production Data:', response.data);
         massProdData.value = response.data;
-        filmPastingFormat.value = response.data?.some(row => row.Film_Coating_Amount !== undefined)
+        filmPastingFormat.value = response.data?.layersData?.some(row => row.Film_Coating_Amount !== undefined)
     } catch (error) {
         console.error('Error fetching mass production data:', error);
         toast.error('Failed to load mass production data.');
