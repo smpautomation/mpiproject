@@ -214,7 +214,7 @@ class SmpDataService
                 'Layer' => $layerOrdinal,
                 'Batches' => $batchesCount,
                 'Total_Lot_Qty' => $mapped['total_qty'],
-                'Date' => $coating->date ?? '',
+                'Date' =>
                     !empty($filmPastingData->date)
                             ? $filmPastingData->date
                             : ($coating->date ?? ''),
