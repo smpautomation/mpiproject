@@ -12,6 +12,7 @@ use App\Models\BreaklotFilmpasting;
 use App\Models\TPMDataAggregateFunctions;
 use App\Models\ReportData;
 use App\Models\Coating;
+use App\Models\GbdpSecondCoating;
 use App\Models\SmpData;
 use App\Models\FilmPastingData;
 use Illuminate\Support\Facades\Log;
@@ -49,27 +50,10 @@ class SmpDataService
 
         //$tpmAggregates = TPMDataAggregateFunctions::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
         //$reportRecords = ReportData::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
-        Log::info("QUERY START: Coating", [
-            'furnace' => $furnace,
-            'mass_prod' => $massProd
-        ]);
-
-        $coatingQuery = Coating::where('furnace', $furnace)
-            ->where('mass_prod', $massProd);
-
-        Log::info("SQL: Coating", [
-            'sql' => $coatingQuery->toSql(),
-            'bindings' => $coatingQuery->getBindings(),
-        ]);
-
-        $coatings = $coatingQuery->get();
-
-        Log::info("QUERY RESULT: Coating", [
-            'count' => $coatings->count(),
-            'layers_found' => $coatings->pluck('layer')->values()->all(),
-        ]);
-
-        $coatings = $coatings->keyBy(fn($c) => $c->layer);
+        $coatings = Coating::where('furnace', $furnace)
+            ->where('mass_prod', $massProd)
+            ->get()
+            ->keyBy(fn($c) => $c->layer);
 
         // Step 1: Build unique Model+Lot mapping per layer
         $mappedRows = [];
@@ -164,18 +148,20 @@ class SmpDataService
 
             // Coating fallback
             if ($isInitialLot) {
-                Log::info("COATING LOOKUP", [
-                    'layerNumber_raw' => $layerNumber,
-                    'layerNumber_type' => gettype($layerNumber),
-                    'available_keys' => $coatings->keys()->values()->all(),
-                ]);
+                $coating = $coatings[$layerNumber] ?? null;
 
-                $coating = $coatings->get($layerNumber);
+                if (!$coating) {
+                    Log::info("FALLBACK TO GBDP SECOND COATING", [
+                        'layer' => $layerOrdinal,
+                        'furnace' => $furnace,
+                        'mass_prod' => $massProd,
+                    ]);
 
-                Log::info("COATING RESULT", [
-                    'found' => $coating ? true : false,
-                    'layer' => $layerNumber,
-                ]);
+                    $coating = GbdpSecondCoating::where('furnace', $furnace)
+                        ->where('mass_prod', $massProd)
+                        ->where('layer', $layerOrdinal)
+                        ->first();
+                }
             } else {
                 $coating = BreaklotCoating::where('furnace', $furnace)
                     ->where('mass_prod', $massProd)
@@ -288,25 +274,6 @@ class SmpDataService
         }
 
         Log::info("Flattened layers count: " . count($flattenedLayers));
-
-        Log::info("COATING DEBUG SNAPSHOT", [
-            'furnace' => $furnace,
-            'mass_prod' => $massProd,
-            'coatings_loaded' => $coatings->map(function ($c) {
-                return [
-                    'layer' => $c->layer,
-                    'min_tb_content' => $c->min_tb_content ?? null,
-                    'max' => $c->maximum ?? null,
-                    'min' => $c->minimum ?? null,
-                ];
-            })->values()->all(),
-        ]);
-
-        Log::info("LAYER COATING ASSIGNMENT CHECK", [
-            'mapped_rows_layers' => collect($mappedRows)->pluck('layer')->values()->all(),
-            'coating_keys_available' => $coatings->keys()->values()->all(),
-        ]);
-
         return $flattenedLayers;
     }
 }

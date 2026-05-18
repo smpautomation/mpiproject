@@ -421,8 +421,8 @@ class MassProductionController extends Controller
         // Normalize layer number (e.g., 9.5 → layer_9_5)
         $layerColumn = 'layer_' . str_replace('.', '_', $layerNumber);
 
-        Log::info('Record fetched: ', $record->toArray());
-        Log::info('Layer column: ' . $layerColumn);
+        //Log::info('Record fetched: ', $record->toArray());
+        //Log::info('Layer column: ' . $layerColumn);
 
         if (!isset($record->$layerColumn)) {
             return response()->json([
