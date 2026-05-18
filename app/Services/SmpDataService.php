@@ -147,26 +147,70 @@ class SmpDataService
             $isInitialLot = !$isBreaklot || $initialLotCheck;
 
             // Coating fallback
-            if ($isInitialLot) {
+           if ($isInitialLot) {
+
+                Log::info('COATING fallback: INITIAL LOT', [
+                    'furnace' => $furnace,
+                    'mass_prod' => $massProd,
+                    'layer_number' => $layerNumber,
+                ]);
+
                 $coating = $coatings[$layerNumber] ?? null;
+
+                Log::info('COATING initial lot result', [
+                    'found' => $coating ? true : false,
+                ]);
+
             } else {
+
+                Log::info('COATING fallback: BREAKLOT PATH', [
+                    'furnace' => $furnace,
+                    'mass_prod' => $massProd,
+                    'layer_ordinal' => $layerOrdinal,
+                    'model' => $model,
+                    'lot_no' => $lotNo,
+                ]);
+
                 $coating = BreaklotCoating::where('furnace', $furnace)
                     ->where('mass_prod', $massProd)
                     ->where('layer', $layerOrdinal)
                     ->where('model', $model)
                     ->where('lot_no', $lotNo)
                     ->first();
+
+                Log::info('BreaklotCoating result', [
+                    'found' => $coating ? true : false,
+                ]);
+
                 if (!$coating) {
-                    // 1. GBDP Second Coating (PRIMARY fallback)
+
+                    // 1. GBDP Second Coating
+                    Log::info('GBDP SECOND COATING lookup START', [
+                        'furnace' => $furnace,
+                        'mass_prod' => $massProd,
+                        'layer' => $layerOrdinal,
+                    ]);
+
                     $gbdp = GbdpSecondCoating::where('furnace', $furnace)
                         ->where('mass_prod', $massProd)
                         ->where('layer', $layerOrdinal)
                         ->first();
 
+                    Log::info('GBDP SECOND COATING result', [
+                        'found' => $gbdp ? true : false,
+                        'has_json' => !empty($gbdp->coating_info_2ndgbdp ?? null),
+                    ]);
+
                     if ($gbdp && !empty($gbdp->coating_info_2ndgbdp)) {
+
+                        Log::info('GBDP SECOND COATING JSON FOUND');
+
                         $data = json_decode($gbdp->coating_info_2ndgbdp, true);
 
                         if ($data) {
+
+                            Log::info('GBDP SECOND COATING JSON PARSED', $data);
+
                             $coating = (object) [
                                 'date' => $data['date'] ?? '',
                                 'average' => $data['average'] ?? '',
@@ -180,8 +224,11 @@ class SmpDataService
                         }
                     }
 
-                    // 2. BreaklotSecondCoating (fallback if GBDP missing)
+                    // 2. BreaklotSecondCoating fallback
                     if (!$coating) {
+
+                        Log::info('BREAKLOT SECOND COATING fallback START');
+
                         $breaklot = BreaklotSecondCoating::where('furnace', $furnace)
                             ->where('mass_prod', $massProd)
                             ->where('layer', $layerOrdinal)
@@ -189,21 +236,16 @@ class SmpDataService
                             ->where('lot_no', $lotNo)
                             ->first();
 
+                        Log::info('BREAKLOT SECOND COATING result', [
+                            'found' => $breaklot ? true : false,
+                            'has_json' => !empty($breaklot->coating_info_2ndgbdp ?? null),
+                        ]);
+
                         if ($breaklot && !empty($breaklot->coating_info_2ndgbdp)) {
+
                             $data = json_decode($breaklot->coating_info_2ndgbdp, true);
 
-                            if ($data) {
-                                $coating = (object) [
-                                    'date' => $data['date'] ?? '',
-                                    'average' => $data['average'] ?? '',
-                                    'maximum' => $data['maximum'] ?? '',
-                                    'minimum' => $data['minimum'] ?? '',
-                                    'remarks' => $data['remarks'] ?? '',
-                                    'machine_no' => $data['machine_no'] ?? '',
-                                    'min_tb_content' => $data['min_tb_content'] ?? '',
-                                    'total_magnet_weight' => $data['total_magnet_weight'] ?? '',
-                                ];
-                            }
+                            Log::info('BREAKLOT SECOND COATING JSON PARSED', $data ?? []);
                         }
                     }
                 }
