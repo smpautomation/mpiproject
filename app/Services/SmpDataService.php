@@ -49,10 +49,27 @@ class SmpDataService
 
         //$tpmAggregates = TPMDataAggregateFunctions::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
         //$reportRecords = ReportData::whereIn('tpm_data_serial', $layerSerials)->get()->keyBy('tpm_data_serial');
-        $coatings = Coating::where('furnace', $furnace)
-            ->where('mass_prod', $massProd)
-            ->get()
-            ->keyBy(fn($c) => $c->layer);
+        Log::info("QUERY START: Coating", [
+            'furnace' => $furnace,
+            'mass_prod' => $massProd
+        ]);
+
+        $coatingQuery = Coating::where('furnace', $furnace)
+            ->where('mass_prod', $massProd);
+
+        Log::info("SQL: Coating", [
+            'sql' => $coatingQuery->toSql(),
+            'bindings' => $coatingQuery->getBindings(),
+        ]);
+
+        $coatings = $coatingQuery->get();
+
+        Log::info("QUERY RESULT: Coating", [
+            'count' => $coatings->count(),
+            'layers_found' => $coatings->pluck('layer')->values()->all(),
+        ]);
+
+        $coatings = $coatings->keyBy(fn($c) => $c->layer);
 
         // Step 1: Build unique Model+Lot mapping per layer
         $mappedRows = [];
