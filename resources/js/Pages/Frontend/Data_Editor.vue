@@ -1050,6 +1050,7 @@
                                     class="bg-gray-100 border-b text-[10px] uppercase tracking-wide"
                                 >
                                     <tr>
+                                        <th class="px-2 py-1">Date</th>
                                         <th class="px-2 py-1">Furnace</th>
                                         <th class="px-2 py-1">
                                             Mass Production
@@ -1066,6 +1067,9 @@
                                         :key="item.id"
                                         class="border-b hover:bg-gray-50"
                                     >
+                                        <td class="px-2 py-1">
+                                            {{ item.created_at?.split('T')[0] }}
+                                        </td>
                                         <td class="px-2 py-1">
                                             {{ item.furnace }}
                                         </td>
@@ -1191,6 +1195,7 @@
                                     class="bg-gray-100 border-b text-[10px] uppercase tracking-wide"
                                 >
                                     <tr>
+                                        <th class="px-2 py-1">Date</th>
                                         <th class="px-2 py-1">Furnace</th>
                                         <th class="px-2 py-1">
                                             Mass Production
@@ -1207,6 +1212,9 @@
                                         :key="item.id"
                                         class="border-b hover:bg-gray-50"
                                     >
+                                        <td class="px-2 py-1">
+                                            {{ item.created_at?.split('T')[0] }}
+                                        </td>
                                         <td class="px-2 py-1">
                                             {{ item.furnace }}
                                         </td>
