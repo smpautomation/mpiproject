@@ -1847,6 +1847,7 @@ const req_htInfoEditingOnly = ref(false);
 const userReason = ref();
 const userCorrectiveAction = ref();
 const userVerified = ref(false);
+const requestedBy = ref();
 
 const dataEditorHistory = ref([]);
 
@@ -1976,7 +1977,9 @@ const confirmApprove = async () => {
             selectedLayer.value = selectedApproveItem.value.layer;
             userCorrectiveAction.value = selectedApproveItem.value.corrective_action;
             userReason.value = selectedApproveItem.value.reason;
+            requestedBy.value = selectedApproveItem.value.request_by;
             userVerified.value = true;
+            
 
             await deleteLayerDataFinal(selectedApproveItem.value.id);
         }
@@ -1988,6 +1991,7 @@ const confirmApprove = async () => {
             cycleNoToEdit.value = selectedApproveItem.value.current_data;
             userCorrectiveAction.value = selectedApproveItem.value.corrective_action;
             userReason.value = selectedApproveItem.value.reason;
+            requestedBy.value = selectedApproveItem.value.request_by;
             userVerified.value = true;
 
             await editCycleNo(selectedApproveItem.value.id);
@@ -2349,7 +2353,7 @@ const deleteLayerDataFinal = async (requestId) => {
         if (response.data.success) {
             const total = response.data.total_deleted ?? 0;
 
-            await saveLog(
+            await req_saveLog(
                 `has fully removed Layer ${selectedLayer.value} data from ${selectedFurnace.value} ${selectedMassProd.value}. Total deleted: ${total}`,
             );
 
@@ -2449,7 +2453,7 @@ const editCycleNo = async (requestId) => {
         if (response.data) {
             toast.success("Cycle No updated successfully");
             console.log("Cycle No edited successfully: ", response.data);
-            await saveLog(
+            await req_saveLog(
                 `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
             );
             await updateEditPendingList(requestId, "Approved");
@@ -2532,6 +2536,45 @@ const saveLog = async (log) => {
         user_confirmation: userVerified.value,
         requested_by:
             state.user.firstName + " " + state.user.surname,
+        approved_by:
+            state.user.firstName + " " + state.user.surname,
+        log_remarks: log,
+    };
+
+    try {
+        console.log("saveLog payload:", payload);
+
+        const response = await axios.post(
+            "/api/data_editor_logs",
+            payload
+        );
+
+        console.log(
+            "Data logs saved successfully",
+            response.data
+        );
+
+    } catch (error) {
+        console.error(
+            "Failed to save data editor logs",
+            error.response?.data || error
+        );
+
+        toast.error("Failed to save editor logs");
+    }
+};
+
+
+const req_saveLog = async (log) => {
+    const payload = {
+        mass_prod: selectedMassProd.value,
+        furnace: selectedFurnace.value,
+        layer: selectedLayer.value,
+        user_reason: userReason.value,
+        user_corrective_action: userCorrectiveAction.value,
+        user_confirmation: userVerified.value,
+        requested_by:
+            requestedBy.value,
         approved_by:
             state.user.firstName + " " + state.user.surname,
         log_remarks: log,
