@@ -74,7 +74,7 @@
                                 <td class="px-1 border border-gray-300">{{ layer.Magnet_Weight }}</td>
 
                                 <!-- Conditionally render Coating or Film Pasting fields -->
-                                <template v-if="!layer.Film_Coating_Amount">
+                                <template v-if="layer.format_type !== 'Film Pasting'">
                                     <td class="px-1 border border-gray-300">{{ layer.Coating_Target }}</td>
                                     <td class="px-1 border border-gray-300">{{ layer.Coating_Max }}</td>
                                     <td class="px-1 border border-gray-300">{{ layer.Coating_Min }}</td>
@@ -402,7 +402,9 @@ const getMassProdData = async () => { //Function for getting the current selecte
         const response = await axios.get(`/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}/smp-data`);
         console.log('Mass Production Data:', response.data);
         massProdData.value = response.data;
-        filmPastingFormat.value = response.data?.layersData?.some(row => row.Film_Coating_Amount !== undefined)
+        filmPastingFormat.value = response.data?.layersData?.some(
+            row => row.format_type === 'Film Pasting'
+        );
     } catch (error) {
         console.error('Error fetching mass production data:', error);
         toast.error('Failed to load mass production data.');

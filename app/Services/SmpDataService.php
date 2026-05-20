@@ -125,6 +125,13 @@ class SmpDataService
         // Step 3: Build final flattened rows
         $flattenedLayers = [];
         foreach ($mappedRows as $mapped) {
+
+            Log::info('FORMAT TYPE CHECK', [
+                'layerCol' => $layerCol,
+                'resolved_key' => $layerCol . '_format_type',
+                'value' => $massProdData->{$layerCol . '_format_type'} ?? null,
+            ]);
+
             $layerCol = $mapped['layerCol'];
             $layerNumber = $mapped['layer'];
             $layerOrdinal = (string) $layerNumber;
@@ -151,33 +158,30 @@ class SmpDataService
                 $coating = $coatings[$layerNumber] ?? null;
 
                 if (!$coating) {
-                    Log::info("FALLBACK TO GBDP SECOND COATING", [
-                        'layer' => $layerOrdinal,
-                        'furnace' => $furnace,
-                        'mass_prod' => $massProd,
-                    ]);
-
                     $coating = GbdpSecondCoating::where('furnace', $furnace)
-                        ->where('mass_prod', $massProd)
-                        ->where('layer', $layerOrdinal)
-                        ->first();
+                    ->where('mass_prod', $massProd)
+                    ->where('layer', $layerOrdinal)
+                    ->first();
                 }
             } else {
                 $coating = BreaklotCoating::where('furnace', $furnace)
+                ->where('mass_prod', $massProd)
+                ->where('layer', $layerOrdinal)
+                ->where('model', $model)
+                ->where('lot_no', $lotNo)
+                ->first();
+
+                if (!$coating) {
+                    $coating = BreaklotSecondCoating::where('furnace', $furnace)
                     ->where('mass_prod', $massProd)
                     ->where('layer', $layerOrdinal)
                     ->where('model', $model)
                     ->where('lot_no', $lotNo)
                     ->first();
-                if (!$coating) {
-                    $coating = BreaklotSecondCoating::where('furnace', $furnace)
-                        ->where('mass_prod', $massProd)
-                        ->where('layer', $layerOrdinal)
-                        ->where('model', $model)
-                        ->where('lot_no', $lotNo)
-                        ->first();
                 }
             }
+
+            $coatingData = $this->resolveCoatingData($coating);
 
             // TPM & report data
             $tpmData = $serial && isset($tpmRecords[$serial]) ? $tpmRecords[$serial]->values() : collect();
@@ -228,46 +232,64 @@ class SmpDataService
                 'Layer' => $layerOrdinal,
                 'Batches' => $batchesCount,
                 'Total_Lot_Qty' => $mapped['total_qty'],
-                'Date' =>
-                    !empty($filmPastingData->date)
-                            ? $filmPastingData->date
-                            : ($coating->date ?? ''),
-                'M_C' =>
-                    !empty($filmPastingData->machine_no)
-                        ? $filmPastingData->machine_no
-                        : ($coating->machine_no ?? ''),
 
-                'Magnet_Weight' =>
-                    !empty($filmPastingData->total_magnet_weight)
-                        ? $filmPastingData->total_magnet_weight
-                        : ($coating->total_magnet_weight ?? ''),
+                'format_type' => $formatType,
+
+                'Date' => !empty($filmPastingData->date)
+                    ? $filmPastingData->date
+                    : ($coatingData['date'] ?? ''),
+
+                'M_C' => !empty($filmPastingData->machine_no)
+                    ? $filmPastingData->machine_no
+                    : ($coatingData['machine_no'] ?? ''),
+
+                'Magnet_Weight' => !empty($filmPastingData->total_magnet_weight)
+                    ? $filmPastingData->total_magnet_weight
+                    : ($coatingData['total_magnet_weight'] ?? ''),
+
                 'iHc_Target' => $magProp['ihcStandard'] ?? '',
-                'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? '' : '',
-                'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? '' : '',
-                'iHc_Ave' => $tpmAggregate && $tpmAggregate->average ? json_decode($tpmAggregate->average, true)['iHc'] ?? '' : '',
+                'iHc_Max' => $tpmAggregate && $tpmAggregate->maximum
+                    ? json_decode($tpmAggregate->maximum, true)['iHc'] ?? ''
+                    : '',
+                'iHc_Min' => $tpmAggregate && $tpmAggregate->minimum
+                    ? json_decode($tpmAggregate->minimum, true)['iHc'] ?? ''
+                    : '',
+                'iHc_Ave' => $tpmAggregate && $tpmAggregate->average
+                    ? json_decode($tpmAggregate->average, true)['iHc'] ?? ''
+                    : '',
+
                 'Remarks' => (is_array($remarksDecoded) && count($remarksDecoded) > 0)
                     ? implode("\n", $remarksDecoded)
                     : (!empty($remarksDecoded) ? $remarksDecoded : 'NONE'),
+
                 'Status' => !empty(trim($reportData->modified_smp_judgement ?? ''))
                     ? $reportData->modified_smp_judgement
                     : ($reportData->smp_judgement ?? ''),
+
                 'HT_Trouble' => $massProdData->current_pattern === 'PASS' ? 'NO' : 'YES',
+
                 'Special_Instruction' => $smpData->special_instruction ?? ''
             ];
             if ($formatType === 'Film Pasting') {
-                $rowData = array_merge($rowData, [
+                $rowData += [
                     'Film_Coating_Amount' => $filmPastingData->film_coating_amount ?? '',
                     'Film_Type' => $filmPastingData->film_type ?? '',
                     'Film_Class' => $filmPastingData->film_class ?? '',
-                    'blank' => '',
-                ]);
+                    'Coating_Target' => '',
+                    'Coating_Max' => '',
+                    'Coating_Min' => '',
+                    'Coating_Ave' => '',
+                ];
             } else {
-                $rowData = array_merge($rowData, [
-                    'Coating_Target' => $coating->min_tb_content ?? '',
-                    'Coating_Max' => $coating->maximum ?? '',
-                    'Coating_Min' => $coating->minimum ?? '',
-                    'Coating_Ave' => $coating->average ?? '',
-                ]);
+                $rowData += [
+                    'Film_Coating_Amount' => '',
+                    'Film_Type' => '',
+                    'Film_Class' => '',
+                    'Coating_Target' => $coatingData['min_tb_content'] ?? '',
+                    'Coating_Max' => $coatingData['maximum'] ?? '',
+                    'Coating_Min' => $coatingData['minimum'] ?? '',
+                    'Coating_Ave' => $coatingData['average'] ?? '',
+                ];
             }
 
             $flattenedLayers[] = $rowData;
@@ -275,5 +297,30 @@ class SmpDataService
 
         Log::info("Flattened layers count: " . count($flattenedLayers));
         return $flattenedLayers;
+    }
+
+    private function resolveCoatingData($coating): array
+    {
+        if (!$coating) {
+            return [];
+        }
+
+        // Case 1: JSON-based coating (second coating tables)
+        if (!empty($coating->coating_info_2ndgbdp)) {
+            return is_array($coating->coating_info_2ndgbdp)
+                ? $coating->coating_info_2ndgbdp
+                : json_decode($coating->coating_info_2ndgbdp, true);
+        }
+
+        // Case 2: Normal column-based coating
+        return [
+            'date' => $coating->date ?? null,
+            'machine_no' => $coating->machine_no ?? null,
+            'total_magnet_weight' => $coating->total_magnet_weight ?? null,
+            'min_tb_content' => $coating->min_tb_content ?? null,
+            'maximum' => $coating->maximum ?? null,
+            'minimum' => $coating->minimum ?? null,
+            'average' => $coating->average ?? null,
+        ];
     }
 }

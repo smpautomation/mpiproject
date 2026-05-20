@@ -352,7 +352,7 @@
                                 <td
                                     v-for="hour in hours"
                                     :key="hour"
-                                    class="p-1 text-center border whitespace-nowrap"
+                                    class="p-1 text-center border whitespace-nowrap cursor-pointer"
                                     @click="
                                         timetableMap[day.date]?.[hour] &&
                                         viewControlSheet(

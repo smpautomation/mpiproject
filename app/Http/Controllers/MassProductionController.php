@@ -983,7 +983,10 @@ class MassProductionController extends Controller
     public function smpDataSummary($furnace, $massprod)
     {
         $flattenedLayers = app(\App\Services\SmpDataService::class)->getFlattenedData($furnace, $massprod);
-        $formatType = reset($flattenedLayers)['format_type'] ?? null;
+        $formatType = collect($flattenedLayers)
+            ->first(function ($row) {
+                return !empty($row['format_type']);
+            })['format_type'] ?? null;
 
         return response()->json([
             'layersData' => $flattenedLayers,
