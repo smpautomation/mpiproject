@@ -2011,6 +2011,7 @@ const confirmApprove = async () => {
             selectedMassProd.value = selectedApproveItem.value.mass_prod;
             selectedFurnace.value = selectedApproveItem.value.furnace;
             newCycleNo.value = selectedApproveItem.value.new_data;
+            cycleNoToEdit.value = selectedApproveItem.value.current_data;
             userCorrectiveAction.value = selectedApproveItem.value.corrective_action;
             userReason.value = selectedApproveItem.value.reason;
             userVerified.value = true;
@@ -2477,7 +2478,7 @@ const editCycleNo = async (requestId) => {
             await saveLog(
                 `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
             );
-            await updateEditPendingList(requestId, "Approved");
+            //await updateEditPendingList(requestId, "Approved");
             await getDeleteRequests();
             await getEditRequests();
             await getDataLogsHistory();
