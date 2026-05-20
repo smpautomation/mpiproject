@@ -1054,8 +1054,6 @@
                                         <th class="px-2 py-1">
                                             Mass Production
                                         </th>
-                                        <th class="px-2 py-1">Reason</th>
-                                        <th class="px-2 py-1">Action</th>
                                         <th class="px-2 py-1">Request By</th>
                                         <th class="px-2 py-1">Status</th>
                                         <th class="px-2 py-1">Action</th>
@@ -1073,16 +1071,6 @@
                                         </td>
                                         <td class="px-2 py-1">
                                             {{ item.mass_prod }}
-                                        </td>
-                                        <td
-                                            class="px-2 py-1 truncate max-w-[120px]"
-                                        >
-                                            {{ item.reason }}
-                                        </td>
-                                        <td
-                                            class="px-2 py-1 truncate max-w-[120px]"
-                                        >
-                                            {{ item.corrective_action }}
                                         </td>
                                         <td class="px-2 py-1">
                                             {{ item.request_by }}
@@ -1207,12 +1195,6 @@
                                         <th class="px-2 py-1">
                                             Mass Production
                                         </th>
-                                        <th class="px-2 py-1">Reason</th>
-                                        <th class="px-2 py-1">
-                                            Corrective Action
-                                        </th>
-                                        <th class="px-2 py-1">Current</th>
-                                        <th class="px-2 py-1">New</th>
                                         <th class="px-2 py-1">Request By</th>
                                         <th class="px-2 py-1">Status</th>
                                         <th class="px-2 py-1">Action</th>
@@ -1230,22 +1212,6 @@
                                         </td>
                                         <td class="px-2 py-1">
                                             {{ item.mass_prod }}
-                                        </td>
-                                        <td
-                                            class="px-2 py-1 truncate max-w-[120px]"
-                                        >
-                                            {{ item.reason }}
-                                        </td>
-                                        <td
-                                            class="px-2 py-1 truncate max-w-[120px]"
-                                        >
-                                            {{ item.corrective_action }}
-                                        </td>
-                                        <td class="px-2 py-1">
-                                            {{ item.current_data }}
-                                        </td>
-                                        <td class="px-2 py-1">
-                                            {{ item.new_data }}
                                         </td>
                                         <td class="px-2 py-1">
                                             {{ item.request_by }}
@@ -2478,7 +2444,7 @@ const editCycleNo = async (requestId) => {
             await saveLog(
                 `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
             );
-            //await updateEditPendingList(requestId, "Approved");
+            await updateEditPendingList(requestId, "Approved");
             await getDeleteRequests();
             await getEditRequests();
             await getDataLogsHistory();
