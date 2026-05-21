@@ -39,36 +39,28 @@
                         <button
                             @click="checkAllToggle"
                             :disabled="
-                                filteredReports.filter((r) => r.checked === 1)
-                                    .length === 0
+                                reportDataList.filter(
+                                    (r) => Number(r.checked) === 1
+                                ).length === 0
                             "
                             :class="[
                                 'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
-                                filteredReports.filter(
+
+                                reportDataList.filter(
                                     (r) =>
-                                        r.checked === 1 &&
-                                        !r.approved_by_firstname,
+                                        Number(r.checked) === 1 &&
+                                        !r.approved_by_firstname
                                 ).length === 0
                                     ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
                                     : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
                             ]"
                         >
                             {{
-                                filteredReports.filter(
-                                    (r) =>
-                                        r.checked === 1 &&
-                                        !r.approved_by_firstname,
-                                ).length === 0
+                                !approvalState.hasEligible
                                     ? "No eligible data to approve"
-                                    : filteredReports
-                                            .filter((r) => r.checked === 1)
-                                            .every((r) =>
-                                                selectedRows.includes(
-                                                    r.tpm_data_serial,
-                                                ),
-                                            )
-                                      ? "Uncheck All Eligible"
-                                      : "Check All Eligible"
+                                    : approvalState.allSelected
+                                        ? "Uncheck All Eligible"
+                                        : "Check All Eligible"
                             }}
                         </button>
                     </div>
@@ -86,28 +78,19 @@
                                     <th
                                         class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700"
                                     >
-                                        Magnet Model
+                                        Furnace No
                                     </th>
                                     <th
                                         class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700"
                                     >
-                                        Material Code
+                                        Model
                                     </th>
                                     <th
                                         class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700"
                                     >
-                                        Partial No
+                                        Lot No
                                     </th>
-                                    <th
-                                        class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase border-b border-gray-700"
-                                    >
-                                        Total Quantity
-                                    </th>
-                                    <th
-                                        class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-blue-600 border-b border-gray-700"
-                                    >
-                                        SMP Judgement
-                                    </th>
+                                    
                                     <th
                                         class="px-4 py-3 text-xs font-semibold tracking-wide text-center text-black uppercase bg-yellow-500 border-b border-gray-700"
                                     >
@@ -117,6 +100,11 @@
                                         class="px-4 py-3 text-xs font-semibold tracking-wide text-center text-black uppercase bg-yellow-500 border-b border-gray-700"
                                     >
                                         Checked By
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-blue-600 border-b border-gray-700"
+                                    >
+                                        SMP Judgement
                                     </th>
                                     <th
                                         class="px-4 py-3 text-xs font-semibold tracking-wide text-center uppercase bg-green-600 border-b border-gray-700"
@@ -137,34 +125,32 @@
                             </thead>
                             <tbody class="text-gray-800 bg-white">
                                 <tr
-                                    v-for="report in paginatedReports"
+                                    v-for="report in reportDataList"
                                     :key="report.tpm_data_serial"
                                     class="transition-colors duration-150 border-b border-gray-200 hover:bg-gray-100"
                                 >
                                     <td
                                         class="px-4 py-2 text-center whitespace-nowrap"
                                     >
-                                        {{ report.tpm_data_serial }}
+                                        {{ report.serial_no }}
                                     </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
-                                        {{ report.model }}
+                                    <td class="px-4 py-2 text-center whitespace-nowrap">
+                                        {{ report.sintering_furnace_no }}
                                     </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
-                                        {{ report.material_code }}
+
+                                    <td class="px-4 py-2 text-center whitespace-nowrap">
+                                        {{ report.actual_model }}
                                     </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
-                                        {{ report.partial_number }}
+
+                                    <td class="px-4 py-2 text-center whitespace-nowrap">
+                                        {{ report.jhcurve_lotno }}
                                     </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
-                                        {{ report.total_quantity }}
+                                    <td class="px-4 py-2 text-center whitespace-nowrap">
+                                        {{ report.prepared_by }}
+                                    </td>
+
+                                    <td class="px-4 py-2 text-center whitespace-nowrap">
+                                        {{ report.checked_by }}
                                     </td>
                                     <td
                                         class="px-4 py-2 text-lg font-semibold text-center whitespace-nowrap"
@@ -188,31 +174,12 @@
                                                 : (report.smp_judgement ?? '')
                                         }}
                                     </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
-                                        {{
-                                            report.prepared_by ??
-                                            `${report.prepared_by_firstname} ${report.prepared_by_surname}`
-                                        }}
-                                    </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
-                                        {{
-                                            report.checked_by ??
-                                            `${report.checked_by_firstname} ${report.checked_by_surname}`
-                                        }}
-                                    </td>
+                                    
                                     <td
                                         class="px-4 py-2 text-center whitespace-nowrap"
                                     >
                                         <button
-                                            @click="
-                                                viewReport(
-                                                    report.tpm_data_serial,
-                                                )
-                                            "
+                                            @click="viewReport(report.serial_no)"
                                             class="inline-block px-3 py-1 text-sm font-medium text-blue-600 transition duration-150 border border-blue-500 rounded hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                                         >
                                             View
@@ -221,25 +188,18 @@
                                     <td
                                         class="px-4 py-2 text-sm font-bold text-center whitespace-nowrap"
                                     >
-                                        <span
-                                            v-if="report.approved_by_firstname"
-                                            class="text-green-700"
-                                            >APPROVED</span
-                                        >
-                                        <span v-else class="text-yellow-600"
-                                            >PENDING</span
-                                        >
+                                        <span v-if="!!report.approved_by_firstname" class="text-green-700">
+                                            APPROVED
+                                        </span>
+                                        <span v-else class="text-yellow-600">
+                                            PENDING
+                                        </span>
                                     </td>
-                                    <td
-                                        class="px-4 py-2 text-center whitespace-nowrap"
-                                    >
+                                    <td class="px-4 py-2 text-center whitespace-nowrap">
                                         <input
-                                            v-if="
-                                                !report.approved_by_firstname &&
-                                                report.checked == 1
-                                            "
+                                            v-if="!report.approved_by_firstname && report.checked === 1"
                                             type="checkbox"
-                                            :value="report.tpm_data_serial"
+                                            :value="report.serial_no"
                                             v-model="selectedRows"
                                             class="w-5 h-5 text-blue-600 border-gray-300 rounded cursor-pointer focus:ring focus:ring-blue-300"
                                         />
@@ -249,10 +209,38 @@
                         </table>
                     </div>
                     <div class="flex justify-center mb-10 space-y-6">
-                        <DotsLoader
-                            v-show="isLoadingApproval"
-                            class="z-10 mt-8"
-                        />
+                        <div
+                            v-if="approvalProgress.active"
+                            class="flex items-center gap-5 px-5 py-4 mt-3 bg-white border border-gray-200 rounded-md shadow-sm"
+                        >
+
+                            <!-- STAMP ANIMATION -->
+                            <div class="relative w-16 h-16 flex items-center justify-center">
+
+                                <!-- document -->
+                                <div class="absolute w-12 h-14 bg-gray-100 border border-gray-300 rounded-sm animate-doc"></div>
+
+                                <!-- stamp -->
+                                <div class="absolute w-10 h-5 bg-red-600 text-white text-[7px] flex items-center justify-center font-bold rounded-sm animate-stamp">
+                                    APPROVED
+                                </div>
+
+                                <!-- ink ripple -->
+                                <div class="absolute w-12 h-12 border-2 border-red-400 rounded-full animate-ripple opacity-0"></div>
+
+                            </div>
+
+                            <!-- TEXT (UNCHANGED) -->
+                            <div class="text-xs text-gray-700 leading-tight">
+                                <div class="font-semibold">
+                                    {{ approvalProgress.step || 'PROCESSING' }}
+                                </div>
+                                <div class="text-gray-500">
+                                    {{ approvalProgress.currentSerial ?? '-' }}
+                                </div>
+                            </div>
+
+                        </div>
                         <!-- Approve Button -->
                         <div v-if="!approveNotif && !blockedNotif">
                             <button
@@ -328,17 +316,17 @@
                         <button
                             class="px-4 py-2 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
                             @click="prevPage"
-                            :disabled="currentPage === 1"
+                            :disabled="pagination.current_page === 1"
                         >
                             Previous
                         </button>
                         <span class="text-gray-600"
-                            >Page {{ currentPage }} of {{ totalPages }}</span
+                            >Page {{ pagination.current_page }} of {{ pagination.last_page }}</span
                         >
                         <button
                             class="px-4 py-2 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
                             @click="nextPage"
-                            :disabled="currentPage === totalPages"
+                            :disabled="pagination.current_page === pagination.last_page"
                         >
                             Next
                         </button>
@@ -453,8 +441,12 @@ function useSessionStorage(key, state) {
 
 const statusFilter = ref("ALL");
 
-watch(statusFilter, () => {
+watch(statusFilter, async (value) => {
+    //console.log("Status changed:", value);
+
     currentPage.value = 1;
+
+    await showReportData();
 });
 
 const currentPage = ref(1);
@@ -465,41 +457,30 @@ const showApproveConfirmation = ref(false);
 const approveNotif = ref(false);
 const blockedNotif = ref(false);
 const reportNotificationMessage = ref("");
-const isLoadingApproval = ref(false);
+
+const approvalProgress = ref({
+    active: false,
+    step: '',
+    currentSerial: null,
+    message: '',
+});
 
 // UI end
 const ipAddress = ref("");
 const reportDataList = ref([]);
+const pagination = ref({});
 
-const filteredReports = computed(() => {
-    if (statusFilter.value === "ALL") return reportDataList.value;
-
-    return reportDataList.value.filter((report) => {
-        const isApproved = report.approved_by_firstname;
-        if (statusFilter.value === "APPROVED") return isApproved;
-        if (statusFilter.value === "PENDING") return !isApproved;
-    });
-});
-
-const paginatedReports = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return filteredReports.value.slice(start, end);
-});
-
-const totalPages = computed(() => {
-    return Math.ceil(filteredReports.value.length / itemsPerPage.value);
-});
-
-const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
+const nextPage = async() => {
+    if (currentPage.value < pagination.value.last_page) {
+        currentPage.value++
+        await showReportData();
     }
 };
 
-const prevPage = () => {
+const prevPage = async () => {
     if (currentPage.value > 1) {
         currentPage.value--;
+        await showReportData();
     }
 };
 
@@ -514,7 +495,7 @@ ipAddress.value = props.ipAddress;
 if (props.fromReports) {
     statusFilter.value = props.filterStatus;
 }
-console.log("Current IP Detected: ", ipAddress.value);
+//console.log("Current IP Detected: ", ipAddress.value);
 
 const showApprovedNotification = (message) => {
     // Show notification and set the message
@@ -557,6 +538,7 @@ watch(
     { deep: true },
 );
 
+
 const viewReport = (serial) => {
     saveReportChecked(serial);
     //console.log('Navigating to report with serial:', serial);
@@ -573,51 +555,55 @@ const viewReport = (serial) => {
 };
 
 const checkAllToggle = () => {
-    const eligibleSerials = filteredReports.value
+    const eligibleSerials = reportDataList.value
         .filter(
-            (report) => report.checked === 1 && !report.approved_by_firstname,
+            (report) =>
+                Number(report.checked) === 1 &&
+                !report.approved_by_firstname
         )
-        .map((report) => report.tpm_data_serial);
+        .map((report) => report.serial_no);
 
     const allEligibleSelected = eligibleSerials.every((serial) =>
-        selectedRows.value.includes(serial),
+        selectedRows.value.includes(serial)
     );
 
     if (allEligibleSelected) {
         selectedRows.value = selectedRows.value.filter(
-            (serial) => !eligibleSerials.includes(serial),
+            (serial) => !eligibleSerials.includes(serial)
         );
     } else {
         selectedRows.value = Array.from(
-            new Set([...selectedRows.value, ...eligibleSerials]),
+            new Set([
+                ...selectedRows.value,
+                ...eligibleSerials,
+            ])
         );
     }
 };
 
+
 const showReportData = async () => {
     try {
-        const response = await axios.get(`/api/reportdata/`);
+        const response = await axios.get(`/api/reportdata/approval-list`, {
+            params: {
+                page: currentPage.value,
+                per_page: itemsPerPage.value,
+                status: statusFilter.value,
+            },
+        });
         //console.log("Getting report data API result: ", response.data);
 
         // Filter out rows where smp_judgement is null or an empty string
-        reportDataList.value = response.data.data
-            .filter(
-                (report) =>
-                    report.smp_judgement &&
-                    report.smp_judgement.trim() !== "" &&
-                    ((report.checked_by &&
-                        report.checked_by.trim() !== "" &&
-                        report.prepared_by &&
-                        report.prepared_by.trim() !== "") ||
-                        (report.checked_by_firstname &&
-                            report.checked_by_firstname.trim() !== "" &&
-                            report.prepared_by_firstname &&
-                            report.prepared_by_firstname.trim() !== "")),
-            )
-            .sort((a, b) => {
-                // Ensure both values are treated as numbers for natural ordering
-                return Number(b.tpm_data_serial) - Number(a.tpm_data_serial);
-            });
+        reportDataList.value = response.data.data ?? [];
+        pagination.value = response.data.pagination ?? {};
+
+        if (
+            currentPage.value > pagination.value.last_page &&
+            pagination.value.last_page > 0
+        ) {
+            currentPage.value = 1;
+            return await showReportData();
+        }
 
         //console.log("Filtered and sorted report data: ", reportDataList.value);
     } catch (error) {
@@ -703,12 +689,22 @@ const datenow = () => {
 };
 
 const confirmationApprove = async () => {
-    isLoadingApproval.value = true;
+    if (!selectedRows.value?.length) return;
+
     showApproveConfirmation.value = false;
 
-    console.log("== Starting approval process ==");
-    const dateNow = datenow();
+    //console.log("== Starting approval process ==");
 
+    approvalProgress.value.active = true;
+
+    const dateNow = datenow();
+/*
+    const reportData = {
+        approved_by_firstname: '',
+        approved_by_surname: '',
+        approved_by_date: '',
+    };
+*/  
     const reportData = {
         approved_by_firstname: state.user.firstName,
         approved_by_surname: state.user.surname,
@@ -717,83 +713,194 @@ const confirmationApprove = async () => {
 
     try {
         // 1. Stamp approval
+        approvalProgress.value.step = "STAMPING";
+
         for (const serial of selectedRows.value) {
+            approvalProgress.value.currentSerial = serial;
+            approvalProgress.value.message = "Applying approval stamp";
+
             try {
                 await userApprovalLogging(
                     `has successfully stamped Approved by of serial ${serial}`
                 );
+
                 await axios.patch(`/api/reportdata/${serial}`, reportData);
+
+                approvalProgress.value.done++;
             } catch (err) {
                 console.error(`[Stamp Approval] Error for serial ${serial}:`, err);
-                await rollbackApproval(selectedRows.value); // undo stamping
-                throw err; // stop process if stamping fails
+
+                await rollbackApproval(selectedRows.value);
+                throw err;
             }
         }
 
-        // 2. Generate + save PDFs
+        // 2. PDF generation
+        approvalProgress.value.step = "PDF GENERATION";
+
         for (const serial of selectedRows.value) {
+            approvalProgress.value.currentSerial = serial;
+            approvalProgress.value.message = "Generating and saving PDF";
+
             try {
                 await axios.get(
                     `/api/reports/${encodeURIComponent(serial)}/generate-and-save`
                 );
-                console.log(`✅ PDF generated and saved for serial: ${serial}`);
             } catch (pdfErr) {
                 console.error(`[PDF Generation] Failed for serial ${serial}`, pdfErr);
-                await rollbackApproval(selectedRows.value); // undo stamping
+
+                await rollbackApproval(selectedRows.value);
+
                 showBlockedNotification(`PDF generation failed for serial ${serial}`);
-                throw pdfErr; // bubble up to outer catch
+
+                throw pdfErr;
             }
         }
 
-        // 3. Send emails
+        // 3. Email
+        approvalProgress.value.step = "EMAIL";
+        approvalProgress.value.currentSerial = "ALL";
+        approvalProgress.value.message = "Sending notifications";
+
         try {
             await axios.post("/api/notify-email", {
                 serial: selectedRows.value,
-                emails: "edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph",
+                emails:
+                    "edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph",
             });
-            console.log("📧 Emails sent successfully");
         } catch (emailErr) {
             console.error("[Email Sending] Failed", emailErr);
+
             showBlockedNotification(
                 "Emails could not be sent. Please try again later."
             );
-            // Note: Do not throw here, continue to finalization
         }
 
-        // 4. Finalize report (errors are loud)
+        // 4. Finalization
+        approvalProgress.value.step = "FINALIZATION";
+
         for (const serial of selectedRows.value) {
+            approvalProgress.value.currentSerial = serial;
+            approvalProgress.value.message = "Finalizing report";
+
             try {
                 await finalizeReport(serial);
             } catch (finalErr) {
                 console.error(`[Finalize Report] Failed for serial ${serial}`, finalErr);
+
                 await rollbackApproval(selectedRows.value);
+
                 showBlockedNotification(`
                     An error occurred while saving the PDF reports.<br>
                     Please try again later or contact support.
                 `);
-                throw finalErr; // stop the process if finalization fails
+
+                throw finalErr;
             }
         }
 
-        showApprovedNotification("✅ Approved and PDF saved successfully.");
-
+        showApprovedNotification("Approved and PDF saved successfully.");
     } catch (error) {
-        console.error("❌ Approval process error:", error);
+        console.error("Approval process error:", error);
+
         showBlockedNotification(`
             An error occurred during the approval process.<br>
             Please try again later or contact support.
         `);
     } finally {
-        isLoadingApproval.value = false;
-        await showReportData(); // refresh table
+        selectedRows.value = [];
+
         showApproveButton.value = true;
+
+        approvalProgress.value.active = false;
+        approvalProgress.value.step = "";
+        approvalProgress.value.currentSerial = null;
+        approvalProgress.value.message = "";
+        approvalProgress.value.percent = 0;
+
+        await showReportData();
     }
 };
 
-useSessionStorage("currentPage", currentPage);
+const fullName = (first, last, fallback) => {
+    return fallback ?? [first, last].filter(Boolean).join(' ');
+};
+
+const approvalState = computed(() => {
+    const rows = reportDataList.value ?? [];
+
+    const eligible = rows.filter(
+        (r) => Number(r.checked) === 1
+    );
+
+    const checkedEligible = eligible.filter((r) =>
+        selectedRows.value.includes(r.serial_no)
+    );
+
+    return {
+        hasEligible: eligible.length > 0,
+
+        eligibleCount: eligible.length,
+
+        checkedEligibleCount: checkedEligible.length,
+
+        allSelected:
+            eligible.length > 0 &&
+            eligible.every((r) =>
+                selectedRows.value.includes(r.serial_no)
+            ),
+    };
+});
+
+const approvalPercent = computed(() => {
+    const total = approvalProgress.value.total;
+    if (!total) return 0;
+
+    return Math.round(
+        (approvalProgress.value.done / total) * 100
+    );
+});
+
+useSessionStorage("approvalCurrentPage", currentPage);
 
 onMounted(async () => {
     await checkAuthentication();
     await showReportData();
 });
+
 </script>
+
+<style scoped>
+
+@keyframes doc {
+    0%   { transform: translateY(4px); opacity: 0.6; }
+    50%  { transform: translateY(0px); opacity: 1; }
+    100% { transform: translateY(4px); opacity: 0.6; }
+}
+
+.animate-doc {
+    animation: doc 1.4s ease-in-out infinite;
+}
+
+@keyframes stamp {
+    0%   { transform: translateY(-20px) scale(0.8); opacity: 0; }
+    40%  { transform: translateY(0px) scale(1); opacity: 1; }
+    60%  { transform: translateY(0px) scale(1); opacity: 1; }
+    100% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+}
+
+.animate-stamp {
+    animation: stamp 1.4s ease-in-out infinite;
+}
+
+@keyframes ripple {
+    0%   { transform: scale(0.2); opacity: 0; }
+    40%  { opacity: 0.6; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+.animate-ripple {
+    animation: ripple 1.4s ease-out infinite;
+}
+
+</style>

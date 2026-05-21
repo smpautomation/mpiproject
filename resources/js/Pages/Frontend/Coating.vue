@@ -4481,7 +4481,7 @@ const checkHt2ndGbdp = async () => {
             },
         });
         ht2ndGbdpNotAvailable.value = !response.data.is_existing;
-        console.log("ht2ndGbdpNotAvailable: ", ht2ndGbdpNotAvailable.value);
+        //console.log("ht2ndGbdpNotAvailable: ", ht2ndGbdpNotAvailable.value);
     } catch (error) {
         console.error("Failed to check 2nd GBDP of HT", error);
     }
@@ -4624,7 +4624,7 @@ const addtnl_saveToDatabase = async () => {
         },
     };
 
-    console.log("Coating Data Payload: ", coatingDataPayload);
+    //console.log("Coating Data Payload: ", coatingDataPayload);
     /*
     const exists = await checkExisting(
         coatingInfo.selectedFurnace,
@@ -4643,7 +4643,7 @@ const addtnl_saveToDatabase = async () => {
             "/api/break-lot-coating",
             coatingDataPayload,
         );
-        console.log("Saved Successfully: ", response.data);
+        //console.log("Saved Successfully: ", response.data);
         toast.success("Saved Successfully");
         await userManageLogging(
             "created Coating Data for Mass Prod: " +
@@ -4769,8 +4769,8 @@ const addtnl_saveToDatabase_1st2ndgbdp = async () => {
             payload,
         );
         toast.success("1st and 2nd GBDP Data Saved Successfully");
-        console.log("Saved succesfully", response.data);
-        console.log("Lot no: ", lotNo.value);
+        //console.log("Saved succesfully", response.data);
+        //console.log("Lot no: ", lotNo.value);
         await userManageLogging(
             "created 2nd Gbdp Coating Data for Mass Prod: " +
                 coatingInfo.selectedMassProd +
@@ -4844,7 +4844,7 @@ const saveToDatabase = async () => {
         },
     };
 
-    console.log("Coating Data Payload: ", coatingDataPayload);
+    //console.log("Coating Data Payload: ", coatingDataPayload);
 
     const exists = await checkExisting(
         coatingInfo.selectedFurnace,
@@ -4862,7 +4862,7 @@ const saveToDatabase = async () => {
             "/api/coating-data",
             coatingDataPayload,
         );
-        console.log("Saved Successfully: ", response.data);
+        //console.log("Saved Successfully: ", response.data);
         toast.success("Saved Successfully");
         if (lotNoLists.value.length > 1) {
             await saveInitialLot();
@@ -4967,7 +4967,7 @@ const saveToDatabase_1st2ndgbdp = async () => {
         if (lotNoLists.value.length > 1) {
             await saveInitialLot();
         }
-        console.log(response.data);
+        //console.log(response.data);
         await userManageLogging(
             "created 2nd Gbdp Coating Data for Mass Prod: " +
                 coatingInfo.selectedMassProd +
@@ -5143,7 +5143,7 @@ const getCompletedLayers = async () => {
             `/api/coating-data/${coatingInfo.selectedFurnace}/${coatingInfo.selectedMassProd}/layers`,
         );
         completedLayers.value = response.data.completed_layers.map(String);
-        console.log(completedLayers.value);
+        //console.log(completedLayers.value);
     } catch (error) {
         console.error(error);
         toast.error("Failed to fetch layers");
@@ -5167,7 +5167,7 @@ const getCompletedLayers_1st_2nd_gbdp = async () => {
         );
         completedLayers_1st_2nd_gbdp.value =
             response.data.completed_layers.map(String);
-        console.log(completedLayers_1st_2nd_gbdp.value);
+        //console.log(completedLayers_1st_2nd_gbdp.value);
     } catch (error) {
         console.error(error);
         toast.error("Failed to fetch layers");
@@ -5504,7 +5504,7 @@ const autoFetch = async () => {
         toast.success(
             `Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`,
         );
-        console.log("Fetched Mass Production Data: ", fetchedCoatingData.value);
+        //console.log("Fetched Mass Production Data: ", fetchedCoatingData.value);
     } catch (error) {
         console.error("Error fetching mass prod data:", error);
 
@@ -5622,7 +5622,7 @@ const autoFetchBreaklot = async () => {
         toast.success(
             `Data fetched successfully for ${selectedMassProd_fetch.value} Mass Production`,
         );
-        console.log("Fetched Mass Production Data: ", fetchedCoatingData.value);
+        //console.log("Fetched Mass Production Data: ", fetchedCoatingData.value);
     } catch (error) {
         console.error("Error fetching mass prod data:", error);
 
@@ -5688,7 +5688,7 @@ const fetchCoatingDataSummary = async () => {
             },
         );
 
-        console.log("Fetched Coating Data: ", response.data);
+        //console.log("Fetched Coating Data: ", response.data);
 
         // Assign relevant fields to reactive coatingInfo
         const coating = response.data;
@@ -5794,7 +5794,7 @@ const fetchCoatingDataSummary = async () => {
             return;
         }
 
-        console.log("Failed to fetch data.", error);
+        console.error("Failed to fetch data.", error);
     }
 };
 
@@ -5829,7 +5829,7 @@ const fetchCoatingData2ndGbdpSummary = async () => {
             },
         );
 
-        console.log("Fetched Coating Data: ", response.data);
+        //console.log("Fetched Coating Data: ", response.data);
 
         // Assign relevant fields to reactive coatingInfo
         const coating = response.data;
@@ -5909,7 +5909,7 @@ const fetchCoatingData2ndGbdpSummary = async () => {
             return;
         }
 
-        console.log("Failed to fetch 2nd gbdp coating summary data", error);
+        console.error("Failed to fetch 2nd gbdp coating summary data", error);
     }
 };
 
@@ -5980,7 +5980,7 @@ const usePerfTracker = (label = "TOTAL") => {
 
     const end = (name) => {
         const t = performance.now() - marks[name];
-        console.log(`${name}: ${t.toFixed(2)}ms`);
+        //console.log(`${name}: ${t.toFixed(2)}ms`);
     };
 
     const totalStart = () => start(label);

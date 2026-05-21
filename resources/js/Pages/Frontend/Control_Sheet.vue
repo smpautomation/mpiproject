@@ -981,12 +981,12 @@ const calc_dateTimeFinish = async (
         // ─────────────────────────────
         // INPUT TRACE
         // ─────────────────────────────
-        console.log("[calc_dateTimeFinish INPUT]", {
+        /*console.log("[calc_dateTimeFinish INPUT]", {
             furnaceNo,
             patternNo,
             dateStart,
             timeStart,
-        });
+        });*/
 
         // Guard 1: required inputs
         if (!furnaceNo || !patternNo || !dateStart || !timeStart) {
@@ -1026,7 +1026,7 @@ const calc_dateTimeFinish = async (
 
         const startDateTime = new Date(`${dateStart}T${timeStart}`);
 
-        console.log("[START DATETIME]", startDateTime);
+        //console.log("[START DATETIME]", startDateTime);
 
         // Guard 3: invalid date construction
         if (isNaN(startDateTime.getTime())) {
@@ -1038,7 +1038,7 @@ const calc_dateTimeFinish = async (
             startDateTime.getTime() + patternHours * 60 * 60 * 1000,
         );
 
-        console.log("[FINISH DATETIME]", finishDateTime);
+        //console.log("[FINISH DATETIME]", finishDateTime);
 
         const formattedFinish = finishDateTime.toLocaleString("en-US", {
             weekday: "short",
@@ -1066,11 +1066,11 @@ const calc_dateTimeFinish = async (
             ":" +
             String(finishDateTime.getSeconds()).padStart(2, "0");
 
-        console.log("[PATCH MASS PROD]", {
+        /*console.log("[PATCH MASS PROD]", {
             furnace: redirectedFurnace.value,
             massProd: redirectedMassPro.value,
             mysqlDateTime,
-        });
+        });*/
 
         await axios.patch(
             `/api/mass-production/${redirectedFurnace.value}/${redirectedMassPro.value}`,

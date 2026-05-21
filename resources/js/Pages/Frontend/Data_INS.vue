@@ -211,19 +211,19 @@ const core_rowCell = ref([]);
 const corner_storeFileList = (event) => {
     corner_fileData.value = Array.from(event.target.files);
     corner_fileLists.value = corner_fileData.value.map(file => file.name); // Extract and store file names
-    console.log('Corner Files stored:', corner_fileData.value);
+    //console.log('Corner Files stored:', corner_fileData.value);
 };
 
 const surface_storeFileList = (event) => {
     surface_fileData.value = Array.from(event.target.files);
     surface_fileLists.value = surface_fileData.value.map(file => file.name); // Extract and store file names
-    console.log('Surface Files stored:', surface_fileData.value);
+    //console.log('Surface Files stored:', surface_fileData.value);
 };
 
 const core_storeFileList = (event) => {
     core_fileData.value = Array.from(event.target.files);
     core_fileLists.value = core_fileData.value.map(file => file.name); // Extract and store file names
-    console.log('Core Files stored:', core_fileData.value);
+    //console.log('Core Files stored:', core_fileData.value);
 };
 
 // Method to clear the file upload
@@ -232,7 +232,7 @@ const corner_clearFileUpload = () => {
     corner_fileLists.value = null;
     const fileInput = document.getElementById('corner-file');
     if (fileInput) fileInput.value = '';
-    console.log('Corner File upload cleared');
+    //console.log('Corner File upload cleared');
 };
 
 const surface_clearFileUpload = () => {
@@ -240,7 +240,7 @@ const surface_clearFileUpload = () => {
     surface_fileLists.value = null;
     const fileInput = document.getElementById('surface-file');
     if (fileInput) fileInput.value = '';
-    console.log('Surface File upload cleared');
+    //console.log('Surface File upload cleared');
 };
 
 const core_clearFileUpload = () => {
@@ -248,7 +248,7 @@ const core_clearFileUpload = () => {
     core_fileLists.value = null;
     const fileInput = document.getElementById('core-file');
     if (fileInput) fileInput.value = '';
-    console.log('Core File upload cleared');
+    //console.log('Core File upload cleared');
 };
 
 const corner_saveToDatabase = () => {
@@ -259,7 +259,7 @@ const corner_saveToDatabase = () => {
 
     // Sort the files alphabetically by their name
     corner_fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
-    console.log('Corner Sorted Files:', corner_fileData.value);
+    //console.log('Corner Sorted Files:', corner_fileData.value);
 
     //layerTableRowLoading.value = true;
     corner_fileData.value.forEach((file) => {
@@ -270,7 +270,7 @@ const corner_saveToDatabase = () => {
             const content = reader.result; // Read file content
             const parsedData = parseFileContent(content); // Parse content
 
-            console.log('Corner Parsed Data:', parsedData);
+            //console.log('Corner Parsed Data:', parsedData);
 
 
             // Dynamically handle rows based on the length of the file content
@@ -307,7 +307,7 @@ const corner_saveToDatabase = () => {
                 "Br": Math.round(corner_rowCell.value[11]),
                 "iHc": Math.round(corner_rowCell.value[13]),
             };
-            console.log("Corner Layer Data:", layerData);
+            //console.log("Corner Layer Data:", layerData);
 
             corner_sendLayerData(layerData); // Send the parsed data to the server
         };
@@ -328,7 +328,7 @@ const surface_saveToDatabase = () => {
 
     // Sort the files alphabetically by their name
     corner_fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
-    console.log('Surface Sorted Files:', corner_fileData.value);
+    //console.log('Surface Sorted Files:', corner_fileData.value);
 
     //layerTableRowLoading.value = true;
     corner_fileData.value.forEach((file) => {
@@ -339,7 +339,7 @@ const surface_saveToDatabase = () => {
             const content = reader.result; // Read file content
             const parsedData = parseFileContent(content); // Parse content
 
-            console.log('Surface Parsed Data:', parsedData);
+            //console.log('Surface Parsed Data:', parsedData);
 
 
             // Dynamically handle rows based on the length of the file content
@@ -376,7 +376,7 @@ const surface_saveToDatabase = () => {
                 "Br": Math.round(surface_rowCell.value[11]),
                 "iHc": Math.round(surface_rowCell.value[13]),
             };
-            console.log("Surface Layer Data:", layerData);
+            //console.log("Surface Layer Data:", layerData);
 
             surface_sendLayerData(layerData); // Send the parsed data to the server
         };
@@ -397,7 +397,7 @@ const core_saveToDatabase = () => {
 
     // Sort the files alphabetically by their name
     core_fileData.value.sort((a, b) => a.name.localeCompare(b.name)); // Sort by file name alphabetically
-    console.log('Core Sorted Files:', core_fileData.value);
+    //console.log('Core Sorted Files:', core_fileData.value);
 
     //layerTableRowLoading.value = true;
     core_fileData.value.forEach((file) => {
@@ -408,7 +408,7 @@ const core_saveToDatabase = () => {
             const content = reader.result; // Read file content
             const parsedData = parseFileContent(content); // Parse content
 
-            console.log('Core Parsed Data:', parsedData);
+            //console.log('Core Parsed Data:', parsedData);
 
 
             // Dynamically handle rows based on the length of the file content
@@ -445,7 +445,7 @@ const core_saveToDatabase = () => {
                 "Br": Math.round(core_rowCell.value[11]),
                 "iHc": Math.round(core_rowCell.value[13]),
             };
-            console.log("Core Layer Data:", layerData);
+            //console.log("Core Layer Data:", layerData);
 
             core_sendLayerData(layerData); // Send the parsed data to the server
         };
@@ -462,7 +462,7 @@ const core_saveToDatabase = () => {
 // Function to send raw data via API
 const corner_sendLayerData = async (layerData) => {
     try {
-        console.log("Sending CORNER TO API: ",layerData);
+        //console.log("Sending CORNER TO API: ",layerData);
         //const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
         //console.log('API Response sendlayerdata:', response.data);
     } catch (error) {
@@ -475,7 +475,7 @@ const corner_sendLayerData = async (layerData) => {
 
 const surface_sendLayerData = async (layerData) => {
     try {
-        console.log("Sending SURFACE TO API: ",layerData);
+        //console.log("Sending SURFACE TO API: ",layerData);
         //const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
         //console.log('API Response sendlayerdata:', response.data);
     } catch (error) {
@@ -488,7 +488,7 @@ const surface_sendLayerData = async (layerData) => {
 
 const core_sendLayerData = async (layerData) => {
     try {
-        console.log("Sending CORE TO API: ",layerData);
+        //console.log("Sending CORE TO API: ",layerData);
         //const response = await axios.post('/api/tpmdata', layerData); // Replace '/api/endpoint' with your API endpoint
         //console.log('API Response sendlayerdata:', response.data);
     } catch (error) {

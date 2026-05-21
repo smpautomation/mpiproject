@@ -576,10 +576,10 @@ const checkAuthentication = async () => {
             return false;
         }
 
-        console.log(
+        /*console.log(
             "USER AUTHENTICATED!",
             `${state.user.firstName} ${state.user.surname}`,
-        );
+        );*/
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
@@ -761,7 +761,7 @@ const revokeChangeJudgement = async (user) => {
 };
 
 const revokeAdminEditor = async (user) => {
-    console.log("clicked revoke", user.id);
+    //console.log("clicked revoke", user.id);
     try {
         await axios.put(`/api/users/${user.id}`, {
             is_editing_allowed: 0,

@@ -1760,10 +1760,10 @@ const checkAuthentication = async () => {
             return false;
         }
 
-        console.log(
+        /*console.log(
             "USER AUTHENTICATED!",
             `${state.user.firstName} ${state.user.surname}`,
-        );
+        );*/
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
@@ -2072,7 +2072,7 @@ const checkAvailableLayers = async () => {
         });
 
         availableLayers.value = response.data.available_layers ?? [];
-        console.log("Available layers: ", availableLayers.value);
+        //console.log("Available layers: ", availableLayers.value);
     } catch (error) {
         console.error("Failed to check avaialable layers", error);
     }
@@ -2099,11 +2099,11 @@ const checkValidate = async () => {
             },
         });
 
-        console.log("Mass Prod: ", selectedMassProd.value);
-        console.log("Furnace: ", selectedFurnace.value);
-        console.log("Selected Layer: ", selectedLayer.value);
-        console.log("htInfoEditingOnly: ", htInfoEditingOnly.value);
-        console.log("Response: ", response.data);
+        //console.log("Mass Prod: ", selectedMassProd.value);
+        //console.log("Furnace: ", selectedFurnace.value);
+        //console.log("Selected Layer: ", selectedLayer.value);
+        //console.log("htInfoEditingOnly: ", htInfoEditingOnly.value);
+        //console.log("Response: ", response.data);
 
         isValidationSuccess.value = response.data.mass_prod_exists;
 
@@ -2141,11 +2141,11 @@ const req_checkValidate = async () => {
             },
         });
 
-        console.log("Mass Prod: ", selectedMassProd.value);
-        console.log("Furnace: ", selectedFurnace.value);
-        console.log("Selected Layer: ", selectedLayer.value);
-        console.log("htInfoEditingOnly: ", htInfoEditingOnly.value);
-        console.log("Response: ", response.data);
+        //console.log("Mass Prod: ", selectedMassProd.value);
+        //console.log("Furnace: ", selectedFurnace.value);
+        //console.log("Selected Layer: ", selectedLayer.value);
+        //console.log("htInfoEditingOnly: ", htInfoEditingOnly.value);
+        //console.log("Response: ", response.data);
 
         req_isValidationSuccess.value = response.data.mass_prod_exists;
 
@@ -2398,7 +2398,7 @@ const req_deleteLayerDataFinal = async () => {
             status: "Pending",
         });
         toast.success("Delete layer request sent successfully");
-        console.log("Request sent successfully", response.data);
+        //console.log("Request sent successfully", response.data);
         req_showProceedDeleteLayerData.value = false;
         resetPage();
         await getDeleteRequests();
@@ -2424,7 +2424,7 @@ const editCycleNoDirect = async () => {
 
         if (response.data) {
             toast.success("Cycle No updated successfully");
-            console.log("Cycle No edited successfully: ", response.data);
+            //console.log("Cycle No edited successfully: ", response.data);
             await saveLog(
                 `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
             );
@@ -2452,7 +2452,7 @@ const editCycleNo = async (requestId) => {
 
         if (response.data) {
             toast.success("Cycle No updated successfully");
-            console.log("Cycle No edited successfully: ", response.data);
+            //console.log("Cycle No edited successfully: ", response.data);
             await req_saveLog(
                 `has fully edited cycle no from ${cycleNoToEdit.value} to ${newCycleNo.value} at ${selectedFurnace.value} ${selectedMassProd.value}.`,
             );
@@ -2485,7 +2485,7 @@ const req_editCycleNo = async () => {
         });
 
         toast.success("Cycle No modification request sent successfully");
-        console.log("Request sent successfully", response.data);
+        //console.log("Request sent successfully", response.data);
         req_showProceedUpdateCycleNo.value = false;
         resetPage();
         await getDeleteRequests();
@@ -2542,17 +2542,17 @@ const saveLog = async (log) => {
     };
 
     try {
-        console.log("saveLog payload:", payload);
+        //console.log("saveLog payload:", payload);
 
         const response = await axios.post(
             "/api/data_editor_logs",
             payload
         );
 
-        console.log(
+        /*console.log(
             "Data logs saved successfully",
             response.data
-        );
+        );*/
 
     } catch (error) {
         console.error(
@@ -2581,17 +2581,17 @@ const req_saveLog = async (log) => {
     };
 
     try {
-        console.log("saveLog payload:", payload);
+        //console.log("saveLog payload:", payload);
 
         const response = await axios.post(
             "/api/data_editor_logs",
             payload
         );
 
-        console.log(
+        /*console.log(
             "Data logs saved successfully",
             response.data
-        );
+        );*/
 
     } catch (error) {
         console.error(
@@ -2620,7 +2620,7 @@ const resetPage = () => {
 const getDeleteRequests = async () => {
     try {
         const response = await axios.get("/api/layer-delete-request");
-        console.log("Delete Request lists: ", response.data);
+        //console.log("Delete Request lists: ", response.data);
         deleteRequestLists.value = response.data || [];
     } catch (error) {
         console.error("Failed to fetch delete requests data due to ", error);
@@ -2631,7 +2631,7 @@ const getDeleteRequests = async () => {
 const getEditRequests = async () => {
     try {
         const response = await axios.get("/api/field-edit-request");
-        console.log("Edit Request lists: ", response.data);
+        //console.log("Edit Request lists: ", response.data);
         editRequestLists.value = response.data || [];
     } catch (error) {
         console.error("Failed to fetch edit requests data due to ", error);
@@ -2666,10 +2666,10 @@ const getDataLogsHistory = async () => {
         const response = await axios.get("/api/data_editor_logs");
         dataEditorHistory.value = response.data;
         if (dataEditorHistory.value) {
-            console.log(
+            /*console.log(
                 "Successfully fetched data editor history: ",
                 dataEditorHistory.value,
-            );
+            );*/
         }
     } catch (error) {
         toast.error("Failed to get the furnace lists api error");

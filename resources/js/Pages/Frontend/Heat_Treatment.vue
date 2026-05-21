@@ -3822,7 +3822,7 @@ const checkInitialLot = async () => {
             currentInitialLot.value = null;
         }
 
-        console.log("Initial Lot saved: ", isInitialLotNotSaved.value);
+        //console.log("Initial Lot saved: ", isInitialLotNotSaved.value);
     } catch (error) {
         console.error("Failed to check initial lot", error);
         isInitialLotNotSaved.value = false;
@@ -3842,7 +3842,7 @@ const checkBreaklot = async () => {
         });
         isBreaklot.value = response.data.is_breaklot;
         //isExisting.value = response.data.is_existing;
-        console.log("isBreaklot: ", isBreaklot.value);
+        //console.log("isBreaklot: ", isBreaklot.value);
         //console.log('isExisting: ', isExisting.value);
     } catch (error) {
         console.error("Failed to check breaklot status", error);
@@ -3861,11 +3861,11 @@ const checkEncodedData = async () => {
 
         isClearLayerDataDisabled.value = response.data.exists;
         clearLayerDisabledCause.value = response.data.source;
-        console.log(
+        /*console.log(
             "Clear Layer data disabled: ",
             isClearLayerDataDisabled.value,
-        );
-        console.log("Clear Layer data cause: ", clearLayerDisabledCause.value);
+        );*/
+        //console.log("Clear Layer data cause: ", clearLayerDisabledCause.value);
     } catch (error) {
         console.error("Failed to check encoded data", error);
     }
@@ -3896,11 +3896,11 @@ const getMassProdData = async () => {
                 "Existing Data has been detected for Heat Treatment Information and Graph",
             );
         }
-        console.log(
+        /*console.log(
             "Heat treatment info detected:",
             heatTreatmentInformationDetected.value,
-        );
-        console.log("Activate 2nd GBDP:", activate2ndGBDP.value);
+        );*/
+        //console.log("Activate 2nd GBDP:", activate2ndGBDP.value);
         noMassProdData.value = false;
     } catch (error) {
         initialFurnaceData.value = null; // Reset if no mass production selected
@@ -4130,7 +4130,7 @@ const getTotalBoxes = async () => {
         //console.log("Total Boxes data: ", response.data);
         const tbox = response.data;
         totalBoxes.value = tbox.total_boxes || "Loading...";
-        console.log("Total Boxes: ", totalBoxes.value);
+        //console.log("Total Boxes: ", totalBoxes.value);
     } catch (error) {
         console.error("Failed to get total boxes: ", error);
     }
@@ -4149,7 +4149,7 @@ const getGraphPatterns = async () => {
 
         graph_patterns.value = response.data.patterns;
 
-        console.log("Graph Patterns:", graph_patterns.value);
+        //console.log("Graph Patterns:", graph_patterns.value);
     } catch (error) {
         //console.error("Error fetching graph patterns", error);
         //toast.error("Failed to get graph patterns.");
@@ -4243,7 +4243,7 @@ const getCompletedLayers = async () => {
             `/api/second-heat-treatment-data/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}/layers`,
         );
         completedLayers.value = response.data.layers.map(String);
-        console.log(completedLayers.value);
+        //console.log(completedLayers.value);
     } catch (error) {
         console.error(error);
         toast.error("Failed to fetch layers");
@@ -4275,7 +4275,7 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
 
         excessLayers.value = layers.filter((l) => l !== blocked);
 
-        console.log("excess layer lists:", excessLayers.value);
+        //console.log("excess layer lists:", excessLayers.value);
     } catch (error) {
         console.error("Failed to fetch excess layers list", error);
         excessLayers.value = [];
@@ -4425,7 +4425,7 @@ const fetchAllLotDataBoxDetails = async () => {
             const getRow = (title) =>
                 layer.find((r) => r.rowTitle === title)?.data || {};
 
-            console.log("Has Excess: ", hasExcess);
+            //console.log("Has Excess: ", hasExcess);
 
             // ==========================
             // BREAK LOT MODE
@@ -4587,7 +4587,7 @@ const fetchAllLotDataBoxDetails = async () => {
         const boxPrepRow = getRow("Box prepared by:");
         const rawMatRow = getRow("RAW MATERIAL CODE:");
 
-        console.log("Main Rows Extracted:", { qtyRow, weightRow, boxNoRow });
+        //console.log("Main Rows Extracted:", { qtyRow, weightRow, boxNoRow });
 
         // --- 2. Extract EXCESS row data (if exists) ---
         let excessQtyRow = {};
@@ -4608,12 +4608,12 @@ const fetchAllLotDataBoxDetails = async () => {
             excessBoxNoRow = getExcessRow("BOX No.:");
             excessRawMatRow = getExcessRow("RAW MATERIAL CODE:"); // <-- add this
 
-            console.log("Excess Rows Extracted:", {
+            /*console.log("Excess Rows Extracted:", {
                 excessQtyRow,
                 excessWeightRow,
                 excessBoxNoRow,
                 excessRawMatRow, // <-- log it too
-            });
+            });*/
         } else {
             console.log("No excess data found in sheet.excess_data");
         }
@@ -4622,16 +4622,16 @@ const fetchAllLotDataBoxDetails = async () => {
         const allFoundMain = Object.keys(boxNoRow || {});
         const allFoundExcess = Object.keys(excessBoxNoRow || {});
 
-        console.log("All Main Boxes:", allFoundMain);
-        console.log("All Excess Boxes:", allFoundExcess);
+        //console.log("All Main Boxes:", allFoundMain);
+        //console.log("All Excess Boxes:", allFoundExcess);
 
         visibleBoxes.value = allFoundMain.slice(0, 10);
         visibleExcessBoxes.value = allFoundExcess.length
             ? allFoundExcess
             : allFoundMain.slice(10);
 
-        console.log("Visible Main Boxes (first 10):", visibleBoxes.value);
-        console.log("Visible Excess Boxes:", visibleExcessBoxes.value);
+        //console.log("Visible Main Boxes (first 10):", visibleBoxes.value);
+        //console.log("Visible Excess Boxes:", visibleExcessBoxes.value);
 
         // --- 4. Clear reactive maps ---
         qtyValues.value = {};
@@ -4650,11 +4650,11 @@ const fetchAllLotDataBoxDetails = async () => {
             rawMaterialCodeValues.value[box] = rawMatRow[box] || "";
         });
 
-        console.log("Populated MAIN box values:", {
+        /*console.log("Populated MAIN box values:", {
             qtyValues: qtyValues.value,
             weightValues: weightValues.value,
             boxNoValues: boxNoValues.value,
-        });
+        });*/
 
         // --- 6. Populate EXCESS box values ---
         visibleExcessBoxes.value.forEach((box) => {
@@ -4664,15 +4664,15 @@ const fetchAllLotDataBoxDetails = async () => {
             rawMaterialCodeValues.value[box] = excessRawMatRow?.[box] || ""; // if excess raw materials exist
         });
 
-        console.log("Populated EXCESS box values:", {
+        /*console.log("Populated EXCESS box values:", {
             qtyValuesExcess: qtyValuesExcess.value,
             weightValuesExcess: weightValuesExcess.value,
             boxNoValuesExcess: boxNoValuesExcess.value,
-        });
+        });*/
 
         if (mpcs.moreThanTenBoxes && visibleExcessBoxes.value.length) {
             const excessData = getExcessDataRange(visibleExcessBoxes.value); // e.g., "A-E"
-            console.log("Excess Data Range for API call:", excessData);
+            //console.log("Excess Data Range for API call:", excessData);
             await fetchAvailableLayersForExcessList(excessData);
         }
 
@@ -4722,8 +4722,8 @@ watch(
     async (newVal) => {
         if (!newVal) return;
         await getModelLists();
-        console.log("Lot No: ", mpcs.lotNo);
-        console.log("Model: ", mpcs.selectedModel);
+        //console.log("Lot No: ", mpcs.lotNo);
+        //console.log("Model: ", mpcs.selectedModel);
     },
 );
 
@@ -4901,7 +4901,7 @@ const hoursLeftDisplay = computed(() => {
 });
 
 const saveInitialLot = async () => {
-    console.log("[triggered saveInitialLot]");
+    //console.log("[triggered saveInitialLot]");
 
     try {
         const response = await axios.post("/api/breaklot-initial-lots-ht", {
@@ -4912,7 +4912,7 @@ const saveInitialLot = async () => {
             initial_lot: mpcs.lotNo,
         });
 
-        console.log("Successfully saved data to initial lots:", response.data);
+        //console.log("Successfully saved data to initial lots:", response.data);
     } catch (error) {
         console.error(
             "Failed to save initial lot data on double gbdp heat treatment",
@@ -4930,7 +4930,7 @@ const updateHeatTreatmentInfo = async () => {
             `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`,
         );
         const massprod_data = response.data;
-        console.log("Mass Production Data:", response.data);
+        //console.log("Mass Production Data:", response.data);
 
         hti.cycleNo = massprod_data.cycle_no;
         hti.patternNo = massprod_data.pattern_no;
@@ -5061,7 +5061,7 @@ const handleCycleGraphUpload = (event) => {
     }
     cycleGraphFile.value = file;
     cycleGraphPreview.value = URL.createObjectURL(file); // Create a preview URL
-    console.log("Cycle Graph File selected:", cycleGraphFile.value);
+    //console.log("Cycle Graph File selected:", cycleGraphFile.value);
 };
 
 const handleActualGraphUpload = (event) => {
@@ -5079,7 +5079,7 @@ const handleActualGraphUpload = (event) => {
     }
     actualGraphFile.value = file;
     actualGraphPreview.value = URL.createObjectURL(file); // Create a preview URL
-    console.log("Actual Graph File selected:", actualGraphFile.value);
+    //console.log("Actual Graph File selected:", actualGraphFile.value);
 };
 
 const cancelProceed = () => {
@@ -5183,7 +5183,7 @@ const saveToDatabase = async () => {
         // Filter only boxes that exist in visibleBoxes
         mainBoxes = mainBoxes.filter((box) => visibleBoxes.value.includes(box));
     }
-    console.log("RAW MATERIAL CODE values", rawMaterialCodeValues.value);
+    //console.log("RAW MATERIAL CODE values", rawMaterialCodeValues.value);
 
     // --- 2️⃣ Prepare main layer payload ---
     const mainLayerPayload = formatLayerDataForDatabase(mainBoxes, false);
@@ -5226,7 +5226,7 @@ const saveToDatabase = async () => {
             `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`,
             dataPayload,
         );
-        console.log("Main layer saved:", response.data);
+        //console.log("Main layer saved:", response.data);
 
         if (
             (mpcs.moreThanTenBoxes || mpcs.breakLotMode) &&
@@ -5246,7 +5246,7 @@ const saveToDatabase = async () => {
                 "/api/excess-layers/merge",
                 excessPayload,
             );
-            console.log("Excess layer saved:", saveExcess.data);
+            //console.log("Excess layer saved:", saveExcess.data);
         }
 
         if (!heatTreatmentInformationDetected.value) {
@@ -5446,7 +5446,7 @@ const overwriteDatabase = async () => {
         });
     }
 
-    console.log("Data Payload:", dataPayload);
+    //console.log("Data Payload:", dataPayload);
 
     try {
         const response = await axios.patch(
@@ -5454,7 +5454,7 @@ const overwriteDatabase = async () => {
             dataPayload,
         );
         await uploadGraphs();
-        console.log("Data overwritten successfully:", response.data);
+        //console.log("Data overwritten successfully:", response.data);
         toast.success("Data overwritten successfully!");
         if (!heatTreatmentInformationDetected.value) {
             await userManageLogging(
@@ -5531,9 +5531,9 @@ const updateFormatType = async () => {
             `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`,
             dataPayload,
         );
-        console.log("Response Update: ", responseUpdate.data);
+        //console.log("Response Update: ", responseUpdate.data);
     } catch (error) {
-        console.log("Failed to update format type");
+        //console.log("Failed to update format type");
         toast.error("Failed to update format type");
         await userErrorLogging(
             {
@@ -5559,10 +5559,10 @@ const breaklotAddtnlFormatType = async () => {
             format_type: "Normal",
         });
 
-        console.log(
+        /*console.log(
             "Successfully added format type for additional breaklots: ",
             response.data,
-        );
+        );*/
     } catch (error) {
         console.error(
             "Failed to update format type for additional breaklot",
@@ -5598,12 +5598,12 @@ const uploadGraphs = async () => {
     formData.append("pattern_no", hti.patternNo);
     formData.append("furnace_no", hti.machine_no ?? mpcs.selectedFurnace);
 
-    console.log(
+    /*console.log(
         "Furnace: ",
         mpcs.selectedFurnace,
         " Mass Prod: ",
         mpcs.selectedMassProd,
-    );
+    );*/
 
     try {
         const response = await axios.post(
@@ -5613,7 +5613,7 @@ const uploadGraphs = async () => {
                 headers: { "Content-Type": "multipart/form-data" },
             },
         );
-        console.log("Graphs uploaded successfully:", response.data);
+        //console.log("Graphs uploaded successfully:", response.data);
         toast.success("Graphs uploaded successfully!");
     } catch (error) {
         console.error("Error uploading graphs:", error);
@@ -5753,7 +5753,7 @@ const usePerfTracker = (label = "TOTAL") => {
 
     const end = (name) => {
         const t = performance.now() - marks[name];
-        console.log(`${name}: ${t.toFixed(2)}ms`);
+        //console.log(`${name}: ${t.toFixed(2)}ms`);
     };
 
     const totalStart = () => start(label);

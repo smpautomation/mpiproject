@@ -22,6 +22,7 @@ use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class TPMDataController extends Controller
 {
@@ -518,7 +519,10 @@ class TPMDataController extends Controller
             TPMDataAggregateFunctions::where('tpm_data_serial', $serial_no)->delete();
 
             // Commit the transaction
+
             DB::commit();
+
+            Cache::flush();
 
             return response()->json([
                 'status' => true,
@@ -732,7 +736,7 @@ class TPMDataController extends Controller
 
             $perPage = (int) ($request->per_page ?? 20);
 
-            $cacheKey = 'view_list_' . md5(json_encode([
+            $cacheKey = 'view_list_v1_' . md5(json_encode([
                 'search' => $request->search,
                 'mass_prod' => $request->mass_prod,
                 'furnace' => $request->furnace,
@@ -743,7 +747,10 @@ class TPMDataController extends Controller
                 'per_page' => $perPage,
             ]));
 
-            return Cache::remember($cacheKey, 20, function () use ($request, $perPage) {
+            return Cache::remember(
+                $cacheKey,
+                now()->addSeconds(20),
+                function () use ($request, $perPage) {
 
                 $serialQuery = TPMData::query()
                     ->select('serial_no')

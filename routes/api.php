@@ -89,6 +89,7 @@ Route::get('/tpmdata/max-serial', [TPMDataController::class, 'getMaxSerialForMon
 
 Route::get('/tpmdata-fetch-serials', [TPMDataController::class, 'fetchSerials']);
 
+Route::get('/reportdata/approval-list', [ReportDataController::class, 'approvalViewList']);
 
 Route::get('/reportdata/by-serial', [ReportDataController::class, 'getBySerial']);
 

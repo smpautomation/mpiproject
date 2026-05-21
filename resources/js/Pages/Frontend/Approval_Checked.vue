@@ -349,19 +349,19 @@ watch([selectedRows, paginatedReports], () => {
 const showReportData = async () => {
     try {
         const response = await axios.get(`/api/approve-list-checked`);
-        console.log("Raw approval response:", response.data);
+        //console.log("Raw approval response:", response.data);
 
         const data = Array.isArray(response.data)
             ? response.data
             : response.data?.data || [];
 
-        console.log("Normalized approval data:", data.length, data);
+        //console.log("Normalized approval data:", data.length, data);
 
         reportDataList.value = data
             .filter(item => item.SMP_Judgement && item.SMP_Judgement.trim() !== '')
             .sort((a, b) => Number(b.Serial_No) - Number(a.Serial_No));
 
-        console.log('Approval View List fetched:', reportDataList.value.length);
+        //console.log('Approval View List fetched:', reportDataList.value.length);
     } catch (error) {
         console.error("Error fetching flattened approval data:", error);
     }

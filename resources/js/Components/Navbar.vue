@@ -528,6 +528,7 @@ const navItems = [
                 access: [
                     "Automation",
                     "Preparation Approver",
+                    "PrepCheck Approver",
                     "Checking Approver",
                     "Proxy Approver",
                     "Final Approver",

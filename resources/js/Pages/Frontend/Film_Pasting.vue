@@ -1207,10 +1207,10 @@ const checkAuthentication = async () => {
             return false;
         }
 
-        console.log(
+        /*console.log(
             "USER AUTHENTICATED!",
             `${state.user.firstName} ${state.user.surname}`,
-        );
+        );*/
         return true;
     } catch (error) {
         console.error("Error checking authentication:", error);
@@ -1744,7 +1744,7 @@ const getSelectedMassProdData = async () => {
             `/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/layer/${filmPastingInfo.selected_layer}/layer-no`,
         );
         const massProdLayerData = response.data.layer_data;
-        console.log("Mass Prod layer data: ", massProdLayerData);
+        //console.log("Mass Prod layer data: ", massProdLayerData);
         filmPasteModel.value =
             massProdLayerData[0].data["A"] ||
             massProdLayerData[0].data["B"] ||
@@ -1752,10 +1752,10 @@ const getSelectedMassProdData = async () => {
         lotNoLists.value = response.data.layer_lot_lists;
         filmPasteLotNo.value = lotNoLists.value[0] || null;
 
-        console.log(
+        /*console.log(
             "success response getSelectedMassProdData: ",
             massProdLayerData,
-        );
+        );*/
     } catch (error) {
         //console.error('Error fetching mass prod data:', error);
         toast.error("Failed to get the mass prod data api error");
@@ -1861,9 +1861,9 @@ const checkExistingAdditional = async () => {
     } catch (error) {
         console.error("Failed to check existing additionals", error);
         toast.error("Failed to verify Lot Number.");
-        console.log('STATUS:', error.response?.status);
-        console.log('HEADERS:', error.response?.headers);
-        console.log('DATA:', error.response?.data);
+        //console.log('STATUS:', error.response?.status);
+        //console.log('HEADERS:', error.response?.headers);
+        //console.log('DATA:', error.response?.data);
     }
 };
 
@@ -1877,7 +1877,7 @@ const fetchAvailableLayers = async () => {
             `/api/mass-production/${filmPastingInfo.selectedFurnace}/${filmPastingInfo.selected_mass_prod}/completed-layers-film-paste`,
         );
         available_layers.value = response.data.completed_layers;
-        console.log("Available Layers: ", available_layers.value);
+        //console.log("Available Layers: ", available_layers.value);
     } catch (error) {
         //console.error(error);
         available_layers.value = [];

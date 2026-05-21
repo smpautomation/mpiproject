@@ -426,4 +426,137 @@ class ReportDataController extends Controller
             ], 500);
         }
     }
+
+    public function approvalViewList(Request $request)
+    {
+        try {
+
+            $perPage = (int) ($request->per_page ?? 10);
+
+            $status = $request->status;
+
+            $serialQuery = TPMData::query()
+                ->select('serial_no')
+                ->whereExists(function ($q) {
+                    $q->selectRaw(1)
+                        ->from('report_data')
+                        ->whereColumn('report_data.tpm_data_serial', 'tpm_data.serial_no')
+                        ->whereNotNull('report_data.checked_by_firstname')
+                        ->whereNotNull('report_data.checked_by_surname');
+                })
+                ->groupBy('serial_no')
+                ->orderByRaw('MAX(created_at) DESC');
+
+            // STATUS FILTER
+            if ($status && $status !== 'ALL') {
+                $serialQuery->whereExists(function ($q) use ($status) {
+                    $q->selectRaw(1)
+                        ->from('report_data')
+                        ->whereColumn('report_data.tpm_data_serial', 'tpm_data.serial_no');
+
+                    switch ($status) {
+                        case 'APPROVED':
+                            $q->whereNotNull('report_data.approved_by_firstname');
+                            break;
+
+                        case 'PENDING':
+                            $q->whereNull('report_data.approved_by_firstname')
+                            ->whereNotNull('report_data.checked_by_firstname')
+                            ->whereNotNull('report_data.prepared_by_firstname');
+                            break;
+                    }
+                });
+            }
+
+            $paginated = $serialQuery->paginate($perPage);
+
+            $serials = collect($paginated->items())->pluck('serial_no');
+
+            $tpmRows = TPMData::whereIn('serial_no', $serials)
+                ->select('serial_no', 'sintering_furnace_no', 'created_at')
+                ->orderByDesc('created_at')
+                ->get()
+                ->groupBy('serial_no');
+
+            $categories = TPMDataCategory::whereIn('tpm_data_serial', $serials)
+                ->select('tpm_data_serial', 'actual_model', 'jhcurve_lotno')
+                ->get()
+                ->groupBy('tpm_data_serial');
+
+            $reports = ReportData::whereIn('tpm_data_serial', $serials)
+                ->select(
+                    'tpm_data_serial',
+                    'smp_judgement',
+                    'modified_smp_judgement',
+
+                    'prepared_by_firstname',
+                    'prepared_by_surname',
+                    'checked_by_firstname',
+                    'checked_by_surname',
+
+                    'approved_by_firstname',
+                    'approved_by_surname',
+                    'approved_by_date',
+
+                    'checked',
+                    'is_finalized'
+                )
+                ->whereNotNull('checked_by_firstname')
+                ->whereNotNull('checked_by_surname')
+                ->get()
+                ->groupBy('tpm_data_serial');
+
+            $result = [];
+
+            foreach ($serials as $serial) {
+                $tpm = $tpmRows[$serial]?->first();
+                $cat = $categories[$serial]?->first();
+                $rep = $reports[$serial]?->first();
+
+                $result[] = [
+                    'serial_no' => $serial,
+
+                    // TPM
+                    'sintering_furnace_no' => $tpm->sintering_furnace_no ?? null,
+
+                    // Category
+                    'actual_model' => $cat->actual_model ?? null,
+                    'jhcurve_lotno' => $cat->jhcurve_lotno ?? null,
+
+                    // Report
+                    'smp_judgement' => $rep->smp_judgement ?? null,
+                    'modified_smp_judgement' => $rep->modified_smp_judgement ?? null,
+
+                    'prepared_by' => trim(
+                        ($rep->prepared_by_firstname ?? '') . ' ' . ($rep->prepared_by_surname ?? '')
+                    ),
+
+                    'checked_by' => trim(
+                        ($rep->checked_by_firstname ?? '') . ' ' . ($rep->checked_by_surname ?? '')
+                    ),
+
+                    'approved_by_firstname' => $rep->approved_by_firstname ?? null,
+                    'approved_by_surname' => $rep->approved_by_surname ?? null,
+
+                    'checked' => (int) ($rep->checked ?? 0),
+                    'is_finalized' => $rep->is_finalized ?? 0,
+                ];
+            }
+
+            return response()->json([
+                'status' => true,
+                'data' => array_values($result),
+                'pagination' => $paginated
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Error loading approval list',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
