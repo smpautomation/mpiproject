@@ -81,9 +81,7 @@
                 </div>
                 <div v-else>
                     <div class="m-10">
-                        <table
-                            class="w-full overflow-hidden text-sm text-left bg-white border-separate rounded-lg shadow-lg border-spacing-0"
-                        >
+                        <table class="w-full table-fixed overflow-hidden text-sm text-left bg-white border-separate rounded-lg shadow-lg border-spacing-0">
                             <thead class="text-white bg-gray-800">
                                 <tr>
                                     <th
@@ -620,7 +618,7 @@ const showReportData = async () => {
         ) {
             currentPage.value = pagination.value.last_page;
         }
-        
+
         //console.log("Filtered and sorted report data: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
