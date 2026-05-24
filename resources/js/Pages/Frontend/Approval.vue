@@ -8,6 +8,22 @@
                 <div
                     class="flex items-center justify-end mb-4 align-middle"
                 >
+                    <div class="mr-10">
+                        <label class="mr-2 font-semibold">Rows per page:</label>
+
+                        <select v-model="itemsPerPage" @change="changePerPage" class="px-5 border rounded">
+                            <option :value="5">5</option>
+                            <option :value="10">10</option>
+                            <option :value="15">15</option>
+                            <option :value="20">20</option>
+                            <option :value="30">30</option>
+                            <option :value="50">50</option>
+                            <option :value="100">100</option>
+                            <option :value="500">500</option>
+                        </select>
+                    </div>
+                    
+
                     <label for="statusFilter" class="mr-2 font-semibold"
                         >Filter by Status:</label
                     >
@@ -441,11 +457,7 @@ function useSessionStorage(key, state) {
 
 const statusFilter = ref("ALL");
 
-watch(statusFilter, async (value) => {
-    //console.log("Status changed:", value);
-
-    currentPage.value = 1;
-
+watch(statusFilter, async () => {
     await showReportData();
 });
 
@@ -482,6 +494,11 @@ const prevPage = async () => {
         currentPage.value--;
         await showReportData();
     }
+};
+
+const changePerPage = async () => {
+    currentPage.value = 1;
+    await showReportData();
 };
 
 const selectedRows = ref([]); // Track selected rows by their serial numbers
@@ -601,10 +618,9 @@ const showReportData = async () => {
             currentPage.value > pagination.value.last_page &&
             pagination.value.last_page > 0
         ) {
-            currentPage.value = 1;
-            return await showReportData();
+            currentPage.value = pagination.value.last_page;
         }
-
+        
         //console.log("Filtered and sorted report data: ", reportDataList.value);
     } catch (error) {
         console.error("Error fetching report data:", error);
@@ -862,6 +878,7 @@ const approvalPercent = computed(() => {
 });
 
 useSessionStorage("currentPage", currentPage);
+useSessionStorage("itemsPerPage", itemsPerPage);
 
 onMounted(async () => {
     await checkAuthentication();
