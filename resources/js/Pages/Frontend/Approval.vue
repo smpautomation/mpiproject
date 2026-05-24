@@ -450,7 +450,7 @@ watch(statusFilter, async (value) => {
 });
 
 const currentPage = ref(1);
-const itemsPerPage = ref(10); // You can change to 20, 50, etc.
+const itemsPerPage = ref(2); // You can change to 20, 50, etc.
 
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
@@ -861,7 +861,7 @@ const approvalPercent = computed(() => {
     );
 });
 
-useSessionStorage("approvalCurrentPage", currentPage);
+useSessionStorage("currentPage", currentPage);
 
 onMounted(async () => {
     await checkAuthentication();
