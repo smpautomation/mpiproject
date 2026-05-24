@@ -714,15 +714,16 @@ const confirmationApprove = async () => {
     const dateNow = datenow();
 /*
     const reportData = {
-        approved_by_firstname: '',
-        approved_by_surname: '',
-        approved_by_date: '',
-    };
-*/  
-    const reportData = {
         approved_by_firstname: state.user.firstName,
         approved_by_surname: state.user.surname,
         approved_by_date: dateNow,
+    };
+*/  
+    
+    const reportData = {
+        approved_by_firstname: '',
+        approved_by_surname: '',
+        approved_by_date: '',
     };
 
     try {
@@ -780,14 +781,14 @@ const confirmationApprove = async () => {
             await axios.post("/api/notify-email", {
                 serial: selectedRows.value,
                 emails:
-                    "edzel@smp.com.ph, automation3@smp.com.ph, automation5@smp.com.ph, myke@smp.com.ph",
+                    "automation3@smp.com.ph, myke@smp.com.ph, qa_trainingp8@smp.com.ph, p7_mpi_ahi@smp.com.ph, rizza@smp.com.ph, mpi-engr.p8@smp.com.ph, qa_mpip8@smp.com.ph",
             });
         } catch (emailErr) {
             console.error("[Email Sending] Failed", emailErr);
 
-            showBlockedNotification(
+            /*showBlockedNotification(
                 "Emails could not be sent. Please try again later."
-            );
+            );*/
         }
 
         // 4. Finalization
