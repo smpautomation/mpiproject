@@ -445,7 +445,20 @@ class ReportDataController extends Controller
                         ->whereNotNull('report_data.checked_by_surname');
                 })
                 ->groupBy('serial_no')
-                ->orderByRaw('MAX(created_at) DESC');
+                ->orderByRaw("
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM report_data
+                            WHERE report_data.tpm_data_serial = tpm_data.serial_no
+                            AND report_data.approved_by_firstname IS NULL
+                            AND report_data.prepared_by_firstname IS NOT NULL
+                            AND report_data.checked_by_firstname IS NOT NULL
+                        ) THEN 0
+                        ELSE 1
+                    END ASC
+                ")
+                ->orderByRaw('MAX(tpm_data.created_at) DESC');
 
             // STATUS FILTER
             if ($status && $status !== 'ALL') {

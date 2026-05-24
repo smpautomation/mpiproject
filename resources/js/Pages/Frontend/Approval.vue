@@ -450,7 +450,7 @@ watch(statusFilter, async (value) => {
 });
 
 const currentPage = ref(1);
-const itemsPerPage = ref(20);
+const itemsPerPage = ref(2);
 
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
@@ -596,7 +596,7 @@ const showReportData = async () => {
         // Filter out rows where smp_judgement is null or an empty string
         reportDataList.value = response.data.data ?? [];
         pagination.value = response.data.pagination ?? {};
-
+        
         if (
             currentPage.value > pagination.value.last_page &&
             pagination.value.last_page > 0
