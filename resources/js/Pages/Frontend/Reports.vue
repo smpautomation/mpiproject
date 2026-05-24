@@ -6706,14 +6706,26 @@ watch(
         overallCpkRemark
     ],
     () => {
-        reportSurface_remarks.value = surfaceNG.value ? "NG" : "OK";
-        reportCore_remarks.value = coreNG.value ? "NG" : "OK";
-        reportCorner_remarks.value = cornerNG.value ? "NG" : "OK";
+        if (isCpkActive.value) {
+
+            reportSurface_remarks.value =
+                surfaceNG.value ? "NG" : "OK";
+
+            reportCore_remarks.value =
+                coreNG.value ? "NG" : "OK";
+
+            reportCorner_remarks.value =
+                cornerNG.value ? "NG" : "OK";
+        }
+
+        reportCpkRemarks.value =
+            overallCpkRemark.value;
 
         if (cpkJudgement.value !== null) {
-            reportSMPJudgement.value = cpkJudgement.value;
+
+            reportSMPJudgement.value =
+                cpkJudgement.value;
         }
-        reportCpkRemarks.value = overallCpkRemark.value;
     },
     { immediate: true }
 );
