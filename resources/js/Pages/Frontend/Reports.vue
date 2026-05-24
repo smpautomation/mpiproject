@@ -5362,11 +5362,11 @@ const isCpkActive = computed(() => {
         show1x1x1Data_withoutCorner.value === true;
 
     const cpkCondition =
-        isWhitelisted
-            ? true
-            : reportCpk.value !== null;
+        reportCpk.value !== null;
 
-    return (isTTM || isWhitelisted) && baseCondition && cpkCondition;
+    return (isTTM || isWhitelisted) &&
+        baseCondition &&
+        cpkCondition;
 });
 
 const surfaceNG = computed(() =>
@@ -5397,6 +5397,20 @@ const cpkJudgement = computed(() => {
         cornerNG.value;
 
     return hasFailure ? "REJECT" : "HOLD";
+});
+
+const overallCpkRemark = computed(() => {
+
+    if (
+        isTTM_model.value !== true ||
+        reportCpk.value === null
+    ) {
+        return null;
+    }
+
+    return reportCpk.value < 1.0
+        ? "NG"
+        : "OK";
 });
 
 const saveReportButtonVisibility = () => {
@@ -6684,13 +6698,22 @@ watch(
 );
 
 watch(
-    [surfaceNG, coreNG, cornerNG, cpkJudgement],
+    [
+        surfaceNG,
+        coreNG,
+        cornerNG,
+        cpkJudgement,
+        overallCpkRemark
+    ],
     () => {
         reportSurface_remarks.value = surfaceNG.value ? "NG" : "OK";
         reportCore_remarks.value = coreNG.value ? "NG" : "OK";
         reportCorner_remarks.value = cornerNG.value ? "NG" : "OK";
 
-        reportSMPJudgement.value = cpkJudgement.value;
+        if (cpkJudgement.value !== null) {
+            reportSMPJudgement.value = cpkJudgement.value;
+        }
+        reportCpkRemarks.value = overallCpkRemark.value;
     },
     { immediate: true }
 );
