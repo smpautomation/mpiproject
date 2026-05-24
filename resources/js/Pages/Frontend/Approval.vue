@@ -450,7 +450,7 @@ watch(statusFilter, async (value) => {
 });
 
 const currentPage = ref(1);
-const itemsPerPage = ref(2);
+const itemsPerPage = ref(15);
 
 const showApproveButton = ref(true);
 const showApproveConfirmation = ref(false);
