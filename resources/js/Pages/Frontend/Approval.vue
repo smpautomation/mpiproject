@@ -4,6 +4,50 @@
             class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100"
         >
             <div>
+                <!-- Status Filter -->
+                <div
+                    class="flex items-center justify-end mb-4 align-middle"
+                >
+                    <label for="statusFilter" class="mr-2 font-semibold"
+                        >Filter by Status:</label
+                    >
+                    <select
+                        id="statusFilter"
+                        v-model="statusFilter"
+                        class="p-2 w-[125px] border rounded"
+                    >
+                        <option value="ALL">ALL</option>
+                        <option value="APPROVED">APPROVED</option>
+                        <option value="PENDING">PENDING</option>
+                    </select>
+                    <button
+                        @click="checkAllToggle"
+                        :disabled="
+                            reportDataList.filter(
+                                (r) => Number(r.checked) === 1
+                            ).length === 0
+                        "
+                        :class="[
+                            'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
+
+                            reportDataList.filter(
+                                (r) =>
+                                    Number(r.checked) === 1 &&
+                                    !r.approved_by_firstname
+                            ).length === 0
+                                ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
+                                : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+                        ]"
+                    >
+                        {{
+                            !approvalState.hasEligible
+                                ? "No eligible data to approve"
+                                : approvalState.allSelected
+                                    ? "Uncheck All Eligible"
+                                    : "Check All Eligible"
+                        }}
+                    </button>
+                </div>
                 <div
                     v-if="reportDataList == null || reportDataList.length <= 0"
                     class="flex flex-col items-center justify-center animate-pulse"
@@ -20,50 +64,6 @@
                     </p>
                 </div>
                 <div v-else>
-                    <!-- Status Filter -->
-                    <div
-                        class="flex items-center justify-end mb-4 align-middle"
-                    >
-                        <label for="statusFilter" class="mr-2 font-semibold"
-                            >Filter by Status:</label
-                        >
-                        <select
-                            id="statusFilter"
-                            v-model="statusFilter"
-                            class="p-2 w-[125px] border rounded"
-                        >
-                            <option value="ALL">ALL</option>
-                            <option value="APPROVED">APPROVED</option>
-                            <option value="PENDING">PENDING</option>
-                        </select>
-                        <button
-                            @click="checkAllToggle"
-                            :disabled="
-                                reportDataList.filter(
-                                    (r) => Number(r.checked) === 1
-                                ).length === 0
-                            "
-                            :class="[
-                                'px-4 py-2 ml-2 mr-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
-
-                                reportDataList.filter(
-                                    (r) =>
-                                        Number(r.checked) === 1 &&
-                                        !r.approved_by_firstname
-                                ).length === 0
-                                    ? 'bg-gray-400 text-white cursor-not-allowed focus:ring-gray-400'
-                                    : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-                            ]"
-                        >
-                            {{
-                                !approvalState.hasEligible
-                                    ? "No eligible data to approve"
-                                    : approvalState.allSelected
-                                        ? "Uncheck All Eligible"
-                                        : "Check All Eligible"
-                            }}
-                        </button>
-                    </div>
                     <div class="m-10">
                         <table
                             class="w-full overflow-hidden text-sm text-left bg-white border-separate rounded-lg shadow-lg border-spacing-0"
