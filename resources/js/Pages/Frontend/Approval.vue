@@ -714,17 +714,17 @@ const confirmationApprove = async () => {
     const dateNow = datenow();
 /*
     const reportData = {
-        approved_by_firstname: state.user.firstName,
-        approved_by_surname: state.user.surname,
-        approved_by_date: dateNow,
-    };
-*/  
-    
-    const reportData = {
         approved_by_firstname: '',
         approved_by_surname: '',
         approved_by_date: '',
     };
+*/  
+    const reportData = {
+        approved_by_firstname: state.user.firstName,
+        approved_by_surname: state.user.surname,
+        approved_by_date: dateNow,
+    };
+    
 
     try {
         // 1. Stamp approval
