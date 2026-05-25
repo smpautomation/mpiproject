@@ -801,15 +801,8 @@ class BackEndPdfController extends Controller
 
         $massProd = $massprod ?? 'unknown';
         $furnace = str_replace('-', '', $massProdData->furnace);
-        if ($initialLotExists) {
-            // Use selected SET (additional) values
-            $cs_model_final = $addtnlModel;
-            $cs_lt_no_final = $addtnlLot;
-        } else {
-            // Default behavior (A → B fallback)
-            $cs_model_final = $cs_model['A'] ?? $cs_model['B'] ?? null;
-            $cs_lt_no_final = $cs_lt_no['A'] ?? $cs_lt_no['B'] ?? null;
-        }
+        $cs_model_final = $tpmCategories->actual_model ?? null;
+        $cs_lt_no_final = $tpmCategories->jhcurve_lotno ?? null;
 
         $resolvedJudgement = !empty(trim($reportData->modified_smp_judgement ?? ''))
             ? $reportData->modified_smp_judgement
