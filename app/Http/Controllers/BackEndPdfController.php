@@ -817,6 +817,17 @@ class BackEndPdfController extends Controller
 
         $rawFilename = "({$resolvedJudgement}) {$cs_model_final} Lot No {$cs_lt_no_final}";
         //dd($rawFilename);
+        Log::info('PDF Filename Debug', [
+            'serial' => $serial,
+            'initialLotExists' => $initialLotExists,
+            'addtnlModel' => $addtnlModel,
+            'addtnlLot' => $addtnlLot,
+            'cs_model' => $cs_model ?? null,
+            'cs_lt_no' => $cs_lt_no ?? null,
+            'cs_model_final' => $cs_model_final,
+            'cs_lt_no_final' => $cs_lt_no_final,
+            'rawFilename' => $rawFilename,
+        ]);
 
         $savedPath = $this->saveMergedPdf($massprod, $rawFilename, $mergedPdf, $furnace);
 
