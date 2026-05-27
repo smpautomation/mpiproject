@@ -1,5 +1,20 @@
 <template>
     <Frontend>
+        <div class="relative w-full overflow-hidden bg-gray-900 border-b border-cyan-500">
+            <div class="flex w-max animate-marquee">
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+                <!-- duplicate (this is the magic) -->
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+            </div>
+        </div>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100">
             <div v-show="showMainUI" class="flex flex-col items-center justify-center">
                 <div>
@@ -545,3 +560,18 @@ onMounted(async () => {
 });
 
 </script>
+
+<style scoped>
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 18s linear infinite;
+}
+</style>

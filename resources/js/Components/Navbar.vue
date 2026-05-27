@@ -372,7 +372,6 @@ const navItems = [
                 route: "reports",
                 access: [
                     "Automation",
-                    "Final Approver",
                     "Proxy Approver",
                     "Coating",
                     "Heat Treatment",
@@ -421,7 +420,6 @@ const navItems = [
                     "Checking Approver",
                     "PrepCheck Approver",
                     "Proxy Approver",
-                    "Final Approver",
                 ],
             },
             {

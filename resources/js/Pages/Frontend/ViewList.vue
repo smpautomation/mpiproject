@@ -1,5 +1,21 @@
 <template>
     <Frontend>
+        <!-- System Banner -->
+        <div class="relative w-full overflow-hidden bg-gray-900 border-b border-cyan-500">
+            <div class="flex w-max animate-marquee">
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+                <!-- duplicate (this is the magic) -->
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+            </div>
+        </div>
         <div
             class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100"
         >
@@ -285,8 +301,18 @@
                                 class="p-[1px] text-center"
                             >
                                 <div
-                                    class="flex justify-center px-0 py-1 bg-white rounded-sm space-x-7"
+                                    class="flex justify-center px-0 py-1 bg-white rounded-sm space-x-2 overflow-hidden"
                                 >
+                                     <!-- Future Feature Button (interactive-looking placeholder) -->
+                                    <div class="relative group">
+                                        <button
+                                            title="Under Development: streamlined reporting to Automation Engineering for faster issue handling."
+                                            class="w-[160px] bg-gray-200 text-gray-500 rounded-md font-medium text-sm shadow-sm transition-all duration-200 hover:bg-gray-300 hover:text-gray-600 active:scale-[0.98]"
+                                        >
+                                            Report to Automation
+                                        </button>
+                                    </div>
+
                                     <!-- VIEW -->
                                     <button
                                         @click="viewReport(item.serial_no)"
@@ -840,3 +866,19 @@ onMounted(async () => {
     console.timeEnd("TOTAL LOAD TIME");
 });
 </script>
+
+<style scoped>
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 18s linear infinite;
+}
+
+</style>
