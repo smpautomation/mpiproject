@@ -1,13 +1,22 @@
 <template>
     <Frontend>
-        <div
-            v-if="onTestServer"
-            class="flex flex-row items-center justify-center text-xl font-extrabold text-green-500"
-        >
-            YOU ARE ON TEST SERVER
+        <div v-if="showSelectionPanel" class="relative w-full overflow-hidden bg-gray-900 border-b border-cyan-500">
+            <div class="flex w-max animate-marquee">
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+                <!-- duplicate (this is the magic) -->
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+            </div>
         </div>
         <div
-            class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto bg-gray-100"
+            class="flex flex-col items-center justify-start px-8 py-12 mx-auto bg-gray-100"
         >
             <div
                 v-if="
@@ -46,109 +55,128 @@
                     {{ reportNotificationMessage }}
                 </p>
             </div>
-            <div v-show="showSelectionPanel">
+            <div v-show="showSelectionPanel" class="m-0">
                 <div v-if="serialList.length > 0">
                     <div
-                        class="max-w-2xl p-8 mx-auto mt-8 bg-white border border-gray-200 shadow-lg rounded-xl"
+                        class="relative max-w-2xl p-8 mx-auto mt-8 overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white"
                     >
-                        <!-- Header -->
-                        <div class="mb-6 text-center">
-                            <div
-                                class="inline-flex items-center justify-center mb-3 rounded-full shadow-md w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500"
-                            >
-                                <svg
-                                    class="text-white w-7 h-7"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    ></path>
-                                </svg>
-                            </div>
-                            <h3 class="mb-1 text-2xl font-bold text-gray-800">
-                                Generate Report
-                            </h3>
-                            <p class="text-sm text-gray-500">
-                                Select a serial number to proceed
-                            </p>
+                        <!-- Background watermark layer -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <img
+                                src="/photo/AE.png"
+                                alt=""
+                                class="opacity-10 object-contain"
+                                :style="{
+                                    width: '600px',          // base size (zoom control)
+                                    transform: 'scale(1.3)', // zoom in / out
+                                    transformOrigin: 'center center',
+                                    translate: '13px -14px'     // shift position if needed
+                                }"
+                            />
                         </div>
 
-                        <!-- Selection Panel -->
-                        <div class="mb-6">
-                            <label
-                                class="block mb-2 text-sm font-semibold text-gray-700"
-                                >Serial Number</label
-                            >
-                            <select
-                                v-model="currentSerialSelected"
-                                class="w-full px-4 py-3 text-base font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
-                            >
-                                <option
-                                    v-for="serial in serialList"
-                                    :key="serial"
-                                    :value="serial"
+                        <!-- Content layer -->
+                        <div class="relative z-10">
+                            
+                            <!-- Header -->
+                            <div class="mb-6 text-center">
+                                <div
+                                    class="inline-flex items-center justify-center mb-3 rounded-full shadow-md w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500"
                                 >
-                                    {{ serial }}
-                                </option>
-                            </select>
-                        </div>
+                                    <svg
+                                        class="text-white w-7 h-7"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                        ></path>
+                                    </svg>
+                                </div>
 
-                        <!-- Button -->
-                        <button
-                            @click="generateReport"
-                            :disabled="showNotif2"
-                            class="w-full px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-md hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg transition-all duration-200 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
-                        >
-                            <span
-                                class="flex items-center justify-center gap-2"
-                            >
-                                <svg
-                                    class="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    ></path>
-                                </svg>
-                                Generate Report
-                            </span>
-                        </button>
+                                <h3 class="mb-1 text-2xl font-bold text-gray-800">
+                                    Generate Report
+                                </h3>
 
-                        <!-- Notification -->
-                        <div
-                            v-show="showNotif2"
-                            class="p-4 mt-6 border-l-4 border-yellow-400 rounded-lg shadow-sm bg-gradient-to-r from-amber-50 to-yellow-50"
-                        >
-                            <div class="flex items-start gap-3">
-                                <svg
-                                    class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                                    ></path>
-                                </svg>
-                                <p
-                                    class="flex-1 text-sm font-semibold text-gray-800"
-                                >
-                                    {{ reportNotificationMessage }}
+                                <p class="text-sm text-gray-500">
+                                    Select a serial number to proceed
                                 </p>
                             </div>
+
+                            <!-- Selection Panel -->
+                            <div class="mb-6">
+                                <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                    Serial Number
+                                </label>
+
+                                <select
+                                    v-model="currentSerialSelected"
+                                    class="w-full px-4 py-3 text-base font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
+                                >
+                                    <option
+                                        v-for="serial in serialList"
+                                        :key="serial"
+                                        :value="serial"
+                                    >
+                                        {{ serial }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Button -->
+                            <button
+                                @click="generateReport"
+                                :disabled="showNotif2"
+                                class="w-full px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-md hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg transition-all duration-200 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
+                            >
+                                <span class="flex items-center justify-center gap-2">
+                                    <svg
+                                        class="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        ></path>
+                                    </svg>
+                                    Generate Report
+                                </span>
+                            </button>
+
+                            <!-- Notification -->
+                            <div
+                                v-show="showNotif2"
+                                class="p-4 mt-6 border-l-4 border-yellow-400 rounded-lg shadow-sm bg-gradient-to-r from-amber-50 to-yellow-50"
+                            >
+                                <div class="flex items-start gap-3">
+                                    <svg
+                                        class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                        ></path>
+                                    </svg>
+
+                                    <p class="flex-1 text-sm font-semibold text-gray-800">
+                                        {{ reportNotificationMessage }}
+                                    </p>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -9606,6 +9634,20 @@ onMounted(async () => {
     white-space: nowrap;
     animation: marquee 10s linear infinite;
 }
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 18s linear infinite;
+}
+
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {

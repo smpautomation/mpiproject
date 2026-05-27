@@ -1,9 +1,29 @@
 <template>
     <Frontend>
-        <div class="max-w-xl p-8 mx-auto my-12 space-y-6 bg-white rounded-lg shadow-xl">
-            <div>
-
+        <div class="relative w-full overflow-hidden bg-gray-900 border-b border-cyan-500">
+            <div class="flex w-max animate-marquee">
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
+                <!-- duplicate (this is the magic) -->
+                <div class="flex whitespace-nowrap py-2 text-sm font-semibold text-cyan-100">
+                    <span class="mx-6">⚙️ This system is developed and maintained by the Automation Engineering Software Team</span>
+                    <span class="mx-6">📞 For concerns contact Local 206 / 619</span>
+                    <span class="mx-6">📜 System usage and modification are restricted without prior coordination</span>
+                </div>
             </div>
+        </div>
+        <div class="relative max-w-xl p-8 mx-auto my-12 space-y-6 bg-white rounded-lg shadow-xl">
+            <!-- AE watermark background -->
+            <div
+                class="absolute inset-0 pointer-events-none bg-center opacity-[0.06]"
+                style="
+                    background-image: url('/photo/AE.png');
+                    background-size: 200px;
+                "
+            ></div>
             <!-- Header Section - REPLACE -->
             <div class="pb-6 border-b-2 border-gray-200">
                 <div class="flex items-center gap-3 mb-3">
@@ -274,3 +294,34 @@ onMounted(async()=>{
 });
 
 </script>
+
+<style scoped>
+/* Simple fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 18s linear infinite;
+}
+</style>
