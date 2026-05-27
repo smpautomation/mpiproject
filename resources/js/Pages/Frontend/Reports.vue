@@ -7135,6 +7135,46 @@ const autoCheckRemarks = () => {
     }
 };
 
+/*
+
+const getControlSheetData = async () => {
+    try {
+        const response = await axios.get(
+            `/api/mass-production/get-all-data-per-lot`,
+            {
+                params: {
+                    furnace: selectedFurnace.value,
+                    mass_prod: selectedMassProd.value,
+                    model: jhCurveActualModel.value,
+                    lt_no: jhCurveLotNo.value,
+                },
+            },
+        );
+
+        const lot = response.data?.[0] ?? null;
+
+        reportTotalQuantity.value = lot?.total_qty ?? 0;
+
+    } catch (error) {
+        console.log("Failed to get lot data:", error);
+
+        reportTotalQuantity.value = 0;
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getAllLotStatusPreview",
+            "Failed to get lot data"
+        );
+    }
+};
+
+*/
+
 const getControlSheetData = async () => {
     try {
         const response = await axios.get(

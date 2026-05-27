@@ -2117,10 +2117,14 @@ class MassProductionController extends Controller
         $validated = $request->validate([
             'mass_prod' => 'required|string',
             'furnace'   => 'required|string',
+            'model'     => 'nullable|string',
+            'lt_no'     => 'nullable|string',
         ]);
 
         $mass_prod = trim($validated['mass_prod']);
         $furnace   = trim($validated['furnace']);
+        $filterModel = $validated['model'] ?? null;
+        $filterLtNo  = $validated['lt_no'] ?? null;
 
         $massProduction = MassProduction::where('mass_prod', $mass_prod)
             ->where('furnace', $furnace)
@@ -2215,6 +2219,15 @@ class MassProductionController extends Controller
                 $lot['layers'] = $layersUsed;
             }
         }
+
+        if ($filterModel && $filterLtNo) {
+            $finalLots = array_filter($finalLots, function ($lot) use ($filterModel, $filterLtNo) {
+                return $lot['model'] === $filterModel && $lot['lt_no'] === $filterLtNo;
+            });
+
+            $finalLots = array_values($finalLots);
+        }
+
 
         // Normalize output for Vue
         $response = collect($finalLots)->map(function ($lot) {

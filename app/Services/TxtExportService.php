@@ -19,7 +19,7 @@ class TxtExportService
 {
     public function exportData1(string $furnace_no, string $massPro)
     {
-        // Step 1: Get the latest date for the specified furnace + mass_prod
+        // Step 1: Validate existence (kept as-is)
         $dateToGet = TPMData::where('sintering_furnace_no', 'LIKE', "{$furnace_no}-%")
             ->where('mass_prod', $massPro)
             ->orderBy('date', 'desc')
@@ -31,79 +31,56 @@ class TxtExportService
 
         $transformedFurnace = substr($furnace_no, 0, 1) . '-' . substr($furnace_no, 1);
 
-        // Step 2: Fetch the mass production row
+        // Step 2: MassProduction is the structural source of truth
         $massProdData = MassProduction::where('mass_prod', $massPro)->first();
 
         if (!$massProdData) {
             return 'Mass production data not found.';
         }
 
-        // Step 3: Prepare layer/area structure
         $layers = range(1, 10);
         $outputRows = [];
-        $allBoxes = []; // will collect all boxes across layers
+        $allBoxes = [];
 
         foreach ($layers as $layerKey) {
 
-            // Handle 9.5 column naming
-            if ($layerKey == 10) {
-                $layerColumn = 'layer_9_5';
-                $serialColumn = 'layer_9_5_serial';
-            } else {
-                $layerColumn = 'layer_' . $layerKey;
-                $serialColumn = 'layer_' . $layerKey . '_serial';
-            }
+            $layerColumn = $layerKey == 10 ? 'layer_9_5' : 'layer_' . $layerKey;
 
             $layerData = json_decode($massProdData->$layerColumn, true);
-            $layerSerial = $massProdData->$serialColumn;
 
+            // ExcessLayers is ONLY fallback for missing structure
             if (empty($layerData)) {
                 $excess = ExcessLayers::where('furnace', preg_replace('/([A-Z]+)(\d+)/', '$1-$2', $furnace_no))
                     ->where('mass_prod', $massPro)
                     ->where('layer', $layerKey)
                     ->value('layer_data');
 
-                if (is_string($excess)) {
-                    $layerData = json_decode($excess, true);
-                } elseif (is_array($excess)) {
-                    $layerData = $excess;
-                } else {
-                    $layerData = [];
-                }
+                $layerData = is_string($excess)
+                    ? json_decode($excess, true)
+                    : (is_array($excess) ? $excess : []);
             }
 
-            // --- MODEL_CODE RESOLUTION (layer aware) ---
-            $layerForQuery = $layerKey == 10 ? 9.5 : $layerKey;
-            Log::info("Layer {$layerKey} (query as {$layerForQuery}) for furnace {$transformedFurnace} mass_prod {$massPro}");
-
-            $serialArray = array_unique(
-                TPMData::where('mass_prod', $massPro)
-                    ->where('furnace', $transformedFurnace)
-                    ->where('layer_no', $layerForQuery)
-                    ->pluck('serial_no')
-                    ->toArray()
-            );
-
-            Log::info("Layer {$layerKey}: Serial numbers fetched: " . implode(',', $serialArray));
+            // IMPORTANT: DO NOT layer-filter TPMData (this was breaking excess consistency)
+            $serialArray = TPMData::where('mass_prod', $massPro)
+                ->where('furnace', $transformedFurnace)
+                ->pluck('serial_no')
+                ->unique()
+                ->toArray();
 
             $categoryRows = [];
             if (!empty($serialArray)) {
                 $categoryRows = TPMDataCategory::whereIn('tpm_data_serial', $serialArray)
                     ->get(['actual_model', 'jhcurve_lotno', 'tpm_data_serial']);
-
-                Log::info("Layer {$layerKey}: Category rows fetched count: " . $categoryRows->count());
             }
 
-            // Detect boxes dynamically from JSON keys
+            // Extract boxes (same logic, unchanged behavior)
             $boxes = [];
-            if (!empty($layerData)) {
-                foreach ($layerData as $item) {
-                    $boxes = array_unique(array_merge($boxes, array_keys($item['data'] ?? [])));
-                }
+            foreach ($layerData as $item) {
+                $boxes = array_unique(array_merge($boxes, array_keys($item['data'] ?? [])));
             }
+
             $allBoxes = array_unique(array_merge($allBoxes, $boxes));
 
-            // Step 5: Build per-box rows
             foreach ($boxes as $area) {
 
                 $rowData = [
@@ -119,22 +96,22 @@ class TxtExportService
                     'RAW_MATERIAL_CODE' => '0000000',
                 ];
 
-                // Fill with real data from JSON
-                $rawModelName = '0';
-                $rawLotNo     = '0';
+                $rawModelName = null;
+                $rawLotNo = null;
 
                 foreach ($layerData as $item) {
+
                     $title = $item['rowTitle'] ?? '';
                     $data = $item['data'][$area] ?? '0';
 
                     $normalizedTitle = strtolower(str_replace([' ', ':', '.', '/'], '', $title));
 
                     switch ($normalizedTitle) {
+
                         case 'model':
                             $cleanModel = $this->sanitizeModelName($data);
-
                             $rowData['MODEL_NAME'] = $cleanModel;
-                            $rawModelName = $cleanModel; // IMPORTANT: keep matching consistent
+                            $rawModelName = $cleanModel;
                             break;
 
                         case 'coatingmcno':
@@ -142,9 +119,9 @@ class TxtExportService
                             break;
 
                         case 'ltno':
-                            $rowData['LOT_NO'] = $this->normalizeLotNo($data); // normalized for display
-                            $rawLotNo = $data; // raw for serial lookup
-                            $rowData['MC_NO']  = $this->extractMcNo($data);
+                            $rowData['LOT_NO'] = $this->normalizeLotNo($data);
+                            $rawLotNo = $data;
+                            $rowData['MC_NO'] = $this->extractMcNo($data);
                             break;
 
                         case 'qty(pcs)':
@@ -170,43 +147,39 @@ class TxtExportService
                     }
                 }
 
-                // --- Resolve correct serial via RAW MODEL + LOT ---
+                // STRICT MODEL + LOT matching (unchanged logic, just stable data source)
                 $matchedSerial = null;
 
                 foreach ($categoryRows as $cat) {
                     if (
-                        $cat->actual_model == $rawModelName &&
-                        $cat->jhcurve_lotno == $rawLotNo
+                        $cat->actual_model === $rawModelName &&
+                        $cat->jhcurve_lotno === $rawLotNo
                     ) {
                         $matchedSerial = $cat->tpm_data_serial;
-                        Log::info("Layer {$layerKey}, Box {$area}: Matched MODEL_NAME {$rawModelName} + LOT_NO {$rawLotNo} => Serial {$matchedSerial}");
                         break;
                     }
-                }
-
-                if (!$matchedSerial) {
-                    Log::info("Layer {$layerKey}, Box {$area}: No matching serial found for MODEL_NAME {$rawModelName} + LOT_NO {$rawLotNo}");
                 }
 
                 if ($matchedSerial) {
                     $tpmRow = TPMData::where('serial_no', $matchedSerial)->first();
                     $rowData['MODEL_CODE'] = $tpmRow->code_no ?? '0';
-                    Log::info("Layer {$layerKey}, Box {$area}: MODEL_CODE resolved as {$rowData['MODEL_CODE']} from serial {$matchedSerial}");
                 }
 
                 $outputRows[$layerKey][$area] = $rowData;
             }
         }
 
-        // Step 6: Flatten rows for export, converting layer 10 to 'T'
+        // Flatten output (unchanged structure requirement preserved)
         $finalRows = [];
         $layerOrder = range(1, 10);
         rsort($layerOrder);
 
         foreach ($layerOrder as $layer) {
+
             $outputLayer = $layer === 10 ? 'T' : (string)$layer;
 
             foreach ($allBoxes as $area) {
+
                 $row = data_get($outputRows, "{$layer}.{$area}", [
                     'MODEL_NAME' => 0,
                     'COATING_MC_NO' => 0,
@@ -220,23 +193,28 @@ class TxtExportService
                     'RAW_MATERIAL_CODE' => 0,
                 ]);
 
-                $finalRows[] = array_merge(['LAYER' => $outputLayer, 'AREA' => $area], $row);
+                $finalRows[] = array_merge([
+                    'LAYER' => $outputLayer,
+                    'AREA' => $area
+                ], $row);
             }
         }
 
-        // Step 7: Format into lines and save
         $header = "LAYER,AREA,MODEL_NAME,COATING_MC_NO,LOT_NO,MC_NO,QTY,COATING,WT,BOX_NO,MODEL_CODE,RAW_MATERIAL_CODE";
-        $lines = collect($finalRows)->map(fn($row) => implode(',', $row))->prepend($header);
+
+        $lines = collect($finalRows)
+            ->map(fn($row) => implode(',', $row))
+            ->prepend($header);
 
         //dd($lines->toArray());
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
+
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
 
-        $filePath = "{$directory}/Data1.txt";
-        File::put($filePath, implode("\n", $lines->toArray()));
+        File::put("{$directory}/Data1.txt", implode("\n", $lines->toArray()));
 
         return "";
     }

@@ -646,6 +646,81 @@ class BackEndPdfController extends Controller
 
         //NSA Additionals --------------- NSA Additionals --------------- NSA Additionals End
 
+        $controlTotalQty = $cs_total_qty; // fallback default
+        $ltNo = null;
+
+        if (is_array($cs_lt_no)) {
+            $ltNo = collect($cs_lt_no)->first(); // safe, ignores broken keys
+        } else {
+            $ltNo = $cs_lt_no;
+        }
+
+        Log::info('[LOT OVERRIDE] Requesting lot data', [
+            'mass_prod' => $massprod,
+            'furnace'   => $furnace,
+            'model'     => $model ?? null,
+            'lt_no'     => $ltNo,
+            'cs_lt_no_raw' => $cs_lt_no,
+        ]);
+
+        try {
+            $lotResponse = app(\App\Http\Controllers\MassProductionController::class)
+                ->getAllLotStatusPreview(new \Illuminate\Http\Request([
+                    'mass_prod' => $massprod,
+                    'furnace'   => $furnace,
+                    'model'     => $model ?? null,
+                    'lt_no' => $ltNo,
+                ]));
+
+            $lotData = json_decode($lotResponse->getContent(), true);
+
+            Log::info('[LOT OVERRIDE] Response received', [
+                'count' => is_array($lotData) ? count($lotData) : 0,
+                'sample' => $lotData[0] ?? null,
+            ]);
+
+            $matchFound = false;
+
+            if (!empty($lotData)) {
+               foreach ($lotData as $lot) {
+                    if (
+                        isset($lot['lt_no'], $lot['model']) &&
+                        trim((string)$lot['lt_no']) === trim((string)$ltNo) &&
+                        trim((string)$lot['model']) === trim((string)$addtnlModel)
+                    ) {
+                        Log::info('[LOT OVERRIDE] Match found', [
+                            'lt_no' => $lot['lt_no'],
+                            'model' => $lot['model'],
+                            'total_qty' => $lot['total_qty']
+                        ]);
+
+                        $controlTotalQty = $lot['total_qty'];
+                        $matchFound = true;
+
+                        break;
+                    }
+                }
+                if (!$matchFound) {
+                    Log::warning('[LOT OVERRIDE] No match found', [
+                        'lt_no' => $ltNo,
+                        'model_expected' => $addtnlModel,
+                        'available_lots' => array_map(fn($l) => [
+                            'lt_no' => $l['lt_no'] ?? null,
+                            'model' => $l['model'] ?? null,
+                        ], $lotData ?? []),
+                    ]);
+                }
+            }
+
+        } catch (\Throwable $e) {
+            // fail-safe: silently fallback to old system
+            Log::warning("Lot override failed: " . $e->getMessage());
+            Log::warning('[LOT OVERRIDE] Failed, using fallback cs_total_qty', [
+                'error' => $e->getMessage(),
+                'fallback_qty' => $cs_total_qty,
+            ]);
+        }
+
         $data = [
             'massProd' => $massprod,
             'layer' => $layer,
@@ -685,7 +760,7 @@ class BackEndPdfController extends Controller
             'controlBoxNo' => $cs_box_no,
             'controlMagnetPreparedBy' => $cs_magnet_prepared_by,
             'controlBoxPreparedBy' => $cs_box_prepared_by,
-            'controlTotalQty' => $cs_total_qty,
+            'controlTotalQty' => $controlTotalQty,
             'preparedByDate' => $preparedByDate, // pass prepared by
             'checkedByDate' => $checkedByDate, // pass checked by date
             'approvedByDate' => $approvedByDate, // pass approved by date
@@ -810,17 +885,6 @@ class BackEndPdfController extends Controller
 
         $rawFilename = "({$resolvedJudgement}) {$cs_model_final} Lot No {$cs_lt_no_final}";
         //dd($rawFilename);
-        Log::info('PDF Filename Debug', [
-            'serial' => $serial,
-            'initialLotExists' => $initialLotExists,
-            'addtnlModel' => $addtnlModel,
-            'addtnlLot' => $addtnlLot,
-            'cs_model' => $cs_model ?? null,
-            'cs_lt_no' => $cs_lt_no ?? null,
-            'cs_model_final' => $cs_model_final,
-            'cs_lt_no_final' => $cs_lt_no_final,
-            'rawFilename' => $rawFilename,
-        ]);
 
         $savedPath = $this->saveMergedPdf($massprod, $rawFilename, $mergedPdf, $furnace);
 
