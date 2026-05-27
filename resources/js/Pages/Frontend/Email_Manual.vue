@@ -74,6 +74,9 @@
                         required
                         placeholder="automation3@smp.com.ph, automation2@smp.com.ph"
                     />
+                    <p class="mt-2 text-xs text-gray-500">
+                        Note: <strong>Automation Engineering Department </strong>is automatically CC’d for monitoring and troubleshooting support in case any issues are encountered.
+                    </p>
                 </div>
 
                 <!-- Files - REPLACE -->
