@@ -2140,6 +2140,7 @@ const fetchRejectFromReportData = async () => {
 };
 
 const fetchLayerModelAndLotno = async () => {
+    await fetchAvailableLayers();
     // Prevent execution if layer is invalid/not available
     if (
         !selectedMassProd.value ||
