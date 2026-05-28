@@ -754,9 +754,12 @@
                             >Report</span
                         >
                         section and select
-                        <span class="text-2xl font-extrabold text-blue-400">
-                            {{ serialNo }}</span
+                        <button
+                            @click="viewReport(serialNo)"
+                            class="text-2xl font-extrabold text-blue-400 transition hover:text-blue-500 hover:underline focus:outline-none"
                         >
+                            {{ serialNo }}
+                        </button>
                     </p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
@@ -4310,6 +4313,15 @@ const renderChart = () => {
     };
 
     waitForRender();
+};
+
+const viewReport = (serial) => {
+    router.visit("/reports", {
+        method: "get", // You can keep 'get' since we are not modifying any data
+        data: { serialParam: serial, fromViewList: true }, // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 const goToControlSheet = () => {
