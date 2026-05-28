@@ -449,7 +449,7 @@ Route::get('/coating/get-data', [CoatingController::class, 'getCoatingData']);
 
 Route::get('/coating/get-data-breaklot', [CoatingController::class, 'getCoatingDataBreaklot']);
 
-Route::get('/get-coating-remarks', [CoatingController::class, 'getCoatingRemarks']);
+Route::get('/long-aging-detection', [CoatingController::class, 'longAgingDetection']);
 
 Route::get('/approve-list-checked', [ReportDataController::class, 'getViewListChecked']);
 

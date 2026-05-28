@@ -754,9 +754,12 @@
                             >Report</span
                         >
                         section and select
-                        <span class="text-2xl font-extrabold text-blue-400">
-                            {{ serialNo }}</span
+                        <button
+                            @click="viewReport(serialNo)"
+                            class="text-2xl font-extrabold text-blue-400 transition hover:text-blue-500 hover:underline focus:outline-none"
                         >
+                            {{ serialNo }}
+                        </button>
                     </p>
                 </div>
                 <div class="flex flex-row justify-center mt-5 space-x-4">
@@ -1996,7 +1999,7 @@ const proceedToGraphConfirmation = () => {
     if (!selectedMassProd.value) {
         toast.error("Please select a Mass Production.");
         return;
-    } else if (!currentLayerNo.value) {
+    } else if (!currentLayerNo.value || currentLayerNo.value == '') {
         toast.error("Please select layer");
     } else if (!fileData.value || fileData.value.length === 0) {
         toast.error("No .tmp file(s) detected.");
@@ -2140,21 +2143,21 @@ const fetchRejectFromReportData = async () => {
 };
 
 const fetchLayerModelAndLotno = async () => {
-    /*console.log(
-        "Entering fetchLayerModelAndLotno function | MassProd: ",
-        selectedMassProd.value,
-        "Furnace: ",
-        selectedFurnace.value,
-        " Layer: ",
-        currentLayerNo.value,
-    );*/
-
+    await fetchAvailableLayers();
+    // Prevent execution if layer is invalid/not available
     if (
         !selectedMassProd.value ||
         !selectedFurnace.value ||
-        !currentLayerNo.value
+        !currentLayerNo.value ||
+        !available_layers.value.includes(
+            String(currentLayerNo.value),
+        )
     ) {
-        console.warn("MassProd or Layer not selected yet.");
+        console.warn("MassProd or valid layer not selected yet.");
+
+        jhCurveActualModel.value = null;
+        jhCurveLotNo.value = null;
+
         return;
     }
 
@@ -2183,8 +2186,10 @@ const fetchLayerModelAndLotno = async () => {
         jhCurveLotNo.value = lotno;
 
         return { model, lotno };
+
     } catch (error) {
         //console.error("Error fetching layer model or lotno:", error);
+
         toast.error("Failed to fetch layer data.");
 
         jhCurveActualModel.value = null;
@@ -4310,6 +4315,15 @@ const renderChart = () => {
     waitForRender();
 };
 
+const viewReport = (serial) => {
+    router.visit("/reports", {
+        method: "get", // You can keep 'get' since we are not modifying any data
+        data: { serialParam: serial, fromViewList: true }, // Passing the serialParam here
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+
 const goToControlSheet = () => {
     //console.log('Navigating to report with serial:', serial);
     router.visit("/control_sheet", {
@@ -4398,6 +4412,6 @@ onMounted(async () => {
 }
 
 .animate-marquee {
-    animation: marquee 18s linear infinite;
+    animation: marquee 120s linear infinite;
 }
 </style>
