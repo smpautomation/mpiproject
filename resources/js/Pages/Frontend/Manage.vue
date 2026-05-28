@@ -1996,7 +1996,7 @@ const proceedToGraphConfirmation = () => {
     if (!selectedMassProd.value) {
         toast.error("Please select a Mass Production.");
         return;
-    } else if (!currentLayerNo.value) {
+    } else if (!currentLayerNo.value || currentLayerNo.value == '') {
         toast.error("Please select layer");
     } else if (!fileData.value || fileData.value.length === 0) {
         toast.error("No .tmp file(s) detected.");
@@ -2140,21 +2140,20 @@ const fetchRejectFromReportData = async () => {
 };
 
 const fetchLayerModelAndLotno = async () => {
-    /*console.log(
-        "Entering fetchLayerModelAndLotno function | MassProd: ",
-        selectedMassProd.value,
-        "Furnace: ",
-        selectedFurnace.value,
-        " Layer: ",
-        currentLayerNo.value,
-    );*/
-
+    // Prevent execution if layer is invalid/not available
     if (
         !selectedMassProd.value ||
         !selectedFurnace.value ||
-        !currentLayerNo.value
+        !currentLayerNo.value ||
+        !available_layers.value.includes(
+            String(currentLayerNo.value),
+        )
     ) {
-        console.warn("MassProd or Layer not selected yet.");
+        console.warn("MassProd or valid layer not selected yet.");
+
+        jhCurveActualModel.value = null;
+        jhCurveLotNo.value = null;
+
         return;
     }
 
@@ -2183,8 +2182,10 @@ const fetchLayerModelAndLotno = async () => {
         jhCurveLotNo.value = lotno;
 
         return { model, lotno };
+
     } catch (error) {
         //console.error("Error fetching layer model or lotno:", error);
+
         toast.error("Failed to fetch layer data.");
 
         jhCurveActualModel.value = null;
