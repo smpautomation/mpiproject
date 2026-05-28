@@ -3245,14 +3245,18 @@
                                 </p>
                             </div>
                         </div>
-                        <div v-if="fetchedCoatingRemarks?.found" class="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800 flex items-center gap-2">
-                            <span class="text-amber-500">⚠</span>
+                        <div
+                            v-if="longAgingDetected"
+                            class="mt-3 flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800"
+                        >
+                            <span class="text-amber-500">⚠️</span>
 
                             <span>
                                 <span class="font-semibold">Long aging detected:</span>
-                                Coating remarks —
+                                material exceeded safe processing window (>
+                                7 days from coating to start)
                                 <span class="font-medium">
-                                    {{ fetchedCoatingRemarks?.remarks ?? 'N/A' }}
+                                    ({{ daysDiff ?? 'N/A' }} days)
                                 </span>
                             </span>
                         </div>
@@ -5789,7 +5793,8 @@ const reportNotificationMessage = ref("");
 const tpmDataQuantity = ref(0);
 const withAdditionalSampleForRemarks = ref(false);
 
-const fetchedCoatingRemarks = ref(null);
+const longAgingDetected = ref(false);
+const daysDiff = ref(null);
 
 //general variables end
 
@@ -6966,7 +6971,7 @@ const generateReport = async () => {
         // ─────────────────────────────
         showReportLoading.value = false;
 
-        await getCoatingRemarks();
+        await checkLongAging();
 
         logTime("generateReport total", overallStart);
     } catch (error) {
@@ -7792,9 +7797,21 @@ const fetchAllData = async () => {
     }
 };
 
-const getCoatingRemarks = async () => {
+const checkLongAging = async () => {
+    if (
+        !selectedMassProd.value ||
+        !selectedFurnace.value ||
+        !selectedLayer.value ||
+        !jhCurveActualModel.value ||
+        !jhCurveLotNo.value
+    ) {
+        console.warn("Missing required parameters for long aging check.");
+        longAgingDetected.value = false;
+        return;
+    }
+
     try {
-        const response = await axios.get("/api/get-coating-remarks", {
+        const { data } = await axios.get("/api/long-aging-detection", {
             params: {
                 mass_prod: selectedMassProd.value,
                 furnace: selectedFurnace.value,
@@ -7804,21 +7821,21 @@ const getCoatingRemarks = async () => {
             },
         });
 
-        fetchedCoatingRemarks.value = {
-            remarks: response.data?.remarks,
-            found: response.data?.found_coating_remarks
-        };
+        longAgingDetected.value = !!data?.long_aging;
+        daysDiff.value = data?.days_diff ?? null;
 
-        if (response.data?.found_coating_remarks) {
-            console.log(
-                "successfully fetched coating remarks: ",
-                response.data,
-            );
+        if (data?.long_aging) {
+            console.log("Long aging detected:", data);
         } else {
-            console.log("No long aging remarks detected");
+            console.log("No long aging detected");
         }
     } catch (error) {
-        console.error("Failed to get coating remarks due to ", error);
+        longAgingDetected.value = false;
+
+        console.error(
+            "Failed to get long aging detection:",
+            error?.response?.data ?? error
+        );
     }
 };
 

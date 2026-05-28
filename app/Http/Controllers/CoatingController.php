@@ -8,8 +8,10 @@ use App\Models\Coating;
 use App\Models\CoatingPending;
 use App\Models\GbdpSecondCoating;
 use App\Models\BreaklotInitialLotHt;
+use App\Models\MassProduction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class CoatingController extends Controller
 {
@@ -229,7 +231,7 @@ class CoatingController extends Controller
         ]);
     }
 
-    public function getCoatingRemarks(Request $request)
+    public function longAgingDetection(Request $request)
     {
         $request->validate([
             'furnace'   => 'required|string',
@@ -239,6 +241,8 @@ class CoatingController extends Controller
             'lot_no'    => 'required|string',
         ]);
 
+        Log::info('Long aging check started', $request->all());
+
         $massProd = $request->mass_prod;
         $furnace  = $request->furnace;
         $layer    = $request->layer;
@@ -246,103 +250,138 @@ class CoatingController extends Controller
         $lotNo    = $request->lot_no;
 
         $response = [
-            'found_coating_remarks' => false,
-            'remarks' => null,
+            'long_aging' => false,
+            'days_diff'  => null,
         ];
 
-        $matchesLongAging = function ($text) {
-            return is_string($text) && stripos($text, 'long aging') !== false;
-        };
-
-        $safeJsonRemarks = function ($json) {
-            if (empty($json) || !is_string($json)) {
-                return null;
-            }
-
-            $data = json_decode($json, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                return null;
-            }
-
-            return $data['remarks'] ?? null;
-        };
-
-        // 1. Gate check
-        $initialLot = BreaklotInitialLotHt::where([
-            'mass_prod'      => $massProd,
-            'furnace'        => $furnace,
-            'layer'          => $layer,
-            'initial_model'  => $model,
-            'initial_lot'    => $lotNo,
+        $massProduction = MassProduction::where([
+            'mass_prod' => $massProd,
+            'furnace'   => $furnace,
         ])->first();
+
+        if (!$massProduction) {
+            Log::warning('MassProduction not found', compact('massProd', 'furnace'));
+            return response()->json($response);
+        }
+
+        if (!$massProduction->date_start) {
+            Log::warning('MassProduction missing date_start', [
+                'mass_prod' => $massProd,
+                'furnace' => $furnace,
+            ]);
+            return response()->json($response);
+        }
+
+        $dateStartTs = strtotime($massProduction->date_start);
+
+        Log::info('Date start resolved', [
+            'date_start' => $massProduction->date_start,
+            'timestamp' => $dateStartTs,
+        ]);
+
+        $coatingDate = null;
+
+        $initialLot = BreaklotInitialLotHt::where([
+            'mass_prod'     => $massProd,
+            'furnace'       => $furnace,
+            'layer'         => $layer,
+            'initial_model' => $model,
+            'initial_lot'   => $lotNo,
+        ])->first();
+
+        Log::info('Initial lot check', [
+            'exists' => (bool) $initialLot,
+        ]);
 
         if ($initialLot) {
 
-            // 2. Coating (highest priority)
             $coating = Coating::where([
                 'mass_prod' => $massProd,
                 'furnace'   => $furnace,
                 'layer'     => $layer,
             ])->first();
 
-            if ($coating && $matchesLongAging($coating->remarks)) {
-                return response()->json([
-                    'found_coating_remarks' => true,
-                    'remarks' => $coating->remarks,
+            $coatingDate = $coating?->date;
+
+            Log::info('Initial coating date (Coating table)', [
+                'date' => $coatingDate,
+            ]);
+
+            if (!$coatingDate) {
+                $gbdp = GbdpSecondCoating::where([
+                    'mass_prod' => $massProd,
+                    'furnace'   => $furnace,
+                    'layer'     => $layer,
+                ])->first();
+
+                $coatingDate = $gbdp?->coating_info_2ndgbdp['date'] ?? null;
+
+                Log::info('Fallback GBDP date', [
+                    'date' => $coatingDate,
                 ]);
             }
+        } else {
 
-            // 3. GBDP second coating (JSON safe)
-            $gbdp = GbdpSecondCoating::where([
+            $breaklot = BreaklotCoating::where([
                 'mass_prod' => $massProd,
                 'furnace'   => $furnace,
                 'layer'     => $layer,
+                'model'     => $model,
+                'lot_no'    => $lotNo,
             ])->first();
 
-            $gbdpRemarks = $safeJsonRemarks($gbdp->coating_info_2ndgbdp ?? null);
+            $coatingDate = $breaklot?->date;
 
-            if ($matchesLongAging($gbdpRemarks)) {
-                return response()->json([
-                    'found_coating_remarks' => true,
-                    'remarks' => $gbdpRemarks,
+            Log::info('Breaklot coating date', [
+                'date' => $coatingDate,
+            ]);
+
+            if (!$coatingDate) {
+                $breaklotSecond = BreaklotSecondCoating::where([
+                    'mass_prod' => $massProd,
+                    'furnace'   => $furnace,
+                    'layer'     => $layer,
+                    'model'     => $model,
+                    'lot_no'    => $lotNo,
+                ])->first();
+
+                $coatingDate = $breaklotSecond?->coating_info_2ndgbdp['date'] ?? null;
+
+                Log::info('Breaklot second coating fallback', [
+                    'date' => $coatingDate,
                 ]);
             }
+        }
 
+        if (!$coatingDate) {
+            Log::warning('No coating date resolved');
             return response()->json($response);
         }
 
-        // 4. BreaklotCoating fallback
-        $breaklot = BreaklotCoating::where([
-            'mass_prod' => $massProd,
-            'furnace'   => $furnace,
-            'layer'     => $layer,
-            'model'     => $model,
-            'lot_no'    => $lotNo,
-        ])->first();
+        $coatingTs = strtotime($coatingDate);
 
-        if ($breaklot && $matchesLongAging($breaklot->remarks)) {
-            return response()->json([
-                'found_coating_remarks' => true,
-                'remarks' => $breaklot->remarks,
+        if (!$coatingTs) {
+            Log::error('Invalid coating date format', [
+                'coatingDate' => $coatingDate,
             ]);
+            return response()->json($response);
         }
 
-        // 5. BreaklotSecondCoating fallback (JSON safe)
-        $breaklotSecond = BreaklotSecondCoating::where([
-            'mass_prod' => $massProd,
-            'furnace'   => $furnace,
-            'layer'     => $layer,
-            'model'     => $model,
-            'lot_no'    => $lotNo,
-        ])->first();
+        $secondsDiff = $dateStartTs - $coatingTs;
+        $daysDiff = floor($secondsDiff / 86400);
 
-        $breaklotRemarks = $safeJsonRemarks($breaklotSecond->coating_info_2ndgbdp ?? null);
+        Log::info('Date diff computed', [
+            'coating' => $coatingDate,
+            'date_start' => $massProduction->date_start,
+            'days_diff' => $daysDiff,
+        ]);
 
-        if ($matchesLongAging($breaklotRemarks)) {
+        if ($daysDiff > 7) {
+            Log::info('LONG AGING DETECTED');
+
             return response()->json([
-                'found_coating_remarks' => true,
-                'remarks' => $breaklotRemarks,
+                'long_aging' => true,
+                'days_diff'  => $daysDiff,
             ]);
         }
 
