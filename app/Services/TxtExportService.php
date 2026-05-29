@@ -369,7 +369,7 @@ class TxtExportService
             ->map(fn($row) => implode(',', $row))
             ->prepend($header);
 
-        dd($lines->toArray());
+        //dd($lines->toArray());
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
 
