@@ -30,7 +30,9 @@ class TxtExportService
 
         $transformedFurnace = substr($furnace_no, 0, 1) . '-' . substr($furnace_no, 1);
 
-        $massProdData = MassProduction::where('mass_prod', $massPro)->first();
+        $massProdData = MassProduction::where('mass_prod', $massPro)
+            ->where('furnace', $transformedFurnace)
+            ->first();
 
         if (!$massProdData) {
             return 'Mass production data not found.';
