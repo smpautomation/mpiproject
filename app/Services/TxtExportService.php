@@ -62,11 +62,41 @@ class TxtExportService
 
             $massProdRaw = $massProdData->{$layerColumn} ?? null;
 
+            if ($layerKey === '9.5') {
+                Log::info('[9.5 DEBUG STEP 1 RAW FETCH]', [
+                    'layerColumn' => $layerColumn,
+                    'is_null' => $massProdRaw === null,
+                    'type' => gettype($massProdRaw),
+                    'sample_raw' => $massProdRaw,
+                ]);
+            }
+
             $massProdDataArray = is_array($massProdRaw)
                 ? $massProdRaw
                 : json_decode($massProdRaw, true);
 
+            if ($layerKey === '9.5') {
+                Log::info('[9.5 DEBUG STEP 2 AFTER DECODE]', [
+                    'decoded_is_array' => is_array($massProdDataArray),
+                    'row_count' => is_array($massProdDataArray) ? count($massProdDataArray) : 0,
+                    'first_row' => $massProdDataArray[0] ?? null,
+                ]);
+            }
+
             $massProdDataArray = is_array($massProdDataArray) ? $massProdDataArray : [];
+
+            // -------------------------
+            // 9.5 RAW STRUCTURE DEBUG
+            // -------------------------
+            if ($layerKey === '9.5') {
+                Log::info('[9.5 STEP 0 RAW KEYS]', [
+                    'keys' => collect($massProdDataArray)
+                        ->flatMap(fn($r) => array_keys($r['data'] ?? []))
+                        ->unique()
+                        ->values()
+                        ->toArray()
+                ]);
+            }
 
             $excess = ExcessLayers::where([
                 'mass_prod' => $massPro,
@@ -84,7 +114,16 @@ class TxtExportService
                 $excessDataArray = is_array($decoded) ? $decoded : [];
             }
 
+            // -------------------------
+            // MERGE
+            // -------------------------
             $mergedLayerData = $massProdDataArray;
+            if ($layerKey === '9.5') {
+                Log::info('[9.5 DEBUG STEP 3 BEFORE SLOT DETECTION]', [
+                    'merged_count' => count($mergedLayerData),
+                    'available_titles' => array_map(fn($r) => $r['rowTitle'] ?? null, $mergedLayerData),
+                ]);
+            }
 
             foreach ($excessDataArray as $excessRow) {
 
@@ -94,7 +133,6 @@ class TxtExportService
                 $matched = false;
 
                 foreach ($mergedLayerData as &$mainRow) {
-
                     if (($mainRow['rowTitle'] ?? null) === $rowTitle) {
                         $mainRow['data'] = array_merge(
                             $mainRow['data'] ?? [],
@@ -104,7 +142,6 @@ class TxtExportService
                         break;
                     }
                 }
-
                 unset($mainRow);
 
                 if (!$matched) {
@@ -112,16 +149,64 @@ class TxtExportService
                 }
             }
 
-            $boxes = [];
+            // -------------------------
+            // SLOT DETECTION
+            // -------------------------
+            if ($layerKey === '9.5') {
 
-            foreach ($mergedLayerData as $item) {
-                $boxes = array_unique(array_merge(
-                    $boxes,
-                    array_keys($item['data'] ?? [])
-                ));
+                $boxes = $this->detectSlotGroup($mergedLayerData);
+
+                // safety fallback (prevents downstream break)
+                if (empty($boxes)) {
+                    Log::warning('[9.5 SLOT DETECTION FAILED]', [
+                        'fallback_used' => true,
+                        'reason' => 'No exact match for group1 or group2',
+                    ]);
+
+                    // optional fallback: assume group2 as safest default
+                    $boxes = ['B','D','F','H','K'];
+                }
+
+                Log::info('[9.5 DETECTED SLOT GROUP]', [
+                    'boxes' => $boxes
+                ]);
+
+            } else {
+
+                $boxes = [];
+
+                foreach ($mergedLayerData as $item) {
+                    $boxes = array_merge($boxes, array_keys($item['data'] ?? []));
+                }
+
+                $boxes = array_values(array_unique($boxes));
             }
 
-            $allBoxes = array_unique(array_merge($allBoxes, $boxes));
+            if ($layerKey !== '9.5') {
+                $allBoxes = array_values(array_unique(array_merge($allBoxes, $boxes)));
+            }
+
+            if ($layerKey === '9.5') {
+                Log::info('[9.5 DEBUG STEP 4 FINAL BOXES]', [
+                    'boxes' => $boxes,
+                    'box_count' => count($boxes),
+                ]);
+            }
+
+            // -------------------------
+            // BUILD ROWS
+            // -------------------------
+
+             if ($layerKey === '9.5') {
+
+                $outputRows['9.5'] = $this->buildLayer9_5Rows(
+                    $mergedLayerData,
+                    $categoryRows->all(),
+                    $lotModelCodeCache
+                );
+
+                continue;
+            }
 
             foreach ($boxes as $area) {
 
@@ -146,13 +231,20 @@ class TxtExportService
                     $title = strtolower(str_replace([' ', ':', '.', '/'], '', $item['rowTitle'] ?? ''));
                     $value = $item['data'][$area] ?? '0';
 
+                    // -------------------------
+                    // 9.5 SLOT VALUE TRACE
+                    // -------------------------
+                    if ($layerKey === '9.5' && $area === 'A') {
+                        Log::info('[9.5 VALUE TRACE]', [
+                            'rowTitle' => $item['rowTitle'] ?? null,
+                            'value' => $value
+                        ]);
+                    }
+
                     switch ($title) {
 
                         case 'model':
-                            // IMPORTANT: keep FULL model for matching
                             $rawModelFull = $value;
-
-                            // only sanitize for output
                             $rowData['MODEL_NAME'] = $this->sanitizeModelName($value);
                             break;
 
@@ -190,35 +282,20 @@ class TxtExportService
                 }
 
                 // -------------------------
-                // MODEL CODE RESOLUTION
+                // MODEL CODE RESOLUTION DEBUG
                 // -------------------------
                 $lotKey = trim($rawModelFull ?? '') . '|' . trim($rawLot ?? '');
 
                 if (!isset($lotModelCodeCache[$lotKey])) {
-
-                    Log::info('[MODEL_CODE START]', [
-                        'layer' => $layerKey,
-                        'area' => $area,
-                        'rawModel' => $rawModelFull,
-                        'rawLot' => $rawLot,
-                        'lotKey' => $lotKey,
-                    ]);
-
                     $matchedSerial = null;
 
                     foreach ($categoryRows as $cat) {
-
                         if (
                             $cat->actual_model === $rawModelFull &&
                             $cat->jhcurve_lotno === $rawLot
                         ) {
                             $matchedSerial = $cat->tpm_data_serial;
 
-                            Log::info('[MODEL_CODE CATEGORY MATCH FOUND]', [
-                                'serial' => $matchedSerial,
-                                'model' => $cat->actual_model,
-                                'lot' => $cat->jhcurve_lotno,
-                            ]);
 
                             break;
                         }
@@ -226,22 +303,11 @@ class TxtExportService
 
                     if (!$matchedSerial) {
 
-                        Log::warning('[MODEL_CODE NO SERIAL MATCH]', [
-                            'rawModel' => $rawModelFull,
-                            'rawLot' => $rawLot,
-                        ]);
-
                         $lotModelCodeCache[$lotKey] = '0';
 
                     } else {
 
                         $tpm = TPMData::where('serial_no', $matchedSerial)->first();
-
-                        Log::info('[MODEL_CODE TPM LOOKUP]', [
-                            'serial' => $matchedSerial,
-                            'found' => (bool) $tpm,
-                            'code_no' => $tpm->code_no ?? null,
-                        ]);
 
                         $lotModelCodeCache[$lotKey] = $tpm->code_no ?? '0';
                     }
@@ -253,16 +319,37 @@ class TxtExportService
             }
         }
 
+        // -------------------------
+        // FLATTEN (UNCHANGED)
+        // -------------------------
         $finalRows = [];
 
         $layerOrder = ['9.5','9','8','7','6','5','4','3','2','1'];
 
         foreach ($layerOrder as $layer) {
 
-            $outputLayer = $layer === '9.5' ? 'T' : (string)$layer;
+            if ($layer === '9.5') {
+
+                $fixedAreas = ['A','B','C','D','E','F','G','H','J','K'];
+
+                foreach ($fixedAreas as $area) {
+
+                    $row = $outputRows['9.5'][$area] ?? [
+                        'MODEL_NAME'=>0,'COATING_MC_NO'=>0,'LOT_NO'=>0,'MC_NO'=>0,
+                        'QTY'=>0,'COATING'=>0,'WT'=>0,'BOX_NO'=>0,
+                        'MODEL_CODE'=>0,'RAW_MATERIAL_CODE'=>0,
+                    ];
+
+                    $finalRows[] = array_merge([
+                        'LAYER' => 'T',
+                        'AREA'  => $area
+                    ], $row);
+                }
+
+                continue;
+            }
 
             foreach ($allBoxes as $area) {
-
                 $row = data_get($outputRows, "{$layer}.{$area}", [
                     'MODEL_NAME'=>0,'COATING_MC_NO'=>0,'LOT_NO'=>0,'MC_NO'=>0,
                     'QTY'=>0,'COATING'=>0,'WT'=>0,'BOX_NO'=>0,
@@ -270,7 +357,7 @@ class TxtExportService
                 ]);
 
                 $finalRows[] = array_merge([
-                    'LAYER' => $outputLayer,
+                    'LAYER' => (string)$layer,
                     'AREA'  => $area
                 ], $row);
             }
@@ -282,7 +369,7 @@ class TxtExportService
             ->map(fn($row) => implode(',', $row))
             ->prepend($header);
 
-        //dd($lines->toArray());
+        dd($lines->toArray());
 
         $directory = public_path("files/{$furnace_no} {$massPro}");
 
@@ -296,6 +383,152 @@ class TxtExportService
     }
 
     //dd($lines->toArray());
+
+    private function detectSlotGroup(array $layerData): array
+    {
+        $allKeys = [];
+
+        foreach ($layerData as $row) {
+            $allKeys = array_merge($allKeys, array_keys($row['data'] ?? []));
+        }
+
+        $allKeys = array_values(array_unique($allKeys));
+        sort($allKeys);
+
+        $group1 = ['A','C','E','G','J'];
+        $group2 = ['B','D','F','H','K'];
+
+        sort($group1);
+        sort($group2);
+
+        if ($allKeys === $group1) {
+            return $group1;
+        }
+
+        if ($allKeys === $group2) {
+            return $group2;
+        }
+
+        // fallback safety net
+        return [];
+    }
+
+    private function buildLayer9_5Rows(
+        array $layerData,
+        array $categoryRows,
+        array &$lotModelCodeCache
+    ): array
+    {
+        $output = [];
+
+        $boxes = $this->detectSlotGroup($layerData);
+
+        foreach ($boxes as $area) {
+
+            $rowData = [
+                'MODEL_NAME'        => '0',
+                'COATING_MC_NO'     => '0',
+                'LOT_NO'            => '0',
+                'MC_NO'             => '0',
+                'QTY'               => '0',
+                'COATING'           => '0',
+                'WT'                => '0',
+                'BOX_NO'            => '0',
+                'MODEL_CODE'        => '0',
+                'RAW_MATERIAL_CODE' => '0',
+            ];
+
+            $rawModelFull = null;
+            $rawLot = null;
+
+            foreach ($layerData as $item) {
+
+                $title = strtolower(str_replace([' ', ':', '.', '/'], '', $item['rowTitle'] ?? ''));
+                $value = $item['data'][$area] ?? '0';
+
+                Log::info('[9.5 METHOD TRACE]', [
+                    'area' => $area,
+                    'title' => $title,
+                    'available_keys' => array_keys($item['data'] ?? []),
+                    'resolved_value' => $value,
+                ]);
+
+                switch ($title) {
+
+                    case 'model':
+                        $rawModelFull = $value;
+                        $rowData['MODEL_NAME'] = $this->sanitizeModelName($value);
+                        break;
+
+                    case 'coatingmcno':
+                        $rowData['COATING_MC_NO'] = $this->normalizeCoatingMcNo($value);
+                        break;
+
+                    case 'ltno':
+                        $rowData['LOT_NO'] = $this->normalizeLotNo($value);
+                        $rawLot = $value;
+                        $rowData['MC_NO'] = $this->extractMcNo($value);
+                        break;
+
+                    case 'qty(pcs)':
+                        $rowData['QTY'] = $value;
+                        break;
+
+                    case 'coating':
+                        $rowData['COATING'] = $value;
+                        break;
+
+                    case 'wt(kg)':
+                        $rowData['WT'] = $value;
+                        break;
+
+                    case 'boxno':
+                        $clean = str_replace(' ', '', $value);
+                        $rowData['BOX_NO'] = str_pad($clean ?: '0', 11, '0', STR_PAD_LEFT);
+                        break;
+
+                    case 'rawmaterialcode':
+                        $rowData['RAW_MATERIAL_CODE'] = $value;
+                        break;
+                }
+            }
+
+            $lotKey = trim($rawModelFull ?? '') . '|' . trim($rawLot ?? '');
+
+            if (!isset($lotModelCodeCache[$lotKey])) {
+
+                $matchedSerial = null;
+
+                foreach ($categoryRows as $cat) {
+
+                    if (
+                        $cat->actual_model === $rawModelFull &&
+                        $cat->jhcurve_lotno === $rawLot
+                    ) {
+                        $matchedSerial = $cat->tpm_data_serial;
+                        break;
+                    }
+                }
+
+                if (!$matchedSerial) {
+
+                    $lotModelCodeCache[$lotKey] = '0';
+
+                } else {
+
+                    $tpm = TPMData::where('serial_no', $matchedSerial)->first();
+
+                    $lotModelCodeCache[$lotKey] = $tpm->code_no ?? '0';
+                }
+            }
+
+            $rowData['MODEL_CODE'] = $lotModelCodeCache[$lotKey];
+
+            $output[$area] = $rowData;
+        }
+
+        return $output;
+    }
 
     protected function sanitizeModelName(?string $value): string
     {
