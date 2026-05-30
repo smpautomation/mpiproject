@@ -9467,7 +9467,7 @@ const evaluateAllRejectReasons = async () => {
 
         if (
             reportihr95Minimum.value <
-                Number(inspectioniHcStandard.value) - 750 &&
+                Number(inspectioniHcStandard.value) - 750 ||
             getAlliHr95NG.value.includes("1")
         ) {
             //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
@@ -9477,7 +9477,7 @@ const evaluateAllRejectReasons = async () => {
 
         if (
             reportihr98Minimum.value <
-                Number(inspectioniHcStandard.value) - 1250 &&
+                Number(inspectioniHcStandard.value) - 1250 ||
             getAlliHr98NG.value.includes("1")
         ) {
             //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
