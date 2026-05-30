@@ -77,7 +77,7 @@
 
                         <!-- Content layer -->
                         <div class="relative z-10">
-                            
+
                             <!-- Header -->
                             <div class="mb-6 text-center">
                                 <div
@@ -9465,21 +9465,13 @@ const evaluateAllRejectReasons = async () => {
             withAdditionalSampleForRemarks.value = true;
         }
 
-        if (
-            reportihr95Minimum.value <
-                Number(inspectioniHcStandard.value) - 750 ||
-            getAlliHr95NG.value.includes("1")
-        ) {
+        if (getAlliHr95NG.value.includes("1")) {
             //console.log(`N.G Hr95: ${reportihr95Minimum.value} < ${Number(inspectioniHcStandard.value) - 750}`);
             noteReasonForReject.value.push("- N.G Hr95");
             withAdditionalSampleForRemarks.value = true;
         }
 
-        if (
-            reportihr98Minimum.value <
-                Number(inspectioniHcStandard.value) - 1250 ||
-            getAlliHr98NG.value.includes("1")
-        ) {
+        if (getAlliHr98NG.value.includes("1")) {
             //console.log(`N.G Hr98: ${reportihr98Minimum.value} < ${Number(inspectioniHcStandard.value) - 1250}`);
             noteReasonForReject.value.push("- N.G Hr98");
             withAdditionalSampleForRemarks.value = true;
