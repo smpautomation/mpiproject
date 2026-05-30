@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\BreaklotInitialLotHt;
 use App\Models\BreaklotCoating;
 use App\Models\BreaklotSecondCoating;
-use App\Models\TPMData; //Before: App\Models\TpmData
+use App\Models\TPMData;
 use App\Models\TPMDataCategory;
 use App\Models\MassProduction;
 use App\Models\ExcessLayers;
@@ -62,15 +62,6 @@ class TxtExportService
 
             $massProdRaw = $massProdData->{$layerColumn} ?? null;
 
-            if ($layerKey === '9.5') {
-                Log::info('[9.5 DEBUG STEP 1 RAW FETCH]', [
-                    'layerColumn' => $layerColumn,
-                    'is_null' => $massProdRaw === null,
-                    'type' => gettype($massProdRaw),
-                    'sample_raw' => $massProdRaw,
-                ]);
-            }
-
             $massProdDataArray = is_array($massProdRaw)
                 ? $massProdRaw
                 : json_decode($massProdRaw, true);
@@ -84,19 +75,6 @@ class TxtExportService
             }
 
             $massProdDataArray = is_array($massProdDataArray) ? $massProdDataArray : [];
-
-            // -------------------------
-            // 9.5 RAW STRUCTURE DEBUG
-            // -------------------------
-            if ($layerKey === '9.5') {
-                Log::info('[9.5 STEP 0 RAW KEYS]', [
-                    'keys' => collect($massProdDataArray)
-                        ->flatMap(fn($r) => array_keys($r['data'] ?? []))
-                        ->unique()
-                        ->values()
-                        ->toArray()
-                ]);
-            }
 
             $excess = ExcessLayers::where([
                 'mass_prod' => $massPro,
@@ -118,12 +96,6 @@ class TxtExportService
             // MERGE
             // -------------------------
             $mergedLayerData = $massProdDataArray;
-            if ($layerKey === '9.5') {
-                Log::info('[9.5 DEBUG STEP 3 BEFORE SLOT DETECTION]', [
-                    'merged_count' => count($mergedLayerData),
-                    'available_titles' => array_map(fn($r) => $r['rowTitle'] ?? null, $mergedLayerData),
-                ]);
-            }
 
             foreach ($excessDataArray as $excessRow) {
 
@@ -158,18 +130,10 @@ class TxtExportService
 
                 // safety fallback (prevents downstream break)
                 if (empty($boxes)) {
-                    Log::warning('[9.5 SLOT DETECTION FAILED]', [
-                        'fallback_used' => true,
-                        'reason' => 'No exact match for group1 or group2',
-                    ]);
 
                     // optional fallback: assume group2 as safest default
                     $boxes = ['B','D','F','H','K'];
                 }
-
-                Log::info('[9.5 DETECTED SLOT GROUP]', [
-                    'boxes' => $boxes
-                ]);
 
             } else {
 
@@ -184,13 +148,6 @@ class TxtExportService
 
             if ($layerKey !== '9.5') {
                 $allBoxes = array_values(array_unique(array_merge($allBoxes, $boxes)));
-            }
-
-            if ($layerKey === '9.5') {
-                Log::info('[9.5 DEBUG STEP 4 FINAL BOXES]', [
-                    'boxes' => $boxes,
-                    'box_count' => count($boxes),
-                ]);
             }
 
             // -------------------------
@@ -371,13 +328,12 @@ class TxtExportService
 
         //dd($lines->toArray());
 
-        $directory = public_path("files/{$furnace_no} {$massPro}");
-
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
-
-        File::put("{$directory}/Data1.txt", implode("\n", $lines->toArray()));
+        $this->writeExportFile(
+            $furnace_no,
+            $massPro,
+            'Data1.txt',
+            $lines->toArray()
+        );
 
         return "";
     }
@@ -852,14 +808,12 @@ class TxtExportService
 
         //dd($lines->toArray()); // verify output
 
-        // --- Save ---
-        $directory = public_path("files/{$furnace_no} {$massPro}");
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
-
-        $filePath = "{$directory}/Data2.txt";
-        File::put($filePath, implode("\n", $lines->toArray()));
+        $this->writeExportFile(
+            $furnace_no,
+            $massPro,
+            'Data2.txt',
+            $lines->toArray()
+        );
 
         return "";
     }
@@ -1164,14 +1118,12 @@ class TxtExportService
         }
 
         //dd($lines);
-
-        $directory = public_path("files/{$furnace_no} {$massPro}");
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
-
-        $filePath = "{$directory}/Data3.txt";
-        File::put($filePath, implode("\n", $lines));
+        $this->writeExportFile(
+            $furnace_no,
+            $massPro,
+            'Data3.txt',
+            $lines
+        );
 
         return "";
     }
@@ -1254,8 +1206,7 @@ class TxtExportService
 
         return "";
     }
-
-
+    
     private function convertToString($value)
     {
         if (is_array($value)) {
@@ -1267,5 +1218,172 @@ class TxtExportService
         }
 
         return (string)$value; // Fallback for strings, numbers, and null
+    }
+
+    private function writeExportFile(string $furnace_no, string $massPro, string $filename, array $lines): void
+    {
+        $this->ensureExportDirectory($furnace_no, $massPro);
+
+        $filePath = $this->resolveExportFilePath($furnace_no, $massPro, $filename);
+
+        File::put($filePath, implode("\n", $lines));
+    }
+
+    private function ensureExportDirectory(string $furnace_no, string $massPro): string
+    {
+        $directory = public_path("files/{$furnace_no} {$massPro}");
+
+        if (!File::isDirectory($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        return $directory;
+    }
+
+    private function resolveExportFilePath(string $furnace_no, string $massPro, string $filename): string
+    {
+        return public_path("files/{$furnace_no} {$massPro}") . DIRECTORY_SEPARATOR . $filename;
+    }
+
+    public function validateModelRawMaterialLinkage(string $furnace_no, string $massPro)
+    {
+        $transformedFurnace = substr($furnace_no, 0, 1) . '-' . substr($furnace_no, 1);
+
+        $tpmRows = TPMData::where('furnace', 'LIKE', "{$transformedFurnace}%")
+            ->where('mass_prod', $massPro)
+            ->get(['code_no', 'raw_material_code', 'serial_no']);
+
+        if ($tpmRows->isEmpty()) {
+            return [
+                'status' => false,
+                'reason' => 'No TPM data found',
+            ];
+        }
+
+        $serials = $tpmRows->pluck('serial_no')->unique()->toArray();
+
+        $categoryMap = TPMDataCategory::whereIn('tpm_data_serial', $serials)
+            ->get(['actual_model', 'jhcurve_lotno', 'tpm_data_serial']);
+
+        $data1 = [];
+        $data2 = [];
+        $data3 = [];
+
+        $serialMap = []; // traceability index
+
+        foreach ($tpmRows as $row) {
+
+            $serial = $row->serial_no;
+            $category = $categoryMap->firstWhere('tpm_data_serial', $serial);
+
+            $model = $category->actual_model ?? 'NULL_MODEL';
+            $lot   = $category->jhcurve_lotno ?? 'NULL_LOT';
+
+            $modelCode = $row->code_no ?? '0';
+            $rawCode   = $row->raw_material_code ?? '0';
+
+            $pair = $modelCode . '|' . $rawCode;
+
+            $data1[$pair][] = $serial;
+            $data3[$pair][] = $serial;
+
+            if ($model !== 'NULL_MODEL' && $lot !== 'NULL_LOT') {
+                $data2[$model . '|' . $lot][] = $serial;
+            }
+
+            $serialMap[$serial] = [
+                'model' => $model,
+                'lot' => $lot,
+                'pair' => $pair
+            ];
+        }
+
+        /**
+         * -----------------------------------------
+         * LINKAGE ANALYSIS ENGINE
+         * -----------------------------------------
+         */
+
+        $links = [];
+
+        foreach ($data1 as $pair => $serialList1) {
+            foreach ($data2 as $key2 => $serialList2) {
+                if (array_intersect($serialList1, $serialList2)) {
+                    $links[] = "DATA1 ↔ DATA2 : {$pair} ↔ {$key2}";
+                }
+            }
+
+            foreach ($data3 as $pair3 => $serialList3) {
+                if (array_intersect($serialList1, $serialList3)) {
+                    $links[] = "DATA1 ↔ DATA3 : {$pair} ↔ {$pair3}";
+                }
+            }
+        }
+
+        foreach ($data2 as $key2 => $serialList2) {
+            foreach ($data3 as $pair3 => $serialList3) {
+                if (array_intersect($serialList2, $serialList3)) {
+                    $links[] = "DATA2 ↔ DATA3 : {$key2} ↔ {$pair3}";
+                }
+            }
+        }
+
+        /**
+         * -----------------------------------------
+         * FAILURE ANALYSIS
+         * -----------------------------------------
+         */
+
+        if (empty($links)) {
+
+            // isolate orphan nodes
+            $orphans = [];
+
+            foreach ($serialMap as $serial => $info) {
+                $orphans[] = [
+                    'serial' => $serial,
+                    'model' => $info['model'],
+                    'lot' => $info['lot'],
+                    'pair' => $info['pair']
+                ];
+            }
+
+            return [
+                'status' => false,
+                'reason' => 'No linkage detected between Data1 / Data2 / Data3 exports',
+                'breakdown' => [
+                    'links_found' => [],
+                    'orphan_samples' => array_slice($orphans, 0, 20),
+                    'data1_keys' => array_keys($data1),
+                    'data2_keys' => array_keys($data2),
+                    'data3_keys' => array_keys($data3),
+                ]
+            ];
+        }
+
+        /**
+         * -----------------------------------------
+         * SUCCESS
+         * -----------------------------------------
+         */
+
+        return true;
+    }
+
+    private function hasIntersection(array $a, array $b): bool
+    {
+        if (empty($a) || empty($b)) {
+            return false;
+        }
+
+        $flip = array_flip($a);
+
+        foreach ($b as $item) {
+            if (isset($flip[$item])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
