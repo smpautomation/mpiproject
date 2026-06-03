@@ -814,7 +814,7 @@ For Login form...
 }
 
 .animate-marquee {
-    animation: marquee 120s linear infinite;
+    animation: marquee 500s linear infinite;
 }
 
 </style>
