@@ -484,6 +484,8 @@ Route::get('/mass-production/{furnace}/{massprod}/completed-layers-coating', [Ma
 //);
 Route::get('/mass-production/{furnace}/{massprod}/coating-completed-layers', [MassProductionController::class, 'getAllCoatingCompleteLayers']);
 
+Route::get('/mass-production/{furnace}/{mass_prod}/layer-unified-state', [MassProductionController::class, 'getLayerUnifiedState']);
+
 //Route::get(
 //    '/mass-productions/{massprod}/filmpasting-completed-layers',
 //    [MassProductionController::class, 'getAllFilmPastingCompletedLayers']

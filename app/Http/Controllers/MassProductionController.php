@@ -766,8 +766,37 @@ class MassProductionController extends Controller
             ->sort()
             ->values();
 
+        $breaklotFilmLayers = BreaklotFilmpasting::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->get(['layer', 'model', 'lot_no'])
+            ->map(function ($item) {
+                return [
+                    'layer' => (string) $item->layer,
+                    'model' => $item->model,
+                    'lot_no' => $item->lot_no,
+                ];
+            });
+
+        $breaklotCoatingLayers = BreaklotCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->get(['layer', 'model', 'lot_no'])
+            ->map(function ($item) {
+                return [
+                    'layer' => (string) $item->layer,
+                    'model' => $item->model,
+                    'lot_no' => $item->lot_no,
+                ];
+            });
+
+        $breaklotLayers = collect($breaklotFilmLayers->all())
+            ->merge($breaklotCoatingLayers->all())
+            ->values();
+
         return response()->json([
-            'completed_layers' => $layers
+            'completed_layers' => $layers,
+            'breaklot_layers' => $breaklotLayers,
         ]);
     }
 

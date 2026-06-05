@@ -1537,221 +1537,154 @@
                 </div>
             </div>
 
+
+
             <Modal
-                :show="showGraphProceedConfirmation"
-                @close="showGraphProceedConfirmation = false"
-            >
-                <!-- Modal Content - goes directly in the slot -->
-                <div class="relative">
-                    <!-- Header with Gradient -->
-                    <div
-                        class="relative px-6 py-6 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700"
-                    >
-                        <!-- Geometric Pattern Background -->
-                        <div class="absolute inset-0 opacity-10">
-                            <svg
-                                class="w-full h-full"
-                                viewBox="0 0 60 60"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <defs>
-                                    <pattern
-                                        id="hexagon"
-                                        width="12"
-                                        height="12"
-                                        patternUnits="userSpaceOnUse"
-                                    >
-                                        <polygon
-                                            points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="0.5"
-                                        />
-                                    </pattern>
-                                </defs>
-                                <rect
-                                    width="100%"
-                                    height="100%"
-                                    fill="url(#hexagon)"
-                                />
-                            </svg>
-                        </div>
+    :show="showGraphProceedConfirmation"
+    @close="showGraphProceedConfirmation = false"
+>
+    <div class="relative w-full max-w-2xl mx-auto bg-white rounded-xl max-h-[80vh] flex flex-col overflow-hidden">
 
-                        <!-- Header Content -->
-                        <div class="relative flex items-center justify-between">
-                            <!-- Create Icon -->
-                            <div
-                                class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-25 border border-white rounded-xl backdrop-blur-sm border-opacity-40"
-                            >
-                                <svg
-                                    class="w-6 h-6 text-white"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </div>
+        <!-- HEADER -->
+        <div class="relative px-5 py-4 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
 
-                            <!-- Close Button -->
-                            <button
-                                @click="showGraphProceedConfirmation = false"
-                                class="p-2 text-white transition-all duration-200 rounded-lg hover:text-gray-200 hover:bg-white hover:bg-opacity-20 hover:scale-110"
-                            >
-                                <svg
-                                    class="w-5 h-5"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+            <div class="absolute inset-0 opacity-10">
+                <svg class="w-full h-full" viewBox="0 0 60 60">
+                    <defs>
+                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                            <polygon
+                                points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="0.5"
+                            />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#hexagon)" />
+                </svg>
+            </div>
 
-                    <!-- Main Content -->
-                    <div class="px-6 py-6">
-                        <!-- Title -->
-                        <div class="mb-6 text-center">
-                            <h3
-                                class="flex items-center justify-center mb-2 space-x-2 text-xl font-bold text-gray-900"
-                            >
-                                <svg
-                                    class="w-5 h-5 text-cyan-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                <span>Confirm Submission</span>
-                            </h3>
-                            <p class="text-sm leading-relaxed text-gray-600">
-                                Are you sure? Please ensure all inputs are
-                                correct before proceeding.
-                            </p>
-                        </div>
-
-                        <!-- Validation Checklist -->
-                        <div
-                            class="p-4 mb-6 border rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 border-cyan-200"
-                        >
-                            <h4
-                                class="flex items-center mb-3 space-x-2 text-sm font-semibold text-gray-800"
-                            >
-                                <svg
-                                    class="w-4 h-4 text-cyan-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                <span>Validation Summary</span>
-                            </h4>
-
-                            <div class="space-y-2 text-xs text-gray-700">
-                                <div class="flex items-center space-x-2">
-                                    <div
-                                        class="w-1.5 h-1.5 bg-cyan-500 rounded-full"
-                                    ></div>
-                                    <span>All required fields completed</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <div
-                                        class="w-1.5 h-1.5 bg-teal-500 rounded-full"
-                                    ></div>
-                                    <span>Data validation passed</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <div
-                                        class="w-1.5 h-1.5 bg-cyan-500 rounded-full"
-                                    ></div>
-                                    <span>Ready for database insertion</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex space-x-3">
-                            <!-- Cancel Button -->
-                            <button
-                                @click="showGraphProceedConfirmation = false"
-                                class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 transform hover:scale-[0.98] active:scale-95 flex items-center justify-center space-x-2"
-                            >
-                                <svg
-                                    class="w-4 h-4"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                <span>Cancel</span>
-                            </button>
-
-                            <!-- Confirm Button with Animation -->
-                            <button
-                                @click="finalizeGraph()"
-                                :disabled="showLoadingForGraphAndTables"
-                                :class="[
-                                    'group flex-1 px-4 py-3 text-white font-semibold text-sm rounded-xl shadow-lg relative overflow-hidden transition-all duration-300 transform flex items-center justify-center',
-                                    showLoadingForGraphAndTables
-                                        ? 'bg-gray-400 cursor-not-allowed hover:from-gray-400 hover:to-gray-400 focus:ring-gray-300'
-                                        : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-cyan-300 hover:shadow-xl hover:scale-[1.02] active:scale-95',
-                                ]"
-                            >
-                                <!-- Shine effect -->
-                                <div
-                                    class="absolute inset-0 transition-transform transform -translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:opacity-20 group-hover:translate-x-full duration-600"
-                                ></div>
-
-                                <span
-                                    class="relative flex items-center justify-center space-x-2"
-                                >
-                                    <svg
-                                        class="w-4 h-4 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                    <span>{{
-                                        showLoadingForGraphAndTables
-                                            ? "Processing..."
-                                            : "Submit Now"
-                                    }}</span>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Bottom accent line -->
-                    <div
-                        class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"
-                    ></div>
+            <div class="relative flex items-center justify-between text-white">
+                <div class="font-semibold text-sm tracking-wide">
+                    Layer Compliance Check
                 </div>
-            </Modal>
+
+                <button
+                    @click="showGraphProceedConfirmation = false"
+                    class="text-white/90 hover:text-white text-lg"
+                >
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="px-5 py-4 overflow-y-auto">
+
+            <!-- WARNING -->
+            <div
+                v-if="layer_unified_state.some(l => l.has_encoded_data && !l.is_completed)"
+                class="mb-3 px-3 py-2 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700"
+            >
+                ⚠ Some layers are not completed. Submission may be blocked.
+            </div>
+
+            <!-- LAYER GRID (compact tiles) -->
+            <div class="grid grid-cols-2 gap-2 mb-4">
+
+                <div
+                    v-for="layer in layer_unified_state"
+                    :key="layer.layer"
+                    class="rounded-lg border p-2 transition-all"
+                    :class="layer.is_completed
+                        ? 'border-green-200 bg-green-50'
+                        : 'border-red-200 bg-red-50'"
+                >
+
+                    <!-- TOP ROW -->
+                    <div class="flex justify-between items-center">
+
+                        <div class="text-xs font-semibold">
+                            Layer {{ layer.layer }}
+                        </div>
+
+                        <div class="text-[10px] font-bold"
+                            :class="layer.is_completed ? 'text-green-700' : 'text-red-600'"
+                        >
+                            {{ layer.is_completed ? 'OK' : 'BLOCK' }}
+                        </div>
+
+                    </div>
+
+                    <!-- BREAKLOT INDICATOR ONLY (compact) -->
+                    <div
+                        class="mt-1 text-[10px] text-gray-600 flex items-center justify-between"
+                    >
+                        <span>
+                            Breaklots
+                        </span>
+
+                        <span
+                            class="font-semibold"
+                            :class="layer.has_breaklot ? 'text-amber-600' : 'text-gray-400'"
+                        >
+                            {{ layer.has_breaklot ? 'YES' : '—' }}
+                        </span>
+                    </div>
+
+                    <!-- STATUS DOT -->
+                    <div class="mt-2 flex gap-1">
+                        <span
+                            class="w-2 h-2 rounded-full"
+                            :class="layer.is_completed ? 'bg-green-500' : 'bg-red-500'"
+                        ></span>
+
+                        <span
+                            class="w-2 h-2 rounded-full"
+                            :class="layer.has_breaklot ? 'bg-amber-500' : 'bg-gray-300'"
+                        ></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="flex gap-2">
+
+                <button
+                    @click="showGraphProceedConfirmation = false"
+                    class="flex-1 py-2 text-xs rounded-lg bg-gray-100 hover:bg-gray-200"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    @click="finalizeGraph()"
+                    :disabled="
+                        showLoadingForGraphAndTables ||
+                        layer_unified_state.some(l => l.has_encoded_data && !l.is_completed)
+                    "
+                    class="flex-1 py-2 text-xs rounded-lg text-white font-semibold transition-all"
+                    :class="layer_unified_state.some(l => !l.is_completed)
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-cyan-600 to-teal-600'"
+                >
+                    {{ showLoadingForGraphAndTables ? 'Processing...' : 'Submit' }}
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER STRIP -->
+        <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
+
+    </div>
+</Modal>
+
+
+
             <Modal
                 :show="showMiasFactorError"
                 @close="handleMiasFactorModalClose"
@@ -1942,6 +1875,8 @@ const furnace_names = ref([]);
 const massProd_names = ref([]);
 const isDataExisting = ref(false);
 const available_layers = ref([]);
+const breaklot_layers = ref([]);
+const layer_unified_state = ref([]);
 const lotNoLists = ref([]);
 const sets = ref({});
 
@@ -2096,7 +2031,8 @@ const fetchAvailableLayers = async () => {
             `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/coating-completed-layers`,
         );
         available_layers.value = response.data.completed_layers;
-        //console.log("Available Layers: ", available_layers.value);
+        breaklot_layers.value = response.data.breaklot_layers;
+        //console.log("Breaklot Layers: ", breaklot_layers.value);
     } catch (error) {
         console.error(error);
         toast.error("Failed to fetch available layers from Heat Treatment");
@@ -2110,6 +2046,20 @@ const fetchAvailableLayers = async () => {
             "fetchAvailableLayers",
             "Failed to fetch available layers from Heat Treatment",
         );
+    }
+};
+
+const fetchLayerUnifiedState = async () => {
+    try {
+        const response = await axios.get(
+            `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-unified-state`
+        );
+
+        layer_unified_state.value = response.data.layers;
+
+    } catch (error) {
+        console.error(error);
+        toast.error("Failed to fetch layer state");
     }
 };
 
@@ -2144,6 +2094,7 @@ const fetchRejectFromReportData = async () => {
 
 const fetchLayerModelAndLotno = async () => {
     await fetchAvailableLayers();
+    await fetchLayerUnifiedState();
     // Prevent execution if layer is invalid/not available
     if (
         !selectedMassProd.value ||
@@ -2400,6 +2351,7 @@ watch(
 watch(selectedMassProd, async (newVal, oldVal) => {
     if (newVal) {
         await fetchAvailableLayers();
+        await fetchLayerUnifiedState();
     }
 });
 
