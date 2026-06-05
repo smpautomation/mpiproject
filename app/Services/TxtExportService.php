@@ -597,25 +597,20 @@ class TxtExportService
 
         $value = trim($value);
 
-        // Remove everything after dash: 421/543-3 -> 421/543
+        // remove everything after dash: 421/543-3 -> 421/543
         $value = preg_replace('/-.*/', '', $value);
 
-        // If no slash, just return what's left
-        if (!str_contains($value, '/')) {
-            return $value;
+        // if slash exists, ALWAYS take LEFT side
+        if (str_contains($value, '/')) {
+            [$left] = explode('/', $value, 2);
+            $left = preg_replace('/\D/', '', $left);
+            return $left !== '' ? $left : '0';
         }
 
-        [$a, $b] = explode('/', $value, 2);
+        // no slash case: just digits cleanup
+        $value = preg_replace('/\D/', '', $value);
 
-        // Keep only digits
-        $a = preg_replace('/\D/', '', $a);
-        $b = preg_replace('/\D/', '', $b);
-
-        if ($a === '' || $b === '') {
-            return $a !== '' ? $a : ($b !== '' ? $b : '0');
-        }
-
-        return ((int)$a <= (int)$b) ? $a : $b;
+        return $value !== '' ? $value : '0';
     }
 
 
