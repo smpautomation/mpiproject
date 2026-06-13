@@ -1540,148 +1540,221 @@
 
 
             <Modal
-    :show="showGraphProceedConfirmation"
-    @close="showGraphProceedConfirmation = false"
->
-    <div class="relative w-full max-w-2xl mx-auto bg-white rounded-xl max-h-[80vh] flex flex-col overflow-hidden">
-
-        <!-- HEADER -->
-        <div class="relative px-5 py-4 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
-
-            <div class="absolute inset-0 opacity-10">
-                <svg class="w-full h-full" viewBox="0 0 60 60">
-                    <defs>
-                        <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
-                            <polygon
-                                points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="0.5"
-                            />
-                        </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#hexagon)" />
-                </svg>
-            </div>
-
-            <div class="relative flex items-center justify-between text-white">
-                <div class="font-semibold text-sm tracking-wide">
-                    Layer Compliance Check
-                </div>
-
-                <button
-                    @click="showGraphProceedConfirmation = false"
-                    class="text-white/90 hover:text-white text-lg"
-                >
-                    ✕
-                </button>
-            </div>
-        </div>
-
-        <!-- BODY -->
-        <div class="px-5 py-4 overflow-y-auto">
-
-            <!-- WARNING -->
-            <div
-                v-if="layer_unified_state.some(l => l.has_encoded_data && !l.is_completed)"
-                class="mb-3 px-3 py-2 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700"
+                :show="showGraphProceedConfirmation"
+                @close="showGraphProceedConfirmation = false"
             >
-                ⚠ Some layers are not completed. Submission may be blocked.
-            </div>
+                <div class="w-full max-w-3xl mx-auto bg-white shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
 
-            <!-- LAYER GRID (compact tiles) -->
-            <div class="grid grid-cols-2 gap-2 mb-4">
+                    <!-- HEADER -->
+                    <div class="px-6 py-4 bg-gradient-to-r from-slate-900 via-cyan-800 to-teal-700 text-white">
+                        <div class="flex justify-between items-center">
 
-                <div
-                    v-for="layer in layer_unified_state"
-                    :key="layer.layer"
-                    class="rounded-lg border p-2 transition-all"
-                    :class="layer.is_completed
-                        ? 'border-green-200 bg-green-50'
-                        : 'border-red-200 bg-red-50'"
-                >
+                            <div>
+                                <div class="text-sm font-semibold">
+                                    Layer Compliance Check
+                                </div>
+                                <div class="text-[11px] text-white/70">
+                                    Lot-level coating validation
+                                </div>
+                            </div>
 
-                    <!-- TOP ROW -->
-                    <div class="flex justify-between items-center">
+                            <button
+                                @click="showGraphProceedConfirmation = false"
+                                class="text-white/70 hover:text-white text-lg"
+                            >
+                                ✕
+                            </button>
 
-                        <div class="text-xs font-semibold">
-                            Layer {{ layer.layer }}
+                        </div>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="p-5 overflow-y-auto space-y-5">
+
+                        <!-- BLOCKING REMARK -->
+                        <div
+                            v-if="selectedLotHasIncompleteCoating"
+                            class="rounded-xl border border-red-300 bg-red-50 p-4"
+                        >
+                            <div class="flex items-start gap-3">
+
+                                <div class="text-red-600 text-xl">
+                                    ⚠
+                                </div>
+
+                                <div>
+                                    <div class="font-semibold text-red-800">
+                                        Submission Blocked
+                                    </div>
+
+                                    <div class="mt-1 text-sm text-red-700">
+                                        The selected lot
+                                        <strong>{{ currentValidationModel }}</strong>
+                                        ({{ currentValidationLot }})
+                                        has heat treatment data recorded but does not yet have the
+                                        required coating completion data.
+                                    </div>
+
+                                    <div class="mt-2 text-xs text-red-600">
+                                        Current Layer: {{ currentLayerNo }}
+                                    </div>
+
+                                    <div class="mt-1 text-xs text-red-600">
+                                        Complete the required coating entry for this lot before proceeding with submission.
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
 
-                        <div class="text-[10px] font-bold"
-                            :class="layer.is_completed ? 'text-green-700' : 'text-red-600'"
+                        <!-- SUCCESS REMARK -->
+                        <div
+                            v-else
+                            class="rounded-xl border border-green-300 bg-green-50 p-4"
                         >
-                            {{ layer.is_completed ? 'OK' : 'BLOCK' }}
+                        <div class="mt-1 text-sm text-green-700">
+                            The selected lot
+                            <strong>{{ currentValidationModel }}</strong>
+                            ({{ currentValidationLot }})
+                            has satisfied all required coating validations.
+                        </div>
+
+                        <div class="mt-1 text-xs text-green-600">
+                            Current Layer: {{ currentLayerNo }}
+                        </div>
+                        </div>
+
+                        <!-- LAYERS -->
+                        <div class="space-y-4">
+
+                            <div
+                                v-for="layer in layer_unified_state"
+                                :key="layer.layer"
+                                class="border rounded-xl overflow-hidden"
+                            >
+
+                                <!-- LAYER HEADER -->
+                                <div
+                                    class="px-4 py-2 flex justify-between items-center"
+                                    :class="String(layer.layer) === String(currentLayerNo)
+                                        ? 'bg-cyan-100 border-b border-cyan-200'
+                                        : 'bg-gray-100'"
+                                >
+                                    <div class="text-sm font-semibold">
+                                        Layer {{ layer.layer }}
+                                    </div>
+
+                                    <div
+                                        v-if="String(layer.layer) === String(currentLayerNo)"
+                                        class="text-[10px] font-semibold px-2 py-1 rounded-full bg-cyan-600 text-white"
+                                    >
+                                        SELECTED
+                                    </div>
+                                </div>
+
+                                <!-- LOTS -->
+                                <div class="p-3 space-y-2">
+
+                                    <div
+                                        v-for="(lot, idx) in layer.rows"
+                                        :key="idx"
+                                        class="rounded-lg border p-3 flex justify-between items-center"
+                                        :class="lot.lot_type === 'additional'
+                                            ? 'bg-amber-50 border-amber-200'
+                                            : 'bg-white border-gray-200'"
+                                    >
+
+                                        <!-- LEFT -->
+                                        <div>
+
+                                            <div class="text-xs font-semibold text-gray-800">
+                                                {{ lot.model || 'Unknown Model' }}
+                                            </div>
+
+                                            <div class="text-[11px] text-gray-500">
+                                                Lot No: {{ lot.lot_no || 'N/A' }}
+                                            </div>
+
+                                            <div class="text-[10px] text-gray-400">
+                                                {{ lot.lot_type === 'additional'
+                                                    ? 'Additional Lot'
+                                                    : 'Main Lot'
+                                                }}
+                                            </div>
+
+                                        </div>
+
+                                        <!-- RIGHT STATUS -->
+                                        <div
+                                            class="font-semibold text-xs"
+                                            :class="(
+                                                lot.coating_completed ||
+                                                lot.second_coating_completed
+                                            )
+                                                ? 'text-green-600'
+                                                : (
+                                                    lot.heat_treatment_completed ||
+                                                    lot.second_heat_treatment_completed
+                                                )
+                                                    ? 'text-red-600'
+                                                    : 'text-gray-400'
+                                            "
+                                        >
+                                            {{
+                                                (
+                                                    lot.heat_treatment_completed ||
+                                                    lot.second_heat_treatment_completed
+                                                )
+                                                    ? (
+                                                        lot.coating_completed ||
+                                                        lot.second_coating_completed
+                                                    )
+                                                        ? 'COMPLETED'
+                                                        : 'MISSING COATING'
+                                                    : 'NO DATA'
+                                            }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
                     </div>
 
-                    <!-- BREAKLOT INDICATOR ONLY (compact) -->
-                    <div
-                        class="mt-1 text-[10px] text-gray-600 flex items-center justify-between"
-                    >
-                        <span>
-                            Breaklots
-                        </span>
+                    <!-- FOOTER -->
+                    <div class="px-5 py-3 bg-gray-50 border-t flex justify-between items-center">
 
-                        <span
-                            class="font-semibold"
-                            :class="layer.has_breaklot ? 'text-amber-600' : 'text-gray-400'"
+                        <button
+                            @click="showGraphProceedConfirmation = false"
+                            class="px-4 py-2 text-xs rounded-lg bg-white border hover:bg-gray-100"
                         >
-                            {{ layer.has_breaklot ? 'YES' : '—' }}
-                        </span>
-                    </div>
+                            Cancel
+                        </button>
 
-                    <!-- STATUS DOT -->
-                    <div class="mt-2 flex gap-1">
-                        <span
-                            class="w-2 h-2 rounded-full"
-                            :class="layer.is_completed ? 'bg-green-500' : 'bg-red-500'"
-                        ></span>
+                        <button
+                            @click="finalizeGraph()"
+                            :disabled="
+                                showLoadingForGraphAndTables ||
+                                selectedLotHasIncompleteCoating
+                            "
+                            class="px-4 py-2 text-xs rounded-lg font-semibold text-white transition-all"
+                            :class="
+                                selectedLotHasIncompleteCoating
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:opacity-90'
+                            "
+                        >
+                            {{ showLoadingForGraphAndTables ? 'Processing...' : 'Submit' }}
+                        </button>
 
-                        <span
-                            class="w-2 h-2 rounded-full"
-                            :class="layer.has_breaklot ? 'bg-amber-500' : 'bg-gray-300'"
-                        ></span>
                     </div>
 
                 </div>
-
-            </div>
-
-            <!-- ACTIONS -->
-            <div class="flex gap-2">
-
-                <button
-                    @click="showGraphProceedConfirmation = false"
-                    class="flex-1 py-2 text-xs rounded-lg bg-gray-100 hover:bg-gray-200"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    @click="finalizeGraph()"
-                    :disabled="
-                        showLoadingForGraphAndTables ||
-                        layer_unified_state.some(l => l.has_encoded_data && !l.is_completed)
-                    "
-                    class="flex-1 py-2 text-xs rounded-lg text-white font-semibold transition-all"
-                    :class="layer_unified_state.some(l => !l.is_completed)
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-cyan-600 to-teal-600'"
-                >
-                    {{ showLoadingForGraphAndTables ? 'Processing...' : 'Submit' }}
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- FOOTER STRIP -->
-        <div class="h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-teal-500"></div>
-
-    </div>
-</Modal>
+            </Modal>
 
 
 
@@ -1975,6 +2048,44 @@ const additionalLot = computed(() => {
         : selectedSet.value.lot_no;
 });
 
+const currentValidationModel = computed(() => {
+    return lotNoLists.value.length > 1
+        ? additionalModel.value
+        : jhCurveActualModel.value;
+});
+
+const currentValidationLot = computed(() => {
+    return lotNoLists.value.length > 1
+        ? additionalLot.value
+        : jhCurveLotNo.value;
+});
+
+const selectedLotHasIncompleteCoating = computed(() => {
+
+    for (const layer of layer_unified_state.value) {
+
+        const lot = layer.rows.find(row =>
+            row.model === currentValidationModel.value &&
+            row.lot_no === currentValidationLot.value
+        );
+
+        if (!lot) {
+            continue;
+        }
+
+        const requiresCoating =
+            lot.heat_treatment_completed ||
+            lot.second_heat_treatment_completed;
+
+        const hasCoating =
+            lot.coating_completed ||
+            lot.second_coating_completed;
+
+        return requiresCoating && !hasCoating;
+    }
+
+    return false;
+});
 // Data fetching zone ------ Data fetching zone
 
 const getMassProdLists = async () => {
@@ -2052,10 +2163,43 @@ const fetchAvailableLayers = async () => {
 const fetchLayerUnifiedState = async () => {
     try {
         const response = await axios.get(
-            `/api/mass-production/${selectedFurnace.value}/${selectedMassProd.value}/layer-unified-state`
+            `/api/mass-production-monitoring/${selectedFurnace.value}/${selectedMassProd.value}`
         );
 
-        layer_unified_state.value = response.data.layers;
+        const rawLayers = response.data.data[0].layers;
+
+        const grouped = {};
+
+        rawLayers.forEach(row => {
+            const key = row.layer_no;
+
+            if (!grouped[key]) {
+                grouped[key] = {
+                    layer: key,
+                    has_encoded_data: false,
+                    has_breaklot: false,
+                    rows: []
+                };
+            }
+
+            const layer = grouped[key];
+
+            layer.rows.push(row);
+
+            // Heat treatment gate
+            if (row.heat_treatment_completed || row.second_heat_treatment_completed) {
+                layer.has_encoded_data = true;
+            }
+
+            // Breaklot flag
+            if (row.lot_type === 'additional') {
+                layer.has_breaklot = true;
+            }
+        });
+
+        layer_unified_state.value = Object.values(grouped);
+
+        //console.log('Unified States:', layer_unified_state.value);
 
     } catch (error) {
         console.error(error);
