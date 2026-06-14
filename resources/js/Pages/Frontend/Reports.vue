@@ -5595,7 +5595,7 @@ const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
 const MODELS_SHOW_HIS = ref([]);
-const MODELS_1X1X1 = ref(['AAW0935G', 'AAW0934G', 'TIC0281G']);
+const MODELS_1X1X1 = ref([]);
 
 const undoHistory = ref([]);
 const hasUndoHistory = ref(false);
@@ -7019,6 +7019,9 @@ const checkSpecialJudgement = async () => {
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map((item) => item.model_name);
     //console.log("GX MODELS: ", MODELS_SHOW_GX.value);
+    const responseGetTTMWCData = await axios.get("/api/ttmwc-models");
+    const fetchAllTTMWC = responseGetTTMWCData.data;
+    MODELS_1X1X1.value = fetchAllTTMWC.map((item) => item.model_name);
     const responseGetTTMNCData = await axios.get("/api/ttmnc-models");
     const fetchAllTTMNC = responseGetTTMNCData.data;
     MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map((item) => item.model_name);

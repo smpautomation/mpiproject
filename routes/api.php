@@ -26,6 +26,7 @@ use App\Http\Controllers\MiasFactorController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\RobModelController;
 use App\Http\Controllers\HisModelController;
+use App\Http\Controllers\TtmwcModelController;
 use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
