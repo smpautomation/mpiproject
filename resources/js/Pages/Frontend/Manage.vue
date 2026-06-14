@@ -1554,7 +1554,7 @@
                                     Layer Compliance Check
                                 </div>
                                 <div class="text-[11px] text-white/70">
-                                    Lot-level coating validation
+                                    {{ currentProcessMode === 'FILM_PASTING' ? 'Film Pasting' : 'Coating' }} validation
                                 </div>
                             </div>
 
@@ -1573,14 +1573,12 @@
 
                         <!-- BLOCKING REMARK -->
                         <div
-                            v-if="selectedLotHasIncompleteCoating"
+                            v-if="selectedLotHasIncompleteProcessing"
                             class="rounded-xl border border-red-300 bg-red-50 p-4"
                         >
                             <div class="flex items-start gap-3">
 
-                                <div class="text-red-600 text-xl">
-                                    ⚠
-                                </div>
+                                <div class="text-red-600 text-xl">⚠</div>
 
                                 <div>
                                     <div class="font-semibold text-red-800">
@@ -1591,17 +1589,15 @@
                                         The selected lot
                                         <strong>{{ currentValidationModel }}</strong>
                                         ({{ currentValidationLot }})
-                                        has heat treatment data recorded but does not yet have the
-                                        required coating completion data.
+                                        has heat treatment data recorded but does not yet have the required
+                                        {{ currentProcessMode === 'FILM_PASTING' ? 'film pasting' : 'coating' }}
+                                        completion.
                                     </div>
 
                                     <div class="mt-2 text-xs text-red-600">
                                         Current Layer: {{ currentLayerNo }}
                                     </div>
 
-                                    <div class="mt-1 text-xs text-red-600">
-                                        Complete the required coating entry for this lot before proceeding with submission.
-                                    </div>
                                 </div>
 
                             </div>
@@ -1612,16 +1608,18 @@
                             v-else
                             class="rounded-xl border border-green-300 bg-green-50 p-4"
                         >
-                        <div class="mt-1 text-sm text-green-700">
-                            The selected lot
-                            <strong>{{ currentValidationModel }}</strong>
-                            ({{ currentValidationLot }})
-                            has satisfied all required coating validations.
-                        </div>
+                            <div class="text-sm text-green-700">
+                                The selected lot
+                                <strong>{{ currentValidationModel }}</strong>
+                                ({{ currentValidationLot }})
+                                has satisfied all required
+                                {{ currentProcessMode === 'FILM_PASTING' ? 'film pasting' : 'coating' }}
+                                validations.
+                            </div>
 
-                        <div class="mt-1 text-xs text-green-600">
-                            Current Layer: {{ currentLayerNo }}
-                        </div>
+                            <div class="mt-1 text-xs text-green-600">
+                                Current Layer: {{ currentLayerNo }}
+                            </div>
                         </div>
 
                         <!-- LAYERS -->
@@ -1633,7 +1631,7 @@
                                 class="border rounded-xl overflow-hidden"
                             >
 
-                                <!-- LAYER HEADER -->
+                                <!-- HEADER -->
                                 <div
                                     class="px-4 py-2 flex justify-between items-center"
                                     :class="String(layer.layer) === String(currentLayerNo)
@@ -1664,9 +1662,7 @@
                                             : 'bg-white border-gray-200'"
                                     >
 
-                                        <!-- LEFT -->
                                         <div>
-
                                             <div class="text-xs font-semibold text-gray-800">
                                                 {{ lot.model || 'Unknown Model' }}
                                             </div>
@@ -1681,36 +1677,31 @@
                                                     : 'Main Lot'
                                                 }}
                                             </div>
-
                                         </div>
 
-                                        <!-- RIGHT STATUS -->
+                                        <!-- STATUS -->
                                         <div
                                             class="font-semibold text-xs"
                                             :class="(
-                                                lot.coating_completed ||
-                                                lot.second_coating_completed
+                                                currentProcessMode === 'FILM_PASTING'
+                                                    ? lot.filmpasting_completed
+                                                    : (lot.coating_completed || lot.second_coating_completed)
                                             )
                                                 ? 'text-green-600'
-                                                : (
-                                                    lot.heat_treatment_completed ||
-                                                    lot.second_heat_treatment_completed
-                                                )
+                                                : (lot.heat_treatment_completed || lot.second_heat_treatment_completed)
                                                     ? 'text-red-600'
                                                     : 'text-gray-400'
                                             "
                                         >
                                             {{
-                                                (
-                                                    lot.heat_treatment_completed ||
-                                                    lot.second_heat_treatment_completed
-                                                )
+                                                (lot.heat_treatment_completed || lot.second_heat_treatment_completed)
                                                     ? (
-                                                        lot.coating_completed ||
-                                                        lot.second_coating_completed
+                                                        currentProcessMode === 'FILM_PASTING'
+                                                            ? (lot.filmpasting_completed ? 'COMPLETED' : 'MISSING FILM PASTING')
+                                                            : ((lot.coating_completed || lot.second_coating_completed)
+                                                                ? 'COMPLETED'
+                                                                : 'MISSING COATING')
                                                     )
-                                                        ? 'COMPLETED'
-                                                        : 'MISSING COATING'
                                                     : 'NO DATA'
                                             }}
                                         </div>
@@ -1737,16 +1728,11 @@
 
                         <button
                             @click="finalizeGraph()"
-                            :disabled="
-                                showLoadingForGraphAndTables ||
-                                selectedLotHasIncompleteCoating
-                            "
+                            :disabled="showLoadingForGraphAndTables || selectedLotHasIncompleteProcessing"
                             class="px-4 py-2 text-xs rounded-lg font-semibold text-white transition-all"
-                            :class="
-                                selectedLotHasIncompleteCoating
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:opacity-90'
-                            "
+                            :class="selectedLotHasIncompleteProcessing
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:opacity-90'"
                         >
                             {{ showLoadingForGraphAndTables ? 'Processing...' : 'Submit' }}
                         </button>
@@ -2048,6 +2034,17 @@ const additionalLot = computed(() => {
         : selectedSet.value.lot_no;
 });
 
+const currentProcessMode = computed(() => {
+
+    const hasFilmPasting = layer_unified_state.value.some(layer =>
+        layer.rows.some(lot =>
+            lot.filmpasting_completed === true
+        )
+    );
+
+    return hasFilmPasting ? 'FILM_PASTING' : 'COATING';
+});
+
 const currentValidationModel = computed(() => {
     return lotNoLists.value.length > 1
         ? additionalModel.value
@@ -2060,32 +2057,36 @@ const currentValidationLot = computed(() => {
         : jhCurveLotNo.value;
 });
 
-const selectedLotHasIncompleteCoating = computed(() => {
+const selectedLotHasIncompleteProcessing = computed(() => {
 
-    for (const layer of layer_unified_state.value) {
+    const model = currentValidationModel.value;
+    const lotNo = currentValidationLot.value;
 
-        const lot = layer.rows.find(row =>
-            row.model === currentValidationModel.value &&
-            row.lot_no === currentValidationLot.value
+    const lot = layer_unified_state.value
+        .flatMap(layer => layer.rows)
+        .find(row =>
+            row.model === model &&
+            row.lot_no === lotNo
         );
 
-        if (!lot) {
-            continue;
-        }
+    if (!lot) return false;
 
-        const requiresCoating =
-            lot.heat_treatment_completed ||
-            lot.second_heat_treatment_completed;
+    const requiresHeatTreatment =
+        lot.heat_treatment_completed ||
+        lot.second_heat_treatment_completed;
 
-        const hasCoating =
-            lot.coating_completed ||
-            lot.second_coating_completed;
-
-        return requiresCoating && !hasCoating;
+    if (!requiresHeatTreatment) {
+        return false;
     }
 
-    return false;
+    if (currentProcessMode.value === 'FILM_PASTING') {
+        return !lot.filmpasting_completed;
+    }
+
+    return !(lot.coating_completed || lot.second_coating_completed);
 });
+
+
 // Data fetching zone ------ Data fetching zone
 
 const getMassProdLists = async () => {

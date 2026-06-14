@@ -392,6 +392,7 @@ Route::apiResource('mias-factor', MiasFactorController::class);
 Route::apiResource('vt-models', VtModelController::class);
 Route::apiResource('cpk-ihc-models', CpkIhcModelController::class);
 Route::apiResource('gx-models', GxModelController::class);
+Route::apiResource('ttmwc-models', TtmwcModelController::class);
 Route::apiResource('ttmnc-models', TtmncModelController::class);
 Route::apiResource('bh-models', BhModelController::class);
 Route::apiResource('rob-models', RobModelController::class);

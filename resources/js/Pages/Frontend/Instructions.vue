@@ -389,6 +389,106 @@
         </div>
       </div>
 
+      <!-- 1x1x1 MODELS (With corner) Table Section -->
+      <div
+        v-if="showTTMWCPanel"
+        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
+      >
+        <!-- Table -->
+        <div>
+          <h2 class="mb-4 text-2xl font-semibold text-gray-800">1x1x1 MODELS (With corner)</h2>
+          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
+            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-3 text-left border-b">Date</th>
+                <th class="px-4 py-3 text-left border-b">Model Name</th>
+                <th class="px-4 py-3 text-left border-b">Encoded By</th>
+                <th class="px-4 py-3 text-left border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="ttmnc in ttmncModels"
+                :key="ttmnc.id"
+                class="transition border-b hover:bg-gray-50 last:border-b-0"
+              >
+                <td class="px-4 py-3">{{ new Date(ttmnc.created_at).toISOString().slice(0, 10) }}</td>
+                <td class="px-4 py-3">{{ ttmnc.model_name }}</td>
+                <td class="px-4 py-3">{{ ttmnc.encoded_by }}</td>
+                <td class="px-4 py-3">
+                  <button
+                    @click="ttmnc_startEditing(ttmnc)"
+                    class="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Edit Model
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New -->
+        <div class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="ttmnc_newRecord.model_name"
+              type="text"
+              @input="ttmnc_newRecord.model_name = ttmnc_newRecord.model_name.toUpperCase()"
+              placeholder="Model Name"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+            <input
+              v-model="ttmnc_newRecord.encoded_by"
+              type="text"
+              @input="ttmnc_newRecord.encoded_by = ttmnc_newRecord.encoded_by.toUpperCase()"
+              placeholder="Encoded By"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+          </div>
+          <button
+            @click="ttmnc_addRecord"
+            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
+          >
+            Add
+          </button>
+        </div>
+
+        <!-- Edit Record -->
+        <div v-if="ttmnc_editingRecord" class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="ttmnc_editingRecord.model_name"
+              type="text"
+              @input="ttmnc_editingRecord.model_name = ttmnc_editingRecord.model_name.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+            <input
+              v-model="ttmnc_editingRecord.encoded_by"
+              type="text"
+              @input="ttmnc_editingRecord.encoded_by = ttmnc_editingRecord.encoded_by.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+          </div>
+          <div class="space-x-3">
+            <button
+              @click="ttmnc_updateRecord"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+            >
+              Update
+            </button>
+            <button
+              @click="ttmnc_editingRecord = null"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- 1x1x1 MODELS (No corner) Table Section -->
       <div
         v-if="showTTMNCPanel"
@@ -959,6 +1059,7 @@ const showSelectionPanel = ref(true);
 const showVTPanel = ref(false);
 const showCPKIHCPanel = ref(false);
 const showGXPanel = ref(false);
+const showTTMWCPanel = ref(false);
 const showTTMNCPanel = ref(false);
 const showBHPanel = ref(false);
 const showROBPanel = ref(false);
@@ -974,6 +1075,7 @@ const models = [
     { name: 'VT MODELS', panel: 'showVTPanel', image: '/photo/vt_models.png' },
     { name: 'CPK IHC MODELS', panel: 'showCPKIHCPanel', image: '/photo/cpk_ihc_models.png' },
     { name: 'GX MODELS', panel: 'showGXPanel', image: '/photo/gx_models.png' },
+    { name: '1X1X1 MODELS (WITH CORNER)', panel: 'showTTMWCPanel' },
     { name: '1X1X1 MODELS (NO CORNER)', panel: 'showTTMNCPanel', image: '/photo/no_corner_models.png' },
     { name: 'BH MODELS', panel: 'showBHPanel', image: '/photo/bh_models.png' },
     { name: 'ROB BH TRACER MODELS', panel: 'showROBPanel', image: '/photo/rob_tracer_models.png' },
@@ -1020,6 +1122,7 @@ const closeImage = () => {
 const vtModels = ref([]); // all fetched records
 const cpkihcModels = ref([]);
 const gxModels = ref([]);
+const ttmwcModels = ref([]);
 const ttmncModels = ref([]);
 const bhModels = ref([]);
 const robModels = ref([]);
@@ -1235,6 +1338,8 @@ const loadData = async () => {
     cpkihcModels.value = responseGetCPKIHCData.data;
     const responseGetGXData = await axios.get('/api/gx-models');
     gxModels.value = responseGetGXData.data;
+    const responseGetTTMWCData = await axios.get('/api/ttmwc-models');
+    ttmwcModels.value = responseGetTTMWCData.data;
     const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
     ttmncModels.value = responseGetTTMNCData.data;
     const responseGetBHData = await axios.get('/api/bh-models');
