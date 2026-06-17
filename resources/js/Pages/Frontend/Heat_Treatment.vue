@@ -586,7 +586,7 @@
                                         !mpcs.selectedFurnace ||
                                         !mpcs.selectedMassProd ||
                                         isDataShown ||
-                                        noMassProdData || 
+                                        noMassProdData ||
                                         !heatTreatmentInformationDetected
                                     "
                                     class="w-full py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
@@ -3641,7 +3641,6 @@ const initialFurnaceData = ref();
 const furnace_names = ref([]);
 const massProd_names = ref([]);
 const model_names = ref([]);
-const lotNoLists = ref([]);
 const graph_patterns = ref([]);
 const firstSecondGBDP_models = ref([]);
 const existingLayers = ref([]);
@@ -4282,21 +4281,6 @@ const fetchAvailableLayersForExcessList = async (excessData) => {
     }
 };
 
-/*
-const fetchAllLotNoData = async () => {
-    try {
-        isLotListsLoading.value = true;
-
-        const response = await axios.get("/api/initial-control-sheets/lot-all");
-        lotNoLists.value = response.data;
-    } catch (err) {
-        console.error("Failed to fetch lot_no data:", err);
-    } finally {
-        isLotListsLoading.value = false;
-    }
-};
-*/
-
 const changeData = () => {
     const preserveKeys = [
         "selectedFurnace",
@@ -4720,12 +4704,18 @@ const fetchAllLotDataBoxDetails = async () => {
 watch(
     () => mpcs.lotNo,
     async (newVal) => {
-        if (!newVal) return;
+        if (!newVal) {
+            model_names.value = [];
+            mpcs.selectedModel = null;
+            return;
+        }
+
         await getModelLists();
-        //console.log("Lot No: ", mpcs.lotNo);
-        //console.log("Model: ", mpcs.selectedModel);
+
+        mpcs.selectedModel = null;
     },
 );
+
 
 watch(
     () => [mpcs.selectedModel, mpcs.lotNo],
