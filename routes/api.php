@@ -536,6 +536,8 @@ Route::post('/mass-production/delete-existing-data', [MassProductionController::
 
 Route::post('/mass-production/delete-layer-full', [MassProductionController::class, 'deleteLayerFull']);
 
+Route::delete('/mass-production/delete-massproduction-alldata', [MassProductionController::class, 'deleteMassProductionAllData']);
+
 //Insert new route for deletelayerdata
 
 Route::post('/initial-control-sheet/check-duplicate', [InitialControlSheetController::class, 'checkDuplicateLot']);
