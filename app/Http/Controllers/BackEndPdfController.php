@@ -22,6 +22,7 @@ use App\Models\VtModel;
 use App\Models\CpkIhcModel;
 use App\Models\CpkBrModels;
 use App\Models\GxModel;
+use App\Models\TtmwcModel;
 use App\Models\TtmncModel;
 use App\Models\BhModel;
 use App\Models\RobModel;
@@ -517,7 +518,7 @@ class BackEndPdfController extends Controller
 
         $MODELS_SPECIAL_ROB_FOR_GX = ['ROB0C79G'];
         $MODELS_SPECIAL_TSI = ['TSI0817G'];
-        $MODELS_1X1X1 = ['AAW0935G', 'AAW0934G'];
+        $MODELS_1X1X1 = TtmwcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
         $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_BR     = CpkBrModels::pluck('model_name')->toArray();
