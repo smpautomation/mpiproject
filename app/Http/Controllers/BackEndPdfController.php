@@ -180,36 +180,11 @@ class BackEndPdfController extends Controller
             ], 404);
         }
 
-        $secondHeatTreatment = GbdpSecondHeatTreatment::where([
+        $secondHeatTreatment = GbdpSecondHeatTreatment::where([ //goback here
             'mass_prod' => $massprod,
             'furnace'   => $furnace,
             'layer'     => (string) $layer,
         ])->first();
-
-        if($secondHeatTreatment){
-            $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
-                ? json_decode($secondHeatTreatment->gbdp_1st, true)
-                : $secondHeatTreatment->gbdp_1st;
-
-            $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
-                ? json_decode($secondHeatTreatment->gbdp_2nd, true)
-                : $secondHeatTreatment->gbdp_2nd;
-
-
-            $gbdp1stFurnace = $secondGbdp1st['furnace_machine'] ?? null;
-            $gbdp1stMassProd = $secondGbdp1st['batch_cycle_no'] ?? null;
-
-            $massProd1stGbdpData = null;
-
-            if ($gbdp1stFurnace && $gbdp1stMassProd) {
-                $massProd1stGbdpData = MassProduction::query()
-                    ->where('mass_prod', $gbdp1stMassProd)
-                    ->where('furnace', $gbdp1stFurnace)
-                    ->first();
-            }
-        }
-
-
 
 
         // Build column name dynamically
@@ -490,7 +465,7 @@ class BackEndPdfController extends Controller
         //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp
 
         if ($initialLotExists) {
-            $secondGbdpCoatingData = BreaklotSecondCoating::where([
+            $secondGbdpCoatingData = BreaklotSecondCoating::where([  //goback
                 'mass_prod' => $massprod,
                 'layer'     => $layer,
                 'furnace'   => $furnace,
@@ -505,15 +480,45 @@ class BackEndPdfController extends Controller
             ])->first();
         }
 
-        /*$secondGbdpHTData = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
-            ->where('layer', $layer)
-            ->first();
-        if (!$secondGbdpHTData) {
-            return response()->json([
-                'status' => false,
-                'message' => "Second GBDP Heat Treatment record not found for mass_prod: {$massprod} or layer: {$layer}"
-            ], 404);
-        }*/
+        if ($initialLotExists) {
+            $secondHeatTreatment = BreaklotSecondHeatTreatment::where([  //goback
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->first();
+        } else {
+            $secondHeatTreatment = GbdpSecondHeatTreatment::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+            ])->first();
+        }
+
+        if($secondHeatTreatment){
+            $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
+                ? json_decode($secondHeatTreatment->gbdp_1st, true)
+                : $secondHeatTreatment->gbdp_1st;
+
+            $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
+                ? json_decode($secondHeatTreatment->gbdp_2nd, true)
+                : $secondHeatTreatment->gbdp_2nd;
+
+
+            $gbdp1stFurnace = $secondGbdp1st['furnace_machine'] ?? null;
+            $gbdp1stMassProd = $secondGbdp1st['batch_cycle_no'] ?? null;
+
+            $massProd1stGbdpData = null;
+
+            if ($gbdp1stFurnace && $gbdp1stMassProd) {
+                $massProd1stGbdpData = MassProduction::query()
+                    ->where('mass_prod', $gbdp1stMassProd)
+                    ->where('furnace', $gbdp1stFurnace)
+                    ->first();
+            }
+        }
+
 
         //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp End
 
