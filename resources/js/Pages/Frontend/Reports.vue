@@ -5389,15 +5389,19 @@ const isCpkActive = computed(() => {
     const isTTM = isTTM_model.value === true;
     const isWhitelisted = MODELS_1X1X1.value.includes(model);
 
-    const baseCondition =
-        noteReasonForReject.value?.includes("- N.G iHc") &&
+    const hasNGihc =
+        noteReasonForReject.value?.includes("- N.G iHc");
+
+    const has1x1x1 =
         show1x1x1Data_withoutCorner.value === true;
 
     const cpkCondition =
+        isWhitelisted ||
         reportCpk.value !== null;
 
     return (isTTM || isWhitelisted) &&
-        baseCondition &&
+        hasNGihc &&
+        has1x1x1 &&
         cpkCondition;
 });
 
@@ -6739,6 +6743,7 @@ watch(
         overallCpkRemark
     ],
     () => {
+
         if (isCpkActive.value) {
 
             reportSurface_remarks.value =
@@ -6759,6 +6764,7 @@ watch(
             reportSMPJudgement.value =
                 cpkJudgement.value;
         }
+
     },
     { immediate: true }
 );
@@ -8475,7 +8481,7 @@ const showReportData = async () => {
             heatTreatmentCompleted.value = row.heat_treatment_completed == 1;
 
             const ovenNA = inspectionOvenMachineNo.value === 0;
-            console.log("Oven NA: ", ovenNA);
+            //console.log("Oven NA: ", ovenNA);
             reportOvenMachineNo.value = ovenNA ? "N/A" : row.oven_machine_no;
             reportTimeLoading.value = ovenNA ? "N/A" : row.time_loading;
             reportTimeUnloading.value = ovenNA ? "N/A" : row.time_unloading;
