@@ -392,6 +392,23 @@ class NormalSecAdditionalsController extends Controller
             ], 500);
         }
     }
+
+    public function getMaxSet(Request $request)
+    {
+        $serial = $request->query('serial');
+
+        $maxSet = NormalSecAdditionals::where('serial_no', $serial)
+            ->max('set_no');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Maximum set retrieved successfully.',
+            'data' => [
+                'max_set' => $maxSet ?? 0,
+            ],
+        ]);
+    }
+
     public function destroy($serial, $set)
     {
         try {
