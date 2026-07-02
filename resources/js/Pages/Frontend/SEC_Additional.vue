@@ -2206,13 +2206,24 @@ const renderChart = () => {
 
 
 const autoDeleteNullData = async () => {
+    console.log("[autoDeleteNullData] Started");
+
     try {
+        console.log("[1] Fetching /api/nsadata...");
+
         const responseGetNSA = await axios.get("/api/nsadata");
+
+        console.log("[2] API Response:", responseGetNSA);
 
         const responseData = responseGetNSA.data.data || {};
 
         const nsadata = responseData.NSAData ?? [];
         const aggregateFunctions = responseData.aggregateFunctions ?? [];
+        const nsaCategory = responseData.nsaCategory ?? [];
+
+        console.log("[3] NSA rows:", nsadata.length);
+        console.log("[3] Aggregate rows:", aggregateFunctions.length);
+        console.log("[3] Category rows:", nsaCategory.length);
 
         const nsaForDelete_IDs = [];
 
@@ -2228,28 +2239,46 @@ const autoDeleteNullData = async () => {
             }
         });
 
+        console.log("[4] NSA IDs to delete:", nsaForDelete_IDs);
+
+        console.log("[5] Starting NSA deletes...");
+
         await Promise.all(
             nsaForDelete_IDs.map(async (id) => {
                 try {
                     const res = await axios.delete(`/api/nsadata/${id}`);
-                    console.log(`[DELETE] ID ${id} successful:`, res.data);
+                    console.log(`[DELETE] NSA ${id}`, res.data);
                 } catch (err) {
                     console.error(
-                        `[DELETE] ID ${id} failed:`,
+                        `[DELETE] NSA ${id} FAILED`,
                         err.response?.data || err.message
                     );
                 }
             })
         );
 
+        console.log("[6] NSA deletes complete");
+
+        console.log("[7] Cleaning aggregate...");
         await deleteNullOnNsaAggregate(aggregateFunctions);
-        await deleteNullOnNsaCategory(responseData.nsaCategory ?? []);
+
+        console.log("[8] Aggregate complete");
+
+        console.log("[9] Cleaning category...");
+        await deleteNullOnNsaCategory(nsaCategory);
+
+        console.log("[10] Category complete");
+
+        console.log("[autoDeleteNullData] Finished");
 
     } catch (error) {
-        console.error(
-            "[autoDeleteNullData] Error deleting null data:",
-            error.response?.data || error.message
-        );
+        console.error("[autoDeleteNullData] FAILED");
+        console.error("Message:", error.message);
+        console.error("Response:", error.response);
+        console.error("Response Data:", error.response?.data);
+        console.error("Status:", error.response?.status);
+        console.error("Stack:", error.stack);
+        console.error(error);
     }
 };
 
