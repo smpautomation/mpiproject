@@ -851,40 +851,40 @@ const storeFileList = (event) => {
     }
 
     const mergeTempToTPM = async () => {
-        try { // tempDataClass contains the value to be updated
-            const responseTPM = await axios.get("/api/nsadata");
-            const nsaData = responseTPM.data.data["NSAData"] || [];
+        try {
+            const responseTPM = await axios.get(
+                `/api/nsadata?serial=${currentSerialSelected.value}&set=${highest_setNo.value}`
+            );
 
-            const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-            const nsafilteredData2 = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
-            const getAllID = nsafilteredData2.map(item => item.id);
+            const nsaData = responseTPM.data.data?.NSAData ?? [];
+            const getAllID = nsaData.map(item => item.id);
 
-            // Create array of PATCH promises
-            const patchPromises = getAllID.map((id, i) => {
-            return axios.patch(`/api/nsadataupdate/${id}`, {
-                temperature: csv_tempWithDataStat.value[i]?.temp || null,
-                data_status: csv_tempWithDataStat.value[i]?.status || null,
-                set_name: additional_remarks.value || null
-            }).catch(error => {
-                console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
-                return null; // Continue with others even if one fails
-            });
-            });
+            const patchPromises = getAllID.map((id, i) =>
+                axios.patch(`/api/nsadataupdate/${id}`, {
+                    temperature: csv_tempWithDataStat.value[i]?.temp ?? null,
+                    data_status: csv_tempWithDataStat.value[i]?.status ?? null,
+                    set_name: additional_remarks.value ?? null,
+                }).catch(error => {
+                    console.error(
+                        `Error patching ID ${id}:`,
+                        error.response?.data || error.message
+                    );
+                    return null;
+                })
+            );
 
-            // Wait for all PATCH requests to finish
-            const patchResults = await Promise.all(patchPromises);
-            // Optionally log patchResults or process them if needed
-           // console.log('All patch results:', patchResults);
+            await Promise.all(patchPromises);
 
         } catch (error) {
-           // console.log("Merge failed: ", error);
+            console.error("Merge failed:", error);
         } finally {
             await fetchLayerModelAndLotno();
             await saveToNsaCategory();
+
             showCsvLoading.value = false;
             showProceed3.value = true;
         }
-    }
+    };
 
     //New Furnace , New Layers end
 
