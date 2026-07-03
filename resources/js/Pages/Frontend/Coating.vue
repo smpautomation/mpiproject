@@ -759,6 +759,43 @@
                                     />
                                 </div>
                             </div>
+
+
+                            <!-- Group: Selection -->
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                        >Time Start<span class="text-red-500">
+                                            *</span
+                                        ></label
+                                    >
+                                    <input
+                                        v-model="
+                                            coatingInfo_1stgbdp.timeStart
+                                        "
+                                        type="time"
+                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                        >Time Finished<span class="text-red-500">
+                                            *</span
+                                        ></label
+                                    >
+                                    <input
+                                        v-model="
+                                            coatingInfo_1stgbdp.timeFinished
+                                        "
+                                        type="time"
+                                        class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                            </div>
+
+
                             <!-- Group: Selection -->
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
                                 <!-- Remarks Input -->
@@ -1007,6 +1044,44 @@
                                     button.
                                 </p>
                             </div>
+
+
+                            <!-- Group: Selection goback -->
+                            <div
+                                v-if="activate2ndGBDP"
+                                class="grid grid-cols-1 gap-6 md:grid-cols-2"
+                            >
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                        >Time Start <span class="text-red-500">
+                                            *</span
+                                        ></label
+                                    >
+                                    <input
+                                        v-model="coatingInfo.timeStart"
+                                        type="time"
+                                        disabled
+                                        class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        class="block mb-1 text-xs font-medium text-gray-700"
+                                        >Time Finished <span class="text-red-500">
+                                            *</span
+                                        ></label
+                                    >
+                                    <input
+                                        v-model="coatingInfo.timeFinished"
+                                        type="time"
+                                        disabled
+                                        class="w-full text-xs bg-gray-100 border-gray-300 rounded-lg shadow-sm cursor-not-allowed focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                            </div>
+
+
                             <!-- Group: Selection -->
                             <div
                                 v-if="activate2ndGBDP"
@@ -4737,6 +4812,8 @@ const addtnl_saveToDatabase_1st2ndgbdp = async () => {
                 average: parseFloat(coatingAverage_1stgbdp.value.toFixed(2)),
                 maximum: parseFloat(coatingMaximum_1stgbdp.value.toFixed(2)),
                 minimum: parseFloat(coatingMinimum_1stgbdp.value.toFixed(2)),
+                time_start: coatingInfo_1stgbdp.timeStart,
+                time_finished: coatingInfo_1stgbdp.timeFinished,
                 remarks: coatingInfo_1stgbdp.remarks,
             },
             coating_info_2ndgbdp: {
@@ -4750,6 +4827,8 @@ const addtnl_saveToDatabase_1st2ndgbdp = async () => {
                 average: parseFloat(coatingAverage_2ndgbdp.value.toFixed(2)),
                 maximum: parseFloat(coatingMaximum_2ndgbdp.value.toFixed(2)),
                 minimum: parseFloat(coatingMinimum_2ndgbdp.value.toFixed(2)),
+                time_start: coatingInfo.timeStart,
+                time_finished: coatingInfo.timeFinished,
                 remarks: coatingInfo.remarks,
             },
             coating_data_1stgbdp: {
@@ -4935,6 +5014,8 @@ const saveToDatabase_1st2ndgbdp = async () => {
                 average: parseFloat(coatingAverage_1stgbdp.value.toFixed(2)),
                 maximum: parseFloat(coatingMaximum_1stgbdp.value.toFixed(2)),
                 minimum: parseFloat(coatingMinimum_1stgbdp.value.toFixed(2)),
+                time_start: coatingInfo_1stgbdp.timeStart,
+                time_finish: coatingInfo_1stgbdp.timeFinished,
                 remarks: coatingInfo_1stgbdp.remarks,
             },
             coating_info_2ndgbdp: {
@@ -4948,6 +5029,8 @@ const saveToDatabase_1st2ndgbdp = async () => {
                 average: parseFloat(coatingAverage_2ndgbdp.value.toFixed(2)),
                 maximum: parseFloat(coatingMaximum_2ndgbdp.value.toFixed(2)),
                 minimum: parseFloat(coatingMinimum_2ndgbdp.value.toFixed(2)),
+                time_start: coatingInfo.timeStart,
+                time_finish: coatingInfo.timeFinished,
                 remarks: coatingInfo.remarks,
             },
             coating_data_1stgbdp: {
@@ -5467,6 +5550,8 @@ const autoFetch = async () => {
         coatingInfo_1stgbdp.slurryLotNo = cd.slurry_lot_no;
         coatingInfo_1stgbdp.minTbContent = cd.min_tb_content;
         coatingInfo_1stgbdp.totalMagnetWeight = cd.total_magnet_weight;
+        coatingInfo_1stgbdp.timeStart = cd.time_start;
+        coatingInfo_1stgbdp.timeFinished = cd.time_finish;
         coatingInfo_1stgbdp.remarks = cd.remarks;
 
         lotNo_1stGBDP.value = cdJson["Lot no"] ?? null;
@@ -5585,6 +5670,8 @@ const autoFetchBreaklot = async () => {
         coatingInfo_1stgbdp.slurryLotNo = cd.slurry_lot_no;
         coatingInfo_1stgbdp.minTbContent = cd.min_tb_content;
         coatingInfo_1stgbdp.totalMagnetWeight = cd.total_magnet_weight;
+        coatingInfo_1stgbdp.timeStart = cd.time_start;
+        coatingInfo_1stgbdp.timeFinished = cd.time_finish;
         coatingInfo_1stgbdp.remarks = cd.remarks;
 
         lotNo_1stGBDP.value = cdJson["Lot no"] ?? null;
@@ -5708,6 +5795,8 @@ const fetchCoatingDataSummary = async () => {
         coatingInfo.timeStart = coating.time_start;
         coatingInfo.timeFinished = coating.time_finished;
         coatingInfo.remarks = coating.remarks;
+
+        //goback
 
         // --- Populate coatingsTable ---
         // console.log('Coating Amount Data from API:', coating['Coating Amount Data']);
@@ -5843,6 +5932,11 @@ const fetchCoatingData2ndGbdpSummary = async () => {
         coatingInfo.minTbContent = coating.min_tb_content;
         coatingInfo.totalMagnetWeight = coating.total_magnet_weight;
         coatingInfo.remarks = coating.remarks;
+
+        coatingInfo.timeStart = coating.time_start;
+        coatingInfo.timeFinished = coating.time_finished;
+
+        //goback
 
         // --- Populate coatingsTable ---
         // console.log('Coating Amount Data from API:', coating['Coating Amount Data']);
