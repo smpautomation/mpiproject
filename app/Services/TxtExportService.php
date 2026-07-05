@@ -12,6 +12,7 @@ use App\Models\ExcessLayers;
 use App\Models\ReportData;
 use App\Models\Coating;
 use App\Models\GbdpSecondCoating;
+use App\Models\GbdpSecondHeatTreatment;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
@@ -635,6 +636,10 @@ class TxtExportService
             ->where('mass_prod', $massPro)
             ->first();
 
+        $has2ndgbdp = GbdpSecondHeatTreatment::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->exists();
+
         if (!$massProd) {
             return 'No MassProduction data found.';
         }
@@ -938,7 +943,8 @@ class TxtExportService
                     }
                 }
 
-                // Determine coating source
+                $isSecondGbdp = false;
+
                 $coating = $this->resolveCoating(
                     $normalizedFurnace,
                     $massPro,
@@ -948,8 +954,32 @@ class TxtExportService
                     $coatingLookupLayerNo,
                     $model,
                     $lotNo,
-                    $normalizedFurnace
+                    $normalizedFurnace,
+                    $isSecondGbdp
                 );
+
+                $coating1stGbdp = null;
+                $heatTreatment1stGbdp = null;
+
+                if ($isSecondGbdp) {
+                    $coating1stGbdp = $coating['coating_info_1stgbdp'];
+                    $coating = $coating['coating_info_2ndgbdp'];
+
+                    $secondHeatTreatment = GbdpSecondHeatTreatment::where('furnace', $normalizedFurnace)
+                        ->where('mass_prod', $massPro)
+                        ->where('layer', (string)$layerKey)
+                        ->first();
+
+                    if ($secondHeatTreatment) {
+                        $heatTreatment1stGbdp = is_array($secondHeatTreatment->gbdp_1st)
+                            ? $secondHeatTreatment->gbdp_1st
+                            : json_decode($secondHeatTreatment->gbdp_1st, true);
+
+                        $heatTreatment2ndGbdp = is_array($secondHeatTreatment->gbdp_2nd)
+                            ? $secondHeatTreatment->gbdp_2nd
+                            : json_decode($secondHeatTreatment->gbdp_2nd, true);
+                    }
+                }
 
                 // --- Step 4: Extract Raw Material & Total Qty (precise per pair) ---
 
@@ -972,7 +1002,7 @@ class TxtExportService
                 );
 
                 // --- Step 5: Push row ---
-                if ($tpmRow || $coating) {
+                if ($tpmRow && $isSecondGbdp) {
                     $outputRows[] = [
                         $layerKey,
                         $tpmRow->code_no ?? '',
@@ -984,6 +1014,62 @@ class TxtExportService
                             : '',
                         $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
                         $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
+                        substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
+                        substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
+                        $coating1stGbdp['date'] ?? '',
+                        $coating1stGbdp['machine_no'] ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating1stGbdp['machine_no'])) : '',
+                        $coating1stGbdp['min_tb_content'] ?? 0,
+                        $coating1stGbdp['total_magnet_weight'] ?? 0,
+                        substr($coating1stGbdp['time_start'] ?? '', 0, 5),
+                        substr($coating1stGbdp['time_finish'] ?? '', 0, 5),
+                        $coating['maximum'] ?? $coating?->maximum ?? 0,
+                        $coating['minimum'] ?? $coating?->minimum ?? 0,
+                        $coating['average'] ?? $coating?->average ?? 0,
+                        $coating1stGbdp['maximum'] ?? 0,
+                        $coating1stGbdp['minimum'] ?? 0,
+                        $coating1stGbdp['average'] ?? 0,
+                        $heatTreatment1stGbdp['furnace_machine'] ? str_replace('-', '0', $heatTreatment1stGbdp['furnace_machine']) : '',
+                        $heatTreatment1stGbdp['cycle_no']
+                            ? ltrim(substr($heatTreatment1stGbdp['cycle_no'], strpos($heatTreatment1stGbdp['cycle_no'], '-') + 1), ' ')
+                            : '',
+                        $heatTreatment1stGbdp['batch_cycle_no'] ? preg_replace('/\D+/', '', $heatTreatment1stGbdp['batch_cycle_no']) : '',
+                        $heatTreatment1stGbdp['pattern_no'] ?? '',
+                        $heatTreatment1stGbdp['date_start'] ?? '',
+                        $heatTreatment1stGbdp['date_finished'] ?? '',
+                        $massProd?->furnace ? str_replace('-', '0', $massProd->furnace) : '',
+                        $massProd?->cycle_no
+                            ? ltrim(substr($massProd->cycle_no, strpos($massProd->cycle_no, '-') + 1), ' ')
+                            : '',
+                        $massProd?->batch_cycle_no ? preg_replace('/\D+/', '', $massProd->batch_cycle_no) : '',
+                        $massProd?->pattern_no ?? '',
+                        $massProd?->date_start ?? '',
+                        $massProd?->date_finished ?? '',
+                        $reportData?->length ?? 0,
+                        $reportData?->width ?? 0,
+                        $reportData?->thickness ?? 0,
+                        $reportData?->material_grade ?? '',
+                        (int) preg_replace('/\D.*/', '', $reportData?->mpi_sample_quantity ?? ''),
+                    ];
+                } else if($tpmRow && $coating){
+                    $outputRows[] = [
+                        $layerKey,
+                        $tpmRow->code_no ?? '',
+                        $tpmRow->raw_material_code ?? $rawMaterialCode,
+                        $totalQty,
+                        $coating['date'] ?? $coating?->date ?? '',
+                        $coating['machine_no'] ?? $coating?->machine_no
+                            ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating['machine_no'] ?? $coating?->machine_no))
+                            : '',
+                        $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
+                        $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
+                        substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
+                        substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
                         $coating['maximum'] ?? $coating?->maximum ?? 0,
                         $coating['minimum'] ?? $coating?->minimum ?? 0,
                         $coating['average'] ?? $coating?->average ?? 0,
@@ -998,7 +1084,8 @@ class TxtExportService
                         $reportData?->length ?? 0,
                         $reportData?->width ?? 0,
                         $reportData?->thickness ?? 0,
-                        $reportData?->material_grade ?? ''
+                        $reportData?->material_grade ?? '',
+                        (int) preg_replace('/\D.*/', '', $reportData?->mpi_sample_quantity ?? ''),
                     ];
                 } else {
                     // Layer exists but empty
@@ -1013,16 +1100,46 @@ class TxtExportService
         // --- Headers ---
         $header = [
             'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
-            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_MAX','COATING_MIN','COATING_AVE',
+            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_MAX','COATING_MIN','COATING_AVE',
             'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
             'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
         ];
+
+        $header2ndgbdp = [
+            'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
+            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_DATE2',
+            'COATING_MC_NO2','MIN_TB_CONTENT2','TOTAL_MAGNET_WEIGHT2','COATING_DATE_START2','COATING_DATE_FINISH2',
+            'COATING_MAX','COATING_MIN','COATING_AVE',
+            'COATING_MAX2','COATING_MIN2','COATING_AVE2',
+            'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
+            'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
+        ];
+
+        $headerFilmPaste = [
+            'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
+            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_MAX',
+            'COATING_MIN','COATING_AVE','FILM_TYPE','FILM_CLASS',
+            'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
+            'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
+        ];
+
+        $header2ndFilmPaste = [
+            'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
+            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_MAX',
+            'COATING_MIN','COATING_AVE','FILM_TYPE','FILM_CLASS','FILM_TYPE2','FILM_CLASS2',
+            'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
+            'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
+        ];
+
+        if($has2ndgbdp){
+            $header = $header2ndgbdp;
+        }
 
         $lines = collect($outputRows)
             ->map(fn($row) => implode(',', array_map([$this, 'convertToString'], $row)))
             ->prepend(implode(',', $header));
 
-        //dd($lines->toArray()); // verify output
+        dd($lines->toArray()); // verify output
 
         // --- Save ---
         $directory = public_path("files/{$furnace_no} {$massPro}");
@@ -1045,12 +1162,13 @@ class TxtExportService
         $coatingLookupLayerNo,
         $model,
         $lotNo,
-        $normalizedFurnace
+        $normalizedFurnace,
+        bool &$isSecondGbdp = false
     ) {
-        $coating = null;
+        $isSecondGbdp = false;
 
         // -------------------------
-        // 1. Breaklot path first (only for real additional breaklot pairs)
+        // 1. Breaklot path first
         // -------------------------
         if ($isBreaklotLayer && !$isInitialLot) {
 
@@ -1073,14 +1191,22 @@ class TxtExportService
                 ->first();
 
             if ($blSecond) {
-                return is_array($blSecond->coating_info_2ndgbdp)
-                    ? $blSecond->coating_info_2ndgbdp
-                    : json_decode($blSecond->coating_info_2ndgbdp, true);
+                $isSecondGbdp = true;
+
+                return [
+                    'coating_info_1stgbdp' => is_array($blSecond->coating_info_1stgbdp)
+                        ? $blSecond->coating_info_1stgbdp
+                        : json_decode($blSecond->coating_info_1stgbdp, true),
+
+                    'coating_info_2ndgbdp' => is_array($blSecond->coating_info_2ndgbdp)
+                        ? $blSecond->coating_info_2ndgbdp
+                        : json_decode($blSecond->coating_info_2ndgbdp, true),
+                ];
             }
         }
 
         // -------------------------
-        // 2. Normal + initial lot path
+        // 2. Normal path
         // -------------------------
         $coating = Coating::where('furnace', $normalizedFurnace)
             ->where('mass_prod', $massPro)
@@ -1097,9 +1223,17 @@ class TxtExportService
             ->first();
 
         if ($gbdp) {
-            return is_array($gbdp->coating_info_2ndgbdp)
-                ? $gbdp->coating_info_2ndgbdp
-                : json_decode($gbdp->coating_info_2ndgbdp, true);
+            $isSecondGbdp = true;
+
+            return [
+                'coating_info_1stgbdp' => is_array($gbdp->coating_info_1stgbdp)
+                    ? $gbdp->coating_info_1stgbdp
+                    : json_decode($gbdp->coating_info_1stgbdp, true),
+
+                'coating_info_2ndgbdp' => is_array($gbdp->coating_info_2ndgbdp)
+                    ? $gbdp->coating_info_2ndgbdp
+                    : json_decode($gbdp->coating_info_2ndgbdp, true),
+            ];
         }
 
         return null;

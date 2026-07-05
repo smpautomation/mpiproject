@@ -1430,37 +1430,74 @@
                     </button>
                 </div>
 
+
                 <div
                     v-if="showHistoryPanel"
-                    class="mx-10 my-10 overflow-hidden text-xs bg-white border border-gray-200 rounded-md"
+                    class="mx-10 my-10 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm"
                 >
-                    <div class="px-3 py-2 font-medium text-white bg-gray-900">
-                        Data Editor History
+                    <!-- Header -->
+                    <div
+                        class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-900"
+                    >
+                        <div>
+                            <h2 class="text-sm font-semibold text-gray-100">
+                                Data Editor History
+                            </h2>
+                            <p class="text-[11px] text-gray-200">
+                                History of data editor changes
+                            </p>
+                        </div>
+
+                        <input
+                            v-model="historySearch"
+                            type="text"
+                            placeholder="Search Mass Production or Furnace..."
+                            class="w-64 px-3 py-1.5 text-xs bg-white border border-gray-300 rounded-md outline-none transition focus:border-black"
+                        />
                     </div>
 
+                    <!-- Table -->
                     <div class="overflow-x-auto">
-                        <table class="min-w-full text-[11px] table-fixed">
-                            <thead class="text-gray-600 bg-gray-100">
-                                <tr class="uppercase whitespace-nowrap">
-                                    <th class="px-2 py-1 w-[140px]">
+                        <table class="min-w-full text-[11px]">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr
+                                    class="font-semibold tracking-wide text-gray-600 uppercase"
+                                >
+                                    <th class="px-3 py-2 text-left whitespace-nowrap">
                                         Date & Time
                                     </th>
-                                    <th class="px-2 py-1 w-[80px]">
-                                        Mass Production
+
+                                    <th class="px-3 py-2 text-left whitespace-nowrap">
+                                        Mass Prod
                                     </th>
-                                    <th class="px-2 py-1 w-[60px]">Furnace</th>
-                                    <th class="px-2 py-1 w-[50px]">Layer</th>
-                                    <th class="px-2 py-1 w-[120px]">Reason</th>
-                                    <th class="px-2 py-1 w-[120px]">
+
+                                    <th class="px-2 py-2 text-center whitespace-nowrap">
+                                        Furnace
+                                    </th>
+
+                                    <th class="px-2 py-2 text-center whitespace-nowrap">
+                                        Layer
+                                    </th>
+
+                                    <th class="px-3 py-2 text-left">
+                                        Reason
+                                    </th>
+
+                                    <th class="px-3 py-2 text-left">
                                         Corrective Action
                                     </th>
-                                    <th class="px-2 py-1 w-[100px]">
+
+                                    <th class="px-2 py-2 text-center whitespace-nowrap">
                                         Requestor
                                     </th>
-                                    <th class="px-2 py-1 w-[100px]">
+
+                                    <th class="px-2 py-2 text-center whitespace-nowrap">
                                         Approver
                                     </th>
-                                    <th class="w-auto px-2 py-1">Remarks</th>
+
+                                    <th class="px-3 py-2 text-left">
+                                        Remarks
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -1468,64 +1505,58 @@
                                 <tr
                                     v-for="item in paginatedHistory"
                                     :key="item.id"
-                                    class="text-center hover:bg-gray-50"
+                                    class="transition hover:bg-gray-50"
                                 >
-                                    <!-- Date -->
                                     <td
-                                        class="px-2 py-1 font-medium text-gray-900 whitespace-nowrap"
+                                        class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
                                     >
-                                        {{
-                                            new Date(
-                                                item.created_at,
-                                            ).toLocaleDateString() +
-                                            " " +
-                                            new Date(
-                                                item.created_at,
-                                            ).toLocaleTimeString()
-                                        }}
+                                        {{ formatDateTime(item.created_at) }}
                                     </td>
 
-                                    <!-- Tight columns -->
                                     <td
-                                        class="px-2 py-1 font-medium text-gray-900 whitespace-nowrap"
+                                        class="px-3 py-2 font-semibold text-gray-900 whitespace-nowrap"
                                     >
                                         {{ item.mass_prod }}
                                     </td>
 
-                                    <td class="px-2 py-1 whitespace-nowrap">
+                                    <td
+                                        class="px-2 py-2 text-center text-gray-700 whitespace-nowrap"
+                                    >
                                         {{ item.furnace }}
                                     </td>
 
-                                    <td class="px-2 py-1 whitespace-nowrap">
-                                        {{ item.layer ?? "NA" }}
+                                    <td
+                                        class="px-2 py-2 text-center text-gray-700 whitespace-nowrap"
+                                    >
+                                        {{ item.layer ?? "—" }}
                                     </td>
 
-                                    <!-- PRIORITY: Reason -->
                                     <td
-                                        class="px-2 py-1 text-gray-600 text-center whitespace-normal break-words w-[250px]"
+                                        class="max-w-[220px] px-3 py-2 text-gray-600 break-words"
                                     >
                                         {{ item.user_reason }}
                                     </td>
 
-                                    <!-- PRIORITY: Corrective Action -->
                                     <td
-                                        class="px-2 py-1 text-gray-600 text-center whitespace-normal break-words w-[250px]"
+                                        class="max-w-[220px] px-3 py-2 text-gray-600 break-words"
                                     >
                                         {{ item.user_corrective_action }}
                                     </td>
 
-                                    <!-- Tight -->
-                                    <td class="px-2 py-1 whitespace-nowrap">
+                                    <td
+                                        class="px-2 py-2 text-center text-gray-700 whitespace-nowrap"
+                                    >
                                         {{ item.requested_by }}
                                     </td>
 
-                                    <td class="px-2 py-1 whitespace-nowrap">
+                                    <td
+                                        class="px-2 py-2 text-center text-gray-700 whitespace-nowrap"
+                                    >
                                         {{ item.approved_by }}
                                     </td>
 
-                                    <!-- PRIORITY: Remarks -->
                                     <td
-                                        class="px-2 py-1 text-gray-500 text-center whitespace-normal break-words w-[200px]"
+                                        class="max-w-[180px] px-3 py-2 text-gray-500 break-words"
                                     >
                                         {{ item.log_remarks }}
                                     </td>
@@ -1533,26 +1564,38 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Footer -->
                     <div
-                        class="flex items-center justify-between px-3 py-2 border-t border-gray-200 bg-gray-50"
+                        class="flex items-center justify-between px-4 py-2 border-t border-gray-200 bg-gray-50"
                     >
-                        <!-- Left info -->
-                        <div class="text-[11px] text-gray-600">
-                            Page {{ historyPage }} of {{ historyTotalPages }}
+                        <div class="text-[11px] text-gray-500">
+                            Showing
+                            <span class="font-semibold text-gray-800">
+                                {{ paginatedHistory.length }}
+                            </span>
+                            records ·
+                            Page
+                            <span class="font-semibold text-gray-800">
+                                {{ historyPage }}
+                            </span>
+                            of
+                            <span class="font-semibold text-gray-800">
+                                {{ historyTotalPages }}
+                            </span>
                         </div>
 
-                        <!-- Controls -->
-                        <div class="flex gap-1">
+                        <div class="flex items-center gap-2">
                             <button
-                                class="px-2 py-1 text-[11px] border rounded disabled:opacity-40"
+                                class="px-3 py-1 text-[11px] border border-gray-300 rounded-md transition hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
                                 :disabled="historyPage === 1"
                                 @click="historyPage--"
                             >
-                                Prev
+                                Previous
                             </button>
 
                             <button
-                                class="px-2 py-1 text-[11px] border rounded disabled:opacity-40"
+                                class="px-3 py-1 text-[11px] text-white transition bg-black rounded-md hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed"
                                 :disabled="historyPage === historyTotalPages"
                                 @click="historyPage++"
                             >
@@ -1957,16 +2000,39 @@ const editRequestLists = ref([]);
 const historyPage = ref(1);
 const historyPerPage = ref(10);
 
+const historySearch = ref("");
+
 const paginatedHistory = computed(() => {
     const start = (historyPage.value - 1) * historyPerPage.value;
     const end = start + historyPerPage.value;
 
-    return dataEditorHistory.value.slice(start, end);
+    return filteredHistory.value.slice(start, end);
+});
+
+const filteredHistory = computed(() => {
+    const search = historySearch.value.trim().toLowerCase();
+
+    if (!search) {
+        return dataEditorHistory.value ?? [];
+    }
+
+    return (dataEditorHistory.value ?? []).filter(item => {
+        return (
+            item.mass_prod?.toLowerCase().includes(search) ||
+            item.furnace?.toLowerCase().includes(search)
+        );
+    });
 });
 
 const historyTotalPages = computed(() => {
-    return Math.ceil(dataEditorHistory.value.length / historyPerPage.value);
+    return Math.ceil(filteredHistory.value.length / historyPerPage.value);
 });
+
+const formatDateTime = (date) => {
+    if (!date) return '';
+
+    return new Date(date).toLocaleString();
+};
 
 const fetchedModel = ref();
 const fetchedLotNo = ref();
@@ -2836,6 +2902,11 @@ const getDataLogsHistory = async () => {
         );
     }
 };
+
+
+watch(historySearch, () => {
+    historyPage.value = 1;
+});
 
 //SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- SESSION SECTION ---- ]
 
