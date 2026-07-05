@@ -851,40 +851,40 @@ const storeFileList = (event) => {
     }
 
     const mergeTempToTPM = async () => {
-        try { // tempDataClass contains the value to be updated
-            const responseTPM = await axios.get("/api/nsadata");
-            const nsaData = responseTPM.data.data["NSAData"] || [];
+        try {
+            const responseTPM = await axios.get(
+                `/api/nsadata?serial=${currentSerialSelected.value}&set=${highest_setNo.value}`
+            );
 
-            const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-            const nsafilteredData2 = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
-            const getAllID = nsafilteredData2.map(item => item.id);
+            const nsaData = responseTPM.data.data?.NSAData ?? [];
+            const getAllID = nsaData.map(item => item.id);
 
-            // Create array of PATCH promises
-            const patchPromises = getAllID.map((id, i) => {
-            return axios.patch(`/api/nsadataupdate/${id}`, {
-                temperature: csv_tempWithDataStat.value[i]?.temp || null,
-                data_status: csv_tempWithDataStat.value[i]?.status || null,
-                set_name: additional_remarks.value || null
-            }).catch(error => {
-                console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
-                return null; // Continue with others even if one fails
-            });
-            });
+            const patchPromises = getAllID.map((id, i) =>
+                axios.patch(`/api/nsadataupdate/${id}`, {
+                    temperature: csv_tempWithDataStat.value[i]?.temp ?? null,
+                    data_status: csv_tempWithDataStat.value[i]?.status ?? null,
+                    set_name: additional_remarks.value ?? null,
+                }).catch(error => {
+                    console.error(
+                        `Error patching ID ${id}:`,
+                        error.response?.data || error.message
+                    );
+                    return null;
+                })
+            );
 
-            // Wait for all PATCH requests to finish
-            const patchResults = await Promise.all(patchPromises);
-            // Optionally log patchResults or process them if needed
-           // console.log('All patch results:', patchResults);
+            await Promise.all(patchPromises);
 
         } catch (error) {
-           // console.log("Merge failed: ", error);
+            console.error("Merge failed:", error);
         } finally {
             await fetchLayerModelAndLotno();
             await saveToNsaCategory();
+
             showCsvLoading.value = false;
             showProceed3.value = true;
         }
-    }
+    };
 
     //New Furnace , New Layers end
 
@@ -2206,113 +2206,129 @@ const renderChart = () => {
 
 
 const autoDeleteNullData = async () => {
-    //console.log('[autoDeleteNullData] Starting...');
     try {
-        const responseGetNSA = await axios.get(`/api/nsadata`);
-        const nsadata = responseGetNSA.data.data["NSAData"] || [];
-        //console.log('[autoDeleteNullData] Raw API data:', nsadata);
-        //console.log('[autoDeleteNullData] Total rows fetched:', nsadata.length);
-        const nsaOverallData = responseGetNSA.data;
-        //console.log('[autoDeleteNullData] Overall data fetched:', nsaOverallData);
+        const responseGetNSA = await axios.get(
+            `/api/nsadata?serial=${currentSerialSelected.value}&set=${highest_setNo.value}`
+        );
+
+        const responseData = responseGetNSA.data.data || {};
+
+        const nsadata = responseData.NSAData ?? [];
+        const aggregateFunctions = responseData.aggregateFunctions ?? [];
 
         const nsaForDelete_IDs = [];
 
-        nsadata.forEach((row, idx) => {
-            const { id, layer_no, ...otherFields } = row;
-            const nullFields = Object.keys(otherFields).filter(key => otherFields[key] === null);
+        nsadata.forEach((row) => {
+            const hasNull = Object.entries(row).some(([key, value]) =>
+                key !== "id" &&
+                key !== "layer_no" &&
+                value === null
+            );
 
-            if (nullFields.length > 0) {
-                nsaForDelete_IDs.push(id);
-                console.log(`[Row ${idx}] ID ${id} marked for deletion. Null fields:`, nullFields);
+            if (hasNull) {
+                nsaForDelete_IDs.push(row.id);
             }
         });
 
-        //console.log('[autoDeleteNullData] IDs marked for deletion:', nsaForDelete_IDs);
+        await Promise.all(
+            nsaForDelete_IDs.map(async (id) => {
+                try {
+                    const res = await axios.delete(`/api/nsadata/${id}`);
+                    console.log(`[DELETE] ID ${id} successful:`, res.data);
+                } catch (err) {
+                    console.error(
+                        `[DELETE] ID ${id} failed:`,
+                        err.response?.data || err.message
+                    );
+                }
+            })
+        );
 
-        for (const id of nsaForDelete_IDs) {
-            try {
-                const res = await axios.delete(`/api/nsadata/${id}`);
-                console.log(`[DELETE] ID ${id} successful:`, res.data);
-            } catch (err) {
-                console.error(`[DELETE] ID ${id} failed:`, err.response?.data || err.message);
-            }
-        }
-
-        await deleteNullOnNsaAggregate();
-        await deleteNullOnNsaCategory();
+        await deleteNullOnNsaAggregate(aggregateFunctions);
+        await deleteNullOnNsaCategory(responseData.nsaCategory ?? []);
 
     } catch (error) {
-        console.error('[autoDeleteNullData] Error deleting null data:', error.response?.data || error.message);
+        console.error(
+            "[autoDeleteNullData] Error deleting null data:",
+            error.response?.data || error.message
+        );
     }
 };
 
-const deleteNullOnNsaAggregate = async () => {
+const deleteNullOnNsaAggregate = async (aggregateData = []) => {
     try {
-        const response = await axios.get(`/api/nsadata`);
-        const nsaAggregateData = response.data.data["aggregateFunctions"] || [];
-        //console.log('[deleteNullOnNsaAggregate] Fetched aggregate data:', nsaAggregateData);
-
-        const idsToDelete = nsaAggregateData
+        const idsToDelete = aggregateData
             .filter(({ average, maximum, minimum, ng_counter }) =>
-                average == null || maximum == null || minimum == null || ng_counter == null
+                average == null ||
+                maximum == null ||
+                minimum == null ||
+                ng_counter == null
             )
             .map(({ id }) => id);
 
         await Promise.all(
-            idsToDelete.map(async id => {
+            idsToDelete.map(async (id) => {
                 try {
                     await axios.delete(`/api/nsaaggregate/${id}`);
                     console.log(`[DELETE] Deleted aggregate with ID ${id}`);
                 } catch (err) {
-                    console.error(`[DELETE ERROR] ID ${id}:`, err.response?.data || err.message);
+                    console.error(
+                        `[DELETE ERROR] ID ${id}:`,
+                        err.response?.data || err.message
+                    );
                 }
             })
         );
     } catch (err) {
-        console.error('[deleteNullOnNsaAggregate] Failed to fetch or delete:', err.response?.data || err.message);
+        console.error(
+            "[deleteNullOnNsaAggregate] Failed to delete:",
+            err.response?.data || err.message
+        );
     }
 };
 
-const deleteNullOnNsaCategory = async () => {
+const deleteNullOnNsaCategory = async (categoryData = []) => {
     try {
-        const response = await axios.get(`/api/nsadata`);
-        const nsaCategoryData = response.data.data["nsaCategory"] || [];
-        //console.log('[deleteNullOnNsaCategory] Fetched category data:', nsaCategoryData);
-
         const requiredFields = [
-            'actual_model',
-            'factor_emp',
-            'jhcurve_lotno',
-            'massprod_name',
-            'mias_emp',
-            'nsa_serial',
+            "actual_model",
+            "factor_emp",
+            "jhcurve_lotno",
+            "massprod_name",
+            "mias_emp",
+            "nsa_serial",
         ];
 
-        const idsToDelete = nsaCategoryData
-            .filter(row => {
-                return requiredFields.some(field => row[field] == null);
-            })
+        const idsToDelete = categoryData
+            .filter(row =>
+                requiredFields.some(field => row[field] == null)
+            )
             .map(({ id }) => id)
-            .filter(id => id != null); // extra safety
+            .filter(id => id != null);
 
         await Promise.all(
-            idsToDelete.map(async id => {
+            idsToDelete.map(async (id) => {
                 try {
                     await axios.delete(`/api/nsacategory/${id}`);
                     console.log(`[DELETE] Deleted category with ID ${id}`);
                 } catch (err) {
-                    console.error(`[DELETE ERROR] ID ${id}:`, err.response?.data || err.message);
+                    console.error(
+                        `[DELETE ERROR] ID ${id}:`,
+                        err.response?.data || err.message
+                    );
                 }
             })
         );
     } catch (err) {
-        console.error('[deleteNullOnNsaCategory] Failed to fetch or delete:', err.response?.data || err.message);
+        console.error(
+            "[deleteNullOnNsaCategory] Failed to delete:",
+            err.response?.data || err.message
+        );
     }
 };
 
 onMounted(async() => {
     //await testNSA();
-    await autoDeleteNullData();
+    //await autoDeleteNullData();
     await checkAuthentication();
 });
 
