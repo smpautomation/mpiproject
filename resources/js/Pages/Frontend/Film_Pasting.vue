@@ -1105,7 +1105,7 @@
                         <!-- Action Buttons -->
                         <div class="flex space-x-3">
                             <button
-                                @click="showModalSubmit = false"
+                                @click="showModalSubmit = false, showModalConfirmDouble = false, showModalConfirmDouble2 = false, showModalSecondFilmPasteInputForm = false"
                                 class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-all duration-200 transform hover:scale-[0.98] flex items-center justify-center space-x-2"
                             >
                                 Cancel
@@ -1168,6 +1168,228 @@
                     ></div>
                 </div>
             </Modal>
+
+            <Modal :show="showModalConfirmDouble" @close="showModalConfirmDouble = false">
+                <div class="relative">
+                    <!-- Header with Cyan/Teal Gradient -->
+                    <div class="relative px-5 py-4 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
+                        <div class="absolute inset-0 opacity-10">
+                            <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                                        <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5" />
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#hexagon)" />
+                            </svg>
+                        </div>
+                        <!-- Header Content -->
+                        <div class="relative flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center justify-center w-10 h-10 bg-white bg-opacity-20 border border-white rounded-lg backdrop-blur-sm border-opacity-30">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.584c.75 1.334-.213 2.983-1.742 2.983H3.48c-1.53 0-2.492-1.65-1.742-2.983L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-.993.883L9 6v4a1 1 0 001.993.117L11 10V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-base font-semibold text-white">Second Film Pasting</h3>
+                            </div>
+                            <button
+                                @click="showModalConfirmDouble = false"
+                                class="p-1.5 text-white transition-all duration-200 rounded-lg hover:bg-white hover:bg-opacity-20 hover:scale-110"
+                            >
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="px-5 py-5 bg-gradient-to-b from-cyan-50 to-white">
+
+                        <!-- Form State -->
+                        <div v-if="showModalSecondFilmPasteInputForm" class="space-y-4">
+                            <p class="text-sm font-medium text-teal-800">
+                                Enter the First Film Pasting data
+                            </p>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-teal-700">Mass Prod Name</label>
+                                    <select
+                                        v-model="firstFilmPasteMassProd"
+                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                    >
+                                        <option disabled value="">
+                                            Select Mass Production
+                                        </option>
+                                        <option
+                                            v-for="items in massProdLists"
+                                            :key="items"
+                                            :value="items"
+                                        >
+                                            {{ items }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-teal-700">Furnace</label>
+                                    <select
+                                        v-model="firstFilmPasteFurnace"
+                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                        placeholder="e.g. K-40"
+                                    >
+                                        <option disabled value="">
+                                            Select Furnace
+                                        </option>
+                                        <option
+                                            v-for="items in furnace_names"
+                                            :key="items"
+                                            :value="items"
+                                        >
+                                            {{ items }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-xs font-medium text-teal-700">Layer</label>
+                                    <select
+                                        v-model="firstFilmPasteLayer"
+                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                    >
+                                        <option value="" disabled>Select Layer</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="9.5">9.5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 pt-2">
+                                <button
+                                    @click="secondFilmPasteProceed"
+                                    class="flex-1 px-4 py-2 text-sm font-medium text-white transition-all duration-200 rounded-lg shadow-sm bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 hover:shadow-md"
+                                >
+                                    Proceed
+                                </button>
+                                <button
+                                    @click="showModalSecondFilmPasteInputForm = false"
+                                    class="flex-1 px-4 py-2 text-sm font-medium text-teal-700 transition-all duration-200 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation State -->
+                        <div v-else class="space-y-4">
+                            <div class="flex flex-col items-center gap-2 py-2 text-center">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-100">
+                                    <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-700">
+                                    Is this a second film pasting type?
+                                </p>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button
+                                    @click="secondFilmPasteConfirm"
+                                    class="flex-1 px-4 py-2 text-sm font-medium text-white transition-all duration-200 rounded-lg shadow-sm bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 hover:shadow-md"
+                                >
+                                    Yes
+                                </button>
+                                <button
+                                    @click="secondFilmPasteCancel"
+                                    class="flex-1 px-4 py-2 text-sm font-medium text-teal-700 transition-all duration-200 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50"
+                                >
+                                    No
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal :show="showModalConfirmDouble2" @close="showModalConfirmDouble2 = false">
+                <div class="relative">
+                    <!-- Header with Cyan/Teal Gradient -->
+                    <div class="relative px-5 py-4 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700">
+                        <div class="absolute inset-0 opacity-10">
+                            <svg class="w-full h-full" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <pattern id="hexagon" width="12" height="12" patternUnits="userSpaceOnUse">
+                                        <polygon points="6,1 11,4.5 11,9.5 6,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="0.5" />
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#hexagon)" />
+                            </svg>
+                        </div>
+                        <!-- Header Content -->
+                        <div class="relative flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center justify-center w-10 h-10 bg-white bg-opacity-20 border border-white rounded-lg backdrop-blur-sm border-opacity-30">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.584c.75 1.334-.213 2.983-1.742 2.983H3.48c-1.53 0-2.492-1.65-1.742-2.983L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-.993.883L9 6v4a1 1 0 001.993.117L11 10V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-base font-semibold text-white">Confirm Submission</h3>
+                            </div>
+                            <button
+                                @click="showModalConfirmDouble2 = false"
+                                class="p-1.5 text-white transition-all duration-200 rounded-lg hover:bg-white hover:bg-opacity-20 hover:scale-110"
+                            >
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="px-5 py-5 bg-gradient-to-b from-cyan-50 to-white">
+
+                        <div class="flex flex-col items-center gap-3 py-2 text-center">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-100">
+                                <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                Are you truly sure? Clicking <span class="font-semibold text-teal-700">Yes</span> confirms that this Film Pasting data is <span class="font-semibold">not</span> a double film pasting. It will proceed normally into submission.
+                            </p>
+                        </div>
+
+                        <div class="flex gap-2 pt-4">
+                            <button
+                                @click="secondFilmPasteCancelFinal"
+                                class="flex-1 px-4 py-2 text-sm font-medium text-white transition-all duration-200 rounded-lg shadow-sm bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 hover:shadow-md"
+                            >
+                                Yes
+                            </button>
+                            <button
+                                @click="secondFilmPasteCancelConfirmation"
+                                class="flex-1 px-4 py-2 text-sm font-medium text-teal-700 transition-all duration-200 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50"
+                            >
+                                No, I am not sure
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+
+
         </div>
     </Frontend>
 </template>
@@ -1266,7 +1488,11 @@ function useSessionStorage(key, state) {
 // Toggle variable ---------- Toggle Variable
 
 const bypassValidation = ref();
-const showModalSubmit = ref();
+const showModalSubmit = ref(false);
+const showModalConfirmDouble = ref(false);
+const showModalConfirmDouble2 = ref(false);
+const showModalSecondFilmPasteInputForm = ref(false);
+const showModalProceedSecondFilmPaste = ref(false);
 const isFilmPasteDataShown = ref();
 const isAdditionalMode = ref(false);
 const isInitialLotSaved = ref(false);
@@ -1289,6 +1515,9 @@ const currentInitialLot = ref();
 const filmPasteModel = ref();
 const filmPasteLotNo = ref();
 
+const firstFilmPasteMassProd = ref("");
+const firstFilmPasteFurnace = ref("");
+const firstFilmPasteLayer = ref("");
 const filmPastingInfo = reactive({
     selectedFurnace: "",
     selected_mass_prod: "",
@@ -1361,8 +1590,38 @@ const submit = async () => {
         }
     }
 
-    showModalSubmit.value = true;
+    //showModalSubmit.value = true;
+    showModalConfirmDouble.value = true;
 };
+
+const secondFilmPasteConfirm = async () => {
+    showModalSecondFilmPasteInputForm.value = true;
+}
+
+const secondFilmPasteCancel = async () => {
+    showModalConfirmDouble2.value = true;
+}
+
+const secondFilmPasteCancelFinal = async () => {
+    showModalSubmit.value = true;
+}
+
+const secondFilmPasteCancelConfirmation = async () => {
+    showModalConfirmDouble2.value = false;
+    showModalConfirmDouble.value = false;
+    showModalProceedSecondFilmPaste.value = false;
+}
+
+const secondFilmPasteProceed = async () => {
+
+    if(!firstFilmPasteFurnace.value || !firstFilmPasteLayer.value || !firstFilmPasteMassProd.value ){
+        toast.warning("Please fill up all fields");
+        return;
+    }
+
+    showModalProceedSecondFilmPaste.value = true; // Second Film Paste confirmation flag
+    showModalSubmit.value = true;
+}
 
 const checkInitialLot = async () => {
     try {
@@ -1495,6 +1754,10 @@ const addtnl_saveToDatabase = async () => {
     } finally {
         showModalSubmit.value = false;
         isFilmPasteDataShown.value = false;
+        showModalConfirmDouble.value = false;
+        showModalConfirmDouble2.value = false;
+        showModalSecondFilmPasteInputForm.value = false;
+        showModalProceedSecondFilmPaste.value = false;
         await getCompletedLayers();
         await fetchAvailableLayers();
         await fetchExistingLayers();
@@ -1536,6 +1799,28 @@ const saveToDatabase = async () => {
         }else{
             await breaklotAddtnlFormatType();
         }
+
+        if (showModalProceedSecondFilmPaste.value) {
+            try {
+                const response2ndFilmPaste = await axios.post('/api/second-film-paste', {
+                    second_mass_prod: filmPastingInfo.selected_mass_prod,
+                    second_furnace: filmPastingInfo.selectedFurnace,
+                    second_layer: filmPastingInfo.selected_layer,
+
+                    mass_prod: firstFilmPasteMassProd.value,
+                    furnace: firstFilmPasteFurnace.value,
+                    layer: firstFilmPasteLayer.value,
+                });
+
+                console.log(response2ndFilmPaste.data);
+
+            } catch (error) {
+                console.error(
+                    error.response?.data || error.message
+                );
+            }
+        }
+
     } catch (error) {
         toast.error("Failed to save film pasting data");
         await userErrorLogging(

@@ -2103,8 +2103,19 @@
                     <!-- Group: Film Pasting Date, Machine No, Total Magnet Weight -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-1">
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Film Type (Tb or Dy)<span class="text-red-500"> *</span></label>
-                            <input v-model="filmPastingInfo.film_type" @input="filmPastingInfo.film_type = filmPastingInfo.film_type.toUpperCase()" type="text" class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                            <label class="block mb-1 text-xs font-medium text-gray-700">
+                                Film Type (TB or DY)
+                                <span class="text-red-500">*</span>
+                            </label>
+
+                            <select
+                                v-model="filmPastingInfo.film_type"
+                                class="w-full text-xs border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option disabled value="">Select Film Type</option>
+                                <option value="TB">TB</option>
+                                <option value="DY">DY</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block mb-1 text-xs font-medium text-gray-700">Film Class<span class="text-red-500"> *</span></label>
@@ -2116,7 +2127,7 @@
             <div class="p-6 mt-10 bg-white shadow-lg rounded-2xl">
                 <!-- Header -->
                 <h2 class="pb-2 mb-6 text-lg font-bold text-gray-800 border-b-2 border-cyan-400">
-                HOURLY CHECKING
+                    HOURLY CHECKING
                 </h2>
 
                 <!-- Horizontal scrollable blocks container -->

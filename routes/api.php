@@ -39,6 +39,7 @@ use App\Http\Controllers\BreaklotSecondCoatingController;
 use App\Http\Controllers\BreaklotSecondHeatTreatmentController;
 use App\Http\Controllers\ExcessLayersController;
 use App\Http\Controllers\FilmPastingDataController;
+use App\Http\Controllers\GbdpSecondFilmPasteController;
 use App\Http\Controllers\GbdpSecondCoatingController;
 use App\Http\Controllers\HtGraphPatternsController;
 use App\Http\Controllers\MassProductionController;
@@ -607,6 +608,8 @@ Route::post('/initial-coating/check-duplicate', [InitialCoatingController::class
 Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::class, 'fetchCoatingSummaryData']);
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
 Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
+
+Route::post('/second-film-paste', [GbdpSecondFilmPasteController::class, 'store']);
 
 Route::apiResource('mass-production', MassProductionController::class);
 Route::apiResource('break-lot-coating', BreaklotCoatingController::class);
