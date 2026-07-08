@@ -290,16 +290,17 @@
                                         Lot No.
                                         <span class="ml-1 font-bold text-red-500">*</span>
                                     </label>
-                                    <select
+
+                                    <input
                                         v-model="mpcsbl.lotNo"
+                                        type="text"
                                         :disabled="validationPassed"
-                                        :class="['w-full text-sm transition-all duration-200 border-2 rounded-lg shadow-sm focus:ring-2 hover:border-gray-400', validationPassed ? 'bg-gray-100 border-gray-300 cursor-not-allowed' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500']"
-                                    >
-                                        <option value="" disabled>Select Lot No</option>
-                                        <option v-for="(lot, index) in lotNoLists" :key="index" :value="lot.lot_no">
-                                            {{ lot.lot_no }}
-                                        </option>
-                                    </select>
+                                        class="w-full text-sm font-semibold transition-all duration-200 border-2 rounded-lg shadow-sm focus:ring-2 hover:border-gray-400"
+                                        :class="validationPassed
+                                            ? 'bg-gray-100 border-gray-300 cursor-not-allowed'
+                                            : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'"
+                                        placeholder="Enter Lot No"
+                                    />
                                 </div>
 
                                 <!-- Model -->
@@ -1057,7 +1058,6 @@ const showPreviewPanel = ref(false);
 const firstLayerSelected = ref('');
 const totalBoxes = ref();
 const model_names = ref([]);
-const lotNoLists = ref([]);
 const validationPassed = ref(false); // true only after successful validation
 const validationAttempted = ref(false); // to track if validation has been attempted
 const layers = ref([9, 8, 7, 6, 5, 4, 3, 2, 1]);
@@ -1242,11 +1242,18 @@ const validateData = async () => {
 
 watch(
     () => mpcsbl.lotNo,
-    async (newVal) => {
-        if (!newVal) return;
+    async (newVal, oldVal) => {
+
+        if (!newVal) {
+            model_names.value = [];
+            mpcsbl.selectedModel = null;
+            return;
+        }
+
+        // reset BEFORE fetch to avoid stale UI flash
+        mpcsbl.selectedModel = null;
+
         await getModelLists();
-        console.log("Lot No: ",mpcsbl.lotNo);
-        console.log("Model: ",mpcsbl.selectedModel);
     }
 );
 
@@ -1362,17 +1369,6 @@ const getModelLists = async () => {
         );
     }
 }
-
-const fetchAllLotNoData = async () => {
-    try {
-        const response = await axios.get('/api/initial-control-sheets/lot-all');
-        //console.log(response.data); // All records with lot_no, newest first
-        lotNoLists.value = response.data;
-    } catch (err) {
-        console.error('Failed to fetch lot_no data:', err);
-    }
-};
-
 
 // DATABASE FETCHING ZONE ------------------------------ DATABASE FETCHING ZONE END
 

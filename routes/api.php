@@ -26,6 +26,7 @@ use App\Http\Controllers\MiasFactorController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\RobModelController;
 use App\Http\Controllers\HisModelController;
+use App\Http\Controllers\TtmwcModelController;
 use App\Http\Controllers\TtmncModelController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VtModelController;
@@ -149,10 +150,11 @@ Route::patch('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggre
 Route::delete('/miegxdatainstructionsaggregate/{id}', [MieGxDataInstructionsAggregateController::class, 'destroy']);
 
 Route::get('/nsadata', [NormalSecAdditionalsController::class, 'index']);
-Route::get('/nsadata/{id}', [NormalSecAdditionalsController::class, 'show']);
 Route::post('/nsadata', [NormalSecAdditionalsController::class, 'store']);
-Route::patch('/nsadataupdate/{id}', [NormalSecAdditionalsController::class, 'updateNSAData']);
+Route::get('/nsadata/max-set', [NormalSecAdditionalsController::class, 'getMaxSet']);
 Route::patch('/nsadataupdatemiasfactor', [NormalSecAdditionalsController::class, 'updateNSA_MiasFactor']);
+Route::get('/nsadata/{id}', [NormalSecAdditionalsController::class, 'show']);
+Route::patch('/nsadataupdate/{id}', [NormalSecAdditionalsController::class, 'updateNSAData']);
 Route::patch('/nsaremarksupdate/{id}', [NormalSecAdditionalsController::class, 'updateRemarks']);
 Route::patch('/nsaaggregateupdate/{id}', [NormalSecAdditionalsController::class, 'updateAggregateFunctions']);
 Route::patch('/nsaupdatecategory/{id}', [NormalSecAdditionalsController::class, 'updateCategory']);
@@ -392,6 +394,7 @@ Route::apiResource('mias-factor', MiasFactorController::class);
 Route::apiResource('vt-models', VtModelController::class);
 Route::apiResource('cpk-ihc-models', CpkIhcModelController::class);
 Route::apiResource('gx-models', GxModelController::class);
+Route::apiResource('ttmwc-models', TtmwcModelController::class);
 Route::apiResource('ttmnc-models', TtmncModelController::class);
 Route::apiResource('bh-models', BhModelController::class);
 Route::apiResource('rob-models', RobModelController::class);
@@ -484,6 +487,8 @@ Route::get('/mass-production/{furnace}/{massprod}/completed-layers-coating', [Ma
 //);
 Route::get('/mass-production/{furnace}/{massprod}/coating-completed-layers', [MassProductionController::class, 'getAllCoatingCompleteLayers']);
 
+Route::get('/mass-production/{furnace}/{mass_prod}/layer-unified-state', [MassProductionController::class, 'getLayerUnifiedState']);
+
 //Route::get(
 //    '/mass-productions/{massprod}/filmpasting-completed-layers',
 //    [MassProductionController::class, 'getAllFilmPastingCompletedLayers']
@@ -531,6 +536,8 @@ Route::post('/mass-production/delete-layer-data', [MassProductionController::cla
 Route::post('/mass-production/delete-existing-data', [MassProductionController::class, 'deleteExistingData']);
 
 Route::post('/mass-production/delete-layer-full', [MassProductionController::class, 'deleteLayerFull']);
+
+Route::delete('/mass-production/delete-massproduction-alldata', [MassProductionController::class, 'deleteMassProductionAllData']);
 
 //Insert new route for deletelayerdata
 

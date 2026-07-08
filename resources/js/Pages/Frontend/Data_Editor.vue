@@ -159,10 +159,14 @@
                                 v-model="htInfoEditingOnly"
                                 class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
                             />
-                            <span class="text-xs text-gray-500"
-                                >Heat Treatment Info editing only</span
-                            >
+                            <span class="text-xs text-gray-500">
+                                Enable Cycle No editing and/or Mass Production deletion only
+                            </span>
                         </label>
+
+                        <div>
+
+                        </div>
 
                         <div v-if="!isCorrectiveActionCompleted">
                             <!-- Action -->
@@ -394,6 +398,94 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- FULL MASS PROD DELETE ACTION -->
+                            <div
+                                class="p-5 space-y-4 bg-white border border-gray-200 rounded-md"
+                            >
+                                <!-- Header -->
+                                <div>
+                                    <p
+                                        class="text-sm font-semibold text-gray-800"
+                                    >
+                                        Delete Entire Mass Production
+                                    </p>
+
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Permanently removes all data associated with the selected
+                                        Furnace and Mass Production.
+                                    </p>
+
+                                    <p class="mt-2 text-xs font-medium text-red-600">
+                                        Warning: This action cannot be undone. Verify that the
+                                        selected Furnace and Mass Production are correct before
+                                        proceeding.
+                                    </p>
+                                </div>
+
+                                <!-- Action -->
+                                <div class="flex justify-end">
+                                    <button
+                                        @click="proceedDeleteMassProduction"
+                                        class="px-4 py-2 text-sm font-medium text-gray-800 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 active:scale-[0.98]"
+                                    >
+                                        Delete Mass Production
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    v-if="showProceedDeleteMassProduction"
+                    class="fixed inset-0 z-50 flex items-center justify-center"
+                >
+                    <!-- Backdrop -->
+                    <div
+                        class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                        @click="showProceedDeleteMassProduction = false"
+                    ></div>
+
+                    <!-- Panel -->
+                    <div
+                        class="relative z-10 w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-xl"
+                    >
+                        <!-- Title -->
+                        <h2
+                            class="mb-4 text-sm font-semibold text-gray-800 uppercase"
+                        >
+                            Confirm Action
+                        </h2>
+
+                        <!-- Message -->
+                        <p class="mb-6 text-sm leading-relaxed text-gray-700">
+                            You are about to delete ALL data related to
+                            <span class="font-semibold"
+                                >{{ selectedFurnace }}
+                                {{ selectedMassProd }}</span
+                            >
+                            <br /><br />
+                            This action cannot be undone. Proceed?
+                        </p>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-3">
+                            <button
+                                @click="showProceedDeleteMassProduction = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                @click="deleteMassProductionDirect"
+                                class="px-4 py-2 text-sm font-semibold text-white transition bg-black rounded-md hover:bg-gray-800 active:scale-[0.98]"
+                            >
+                                Yes, Delete
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -641,7 +733,7 @@
                                 class="mr-2 mt-0.5 disabled:opacity-100 disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
                             />
                             <span class="text-xs text-gray-500"
-                                >Heat Treatment Info editing only</span
+                                >Heat Treatment Info editing and Mass Production deletion only</span
                             >
                         </label>
 
@@ -1830,6 +1922,7 @@ function useSessionStorage(key, state) {
 }
 
 const showHistoryPanel = ref(false);
+const showProceedDeleteMassProduction = ref(false);
 const showProceedDeleteLayerData = ref(false);
 const showProceedUpdateCycleNo = ref(false);
 const isValidationSuccess = ref(false);
@@ -1979,7 +2072,7 @@ const confirmApprove = async () => {
             userReason.value = selectedApproveItem.value.reason;
             requestedBy.value = selectedApproveItem.value.request_by;
             userVerified.value = true;
-            
+
 
             await deleteLayerDataFinal(selectedApproveItem.value.id);
         }
@@ -2202,6 +2295,18 @@ const showHistoryPanelButtonClose = () => {
     showHistoryPanel.value = false;
 };
 
+const proceedDeleteMassProduction = async () => {
+    if (
+        !selectedFurnace.value &&
+        !selectedMassProd.value
+    ) {
+        toast.warning("Fill all fields before proceeding.");
+        return;
+    }
+
+    showProceedDeleteMassProduction.value = true;
+};
+
 const proceedButton = async () => {
     if (
         !selectedFurnace.value &&
@@ -2291,6 +2396,51 @@ const req_submitForm = async () => {
     }
 
     req_isCorrectiveActionCompleted.value = true;
+};
+
+const deleteMassProductionDirect = async () => {
+    try {
+        const response = await axios.delete(
+            "/api/mass-production/delete-massproduction-alldata",
+            {
+                data: {
+                    massprod: selectedMassProd.value,
+                    furnace: selectedFurnace.value,
+                },
+            },
+        );
+
+        if (response.data.success) {
+            await saveLog(
+                `has fully removed all data related to ${selectedFurnace.value} ${selectedMassProd.value} in the system.`,
+            );
+
+            toast.success(
+                response.data.message || "Mass Production deleted successfully.",
+            );
+
+            resetPage();
+            await getDeleteRequests();
+            await getEditRequests();
+            await getDataLogsHistory();
+        } else {
+            toast.warning(response.data.message || "No matching data found.");
+        }
+    } catch (error) {
+        console.error("Failed to delete layer data", error);
+
+        toast.error("Failed to delete layer data.");
+
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+            },
+            "deleteLayerFull",
+            "Failed to delete layer data.",
+        );
+    }
 };
 
 const deleteLayerDataFinalDirect = async () => {
@@ -2605,6 +2755,7 @@ const req_saveLog = async (log) => {
 
 const resetPage = () => {
     showProceedDeleteLayerData.value = false;
+    showProceedDeleteMassProduction.value = false;
     isValidationSuccess.value = false;
     isCorrectiveActionCompleted.value = false;
     userReason.value = null;

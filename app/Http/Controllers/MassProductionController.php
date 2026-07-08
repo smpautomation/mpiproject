@@ -766,8 +766,37 @@ class MassProductionController extends Controller
             ->sort()
             ->values();
 
+        $breaklotFilmLayers = BreaklotFilmpasting::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->get(['layer', 'model', 'lot_no'])
+            ->map(function ($item) {
+                return [
+                    'layer' => (string) $item->layer,
+                    'model' => $item->model,
+                    'lot_no' => $item->lot_no,
+                ];
+            });
+
+        $breaklotCoatingLayers = BreaklotCoating::where('furnace', $furnace)
+            ->where('mass_prod', $massprod)
+            ->whereNotNull('layer')
+            ->get(['layer', 'model', 'lot_no'])
+            ->map(function ($item) {
+                return [
+                    'layer' => (string) $item->layer,
+                    'model' => $item->model,
+                    'lot_no' => $item->lot_no,
+                ];
+            });
+
+        $breaklotLayers = collect($breaklotFilmLayers->all())
+            ->merge($breaklotCoatingLayers->all())
+            ->values();
+
         return response()->json([
-            'completed_layers' => $layers
+            'completed_layers' => $layers,
+            'breaklot_layers' => $breaklotLayers,
         ]);
     }
 
@@ -1803,36 +1832,52 @@ class MassProductionController extends Controller
         ]);
     }
 
-    public function deleteExistingData(Request $request)
+    public function deleteMassProductionAllData(Request $request)
     {
-        $massProd = $request->massprod;
-        $furnace  = $request->furnace;
-        $layer    = $request->layer;
-
-        // List of models to clean
-        $tables = [
-            Coating::class,
-            GbdpSecondCoating::class,
-            GbdpSecondHeatTreatment::class,
-            FilmPastingData::class,
-            BreaklotInitialLot::class,
-            BreaklotCoating::class,
-            BreaklotSecondCoating::class,
-            BreaklotFilmpasting::class,
-            BreaklotSecondHeatTreatment::class,
-        ];
-
-        foreach ($tables as $model) {
-            $model::where('mass_prod', $massProd)
-                ->where('furnace', $furnace)
-                ->where('layer', $layer)
-                ->delete();
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Existing data deleted successfully'
+        $validated = $request->validate([
+            'massprod' => 'required|string',
+            'furnace'  => 'required|string',
         ]);
+
+        $massProd = $validated['massprod'];
+        $furnace  = $validated['furnace'];
+
+        try {
+
+            DB::transaction(function () use ($massProd, $furnace) {
+
+                MassProduction::where('mass_prod', $massProd)
+                    ->where('furnace', $furnace)
+                    ->delete();
+
+                Coating::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                GbdpSecondCoating::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                GbdpSecondHeatTreatment::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                FilmPastingData::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotInitialLot::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotCoating::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotSecondCoating::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotFilmpasting::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotInitialLotHt::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotSecondHeatTreatment::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                BreaklotAddtnlFormatType::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+                ExcessLayers::where('mass_prod', $massProd)->where('furnace', $furnace)->delete();
+
+            });
+
+            return response()->json([
+                'message' => 'Mass production and all related data deleted successfully.',
+                'success' => true
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'message' => 'Deletion failed. No changes were applied.',
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function deleteLayerFull(Request $request)

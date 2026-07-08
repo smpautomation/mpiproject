@@ -592,7 +592,7 @@ const myChartCanvas = ref(null); // Ref for the canvas
 const mias_factorData = async (factor, mias) => {
         const response = await axios.get('/api/mias-factor');
         const miasFactorData = response.data.data;
-        console.log("MIAS Factor Data:", miasFactorData);
+        //console.log("MIAS Factor Data:", miasFactorData);
 
         const findByEmpOrMiasNo = (searchValue) => {
             return (
@@ -635,14 +635,6 @@ currentFurnaceSelected.value = props.sec_furnace;
 //console.log('Layer Param check: ',currentLayerSelected.value);
 
 const fetchLayerModelAndLotno = async () => {
-    console.log(
-        'Entering fetchLayerModelAndLotno function | MassProd: ',
-        currentMassProdSelected.value,
-        'Furnace: ',
-        currentFurnaceSelected.value,
-        ' Layer: ',
-        currentLayerSelected.value
-    );
 
     if (!currentMassProdSelected.value || !currentFurnaceSelected.value || !currentLayerSelected.value) {
         console.warn("MassProd or Layer not selected yet.");
@@ -825,25 +817,25 @@ const storeFileList = (event) => {
 
                 // Skip rows that are completely empty
                 if (!factor && !mias && !row.temp && !row.status) {
-                    console.warn('Skipping completely empty row:', row);
+                    //console.warn('Skipping completely empty row:', row);
                     continue;
                 }
 
-                console.log('Raw row data:', row);
-                console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
+                //console.log('Raw row data:', row);
+                //console.log('Cleaned factor:', factor, 'Cleaned mias:', mias);
 
                 if (factor && mias) {
-                    console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
+                    //console.log('Valid row - Processing factor:', factor, 'and mias:', mias);
                     await mias_factorData(factor, mias);
                 } else {
-                    console.warn('Missing factor or mias in cleaned row:', row);
+                    //console.warn('Missing factor or mias in cleaned row:', row);
                     return;
                 }
             }
             await mergeTempToTPM();
 
         } catch (err) {
-            console.error('Error during CSV processing:', err);
+            //console.error('Error during CSV processing:', err);
         }
     };
 
@@ -859,40 +851,40 @@ const storeFileList = (event) => {
     }
 
     const mergeTempToTPM = async () => {
-        try { // tempDataClass contains the value to be updated
-            const responseTPM = await axios.get("/api/nsadata");
-            const nsaData = responseTPM.data.data["NSAData"] || [];
+        try {
+            const responseTPM = await axios.get(
+                `/api/nsadata?serial=${currentSerialSelected.value}&set=${highest_setNo.value}`
+            );
 
-            const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-            const nsafilteredData2 = nsafilteredData.filter(item => item.set_no == highest_setNo.value);
-            const getAllID = nsafilteredData2.map(item => item.id);
+            const nsaData = responseTPM.data.data?.NSAData ?? [];
+            const getAllID = nsaData.map(item => item.id);
 
-            // Create array of PATCH promises
-            const patchPromises = getAllID.map((id, i) => {
-            return axios.patch(`/api/nsadataupdate/${id}`, {
-                temperature: csv_tempWithDataStat.value[i]?.temp || null,
-                data_status: csv_tempWithDataStat.value[i]?.status || null,
-                set_name: additional_remarks.value || null
-            }).catch(error => {
-                console.error(`Error patching ID ${id}:`, error.response?.data || error.message);
-                return null; // Continue with others even if one fails
-            });
-            });
+            const patchPromises = getAllID.map((id, i) =>
+                axios.patch(`/api/nsadataupdate/${id}`, {
+                    temperature: csv_tempWithDataStat.value[i]?.temp ?? null,
+                    data_status: csv_tempWithDataStat.value[i]?.status ?? null,
+                    set_name: additional_remarks.value ?? null,
+                }).catch(error => {
+                    console.error(
+                        `Error patching ID ${id}:`,
+                        error.response?.data || error.message
+                    );
+                    return null;
+                })
+            );
 
-            // Wait for all PATCH requests to finish
-            const patchResults = await Promise.all(patchPromises);
-            // Optionally log patchResults or process them if needed
-           // console.log('All patch results:', patchResults);
+            await Promise.all(patchPromises);
 
         } catch (error) {
-           // console.log("Merge failed: ", error);
+            console.error("Merge failed:", error);
         } finally {
             await fetchLayerModelAndLotno();
             await saveToNsaCategory();
+
             showCsvLoading.value = false;
             showProceed3.value = true;
         }
-    }
+    };
 
     //New Furnace , New Layers end
 
@@ -1050,22 +1042,20 @@ const saveToDatabase = async () => {
 
     layerTableRowLoading.value = true;
     showSaveToDatabase_confirmation.value = false;
-    try{
-        const responseCheckNsa = await axios.get("/api/nsadata");
-        //console.log('response check NSA: ',responseCheckNsa.data.data);
-        const nsaData = responseCheckNsa.data.data["NSAData"] || [];
-        console.log('tpm data: ',nsaData);
-        const nsafilteredData = nsaData.filter(item => item.serial_no == currentSerialSelected.value);
-        console.log('tpm data filtered by serial: ',nsafilteredData);
+    try {
+        const { data } = await axios.get("/api/nsadata/max-set", {
+            params: {
+                serial: currentSerialSelected.value,
+            },
+        });
 
-        if(nsafilteredData.length > 0) {
-            const maxSetNo = Math.max(...nsafilteredData.map(item => item.set_no));
-            highest_setNo.value = maxSetNo + 1;
-        } else {
-            console.warn('No matching NSA data for this serial number.');
-        }
-    }catch(error){
-        console.warn("404 No data detected or another error check here -> ",error)
+        highest_setNo.value = (data.data.max_set ?? 0) + 1;
+
+    } catch (error) {
+        console.warn("Unable to determine highest set number.", error);
+
+        // Keep existing behavior.
+        highest_setNo.value = 1;
     }
 
 
@@ -1275,7 +1265,7 @@ const sendLayerData = async (layerData) => {
     try {
         //console.log("Sending layer TO API: ",layerData);
         const response = await axios.post('/api/nsadata', layerData); // Replace '/api/endpoint' with your API endpoint
-        console.log('API Response sendlayerdata:', response.data);
+        //console.log('API Response sendlayerdata:', response.data);
 
     } catch (error) {
         console.error('Error sending data to API:', error.response?.data || error.message);
@@ -1394,7 +1384,7 @@ const saveToNsaCategory = async () => {
     try{
 
         const responseTPMCAT = await axios.get("/api/tpmdata?serial=" + currentSerialSelected.value); // Adjust this URL to your API endpoint
-        console.log('saveToNsaCategory - API Response responseTPMCAT:', responseTPMCAT.data);
+        //console.log('saveToNsaCategory - API Response responseTPMCAT:', responseTPMCAT.data);
         tpmCatData.value = responseTPMCAT.data.data;
 
         const tpm_category_actualmodel = tpmCatData.value.map(item => item.category?.actual_model ?? null);
@@ -1419,7 +1409,7 @@ const saveToNsaCategory = async () => {
                 jhcurve_lotno: jhCurveLotNo.value,
                 massprod_name: currentMassProdSelected.value,
             });
-        console.log("API PATCHED category: ",responsePatchCategory);
+        //console.log("API PATCHED category: ",responsePatchCategory);
 
         const responsePatchNSAData = await axios.patch(`/api/nsadataupdatemiasfactor/`, {
             serial_no: currentSerialSelected.value,
@@ -1427,7 +1417,7 @@ const saveToNsaCategory = async () => {
             factor_emp: nsa_FactorEmp.value,
             mias_emp: nsa_MiasEmp.value,
         });
-        console.log("API PATCHED NSA Data: ",responsePatchNSAData);
+        //console.log("API PATCHED NSA Data: ",responsePatchNSAData);
 
     }catch(error){
         console.error("Error fetching API Response saveToNsaCategory:", error);
@@ -1467,8 +1457,8 @@ const saveToNsaCategory = async () => {
                 item => item.nsa_set === highest_setNo.value
             );
 
-            console.log(typeof aggregateFunctionsArray[0].nsa_serial, typeof currentSerialSelected.value);
-            console.log(typeof aggregateFunctionsArray[0].nsa_set, typeof highest_setNo.value);
+            //console.log(typeof aggregateFunctionsArray[0].nsa_serial, typeof currentSerialSelected.value);
+            //console.log(typeof aggregateFunctionsArray[0].nsa_set, typeof highest_setNo.value);
 
             // Safe access to aggregate ID
             nsaData_aggID.value = filteredAggregateID.value[0]?.id || null;
@@ -1714,8 +1704,8 @@ const saveToNsaCategory = async () => {
                 })
             };
 
-            console.log('Aggregate Data:', aggregateData);
-            console.log('Aggregate ID for patch:', nsaData_aggID.value)
+            //console.log('Aggregate Data:', aggregateData);
+            //console.log('Aggregate ID for patch:', nsaData_aggID.value)
             await sendAggData(aggregateData, nsaData_aggID.value);
 
             sampleWithVariances.value = calculateVariance(getAlliHcValues.value, maxiHc.value);
@@ -1810,7 +1800,7 @@ const saveToNsaCategory = async () => {
             showProceed3.value = false;
             toggleManageForm.value = false;
         }
-        await fetchDataCreateGraph();
+        await buildGraphDatasets(nsaData.value);
     };
 
     // Function to send raw data via API
@@ -1828,24 +1818,10 @@ const error = ref(null);
 const datasets = ref([]); // Array to hold multiple datasets
 const filteredNSADataForGraph = ref([]);
 
-const fetchDataCreateGraph = async () => {
+const buildGraphDatasets = async (baseData) => {
     try {
-        const response = await axios.get("/api/nsadata");
-
-        const nsaData = response.data.data?.NSAData ?? [];
-
-        if (!Array.isArray(nsaData) || nsaData.length === 0) {
-            throw new Error("No data found in nsaData");
-        }
-
-        const baseData = nsaData.filter(
-            item =>
-                item.serial_no == currentSerialSelected.value &&
-                item.set_no == highest_setNo.value
-        );
-
         if (!Array.isArray(baseData) || baseData.length === 0) {
-            throw new Error("No NSA data found after filtering");
+            throw new Error("No NSA data found.");
         }
 
         // =========================
@@ -1922,7 +1898,7 @@ const fetchDataCreateGraph = async () => {
                 response: err?.response?.data ?? null,
                 payload: err?.response?.data ?? null,
             },
-            "fetchDataCreateGraph",
+            "buildGraphDatasets",
             "Error fetching graph data",
         );
     } finally {
@@ -2230,113 +2206,129 @@ const renderChart = () => {
 
 
 const autoDeleteNullData = async () => {
-    //console.log('[autoDeleteNullData] Starting...');
     try {
-        const responseGetNSA = await axios.get(`/api/nsadata`);
-        const nsadata = responseGetNSA.data.data["NSAData"] || [];
-        //console.log('[autoDeleteNullData] Raw API data:', nsadata);
-        //console.log('[autoDeleteNullData] Total rows fetched:', nsadata.length);
-        const nsaOverallData = responseGetNSA.data;
-        //console.log('[autoDeleteNullData] Overall data fetched:', nsaOverallData);
+        const responseGetNSA = await axios.get(
+            `/api/nsadata?serial=${currentSerialSelected.value}&set=${highest_setNo.value}`
+        );
+
+        const responseData = responseGetNSA.data.data || {};
+
+        const nsadata = responseData.NSAData ?? [];
+        const aggregateFunctions = responseData.aggregateFunctions ?? [];
 
         const nsaForDelete_IDs = [];
 
-        nsadata.forEach((row, idx) => {
-            const { id, layer_no, ...otherFields } = row;
-            const nullFields = Object.keys(otherFields).filter(key => otherFields[key] === null);
+        nsadata.forEach((row) => {
+            const hasNull = Object.entries(row).some(([key, value]) =>
+                key !== "id" &&
+                key !== "layer_no" &&
+                value === null
+            );
 
-            if (nullFields.length > 0) {
-                nsaForDelete_IDs.push(id);
-                console.log(`[Row ${idx}] ID ${id} marked for deletion. Null fields:`, nullFields);
+            if (hasNull) {
+                nsaForDelete_IDs.push(row.id);
             }
         });
 
-        //console.log('[autoDeleteNullData] IDs marked for deletion:', nsaForDelete_IDs);
+        await Promise.all(
+            nsaForDelete_IDs.map(async (id) => {
+                try {
+                    const res = await axios.delete(`/api/nsadata/${id}`);
+                    console.log(`[DELETE] ID ${id} successful:`, res.data);
+                } catch (err) {
+                    console.error(
+                        `[DELETE] ID ${id} failed:`,
+                        err.response?.data || err.message
+                    );
+                }
+            })
+        );
 
-        for (const id of nsaForDelete_IDs) {
-            try {
-                const res = await axios.delete(`/api/nsadata/${id}`);
-                console.log(`[DELETE] ID ${id} successful:`, res.data);
-            } catch (err) {
-                console.error(`[DELETE] ID ${id} failed:`, err.response?.data || err.message);
-            }
-        }
-
-        await deleteNullOnNsaAggregate();
-        await deleteNullOnNsaCategory();
+        await deleteNullOnNsaAggregate(aggregateFunctions);
+        await deleteNullOnNsaCategory(responseData.nsaCategory ?? []);
 
     } catch (error) {
-        console.error('[autoDeleteNullData] Error deleting null data:', error.response?.data || error.message);
+        console.error(
+            "[autoDeleteNullData] Error deleting null data:",
+            error.response?.data || error.message
+        );
     }
 };
 
-const deleteNullOnNsaAggregate = async () => {
+const deleteNullOnNsaAggregate = async (aggregateData = []) => {
     try {
-        const response = await axios.get(`/api/nsadata`);
-        const nsaAggregateData = response.data.data["aggregateFunctions"] || [];
-        //console.log('[deleteNullOnNsaAggregate] Fetched aggregate data:', nsaAggregateData);
-
-        const idsToDelete = nsaAggregateData
+        const idsToDelete = aggregateData
             .filter(({ average, maximum, minimum, ng_counter }) =>
-                average == null || maximum == null || minimum == null || ng_counter == null
+                average == null ||
+                maximum == null ||
+                minimum == null ||
+                ng_counter == null
             )
             .map(({ id }) => id);
 
         await Promise.all(
-            idsToDelete.map(async id => {
+            idsToDelete.map(async (id) => {
                 try {
                     await axios.delete(`/api/nsaaggregate/${id}`);
                     console.log(`[DELETE] Deleted aggregate with ID ${id}`);
                 } catch (err) {
-                    console.error(`[DELETE ERROR] ID ${id}:`, err.response?.data || err.message);
+                    console.error(
+                        `[DELETE ERROR] ID ${id}:`,
+                        err.response?.data || err.message
+                    );
                 }
             })
         );
     } catch (err) {
-        console.error('[deleteNullOnNsaAggregate] Failed to fetch or delete:', err.response?.data || err.message);
+        console.error(
+            "[deleteNullOnNsaAggregate] Failed to delete:",
+            err.response?.data || err.message
+        );
     }
 };
 
-const deleteNullOnNsaCategory = async () => {
+const deleteNullOnNsaCategory = async (categoryData = []) => {
     try {
-        const response = await axios.get(`/api/nsadata`);
-        const nsaCategoryData = response.data.data["nsaCategory"] || [];
-        //console.log('[deleteNullOnNsaCategory] Fetched category data:', nsaCategoryData);
-
         const requiredFields = [
-            'actual_model',
-            'factor_emp',
-            'jhcurve_lotno',
-            'massprod_name',
-            'mias_emp',
-            'nsa_serial',
+            "actual_model",
+            "factor_emp",
+            "jhcurve_lotno",
+            "massprod_name",
+            "mias_emp",
+            "nsa_serial",
         ];
 
-        const idsToDelete = nsaCategoryData
-            .filter(row => {
-                return requiredFields.some(field => row[field] == null);
-            })
+        const idsToDelete = categoryData
+            .filter(row =>
+                requiredFields.some(field => row[field] == null)
+            )
             .map(({ id }) => id)
-            .filter(id => id != null); // extra safety
+            .filter(id => id != null);
 
         await Promise.all(
-            idsToDelete.map(async id => {
+            idsToDelete.map(async (id) => {
                 try {
                     await axios.delete(`/api/nsacategory/${id}`);
                     console.log(`[DELETE] Deleted category with ID ${id}`);
                 } catch (err) {
-                    console.error(`[DELETE ERROR] ID ${id}:`, err.response?.data || err.message);
+                    console.error(
+                        `[DELETE ERROR] ID ${id}:`,
+                        err.response?.data || err.message
+                    );
                 }
             })
         );
     } catch (err) {
-        console.error('[deleteNullOnNsaCategory] Failed to fetch or delete:', err.response?.data || err.message);
+        console.error(
+            "[deleteNullOnNsaCategory] Failed to delete:",
+            err.response?.data || err.message
+        );
     }
 };
 
 onMounted(async() => {
     //await testNSA();
-    await autoDeleteNullData();
+    //await autoDeleteNullData();
     await checkAuthentication();
 });
 

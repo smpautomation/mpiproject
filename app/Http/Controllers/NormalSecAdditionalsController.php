@@ -111,137 +111,131 @@ class NormalSecAdditionalsController extends Controller
             ], 500);
         }
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         DB::beginTransaction();
 
-        try{
-            $NSAInputs = [
-                'date' => $request->input('date', null),
-                'serial_no' => $request->input('serial_no', null),
-                'set_no' => $request->input('set_no', null),
-                'set_name' => $request->input('set_name', null),
-                'code_no' => $request->input('code_no', null),
-                'order_no' => $request->input('order_no', null),
-                'type' => $request->input('type', null),
-                'press_1' => $request->input('press_1', null),
-                'press_2' => $request->input('press_2', null),
-                'machine_no' => $request->input('machine_no', null),
-                'sintering_furnace_no' => $request->input('sintering_furnace_no', null),
-                'furnace_no' => $request->input('furnace_no', null),
-                'zone' => $request->input('zone', null),
-                'pass_no' => $request->input('pass_no', null),
-                'Br' => $request->input('Br', null),
-                '4paiId' => $request->input('4paiId', null),
-                'iHc' => $request->input('iHc', null),
-                'bHc' => $request->input('bHc', null),
-                'BHMax' => $request->input('BHMax', null),
-                'Squareness' => $request->input('Squareness', null),
-                '4paiIs' => $request->input('4paiIs', null),
-                'iHk' => $request->input('iHk', null),
-                '4paiIa' => $request->input('4paiIa', null),
-                'Density' => $request->input('Density', null),
-                'iHkiHc' => $request->input('iHkiHc', null),
-                'Br4pai' => $request->input('Br4pai', null),
-                'iHr95' => $request->input('iHr95', null),
-                'iHr98' => $request->input('iHr98', null),
-                'Tracer' => $request->input('Tracer', null),
-                'HRX' => $request->input('HRX', null),
-                'MRX' => $request->input('MRX', null),
-                'HRY' => $request->input('HRY', null),
-                'MRY' => $request->input('MRY', null),
-                'IHKA' => $request->input('IHKA', null),
-                'MRA' => $request->input('MRA', null),
-                'IHKB' => $request->input('IHKB', null),
-                'MRB' => $request->input('MRB', null),
-                'IHKC' => $request->input('IHKC', null),
-                'MRC' => $request->input('MRC', null),
-                'HR' => $request->input('HR', null),
-                'HRO' => $request->input('HRO', null),
-                'x' => $request->input('x', null),
-                'y' => $request->input('y', null),
-                'furnace' => $request->input('furnace', null),
-                'mass_prod' => $request->input('mass_prod', null),
-                'layer_no' => $request->input('layer_no', null),
-                'temperature' => $request->input('temperature', null),
-                'data_status' => $request->input('data_status', null)
-            ];
+        try {
+
+            $NSAInputs = $request->only([
+                'date',
+                'serial_no',
+                'set_no',
+                'set_name',
+                'code_no',
+                'order_no',
+                'type',
+                'press_1',
+                'press_2',
+                'machine_no',
+                'sintering_furnace_no',
+                'furnace_no',
+                'zone',
+                'pass_no',
+                'Br',
+                '4paiId',
+                'iHc',
+                'bHc',
+                'BHMax',
+                'Squareness',
+                '4paiIs',
+                'iHk',
+                '4paiIa',
+                'Density',
+                'iHkiHc',
+                'Br4pai',
+                'iHr95',
+                'iHr98',
+                'Tracer',
+                'HRX',
+                'MRX',
+                'HRY',
+                'MRY',
+                'IHKA',
+                'MRA',
+                'IHKB',
+                'MRB',
+                'IHKC',
+                'MRC',
+                'HR',
+                'HRO',
+                'x',
+                'y',
+                'furnace',
+                'mass_prod',
+                'layer_no',
+                'temperature',
+                'data_status',
+            ]);
+
             $nsaData = NormalSecAdditionals::create($NSAInputs);
-            $remarkData = [
-                'nsa_id' => $nsaData->id,
-                'nsa_set' => $nsaData->set_no,
-                'Br_remarks' => $request->input('Br_remarks', null),
-                '4paiId_remarks' => $request->input('4paiId_remarks', null),
-                'iHc_remarks' => $request->input('iHc_remarks', null),
-                'bHc_remarks' => $request->input('bHc_remarks', null),
-                'BHMax_remarks' => $request->input('BHMax_remarks', null),
-                'Squareness_remarks' => $request->input('Squareness_remarks', null),
-                '4paiIs_remarks' => $request->input('4paiIs_remarks', null),
-                'iHk_remarks' => $request->input('iHk_remarks', null),
-                '4paiIa_remarks' => $request->input('4paiIa_remarks', null),
-                'Density_remarks' => $request->input('Density_remarks', null),
-                'iHkiHc_remarks' => $request->input('iHkiHc_remarks', null),
-                'Br4pai_remarks' => $request->input('Br4pai_remarks', null),
-                'iHr95_remarks' => $request->input('iHr95_remarks', null),
-                'iHr98_remarks' => $request->input('iHr98_remarks', null),
-                'Tracer_remarks' => $request->input('Tracer_remarks', null),
-                'HRX_remarks' => $request->input('HRX_remarks', null),
-                'MRX_remarks' => $request->input('MRX_remarks', null),
-                'HRY_remarks' => $request->input('HRY_remarks', null),
-                'MRY_remarks' => $request->input('MRY_remarks', null),
-                'IHKA_remarks' => $request->input('IHKA_remarks', null),
-                'MRA_remarks' => $request->input('MRA_remarks', null),
-                'IHKB_remarks' => $request->input('IHKB_remarks', null),
-                'MRB_remarks' => $request->input('MRB_remarks', null),
-                'IHKC_remarks' => $request->input('IHKC_remarks', null),
-                'MRC_remarks' => $request->input('MRC_remarks', null),
-                'HR_remarks' => $request->input('HR_remarks', null),
-                'HRO_remarks' => $request->input('HRO_remarks', null),
-            ];
+
+            $remarkData = array_merge(
+                [
+                    'nsa_id'  => $nsaData->id,
+                    'nsa_set' => $nsaData->set_no,
+                ],
+                $request->only([
+                    'Br_remarks',
+                    '4paiId_remarks',
+                    'iHc_remarks',
+                    'bHc_remarks',
+                    'BHMax_remarks',
+                    'Squareness_remarks',
+                    '4paiIs_remarks',
+                    'iHk_remarks',
+                    '4paiIa_remarks',
+                    'Density_remarks',
+                    'iHkiHc_remarks',
+                    'Br4pai_remarks',
+                    'iHr95_remarks',
+                    'iHr98_remarks',
+                    'Tracer_remarks',
+                    'HRX_remarks',
+                    'MRX_remarks',
+                    'HRY_remarks',
+                    'MRY_remarks',
+                    'IHKA_remarks',
+                    'MRA_remarks',
+                    'IHKB_remarks',
+                    'MRB_remarks',
+                    'IHKC_remarks',
+                    'MRC_remarks',
+                    'HR_remarks',
+                    'HRO_remarks',
+                ])
+            );
+
             $remark = NSARemark::create($remarkData);
 
-            $checkNSAAggregateFunctions = NSAAggregateFunctions::where('nsa_serial', $nsaData->serial_no)
-                                        ->where('nsa_set', $nsaData->set_no)
-                                        ->exists();
-            if(!$checkNSAAggregateFunctions){
-                try{
-                    $NSAAggragateFunctionsInput = [
-                        'nsa_serial' => $nsaData->serial_no,
-                        'nsa_set' => $nsaData->set_no,
-                    ];
-                    $NSAAggragateFunctions = NSAAggregateFunctions::create($NSAAggragateFunctionsInput);
-                }catch(\Exception $e){
+            $aggregate = NSAAggregateFunctions::firstOrCreate(
+                [
+                    'nsa_serial' => $nsaData->serial_no,
+                    'nsa_set'    => $nsaData->set_no,
+                ]
+            );
 
-                }
-            }
-
-            $checkNSACategory = NSACategory::where('nsa_serial', $nsaData->serial_no)->exists();
-            if(!$checkNSACategory){
-                try{
-                    $NSACategoryInputs = [
-                        'nsa_serial' => $nsaData->serial_no,
-                    ];
-                    $NSACategory = NSACategory::create($NSACategoryInputs);
-                }catch(\Exception $e){
-
-                }
-            }
-
-
-
+            $category = NSACategory::firstOrCreate(
+                [
+                    'nsa_serial' => $nsaData->serial_no,
+                ]
+            );
 
             DB::commit();
+
             return response()->json([
                 'status' => true,
                 'message' => 'NSA Data created successfully',
                 'data' => [
                     $nsaData,
                     $remark,
-                    $checkNSAAggregateFunctions ?? $NSAAggragateFunctions,
-                    $checkNSACategory ?? $NSACategory
-                    ]
+                    $aggregate,
+                    $category,
+                ],
             ], 201);
-        }catch(\Exception $e){
-            // If an error occurs, roll back the transaction
+
+        } catch (\Exception $e) {
+
             DB::rollBack();
 
             return response()->json([
@@ -250,8 +244,10 @@ class NormalSecAdditionalsController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
+
+
+
     public function updateNSAData(Request $request, $id)
     {
         DB::beginTransaction();
@@ -392,6 +388,23 @@ class NormalSecAdditionalsController extends Controller
             ], 500);
         }
     }
+
+    public function getMaxSet(Request $request)
+    {
+        $serial = $request->query('serial');
+
+        $maxSet = NormalSecAdditionals::where('serial_no', $serial)
+            ->max('set_no');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Maximum set retrieved successfully.',
+            'data' => [
+                'max_set' => $maxSet ?? 0,
+            ],
+        ]);
+    }
+
     public function destroy($serial, $set)
     {
         try {

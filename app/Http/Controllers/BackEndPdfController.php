@@ -22,6 +22,7 @@ use App\Models\VtModel;
 use App\Models\CpkIhcModel;
 use App\Models\CpkBrModels;
 use App\Models\GxModel;
+use App\Models\TtmwcModel;
 use App\Models\TtmncModel;
 use App\Models\BhModel;
 use App\Models\RobModel;
@@ -179,36 +180,11 @@ class BackEndPdfController extends Controller
             ], 404);
         }
 
-        $secondHeatTreatment = GbdpSecondHeatTreatment::where([
+        $secondHeatTreatment = GbdpSecondHeatTreatment::where([ //goback here
             'mass_prod' => $massprod,
             'furnace'   => $furnace,
             'layer'     => (string) $layer,
         ])->first();
-
-        if($secondHeatTreatment){
-            $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
-                ? json_decode($secondHeatTreatment->gbdp_1st, true)
-                : $secondHeatTreatment->gbdp_1st;
-
-            $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
-                ? json_decode($secondHeatTreatment->gbdp_2nd, true)
-                : $secondHeatTreatment->gbdp_2nd;
-
-
-            $gbdp1stFurnace = $secondGbdp1st['furnace_machine'] ?? null;
-            $gbdp1stMassProd = $secondGbdp1st['batch_cycle_no'] ?? null;
-
-            $massProd1stGbdpData = null;
-
-            if ($gbdp1stFurnace && $gbdp1stMassProd) {
-                $massProd1stGbdpData = MassProduction::query()
-                    ->where('mass_prod', $gbdp1stMassProd)
-                    ->where('furnace', $gbdp1stFurnace)
-                    ->first();
-            }
-        }
-
-
 
 
         // Build column name dynamically
@@ -247,6 +223,16 @@ class BackEndPdfController extends Controller
 
         $isBreaklot = count($uniquePairs) > 1;
 
+        Log::info('PDF Format Type Evaluation Started', [
+            'mass_prod' => $massprod,
+            'furnace' => $furnace,
+            'layer' => $layer,
+            'model' => $addtnlModel,
+            'lot_no' => $addtnlLot,
+            'is_breaklot' => $isBreaklot,
+            'original_format_type' => $gbdp_report_format_type,
+        ]);
+
         // --- Breaklot logic ---
         if ($isBreaklot) {
             // Step 1: Check initial lot exception
@@ -258,6 +244,12 @@ class BackEndPdfController extends Controller
                     'initial_model' => $addtnlModel,
                     'initial_lot'   => $addtnlLot,
                 ])->exists();
+
+            Log::info('Breaklot Initial Lot Check', [
+                'model' => $addtnlModel,
+                'lot_no' => $addtnlLot,
+                'initial_lot_match' => $initialLotMatch,
+            ]);
 
             //dd($initialLotMatch);
             if ($initialLotMatch) {
@@ -281,6 +273,12 @@ class BackEndPdfController extends Controller
                         'lot_no'    => $addtnlLot,
                     ])->exists();
 
+                Log::info('Breaklot Second GBDP Check', [
+                    'model' => $addtnlModel,
+                    'lot_no' => $addtnlLot,
+                    'has_second_gbdp' => $hasSecondGbdp,
+                ]);
+
                 if ($hasSecondGbdp) {
                     $finalFormatType = '1st and 2nd Gbdp';
                 } else {
@@ -294,12 +292,27 @@ class BackEndPdfController extends Controller
                     ])->exists();
 
                     $finalFormatType = $hasFilmPasting ? 'Film Pasting' : 'Normal';
+
+                    Log::info('Breaklot Film Pasting Check', [
+                        'model' => $addtnlModel,
+                        'lot_no' => $addtnlLot,
+                        'has_film_pasting' => $hasFilmPasting,
+                    ]);
                 }
             }
         } else {
             // Not a breaklot, use original format type
             $finalFormatType = $gbdp_report_format_type;
         }
+
+        Log::info('Final Format Type Selected', [
+            'mass_prod' => $massprod,
+            'furnace' => $furnace,
+            'layer' => $layer,
+            'model' => $addtnlModel,
+            'lot_no' => $addtnlLot,
+            'final_format_type' => $finalFormatType,
+        ]);
 
         // Check if there is a matching Initial Lot
         $initialLotExists =
@@ -452,7 +465,7 @@ class BackEndPdfController extends Controller
         //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp
 
         if ($initialLotExists) {
-            $secondGbdpCoatingData = BreaklotSecondCoating::where([
+            $secondGbdpCoatingData = BreaklotSecondCoating::where([  //goback
                 'mass_prod' => $massprod,
                 'layer'     => $layer,
                 'furnace'   => $furnace,
@@ -467,15 +480,45 @@ class BackEndPdfController extends Controller
             ])->first();
         }
 
-        /*$secondGbdpHTData = GbdpSecondHeatTreatment::where('mass_prod', $massprod)
-            ->where('layer', $layer)
-            ->first();
-        if (!$secondGbdpHTData) {
-            return response()->json([
-                'status' => false,
-                'message' => "Second GBDP Heat Treatment record not found for mass_prod: {$massprod} or layer: {$layer}"
-            ], 404);
-        }*/
+        if ($initialLotExists) {
+            $secondHeatTreatment = BreaklotSecondHeatTreatment::where([  //goback
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+                'model'     => $addtnlModel,
+                'lot_no'    => $addtnlLot,
+            ])->first();
+        } else {
+            $secondHeatTreatment = GbdpSecondHeatTreatment::where([
+                'mass_prod' => $massprod,
+                'layer'     => $layer,
+                'furnace'   => $furnace,
+            ])->first();
+        }
+
+        if($secondHeatTreatment){
+            $secondGbdp1st = is_string($secondHeatTreatment->gbdp_1st ?? null)
+                ? json_decode($secondHeatTreatment->gbdp_1st, true)
+                : $secondHeatTreatment->gbdp_1st;
+
+            $secondGbdp2nd = is_string($secondHeatTreatment->gbdp_2nd ?? null)
+                ? json_decode($secondHeatTreatment->gbdp_2nd, true)
+                : $secondHeatTreatment->gbdp_2nd;
+
+
+            $gbdp1stFurnace = $secondGbdp1st['furnace_machine'] ?? null;
+            $gbdp1stMassProd = $secondGbdp1st['batch_cycle_no'] ?? null;
+
+            $massProd1stGbdpData = null;
+
+            if ($gbdp1stFurnace && $gbdp1stMassProd) {
+                $massProd1stGbdpData = MassProduction::query()
+                    ->where('mass_prod', $gbdp1stMassProd)
+                    ->where('furnace', $gbdp1stFurnace)
+                    ->first();
+            }
+        }
+
 
         //Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp ------------------ Second Gbdp End
 
@@ -517,7 +560,7 @@ class BackEndPdfController extends Controller
 
         $MODELS_SPECIAL_ROB_FOR_GX = ['ROB0C79G'];
         $MODELS_SPECIAL_TSI = ['TSI0817G'];
-        $MODELS_1X1X1 = ['AAW0935G', 'AAW0934G'];
+        $MODELS_1X1X1 = TtmwcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_VT_DATA = VtModel::pluck('model_name')->toArray();
         $MODELS_SHOW_CPK     = CpkIhcModel::pluck('model_name')->toArray();
         $MODELS_SHOW_BR     = CpkBrModels::pluck('model_name')->toArray();
@@ -655,14 +698,6 @@ class BackEndPdfController extends Controller
             $ltNo = $cs_lt_no;
         }
 
-        Log::info('[LOT OVERRIDE] Requesting lot data', [
-            'mass_prod' => $massprod,
-            'furnace'   => $furnace,
-            'model'     => $model ?? null,
-            'lt_no'     => $ltNo,
-            'cs_lt_no_raw' => $cs_lt_no,
-        ]);
-
         try {
             $lotResponse = app(\App\Http\Controllers\MassProductionController::class)
                 ->getAllLotStatusPreview(new \Illuminate\Http\Request([
@@ -673,11 +708,6 @@ class BackEndPdfController extends Controller
                 ]));
 
             $lotData = json_decode($lotResponse->getContent(), true);
-
-            Log::info('[LOT OVERRIDE] Response received', [
-                'count' => is_array($lotData) ? count($lotData) : 0,
-                'sample' => $lotData[0] ?? null,
-            ]);
 
             $matchFound = false;
 

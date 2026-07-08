@@ -10,7 +10,7 @@ class InitialCoating extends Model
     protected $guarded = [];
     protected $casts = [
         'coating_data' => 'array',
-        'coating_date' => 'date',
+        'coating_date' => 'date:Y-m-d',
         'time_start' => 'datetime:H:i:s',
         'time_finished' => 'datetime:H:i:s',
     ];

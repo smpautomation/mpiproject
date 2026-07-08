@@ -389,6 +389,106 @@
         </div>
       </div>
 
+      <!-- 1x1x1 MODELS (With corner) Table Section -->
+      <div
+        v-if="showTTMWCPanel"
+        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
+      >
+        <!-- Table -->
+        <div>
+          <h2 class="mb-4 text-2xl font-semibold text-gray-800">1x1x1 MODELS (With corner)</h2>
+          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
+            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-3 text-left border-b">Date</th>
+                <th class="px-4 py-3 text-left border-b">Model Name</th>
+                <th class="px-4 py-3 text-left border-b">Encoded By</th>
+                <th class="px-4 py-3 text-left border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="ttmwc in ttmwcModels"
+                :key="ttmwc.id"
+                class="transition border-b hover:bg-gray-50 last:border-b-0"
+              >
+                <td class="px-4 py-3">{{ new Date(ttmwc.created_at).toISOString().slice(0, 10) }}</td>
+                <td class="px-4 py-3">{{ ttmwc.model_name }}</td>
+                <td class="px-4 py-3">{{ ttmwc.encoded_by }}</td>
+                <td class="px-4 py-3">
+                  <button
+                    @click="ttmwc_startEditing(ttmwc)"
+                    class="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Edit Model
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New -->
+        <div class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="ttmwc_newRecord.model_name"
+              type="text"
+              @input="ttmwc_newRecord.model_name = ttmwc_newRecord.model_name.toUpperCase()"
+              placeholder="Model Name"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+            <input
+              v-model="ttmwc_newRecord.encoded_by"
+              type="text"
+              @input="ttmwc_newRecord.encoded_by = ttmwc_newRecord.encoded_by.toUpperCase()"
+              placeholder="Encoded By"
+              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
+            />
+          </div>
+          <button
+            @click="ttmwc_addRecord"
+            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
+          >
+            Add
+          </button>
+        </div>
+
+        <!-- Edit Record -->
+        <div v-if="ttmwc_editingRecord" class="pt-6 border-t">
+          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <input
+              v-model="ttmwc_editingRecord.model_name"
+              type="text"
+              @input="ttmwc_editingRecord.model_name = ttmwc_editingRecord.model_name.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+            <input
+              v-model="ttmwc_editingRecord.encoded_by"
+              type="text"
+              @input="ttmwc_editingRecord.encoded_by = ttmwc_editingRecord.encoded_by.toUpperCase()"
+              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
+            />
+          </div>
+          <div class="space-x-3">
+            <button
+              @click="ttmwc_updateRecord"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+            >
+              Update
+            </button>
+            <button
+              @click="ttmwc_editingRecord = null"
+              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- 1x1x1 MODELS (No corner) Table Section -->
       <div
         v-if="showTTMNCPanel"
@@ -959,6 +1059,7 @@ const showSelectionPanel = ref(true);
 const showVTPanel = ref(false);
 const showCPKIHCPanel = ref(false);
 const showGXPanel = ref(false);
+const showTTMWCPanel = ref(false);
 const showTTMNCPanel = ref(false);
 const showBHPanel = ref(false);
 const showROBPanel = ref(false);
@@ -974,6 +1075,7 @@ const models = [
     { name: 'VT MODELS', panel: 'showVTPanel', image: '/photo/vt_models.png' },
     { name: 'CPK IHC MODELS', panel: 'showCPKIHCPanel', image: '/photo/cpk_ihc_models.png' },
     { name: 'GX MODELS', panel: 'showGXPanel', image: '/photo/gx_models.png' },
+    { name: '1X1X1 MODELS (WITH CORNER)', panel: 'showTTMWCPanel' },
     { name: '1X1X1 MODELS (NO CORNER)', panel: 'showTTMNCPanel', image: '/photo/no_corner_models.png' },
     { name: 'BH MODELS', panel: 'showBHPanel', image: '/photo/bh_models.png' },
     { name: 'ROB BH TRACER MODELS', panel: 'showROBPanel', image: '/photo/rob_tracer_models.png' },
@@ -989,6 +1091,7 @@ const openPanel = (panelName) => {
     showVTPanel.value = false;
     showCPKIHCPanel.value = false;
     showGXPanel.value = false;
+    showTTMWCPanel.value = false;
     showTTMNCPanel.value = false;
     showBHPanel.value = false;
     showROBPanel.value = false;
@@ -999,6 +1102,7 @@ const openPanel = (panelName) => {
     if (panelName === 'showVTPanel') showVTPanel.value = true;
     if (panelName === 'showCPKIHCPanel') showCPKIHCPanel.value = true;
     if (panelName === 'showGXPanel') showGXPanel.value = true;
+    if (panelName === 'showTTMWCPanel') showTTMWCPanel.value = true;
     if (panelName === 'showTTMNCPanel') showTTMNCPanel.value = true;
     if (panelName === 'showBHPanel') showBHPanel.value = true;
     if (panelName === 'showROBPanel') showROBPanel.value = true;
@@ -1020,6 +1124,7 @@ const closeImage = () => {
 const vtModels = ref([]); // all fetched records
 const cpkihcModels = ref([]);
 const gxModels = ref([]);
+const ttmwcModels = ref([]);
 const ttmncModels = ref([]);
 const bhModels = ref([]);
 const robModels = ref([]);
@@ -1029,6 +1134,7 @@ const hisModels = ref([]);
 const vt_newRecord = ref({ model_name: '', encoded_by: ''});
 const cpkihc_newRecord = ref({ model_name: '', encoded_by: ''});
 const gx_newRecord = ref({ model_name: '', encoded_by: ''});
+const ttmwc_newRecord = ref({ model_name: '', encoded_by: ''});
 const ttmnc_newRecord = ref({ model_name: '', encoded_by: ''});
 const bh_newRecord = ref({ model_name: '', encoded_by: ''});
 const rob_newRecord = ref({ model_name: '', encoded_by: ''});
@@ -1038,6 +1144,7 @@ const his_newRecord = ref({ model_name: '', encoded_by: '' });
 const vt_editingRecord = ref(null);
 const cpkihc_editingRecord = ref(null);
 const gx_editingRecord = ref(null);
+const ttmwc_editingRecord = ref(null);
 const ttmnc_editingRecord = ref(null);
 const bh_editingRecord = ref(null);
 const rob_editingRecord = ref(null);
@@ -1051,6 +1158,7 @@ const backButton = () => {
     showROBPanel.value = false;
     showCPKIHCPanel.value = false;
     showGXPanel.value = false;
+    showTTMWCPanel.value = false;
     showTTMNCPanel.value = false;
     showCPKBRPanel.value = false;
     showHISPanel.value = false;
@@ -1066,6 +1174,10 @@ const cpkihc_startEditing = (record) => {
 
 const gx_startEditing = (record) => {
   gx_editingRecord.value = { ...record };
+};
+
+const ttmwc_startEditing = (record) => {
+  ttmwc_editingRecord.value = { ...record };
 };
 
 const ttmnc_startEditing = (record) => {
@@ -1113,9 +1225,19 @@ const gx_addRecord = async () => {
   if (!gx_newRecord.value.model_name || !gx_newRecord.value.encoded_by) return;
 
   await axios.post('/api/gx-models', gx_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${gx_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await userInstructionsLogging(`has successfully added ${gx_newRecord.value.model_name} to the data list instructions of GX Models`);
   await loadData();
   gx_newRecord.value = { model_name: '', encoded_by: ''};
+};
+
+// Add record
+const ttmwc_addRecord = async () => {
+  if (!ttmwc_newRecord.value.model_name || !ttmwc_newRecord.value.encoded_by) return;
+
+  await axios.post('/api/ttmwc-models', ttmwc_newRecord.value);
+  await userInstructionsLogging(`has successfully added ${ttmwc_newRecord.value.model_name} to the data list instructions of 1x1x1 with corner Models`);
+  await loadData();
+  ttmwc_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
@@ -1123,7 +1245,7 @@ const ttmnc_addRecord = async () => {
   if (!ttmnc_newRecord.value.model_name || !ttmnc_newRecord.value.encoded_by) return;
 
   await axios.post('/api/ttmnc-models', ttmnc_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${ttmnc_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await userInstructionsLogging(`has successfully added ${ttmnc_newRecord.value.model_name} to the data list instructions of 1x1x1 without corner Models`);
   await loadData();
   ttmnc_newRecord.value = { model_name: '', encoded_by: ''};
 };
@@ -1133,7 +1255,7 @@ const bh_addRecord = async () => {
   if (!bh_newRecord.value.model_name || !bh_newRecord.value.encoded_by) return;
 
   await axios.post('/api/bh-models', bh_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${bh_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await userInstructionsLogging(`has successfully added ${bh_newRecord.value.model_name} to the data list instructions of BH Models`);
   await loadData();
   bh_newRecord.value = { model_name: '', encoded_by: ''};
 };
@@ -1143,7 +1265,7 @@ const rob_addRecord = async () => {
   if (!rob_newRecord.value.model_name || !rob_newRecord.value.encoded_by) return;
 
   await axios.post('/api/rob-models', rob_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${rob_newRecord.value.model_name} to the data list instructions of VT Models`);
+  await userInstructionsLogging(`has successfully added ${rob_newRecord.value.model_name} to the data list instructions of ROB Models`);
   await loadData();
   rob_newRecord.value = { model_name: '', encoded_by: ''};
 };
@@ -1152,7 +1274,7 @@ const cpkbr_addRecord = async () => {
   if (!cpkbr_newRecord.value.model_name || !cpkbr_newRecord.value.encoded_by) return;
 
   await axios.post('/api/cpk-br-models', cpkbr_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${cpkbr_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await userInstructionsLogging(`has successfully added ${cpkbr_newRecord.value.model_name} to the data list instructions of CPK BR Models`);
   await loadData();
   cpkbr_newRecord.value = { model_name: '', encoded_by: ''};
 };
@@ -1161,7 +1283,7 @@ const his_addRecord = async () => {
   if (!his_newRecord.value.model_name || !his_newRecord.value.encoded_by) return;
 
   await axios.post('/api/his-models', his_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${his_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await userInstructionsLogging(`has successfully added ${his_newRecord.value.model_name} to the data list instructions of HIS Models`);
   await loadData();
   his_newRecord.value = { model_name: '', encoded_by: ''};
 };
@@ -1184,15 +1306,23 @@ const cpkihc_updateRecord = async () => {
 
 const gx_updateRecord = async () => {
   await axios.put(`/api/gx-models/${gx_editingRecord.value.id}`, gx_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${gx_editingRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+  await userInstructionsLogging(`has successfully edited ${gx_editingRecord.value.model_name} to the data list instructions of GX Models`);
   gx_editingRecord.value = null;
+  await loadData();
+};
+
+// Update record
+const ttmwc_updateRecord = async () => {
+  await axios.put(`/api/ttmwc-models/${ttmwc_editingRecord.value.id}`, ttmwc_editingRecord.value);
+  await userInstructionsLogging(`has successfully edited ${ttmwc_editingRecord.value.model_name} to the data list instructions of 1x1x1 with corner Models`);
+  ttmwc_editingRecord.value = null;
   await loadData();
 };
 
 // Update record
 const ttmnc_updateRecord = async () => {
   await axios.put(`/api/ttmnc-models/${ttmnc_editingRecord.value.id}`, ttmnc_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${ttmnc_editingRecord.value.model_name} to the data list instructions of VT Models`);
+  await userInstructionsLogging(`has successfully edited ${ttmnc_editingRecord.value.model_name} to the data list instructions of 1x1x1 without corner Models`);
   ttmnc_editingRecord.value = null;
   await loadData();
 };
@@ -1200,7 +1330,7 @@ const ttmnc_updateRecord = async () => {
 // Update record
 const bh_updateRecord = async () => {
   await axios.put(`/api/bh-models/${bh_editingRecord.value.id}`, bh_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${bh_editingRecord.value.model_name} to the data list instructions of VT Models`);
+  await userInstructionsLogging(`has successfully edited ${bh_editingRecord.value.model_name} to the data list instructions of BH Models`);
   bh_editingRecord.value = null;
   await loadData();
 };
@@ -1208,7 +1338,7 @@ const bh_updateRecord = async () => {
 // Update record
 const rob_updateRecord = async () => {
     await axios.put(`/api/rob-models/${rob_editingRecord.value.id}`, rob_editingRecord.value);
-    await userInstructionsLogging(`has successfully edited ${rob_editingRecord.value.model_name} to the data list instructions of VT Models`);
+    await userInstructionsLogging(`has successfully edited ${rob_editingRecord.value.model_name} to the data list instructions of ROB Models`);
     rob_editingRecord.value = null;
     await loadData();
 };
@@ -1222,7 +1352,7 @@ const cpkbr_updateRecord = async () => {
 
 const his_updateRecord = async () => {
     await axios.put(`/api/his-models/${his_editingRecord.value.id}`, his_editingRecord.value);
-    await userInstructionsLogging(`has successfully edited ${his_editingRecord.value.model_name} to the data list instructions of CPK BR Models`);
+    await userInstructionsLogging(`has successfully edited ${his_editingRecord.value.model_name} to the data list instructions of HIS Models`);
     his_editingRecord.value = null;
     await loadData();
 };
@@ -1235,6 +1365,8 @@ const loadData = async () => {
     cpkihcModels.value = responseGetCPKIHCData.data;
     const responseGetGXData = await axios.get('/api/gx-models');
     gxModels.value = responseGetGXData.data;
+    const responseGetTTMWCData = await axios.get('/api/ttmwc-models');
+    ttmwcModels.value = responseGetTTMWCData.data;
     const responseGetTTMNCData = await axios.get('/api/ttmnc-models');
     ttmncModels.value = responseGetTTMNCData.data;
     const responseGetBHData = await axios.get('/api/bh-models');

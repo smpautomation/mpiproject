@@ -5389,15 +5389,19 @@ const isCpkActive = computed(() => {
     const isTTM = isTTM_model.value === true;
     const isWhitelisted = MODELS_1X1X1.value.includes(model);
 
-    const baseCondition =
-        noteReasonForReject.value?.includes("- N.G iHc") &&
+    const hasNGihc =
+        noteReasonForReject.value?.includes("- N.G iHc");
+
+    const has1x1x1 =
         show1x1x1Data_withoutCorner.value === true;
 
     const cpkCondition =
+        isWhitelisted ||
         reportCpk.value !== null;
 
     return (isTTM || isWhitelisted) &&
-        baseCondition &&
+        hasNGihc &&
+        has1x1x1 &&
         cpkCondition;
 });
 
@@ -5595,7 +5599,7 @@ const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
 const MODELS_SHOW_HIS = ref([]);
-const MODELS_1X1X1 = ref(['AAW0935G', 'AAW0934G', 'TIC0281G']);
+const MODELS_1X1X1 = ref([]);
 
 const undoHistory = ref([]);
 const hasUndoHistory = ref(false);
@@ -6739,6 +6743,7 @@ watch(
         overallCpkRemark
     ],
     () => {
+
         if (isCpkActive.value) {
 
             reportSurface_remarks.value =
@@ -6759,6 +6764,7 @@ watch(
             reportSMPJudgement.value =
                 cpkJudgement.value;
         }
+
     },
     { immediate: true }
 );
@@ -7019,6 +7025,9 @@ const checkSpecialJudgement = async () => {
     const fetchAllGX = responseGetGXData.data;
     MODELS_SHOW_GX.value = fetchAllGX.map((item) => item.model_name);
     //console.log("GX MODELS: ", MODELS_SHOW_GX.value);
+    const responseGetTTMWCData = await axios.get("/api/ttmwc-models");
+    const fetchAllTTMWC = responseGetTTMWCData.data;
+    MODELS_1X1X1.value = fetchAllTTMWC.map((item) => item.model_name);
     const responseGetTTMNCData = await axios.get("/api/ttmnc-models");
     const fetchAllTTMNC = responseGetTTMNCData.data;
     MODELS_1X1X1_NO_CORNER.value = fetchAllTTMNC.map((item) => item.model_name);
@@ -8472,7 +8481,7 @@ const showReportData = async () => {
             heatTreatmentCompleted.value = row.heat_treatment_completed == 1;
 
             const ovenNA = inspectionOvenMachineNo.value === 0;
-            console.log("Oven NA: ", ovenNA);
+            //console.log("Oven NA: ", ovenNA);
             reportOvenMachineNo.value = ovenNA ? "N/A" : row.oven_machine_no;
             reportTimeLoading.value = ovenNA ? "N/A" : row.time_loading;
             reportTimeUnloading.value = ovenNA ? "N/A" : row.time_unloading;
