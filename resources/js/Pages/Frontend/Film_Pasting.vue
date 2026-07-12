@@ -1105,7 +1105,7 @@
                         <!-- Action Buttons -->
                         <div class="flex space-x-3">
                             <button
-                                @click="showModalSubmit = false, showModalConfirmDouble = false, showModalConfirmDouble2 = false, showModalSecondFilmPasteInputForm = false"
+                                @click="cancelSubmit"
                                 class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-all duration-200 transform hover:scale-[0.98] flex items-center justify-center space-x-2"
                             >
                                 Cancel
@@ -1218,7 +1218,8 @@
                                     <label class="block mb-1 text-xs font-medium text-teal-700">Mass Prod Name</label>
                                     <select
                                         v-model="firstFilmPasteMassProd"
-                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                        :disabled="showFirstFilmPasteManualEntry"
+                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     >
                                         <option disabled value="">
                                             Select Mass Production
@@ -1237,8 +1238,8 @@
                                     <label class="block mb-1 text-xs font-medium text-teal-700">Furnace</label>
                                     <select
                                         v-model="firstFilmPasteFurnace"
-                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
-                                        placeholder="e.g. K-40"
+                                        :disabled="showFirstFilmPasteManualEntry"
+                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     >
                                         <option disabled value="">
                                             Select Furnace
@@ -1257,7 +1258,8 @@
                                     <label class="block mb-1 text-xs font-medium text-teal-700">Layer</label>
                                     <select
                                         v-model="firstFilmPasteLayer"
-                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                        :disabled="showFirstFilmPasteManualEntry"
+                                        class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     >
                                         <option value="" disabled>Select Layer</option>
                                         <option value="1">1</option>
@@ -1272,6 +1274,36 @@
                                         <option value="9.5">9.5</option>
                                     </select>
                                 </div>
+
+                                <div 
+                                    v-if="showFirstFilmPasteManualEntry"
+                                    class="space-y-3"
+                                >
+                                    <label class="block mb-1 text-xs font-medium text-red-700 py-3">No Existing Film pasting data found. Manually enter the data below.</label>
+                                    
+                                    <div>
+                                        <label class="block mb-1 text-xs font-medium text-teal-700">Film Type (Tb or Dy)</label>
+                                        <select
+                                            v-model="firstFilmPasteFilmType"
+                                            class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                        >
+                                            <option value="" disabled>Select Film Type</option>
+                                            <option value="DY">DY</option>
+                                            <option value="TB">TB</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block mb-1 text-xs font-medium text-teal-700">Film Class</label>
+                                        <input
+                                            v-model="firstFilmPasteFilmClass"
+                                            @input="firstFilmPasteFilmClass = firstFilmPasteFilmClass.toUpperCase()"
+                                            type="text"
+                                            placeholder="Enter Film Class"
+                                            class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="flex gap-2 pt-2">
@@ -1282,7 +1314,7 @@
                                     Proceed
                                 </button>
                                 <button
-                                    @click="showModalSecondFilmPasteInputForm = false"
+                                    @click="cancelProceedFirstFilmPaste"
                                     class="flex-1 px-4 py-2 text-sm font-medium text-teal-700 transition-all duration-200 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50"
                                 >
                                     Cancel
@@ -1493,6 +1525,7 @@ const showModalConfirmDouble = ref(false);
 const showModalConfirmDouble2 = ref(false);
 const showModalSecondFilmPasteInputForm = ref(false);
 const showModalProceedSecondFilmPaste = ref(false);
+const showFirstFilmPasteManualEntry = ref(false);
 const isFilmPasteDataShown = ref();
 const isAdditionalMode = ref(false);
 const isInitialLotSaved = ref(false);
@@ -1509,6 +1542,7 @@ const completedLayers = ref([]);
 const massProdLists = ref([]);
 const furnace_names = ref([]);
 const lotNoLists = ref([]);
+const model_names = ref([]);
 
 const currentInitialLot = ref();
 
@@ -1518,6 +1552,10 @@ const filmPasteLotNo = ref();
 const firstFilmPasteMassProd = ref("");
 const firstFilmPasteFurnace = ref("");
 const firstFilmPasteLayer = ref("");
+
+const firstFilmPasteFilmType = ref("");
+const firstFilmPasteFilmClass = ref("");
+
 const filmPastingInfo = reactive({
     selectedFurnace: "",
     selected_mass_prod: "",
@@ -1563,6 +1601,20 @@ const canSubmitAdditional = computed(() => {
 
 // General Variables --------- General Variables END
 
+const cancelSubmit = async () => {
+    showModalSubmit.value = false;
+    showModalConfirmDouble.value = false;
+    showModalConfirmDouble2.value = false;
+    showModalProceedSecondFilmPaste.value = false;
+    firstFilmPasteFurnace.value = '';
+    firstFilmPasteLayer.value = '';
+    firstFilmPasteMassProd.value = '';
+    firstFilmPasteFilmClass.value = null;
+    firstFilmPasteFilmType.value = null;
+    showModalSecondFilmPasteInputForm.value = false;
+    showFirstFilmPasteManualEntry.value = false;
+}
+
 const submit = async () => {
     if (!bypassValidation.value) {
         if (
@@ -1590,9 +1642,39 @@ const submit = async () => {
         }
     }
 
+    try{
+        const response = await axios.get('/api/inspectiondata/');
+        const inspectionDataList = response.data.data;
+        model_names.value = inspectionDataList.map(item => item.model);
+        //console.log('Model lists: ',model_names.value);
+    }catch(error){
+        console.error('Error fetching model names', error);
+        toast.error('Failed to get the model names.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getModelListsFromSubmitFunction",
+            "Failed to get the model names"
+        );
+    }
+
     //showModalSubmit.value = true;
     showModalConfirmDouble.value = true;
 };
+
+const cancelProceedFirstFilmPaste = async () => {//goback
+    firstFilmPasteMassProd.value = '';
+    firstFilmPasteFurnace.value = '';
+    firstFilmPasteLayer.value = '';
+    firstFilmPasteFilmClass.value = null;
+    firstFilmPasteFilmType.value = null;
+    showModalSecondFilmPasteInputForm.value = false;
+    showFirstFilmPasteManualEntry.value = false;
+}
 
 const secondFilmPasteConfirm = async () => {
     showModalSecondFilmPasteInputForm.value = true;
@@ -1613,14 +1695,42 @@ const secondFilmPasteCancelConfirmation = async () => {
 }
 
 const secondFilmPasteProceed = async () => {
+    await validateExistingFirstFilmPaste();
 
-    if(!firstFilmPasteFurnace.value || !firstFilmPasteLayer.value || !firstFilmPasteMassProd.value ){
+    // Collect the core fields that are always required
+    const requiredFields = [
+        firstFilmPasteFurnace.value, 
+        firstFilmPasteLayer.value, 
+        firstFilmPasteMassProd.value
+    ];
+
+    if (showFirstFilmPasteManualEntry.value) {
+        requiredFields.push(firstFilmPasteFilmClass.value, firstFilmPasteFilmType.value);
+    }
+
+    // Check if any of the gathered fields are blank
+    if (requiredFields.some(field => !field)) {
         toast.warning("Please fill up all fields");
         return;
     }
 
+    showModalSecondFilmPasteInputForm.value = false;
     showModalProceedSecondFilmPaste.value = true; // Second Film Paste confirmation flag
     showModalSubmit.value = true;
+}
+
+const validateExistingFirstFilmPaste = async () => {
+    try{
+        const responseExistingCheck = await axios.get('/api/second-film-paste-check');
+
+        if(responseExistingCheck.second_film_exists){
+            showFirstFilmPasteManualEntry.value = false;
+        }else{
+            showFirstFilmPasteManualEntry.value = true;
+        }
+    }catch(error){
+        console.error('Failed to check existing film paste', error);
+    }
 }
 
 const checkInitialLot = async () => {
@@ -1739,6 +1849,35 @@ const addtnl_saveToDatabase = async () => {
         }else{
             await breaklotAddtnlFormatType();
         }
+
+        if (showModalProceedSecondFilmPaste.value) {
+            try {
+                const response2ndFilmPaste = await axios.post('/api/second-film-paste', {
+                    second_mass_prod: filmPastingInfo.selected_mass_prod,
+                    second_furnace: filmPastingInfo.selectedFurnace,
+                    second_layer: filmPastingInfo.selected_layer,
+
+                    mass_prod: firstFilmPasteMassProd.value,
+                    furnace: firstFilmPasteFurnace.value,
+                    layer: firstFilmPasteLayer.value,
+                    model: filmPasteModel.value,
+                    lot_no: filmPasteLotNo.value,
+
+                    film_type: showFirstFilmPasteManualEntry.value ? firstFilmPasteFilmType.value : null,
+                    film_class: showFirstFilmPasteManualEntry.value ? firstFilmPasteFilmClass.value : null,
+
+                    encoded_by: state.user.firstName + " " + state.user.surname,
+                });
+
+                //console.log(response2ndFilmPaste.data);
+
+            } catch (error) {
+                console.error(
+                    error.response?.data || error.message
+                );
+            }
+        }
+
     } catch (error) {
         toast.error("Failed to save additional film pasting data");
         await userErrorLogging(
@@ -1756,7 +1895,7 @@ const addtnl_saveToDatabase = async () => {
         isFilmPasteDataShown.value = false;
         showModalConfirmDouble.value = false;
         showModalConfirmDouble2.value = false;
-        showModalSecondFilmPasteInputForm.value = false;
+        showModalSecondFilmPasteInputForm.value = false; //goback
         showModalProceedSecondFilmPaste.value = false;
         await getCompletedLayers();
         await fetchAvailableLayers();
@@ -1810,9 +1949,16 @@ const saveToDatabase = async () => {
                     mass_prod: firstFilmPasteMassProd.value,
                     furnace: firstFilmPasteFurnace.value,
                     layer: firstFilmPasteLayer.value,
+                    model: filmPasteModel.value,
+                    lot_no: filmPasteLotNo.value,
+
+                    film_type: showFirstFilmPasteManualEntry.value ? firstFilmPasteFilmType.value : null,
+                    film_class: showFirstFilmPasteManualEntry.value ? firstFilmPasteFilmClass.value : null,
+
+                    encoded_by: state.user.firstName + " " + state.user.surname,
                 });
 
-                console.log(response2ndFilmPaste.data);
+                //console.log(response2ndFilmPaste.data);
 
             } catch (error) {
                 console.error(
@@ -1836,6 +1982,10 @@ const saveToDatabase = async () => {
     } finally {
         showModalSubmit.value = false;
         isFilmPasteDataShown.value = false;
+        showModalConfirmDouble.value = false;
+        showModalConfirmDouble2.value = false;
+        showModalSecondFilmPasteInputForm.value = false; //goback
+        showModalProceedSecondFilmPaste.value = false;
         await getCompletedLayers();
         await fetchAvailableLayers();
         await fetchExistingLayers();
@@ -2043,7 +2193,7 @@ const getSelectedMassProdData = async () => {
         );*/
     } catch (error) {
         //console.error('Error fetching mass prod data:', error);
-        toast.error("Failed to get the mass prod data api error");
+        //toast.error("Failed to get the mass prod data api error");
         await userErrorLogging(
             {
                 message: error.message,
@@ -2205,11 +2355,11 @@ const fetchExistingLayers = async () => {
             );
         }
 
-        if (isExists.value) {
+        /*if (isExists.value) {
             toast.warning(
                 "Selected layer already contains existing coating data.",
             );
-        }
+        }*/
     } catch (error) {
         isExists.value = false;
         //console.error("Error fetching existing layers:", error);

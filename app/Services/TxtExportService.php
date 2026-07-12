@@ -11,6 +11,9 @@ use App\Models\MassProduction;
 use App\Models\ExcessLayers;
 use App\Models\ReportData;
 use App\Models\Coating;
+use App\Models\FilmPastingData;
+use App\Models\BreaklotFilmpasting;
+use App\Models\GbdpSecondFilmPaste;
 use App\Models\GbdpSecondCoating;
 use App\Models\GbdpSecondHeatTreatment;
 use Illuminate\Support\Facades\File;
@@ -625,6 +628,8 @@ class TxtExportService
             ->where('mass_prod', $massPro)
             ->get();
 
+        //dump($tpmData);
+
         if ($tpmData->isEmpty()) {
             return 'No TPM data found for this furnace and mass production.';
         }
@@ -636,9 +641,29 @@ class TxtExportService
             ->where('mass_prod', $massPro)
             ->first();
 
+        //dump($massProd);
+
         $has2ndgbdp = GbdpSecondHeatTreatment::where('furnace', $normalizedFurnace)
             ->where('mass_prod', $massPro)
             ->exists();
+
+        $hasSecondFilmPaste = GbdpSecondFilmPaste::where('second_furnace', $normalizedFurnace)
+            ->where('second_mass_prod', $massPro)
+            ->exists();
+
+        $hasFilmPaste = BreaklotFilmpasting::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->exists();
+        
+        if(!$hasFilmPaste){
+            $hasFilmPaste = FilmPastingData::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->exists();
+
+            dump("Has Film Paste flag normal: ", $hasFilmPaste);
+        }
+        
+        //dump($has2ndgbdp);
 
         if (!$massProd) {
             return 'No MassProduction data found.';
@@ -838,7 +863,7 @@ class TxtExportService
         }
 
         $outputRows = [];
-
+                        
         foreach ($layerKeys as $layerKey) {
             $pairs = $layerKeyPairs[$layerKey] ?? [];
 
@@ -946,7 +971,6 @@ class TxtExportService
                 $isSecondGbdp = false;
 
                 $coating = $this->resolveCoating(
-                    $normalizedFurnace,
                     $massPro,
                     $isBreaklotLayer,
                     $isInitialLot,
@@ -967,17 +991,74 @@ class TxtExportService
 
                     $secondHeatTreatment = GbdpSecondHeatTreatment::where('furnace', $normalizedFurnace)
                         ->where('mass_prod', $massPro)
-                        ->where('layer', (string)$layerKey)
+                        ->where('layer', (string)$coatingLookupLayerNo)
                         ->first();
-
+                
                     if ($secondHeatTreatment) {
                         $heatTreatment1stGbdp = is_array($secondHeatTreatment->gbdp_1st)
                             ? $secondHeatTreatment->gbdp_1st
                             : json_decode($secondHeatTreatment->gbdp_1st, true);
+                    }
+                }
 
-                        $heatTreatment2ndGbdp = is_array($secondHeatTreatment->gbdp_2nd)
-                            ? $secondHeatTreatment->gbdp_2nd
-                            : json_decode($secondHeatTreatment->gbdp_2nd, true);
+                $isSecondFilmPaste = false;
+                $filmPasting = null;
+                $firstFilmPaste = null;
+
+                $filmPasting = $this->resolveFilmPaste(
+                    $massPro,
+                    $isBreaklotLayer,
+                    $isInitialLot,
+                    $layerKey,
+                    $coatingLookupLayerNo,
+                    $model,
+                    $lotNo,
+                    $normalizedFurnace,
+                    $isSecondFilmPaste,
+                );
+
+                if($isSecondFilmPaste){
+
+                    $ffpFurnace = $filmPasting?->furnace;
+                    $ffpMassProd = $filmPasting?->mass_prod;
+                    $ffpLayer = $filmPasting?->layer;
+                    $ffpModel = $filmPasting?->model;
+                    $ffpLotNo = $filmPasting?->lot_no;
+                    $ffpFilmType = $filmPasting?->film_type;
+                    $ffpFilmClass = $filmPasting?->film_class;
+
+                    $sfpFurnace = $filmPasting?->second_furnace;
+                    $sfpMassProd = $filmPasting?->second_mass_prod;
+                    $sfpLayer = $filmPasting?->second_layer;
+                    $sfpModel = $filmPasting?->model;
+                    $sfpLotNo = $filmPasting?->lot_no;
+
+                    $firstFilmPaste = BreaklotFilmpasting::where('furnace', $ffpFurnace) //Get the first film paste in breaklot
+                        ->where('mass_prod', $ffpMassProd)
+                        ->where('layer', (string)$ffpLayer)
+                        ->where('model', $ffpModel)
+                        ->where('lot_no', $ffpLotNo)
+                        ->first();
+
+                    if(!$firstFilmPaste){
+                        $firstFilmPaste = FilmPastingData::where('furnace', $ffpFurnace) //Get the first film paste in normal
+                            ->where('mass_prod', $ffpMassProd)
+                            ->where('layer', (string)$ffpLayer)
+                            ->first();
+                    }
+
+                    $filmPasting = BreaklotFilmpasting::where('furnace', $sfpFurnace)
+                        ->where('mass_prod', $sfpMassProd)
+                        ->where('layer', (string)$sfpLayer)
+                        ->where('model', $sfpModel)
+                        ->where('lot_no', $sfpLotNo)
+                        ->first();
+                    
+                    if(!$filmPasting){
+                        $filmPasting = FilmPastingData::where('furnace', $sfpFurnace)
+                            ->where('mass_prod', $sfpMassProd)
+                            ->where('layer', (string)$sfpLayer)
+                            ->first();
                     }
                 }
 
@@ -1008,6 +1089,12 @@ class TxtExportService
                         $tpmRow->code_no ?? '',
                         $tpmRow->raw_material_code ?? $rawMaterialCode,
                         $totalQty,
+                        $coating1stGbdp['date'] ?? '',
+                        $coating1stGbdp['machine_no'] ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating1stGbdp['machine_no'])) : '',
+                        $coating1stGbdp['min_tb_content'] ?? 0,
+                        $coating1stGbdp['total_magnet_weight'] ?? 0,
+                        substr($coating1stGbdp['time_start'] ?? '', 0, 5),
+                        substr($coating1stGbdp['time_finish'] ?? '', 0, 5),
                         $coating['date'] ?? $coating?->date ?? '',
                         $coating['machine_no'] ?? $coating?->machine_no
                             ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating['machine_no'] ?? $coating?->machine_no))
@@ -1015,19 +1102,13 @@ class TxtExportService
                         $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
                         $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
                         substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
-                        substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
-                        $coating1stGbdp['date'] ?? '',
-                        $coating1stGbdp['machine_no'] ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating1stGbdp['machine_no'])) : '',
-                        $coating1stGbdp['min_tb_content'] ?? 0,
-                        $coating1stGbdp['total_magnet_weight'] ?? 0,
-                        substr($coating1stGbdp['time_start'] ?? '', 0, 5),
-                        substr($coating1stGbdp['time_finish'] ?? '', 0, 5),
-                        $coating['maximum'] ?? $coating?->maximum ?? 0,
-                        $coating['minimum'] ?? $coating?->minimum ?? 0,
-                        $coating['average'] ?? $coating?->average ?? 0,
+                        substr($coating['time_finish'] ?? $coating?->time_finished ?? '', 0, 5),
                         $coating1stGbdp['maximum'] ?? 0,
                         $coating1stGbdp['minimum'] ?? 0,
                         $coating1stGbdp['average'] ?? 0,
+                        $coating['maximum'] ?? $coating?->maximum ?? 0,
+                        $coating['minimum'] ?? $coating?->minimum ?? 0,
+                        $coating['average'] ?? $coating?->average ?? 0,
                         $heatTreatment1stGbdp['furnace_machine'] ? str_replace('-', '0', $heatTreatment1stGbdp['furnace_machine']) : '',
                         $heatTreatment1stGbdp['cycle_no']
                             ? ltrim(substr($heatTreatment1stGbdp['cycle_no'], strpos($heatTreatment1stGbdp['cycle_no'], '-') + 1), ' ')
@@ -1044,6 +1125,14 @@ class TxtExportService
                         $massProd?->pattern_no ?? '',
                         $massProd?->date_start ?? '',
                         $massProd?->date_finished ?? '',
+                        $reportData?->oven_machine_no ?? '',
+                        $reportData?->time_loading ?? '',
+                        $reportData?->temp_time_loading ?? '',
+                        $reportData?->date_oven_info ?? 'N/A',
+                        $reportData?->time_unloading ?? '',
+                        $reportData?->temp_time_unloading ?? '',
+                        $reportData?->pulse_tracer_machine_number ?? '',
+                        $reportData?->date ?? '',
                         $reportData?->length ?? 0,
                         $reportData?->width ?? 0,
                         $reportData?->thickness ?? 0,
@@ -1063,13 +1152,7 @@ class TxtExportService
                         $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
                         $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
                         substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
-                        substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
+                        substr($coating['time_finish'] ?? $coating?->time_finished ?? '', 0, 5),
                         $coating['maximum'] ?? $coating?->maximum ?? 0,
                         $coating['minimum'] ?? $coating?->minimum ?? 0,
                         $coating['average'] ?? $coating?->average ?? 0,
@@ -1081,6 +1164,97 @@ class TxtExportService
                         $massProd?->pattern_no ?? '',
                         $massProd?->date_start ?? '',
                         $massProd?->date_finished ?? '',
+                        $reportData?->oven_machine_no ?? '',
+                        $reportData?->time_loading ?? '',
+                        $reportData?->temp_time_loading ?? '',
+                        $reportData?->date_oven_info ?? 'N/A',
+                        $reportData?->time_unloading ?? '',
+                        $reportData?->temp_time_unloading ?? '',
+                        $reportData?->pulse_tracer_machine_number ?? '',
+                        $reportData?->date ?? '',
+                        $reportData?->length ?? 0,
+                        $reportData?->width ?? 0,
+                        $reportData?->thickness ?? 0,
+                        $reportData?->material_grade ?? '',
+                        (int) preg_replace('/\D.*/', '', $reportData?->mpi_sample_quantity ?? ''),
+                    ];
+                } else if($tpmRow && $isSecondFilmPaste){
+                    $outputRows[] = [
+                        $layerKey,
+                        $tpmRow->code_no ?? '',
+                        $tpmRow->raw_material_code ?? $rawMaterialCode,
+                        $totalQty,
+                        $coating['date'] ?? $coating?->date ?? '',
+                        $coating['machine_no'] ?? $coating?->machine_no
+                            ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating['machine_no'] ?? $coating?->machine_no))
+                            : '',
+                        $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
+                        $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
+                        substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
+                        substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
+                        
+                        $firstFilmPaste?->film_type ?? '',
+                        $firstFilmPaste?->film_class ?? '',
+
+                        $filmPasting?->film_type ?? '',
+                        $filmPasting?->film_class ?? '',
+
+                        $massProd?->furnace ? str_replace('-', '0', $massProd->furnace) : '',
+                        $massProd?->cycle_no
+                            ? ltrim(substr($massProd->cycle_no, strpos($massProd->cycle_no, '-') + 1), ' ')
+                            : '',
+                        $massProd?->batch_cycle_no ? preg_replace('/\D+/', '', $massProd->batch_cycle_no) : '',
+                        $massProd?->pattern_no ?? '',
+                        $massProd?->date_start ?? '',
+                        $massProd?->date_finished ?? '',
+                        $reportData?->oven_machine_no ?? '',
+                        $reportData?->time_loading ?? '',
+                        $reportData?->temp_time_loading ?? '',
+                        $reportData?->date_oven_info ?? 'N/A',
+                        $reportData?->time_unloading ?? '',
+                        $reportData?->temp_time_unloading ?? '',
+                        $reportData?->pulse_tracer_machine_number ?? '',
+                        $reportData?->date ?? '',
+                        $reportData?->length ?? 0,
+                        $reportData?->width ?? 0,
+                        $reportData?->thickness ?? 0,
+                        $reportData?->material_grade ?? '',
+                        (int) preg_replace('/\D.*/', '', $reportData?->mpi_sample_quantity ?? ''),
+                    ];
+                } else if($tpmRow && $filmPasting && !$isSecondFilmPaste){
+                    $outputRows[] = [
+                        $layerKey,
+                        $tpmRow->code_no ?? '',
+                        $tpmRow->raw_material_code ?? $rawMaterialCode,
+                        $totalQty,
+                        $coating['date'] ?? $coating?->date ?? '',
+                        $coating['machine_no'] ?? $coating?->machine_no
+                            ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating['machine_no'] ?? $coating?->machine_no))
+                            : '',
+                        $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
+                        $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
+                        substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
+                        substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
+
+                        $filmPasting?->film_type ?? '',
+                        $filmPasting?->film_class ?? '',
+
+                        $massProd?->furnace ? str_replace('-', '0', $massProd->furnace) : '',
+                        $massProd?->cycle_no
+                            ? ltrim(substr($massProd->cycle_no, strpos($massProd->cycle_no, '-') + 1), ' ')
+                            : '',
+                        $massProd?->batch_cycle_no ? preg_replace('/\D+/', '', $massProd->batch_cycle_no) : '',
+                        $massProd?->pattern_no ?? '',
+                        $massProd?->date_start ?? '',
+                        $massProd?->date_finished ?? '',
+                        $reportData?->oven_machine_no ?? '',
+                        $reportData?->time_loading ?? '',
+                        $reportData?->temp_time_loading ?? '',
+                        $reportData?->date_oven_info ?? 'N/A',
+                        $reportData?->time_unloading ?? '',
+                        $reportData?->temp_time_unloading ?? '',
+                        $reportData?->pulse_tracer_machine_number ?? '',
+                        $reportData?->date ?? '',
                         $reportData?->length ?? 0,
                         $reportData?->width ?? 0,
                         $reportData?->thickness ?? 0,
@@ -1102,23 +1276,25 @@ class TxtExportService
             'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
             'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_MAX','COATING_MIN','COATING_AVE',
             'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
+            'OVEN_MC_NO','DATE_START_OVEN','TEMP_START','DATE_FINISH_OVEN','TEMP_FINISH','INSPECTION_MC_NO','DATE_INSPECTION',
             'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
         ];
 
         $header2ndgbdp = [
-            'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
-            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_DATE2',
-            'COATING_MC_NO2','MIN_TB_CONTENT2','TOTAL_MAGNET_WEIGHT2','COATING_DATE_START2','COATING_DATE_FINISH2',
+            'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY',
+            'COATING_DATE','COATING_MC_NO','MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH',
+            'COATING_DATE2','COATING_MC_NO2','MIN_TB_CONTENT2','TOTAL_MAGNET_WEIGHT2','COATING_DATE_START2','COATING_DATE_FINISH2',
             'COATING_MAX','COATING_MIN','COATING_AVE',
             'COATING_MAX2','COATING_MIN2','COATING_AVE2',
             'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
+            'FURNACE_MC_NO2','CYCLE_NO2','BATCH_CYCLE_NO2','PATTERN2','DATE_START2','DATE_FINISH2',
+            'OVEN_MC_NO','DATE_START_OVEN','TEMP_START','DATE_FINISH_OVEN','TEMP_FINISH','INSPECTION_MC_NO','DATE_INSPECTION',
             'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
         ];
 
         $headerFilmPaste = [
             'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY','COATING_DATE','COATING_MC_NO',
-            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','COATING_MAX',
-            'COATING_MIN','COATING_AVE','FILM_TYPE','FILM_CLASS',
+            'MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH','FILM_TYPE','FILM_CLASS',
             'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
             'LENGTH','WIDTH','THICKNESS','MATERIAL_GRADE'
         ];
@@ -1133,6 +1309,10 @@ class TxtExportService
 
         if($has2ndgbdp){
             $header = $header2ndgbdp;
+        }else if($hasSecondFilmPaste){
+            $header = $header2ndFilmPaste;
+        }else if($hasFilmPaste){
+            $header = $headerFilmPaste;
         }
 
         $lines = collect($outputRows)
@@ -1154,7 +1334,6 @@ class TxtExportService
     }
 
     private function resolveCoating(
-        string $furnace,
         string $massPro,
         bool $isBreaklotLayer,
         bool $isInitialLot,
@@ -1238,6 +1417,65 @@ class TxtExportService
 
         return null;
     }
+
+    private function resolveFilmPaste(
+        string $massPro,
+        bool $isBreaklotLayer,
+        bool $isInitialLot,
+        $layerKey,
+        $coatingLookupLayerNo,
+        $model,
+        $lotNo,
+        $normalizedFurnace,
+        bool &$isSecondFilmPaste = false,
+    ) {
+        $isSecondFilmPaste = false;
+
+        $filmPasting = GbdpSecondFilmPaste::where('second_furnace', $normalizedFurnace) //Check first if 1st and 2nd film paste type of data
+            ->where('second_mass_prod', $massPro)
+            ->where('second_layer', (string)$coatingLookupLayerNo)
+            ->where('model', $model)
+            ->where('lot_no', $lotNo)
+            ->first();
+
+        if($filmPasting){
+            $isSecondFilmPaste = true;
+            return $filmPasting;
+        }
+
+        // -------------------------
+        // 1. Breaklot path first
+        // -------------------------
+        if ($isBreaklotLayer && !$isInitialLot) {
+
+            $filmPasting = BreaklotFilmpasting::where('furnace', $normalizedFurnace) //Check first if 1st and 2nd film paste type of data
+                ->where('mass_prod', $massPro)
+                ->where('layer', (string)$coatingLookupLayerNo)
+                ->where('model', $model)
+                ->where('lot_no', $lotNo)
+                ->first();
+
+            if($filmPasting){
+                return $filmPasting;
+            }
+            
+        }
+
+        // -------------------------
+        // 2. Normal path
+        // -------------------------
+        $filmPasting = FilmPastingData::where('furnace', $normalizedFurnace)
+            ->where('mass_prod', $massPro)
+            ->where('layer', (string)$coatingLookupLayerNo)
+            ->first();
+
+        if ($filmPasting) {
+            return $filmPasting;
+        }
+
+        return null;
+    }
+
 
     //dd($lines->toArray()); // verify output
 

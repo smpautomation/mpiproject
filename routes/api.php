@@ -609,6 +609,7 @@ Route::post('/initial-coating/fetch-coating-data', [InitialCoatingController::cl
 Route::post('/initial-film-pasting/check-duplicate', [InitialFilmPastingController::class, 'checkDuplicateLot']);
 Route::post('/initial-film-pasting/fetch-film-paste-data', [InitialFilmPastingController::class, 'fetchFilmPasteSummaryData']);
 
+Route::get('/second-film-paste-check', [GbdpSecondFilmPasteController::class, 'checkExisting']);
 Route::post('/second-film-paste', [GbdpSecondFilmPasteController::class, 'store']);
 
 Route::apiResource('mass-production', MassProductionController::class);
