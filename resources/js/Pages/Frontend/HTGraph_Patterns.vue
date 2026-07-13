@@ -1,28 +1,49 @@
 <template>
     <Frontend>
         <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 space-y-6 bg-gray-100">
-            <h1 class="text-2xl font-semibold text-gray-800">Heat Treatment Graph Patterns</h1>
+            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between pb-6 border-b border-gray-100">
+                <!-- Title Section -->
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+                        Heat Treatment <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-500">Graph Patterns</span>
+                    </h1>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Manage, review, and encode industrial furnace configurations.
+                    </p>
+                </div>
 
-            <!-- Blue-themed button -->
-            <button
-            @click="showModalCreate = true"
-            class="px-6 py-3 font-semibold text-white transition-colors bg-blue-600 shadow-lg rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-                Create New Pattern
-            </button>
+                <!-- Actions Container (Search + Create Button) -->
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center w-full lg:w-auto">
+                    <!-- Modern Minimalist Search Input -->
+                    <div class="relative flex-1 sm:w-64 lg:w-72">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.603 10.603Z" />
+                            </svg>
+                        </span>
+                        <input
+                            type="number"
+                            v-model="searchQuery"
+                            placeholder="Search by pattern number..."
+                            class="w-full pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                    </div>
 
-            <!-- Search Input -->
-            <div class="mb-4">
-            <input
-                type="number"
-                v-model="searchQuery"
-                placeholder="Search by pattern number..."
-                class="w-full px-4 py-2 text-xs border rounded shadow-sm focus:outline-none focus:ring focus:border-blue-300"
-            />
+                    <!-- Cyan/Teal Modern Button -->
+                    <button
+                        @click="showModalCreate = true"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 bg-gradient-to-r from-teal-600 to-teal-500 rounded-xl shadow-sm shadow-teal-200 hover:from-teal-700 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 active:scale-[0.98] whitespace-nowrap"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Create New Pattern
+                    </button>
+                </div>
             </div>
 
             <!-- Empty State Panel -->
-            <div v-if="filteredPatterns.length === 0"
+            <div v-if="graphFileLists.length === 0"
                 class="flex flex-col items-center justify-center p-8 border border-gray-200 rounded-lg bg-gray-50 animate-fadeIn">
 
                 <!-- Pulsing Icon -->
@@ -39,174 +60,282 @@
 
 
             <!-- Patterns container -->
-            <div v-else class="grid grid-cols-2 gap-4 mt-12 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-                <div
-                    v-for="(pattern, index) in filteredPatterns"
-                    :key="index"
-                    class="relative flex flex-col items-center overflow-hidden transition-transform transform bg-white shadow-sm cursor-pointer rounded-xl hover:scale-105 hover:shadow-lg"
-                    @click="selectedGraph = pattern.url; selectedPattern = pattern; showModalGraph = true"
-                >
-                    <!-- Image -->
-                    <div class="flex items-center justify-center w-full overflow-hidden aspect-square bg-gray-50">
-                        <img
-                        :src="pattern.url"
-                        alt="Graph pattern"
-                        class="object-contain w-full h-full p-2 transition-transform duration-200 hover:scale-110"
-                        />
+            <div v-else class="w-full mt-12 overflow-x-auto bg-white border border-gray-100 shadow-sm rounded-xl">
+                <table class="w-full text-left border-collapse table-auto">
+                    <thead>
+                        <tr class="border-b border-gray-100 bg-gray-50/90">
+                            <th class="px-6 py-4 text-xs font-bold tracking-wider text-teal-800 uppercase">Pattern</th>
+                            <th class="px-6 py-4 text-xs font-bold tracking-wider text-teal-800 uppercase">Furnace</th>
+                            <th class="px-6 py-4 text-xs font-bold tracking-wider text-teal-800 uppercase">Encoded By</th>
+                            <th class="px-6 py-4 text-right text-xs font-bold tracking-wider text-teal-800 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        <tr
+                            v-for="(pattern, index) in graphFileLists"
+                            :key="pattern.id || index"
+                            class="relative transition-colors cursor-pointer group hover:bg-cyan-50/30"
+                            @click="selectedGraph = pattern.url; selectedPattern = pattern; showModalGraph = true"
+                        >
+                            <!-- Pattern Number (First Column) -->
+                            <td class="px-6 py-4.5 whitespace-nowrap border-l-2 border-transparent group-hover:border-cyan-500 transition-colors">
+                                <span class="text-sm font-semibold text-gray-800 group-hover:text-cyan-700 transition-colors">
+                                    {{ pattern.pattern_no }}
+                                </span>
+                            </td>
+                            
+                            <!-- Furnace Number -->
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm text-gray-600">
+                                    {{ pattern.furnace_no }}
+                                </span>
+                            </td>
+                            
+                            <!-- Encoded By -->
+                            <td class="px-6 py-5 max-w-[200px] truncate">
+                                <span class="text-sm text-gray-500">
+                                    {{ pattern.encoded_by }}
+                                </span>
+                            </td>
+                            
+                            <!-- Action Button -->
+                            <td class="px-6 py-5 text-right whitespace-nowrap" @click.stop>
+                                <button
+                                    @click="editPattern(pattern)"
+                                    class="px-3.5 py-1.5 text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-lg hover:bg-teal-600 hover:text-white transition-all duration-200"
+                                >
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Interface Footer -->
+                <div class="flex items-center justify-between px-6 py-2 bg-white border-t border-gray-100 rounded-b-xl">
+                    <!-- Meta Info: Left Side -->
+                    <div class="text-sm text-gray-500">
+                        Showing 
+                        <span class="font-semibold text-gray-800">{{ paginationMeta.from }}</span> 
+                        to 
+                        <span class="font-semibold text-gray-800">{{ paginationMeta.to }}</span> 
+                        of 
+                        <span class="font-semibold text-gray-800">{{ paginationMeta.total }}</span> 
+                        patterns
                     </div>
 
-                    <!-- Info Panel -->
-                    <div class="flex flex-col items-center w-full px-3 py-2 text-center bg-gray-50">
-                        <p class="text-sm font-semibold text-gray-800 truncate">
-                        Pattern {{ pattern.pattern_no }}
-                        </p>
-                        <p class="text-xs text-gray-500 truncate">
-                        Furnace: {{ pattern.furnace_no }}
-                        </p>
-                        <p class="text-xs text-gray-500 truncate">
-                        Encoded by: {{ pattern.encoded_by }}
-                        </p>
+                    <!-- Direction Navigators: Right Side -->
+                    <div class="inline-flex items-center gap-2">
+                        <!-- Previous Page Button -->
                         <button
-                        @click.stop="editPattern(pattern)"
-                        class="px-2 py-1 mt-2 text-xs font-semibold text-blue-600 rounded bg-blue-50 hover:bg-blue-100 hover:underline"
+                            @click="currentPage > 1 ? currentPage-- : null"
+                            :disabled="currentPage === 1"
+                            class="inline-flex items-center justify-center p-2 text-gray-500 transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed"
                         >
-                        Edit
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
+                        </button>
+
+                        <!-- Concise Page Tracker pills -->
+                        <span class="px-3 py-1.5 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-100 rounded-lg">
+                            Page {{ currentPage }} of {{ paginationMeta.last_page }}
+                        </span>
+
+                        <!-- Next Page Button -->
+                        <button
+                            @click="currentPage < paginationMeta.last_page ? currentPage++ : null"
+                            :disabled="currentPage === paginationMeta.last_page"
+                            class="inline-flex items-center justify-center p-2 text-gray-500 transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
                         </button>
                     </div>
                 </div>
 
 
-                <!-- Modal for full-size image -->
-                <Modal :show="showModalGraph" @close="showModalGraph = false">
-                <div class="relative flex flex-col items-center w-full max-w-3xl p-6 mx-auto bg-white shadow-2xl rounded-2xl">
-
-                    <!-- Close button -->
-                    <button
-                    @click="showModalGraph = false"
-                    class="absolute p-2 text-gray-400 transition rounded-full top-4 right-4 hover:text-gray-600"
-                    aria-label="Close"
-                    >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    </button>
-
-                    <!-- Pattern Info -->
-                    <div class="mb-4 text-center">
-                    <p class="text-lg font-semibold text-gray-800">Pattern {{ selectedPattern?.pattern_no }}</p>
-                    <p class="text-sm text-gray-500">Furnace: {{ selectedPattern?.furnace_no }}</p>
-                    <p class="text-sm text-gray-500">Encoded by: {{ selectedPattern?.encoded_by }}</p>
-                    <p class="text-sm text-gray-500">Hours: {{ selectedPattern?.pattern_no_hours }}</p>
-                    </div>
-
-                    <!-- Image -->
-                    <img
-                    :src="selectedGraph"
-                    alt="Graph pattern"
-                    class="object-contain max-h-[70vh] max-w-full rounded-lg border border-gray-200 shadow-md"
-                    />
-                </div>
-                </Modal>
-
             </div>
 
+            <!-- Modal for full-size image -->
+            <Modal :show="showModalGraph" @close="showModalGraph = false">
+                <div class="relative flex flex-col items-center w-full max-w-3xl p-6 mx-auto bg-white shadow-xl rounded-2xl border border-gray-100">
+                    <!-- Close button -->
+                    <button
+                        @click="showModalGraph = false"
+                        class="absolute p-2 text-gray-400 transition-colors duration-150 rounded-full top-4 right-4 hover:text-gray-600 hover:bg-gray-50"
+                        aria-label="Close"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <!-- Header & Pattern Info -->
+                    <div class="w-full text-center mb-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            Pattern {{ selectedPattern?.pattern_no }}
+                        </h3>
+                        
+                        <!-- Metadata Badges -->
+                        <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-600">
+                            <span class="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full">
+                                <span class="text-gray-400 font-normal">Furnace:</span> {{ selectedPattern?.furnace_no }}
+                            </span>
+                            <span class="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full">
+                                <span class="text-gray-400 font-normal">Encoded by:</span> {{ selectedPattern?.encoded_by }}
+                            </span>
+                            <span class="px-3 py-1 bg-teal-50/50 border border-teal-100/50 text-teal-800 rounded-full">
+                                <span class="text-teal-600/70 font-normal">Duration:</span> {{ selectedPattern?.pattern_no_hours }} hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Image Display Container (Strict Fixed Dimension Wrapper) -->
+                    <div class="w-full h-[450px] overflow-hidden border border-gray-200 rounded-xl bg-gray-50/50 shadow-inner p-2 flex items-center justify-center">
+                        <img
+                            :src="selectedGraph"
+                            alt="Graph pattern"
+                            class="w-full h-full object-contain rounded-lg mix-blend-multiply"
+                        />
+                    </div>
+                </div>
+            </Modal>
+
             <Modal :show="showModalEdit" @close="showModalEdit = false">
-                <div class="relative flex flex-col w-full max-w-3xl p-8 mx-auto bg-white shadow-2xl rounded-2xl">
-
+                <div class="relative flex flex-col w-full max-w-3xl p-8 mx-auto bg-white shadow-xl rounded-2xl border border-gray-100">
                     <!-- Close Button -->
-                    <button @click="showModalEdit = false" class="absolute text-xl text-gray-500 top-4 right-4 hover:text-gray-700">✕</button>
+                    <button 
+                        @click="showModalEdit = false" 
+                        class="absolute p-2 text-gray-400 transition-colors duration-150 rounded-full top-4 right-4 hover:text-gray-600 hover:bg-gray-50"
+                        aria-label="Close modal"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
 
-                    <h2 class="mb-6 text-2xl font-bold text-center text-gray-800">Edit Pattern</h2>
+                    <h3 class="mb-6 text-lg font-bold text-center text-gray-900">Edit Pattern</h3>
 
-                    <!-- Form Fields -->
-                    <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
+                    <!-- Form Fields Row 1 -->
+                    <div class="grid grid-cols-1 gap-5 mb-5 md:grid-cols-3">
+                        <!-- Pattern No -->
                         <div class="flex flex-col">
-                            <label class="mb-1 text-sm font-medium text-gray-700">Pattern No.</label>
-                            <input type="number" v-model="patternNo" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Pattern No.</label>
+                            <input 
+                                type="number" 
+                                v-model="patternNo" 
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
 
+                        <!-- Furnace No -->
                         <div class="flex flex-col">
-                            <label class="mb-1 text-sm font-medium text-gray-700">Furnace No</label>
-                            <select v-model="selectedFurnace" class="w-full border-gray-300 rounded-lg shadow-sm form-select focus:ring-2 focus:ring-green-400">
-                            <option v-for="item in furnaceNo" :key="item" :value="item">{{ item }}</option>
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Furnace No</label>
+                            <select 
+                                v-model="selectedFurnace" 
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 bg-white transition border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
+                            >
+                                <option v-for="item in furnaceNo" :key="item" :value="item">{{ item }}</option>
                             </select>
                         </div>
 
+                        <!-- Encoded By -->
                         <div class="flex flex-col">
-                            <label class="mb-1 text-sm font-medium text-gray-700">Encoded By</label>
-                            <input type="text" v-model="encodedBy" @input="encodedBy = encodedBy.toUpperCase()" class="w-full border-gray-300 rounded-lg shadow-sm form-input focus:ring-2 focus:ring-green-400"/>
-                        </div>
-                    </div>
-
-                    <!-- Form fields -->
-                    <div class="flex flex-col w-full gap-6 mb-8 md:flex-row">
-                        <!-- Upload Graph (separate row) -->
-                        <div  class="flex flex-col flex-1 mb-8">
-                            <label class="mb-1 text-sm font-medium text-gray-700">Replace Graph (optional)</label>
-                            <input type="file" ref="editFile" @change="handleEditGraph" class="p-2 border rounded-lg file-input"/>
-                            <!-- Preview -->
-                            <div v-if="uploadedGraphEdited" class="mb-6 text-center">
-                                <p class="mb-2 text-xs font-semibold text-gray-600">Preview:</p>
-                                <img :src="uploadedGraphEdited" class="inline-block border rounded-lg shadow-sm max-h-48"/>
-                            </div>
-                        </div>
-
-                        <!-- Pattern No -->
-                        <div class="flex flex-col flex-1">
-                            <label class="mb-1 text-sm font-semibold text-gray-700">Time (Hours)</label>
-                            <input
-                                type="number"
-                                v-model="patternNoHours"
-                                placeholder=""
-                                class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-100 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Encoded By</label>
+                            <input 
+                                type="text" 
+                                v-model="encodedBy" 
+                                @input="encodedBy = encodedBy.toUpperCase()" 
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                             />
                         </div>
                     </div>
 
+                    <!-- Form Fields Row 2 -->
+                    <div class="flex flex-col w-full gap-5 mb-6 md:flex-row">
+                        <!-- Replace Graph -->
+                        <div class="flex flex-col flex-1">
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Replace Graph (optional)</label>
+                            <input 
+                                type="file" 
+                                ref="editFile" 
+                                accept=".jpeg,.jpg,.png"
+                                @change="handleEditGraph" 
+                                class="w-full px-3 py-2 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-teal-50 file:text-teal-700 file:font-semibold hover:file:bg-teal-100 file:transition-colors file:cursor-pointer focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
+                            />
+                            <p class="mt-1.5 text-xs text-gray-400">Supported formats: JPEG, JPG, or PNG only.</p>
+                        </div>
+
+                        <!-- Time (Hours) -->
+                        <div class="flex flex-col flex-1">
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Time (Hours)</label>
+                            <input
+                                type="number"
+                                v-model="patternNoHours"
+                                placeholder="Input Hours..."
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 placeholder-gray-400 transition bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- File Preview -->
+                    <div v-if="uploadedGraphEdited" class="w-full mb-6">
+                        <p class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Preview:</p>
+                        <div class="text-center border border-gray-200 rounded-xl bg-gray-50/50 shadow-inner p-2">
+                            <img :src="uploadedGraphEdited" alt="Edited Graph Preview" class="inline-block object-contain max-h-48"/>
+                        </div>
+                    </div>
+
                     <!-- Save Button -->
-                    <button @click="updatePattern"
-                        class="w-full py-3 text-white transition-colors bg-green-600 rounded-lg shadow hover:bg-green-700">
-                        Save Changes
-                    </button>
+                    <div class="flex justify-center w-full">
+                        <button 
+                            @click="updatePattern"
+                            class="px-8 py-2.5 text-sm font-semibold text-white transition-all duration-200 rounded-xl shadow-sm bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-500/20"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
             </Modal>
 
 
             <Modal :show="showModalCreate" @close="showModalCreate = false">
-                <div class="relative flex flex-col items-center justify-center w-full max-w-3xl p-8 mx-auto bg-white shadow-2xl rounded-2xl">
+                <div class="relative flex flex-col items-center justify-center w-full max-w-3xl p-8 mx-auto bg-white shadow-xl rounded-2xl border border-gray-100">
                     <!-- Close button -->
                     <button
-                    @click="showModalCreate = false"
-                    class="absolute p-2 text-gray-400 transition-colors duration-150 rounded-full top-4 right-4 hover:text-gray-600 hover:bg-gray-100"
-                    aria-label="Close modal"
+                        @click="showModalCreate = false"
+                        class="absolute p-2 text-gray-400 transition-colors duration-150 rounded-full top-4 right-4 hover:text-gray-600 hover:bg-gray-50"
+                        aria-label="Close modal"
                     >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
 
-                <!-- Header -->
-                <p class="mb-6 text-xl font-bold text-center text-gray-800">Please fill out all the fields</p>
+                    <!-- Header -->
+                    <h3 class="mb-6 text-lg font-bold text-center text-gray-900">Please fill out all the fields</h3>
 
-                    <!-- Form fields -->
-                    <div class="flex flex-col w-full gap-6 mb-8 md:flex-row">
+                    <!-- Form fields row 1 -->
+                    <div class="flex flex-col w-full gap-5 mb-5 md:flex-row">
                         <!-- Pattern No -->
                         <div class="flex flex-col flex-1">
-                            <label class="mb-1 text-sm font-semibold text-gray-700">Pattern No.</label>
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Pattern No.</label>
                             <input
                                 type="number"
                                 v-model="patternNo"
                                 placeholder="Input Pattern Number..."
-                                class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 placeholder-gray-400 uppercase transition bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
                         </div>
 
                         <!-- Furnace No -->
                         <div class="flex flex-col flex-1">
-                            <label class="mb-1 text-sm font-semibold text-gray-700">Furnace No</label>
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Furnace No</label>
                             <select
                                 v-model="selectedFurnace"
-                                class="w-full px-3 py-3 text-sm text-gray-700 transition border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 bg-white transition border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                             >
                                 <option v-for="item in furnaceNo" :key="item" :value="item">{{ item }}</option>
                             </select>
@@ -214,79 +343,79 @@
 
                         <!-- Encoded By -->
                         <div class="flex flex-col flex-1">
-                            <label class="mb-1 text-sm font-semibold text-gray-700">Encoded by</label>
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Encoded by</label>
                             <input
                                 type="text"
                                 v-model="encodedBy"
                                 @input="encodedBy = encodedBy.toUpperCase()"
-                                class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 placeholder-gray-400 uppercase transition bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                             />
                         </div>
                     </div>
 
-                    <!-- Form fields -->
-                    <div class="flex flex-col w-full gap-6 mb-8 md:flex-row">
-                        <!-- Upload Graph (separate row) -->
-                        <div  class="flex flex-col flex-1 mb-8">
-                            <label class="mb-1 text-sm font-semibold text-gray-700">Upload Graph</label>
+                    <!-- Form fields row 2 -->
+                    <div class="flex flex-col w-full gap-5 mb-6 md:flex-row">
+                        <!-- Upload Graph -->
+                        <div class="flex flex-col flex-1">
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Upload Graph</label>
                             <input
                                 type="file"
                                 id="cycleGraph"
+                                accept=".jpeg,.jpg,.png"
                                 @change="uploadGraph"
-                                class="w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-semibold hover:file:bg-blue-100 file:transition-colors file:cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-3 py-1 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-teal-50 file:text-teal-700 file:font-semibold hover:file:bg-teal-100 file:transition-colors file:cursor-pointer focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                             />
+                            <p class="mt-1.5 text-xs text-gray-400">Supported formats: JPEG, JPG, or PNG only.</p>
                         </div>
 
-                        <!-- Pattern No -->
+                        <!-- Time (Hours) -->
                         <div class="flex flex-col flex-1">
-                            <label class="mb-1 text-sm font-semibold text-gray-700">Time (Hours)</label>
+                            <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Time (Hours)</label>
                             <input
                                 type="number"
                                 v-model="patternNoHours"
-                                placeholder="Input Pattern Number..."
-                                class="w-full px-3 py-3 text-sm font-medium text-gray-700 placeholder-gray-400 uppercase transition border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Input Hours..."
+                                class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 placeholder-gray-400 transition bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
                         </div>
                     </div>
 
                     <!-- File preview -->
-                    <div v-if="uploadedGraph" class="mt-4 mb-8">
-                        <p class="mb-1 text-xs font-semibold text-gray-700">Preview:</p>
+                    <div v-if="uploadedGraph" class="w-full mt-2 mb-6">
+                        <p class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Preview:</p>
                         <img
                             :src="uploadedGraph"
                             alt="Graph Preview"
-                            class="object-contain w-full border border-gray-200 rounded-lg shadow-sm max-h-48"
+                            class="object-contain w-full border border-gray-200 rounded-xl bg-gray-50/50 shadow-inner max-h-48 p-2"
                         />
                     </div>
 
-
-
                     <!-- Submit / Confirmation -->
                     <div v-if="!showConfirmation" class="flex justify-center w-full">
-                    <button
-                        @click="submitForm"
-                        class="px-8 py-3 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
-                    >
-                        Submit
-                    </button>
+                        <button
+                            @click="submitForm"
+                            class="px-8 py-2.5 text-sm font-semibold text-white transition-all duration-200 rounded-xl shadow-sm bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-500/20"
+                        >
+                            Submit
+                        </button>
                     </div>
 
-                    <div v-else class="flex flex-col items-center justify-center gap-4">
-                        <p class="font-semibold text-center text-gray-700">
-                            Are you <span class="text-red-600">sure</span> that input is correct?
+                    <div v-else class="flex flex-col items-center justify-center gap-4 w-full bg-gray-50/50 rounded-xl p-4 border border-gray-100">
+                        <p class="text-sm font-medium text-center text-gray-700">
+                            Are you <span class="font-bold text-rose-600">sure</span> that input is correct?
                         </p>
-                        <div class="flex gap-4">
+                        <div class="flex gap-3">
                             <button
-                            @click="showConfirmation = false"
-                            class="px-6 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-gray-600 rounded-lg shadow hover:bg-gray-700"
+                                @click="showConfirmation = false"
+                                class="px-6 py-2 text-sm font-semibold text-gray-700 transition-colors duration-200 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 hover:text-gray-900"
                             >
-                            No
+                                No
                             </button>
                             <button
-                            @click="saveToDatabase"
-                            class="px-6 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-green-600 rounded-lg shadow hover:bg-green-700"
+                                @click="saveToDatabase"
+                                class="px-6 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-teal-600 rounded-xl shadow-sm hover:bg-teal-700"
                             >
-                            Yes
+                                Yes
                             </button>
                         </div>
                     </div>
@@ -535,6 +664,15 @@ const saveToDatabase = async () => {
 };
 
 const searchQuery = ref('');
+const currentPage = ref(1);
+
+const paginationMeta = ref({
+    total: 0,
+    per_page: 10,
+    last_page: 1,
+    from: 0,
+    to: 0
+});
 
 const filteredPatterns = computed(() => {
   const q = String(searchQuery.value || '').toLowerCase(); // <-- coerce safely
@@ -547,22 +685,48 @@ const filteredPatterns = computed(() => {
   );
 });
 
-const getAllPatterns = async () => {
-  try {
-    const response = await axios.get('/api/htgraph-patterns/list');
-    let data = response.data;
+const getAllPatterns = async (page = 1) => {
+    try {
+        const response = await axios.get('/api/htgraph-patterns/list', {
+            params: {
+                page: page,
+                search: searchQuery.value
+            }
+        });
 
-    // If it's an object with numeric keys, convert to array
-    if (!Array.isArray(data) && typeof data === 'object' && data !== null) {
-      data = Object.values(data);
+        // Laravel pagination results nest data arrays inside response.data.data
+        const backendResponse = response.data;
+        
+        graphFileLists.value = Array.isArray(backendResponse.data) 
+            ? backendResponse.data 
+            : Object.values(backendResponse.data || {});
+
+        // Store pagination metrics safely
+        currentPage.value = backendResponse.current_page;
+        paginationMeta.value = {
+            total: backendResponse.total || 0,
+            per_page: backendResponse.per_page || 15,
+            last_page: backendResponse.last_page || 1,
+            from: backendResponse.from || 0,
+            to: backendResponse.to || 0
+        };
+
+        console.log('Normalized Page Data:', graphFileLists.value);
+    } catch (error) {
+        console.error('Failed to fetch graphs', error);
     }
-
-    graphFileLists.value = data;
-    console.log('Normalized patterns:', graphFileLists.value);
-  } catch (error) {
-    console.error('Failed to fetch graphs', error);
-  }
 };
+
+// Auto-fetch data if user switches pages
+watch(currentPage, (newPage) => {
+    getAllPatterns(newPage);
+});
+
+// Auto-reset to page 1 and fetch data when user searches
+watch(searchQuery, () => {
+    currentPage.value = 1;
+    getAllPatterns(1);
+});
 
 const getFurnaceLists = async() => {
     try{

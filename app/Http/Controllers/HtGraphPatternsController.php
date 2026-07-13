@@ -191,23 +191,39 @@ class HtGraphPatternsController extends Controller
     }
 
 
-    public function listGraphs()
+    public function listGraphs(Request $request)
     {
-        $patterns = HtGraphPatterns::all()->map(function ($pattern) {
-            $folder = public_path('htgraph_patterns');
+        // 1. Core query builder setup
+        $query = HtGraphPatterns::query();
 
-            // Scan for files starting with pattern_<pattern_no>
-            $files = glob("$folder/pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{png,jpg,jpeg}", GLOB_BRACE); // matches png, jpg, jpeg
+        // 2. Filter records dynamically if a search value exists
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('pattern_no', 'like', "%{$search}%")
+                ->orWhere('encoded_by', 'like', "%{$search}%");
+            });
+        }
+
+        // 3. Get the paginator instance explicitly
+        $paginator = $query->latest()->paginate(10);
+        
+        $folder = public_path('htgraph_patterns');
+        
+        // 4. Transform the active items array inside the paginator manually
+        $transformedItems = [];
+        
+        foreach ($paginator->items() as $pattern) {
+            $files = glob("$folder/pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{png,jpg,jpeg}", GLOB_BRACE);
             $url = null;
 
             if (count($files)) {
                 $filename = basename($files[0]);
                 $path = $files[0];
-
                 $url = asset('htgraph_patterns/' . $filename) . '?v=' . filemtime($path);
             }
 
-            return [
+            $transformedItems[] = [
                 'id' => $pattern->id,
                 'pattern_no' => $pattern->pattern_no,
                 'pattern_no_hours' => $pattern->pattern_no_hours,
@@ -215,9 +231,19 @@ class HtGraphPatternsController extends Controller
                 'encoded_by' => $pattern->encoded_by,
                 'url' => $url,
             ];
-        })->filter(fn($item) => $item['url'] !== null);
+        }
 
-        return response()->json($patterns);
+        // 5. Package the raw paginator properties manually into a custom array structure.
+        // This gives Vue exactly the pagination structure it expects!
+        return response()->json([
+            'current_page' => $paginator->currentPage(),
+            'data'         => $transformedItems,
+            'from'         => $paginator->firstItem() ?? 0,
+            'to'           => $paginator->lastItem() ?? 0,
+            'last_page'    => $paginator->lastPage(),
+            'per_page'     => $paginator->perPage(),
+            'total'        => $paginator->total(),
+        ]);
     }
 
     public function getHours($patternNo, $furnaceNo)
