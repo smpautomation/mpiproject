@@ -263,7 +263,7 @@
                                 ref="editFile" 
                                 accept=".jpeg,.jpg,.png"
                                 @change="handleEditGraph" 
-                                class="w-full px-3 py-2 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-teal-50 file:text-teal-700 file:font-semibold hover:file:bg-teal-100 file:transition-colors file:cursor-pointer focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
+                                class="w-full px-3 py-1 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm cursor-pointer file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-teal-50 file:text-teal-700 file:font-semibold hover:file:bg-teal-100 file:transition-colors file:cursor-pointer focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                             />
                             <p class="mt-1.5 text-xs text-gray-400">Supported formats: JPEG, JPG, or PNG only.</p>
                         </div>
