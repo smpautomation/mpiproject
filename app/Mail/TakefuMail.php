@@ -67,23 +67,6 @@ class TakefuMail extends Mailable
             if ($furnaceNo && $massProd) {
                 $txtService = app(\App\Services\TxtExportService::class);
 
-                // STEP 1: Validate linkage consistency BEFORE export
-                $validationResult = $txtService->validateModelRawMaterialLinkage(
-                    $furnaceNo,
-                    $massProd
-                );
-
-                if ($validationResult !== true) {
-                    Log::error("TXT export blocked due to validation mismatch", [
-                        'furnace_no' => $furnaceNo,
-                        'mass_prod' => $massProd,
-                        'details' => $validationResult
-                    ]);
-
-                    return; // hard stop export
-                }
-
-                // STEP 2: Export only if clean
                 $txtService->exportData1($furnaceNo, $massProd);
                 $txtService->exportData2($furnaceNo, $massProd);
                 $txtService->exportData3($furnaceNo, $massProd);
