@@ -29,6 +29,19 @@
                         />
                     </div>
 
+                    <!-- New Furnace Filter Dropdown -->
+                    <div class="w-full sm:w-48">
+                        <select
+                            v-model="selectedFurnaceFilter"
+                            class="w-full px-3.5 py-2.5 text-sm text-gray-900 bg-white transition border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
+                        >
+                            <option value="">All Furnaces</option>
+                            <option v-for="item in furnaceNo" :key="item" :value="item">
+                                {{ item }}
+                            </option>
+                        </select>
+                    </div>
+
                     <!-- Cyan/Teal Modern Button -->
                     <button
                         @click="showModalCreate = true"
@@ -509,6 +522,8 @@ const editId = ref(null);
 const editFile = ref(null);
 const editedGraphFile = ref(null);
 
+const selectedFurnaceFilter = ref('');
+
 // General Variables ---------------------------------- General Variables
 
 const editPattern = (pattern) => {
@@ -690,7 +705,8 @@ const getAllPatterns = async (page = 1) => {
         const response = await axios.get('/api/htgraph-patterns/list', {
             params: {
                 page: page,
-                search: searchQuery.value
+                search: searchQuery.value,
+                furnace: selectedFurnaceFilter.value
             }
         });
 
@@ -723,7 +739,7 @@ watch(currentPage, (newPage) => {
 });
 
 // Auto-reset to page 1 and fetch data when user searches
-watch(searchQuery, () => {
+watch([searchQuery, selectedFurnaceFilter], () => {
     currentPage.value = 1;
     getAllPatterns(1);
 });

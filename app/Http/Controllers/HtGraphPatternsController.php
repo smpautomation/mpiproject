@@ -205,6 +205,10 @@ class HtGraphPatternsController extends Controller
             });
         }
 
+        $query->when($request->filled('furnace'), function ($q) use ($request) {
+            return $q->where('furnace_no', $request->furnace);
+        });
+
         // 3. Get the paginator instance explicitly
         $paginator = $query->latest()->paginate(10);
         
