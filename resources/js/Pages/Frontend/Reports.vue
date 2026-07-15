@@ -8293,6 +8293,7 @@ const setJudgmentFlags = (models) => {
 
     const primary =
         flag(getAllBrNG.value) ||
+        flag(getAlliHcNG.value) ||
         flag(getAlliHr95NG.value) ||
         flag(getAlliHr98NG.value) ||
         flag(getAllSquarenessNG.value) ||
