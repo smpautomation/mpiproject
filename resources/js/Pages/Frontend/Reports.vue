@@ -6936,11 +6936,13 @@ const generateReport = async () => {
         // PARALLELIZE INDEPENDENT WORK
         // ─────────────────────────────
         let stepStart = Date.now();
-
+        
         await fetchAllData();
-        await showReportData();
+        logTime("fetchAllData finished", stepStart);
 
-        //logTime("fetchAllData + showReportData", stepStart);
+        await showReportData();
+        logTime("showReportData finished", stepStart);
+
 
         showReportProceedButtons.value = false;
 
@@ -6970,8 +6972,6 @@ const generateReport = async () => {
             });
         }
 
-        logTime("waitForFlag (refactored)", stepStart);
-
         // ─────────────────────────────
         // REMOVE ARTIFICIAL DELAY
         // ─────────────────────────────
@@ -6979,7 +6979,7 @@ const generateReport = async () => {
 
         await checkLongAging();
 
-        logTime("generateReport total", overallStart);
+        logTime("generateReport logtime", overallStart);
     } catch (error) {
         showReportLoading.value = false;
 
@@ -7874,9 +7874,9 @@ const checkLongAging = async () => {
         daysDiff.value = data?.days_diff ?? null;
 
         if (data?.long_aging) {
-            console.log("Long aging detected:", data);
+            //console.log("Long aging detected:", data);
         } else {
-            console.log("No long aging detected");
+            //console.log("No long aging detected");
         }
     } catch (error) {
         longAgingDetected.value = false;
@@ -8356,7 +8356,7 @@ const parseAggregates = (raw) => {
 };
 
 const matchInspectionModel = async (model) => {
-    console.log("Entered Match inspection model");
+    //console.log("Entered Match inspection model");
     const res = await axios.get("/api/inspectiondata");
     const data = res.data?.data || [];
     inspectionDataList.value = data;
