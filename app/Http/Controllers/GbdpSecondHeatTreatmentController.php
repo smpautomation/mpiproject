@@ -138,6 +138,7 @@ class GbdpSecondHeatTreatmentController extends Controller
                 'is_breaklot'   => false,
                 'is_existing'   => false,
                 'do_not_proceed' => false,
+                'is_initial_lot'    => false,
             ]);
         }
 
@@ -148,6 +149,7 @@ class GbdpSecondHeatTreatmentController extends Controller
                 'is_breaklot'   => false,
                 'is_existing'   => false,
                 'do_not_proceed' => false,
+                'is_initial_lot'    => false,
             ]);
         }
 

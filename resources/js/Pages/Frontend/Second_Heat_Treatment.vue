@@ -672,7 +672,7 @@
                             </button>
 
                             <button
-                                v-if="!isInitialLot"
+                                v-if="!isInitialLot && isBreaklot"
                                 @click="addtnl_saveToDatabase()"
                                 class="group flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden"
                             >
@@ -1273,6 +1273,7 @@ const addtnl_saveToDatabase = async () => {
 };
 
 const checkBreaklot = async () => {
+    console.log('It runs');
     try {
         const response = await axios.get("/api/check-breaklot", {
             params: {
@@ -1287,6 +1288,7 @@ const checkBreaklot = async () => {
         isExisting.value = response.data.is_existing;
         isInitialLot.value = response.data.is_initial_lot;
         doNotProceed.value = response.data.do_not_proceed;
+        console.log("isInitiallot: ", isInitialLot.value);
         console.log("isBreaklot: ", isBreaklot.value);
         console.log("isExisting: ", isExisting.value);
     } catch (error) {
