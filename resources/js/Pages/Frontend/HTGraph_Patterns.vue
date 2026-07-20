@@ -1395,7 +1395,12 @@ const saveRuleToDatabase = async () => {
         if(response.data.success){
             console.log("save rule response: ", response.data);
             toast.success('Model Rule created successfully!');
-            await userManageLogging('created a new rule with model: '+ selectedModel.value +' Encoded by: ' +  user + ' successfully.');
+
+            if(overwriteMode.value){
+                await userManageLogging('overwritten a new rule with model: '+ selectedModel.value +' Encoded by: ' +  user + ' successfully.');
+            }else{
+                await userManageLogging('created a new rule with model: '+ selectedModel.value +' Encoded by: ' +  user + ' successfully.');
+            }
 
             showModalCreatePattern.value = false;
             selectedFurnace.value = '';
