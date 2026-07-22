@@ -12,4 +12,9 @@ class InspectionData extends Model
 
     protected $table = "inspection_data";
     protected $guarded = [];
+
+    protected $casts = [
+        'pattern_list' => 'array',
+        'layer_list' => 'array',
+    ];
 }

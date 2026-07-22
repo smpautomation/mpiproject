@@ -344,7 +344,7 @@
                                 <div class="mt-5">
                                     <button
                                         v-if="!isDataShown"
-                                        @click="fetchAllLotDataBoxDetails()"
+                                        @click="validateSelectedModel()"
                                         class="w-full px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-lg shadow-md bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                                     >
                                         Show Data
@@ -356,6 +356,76 @@
                                     >
                                         Change Data
                                     </button>
+                                </div>
+                            </div>
+
+                            <!-- Model and Layer Validation Alert Callout -->
+                            <div 
+                                v-if="msgModelNotAllowed" 
+                                class="flex items-start gap-3 px-4 py-3 bg-amber-50/50 border border-amber-200/70 rounded-xl shadow-sm transition-all duration-200"
+                            >
+                                <!-- Warning Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.008v.008H12v-.008Z" />
+                                </svg>
+                                
+                                <div class="flex flex-col flex-1 min-w-0">
+                                    <span class="text-xs font-bold text-amber-950">Invalid Selected Layer</span>
+                                    <span class="text-[11px] text-amber-800/90 leading-relaxed mt-0.5">
+                                        This selected model configuration is restricted for the selected layer under the active rule set.
+                                    </span>
+                                    
+                                    <!-- Interactive Rule Reference Link -->
+                                    <div class="mt-2 flex items-center">
+                                        <button
+                                            type="button"
+                                            @click="router.visit('/ht_graph_patterns')"
+                                            class="group inline-flex items-center gap-1.5 text-[10px] font-extrabold tracking-wider uppercase text-cyan-700 hover:text-cyan-900 focus:outline-none transition-colors duration-150"
+                                        >
+                                            <span class="underline decoration-cyan-300/80 group-hover:decoration-cyan-600 underline-offset-4 transition-colors duration-150">
+                                                Review System Models Rules Set
+                                            </span>
+                                            <!-- Clean Micro-interaction arrow chevron -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-2.5 h-2.5 text-cyan-600 group-hover:translate-x-0.5 transition-transform duration-150">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Model Configuration Missing Alert Callout -->
+                            <div 
+                                v-if="msgPatternNotExists" 
+                                class="flex items-start gap-3 px-4 py-3 bg-indigo-50/40 border border-indigo-200/60 rounded-xl shadow-sm transition-all duration-200"
+                            >
+                                <!-- Document Search/Empty State Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.56 12 2.062 2.062m0 0-2.062 2.062m2.062-2.062H11.25m-3 1.125a5.993 5.993 0 0 1-1-3.625c0-3.313 2.687-6 6-6 1.89 0 3.57.87 4.671 2.23" />
+                                </svg>
+                                
+                                <div class="flex flex-col flex-1 min-w-0">
+                                    <span class="text-xs font-bold text-indigo-950">Configuration Unregistered</span>
+                                    <span class="text-[11px] text-indigo-800/90 leading-relaxed mt-0.5">
+                                        The selected model does not have an existing rule set mapped to the tracking layers to prevent wrong encoding.
+                                    </span>
+                                    
+                                    <!-- Interactive Action Link to Route -->
+                                    <div class="mt-2 flex items-center">
+                                        <button
+                                            type="button"
+                                            @click="router.visit('ht_graph_patterns')"
+                                            class="group inline-flex items-center gap-1.5 text-[10px] font-extrabold tracking-wider uppercase text-cyan-700 hover:text-cyan-900 focus:outline-none transition-colors duration-150"
+                                        >
+                                            <span class="underline decoration-cyan-300/80 group-hover:decoration-cyan-600 underline-offset-4 transition-colors duration-150">
+                                                Click here to create a new one
+                                            </span>
+                                            <!-- Clean Micro-interaction arrow chevron -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-2.5 h-2.5 text-cyan-600 group-hover:translate-x-0.5 transition-transform duration-150">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -3495,6 +3565,68 @@
                             </div>
                         </div>
                     </Modal>
+
+                    <Modal :show="msgPatternNotAllowed" @close="msgPatternNotAllowed = false">
+                        <!-- Retained your exact main wrapper div -->
+                        <div class="relative flex flex-col items-start bg-white p-6 rounded-xl shadow-2xl max-w-[95vw] max-h-[90vh] overflow-auto pr-12">
+                            
+                            <!-- Header Group (Aligned left via your items-start layout) -->
+                            <div class="flex items-center gap-3 mb-4 w-full">
+                                <!-- Amber Alert Icon Container -->
+                                <div class="flex items-center justify-center p-2 text-white rounded-lg shadow-sm bg-gradient-to-r from-amber-500 to-orange-500 shrink-0">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="w-5 h-5 animate-pulse"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.008v.008H12v-.008Z"
+                                        />
+                                    </svg>
+                                </div>
+                                
+                                <h3 class="text-base font-extrabold text-slate-900 tracking-tight">
+                                    Pattern Restriction Alert
+                                </h3>
+                            </div>
+
+                            <!-- Warning Messaging Text Area -->
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed text-left max-w-md">
+                                The selected pattern number 
+                                <span class="font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/50">
+                                    #{{ hti?.patternNo ?? 'N/A' }}
+                                </span> 
+                                is not allowed according to the registered model rule set.
+                            </p>
+
+                            <!-- Action Button Controls Footer Group -->
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-2.5 w-full">
+                                <!-- Redirect Button -->
+                                <button
+                                    type="button"
+                                    @click="router.visit('ht_graph_patterns')"
+                                    class="px-4 py-2 text-xs font-bold text-white transition-all duration-150 rounded-xl shadow-sm bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600 focus:outline-none whitespace-nowrap active:scale-[0.98]"
+                                >
+                                    Go to system model rules page / pattern registration
+                                </button>
+                                
+                                <!-- Acknowledgement / Close Button -->
+                                <button
+                                    type="button"
+                                    @click="msgPatternNotAllowed = false"
+                                    class="px-4 py-2 text-xs font-bold text-slate-700 transition-all duration-150 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:text-slate-900 focus:outline-none whitespace-nowrap active:scale-[0.98]"
+                                >
+                                    Okay, I understand
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </Modal>
                 </div>
             </div>
         </div>
@@ -3626,6 +3758,10 @@ const isOverwriting = ref(false);
 const isInitialLotNotSaved = ref(false);
 const isClearLayerDataDisabled = ref(false);
 const isBreaklot = ref(false);
+
+const msgModelNotAllowed = ref(false);
+const msgPatternNotAllowed = ref(false);
+const msgPatternNotExists = ref(false);
 //Dev Controls ----------------- Allow Commands
 
 const clearLayerDisabledCause = ref("");
@@ -4299,6 +4435,8 @@ const changeData = () => {
     isDataShown.value = false;
 
     grandTotalWeight.value = null;
+    msgPatternNotExists.value = false;
+    msgModelNotAllowed.value = false;
 };
 
 const getExcessDataRange = (boxes) => {
@@ -4316,12 +4454,96 @@ const getExcessDataRange = (boxes) => {
     return `${first}-${last}`;
 };
 
+/**
+ * Cross-references current graph_patterns with the allowed model configurations
+ * and strips out any pattern numbers that are restricted.
+ */
+const validatePatternRules = async () => {
+    console.log("ENTERED");
+    try {
+        const response = await axios.get('/api/inspection/check-existing', {
+            params: {
+                model: mpcs.selectedModel,
+            }
+        });
+
+        if (response.data && response.data.rule_existing) {
+            const allowedPatterns = response.data.data.pattern_list; // e.g., ["1", "2", "3"]
+
+            if (Array.isArray(allowedPatterns)) {
+                if (hti && hti.patternNo !== undefined && hti.patternNo !== null) {
+                    const currentPatternStr = String(hti.patternNo);
+
+                    if (!allowedPatterns.includes(currentPatternStr)) {
+                        msgPatternNotAllowed.value = true;
+                        console.log("ITS TRUE", msgPatternNotAllowed.value);
+                    } else {
+                        msgPatternNotAllowed.value = false;
+                    }
+
+                } else {
+                    // Fallback: If no pattern number has been loaded yet, keep the warning hidden
+                    msgPatternNotAllowed.value = false;
+                }
+            }
+        } else {
+            console.log("No explicit model rules found to filter patterns. Bypass active.");
+        }
+
+    } catch (error) {
+        // If the record doesn't exist yet, no rules are broken, so skip filtering
+        if (error.response && error.response.status === 404) {
+            return; 
+        }
+        console.error("Failed to execute pattern constraint validation:", error);
+    }
+};
+
+const validateSelectedModel = async () => {
+    try {
+        const firstResponse = await axios.get('/api/inspection/check-existing', {
+            params: {
+                model: mpcs.selectedModel,
+            }
+        });
+
+        if (firstResponse.data && firstResponse.data.rule_existing) {
+            
+            const allowedLayers = firstResponse.data.data.layer_list;
+            const currentLayer = String(mpcs.selectedLayer);
+
+            if (!allowedLayers.includes(currentLayer)) {
+                msgModelNotAllowed.value = true;
+                msgPatternNotExists.value = false;
+                return;
+            }else{
+                msgModelNotAllowed.value = false;
+                msgPatternNotExists.value = false;
+                console.log(`Layer match verified: ${currentLayer} is allowed.`);
+                await fetchAllLotDataBoxDetails();
+            }
+
+            
+        } else {
+            console.log("Bypassed, no existing rule for this model");
+            msgModelNotAllowed.value = false;
+            msgPatternNotExists.value = true;
+            await fetchAllLotDataBoxDetails();
+        }
+
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return; // Silent exit as no rules exist yet
+        }
+        console.error("Failed to validate input response: ", error);
+    }
+}
+
 const fetchAllLotDataBoxDetails = async () => {
     if (!mpcs.selectedModel || !mpcs.lotNo) {
         toast.warning("Please select Model and Lot number first");
         return;
     }
-
     await checkInitialLot();
 
     try {
@@ -4711,7 +4933,8 @@ watch(
         }
 
         await getModelLists();
-
+        msgModelNotAllowed.value = false;
+        msgPatternNotExists.value = false;
         mpcs.selectedModel = null;
     },
 );
@@ -4743,6 +4966,7 @@ watch(
 
         await fetchExistingLayers(); // this function already sets all flags
         await checkEncodedData();
+        msgModelNotAllowed.value = false;
         checkExpiration();
     },
 );
@@ -5076,7 +5300,7 @@ const cancelProceed = () => {
     showModalCreate.value = false;
 };
 
-const finalize = () => {
+const finalize = async () => {
     if (!bypassValidation.value) {
         // validate MPCS fields
         if (
@@ -5119,6 +5343,11 @@ const finalize = () => {
 
         if (isLayerNinePointFive.value && !mpcs.nineHalfSet) {
             toast.error("Please select which half of 9.5 layer to use.");
+            return;
+        }
+
+        await validatePatternRules();
+        if(msgPatternNotAllowed.value){
             return;
         }
     }

@@ -387,6 +387,14 @@ Route::post('/notify-email', function (Request $request) {
 
 Route::post('/inspection/bulk-upload', [InspectionDataController::class, 'bulkUpload']);
 
+Route::get('/inspection/all-model-names', [InspectionDataController::class, 'fetchAllModelNames']);
+
+Route::patch('/inspection/model-rules', [InspectionDataController::class, 'saveNewRule']);
+
+Route::get('/inspection/rule-table-list', [InspectionDataController::class, 'ruleList']);
+
+Route::get('/inspection/check-existing', [InspectionDataController::class, 'checkExisting']);
+
 Route::post('/mias-factor/bulk-upload', [MiasFactorController::class, 'bulkUpload']);
 
 Route::apiResource('dev-button-controls', DevButtonControlsController::class);
