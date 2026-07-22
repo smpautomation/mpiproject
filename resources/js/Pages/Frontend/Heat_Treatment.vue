@@ -407,7 +407,7 @@
                                 <div class="flex flex-col flex-1 min-w-0">
                                     <span class="text-xs font-bold text-indigo-950">Configuration Unregistered</span>
                                     <span class="text-[11px] text-indigo-800/90 leading-relaxed mt-0.5">
-                                        The selected model does not have an existing rule set mapped to the tracking layers.
+                                        The selected model does not have an existing rule set mapped to the tracking layers to prevent wrong encoding.
                                     </span>
                                     
                                     <!-- Interactive Action Link to Route -->
