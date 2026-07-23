@@ -451,6 +451,97 @@
                         </div>
                     </div>
 
+                    <div v-if="reportApprovedByDate && isSevenDaysOld"  class="flex flex-col sm:flex-row items-start mb-5 mx-10 gap-3.5 p-4 bg-amber-50/70 border border-amber-200/80 rounded-xl shadow-sm">
+                        <!-- Warning Icon -->
+                        <div class="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.008v.008H12v-.008Z" />
+                            </svg>
+                        </div>
+
+                        <!-- Text Body -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-amber-950 uppercase tracking-wider">Archived Data Notice</span>
+                                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">7+ Days Old</span>
+                            </div>
+                            <p class="text-xs text-amber-900/80 leading-relaxed mt-1">
+                                This report exceeds the 7-day active data retention limit. To maintain peak system performance, older graphs and PDF files may have been moved to backup storage.
+                            </p>
+
+                            <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 pt-2 border-t border-amber-200/60">
+                                <!-- Primary Graph Regeneration Trigger -->
+                                <button
+                                    type="button"
+                                    @click="regenerateGraph"
+                                    :disabled="isRegeneratingGraph"
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-700 hover:text-cyan-900 transition-colors duration-150 focus:outline-none group disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        fill="none" 
+                                        viewBox="0 0 24 24" 
+                                        stroke-width="2.5" 
+                                        stroke="currentColor" 
+                                        class="w-3.5 h-3.5 text-cyan-600 group-hover:rotate-180 transition-transform duration-300"
+                                        :class="{ 'animate-spin': isRegeneratingGraph }"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    <span class="underline underline-offset-4 decoration-cyan-300 group-hover:decoration-cyan-600">
+                                        {{ isRegeneratingGraph ? 'Regenerating main graph...' : 'Re-generate main graph' }}
+                                    </span>
+                                </button>
+
+                                <!-- Visual Bullet Separator (Only rendered if SEC Additional exists) -->
+                                <span v-if="isSecAdditional" class="text-amber-400/80 text-xs select-none">•</span>
+
+                                <!-- SEC Additional Graph Regeneration Trigger -->
+                                <div v-if="isSecAdditional" class="inline-flex items-center">
+                                    <button
+                                        type="button"
+                                        @click="regenerateSecAdditionalGraph"
+                                        :disabled="isRegeneratingSecGraph || isRegeneratingGraph"
+                                        class="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 transition-colors duration-150 focus:outline-none group disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <svg 
+                                            xmlns="http://www.w3.org/2000/svg" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            stroke-width="2.5" 
+                                            stroke="currentColor" 
+                                            class="w-3.5 h-3.5 text-teal-600 group-hover:rotate-180 transition-transform duration-300"
+                                            :class="{ 'animate-spin': isRegeneratingSecGraph }"
+                                        >
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+                                        <span class="underline underline-offset-4 decoration-teal-300 group-hover:decoration-teal-600">
+                                            {{ isRegeneratingSecGraph ? 'Regenerating SEC graphs...' : 'Re-generate SEC additional graphs' }}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Hidden Off-Screen Render Engine -->
+                    <div class="fixed -left-[9999px] -top-[9999px] pointer-events-none opacity-0" aria-hidden="true">
+                        <div
+                            class="w-[600px] h-[500px] bg-white rounded-xl flex items-center pr-10 pl-5 border-2 border-blue-900 justify-center"
+                        >
+                            <canvas
+                                ref="myChartCanvas"
+                                width="800"
+                                height="600"
+                                style="
+                                    transform: scale(1);
+                                    transform-origin: top left;
+                                "
+                            ></canvas>
+                        </div>
+                    </div>
+
                     <div
                         class="p-5 mx-10 mb-10 border-2 border-white rounded-lg shadow-xl"
                     >
@@ -5231,6 +5322,7 @@ import {
 import { router } from "@inertiajs/vue3";
 import { usePage } from "@inertiajs/vue3";
 import DotsLoader from "@/Components/DotsLoader.vue";
+import { Chart, registerables } from "chart.js"; // Import all required components
 import Modal from "@/Components/Modal.vue";
 import { useToast } from "vue-toast-notification";
 import axios from "axios";
@@ -5280,6 +5372,19 @@ const checkAuthentication = async () => {
     }
 };
 
+Chart.register(...registerables);
+Chart.register({
+    id: "whiteBackground",
+    beforeDraw: (chart) => {
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-over"; // draw behind chart
+        ctx.fillStyle = "#ffffff"; // white background
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.restore();
+    },
+});
+
 const userReportLogging = async (logEvent) => {
     try {
         const responseReportLogging = await axios.post("/api/userlogs", {
@@ -5323,6 +5428,22 @@ const userErrorLogging = async (details, triggerFunction, title) => {
         console.error("userErrorLogging post request failed: ", error);
     }
 };
+
+const isSevenDaysOld = computed(() => {
+    if (!reportApprovedByDate.value) return false;
+
+    const approvedDate = new Date(reportApprovedByDate.value);
+    const today = new Date();
+
+    // Reset time components to compare calendar dates cleanly
+    approvedDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const diffInTime = today.getTime() - approvedDate.getTime();
+    const diffInDays = diffInTime / (1000 * 3600 * 24);
+
+    return diffInDays >= 7;
+});
 
 const vtStatus = computed(() => {
     const hasRejectReason = (noteReasonForReject.value || "").includes(
@@ -6534,7 +6655,7 @@ const buildSrc = () => {
     }
 
     const ext = extensions[attemptIndex.value];
-    currentSrc.value = `/charts/chart_${currentSerialSelected.value}.${ext}`;
+    currentSrc.value = `/charts/chart_${currentSerialSelected.value}.${ext}?t=${Date.now()}`;
 };
 
 // react to ref directly
@@ -9666,6 +9787,341 @@ const goToControlSheet = () => {
         preserveScroll: true,
     });
 };
+
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+
+
+const isRegeneratingGraph = ref(false);
+const isRegeneratingSecGraph = ref(false);
+const myChartCanvas = ref(null);
+
+const generateColor = (index) => {
+    const colors = [
+        "#0d9ae0", // deep blue
+        "#a543de", // violet
+        "#82bd62", // green
+        "#564094", // purple
+        "#5cd1ac", // green
+        "#bf49d1", // brown
+        "#2da5eb", // blue
+        "#b469f5", // purple
+        "#5cd1ac", // green
+        "#946ff7", // purple
+        "#393B79", // navy
+        "#637939", // olive
+        "#8C6D31", // ochre
+        "#843C39", // brick
+        "#7B4173", // plum
+        "#3182BD", // steel blue
+        "#E6550D", // burnt orange
+        "#31A354", // vivid green
+        "#756BB1", // violet
+        "#636363", // dark gray
+    ];
+    return colors[index % colors.length];
+};
+
+
+const renderAndUploadChart = (tableRows, serial) => {
+    return new Promise((resolve, reject) => {
+        if (!myChartCanvas.value) {
+            return reject(new Error("Canvas ref 'myChartCanvas' is not bound in the template."));
+        }
+
+        const ctx = myChartCanvas.value.getContext("2d");
+        if (!ctx) {
+            return reject(new Error("Failed to get 2D canvas context."));
+        }
+
+        // --- A. Process X & Y Datasets ---
+        const offsets = [
+            0, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000,
+            22000, 24000, 26000, 28000, 30000, 32000, 34000, 36000, 38000,
+        ];
+
+        const chartDatasets = tableRows.map((row, index) => {
+            let x = [];
+            let y = [];
+
+            try {
+                x = JSON.parse(row.x ?? "[]");
+                y = JSON.parse(row.y ?? "[]");
+            } catch (e) {
+                x = [];
+                y = [];
+            }
+
+            const maxLen = Math.max(x.length, y.length);
+            const offset = offsets[index] ?? index * 2000;
+            const points = [];
+
+            for (let i = 0; i < maxLen; i++) {
+                const posX = x[i] ?? null;
+                const posY = y[i] ?? null;
+
+                if (posX === null || posY === null || posX >= 10000 || posY <= -1000) {
+                    points.push({ x: null, y: null });
+                } else {
+                    points.push({
+                        x: posX + offset,
+                        y: posY - offset,
+                    });
+                }
+            }
+
+            // Generate/assign stroke color
+            const color = typeof generateColor === "function" ? generateColor(index) : "#0284c7";
+
+            return {
+                label: `Dataset ${index + 1}`,
+                data: points,
+                borderColor: color,
+                borderWidth: 2,
+                fill: false,
+                pointRadius: 0,
+                tension: 0.6,
+            };
+        });
+
+        // --- B. Clean Up Existing Chart Instance ---
+        if (window.__chartInstance) {
+            window.__chartInstance.destroy();
+        }
+
+        // --- C. Define Complete & Scale Plugins ---
+        let chartRendered = false;
+
+        const renderCompletePlugin = {
+            id: "renderComplete",
+            afterDraw() {
+                chartRendered = true;
+            },
+        };
+
+        const scaleReferencePlugin = {
+            id: "scaleReference",
+            afterDraw(chart) {
+                const { ctx, scales } = chart;
+                const xScale = scales.x;
+                const yScale = scales.y;
+                if (!xScale || !yScale) return;
+
+                ctx.save();
+                ctx.strokeStyle = "#000";
+                ctx.fillStyle = "#000";
+                ctx.lineWidth = 0.5;
+                ctx.font = "8px Arial";
+
+                const arrowHeadSize = 4;
+                const inset = 30;
+                const spacing = 20;
+
+                const getTickValue = (tick) => typeof tick === "object" ? tick.value : tick;
+
+                // X Axis Scale Bar
+                if (xScale.ticks.length >= 2) {
+                    const xStep = xScale.getPixelForValue(getTickValue(xScale.ticks[1])) - xScale.getPixelForValue(getTickValue(xScale.ticks[0]));
+                    const xLength = 1.5 * xStep;
+                    const yBottomPixel = yScale.getPixelForValue(yScale.min);
+                    const targetPixelX = xScale.getPixelForValue(xScale.max) - inset;
+
+                    let closestValue = getTickValue(xScale.ticks[0]);
+                    let minDistance = Infinity;
+
+                    xScale.ticks.forEach((tick) => {
+                        const value = getTickValue(tick);
+                        const tickPixel = xScale.getPixelForValue(value);
+                        const distance = Math.abs(tickPixel - targetPixelX);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestValue = value;
+                        }
+                    });
+
+                    const baseX_X = xScale.getPixelForValue(closestValue) - xLength;
+                    const baseY_X = yBottomPixel - inset;
+
+                    ctx.beginPath();
+                    ctx.moveTo(baseX_X, baseY_X);
+                    ctx.lineTo(baseX_X + xLength, baseY_X);
+                    ctx.stroke();
+
+                    // Arrow tips
+                    ctx.beginPath();
+                    ctx.moveTo(baseX_X + xLength, baseY_X);
+                    ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                    ctx.lineTo(baseX_X + xLength - arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.moveTo(baseX_X, baseY_X);
+                    ctx.lineTo(baseX_X + arrowHeadSize, baseY_X - arrowHeadSize / 2);
+                    ctx.lineTo(baseX_X + arrowHeadSize, baseY_X + arrowHeadSize / 2);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    const xLabel = "4 kOe";
+                    const xLabelWidth = ctx.measureText(xLabel).width;
+                    ctx.fillText(xLabel, baseX_X + xLength / 2 - xLabelWidth / 2, baseY_X - 10);
+                }
+
+                // Y Axis Scale Bar
+                const yLength = -0.1;
+                const baseX_Y = xScale.getPixelForValue(xScale.max) - inset + spacing;
+                const baseY_Y = yScale.getPixelForValue(yScale.min) - inset;
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_Y, baseY_Y);
+                ctx.lineTo(baseX_Y, baseY_Y - yLength);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_Y, baseY_Y - yLength);
+                ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+                ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - yLength + arrowHeadSize);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(baseX_Y, baseY_Y);
+                ctx.lineTo(baseX_Y - arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+                ctx.lineTo(baseX_Y + arrowHeadSize / 2, baseY_Y - arrowHeadSize);
+                ctx.closePath();
+                ctx.fill();
+
+                const yLabel = "4 kG";
+                const yLabelWidth = ctx.measureText(yLabel).width;
+                ctx.fillText(yLabel, baseX_Y - yLabelWidth / 2, baseY_Y - 10);
+
+                ctx.restore();
+            },
+        };
+
+        // --- D. Instantiate Chart.js ---
+        window.__chartInstance = new Chart(ctx, {
+            type: "line",
+            data: { datasets: chartDatasets },
+            options: {
+                responsive: true,
+                animation: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        type: "linear",
+                        position: "bottom",
+                        grid: { color: "rgba(0, 0, 0, 0.1)" },
+                        ticks: { stepSize: 2000, display: false },
+                    },
+                    y: {
+                        type: "linear",
+                        position: "left",
+                        grid: { color: "rgba(0, 0, 0, 0.1)" },
+                        ticks: { stepSize: 2000, display: false },
+                    },
+                },
+            },
+            plugins: [scaleReferencePlugin, renderCompletePlugin],
+        });
+
+        // --- E. Frame Capture & Synchronous POST Upload ---
+        const waitForRenderAndUpload = () => {
+            if (!chartRendered) {
+                requestAnimationFrame(waitForRenderAndUpload);
+                return;
+            }
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(async () => {
+                    try {
+                        const canvas = myChartCanvas.value;
+                        if (!canvas) throw new Error("Canvas missing during capture");
+
+                        const imageData = canvas.toDataURL("image/jpeg", 0.7);
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+                        const uploadResponse = await axios.post("/upload-chart", {
+                            image: imageData,
+                            filename: `chart_${serial}.jpg`,
+                        }, {
+                            headers: { "X-CSRF-TOKEN": csrfToken || "" }
+                        });
+
+                        resolve(uploadResponse);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            });
+        };
+
+        waitForRenderAndUpload();
+    });
+};
+
+const regenerateGraph = async () => {
+    const targetSerial = currentSerialSelected.value;
+
+    if (!targetSerial) {
+        console.warn("No serial selected for graph regeneration.");
+        return;
+    }
+
+    if (isRegeneratingGraph.value) return;
+
+    isRegeneratingGraph.value = true;
+
+    try {
+        const response = await axios.get(`/api/tpmdata?serial=${targetSerial}`);
+        const tableRows = response.data.data;
+
+        if (!Array.isArray(tableRows) || tableRows.length === 0) {
+            throw new Error("No coordinate data found for this serial.");
+        }
+
+        await nextTick();
+
+        await renderAndUploadChart(tableRows, targetSerial);
+
+        attemptIndex.value = 1;
+        buildSrc();
+
+        console.log(`Graph successfully regenerated for serial: ${targetSerial}`);
+
+    } catch (err) {
+        console.error("Failed to regenerate graph:", err);
+
+        if (typeof userErrorLogging === "function") {
+            await userErrorLogging(
+                {
+                    message: err?.message ?? "Unknown regeneration failure",
+                    code: err?.code ?? null,
+                },
+                "regenerateGraph",
+                "Error regenerating graph"
+            );
+        }
+    } finally {
+        isRegeneratingGraph.value = false;
+    }
+};
+
+
+
+const regenerateSecAdditionalGraph = async () => {
+    
+}
+
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+// ============================================================ REGENERATE GRAPH ==================================================================== //
+
+
+
+
 
 // onMounted logic to call the function based on serialParam existence
 onMounted(async () => {
