@@ -570,7 +570,6 @@ class BackEndPdfController extends Controller
         $MODELS_SHOW_ROB     = RobModel::pluck('model_name')->toArray();
         $MODELS_SHOW_GS      = HisModel::pluck('model_name')->toArray();
 
-        $showROB           = in_array($model, $MODELS_SHOW_ROB);
         $hasNGihc          = in_array('- N.G iHc', $noteReasons);
         $hasIhcBelowTarget = in_array('- iHc Below Target+500 Oe', $noteReasons);
 
@@ -581,6 +580,7 @@ class BackEndPdfController extends Controller
         $isSpecialGX     = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
         $showTsi         = (($hasNGihc || $hasIhcBelowTarget) && in_array($model, $MODELS_SPECIAL_TSI));
         $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
+        $showROB         = $hasNGihc && in_array($model, $MODELS_SHOW_ROB);
 
         $showVTData         = false; // default to false
         $showVTData_default = false; // default to false
