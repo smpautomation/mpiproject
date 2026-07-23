@@ -9115,7 +9115,7 @@ const undoStamp = async () => {
 
         // Save undo history
         await axios.post("/api/stamp-undo-history", {
-            serial_no: currentSerialSelected.value,
+            serial_no: String(currentSerialSelected.value ?? ''),
             mass_prod: selectedMassProd.value,
             furnace: selectedFurnace.value,
             model_name: jhCurveActualModel.value,
@@ -9140,7 +9140,10 @@ const undoStamp = async () => {
         reportReset();
         await showReportData();
     } catch (error) {
-        console.error("Failed to undo stamp", error);
+        if (error.response?.status === 422) {
+            console.log("Failed URL:", error.config.url);
+            console.log("Validation Errors:", error.response.data.errors);
+        }
     }
 };
 
