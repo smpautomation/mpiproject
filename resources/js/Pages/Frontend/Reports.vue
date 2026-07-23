@@ -80,9 +80,7 @@
 
                             <!-- Header -->
                             <div class="mb-6 text-center">
-                                <div
-                                    class="inline-flex items-center justify-center mb-3 rounded-full shadow-md w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500"
-                                >
+                                <div class="inline-flex items-center justify-center mb-3 rounded-full shadow-md w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500">
                                     <svg
                                         class="text-white w-7 h-7"
                                         fill="none"
@@ -108,29 +106,62 @@
                             </div>
 
                             <!-- Selection Panel -->
-                            <div class="mb-6">
-                                <label class="block mb-2 text-sm font-semibold text-gray-700">
-                                    Serial Number
-                                </label>
-
-                                <select
-                                    v-model="currentSerialSelected"
-                                    class="w-full px-4 py-3 text-base font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white"
-                                >
-                                    <option
-                                        v-for="serial in serialList"
-                                        :key="serial"
-                                        :value="serial"
+                            <div class="mb-6 space-y-4">
+                                
+                                <!-- Limit Range Control -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label for="serial-limit" class="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Display Limit
+                                        </label>
+                                        <span v-if="isLoadingSerials" class="text-[11px] font-medium text-cyan-600 animate-pulse">
+                                            Fetching records...
+                                        </span>
+                                    </div>
+                                    
+                                    <select
+                                        id="serial-limit"
+                                        v-model="selectedLimit"
+                                        @change="fetchSerial"
+                                        :disabled="isLoadingSerials"
+                                        class="w-full px-3 py-2 text-xs font-semibold text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white disabled:opacity-50 transition-all"
                                     >
-                                        {{ serial }}
-                                    </option>
-                                </select>
+                                        <option v-for="option in limitOptions" :key="option.value" :value="option.value">
+                                            {{ option.label }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Serial Number Selector -->
+                                <div>
+                                    <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                        Serial Number
+                                    </label>
+
+                                    <select
+                                        v-model="currentSerialSelected"
+                                        :disabled="isLoadingSerials || serialList.length === 0"
+                                        class="w-full px-4 py-3 text-base font-medium text-gray-700 transition-all border border-gray-300 rounded-lg shadow-sm cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 focus:bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    >
+                                        <option v-if="isLoadingSerials" value="" disabled>Loading serials list...</option>
+                                        <option v-else-if="serialList.length === 0" value="" disabled>No serials found</option>
+                                        <option
+                                            v-else
+                                            v-for="serial in serialList"
+                                            :key="serial"
+                                            :value="serial"
+                                        >
+                                            {{ serial }}
+                                        </option>
+                                    </select>
+                                </div>
+
                             </div>
 
-                            <!-- Button -->
+                            <!-- Generate Action Button -->
                             <button
                                 @click="generateReport"
-                                :disabled="showNotif2"
+                                :disabled="showNotif2 || isLoadingSerials || !currentSerialSelected"
                                 class="w-full px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-md hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg transition-all duration-200 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
                             >
                                 <span class="flex items-center justify-center gap-2">
@@ -150,7 +181,7 @@
                                     Generate Report
                                 </span>
                             </button>
-
+                            
                             <!-- Notification -->
                             <div
                                 v-show="showNotif2"
@@ -176,11 +207,12 @@
                                     </p>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
+
+            
 
             <div v-show="showReportContent">
                 <!---
@@ -9114,22 +9146,44 @@ const undoStamp = async () => {
 
 // Fetching the serial start
 
+const selectedLimit = ref(100); // Default to 100
+const isLoadingSerials = ref(false);
+
+const limitOptions = [
+    { label: 'Latest 100', value: 100 },
+    { label: 'Latest 500', value: 500 },
+    { label: 'Latest 1,000', value: 1000 },
+    { label: 'Latest 2,000', value: 2000 },
+    { label: 'Latest 5,000', value: 5000 },
+    { label: 'Show ALL', value: 'all' }
+];
+
 // Function to fetch serial data
 const fetchSerial = async () => {
+    isLoadingSerials.value = true;
     try {
-
-        const response = await axios.get("/api/tpmdata-fetch-serials");
+        const response = await axios.get('/api/tpmdata-fetch-serials', {
+            params: {
+                limit: selectedLimit.value
+            }
+        });
 
         serialList.value = response.data.data ?? [];
-        console.log("Serials: ", serialList.value);
+        console.log("Serials retrieved:", serialList.value.length);
 
+        // If the currently selected serial isn't in the new list (or nothing selected yet), pick the first one
         if (serialList.value.length > 0) {
-            currentSerialSelected.value = serialList.value[0];
+            if (!serialList.value.includes(currentSerialSelected.value)) {
+                currentSerialSelected.value = serialList.value[0];
+            }
+        } else {
+            currentSerialSelected.value = null;
         }
 
     } catch (error) {
-
         console.error("Error fetching serial data:", error);
+    } finally {
+        isLoadingSerials.value = false;
     }
 };
 

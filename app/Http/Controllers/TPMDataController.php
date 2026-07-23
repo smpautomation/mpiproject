@@ -909,30 +909,37 @@ class TPMDataController extends Controller
         }
     }
 
-    public function fetchSerials()
+    public function fetchSerials(Request $request)
     {
         try {
+            $limit = $request->query('limit', 100);
 
-           $serials = ReportData::query()
-            ->select('tpm_data_serial')
-            ->whereNotNull('tpm_data_serial')
-            ->groupBy('tpm_data_serial')
-            ->orderByRaw('MAX(created_at) DESC')
-            ->pluck('tpm_data_serial')
-            ->values();
+            // Base query: get distinct serials ordered by their most recent creation date
+            $query = ReportData::query()
+                ->select('tpm_data_serial')
+                ->whereNotNull('tpm_data_serial')
+                ->where('tpm_data_serial', '!=', '')
+                ->groupBy('tpm_data_serial')
+                ->orderByRaw('MAX(created_at) DESC');
+
+            // Apply limit unless user explicitly selected 'all'
+            if ($limit !== 'all') {
+                $query->limit((int) $limit);
+            }
+
+            $serials = $query->pluck('tpm_data_serial')->values();
 
             return response()->json([
-                'status' => true,
+                'status'  => true,
                 'message' => 'Serials retrieved successfully',
-                'data' => $serials
+                'data'    => $serials
             ], 200);
 
         } catch (\Exception $e) {
-
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => 'Failed to retrieve serials',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
