@@ -52,7 +52,7 @@
                 <!-- User Guide Callout -->
                 <div class="mt-6">
                     <a
-                        href="/system_guides/GBDP%20MPI%20ONLINE%20SYSTEM%20USER%20GUIDE.pdf"
+                        href="/system_guides/GBDP_MPI_ONLINE_SYSTEM_USER_GUIDE.pdf"
                         target="_blank"
                         class="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white/90 hover:bg-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 group"
                     >
