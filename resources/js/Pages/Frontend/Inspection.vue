@@ -398,6 +398,19 @@ function convertToUppercase() {
 // Submit form data — POST for new, PATCH for update
 const submitData = async () => {
     try {
+
+        const hasEmptyField = Object.values(formData.value).some((val) => {
+            // Check for null, undefined, or empty string (after trimming spaces)
+            if (val === null || val === undefined) return true;
+            if (typeof val === 'string' && val.trim() === '') return true;
+            return false;
+        });
+
+        if (hasEmptyField) {
+            toast.warning('Please fill up all required fields.');
+            return;
+        }
+
         // Validate duplicate model for primary inspection data
         const isDuplicate = await checkDuplicateModel();
 
