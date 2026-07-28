@@ -292,13 +292,35 @@ const filteredModelData = computed(() => {
     });
 });
 
-const submitForm = () => {
-    if(modelName.value == '' || modelName.value == null){
-        toast.warning('Please fill up all fiends.');
+const submitForm = async () => {
+    // 1. Validate field input
+    if (!modelName.value || modelName.value.trim() === '') {
+        toast.warning('Please fill up all fields.');
         return;
     }
-    showConfirmation.value = true;
-}
+
+    try {
+        // 2. Pass query params as an object matching 'model_name'
+        const response = await axios.get('/api/second-gbdp-model/check-existing', {
+            params: {
+                model_name: modelName.value,
+            },
+        });
+
+        // 3. Block progression if duplicate exists
+        if (response.data.exists) {
+            toast.warning('This 2ND GBDP model name already exists.');
+            return;
+        }
+
+        // 4. Open confirmation modal only if unique
+        showConfirmation.value = true;
+
+    } catch (error) {
+        console.error('Failed to verify existing duplicate model', error);
+        toast.error('Unable to verify model name right now. Please try again.');
+    }
+};
 
 
 const saveToDatabase = async () => {

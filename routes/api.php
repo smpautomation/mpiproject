@@ -397,6 +397,10 @@ Route::get('/inspection/check-existing', [InspectionDataController::class, 'chec
 
 Route::post('/mias-factor/bulk-upload', [MiasFactorController::class, 'bulkUpload']);
 
+Route::get('/second-gbdp-model/check-existing', [SecondGbdpModelsController::class, 'checkExisting']);
+
+Route::patch('/second-gbdp-model/update-model', [SecondGbdpModelsController::class, 'updateModelName']);
+
 Route::apiResource('dev-button-controls', DevButtonControlsController::class);
 Route::apiResource('mias-factor', MiasFactorController::class);
 Route::apiResource('vt-models', VtModelController::class);

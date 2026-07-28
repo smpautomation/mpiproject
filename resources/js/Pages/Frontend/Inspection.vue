@@ -308,6 +308,7 @@ const showInputData = ref(false);
 // Edit mode and currently editing record ID
 const isEditMode = ref(false);
 const currentEditId = ref(null);
+const originalModelName = ref('');
 
 // Reactive state for form data
 const formData = ref({
@@ -352,6 +353,7 @@ const registerBackBtn = () => {
 
 // Reset form fields
 const resetAllField = () => {
+    originalModelName.value = '';
     formData.value = {
         model: null,
         length: null,
@@ -396,14 +398,30 @@ function convertToUppercase() {
 // Submit form data — POST for new, PATCH for update
 const submitData = async () => {
     try {
-        //Validate first
+        // Validate duplicate model for primary inspection data
         const isDuplicate = await checkDuplicateModel();
 
         if (isEditMode.value) {
+            // 1. Update the primary inspection data
             await axios.patch(
                 `/api/inspectiondata/${currentEditId.value}`,
                 formData.value
             );
+
+            const newModelName = formData.value?.model ?? "";
+            const oldModelName = originalModelName.value ?? "";
+
+            const isNewGbdp = newModelName.toUpperCase().includes('2ND GBDP');
+            const isOldGbdp = oldModelName.toUpperCase().includes('2ND GBDP');
+
+            // 2. If either the old or new name involves "2ND GBDP", hit the update endpoint
+            if (isNewGbdp || isOldGbdp) {
+                await axios.patch('/api/second-gbdp-model/update-model', {
+                    old_model_name: oldModelName,
+                    new_model_name: newModelName,
+                    encoded_by: 'SYSTEM',
+                });
+            }
 
             userInspectionLogging(
                 `has successfully updated existing data specs model ${formData.value.model}`
@@ -411,15 +429,42 @@ const submitData = async () => {
 
             toast.success('Model Specs has been edited successfully.');
         } else {
+            // Guard duplicate creation for inspection data
             if (isDuplicate) {
                 toast.warning('Model already exists.');
                 return;
             }
 
+            // Primary POST request
             await axios.post(
                 "/api/inspectiondata",
                 formData.value
             );
+
+            const modelName = formData.value?.model ?? "";
+
+            // Check if it's a 2ND GBDP model
+            if (modelName.toUpperCase().includes('2ND GBDP')) {
+                //1. Check if it already exists in second-gbdp-models
+                const checkResponse = await axios.get('/api/second-gbdp-model/check-existing', {
+                    params: {
+                        model_name: modelName,
+                    },
+                });
+
+                const exists = checkResponse.data?.exists ?? false;
+
+                //2. Only insert if it DOES NOT exist yet
+                if (!exists) {
+                    await axios.post('/api/second-gbdp-models', {
+                        model_name: modelName,
+                        encoded_by: 'SYSTEM',
+                    });
+                    console.log(`Registered new 2ND GBDP model: ${modelName}`);
+                } else {
+                    console.log(`Skipped 2ND GBDP creation: ${modelName} already exists.`);
+                }
+            }
 
             userInspectionLogging(
                 `has successfully inserted new data specs model ${formData.value.model}`
@@ -427,6 +472,7 @@ const submitData = async () => {
             toast.success('Model Specs has been registered successfully.');
         }
 
+        // Reset UI & State
         isEditMode.value = false;
         currentEditId.value = null;
         showMainUI.value = true;
@@ -439,7 +485,6 @@ const submitData = async () => {
         console.warn("Error submitting inspection data");
 
         console.group("❌ submitData error breakdown");
-
         console.error("Message:", error.message);
         console.error("Code:", error.code ?? "N/A");
 
@@ -454,11 +499,9 @@ const submitData = async () => {
         }
 
         console.error("Payload sent:", formData.value);
-
         console.groupEnd();
     }
 };
-
 
 // Fetch all inspection data records
 const showInspectionData = async () => {
@@ -472,8 +515,9 @@ const showInspectionData = async () => {
 
 // Edit button handler — load record into form and show input UI
 const editRecord = (item) => {
-  isEditMode.value = true;
-  currentEditId.value = item.id;
+    isEditMode.value = true;
+    currentEditId.value = item.id;
+    originalModelName.value = item.model ?? '';
 
     formData.value = {
         model: item.model,
@@ -490,8 +534,8 @@ const editRecord = (item) => {
         encoded_by: item.encoded_by
     };
 
-  showMainUI.value = false;
-  showInputData.value = true;
+    showMainUI.value = false;
+    showInputData.value = true;
 };
 
 const csvFile = ref(null);
