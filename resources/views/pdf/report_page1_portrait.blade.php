@@ -816,45 +816,45 @@
                             {{-- Br @ RT --}}
                             <tr>
                                 <th style="background-color: #f0f0f0;">Br @ RT</th>
-                                <td>{{ $rob['brRTStandard'] ?? 'NA' }} kg</td>
+                                <td>{{ $rob['brRTStandardMin'] ?? 'NA' }} ~ {{ $rob['brRTStandardMax'] ?? 'NA' }} T</td>
                                 <td>{{ $rob['brRT_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brRT_brMax'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brRT_iHcMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brRT_iHcMax'] ?? 'NA' }}</td>
-                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result_BrRT'] ?? 'NA' }}</td>
                             </tr>
 
                             {{-- Br @ VT --}}
                             <tr>
                                 <th style="background-color: #f0f0f0;">Br @ VT (180°C)</th>
-                                <td>{{ $rob['brVTStandard'] ?? 'NA' }} kg</td>
+                                <td>{{ $rob['brVTStandard'] ?? 'NA' }} min T</td>
                                 <td>{{ $rob['brVT_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brVT_brMax'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brVT_iHcMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brVT_iHcMax'] ?? 'NA' }}</td>
-                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result_BrVT'] ?? 'NA' }}</td>
                             </tr>
 
                             {{-- HD5 --}}
                             <tr>
                                 <th style="background-color: #f0f0f0;">HD5 (180°C)</th>
-                                <td>{{ $rob['hd5Standard'] ?? 'NA' }} kOe</td>
+                                <td>{{ $rob['hd5Standard'] ?? 'NA' }} min kA/m</td>
                                 <td>{{ $rob['HD5_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['HD5_brMax'] ?? 'NA' }}</td>
                                 <td>{{ $rob['HD5_iHcMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['HD5_iHcMax'] ?? 'NA' }}</td>
-                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result_HD5'] ?? 'NA' }}</td>
                             </tr>
 
                             {{-- JD5 --}}
                             <tr>
                                 <th style="background-color: #f0f0f0;">JD5 (180°C)</th>
-                                <td>{{ $rob['jd5Standard'] ?? 'NA' }} kG</td>
+                                <td>{{ $rob['jd5Standard'] ?? 'NA' }} min T</td>
                                 <td>{{ $rob['JD5_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['JD5_brMax'] ?? 'NA' }}</td>
                                 <td>{{ $rob['JD5_iHcMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['JD5_iHcMax'] ?? 'NA' }}</td>
-                                <td>{{ $rob['result'] ?? 'NA' }}</td>
+                                <td>{{ $rob['result_JD5'] ?? 'NA' }}</td>
                             </tr>
                         @endif
 

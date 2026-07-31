@@ -107,7 +107,7 @@
 
                             <!-- Selection Panel -->
                             <div class="mb-6 space-y-4">
-                                
+
                                 <!-- Limit Range Control -->
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
@@ -118,7 +118,7 @@
                                             Fetching records...
                                         </span>
                                     </div>
-                                    
+
                                     <select
                                         id="serial-limit"
                                         v-model="selectedLimit"
@@ -181,7 +181,7 @@
                                     Generate Report
                                 </span>
                             </button>
-                            
+
                             <!-- Notification -->
                             <div
                                 v-show="showNotif2"
@@ -212,7 +212,7 @@
                 </div>
             </div>
 
-            
+
 
             <div v-show="showReportContent">
                 <!---
@@ -1350,7 +1350,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_BrRTstandard }} kg
+                                                {{ reportROB_BrRTstandardmin }} ~ {{ reportROB_BrRTstandardmax }} T
                                             </td>
                                             <td
                                                 class="px-4 text-white border-4 border-white"
@@ -1399,7 +1399,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_remarks }}
+                                                {{ reportROB_BrRT_remarks }}
                                             </td>
                                         </tr>
                                         <tr class="text-center">
@@ -1411,7 +1411,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_BrVTstandard }} kg
+                                                {{ reportROB_BrVTstandard }} min T
                                             </td>
                                             <td
                                                 class="px-4 text-white border-4 border-white"
@@ -1460,7 +1460,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_remarks }}
+                                                {{ reportROB_BrVT_remarks }}
                                             </td>
                                         </tr>
                                         <tr class="text-center">
@@ -1472,7 +1472,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_HD5standard }} kOe
+                                                {{ reportROB_HD5standard }} min kA/m
                                             </td>
                                             <td
                                                 class="px-4 text-white border-4 border-white"
@@ -1521,7 +1521,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_remarks }}
+                                                {{ reportROB_HD5_remarks }}
                                             </td>
                                         </tr>
                                         <tr class="text-center">
@@ -1533,7 +1533,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_JD5standard }} kG
+                                                {{ reportROB_JD5standard }} min T
                                             </td>
                                             <td
                                                 class="px-4 text-white border-4 border-white"
@@ -1582,7 +1582,7 @@
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                {{ reportROB_remarks }}
+                                                {{ reportROB_JD5_remarks }}
                                             </td>
                                         </tr>
                                     </template>
@@ -5630,6 +5630,7 @@ const MODELS_SHOW_CPK_BR = ref([]);
 const MODELS_SHOW_GX = ref([]);
 const MODELS_SHOW_BH = ref([]);
 const MODELS_SHOW_ROB = ref([]);
+const MODELS_SHOW_ROB_AJ = ref([]);
 const MODELS_SHOW_HIS = ref([]);
 const MODELS_1X1X1 = ref([]);
 
@@ -5771,11 +5772,13 @@ const reportROB_brMax = ref("");
 const reportROB_brMin = ref("");
 const reportROB_iHcMax = ref("");
 const reportROB_iHcMin = ref("");
-const reportROB_BrRTstandard = ref(13.0);
-const reportROB_BrVTstandard = ref(10.5);
-const reportROB_HD5standard = ref(10.053);
-const reportROB_HD5rejectstandard = ref(9.425);
-const reportROB_JD5standard = ref(9.6);
+const reportROB_BrRTstandardmax = ref(0);
+const reportROB_BrRTstandardmin = ref(0);
+const reportROB_BrVTstandard = ref(0);
+const reportROB_HD5standard = ref(0);
+const reportROB_JD5standard = ref(0);
+//const reportROB_HD5rejectstandard = ref(9.425);
+
 const reportROB_BrRT_brMin = ref(0);
 const reportROB_BrRT_brMax = ref(0);
 const reportROB_BrRT_iHcMin = ref(0);
@@ -5792,7 +5795,10 @@ const reportROB_JD5_brMin = ref(0);
 const reportROB_JD5_brMax = ref(0);
 const reportROB_JD5_iHcMin = ref(0);
 const reportROB_JD5_iHcMax = ref(0);
-const reportROB_remarks = ref("NA");
+const reportROB_BrRT_remarks = ref("NA");
+const reportROB_BrVT_remarks = ref("NA");
+const reportROB_HD5_remarks = ref("NA");
+const reportROB_JD5_remarks = ref("NA");
 
 //general variables start
 
@@ -6627,34 +6633,63 @@ watchEffect(() => {
 
 // special judgement conditions logic
 
-//FOR ROB - models ROB-0A70G
+//FOR ROB
 watchEffect(() => {
     if (showROB.value === true) {
-        const belowStandard =
-            reportROB_BrRT_brMin.value < reportROB_BrRTstandard.value ||
-            reportROB_BrRT_brMax.value < reportROB_BrRTstandard.value ||
-            reportROB_BrRT_iHcMin.value < reportROB_BrRTstandard.value ||
-            reportROB_BrRT_iHcMax.value < reportROB_BrRTstandard.value ||
-            reportROB_BrVT_brMin.value < reportROB_BrVTstandard.value ||
-            reportROB_BrVT_brMax.value < reportROB_BrVTstandard.value ||
-            reportROB_BrVT_iHcMin.value < reportROB_BrVTstandard.value ||
-            reportROB_BrVT_iHcMax.value < reportROB_BrVTstandard.value ||
-            reportROB_HD5_brMin.value < reportROB_HD5standard.value ||
-            reportROB_HD5_brMax.value < reportROB_HD5standard.value ||
-            reportROB_HD5_iHcMin.value < reportROB_HD5standard.value ||
-            reportROB_HD5_iHcMax.value < reportROB_HD5standard.value ||
-            reportROB_JD5_brMin.value < reportROB_JD5standard.value ||
-            reportROB_JD5_brMax.value < reportROB_JD5standard.value ||
-            reportROB_JD5_iHcMin.value < reportROB_JD5standard.value ||
-            reportROB_JD5_iHcMax.value < reportROB_JD5standard.value;
+        // Safe numerical casting helper
+        const num = (val) => Number(val) || 0;
 
-        if (belowStandard) {
-            reportROB_remarks.value = "NG";
-            reportSMPJudgement.value = "HOLD";
-        } else {
-            reportROB_remarks.value = "OK";
-            reportSMPJudgement.value = "PASSED";
-        }
+        // Standard Thresholds
+        const brRtMin = num(reportROB_BrRTstandardmin.value);
+        const brRtMax = num(reportROB_BrRTstandardmax.value);
+        const brVtStd = num(reportROB_BrVTstandard.value);
+        const hd5Std  = num(reportROB_HD5standard.value);
+        const jd5Std  = num(reportROB_JD5standard.value);
+
+        // 1. Evaluate BrRT (Fails if below min OR above max)
+        const brRtFails =
+            num(reportROB_BrRT_brMin.value) < brRtMin ||
+            num(reportROB_BrRT_brMin.value) > brRtMax ||
+            num(reportROB_BrRT_brMax.value) < brRtMin ||
+            num(reportROB_BrRT_brMax.value) > brRtMax ||
+            num(reportROB_BrRT_iHcMin.value) < brRtMin ||
+            num(reportROB_BrRT_iHcMin.value) > brRtMax ||
+            num(reportROB_BrRT_iHcMax.value) < brRtMin ||
+            num(reportROB_BrRT_iHcMax.value) > brRtMax;
+
+        reportROB_BrRT_remarks.value = brRtFails ? "NG" : "OK";
+
+        // 2. Evaluate BrVT
+        const brVtFails =
+            num(reportROB_BrVT_brMin.value) < brVtStd ||
+            num(reportROB_BrVT_brMax.value) < brVtStd ||
+            num(reportROB_BrVT_iHcMin.value) < brVtStd ||
+            num(reportROB_BrVT_iHcMax.value) < brVtStd;
+
+        reportROB_BrVT_remarks.value = brVtFails ? "NG" : "OK";
+
+        // 3. Evaluate HD5
+        const hd5Fails =
+            num(reportROB_HD5_brMin.value) < hd5Std ||
+            num(reportROB_HD5_brMax.value) < hd5Std ||
+            num(reportROB_HD5_iHcMin.value) < hd5Std ||
+            num(reportROB_HD5_iHcMax.value) < hd5Std;
+
+        reportROB_HD5_remarks.value = hd5Fails ? "NG" : "OK";
+
+        // 4. Evaluate JD5
+        const jd5Fails =
+            num(reportROB_JD5_brMin.value) < jd5Std ||
+            num(reportROB_JD5_brMax.value) < jd5Std ||
+            num(reportROB_JD5_iHcMin.value) < jd5Std ||
+            num(reportROB_JD5_iHcMax.value) < jd5Std;
+
+        reportROB_JD5_remarks.value = jd5Fails ? "NG" : "OK";
+
+        // Aggregate Judgement: If ANY section is NG, HOLD. All must be OK for PASSED.
+        const hasAnyNG = brRtFails || brVtFails || hd5Fails || jd5Fails;
+
+        reportSMPJudgement.value = hasAnyNG ? "HOLD" : "PASSED";
     }
 });
 
@@ -6968,7 +7003,7 @@ const generateReport = async () => {
         // PARALLELIZE INDEPENDENT WORK
         // ─────────────────────────────
         let stepStart = Date.now();
-        
+
         await fetchAllData();
         logTime("fetchAllData finished", stepStart);
 
@@ -7071,7 +7106,28 @@ const checkSpecialJudgement = async () => {
     const responseGetROBData = await axios.get("/api/rob-models");
     const fetchAllROB = responseGetROBData.data;
     MODELS_SHOW_ROB.value = fetchAllROB.map((item) => item.model_name);
+    if (fetchAllROB && fetchAllROB.length > 0) {
+        const defaultModel = fetchAllROB[0];
+
+        reportROB_BrRTstandardmax.value = defaultModel.br_rt_standardmax ?? 0;
+        reportROB_BrRTstandardmin.value = defaultModel.br_rt_standardmin ?? 0; // or br_rt_standardmin based on your logic
+        reportROB_BrVTstandard.value = defaultModel.br_vt_standard ?? 0;
+        reportROB_HD5standard.value = defaultModel.hd5_standard ?? 0;
+        reportROB_JD5standard.value = defaultModel.jd5_standard ?? 0;
+    }
     //console.log('ROB MODELS: ',MODELS_SHOW_ROB.value);
+    const responseGetROBAJData = await axios.get("/api/rob-model-ajs");
+    const fetchAllROBAJ = responseGetROBAJData.data;
+    MODELS_SHOW_ROB_AJ.value = fetchAllROBAJ.map((item) => item.model_name);
+    if (fetchAllROBAJ && fetchAllROBAJ.length > 0) {
+        const defaultModel = fetchAllROBAJ[0];
+
+        reportROB_BrRTstandardmax.value = defaultModel.br_rt_standardmax ?? 0;
+        reportROB_BrRTstandardmin.value = defaultModel.br_rt_standardmin ?? 0; // or br_rt_standardmin based on your logic
+        reportROB_BrVTstandard.value = defaultModel.br_vt_standard ?? 0;
+        reportROB_HD5standard.value = defaultModel.hd5_standard ?? 0;
+        reportROB_JD5standard.value = defaultModel.jd5_standard ?? 0;
+    }
     const responseGetHISData = await axios.get("/api/his-models");
     const fetchAllHIS = responseGetHISData.data;
     MODELS_SHOW_HIS.value = fetchAllHIS.map((item) => item.model_name);
@@ -7106,6 +7162,11 @@ const checkSpecialJudgement = async () => {
 
     if (MODELS_SHOW_HIS.value.includes(model)) {
         showHIS.value = true;
+    }
+
+    if (MODELS_SHOW_ROB_AJ.value.includes(model)) {
+        showROB.value = true;
+        //console.log('[ROB] ROB enabled');
     }
 
     if (hasIhcBelowTarget || hasNGihc) {
@@ -8711,7 +8772,10 @@ const showReportData = async () => {
         reportROB_JD5_brMin.value = ROB.JD5_brMin || "";
         reportROB_JD5_iHcMax.value = ROB.JD5_iHcMax || "";
         reportROB_JD5_iHcMin.value = ROB.JD5_iHcMin || "";
-        reportROB_remarks.value = ROB.result || "";
+        reportROB_BrRT_remarks.value = ROB.result_BrRT || "";
+        reportROB_BrVT_remarks.value = ROB.result_BrVT || "";
+        reportROB_HD5_remarks.value = ROB.result_HD5 || "";
+        reportROB_JD5_remarks.value = ROB.result_JD5 || "";
 
         reportBHRTSeg_data.value = bhSeg.dataRt || "Br";
         reportBHRTSeg_lower_dataStandard.value =
@@ -8904,7 +8968,8 @@ const saveReport = async () => {
             brMax: reportROB_brMax.value,
             iHcMin: reportROB_iHcMin.value,
             iHcMax: reportROB_iHcMax.value,
-            brRTStandard: reportROB_BrRTstandard.value,
+            brRTStandardMin: reportROB_BrRTstandardmin.value,
+            brRTStandardMax: reportROB_BrRTstandardmax.value,
             brVTStandard: reportROB_BrVTstandard.value,
             hd5Standard: reportROB_HD5standard.value,
             jd5Standard: reportROB_JD5standard.value,
@@ -8924,7 +8989,10 @@ const saveReport = async () => {
             JD5_brMax: reportROB_JD5_brMax.value,
             JD5_iHcMin: reportROB_JD5_iHcMin.value,
             JD5_iHcMax: reportROB_JD5_iHcMax.value,
-            result: reportROB_remarks.value,
+            result_BrRT: reportROB_BrRT_remarks.value,
+            result_BrVT: reportROB_BrVT_remarks.value,
+            result_HD5: reportROB_HD5_remarks.value,
+            result_JD5: reportROB_JD5_remarks.value,
         }),
         data_bh_seg_info: JSON.stringify({
             // BH DATA @ ROOM TEMP AND BH DATA @ 200

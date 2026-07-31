@@ -25,6 +25,7 @@ use App\Http\Controllers\StandardDataController;
 use App\Http\Controllers\MiasFactorController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\RobModelController;
+use App\Http\Controllers\RobModelAjController;
 use App\Http\Controllers\HisModelController;
 use App\Http\Controllers\TtmwcModelController;
 use App\Http\Controllers\TtmncModelController;
@@ -410,6 +411,7 @@ Route::apiResource('ttmwc-models', TtmwcModelController::class);
 Route::apiResource('ttmnc-models', TtmncModelController::class);
 Route::apiResource('bh-models', BhModelController::class);
 Route::apiResource('rob-models', RobModelController::class);
+Route::apiResource('rob-model-ajs', RobModelAjController::class);
 Route::apiResource('cpk-br-models', CpkBrModelsController::class);
 Route::apiResource('his-models', HisModelController::class);
 
@@ -451,6 +453,7 @@ Route::get('/check-latest-masspro-upload', [HtMassProDataController::class, 'che
 
 Route::post('ht-graph-patterns/upload-graph', [HtGraphPatternsController::class, 'uploadGraphPattern']);
 Route::get('htgraph-patterns/list', [HtGraphPatternsController::class, 'listGraphs']);
+Route::get('htgraph-patterns/options', [HtGraphPatternsController::class, 'getPatternOptions']);
 Route::get('/pattern-hours/{patternNo}/{furnaceNo}', [HtGraphPatternsController::class, 'getHours']);
 Route::get('htgraph-patterns/related-lists', [HtGraphPatternsController::class, 'getAssociatedPattern']);
 

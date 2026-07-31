@@ -211,12 +211,12 @@ class HtGraphPatternsController extends Controller
 
         // 3. Get the paginator instance explicitly
         $paginator = $query->latest()->paginate(10);
-        
+
         $folder = public_path('htgraph_patterns');
-        
+
         // 4. Transform the active items array inside the paginator manually
         $transformedItems = [];
-        
+
         foreach ($paginator->items() as $pattern) {
             $files = glob("$folder/pattern_{$pattern->pattern_no}_{$pattern->furnace_no}.{png,jpg,jpeg}", GLOB_BRACE);
             $url = null;
@@ -248,6 +248,17 @@ class HtGraphPatternsController extends Controller
             'per_page'     => $paginator->perPage(),
             'total'        => $paginator->total(),
         ]);
+    }
+
+    public function getPatternOptions()
+    {
+        $patterns = HtGraphPatterns::whereNotNull('pattern_no')
+            ->distinct()
+            ->pluck('pattern_no')
+            ->sort()
+            ->values();
+
+        return response()->json($patterns);
     }
 
     public function getHours($patternNo, $furnaceNo)

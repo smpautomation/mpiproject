@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RobModel;
+use App\Models\RobModelAj;
 use Illuminate\Http\Request;
 
-class RobModelController extends Controller
+class RobModelAjController extends Controller
 {
     public function index()
     {
-        return RobModel::all();
+        return RobModelAj::all();
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'model_name' => 'required|string|max:255',
-            'encoded_by' => 'required|string|max:255',
+            'model_name'         => 'required|string|max:255|unique:rob_model_ajs,model_name',
+            'encoded_by'         => 'required|string|max:255',
             'br_rt_standardmax' => 'required|numeric',
             'br_rt_standardmin' => 'required|numeric',
             'br_vt_standard'    => 'required|numeric',
@@ -24,22 +24,22 @@ class RobModelController extends Controller
             'jd5_standard'      => 'required|numeric',
         ]);
 
-        $model = RobModel::create($validated);
+        $model = RobModelAj::create($validated);
 
         return response()->json([
-            'message' => 'ROB Model created successfully',
+            'message' => 'ROB AJ Model created successfully',
             'data'    => $model
         ], 201);
     }
 
     public function show($id)
     {
-        return RobModel::findOrFail($id);
+        return RobModelAj::findOrFail($id);
     }
 
     public function update(Request $request, $id)
     {
-        $model = RobModel::findOrFail($id);
+        $model = RobModelAj::findOrFail($id);
 
         $validated = $request->validate([
             'model_name' => 'required|string|max:255',
@@ -52,7 +52,7 @@ class RobModelController extends Controller
 
     public function destroy($id)
     {
-        $model = RobModel::findOrFail($id);
+        $model = RobModelAj::findOrFail($id);
         $model->delete();
 
         return response()->json(['message' => 'Deleted successfully'], 200);

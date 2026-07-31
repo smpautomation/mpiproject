@@ -5,7 +5,7 @@
                 <!-- Title Section -->
                 <div class="flex-1">
                     <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                        Heat Treatment 
+                        Heat Treatment
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-teal-500 to-cyan-500">
                             Graph Patterns
                         </span>
@@ -17,7 +17,7 @@
 
                 <!-- Actions Container (Contextual Create Buttons) -->
                 <div class="flex flex-col gap-2.5 sm:flex-row sm:items-center w-full lg:w-auto shrink-0">
-                    
+
                     <!-- Primary Action: Create New Pattern -->
                     <button
                         type="button"
@@ -63,7 +63,7 @@
 
             <!-- Patterns container -->
             <div v-else class="w-full mt-12 overflow-x-auto bg-white border border-gray-100 shadow-sm rounded-xl">
-                
+
                 <div class="space-y-4 w-full">
                     <!-- Browser-style Tab Bar Nav -->
                     <div class="flex items-center border-b border-gray-250 bg-slate-50/50 p-1.5 rounded-t-2xl gap-1">
@@ -72,8 +72,8 @@
                             type="button"
                             @click="activeTab = 'patterns'"
                             class="flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200 rounded-xl focus:outline-none"
-                            :class="activeTab === 'patterns' 
-                                ? 'bg-white text-teal-700 shadow-sm border border-gray-200/80' 
+                            :class="activeTab === 'patterns'
+                                ? 'bg-white text-teal-700 shadow-sm border border-gray-200/80'
                                 : 'text-gray-500 hover:text-gray-800 hover:bg-slate-100'"
                         >
                             <!-- Pattern Icon -->
@@ -88,8 +88,8 @@
                             type="button"
                             @click="activeTab = 'rules'"
                             class="flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200 rounded-xl focus:outline-none"
-                            :class="activeTab === 'rules' 
-                                ? 'bg-white text-teal-700 shadow-sm border border-gray-200/80' 
+                            :class="activeTab === 'rules'
+                                ? 'bg-white text-teal-700 shadow-sm border border-gray-200/80'
                                 : 'text-gray-500 hover:text-gray-800 hover:bg-slate-100'"
                         >
                             <!-- Rules/Layers Icon -->
@@ -102,10 +102,10 @@
 
                     <!-- Active Tab Content Area -->
                     <div class="transition-all duration-250">
-                        
+
                         <!-- ==================== TABLE 1: PATTERNS ==================== -->
                         <div v-show="activeTab === 'patterns'" class="space-y-3.5">
-                            
+
                             <!-- Table Action Header: Holds your filters specifically for Patterns -->
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
                                 <div class="flex flex-col gap-1">
@@ -193,19 +193,19 @@
                                 </div>
 
                                 <!-- Table 1 Pagination Footer -->
-                                <div 
-                                    v-if="paginationMeta && graphFileLists.length > 0" 
+                                <div
+                                    v-if="paginationMeta && graphFileLists.length > 0"
                                     class="flex items-center justify-between px-6 py-3 bg-white border-t border-gray-150 rounded-b-xl"
                                 >
                                     <!-- Left Section: Meta Count -->
                                     <div>
                                         <p class="text-xs text-gray-700">
-                                            Showing 
-                                            <span class="font-bold text-slate-900">{{ paginationMeta.from }}</span> 
-                                            to 
-                                            <span class="font-bold text-slate-900">{{ paginationMeta.to }}</span> 
-                                            of 
-                                            <span class="font-bold text-slate-900">{{ paginationMeta.total }}</span> 
+                                            Showing
+                                            <span class="font-bold text-slate-900">{{ paginationMeta.from }}</span>
+                                            to
+                                            <span class="font-bold text-slate-900">{{ paginationMeta.to }}</span>
+                                            of
+                                            <span class="font-bold text-slate-900">{{ paginationMeta.total }}</span>
                                             patterns
                                         </p>
                                     </div>
@@ -251,7 +251,7 @@
 
                         <!-- ==================== TABLE 2: MODEL RULES ==================== -->
                         <div v-show="activeTab === 'rules'" class="space-y-3.5">
-                            
+
                             <!-- Table Action Header: Search specifically for Model Rules -->
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
                                 <div class="flex flex-col gap-1">
@@ -293,16 +293,16 @@
                                         <!-- Table Body -->
                                         <tbody class="divide-y divide-gray-100 bg-white">
                                             <!-- Data Rows -->
-                                            <tr 
-                                                v-for="rule in modelRules" 
+                                            <tr
+                                                v-for="rule in modelRules"
                                                 :key="rule.model"
                                                 class="hover:bg-slate-50/50 transition-colors duration-150"
                                             >
                                                 <td class="px-6 py-4 text-sm font-semibold text-gray-900">{{ rule.model }}</td>
                                                 <td class="px-6 py-4">
                                                     <div class="flex flex-wrap gap-1.5 max-w-[280px]">
-                                                        <span 
-                                                            v-for="pattern in rule.pattern_list" 
+                                                        <span
+                                                            v-for="pattern in rule.pattern_list"
                                                             :key="pattern"
                                                             class="inline-flex items-center px-2 py-0.5 text-xs font-bold text-teal-700 bg-teal-50 border border-teal-100/60 rounded-md"
                                                         >
@@ -312,8 +312,8 @@
                                                 </td>
                                                 <td class="px-6 py-4">
                                                     <div class="flex flex-wrap gap-1.5 max-w-[280px]">
-                                                        <span 
-                                                            v-for="layer in rule.layer_list" 
+                                                        <span
+                                                            v-for="layer in rule.layer_list"
                                                             :key="layer"
                                                             class="inline-flex items-center px-2 py-0.5 text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-md"
                                                         >
@@ -361,17 +361,17 @@
                                             Next
                                         </button>
                                     </div>
-                                    
+
                                     <!-- Desktop Pagination -->
                                     <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                         <div>
                                             <p class="text-xs text-gray-700">
-                                                Showing 
-                                                <span class="font-bold text-slate-900">{{ rulePaginationMeta.from }}</span> 
-                                                to 
-                                                <span class="font-bold text-slate-900">{{ rulePaginationMeta.to }}</span> 
-                                                of 
-                                                <span class="font-bold text-slate-900">{{ rulePaginationMeta.total }}</span> 
+                                                Showing
+                                                <span class="font-bold text-slate-900">{{ rulePaginationMeta.from }}</span>
+                                                to
+                                                <span class="font-bold text-slate-900">{{ rulePaginationMeta.to }}</span>
+                                                of
+                                                <span class="font-bold text-slate-900">{{ rulePaginationMeta.total }}</span>
                                                 results
                                             </p>
                                         </div>
@@ -438,7 +438,7 @@
                         <h3 class="text-lg font-bold text-gray-900 mb-3">
                             Pattern {{ selectedPattern?.pattern_no }}
                         </h3>
-                        
+
                         <!-- Metadata Badges -->
                         <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-600">
                             <span class="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full">
@@ -467,8 +467,8 @@
             <Modal :show="showModalEdit" @close="showModalEdit = false">
                 <div class="relative flex flex-col w-full max-w-3xl p-8 mx-auto bg-white shadow-xl rounded-2xl border border-gray-100">
                     <!-- Close Button -->
-                    <button 
-                        @click="showModalEdit = false" 
+                    <button
+                        @click="showModalEdit = false"
                         class="absolute p-2 text-gray-400 transition-colors duration-150 rounded-full top-4 right-4 hover:text-gray-600 hover:bg-gray-50"
                         aria-label="Close modal"
                     >
@@ -484,9 +484,9 @@
                         <!-- Pattern No -->
                         <div class="flex flex-col">
                             <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Pattern No.</label>
-                            <input 
-                                type="number" 
-                                v-model="patternNo" 
+                            <input
+                                type="number"
+                                v-model="patternNo"
                                 class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
                         </div>
@@ -494,8 +494,8 @@
                         <!-- Furnace No -->
                         <div class="flex flex-col">
                             <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Furnace No</label>
-                            <select 
-                                v-model="selectedFurnace" 
+                            <select
+                                v-model="selectedFurnace"
                                 class="w-full px-3.5 py-2.5 text-sm font-medium text-gray-900 bg-white transition border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                             >
                                 <option v-for="item in furnaceNo" :key="item" :value="item">{{ item }}</option>
@@ -508,7 +508,7 @@
                         <!-- Replace Graph -->
                         <div class="flex flex-col flex-1">
                             <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Replace Graph (optional)</label>
-                            <input 
+                            <input
                                 type="file"
                                 ref="editFile"
                                 accept=".jpeg,.jpg,.png"
@@ -540,7 +540,7 @@
 
                     <!-- Save Button -->
                     <div class="flex justify-center w-full">
-                        <button 
+                        <button
                             @click="updatePattern"
                             class="px-8 py-2.5 text-sm font-semibold text-white transition-all duration-200 rounded-xl shadow-sm bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-500/20"
                         >
@@ -663,7 +663,7 @@
 
             <Modal :show="showModalCreateRule" @close="showModalCreateRule = false">
                 <div class="relative flex flex-col w-full max-w-3xl p-6 mx-auto bg-white shadow-xl rounded-2xl border border-gray-100 overflow-hidden">
-                    
+
                     <!-- Close Button -->
                     <button
                         @click="showModalCreateRule = false, overwriteMode = false, msgRuleAlreadyExists = false, showConfirmationRule = false"
@@ -681,10 +681,10 @@
                             <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">
                                 Create New Rule
                             </h3>
-                            
+
                             <!-- Premium Overwrite Mode Indicator Badge -->
-                            <span 
-                                v-if="overwriteMode" 
+                            <span
+                                v-if="overwriteMode"
                                 class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-50 border border-rose-150 text-[10px] font-extrabold uppercase tracking-wider text-rose-700 select-none shadow-sm shadow-rose-500/5 animate-pulse"
                             >
                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -698,7 +698,7 @@
 
                     <!-- Form Body -->
                     <div class="space-y-6">
-                        
+
                         <!-- Row 1: Model Selection (Spans Full Width for clean entry) -->
                         <div class="flex flex-col">
                             <label class="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-500">Target Model</label>
@@ -714,11 +714,11 @@
 
                         <!-- Row 2: Two-Column Array Builders Grid -->
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            
+
                             <!-- Column A: Patterns Card -->
                             <div class="flex flex-col p-4 border border-slate-100 bg-slate-50/70 rounded-2xl">
                                 <label class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Pattern Configurations</label>
-                                
+
                                 <div class="space-y-3">
                                     <!-- Dropdown + Add button input group -->
                                     <div class="flex items-center gap-2">
@@ -728,7 +728,7 @@
                                                 class="w-full px-3.5 py-2 text-sm font-medium text-gray-700 bg-white transition border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
                                             >
                                                 <option value="" disabled>Select Pattern</option>
-                                                <option v-for="item in patternLists" :key="item" :value="item">{{ item }}</option>
+                                                <option v-for="item in allPatterns" :key="item" :value="item">{{ item }}</option>
                                             </select>
                                         </div>
                                         <button
@@ -778,7 +778,7 @@
                             <!-- Column B: Layers Card -->
                             <div class="flex flex-col p-4 border border-slate-100 bg-slate-50/70 rounded-2xl">
                                 <label class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Layer Alignments</label>
-                                
+
                                 <div class="space-y-3">
                                     <!-- Dropdown + Add button input group -->
                                     <div class="flex items-center gap-2">
@@ -863,23 +863,23 @@
                         <!-- Normal Submit View -->
 
                         <div v-if="!showConfirmationRule" class="flex flex-col gap-3.5 w-full mt-4">
-    
+
                             <!-- Premium Alert Callout for Existing Rules -->
-                            <div 
-                                v-if="msgRuleAlreadyExists" 
+                            <div
+                                v-if="msgRuleAlreadyExists"
                                 class="flex items-start gap-3 px-4 py-3 bg-red-50/50 border border-red-100 rounded-xl shadow-sm transition-all duration-200"
                             >
                                 <!-- Info Warning Icon -->
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-red-600 shrink-0 mt-0.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12v-.008Z" />
                                 </svg>
-                                
+
                                 <div class="flex flex-col flex-1">
                                     <span class="text-xs font-bold text-red-950">Existing Configuration Found</span>
                                     <span class="text-[11px] text-red-800/90 leading-relaxed mt-0.5">
                                         The selected model already has active rules mapped. Submitting right now will overwrite the current configuration logs.
                                     </span>
-                                    
+
                                     <!-- Interactive Enable Overwrite Switcher Link -->
                                     <div class="mt-2 flex items-center">
                                         <button
@@ -913,7 +913,7 @@
 
                         <!-- Confirmation Gate -->
                         <div v-else class="flex flex-col gap-4 p-4 border border-rose-200 bg-rose-50/50 rounded-2xl sm:flex-row sm:items-start sm:justify-between">
-                            
+
                             <!-- Left Hand: Icon & Alert Message Context -->
                             <div class="flex items-start gap-3 flex-1 min-w-0">
                                 <!-- Structural Alert Icon -->
@@ -922,24 +922,24 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                     </svg>
                                 </div>
-                                
+
                                 <!-- Text & Summary Group -->
                                 <div class="space-y-4 flex-1 min-w-0">
                                     <div class="space-y-2">
                                         <!-- Header + Dynamic Alert Badge Row -->
                                         <div class="flex flex-wrap items-center gap-2">
                                             <h4 class="text-sm font-bold text-slate-900">Double check specifications</h4>
-                                            
+
                                             <!-- Shows specifically when overwrite mode is enabled -->
-                                            <span 
-                                                v-if="overwriteMode" 
+                                            <span
+                                                v-if="overwriteMode"
                                                 class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-50 text-[10px] font-extrabold uppercase tracking-wider text-rose-700 border border-rose-100/80 animate-pulse"
                                             >
                                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                                 Overwrite Mode ON
                                             </span>
                                         </div>
-                                        
+
                                         <!-- Contextual Descriptions changing based on state -->
                                         <p class="text-xs leading-relaxed text-slate-500">
                                             <span v-if="overwriteMode" class="font-medium text-rose-700 block mb-0.5">
@@ -950,7 +950,7 @@
                                     </div>
 
                                     <!-- Structured Review Metadata Block (Border shifts colors based on warning state) -->
-                                    <div 
+                                    <div
                                         class="space-y-2 pt-3 border-t max-w-md transition-colors duration-200"
                                         :class="overwriteMode ? 'border-rose-200' : 'border-slate-100'"
                                     >
@@ -1090,6 +1090,7 @@ const selectedModel = ref("");
 const currentlySelectedLayer = ref("");
 const selectedLayers = ref([]);
 const selectedPatterns = ref([]);
+const allPatterns = ref([]);
 const uploadedGraph = ref();
 const uploadedGraphEdited = ref();
 const encodedBy = ref();
@@ -1106,19 +1107,6 @@ const selectedFurnaceFilter = ref('');
 
 // 1. Helper state for the dropdown selection
 const currentSelectedPattern = ref("");
-
-const patternLists = computed(() => {
-    if (!graphFileLists.value || graphFileLists.value.length === 0) return [];
-    
-    // 1. Extract only the 'pattern_no' from each item
-    const rawPatterns = graphFileLists.value.map(item => item.pattern_no);
-    
-    // 2. Filter out null/undefined and keep unique values only
-    const uniquePatterns = [...new Set(rawPatterns)].filter(val => val !== null && val !== undefined);
-    
-    // 3. Optional: Sort them numerically/alphabetically
-    return uniquePatterns.sort((a, b) => a - b);
-});
 
 // Utility to sort string numbers in true ascending order
 const sortLayersAscending = (array) => {
@@ -1142,10 +1130,10 @@ const addLayerToArray = () => {
     if (value && !selectedLayers.value.includes(value)) {
         msgLayerAlreadyAdded.value = false;
         selectedLayers.value.push(value);
-        
+
         // Real-time sort after insertion
         sortLayersAscending(selectedLayers.value);
-        
+
         currentlySelectedLayer.value = "";
     } else {
         msgLayerAlreadyAdded.value = true;
@@ -1160,7 +1148,7 @@ const addAllLayerToArray = () => {
     );
 
     selectedLayers.value.push(...newLayers);
-    
+
     // Real-time sort after bulk insertion
     sortLayersAscending(selectedLayers.value);
 };
@@ -1173,7 +1161,7 @@ const addAllLayerExceptNinePointFiveToArray = () => {
     );
 
     selectedLayers.value.push(...newLayers);
-    
+
     // Real-time sort after bulk insertion
     sortLayersAscending(selectedLayers.value);
 };
@@ -1231,6 +1219,7 @@ const updatePattern = async () => {
         console.error(error.response?.data || error);
     } finally {
         await getAllPatterns();
+        await fetchPatternOptions();
         editedGraphFile.value = null;
         uploadedGraphEdited.value = null;
     }
@@ -1348,6 +1337,7 @@ const saveToDatabase = async () => {
         }
     } finally {
         await getAllPatterns();
+        await fetchPatternOptions();
         showModalCreatePattern.value = false;
         selectedFurnace.value = '';
         encodedBy.value = '';
@@ -1384,7 +1374,7 @@ const saveRuleToDatabase = async () => {
             "Layer List: ", selectedLayers.value,
             "Encoded by: ", user,
         ]);
-        
+
         const response = await axios.patch('/api/inspection/model-rules',{
             model: selectedModel.value,
             pattern_list: selectedPatterns.value,
@@ -1417,6 +1407,7 @@ const saveRuleToDatabase = async () => {
             overwriteMode.value = false;
 
             await getAllPatterns();
+            await fetchPatternOptions();
             await fetchModelRulesTable();
         }else{
             toast.error("Patch failed", response.data.message);
@@ -1435,10 +1426,11 @@ const saveRuleToDatabase = async () => {
             overwriteMode.value = false;
 
             await getAllPatterns();
+            await fetchPatternOptions();
             await fetchModelRulesTable();
         }
 
-        
+
     }catch(error){
         console.error('Failed to save rule to database', error);
     }
@@ -1483,9 +1475,9 @@ const getAllPatterns = async (page = 1) => {
 
         // Laravel pagination results nest data arrays inside response.data.data
         const backendResponse = response.data;
-        
-        graphFileLists.value = Array.isArray(backendResponse.data) 
-            ? backendResponse.data 
+
+        graphFileLists.value = Array.isArray(backendResponse.data)
+            ? backendResponse.data
             : Object.values(backendResponse.data || {});
 
         // Store pagination metrics safely
@@ -1504,6 +1496,15 @@ const getAllPatterns = async (page = 1) => {
     }
 };
 
+const fetchPatternOptions = async () => {
+    try {
+        const response = await axios.get('/api/htgraph-patterns/options');
+        allPatterns.value = response.data;
+    } catch (error) {
+        console.error('Failed to load pattern options', error);
+    }
+};
+
 const fetchModelRulesTable = async (page = 1) => {
     try {
         const response = await axios.get('/api/inspection/rule-table-list', {
@@ -1515,8 +1516,8 @@ const fetchModelRulesTable = async (page = 1) => {
 
         if (response.data && response.data.success) {
             // Arrays inside Laravel JSON casting arrive fully formatted as native arrays
-            modelRules.value = response.data.data; 
-            
+            modelRules.value = response.data.data;
+
             // Map the unified structural object metrics
             currentRulesPage.value = response.data.pagination.current_page;
             rulePaginationMeta.value = response.data.pagination;
@@ -1574,6 +1575,7 @@ const getFurnaceLists = async() => {
 onMounted(async() => {
     await checkAuthentication();
     await getAllPatterns();
+    await fetchPatternOptions();
     await getFurnaceLists();
     await getModelLists();
     await fetchModelRulesTable();

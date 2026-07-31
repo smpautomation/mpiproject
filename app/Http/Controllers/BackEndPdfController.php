@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RobModelAj;
 use Barryvdh\DomPDF\Facade\Pdf;
 use iio\libmergepdf\Merger;
 use App\Models\ReportData;
@@ -568,6 +569,7 @@ class BackEndPdfController extends Controller
         $MODELS_1X1X1_NO_CORNER = TtmncModel::pluck('model_name')->toArray();
         $MODELS_SHOW_BH      = BhModel::pluck('model_name')->toArray();
         $MODELS_SHOW_ROB     = RobModel::pluck('model_name')->toArray();
+        $MODELS_SHOW_ROB_AJ     = RobModelAj::pluck('model_name')->toArray();
         $MODELS_SHOW_GS      = HisModel::pluck('model_name')->toArray();
 
         $hasNGihc          = in_array('- N.G iHc', $noteReasons);
@@ -580,7 +582,7 @@ class BackEndPdfController extends Controller
         $isSpecialGX     = in_array($model, $MODELS_SPECIAL_ROB_FOR_GX);
         $showTsi         = (($hasNGihc || $hasIhcBelowTarget) && in_array($model, $MODELS_SPECIAL_TSI));
         $showBHData      = $hasNGihc && in_array($model, $MODELS_SHOW_BH);
-        $showROB         = $hasNGihc && in_array($model, $MODELS_SHOW_ROB);
+        $showROB         = $hasNGihc && (in_array($model, $MODELS_SHOW_ROB) || in_array($model, $MODELS_SHOW_ROB_AJ));
 
         $showVTData         = false; // default to false
         $showVTData_default = false; // default to false
