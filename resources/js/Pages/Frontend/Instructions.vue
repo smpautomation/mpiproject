@@ -2,12 +2,15 @@
   <Frontend>
     <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
 
-        <div v-if="showSelectionPanel" class="flex flex-col items-center justify-start min-h-screen pt-[70px] mx-auto space-y-6 bg-gray-100">
+        <div v-if="showSelectionPanel" class="flex flex-col items-center justify-start min-h-screen pt-12 pb-16 px-6 mx-auto space-y-10 bg-gradient-to-b from-cyan-50/50 via-teal-50/20 to-gray-100/50">
 
             <!-- Header -->
-            <p class="px-6 py-3 mb-8 text-2xl font-bold tracking-wide text-blue-800 uppercase bg-blue-100 border border-blue-200 shadow-sm sm:text-3xl rounded-xl">
-                SPECIAL INSTRUCTIONS / JUDGEMENTS
-            </p>
+            <div class="text-center space-y-2">
+                <h1 class="inline-flex items-center px-8 py-3 text-2xl font-black tracking-wider text-cyan-950 uppercase bg-gradient-to-r from-cyan-100/80 to-teal-100/80 border border-cyan-200 shadow-sm sm:text-3xl rounded-2xl backdrop-blur-sm">
+                    SPECIAL INSTRUCTIONS / JUDGEMENTS
+                </h1>
+                <p class="text-xs font-medium text-cyan-800/70">Select a model panel to manage or inspect configuration details</p>
+            </div>
 
             <!-- Grid -->
             <div class="grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -22,18 +25,21 @@
                     <!-- Main Button -->
                     <button
                         @click="openPanel(item.panel)"
-                        class="w-full p-6 font-semibold text-blue-800 transition-all border border-blue-200 shadow-sm bg-blue-50 rounded-xl hover:bg-blue-100 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        class="w-full p-7 font-bold text-left text-cyan-950 transition-all duration-300 border border-cyan-100/80 shadow-md shadow-cyan-900/5 bg-white rounded-2xl hover:bg-gradient-to-br hover:from-cyan-50/60 hover:to-teal-50/60 hover:border-cyan-300 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/40 flex items-center justify-between"
                     >
-                        {{ item.name }}
+                        <span>{{ item.name }}</span>
+                        <svg class="w-5 h-5 text-cyan-400 group-hover:text-cyan-600 transition-colors transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
                     </button>
 
                     <!-- Preview Trigger -->
                     <button
                         @click.stop="openImage(item.image)"
-                        class="absolute z-20 flex items-center justify-center w-9 h-9 transition-all bg-white border rounded-full shadow-md top-2 right-2 border-slate-200 text-slate-500 hover:bg-cyan-500 hover:text-white group/preview"
+                        class="absolute z-20 flex items-center justify-center w-9 h-9 transition-all bg-white/90 backdrop-blur-md border rounded-full shadow-md top-3.5 right-3.5 border-cyan-100 text-cyan-700 hover:bg-cyan-600 hover:text-white group/preview hover:scale-110"
                     >
                         <!-- Pulse -->
-                        <span class="absolute inline-flex w-full h-full rounded-full bg-cyan-400 opacity-20 animate-ping group-hover/preview:hidden"></span>
+                        <span class="absolute inline-flex w-full h-full rounded-full bg-cyan-400 opacity-30 animate-ping group-hover/preview:hidden"></span>
 
                         <!-- Icon -->
                         <svg class="relative w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,40 +47,39 @@
                                 d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h8v12H4z" />
                         </svg>
 
-                        <!-- Preview Bubble -->
-                        <div class="absolute z-30 hidden group-hover:block left-full ml-3 top-1/2 -translate-y-1/2">
-                            <div class="bg-white p-2 rounded-lg shadow-xl border w-48">
-                                <img :src="item.image" class="w-full h-auto object-contain rounded" />
+                        <!-- Preview Bubble (Smart positioned to prevent clipping off screen) -->
+                        <div class="absolute z-30 hidden group-hover:block left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <div class="bg-white p-2.5 rounded-xl shadow-2xl border border-cyan-100 w-52 backdrop-blur-md bg-white/95">
+                                <img :src="item.image" class="w-full h-auto object-contain rounded-lg shadow-sm" />
                             </div>
-
-                            <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white rotate-45 border-r border-b -translate-y-1/2"></div>
+                            <div class="absolute top-1/2 -left-1 w-2 h-2 bg-white rotate-45 border-l border-b border-cyan-100 -translate-y-1/2"></div>
                         </div>
                     </button>
 
                 </div>
             </div>
-            </div>
-
-            <!-- IMAGE MODAL -->
-            <div
-            v-if="showImageModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-            @click="closeImage"
-            >
-            <div class="relative max-w-4xl p-4 bg-white rounded-lg shadow-2xl" @click.stop>
-
-                <!-- Close Button -->
-                <button
-                    @click="closeImage"
-                    class="absolute text-gray-500 top-2 right-2 hover:text-gray-800"
-                >
-                    ✕
-                </button>
-
-                <!-- Image -->
-                <img :src="activeImage" class="max-h-[80vh] w-auto rounded" />
-            </div>
         </div>
+
+<!-- IMAGE MODAL -->
+<div
+v-if="showImageModal"
+class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity"
+@click="closeImage"
+>
+<div class="relative max-w-5xl p-5 bg-white rounded-2xl shadow-2xl border border-cyan-100 transform transition-all" @click.stop>
+
+    <!-- Close Button -->
+    <button
+        @click="closeImage"
+        class="absolute z-10 flex items-center justify-center w-8 h-8 text-gray-500 bg-gray-100 rounded-full top-3 right-3 hover:bg-rose-100 hover:text-rose-600 transition-colors"
+    >
+        ✕
+    </button>
+
+    <!-- Image -->
+    <img :src="activeImage" class="max-h-[82vh] w-auto rounded-xl shadow-inner object-contain mx-auto block" />
+</div>
+</div>
 
     <button
         v-if="!showSelectionPanel"
@@ -87,828 +92,1037 @@
         Back
     </button>
 
-      <!-- VT MODELS Table Section -->
-      <div
+    <!-- VT MODELS Table Section -->
+    <div
         v-if="showVTPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">VT MODELS</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="vt in vtModels"
-                :key="vt.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(vt.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ vt.model_name }}</td>
-                <td class="px-4 py-3">{{ vt.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="vt_startEditing(vt)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">VT MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage standard VT tracing specifications & inventory</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ vtModels?.length || 0 }} Models Recorded
+            </span>
         </div>
 
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="vt_newRecord.model_name"
-              type="text"
-              @input="vt_newRecord.model_name = vt_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="vt_newRecord.encoded_by"
-              type="text"
-              @input="vt_newRecord.encoded_by = vt_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="vt_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="vt in vtModels"
+                        :key="vt.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ vt.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ vt.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(vt.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="vt_confirmDelete(vt)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!vtModels || vtModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No VT models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Edit Record -->
-        <div v-if="vt_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="vt_editingRecord.model_name"
-              type="text"
-              @input="vt_editingRecord.model_name = vt_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="vt_editingRecord.encoded_by"
-              type="text"
-              @input="vt_editingRecord.encoded_by = vt_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
+        <!-- Add New Section (Only Model Name input needed; Encoded By is auto-injected in script) -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New VT Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="vt_newRecord.model_name"
+                        type="text"
+                        @input="vt_newRecord.model_name = vt_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. VT-MODEL-X"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
+            </div>
+
             <button
-              @click="vt_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+                @click="vt_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
             >
-              Update
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save VT Model
             </button>
-            <button
-              @click="vt_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
         </div>
-      </div>
+    </div>
 
     <!-- CPK IHC MODELS Table Section -->
-      <div
+    <div
         v-if="showCPKIHCPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">CPK IHC MODELS</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="cpkihc in cpkihcModels"
-                :key="cpkihc.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(cpkihc.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ cpkihc.model_name }}</td>
-                <td class="px-4 py-3">{{ cpkihc.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="cpkihc_startEditing(cpkihc)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">CPK IHC MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage standard CPK IHC specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ cpkihcModels?.length || 0 }} Models Recorded
+            </span>
         </div>
 
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="cpkihc_newRecord.model_name"
-              type="text"
-              @input="cpkihc_newRecord.model_name = cpkihc_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="cpkihc_newRecord.encoded_by"
-              type="text"
-              @input="cpkihc_newRecord.encoded_by = cpkihc_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="cpkihc_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="cpkihc in cpkihcModels"
+                        :key="cpkihc.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ cpkihc.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ cpkihc.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(cpkihc.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="cpkihc_confirmDelete(cpkihc)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!cpkihcModels || cpkihcModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No CPK IHC models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Edit Record -->
-        <div v-if="cpkihc_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="cpkihc_editingRecord.model_name"
-              type="text"
-              @input="cpkihc_editingRecord.model_name = cpkihc_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="cpkihc_editingRecord.encoded_by"
-              type="text"
-              @input="cpkihc_editingRecord.encoded_by = cpkihc_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
+        <!-- Add New Section -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New CPK IHC Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="cpkihc_newRecord.model_name"
+                        type="text"
+                        @input="cpkihc_newRecord.model_name = cpkihc_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. CPKIHC-MODEL-X"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
+            </div>
+
             <button
-              @click="cpkihc_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+                @click="cpkihc_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
             >
-              Update
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save CPK IHC Model
             </button>
-            <button
-              @click="cpkihc_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
         </div>
-      </div>
+    </div>
 
 
 
     <!-- GX MODELS Table Section -->
-      <div
+    <div
         v-if="showGXPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">GX MODELS</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="gx in gxModels"
-                :key="gx.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(gx.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ gx.model_name }}</td>
-                <td class="px-4 py-3">{{ gx.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="gx_startEditing(gx)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">GX MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage standard GX model specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ gxModels?.length || 0 }} Models Recorded
+            </span>
         </div>
 
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="gx_newRecord.model_name"
-              type="text"
-              @input="gx_newRecord.model_name = gx_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="gx_newRecord.encoded_by"
-              type="text"
-              @input="gx_newRecord.encoded_by = gx_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="gx_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="gx in gxModels"
+                        :key="gx.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ gx.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ gx.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(gx.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="gx_confirmDelete(gx)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!gxModels || gxModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No GX models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Edit Record -->
-        <div v-if="gx_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="gx_editingRecord.model_name"
-              type="text"
-              @input="gx_editingRecord.model_name = gx_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="gx_editingRecord.encoded_by"
-              type="text"
-              @input="gx_editingRecord.encoded_by = gx_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
-            <button
-              @click="gx_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
-            >
-              Update
-            </button>
-            <button
-              @click="gx_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
+        <!-- Add New Section (Manual input for Encoded By removed) -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New GX Model</h3>
 
-      <!-- 1x1x1 MODELS (With corner) Table Section -->
-      <div
-        v-if="showTTMWCPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">1x1x1 MODELS (With corner)</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="ttmwc in ttmwcModels"
-                :key="ttmwc.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(ttmwc.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ ttmwc.model_name }}</td>
-                <td class="px-4 py-3">{{ ttmwc.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="ttmwc_startEditing(ttmwc)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="ttmwc_newRecord.model_name"
-              type="text"
-              @input="ttmwc_newRecord.model_name = ttmwc_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="ttmwc_newRecord.encoded_by"
-              type="text"
-              @input="ttmwc_newRecord.encoded_by = ttmwc_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="ttmwc_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-
-        <!-- Edit Record -->
-        <div v-if="ttmwc_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="ttmwc_editingRecord.model_name"
-              type="text"
-              @input="ttmwc_editingRecord.model_name = ttmwc_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="ttmwc_editingRecord.encoded_by"
-              type="text"
-              @input="ttmwc_editingRecord.encoded_by = ttmwc_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
-            <button
-              @click="ttmwc_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
-            >
-              Update
-            </button>
-            <button
-              @click="ttmwc_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 1x1x1 MODELS (No corner) Table Section -->
-      <div
-        v-if="showTTMNCPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">1x1x1 MODELS (No corner)</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="ttmnc in ttmncModels"
-                :key="ttmnc.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(ttmnc.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ ttmnc.model_name }}</td>
-                <td class="px-4 py-3">{{ ttmnc.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="ttmnc_startEditing(ttmnc)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="ttmnc_newRecord.model_name"
-              type="text"
-              @input="ttmnc_newRecord.model_name = ttmnc_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="ttmnc_newRecord.encoded_by"
-              type="text"
-              @input="ttmnc_newRecord.encoded_by = ttmnc_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="ttmnc_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-
-        <!-- Edit Record -->
-        <div v-if="ttmnc_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="ttmnc_editingRecord.model_name"
-              type="text"
-              @input="ttmnc_editingRecord.model_name = ttmnc_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="ttmnc_editingRecord.encoded_by"
-              type="text"
-              @input="ttmnc_editingRecord.encoded_by = ttmnc_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
-            <button
-              @click="ttmnc_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
-            >
-              Update
-            </button>
-            <button
-              @click="ttmnc_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- BH MODELS Table Section -->
-      <div
-        v-if="showBHPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">BH MODELS</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="bh in bhModels"
-                :key="bh.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(bh.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ bh.model_name }}</td>
-                <td class="px-4 py-3">{{ bh.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="bh_startEditing(bh)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="bh_newRecord.model_name"
-              type="text"
-              @input="bh_newRecord.model_name = bh_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="bh_newRecord.encoded_by"
-              type="text"
-              @input="bh_newRecord.encoded_by = bh_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="bh_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-
-        <!-- Edit Record -->
-        <div v-if="bh_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="bh_editingRecord.model_name"
-              type="text"
-              @input="bh_editingRecord.model_name = bh_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="bh_editingRecord.encoded_by"
-              type="text"
-              @input="bh_editingRecord.encoded_by = bh_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
-            <button
-              @click="bh_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
-            >
-              Update
-            </button>
-            <button
-              @click="bh_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-
-        <!-- ROB MODELS Table Section -->
-        <div
-            v-if="showROBPanel"
-            class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-xl shadow-md border border-gray-100"
-        >
-            <!-- Table Header & Counter -->
-            <div class="flex items-center justify-between">
+            <div class="grid grid-cols-1 max-w-md">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900">ROB BH TRACER MODELS</h2>
-                    <p class="text-xs text-gray-500">Standard Specifications & Baseline Rules</p>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="gx_newRecord.model_name"
+                        type="text"
+                        @input="gx_newRecord.model_name = gx_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. GX-MODEL-X"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
                 </div>
-                <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200/60 rounded-full">
-                    {{ robModels?.length || 0 }} Models Recorded
-                </span>
             </div>
 
-            <!-- Table Container -->
-            <div class="overflow-hidden border border-gray-200/80 rounded-xl shadow-sm bg-white">
-                <table class="w-full text-sm text-left border-collapse">
-                    <thead class="text-xs font-semibold text-gray-500 uppercase bg-gray-50/80 border-b border-gray-200">
-                        <tr>
-                            <th scope="col" class="px-6 py-3.5">Model Name</th>
-                            <th scope="col" class="px-6 py-3.5">Date Created</th>
-                            <th scope="col" class="px-6 py-3.5 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <tr
-                            v-for="rob in robModels"
-                            :key="rob.id"
-                            class="transition-colors hover:bg-slate-50/80 group"
-                        >
-                            <!-- Model Name -->
-                            <td class="px-6 py-4 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                {{ rob.model_name }}
-                            </td>
+            <button
+                @click="gx_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+            >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save GX Model
+            </button>
+        </div>
+    </div>
 
-                            <!-- Date Created -->
-                            <td class="px-6 py-4 text-gray-500 text-xs font-medium">
-                                {{ new Date(rob.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
-                            </td>
+    <!-- 1x1x1 MODELS (With corner) Table Section -->
+    <div
+        v-if="showTTMWCPanel"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">1x1x1 MODELS (With corner)</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage 1x1x1 corner model specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ ttmwcModels?.length || 0 }} Models Recorded
+            </span>
+        </div>
 
-                            <!-- Actions -->
-                            <td class="px-6 py-4 text-right space-x-2">
-                                <!-- View Details Button -->
-                                <button
-                                    @click="openDynamicDetailsModal(rob, 'ROB Model')"
-                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
-                                >
-                                    <svg class="w-3.5 h-3.5 mr-1.5 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    View Details
-                                </button>
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="ttmwc in ttmwcModels"
+                        :key="ttmwc.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ ttmwc.model_name }}
+                        </td>
 
-                                <!-- Delete Button -->
-                                <button
-                                    @click="rob_confirmDelete(rob)"
-                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition"
-                                >
-                                    <svg class="w-3.5 h-3.5 mr-1 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ ttmwc.encoded_by }}
+                        </td>
 
-                        <!-- Corrected Empty State Variable -->
-                        <tr v-if="!robModels || robModels.length === 0">
-                            <td colspan="3" class="px-6 py-8 text-center text-gray-400 text-sm">
-                                No ROB models recorded yet.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(ttmwc.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="ttmwc_confirmDelete(ttmwc)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!ttmwcModels || ttmwcModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No 1x1x1 corner models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add New Section -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="ttmwc_newRecord.model_name"
+                        type="text"
+                        @input="ttmwc_newRecord.model_name = ttmwc_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. 1X1X1-WC-MODEL"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
             </div>
 
-            <!-- Add New Model Card Section -->
-            <div class="pt-6 mt-8 border-t border-gray-200">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                    <h2 class="text-xl font-bold text-gray-900">Add New Model</h2>
-                    <p class="text-sm text-gray-500">Configure new model parameters and baseline specification limits.</p>
-                    </div>
-                </div>
+            <button
+                @click="ttmwc_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+            >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save Model
+            </button>
+        </div>
+    </div>
 
-                <div class="space-y-6">
-                    <!-- Section 1: Basic Information -->
-                    <div>
-                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Basic Info</h3>
-                        <div class="grid grid-cols-1">
-                            <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-700">Model Name</label>
+    <!-- 1x1x1 MODELS (No corner) Table Section -->
+    <div
+        v-if="showTTMNCPanel"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">1x1x1 MODELS (No corner)</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage 1x1x1 no-corner model specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ ttmncModels?.length || 0 }} Models Recorded
+            </span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="ttmnc in ttmncModels"
+                        :key="ttmnc.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ ttmnc.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ ttmnc.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(ttmnc.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="ttmnc_confirmDelete(ttmnc)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!ttmncModels || ttmncModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No 1x1x1 no-corner models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add New Section -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="ttmnc_newRecord.model_name"
+                        type="text"
+                        @input="ttmnc_newRecord.model_name = ttmnc_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. 1X1X1-NC-MODEL"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
+            </div>
+
+            <button
+                @click="ttmnc_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+            >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save Model
+            </button>
+        </div>
+    </div>
+
+    <!-- BH MODELS Table Section -->
+    <div
+        v-if="showBHPanel"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">BH MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage standard BH model specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ bhModels?.length || 0 }} Models Recorded
+            </span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="bh in bhModels"
+                        :key="bh.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ bh.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ bh.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(bh.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="bh_confirmDelete(bh)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!bhModels || bhModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No BH models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add New Section -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="bh_newRecord.model_name"
+                        type="text"
+                        @input="bh_newRecord.model_name = bh_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. BH-MODEL-X"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
+            </div>
+
+            <button
+                @click="bh_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+            >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save Model
+            </button>
+        </div>
+    </div>
+
+    <!-- CPK BR MODELS Table Section -->
+    <div
+        v-if="showCPKBRPanel"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">CPK BR MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage standard CPK BR model specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ cpkbrModels?.length || 0 }} Models Recorded
+            </span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="cpkbr in cpkbrModels"
+                        :key="cpkbr.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ cpkbr.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ cpkbr.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(cpkbr.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="cpkbr_confirmDelete(cpkbr)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!cpkbrModels || cpkbrModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No CPK BR models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add New Section -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="cpkbr_newRecord.model_name"
+                        type="text"
+                        @input="cpkbr_newRecord.model_name = cpkbr_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. CPKBR-MODEL-X"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
+            </div>
+
+            <button
+                @click="cpkbr_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+            >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save Model
+            </button>
+        </div>
+    </div>
+
+    <!-- HIS MODELS Table Section -->
+    <div
+        v-if="showHISPanel"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Header & Counter Badge -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">HIS GS MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Manage standard HIS GS model specifications & records</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ hisModels?.length || 0 }} Models Recorded
+            </span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Encoded By</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="his in hisModels"
+                        :key="his.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ his.model_name }}
+                        </td>
+
+                        <!-- Encoded By -->
+                        <td class="px-6 py-4 text-gray-700 font-medium text-xs">
+                            {{ his.encoded_by }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(his.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            <button
+                                @click="his_confirmDelete(his)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!hisModels || hisModels.length === 0">
+                        <td colspan="4" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No HIS GS models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add New Section -->
+        <div class="pt-6 border-t border-cyan-50 space-y-4">
+            <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+
+            <div class="grid grid-cols-1 max-w-md">
+                <div>
+                    <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                    <input
+                        v-model="his_newRecord.model_name"
+                        type="text"
+                        @input="his_newRecord.model_name = his_newRecord.model_name.toUpperCase()"
+                        placeholder="e.g. HIS-MODEL-X"
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    />
+                </div>
+            </div>
+
+            <button
+                @click="his_addRecord"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+            >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Save Model
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ROB MODELS Table Section -->
+    <div
+        v-if="showROBPanel"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
+    >
+        <!-- Table Header & Counter -->
+        <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-gray-900">ROB BH TRACER MODELS</h2>
+                <p class="text-xs font-medium text-cyan-700/80 mt-0.5">Standard Specifications & Baseline Rules</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
+                {{ robModels?.length || 0 }} Models Recorded
+            </span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Model Name</th>
+                        <th scope="col" class="px-6 py-4">Date Created</th>
+                        <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <tr
+                        v-for="rob in robModels"
+                        :key="rob.id"
+                        class="transition-colors hover:bg-cyan-50/40 group"
+                    >
+                        <!-- Model Name -->
+                        <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
+                            {{ rob.model_name }}
+                        </td>
+
+                        <!-- Date Created -->
+                        <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
+                            {{ new Date(rob.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <!-- View Details Button -->
+                            <button
+                                @click="openDynamicDetailsModal(rob, 'ROB Model')"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg shadow-sm hover:bg-cyan-100 hover:text-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1.5 text-cyan-500 group-hover:text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                View Details
+                            </button>
+
+                            <!-- Delete Button -->
+                            <button
+                                @click="rob_confirmDelete(rob)"
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr v-if="!robModels || robModels.length === 0">
+                        <td colspan="3" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
+                            No ROB models recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add New Model Card Section -->
+        <div class="pt-6 mt-8 border-t border-cyan-50">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+                    <p class="text-xs text-cyan-700/80 mt-0.5">Configure new model parameters and baseline specification limits.</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Section 1: Basic Information -->
+                <div>
+                    <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-cyan-900/60">Basic Info</h4>
+                    <div class="grid grid-cols-1 max-w-md">
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
                             <input
                                 v-model="rob_newRecord.model_name"
                                 type="text"
                                 @input="rob_newRecord.model_name = rob_newRecord.model_name.toUpperCase()"
                                 placeholder="e.g. TIC0755G"
-                                class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg shadow-sm bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
                             />
-                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Section 2: Specifications -->
-                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200/80">
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Specifications Baseline</h3>
+                <!-- Section 2: Specifications -->
+                <div class="p-5 rounded-2xl bg-cyan-50/40 border border-cyan-100">
+                    <h4 class="mb-3 text-xs font-semibold uppercase tracking-wider text-cyan-900/70">Specifications Baseline</h4>
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-600">Br RT Max</label>
-                        <input
-                            v-model.number="rob_newRecord.br_rt_standardmax"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        />
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Br RT Max</label>
+                            <input
+                                v-model.number="rob_newRecord.br_rt_standardmax"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
                         </div>
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-600">Br RT Min</label>
-                        <input
-                            v-model.number="rob_newRecord.br_rt_standardmin"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        />
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Br RT Min</label>
+                            <input
+                                v-model.number="rob_newRecord.br_rt_standardmin"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
                         </div>
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-600">Br VT Standard</label>
-                        <input
-                            v-model.number="rob_newRecord.br_vt_standard"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        />
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Br VT Standard</label>
+                            <input
+                                v-model.number="rob_newRecord.br_vt_standard"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
                         </div>
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-600">HD5 Standard</label>
-                        <input
-                            v-model.number="rob_newRecord.hd5_standard"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        />
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">HD5 Standard</label>
+                            <input
+                                v-model.number="rob_newRecord.hd5_standard"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
                         </div>
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-600">JD5 Standard</label>
-                        <input
-                            v-model.number="rob_newRecord.jd5_standard"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        />
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">JD5 Standard</label>
+                            <input
+                                v-model.number="rob_newRecord.jd5_standard"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
                         </div>
                     </div>
-                    </div>
+                </div>
 
-                    <!-- Actions -->
-                    <div class="flex justify-end">
+                <!-- Actions -->
+                <div class="flex justify-end pt-2">
                     <button
                         @click="rob_addRecord"
-                        class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition duration-150"
+                        class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
                     >
                         <svg class="w-4 h-4 mr-2 -ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         Save Model Record
                     </button>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <!-- ROB MODELS ALL JUDGEMENTS Table Section -->
     <div
         v-if="showROBAJPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
+        class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-8 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60"
     >
         <!-- Table Section -->
         <div class="space-y-4">
             <!-- Header with total count badge -->
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between pb-4 border-b border-cyan-50">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900">ROB BH TRACER MODELS</h2>
-                    <p class="text-xs text-gray-500">All Judgements Specifications & Baseline Rules</p>
+                    <h2 class="text-xl font-extrabold tracking-tight text-gray-900">ROB BH TRACER MODELS</h2>
+                    <p class="text-xs font-medium text-cyan-700/80 mt-0.5">All Judgements Specifications & Baseline Rules</p>
                 </div>
-                <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200/60 rounded-full">
+                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200/60 rounded-full shadow-sm">
                     {{ robAjModels?.length || 0 }} Models Recorded
                 </span>
             </div>
 
             <!-- Table Container -->
-            <div class="overflow-hidden border border-gray-200/80 rounded-xl shadow-sm bg-white">
+            <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
                 <table class="w-full text-sm text-left border-collapse">
-                    <thead class="text-xs font-semibold text-gray-500 uppercase bg-gray-50/80 border-b border-gray-200">
+                    <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
                         <tr>
-                            <th scope="col" class="px-6 py-3.5">Model Name</th>
-                            <th scope="col" class="px-6 py-3.5">Date Created</th>
-                            <th scope="col" class="px-6 py-3.5 text-right">Actions</th>
+                            <th scope="col" class="px-6 py-4">Model Name</th>
+                            <th scope="col" class="px-6 py-4">Date Created</th>
+                            <th scope="col" class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-cyan-50">
                         <tr
                             v-for="rob in robAjModels"
                             :key="rob.id"
-                            class="transition-colors hover:bg-slate-50/80 group"
+                            class="transition-colors hover:bg-cyan-50/40 group"
                         >
                             <!-- Model Name -->
-                            <td class="px-6 py-4 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-cyan-800 transition-colors">
                                 {{ rob.model_name }}
                             </td>
 
                             <!-- Date Created -->
-                            <td class="px-6 py-4 text-gray-500 text-xs font-medium">
+                            <td class="px-6 py-4 text-gray-500 text-xs font-semibold">
                                 {{ new Date(rob.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
                             </td>
 
@@ -917,9 +1131,9 @@
                                 <!-- View Details Button -->
                                 <button
                                     @click="openDynamicDetailsModal(rob, 'ROB AJ Model')"
-                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg shadow-sm hover:bg-cyan-100 hover:text-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition"
                                 >
-                                    <svg class="w-3.5 h-3.5 mr-1.5 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 mr-1.5 text-cyan-500 group-hover:text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
@@ -929,9 +1143,9 @@
                                 <!-- Delete Button -->
                                 <button
                                     @click="robaj_confirmDelete(rob)"
-                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition shadow-sm"
                                 >
-                                    <svg class="w-3.5 h-3.5 mr-1 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
                                     Delete
@@ -941,7 +1155,7 @@
 
                         <!-- Empty State -->
                         <tr v-if="!robAjModels || robAjModels.length === 0">
-                            <td colspan="3" class="px-6 py-8 text-center text-gray-400 text-sm">
+                            <td colspan="3" class="px-6 py-10 text-center text-cyan-900/40 text-sm font-medium">
                                 No ROB models recorded yet.
                             </td>
                         </tr>
@@ -951,362 +1165,105 @@
         </div>
 
         <!-- Add New Model Card Section -->
-        <div class="pt-6 mt-8 border-t border-gray-200">
+        <div class="pt-6 mt-8 border-t border-cyan-50">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                <h2 class="text-xl font-bold text-gray-900">Add New Model</h2>
-                <p class="text-sm text-gray-500">Configure new model parameters and baseline specification limits.</p>
+                    <h3 class="text-sm font-bold tracking-wider uppercase text-cyan-900">Add New Model</h3>
+                    <p class="text-xs text-cyan-700/80 mt-0.5">Configure new model parameters and baseline specification limits.</p>
                 </div>
             </div>
 
             <div class="space-y-6">
                 <!-- Section 1: Basic Information -->
                 <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Basic Info</h3>
-                    <div class="grid grid-cols-1">
+                    <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-cyan-900/60">Basic Info</h4>
+                    <div class="grid grid-cols-1 max-w-md">
                         <div>
-                        <label class="block mb-1 text-xs font-medium text-gray-700">Model Name</label>
-                        <input
-                            v-model="robaj_newRecord.model_name"
-                            type="text"
-                            @input="robaj_newRecord.model_name = robaj_newRecord.model_name.toUpperCase()"
-                            placeholder="e.g. TIC0755G"
-                            class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg shadow-sm bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        />
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
+                            <input
+                                v-model="robaj_newRecord.model_name"
+                                type="text"
+                                @input="robaj_newRecord.model_name = robaj_newRecord.model_name.toUpperCase()"
+                                placeholder="e.g. TIC0755G"
+                                class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                            />
                         </div>
                     </div>
                 </div>
 
                 <!-- Section 2: Specifications -->
-                <div class="p-4 rounded-xl bg-gray-50 border border-gray-200/80">
-                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Specifications Baseline</h3>
-                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                    <div>
-                    <label class="block mb-1 text-xs font-medium text-gray-600">Br RT Max</label>
-                    <input
-                        v-model.number="robaj_newRecord.br_rt_standardmax"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
+                <div class="p-5 rounded-2xl bg-cyan-50/40 border border-cyan-100">
+                    <h4 class="mb-3 text-xs font-semibold uppercase tracking-wider text-cyan-900/70">Specifications Baseline</h4>
+                    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Br RT Max</label>
+                            <input
+                                v-model.number="robaj_newRecord.br_rt_standardmax"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Br RT Min</label>
+                            <input
+                                v-model.number="robaj_newRecord.br_rt_standardmin"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Br VT Standard</label>
+                            <input
+                                v-model.number="robaj_newRecord.br_vt_standard"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">HD5 Standard</label>
+                            <input
+                                v-model.number="robaj_newRecord.hd5_standard"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">JD5 Standard</label>
+                            <input
+                                v-model.number="robaj_newRecord.jd5_standard"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-xl shadow-sm text-gray-900 placeholder-cyan-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition"
+                            />
+                        </div>
                     </div>
-                    <div>
-                    <label class="block mb-1 text-xs font-medium text-gray-600">Br RT Min</label>
-                    <input
-                        v-model.number="robaj_newRecord.br_rt_standardmin"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
-                    </div>
-                    <div>
-                    <label class="block mb-1 text-xs font-medium text-gray-600">Br VT Standard</label>
-                    <input
-                        v-model.number="robaj_newRecord.br_vt_standard"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
-                    </div>
-                    <div>
-                    <label class="block mb-1 text-xs font-medium text-gray-600">HD5 Standard</label>
-                    <input
-                        v-model.number="robaj_newRecord.hd5_standard"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
-                    </div>
-                    <div>
-                    <label class="block mb-1 text-xs font-medium text-gray-600">JD5 Standard</label>
-                    <input
-                        v-model.number="robaj_newRecord.jd5_standard"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
-                    </div>
-                </div>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex justify-end">
-                <button
-                    @click="robaj_addRecord"
-                    class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition duration-150"
-                >
-                    <svg class="w-4 h-4 mr-2 -ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Save Model Record
-                </button>
+                <div class="flex justify-end pt-2">
+                    <button
+                        @click="robaj_addRecord"
+                        class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl hover:from-cyan-700 hover:to-teal-700 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition shadow-md shadow-cyan-600/20"
+                    >
+                        <svg class="w-4 h-4 mr-2 -ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Save Model Record
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-      <!-- CPK BR MODELS Table Section -->
-      <div
-        v-if="showCPKBRPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">CPK BR MODELS</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="cpkbr in cpkbrModels"
-                :key="cpkbr.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(cpkbr.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ cpkbr.model_name }}</td>
-                <td class="px-4 py-3">{{ cpkbr.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="cpkbr_startEditing(cpkbr)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="cpkbr_newRecord.model_name"
-              type="text"
-              @input="cpkbr_newRecord.model_name = cpkbr_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="cpkbr_newRecord.encoded_by"
-              type="text"
-              @input="cpkbr_newRecord.encoded_by = cpkbr_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="cpkbr_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-
-        <!-- Edit Record -->
-        <div v-if="cpkbr_editingRecord" class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="cpkbr_editingRecord.model_name"
-              type="text"
-              @input="cpkbr_editingRecord.model_name = cpkbr_editingRecord.model_name.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-              v-model="cpkbr_editingRecord.encoded_by"
-              type="text"
-              @input="cpkbr_editingRecord.encoded_by = cpkbr_editingRecord.encoded_by.toUpperCase()"
-              class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-          </div>
-          <div class="space-x-3">
-            <button
-              @click="cpkbr_updateRecord"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
-            >
-              Update
-            </button>
-            <button
-              @click="cpkbr_editingRecord = null"
-              class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- HIS MODELS Table Section -->
-      <div
-        v-if="showHISPanel"
-        class="w-full max-w-5xl p-6 mx-auto mt-10 space-y-8 bg-white rounded-lg shadow-md"
-      >
-        <!-- Table -->
-        <div>
-          <h2 class="mb-4 text-2xl font-semibold text-gray-800">HIS GS MODELS</h2>
-          <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-md table-auto">
-            <thead class="text-xs tracking-wider text-gray-700 uppercase bg-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left border-b">Date</th>
-                <th class="px-4 py-3 text-left border-b">Model Name</th>
-                <th class="px-4 py-3 text-left border-b">Encoded By</th>
-                <th class="px-4 py-3 text-left border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="his in hisModels"
-                :key="his.id"
-                class="transition border-b hover:bg-gray-50 last:border-b-0"
-              >
-                <td class="px-4 py-3">{{ new Date(his.created_at).toISOString().slice(0, 10) }}</td>
-                <td class="px-4 py-3">{{ his.model_name }}</td>
-                <td class="px-4 py-3">{{ his.encoded_by }}</td>
-                <td class="px-4 py-3">
-                  <button
-                    @click="his_startEditing(his)"
-                    class="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Edit Model
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Add New -->
-        <div class="pt-6 border-t">
-          <h2 class="mb-2 text-lg font-semibold text-gray-800">Add New Model</h2>
-          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-              v-model="his_newRecord.model_name"
-              type="text"
-              @input="his_newRecord.model_name = his_newRecord.model_name.toUpperCase()"
-              placeholder="Model Name"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-            <input
-              v-model="his_newRecord.encoded_by"
-              type="text"
-              @input="his_newRecord.encoded_by = his_newRecord.encoded_by.toUpperCase()"
-              placeholder="Encoded By"
-              class="px-3 py-2 border rounded focus:ring focus:ring-blue-200"
-            />
-          </div>
-          <button
-            @click="his_addRecord"
-            class="px-5 py-2 text-sm font-medium text-white transition bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-
-        <!-- Edit Record -->
-        <div v-if="his_editingRecord" class="pt-6 border-t">
-            <h2 class="mb-2 text-lg font-semibold text-gray-800">Edit Employee details</h2>
-            <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
-            <input
-                v-model="his_editingRecord.model_name"
-                type="text"
-                @input="his_editingRecord.model_name = his_editingRecord.model_name.toUpperCase()"
-                class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            <input
-                v-model="his_editingRecord.encoded_by"
-                type="text"
-                @input="his_editingRecord.encoded_by = his_editingRecord.encoded_by.toUpperCase()"
-                class="px-3 py-2 border rounded focus:ring focus:ring-green-200"
-            />
-            </div>
-            <div class="space-x-3">
-                <button
-                    @click="his_updateRecord"
-                    class="px-5 py-2 text-sm font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
-                >
-                    Update
-                </button>
-                <button
-                    @click="his_editingRecord = null"
-                    class="px-5 py-2 text-sm font-medium text-white transition bg-gray-400 rounded hover:bg-gray-500"
-                >
-                    Cancel
-                </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Delete Confirmation Modal -->
-        <div
-            v-if="showRobAjDeleteModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-        >
-            <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
-                <h3 class="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
-
-                <p class="mt-2 text-sm text-gray-600">
-                    Are you sure you want to delete <strong class="text-gray-800">{{ recordToDelete?.model_name }}</strong>? This action cannot be undone.
-                </p>
-
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button
-                        @click="showRobAjDeleteModal = false; recordToDelete = null;"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        @click="robaj_executeDelete"
-                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition"
-                    >
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Delete Confirmation Modal -->
-        <div
-            v-if="showRobDeleteModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-        >
-            <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
-                <h3 class="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
-
-                <p class="mt-2 text-sm text-gray-600">
-                    Are you sure you want to delete <strong class="text-gray-800">{{ recordToDelete?.model_name }}</strong>? This action cannot be undone.
-                </p>
-
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button
-                        @click="showRobDeleteModal = false; recordToDelete = null;"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        @click="rob_executeDelete"
-                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition"
-                    >
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <div
             v-if="showAddValidationModal"
@@ -1477,6 +1434,36 @@
             </div>
         </div>
 
+        <!-- Unified Delete Confirmation Modal -->
+        <div
+            v-if="showDeleteModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        >
+            <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
+                <h3 class="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
+
+                <p class="mt-2 text-sm text-gray-600">
+                    Are you sure you want to delete <strong class="text-gray-800">{{ recordToDelete?.model_name }}</strong>? This action cannot be undone.
+                </p>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        @click="showDeleteModal = false; recordToDelete = null; deleteType = ''"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="executeDelete"
+                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
   </Frontend>
@@ -1633,22 +1620,19 @@ const robaj_newRecord = ref({ model_name: '', encoded_by: '', br_rt_standardmax:
 const cpkbr_newRecord = ref({ model_name: '', encoded_by: ''});
 const his_newRecord = ref({ model_name: '', encoded_by: '' });
 
-const vt_editingRecord = ref(null);
-const cpkihc_editingRecord = ref(null);
-const gx_editingRecord = ref(null);
 const ttmwc_editingRecord = ref(null);
 const ttmnc_editingRecord = ref(null);
 const bh_editingRecord = ref(null);
 const cpkbr_editingRecord = ref(null);
 const his_editingRecord = ref(null);
 
-const showRobDeleteModal = ref(false);
-const showRobAjDeleteModal = ref(false);
+const showDeleteModal = ref(false);
 const showAddConfirmModal = ref(false);
 const showAddValidationModal = ref(false);
 const showDetailsModal = ref(false);
 const selectedModelDetails = ref(null);
 const recordToDelete = ref(null);
+const deleteType = ref('');
 
 
 const activeModalType = ref(''); // Stores title e.g. 'ROB Model' or 'ROB AJ Model'
@@ -1677,142 +1661,206 @@ const backButton = () => {
     showHISPanel.value = false;
 }
 
-const vt_startEditing = (record) => {
-  vt_editingRecord.value = { ...record };
+const vt_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'vt';
+    showDeleteModal.value = true;
 };
 
-const cpkihc_startEditing = (record) => {
-  cpkihc_editingRecord.value = { ...record };
+const cpkihc_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'cpkihc';
+    showDeleteModal.value = true;
+}
+
+const gx_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'gx';
+    showDeleteModal.value = true;
 };
 
-const gx_startEditing = (record) => {
-  gx_editingRecord.value = { ...record };
+
+const ttmwc_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'ttmwc';
+    showDeleteModal.value = true;
 };
 
-const ttmwc_startEditing = (record) => {
-  ttmwc_editingRecord.value = { ...record };
+const ttmnc_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'ttmnc';
+    showDeleteModal.value = true;
 };
 
-const ttmnc_startEditing = (record) => {
-  ttmnc_editingRecord.value = { ...record };
+const bh_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'bh';
+    showDeleteModal.value = true;
 };
 
-const bh_startEditing = (record) => {
-  bh_editingRecord.value = { ...record };
-};
+const cpkbr_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'cpkbr';
+    showDeleteModal.value = true;
+}
 
-// Opens the modal and stores the selected record
+const his_confirmDelete = (record) => {
+    recordToDelete.value = record;
+    deleteType.value = 'his';
+    showDeleteModal.value = true;
+}
+
 const rob_confirmDelete = (record) => {
     recordToDelete.value = record;
-    showRobDeleteModal.value = true;
+    deleteType.value = 'rob';
+    showDeleteModal.value = true;
 };
 
-// Opens the modal and stores the selected record
+// Opens the modal for ROB AJ delete
 const robaj_confirmDelete = (record) => {
     recordToDelete.value = record;
-    showRobAjDeleteModal.value = true;
+    deleteType.value = 'robaj';
+    showDeleteModal.value = true;
 };
 
-// Handles the actual API deletion call
-const rob_executeDelete = async () => {
+// Handles the actual API deletion call dynamically based on deleteType
+const executeDelete = async () => {
     if (!recordToDelete.value) return;
 
     try {
-        await axios.delete(`/api/rob-models/${recordToDelete.value.id}`);
-        await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of ROB Models`);
+        if (deleteType.value === 'rob') {
+            await axios.delete(`/api/rob-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of ROB Models`);
+        } else if (deleteType.value === 'robaj') {
+            await axios.delete(`/api/rob-model-ajs/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of ROB AJ Models`);
+        } else if (deleteType.value === 'vt') {
+            await axios.delete(`/api/vt-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of VT Models`);
+        } else if (deleteType.value === 'gx') {
+            await axios.delete(`/api/gx-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of GX Models`);
+        } else if (deleteType.value === 'ttmwc') {
+            await axios.delete(`/api/ttmwc-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of TTMWC Models`);
+        } else if (deleteType.value === 'ttmnc') {
+            await axios.delete(`/api/ttmnc-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of TTMNC Models`);
+        } else if (deleteType.value === 'bh') {
+            await axios.delete(`/api/bh-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of BH Models`);
+        } else if (deleteType.value === 'cpkbr') {
+            await axios.delete(`/api/cpk-br-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of CPK BR Models`);
+        } else if (deleteType.value === 'his') {
+            await axios.delete(`/api/his-models/${recordToDelete.value.id}`);
+            await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of HIS Models`);
+        }
+
         await loadData();
     } catch (error) {
         console.error("Failed to delete record:", error);
     } finally {
         // Reset state & close modal
-        showRobDeleteModal.value = false;
+        showDeleteModal.value = false;
         recordToDelete.value = null;
+        deleteType.value = '';
     }
 };
-
-// Handles the actual API deletion call
-const robaj_executeDelete = async () => {
-    if (!recordToDelete.value) return;
-
-    try {
-        await axios.delete(`/api/rob-model-ajs/${recordToDelete.value.id}`);
-        await userInstructionsLogging(`has successfully deleted ${recordToDelete.value.model_name} from the data list instructions of ROB AJ Models`);
-        await loadData();
-    } catch (error) {
-        console.error("Failed to delete record:", error);
-    } finally {
-        // Reset state & close modal
-        showRobAjDeleteModal.value = false;
-        recordToDelete.value = null;
-    }
-};
-
-const cpkbr_startEditing = (record) => {
-    cpkbr_editingRecord.value = { ...record };
-}
-
-const his_startEditing = (record) => {
-    his_editingRecord.value = { ...record };
-}
 
 // Add record
 const vt_addRecord = async () => {
-  if (!vt_newRecord.value.model_name || !vt_newRecord.value.encoded_by) return;
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    vt_newRecord.value.encoded_by = userName.toUpperCase();
 
-  await axios.post('/api/vt-models', vt_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${vt_newRecord.value.model_name} to the data list instructions of VT Models`);
-  await loadData();
-  vt_newRecord.value = { model_name: '', encoded_by: ''};
+    if (!vt_newRecord.value.model_name || !vt_newRecord.value.encoded_by) return;
+
+    await axios.post('/api/vt-models', vt_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${vt_newRecord.value.model_name} to the data list instructions of VT Models`);
+    await loadData();
+    vt_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
 const cpkihc_addRecord = async () => {
-  if (!cpkihc_newRecord.value.model_name || !cpkihc_newRecord.value.encoded_by) return;
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    cpkihc_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!cpkihc_newRecord.value.model_name || !cpkihc_newRecord.value.encoded_by) return;
 
-  await axios.post('/api/cpk-ihc-models', cpkihc_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${cpkihc_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
-  await loadData();
-  cpkihc_newRecord.value = { model_name: '', encoded_by: ''};
+    await axios.post('/api/cpk-ihc-models', cpkihc_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${cpkihc_newRecord.value.model_name} to the data list instructions of CPK IHC Models`);
+    await loadData();
+    cpkihc_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
 const gx_addRecord = async () => {
-  if (!gx_newRecord.value.model_name || !gx_newRecord.value.encoded_by) return;
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    gx_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!gx_newRecord.value.model_name || !gx_newRecord.value.encoded_by) return;
 
-  await axios.post('/api/gx-models', gx_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${gx_newRecord.value.model_name} to the data list instructions of GX Models`);
-  await loadData();
-  gx_newRecord.value = { model_name: '', encoded_by: ''};
+    await axios.post('/api/gx-models', gx_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${gx_newRecord.value.model_name} to the data list instructions of GX Models`);
+    await loadData();
+    gx_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
 const ttmwc_addRecord = async () => {
-  if (!ttmwc_newRecord.value.model_name || !ttmwc_newRecord.value.encoded_by) return;
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    ttmwc_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!ttmwc_newRecord.value.model_name || !ttmwc_newRecord.value.encoded_by) return;
 
-  await axios.post('/api/ttmwc-models', ttmwc_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${ttmwc_newRecord.value.model_name} to the data list instructions of 1x1x1 with corner Models`);
-  await loadData();
-  ttmwc_newRecord.value = { model_name: '', encoded_by: ''};
+    await axios.post('/api/ttmwc-models', ttmwc_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${ttmwc_newRecord.value.model_name} to the data list instructions of 1x1x1 with corner Models`);
+    await loadData();
+    ttmwc_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
 const ttmnc_addRecord = async () => {
-  if (!ttmnc_newRecord.value.model_name || !ttmnc_newRecord.value.encoded_by) return;
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    ttmnc_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!ttmnc_newRecord.value.model_name || !ttmnc_newRecord.value.encoded_by) return;
 
-  await axios.post('/api/ttmnc-models', ttmnc_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${ttmnc_newRecord.value.model_name} to the data list instructions of 1x1x1 without corner Models`);
-  await loadData();
-  ttmnc_newRecord.value = { model_name: '', encoded_by: ''};
+    await axios.post('/api/ttmnc-models', ttmnc_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${ttmnc_newRecord.value.model_name} to the data list instructions of 1x1x1 without corner Models`);
+    await loadData();
+    ttmnc_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
 const bh_addRecord = async () => {
-  if (!bh_newRecord.value.model_name || !bh_newRecord.value.encoded_by) return;
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    bh_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!bh_newRecord.value.model_name || !bh_newRecord.value.encoded_by) return;
 
-  await axios.post('/api/bh-models', bh_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${bh_newRecord.value.model_name} to the data list instructions of BH Models`);
-  await loadData();
-  bh_newRecord.value = { model_name: '', encoded_by: ''};
+    await axios.post('/api/bh-models', bh_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${bh_newRecord.value.model_name} to the data list instructions of BH Models`);
+    await loadData();
+    bh_newRecord.value = { model_name: '', encoded_by: ''};
+};
+
+const cpkbr_addRecord = async () => {
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    cpkbr_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!cpkbr_newRecord.value.model_name || !cpkbr_newRecord.value.encoded_by) return;
+
+    await axios.post('/api/cpk-br-models', cpkbr_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${cpkbr_newRecord.value.model_name} to the data list instructions of CPK BR Models`);
+    await loadData();
+    cpkbr_newRecord.value = { model_name: '', encoded_by: ''};
+};
+
+const his_addRecord = async () => {
+    const userName = `${state.user?.firstName || ''} ${state.user?.surname || ''}`.trim();
+    his_newRecord.value.encoded_by = userName.toUpperCase();
+    if (!his_newRecord.value.model_name || !his_newRecord.value.encoded_by) return;
+
+    await axios.post('/api/his-models', his_newRecord.value);
+    await userInstructionsLogging(`has successfully added ${his_newRecord.value.model_name} to the data list instructions of HIS Models`);
+    await loadData();
+    his_newRecord.value = { model_name: '', encoded_by: ''};
 };
 
 // Add record
@@ -1907,85 +1955,6 @@ const robaj_executeAdd = async () => {
     } finally {
         showAddConfirmModal.value = false;
     }
-};
-
-const cpkbr_addRecord = async () => {
-  if (!cpkbr_newRecord.value.model_name || !cpkbr_newRecord.value.encoded_by) return;
-
-  await axios.post('/api/cpk-br-models', cpkbr_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${cpkbr_newRecord.value.model_name} to the data list instructions of CPK BR Models`);
-  await loadData();
-  cpkbr_newRecord.value = { model_name: '', encoded_by: ''};
-};
-
-const his_addRecord = async () => {
-  if (!his_newRecord.value.model_name || !his_newRecord.value.encoded_by) return;
-
-  await axios.post('/api/his-models', his_newRecord.value);
-  await userInstructionsLogging(`has successfully added ${his_newRecord.value.model_name} to the data list instructions of HIS Models`);
-  await loadData();
-  his_newRecord.value = { model_name: '', encoded_by: ''};
-};
-
-
-// Update record
-const vt_updateRecord = async () => {
-  await axios.put(`/api/vt-models/${vt_editingRecord.value.id}`, vt_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${vt_editingRecord.value.model_name} to the data list instructions of VT Models`);
-  vt_editingRecord.value = null;
-  await loadData();
-};
-
-const cpkihc_updateRecord = async () => {
-  await axios.put(`/api/cpk-ihc-models/${cpkihc_editingRecord.value.id}`, cpkihc_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${cpkihc_editingRecord.value.model_name} to the data list instructions of CPK IHC Models`);
-  cpkihc_editingRecord.value = null;
-  await loadData();
-};
-
-const gx_updateRecord = async () => {
-  await axios.put(`/api/gx-models/${gx_editingRecord.value.id}`, gx_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${gx_editingRecord.value.model_name} to the data list instructions of GX Models`);
-  gx_editingRecord.value = null;
-  await loadData();
-};
-
-// Update record
-const ttmwc_updateRecord = async () => {
-  await axios.put(`/api/ttmwc-models/${ttmwc_editingRecord.value.id}`, ttmwc_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${ttmwc_editingRecord.value.model_name} to the data list instructions of 1x1x1 with corner Models`);
-  ttmwc_editingRecord.value = null;
-  await loadData();
-};
-
-// Update record
-const ttmnc_updateRecord = async () => {
-  await axios.put(`/api/ttmnc-models/${ttmnc_editingRecord.value.id}`, ttmnc_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${ttmnc_editingRecord.value.model_name} to the data list instructions of 1x1x1 without corner Models`);
-  ttmnc_editingRecord.value = null;
-  await loadData();
-};
-
-// Update record
-const bh_updateRecord = async () => {
-  await axios.put(`/api/bh-models/${bh_editingRecord.value.id}`, bh_editingRecord.value);
-  await userInstructionsLogging(`has successfully edited ${bh_editingRecord.value.model_name} to the data list instructions of BH Models`);
-  bh_editingRecord.value = null;
-  await loadData();
-};
-
-const cpkbr_updateRecord = async () => {
-    await axios.put(`/api/cpk-br-models/${cpkbr_editingRecord.value.id}`, cpkbr_editingRecord.value);
-    await userInstructionsLogging(`has successfully edited ${cpkbr_editingRecord.value.model_name} to the data list instructions of CPK BR Models`);
-    cpkbr_editingRecord.value = null;
-    await loadData();
-};
-
-const his_updateRecord = async () => {
-    await axios.put(`/api/his-models/${his_editingRecord.value.id}`, his_editingRecord.value);
-    await userInstructionsLogging(`has successfully edited ${his_editingRecord.value.model_name} to the data list instructions of HIS Models`);
-    his_editingRecord.value = null;
-    await loadData();
 };
 
 const loadData = async () => {
