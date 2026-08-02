@@ -29,10 +29,12 @@
                         <span
                             :class="[
                                 'px-1.5 py-0.5 text-[9px] font-black uppercase rounded border shrink-0',
-                                isAdded(log.event) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'
+                                getActionType(log.event) === 'added' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                getActionType(log.event) === 'deleted' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                                'bg-amber-50 text-amber-700 border-amber-200'
                             ]"
                         >
-                            {{ isAdded(log.event) ? 'Add' : 'Del' }}
+                            {{ getActionType(log.event) === 'added' ? 'Add' : getActionType(log.event) === 'deleted' ? 'Del' : 'Edit' }}
                         </span>
 
                         <!-- User & Trimmed Event Single Line Truncated -->
@@ -101,8 +103,13 @@
                             <td class="px-6 py-4 text-gray-500 font-semibold whitespace-nowrap">{{ formatDateTime(log.created_at) }}</td>
                             <td class="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">{{ log.user }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="['inline-flex items-center px-2.5 py-1 text-[10px] font-extrabold uppercase rounded-full border shadow-sm', isAdded(log.event) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200']">
-                                    {{ isAdded(log.event) ? '➕ Added' : '🗑️ Deleted' }}
+                                <span :class="[
+                                    'inline-flex items-center px-2.5 py-1 text-[10px] font-extrabold uppercase rounded-full border shadow-sm',
+                                    getActionType(log.event) === 'added' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                    getActionType(log.event) === 'deleted' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                                    'bg-amber-50 text-amber-700 border-amber-200'
+                                ]">
+                                    {{ getActionType(log.event) === 'added' ? '➕ Added' : getActionType(log.event) === 'deleted' ? '🗑️ Deleted' : '✏️ Edited' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-700 font-medium">{{ log.event }}</td>
@@ -1841,9 +1848,14 @@ const paginatedLogs = computed(() => {
     return Array.isArray(systemLogs.value) ? systemLogs.value : [];
 });
 
-const isAdded = (eventText) => {
-    return eventText && eventText.toLowerCase().includes('added');
-}
+// Determine the action type based on keywords in the event string
+const getActionType = (eventText) => {
+    if (!eventText) return 'edited';
+    const lower = eventText.toLowerCase();
+    if (lower.includes('added')) return 'added';
+    if (lower.includes('deleted')) return 'deleted';
+    return 'edited'; // Fallback for historical edits
+};
 
 const formatDateTime = (timestamp) => {
     if (!timestamp) return '-';
