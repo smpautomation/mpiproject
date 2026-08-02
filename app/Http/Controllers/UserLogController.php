@@ -72,4 +72,37 @@ class UserLogController extends Controller
         $userLog->delete();
         return response()->noContent();
     }
+
+    /**
+     * Display a listing of instruction logs filtered by section = Instructions with pagination.
+     */
+    public function instructions(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = UserLog::where('section', 'Instructions');
+
+        // Apply search filter on database level
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('user', 'like', "%{$search}%")
+                ->orWhere('event', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply date range filter on database level
+        if ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
+        $logs = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return response()->json($logs);
+    }
 }

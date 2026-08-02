@@ -2,6 +2,143 @@
   <Frontend>
     <div class="flex flex-col items-center justify-start min-h-screen px-8 py-12 mx-auto space-y-6 bg-gray-100">
 
+        <!-- MINIATURE LOGS PANEL (Compact & Streamlined) -->
+        <div v-if="showMiniLogsPanel" class="w-full max-w-md p-4 mx-auto mt-4 space-y-3 bg-white rounded-xl shadow-md shadow-cyan-900/5 border border-cyan-100/60">
+            <div class="flex items-center justify-between pb-2 border-b border-cyan-50">
+                <div>
+                    <h3 class="text-xs font-black tracking-wider text-gray-900 uppercase">Recent Activity</h3>
+                    <p class="text-[10px] font-medium text-cyan-700/80">Latest Additions & Deletions</p>
+                </div>
+                <button
+                    @click="openFullLogsModal"
+                    class="text-[11px] font-bold text-cyan-600 hover:text-cyan-800 transition"
+                >
+                    View All →
+                </button>
+            </div>
+
+            <!-- Mini Feed List -->
+            <div class="space-y-2">
+                <div
+                    v-for="log in miniLogs"
+                    :key="log.id"
+                    class="flex items-center justify-between px-3 py-2 rounded-lg bg-cyan-50/30 border border-cyan-100/50 text-xs transition hover:bg-cyan-50/60"
+                >
+                    <div class="flex items-center gap-2 overflow-hidden pr-2">
+                        <!-- Action Badge (Abbreviated for compactness) -->
+                        <span
+                            :class="[
+                                'px-1.5 py-0.5 text-[9px] font-black uppercase rounded border shrink-0',
+                                isAdded(log.event) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'
+                            ]"
+                        >
+                            {{ isAdded(log.event) ? 'Add' : 'Del' }}
+                        </span>
+
+                        <!-- User & Event Single Line Truncated -->
+                        <div class="truncate text-[11px]">
+                            <span class="font-bold text-gray-900">{{ log.user }}</span>
+                            <span class="text-gray-600 ml-1 font-normal">{{ log.event }}</span>
+                        </div>
+                    </div>
+
+                    <span class="text-[10px] font-semibold text-gray-400 whitespace-nowrap shrink-0 pl-2">
+                        {{ formatShortDate(log.created_at) }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- FULL PAGINATED LOGS PANEL / MODAL -->
+        <div v-if="showFullLogsPanel" class="w-full max-w-5xl p-8 mx-auto mt-10 space-y-6 bg-white rounded-2xl shadow-xl shadow-cyan-900/5 border border-cyan-100/60">
+
+            <!-- Header & Metrics -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-cyan-50 gap-4">
+                <div>
+                    <h2 class="text-xl font-extrabold tracking-tight text-gray-900">SYSTEM AUDIT LOGS</h2>
+                    <p class="text-xs font-medium text-cyan-700/80 mt-0.5">User action event history</p>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-cyan-50/40 p-4 rounded-xl border border-cyan-100">
+                <div>
+                    <label class="block mb-1 text-xs font-semibold text-cyan-900/80">Search User or Keyword</label>
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Filter records..."
+                        class="w-full px-3.5 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition"
+                    />
+                </div>
+                <div>
+                    <label class="block mb-1 text-xs font-semibold text-cyan-900/80">From Date</label>
+                    <input v-model="startDate" type="date" class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition" />
+                </div>
+                <div>
+                    <label class="block mb-1 text-xs font-semibold text-cyan-900/80">To Date</label>
+                    <div class="flex gap-2">
+                        <input v-model="endDate" type="date" class="w-full px-3 py-2 text-sm bg-white border border-cyan-200 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition" />
+                        <button @click="resetFilters" class="px-3 py-2 text-xs font-bold text-cyan-700 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50 transition shadow-sm">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-hidden border border-cyan-100 rounded-xl shadow-sm bg-white">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead class="text-xs font-bold text-cyan-900 uppercase bg-gradient-to-r from-cyan-50/80 to-teal-50/80 border-b border-cyan-100">
+                        <tr>
+                            <th class="px-6 py-4">Timestamp</th>
+                            <th class="px-6 py-4">User</th>
+                            <th class="px-6 py-4">Action Type</th>
+                            <th class="px-6 py-4">Event Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-cyan-50">
+                        <tr v-for="log in paginatedLogs" :key="log.id" class="transition-colors hover:bg-cyan-50/40 text-xs">
+                            <td class="px-6 py-4 text-gray-500 font-semibold whitespace-nowrap">{{ formatDateTime(log.created_at) }}</td>
+                            <td class="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">{{ log.user }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span :class="['inline-flex items-center px-2.5 py-1 text-[10px] font-extrabold uppercase rounded-full border shadow-sm', isAdded(log.event) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200']">
+                                    {{ isAdded(log.event) ? '➕ Added' : '🗑️ Deleted' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700 font-medium">{{ log.event }}</td>
+                        </tr>
+                        <tr v-if="paginatedLogs.length === 0">
+                            <td colspan="4" class="px-6 py-12 text-center text-cyan-900/40 text-sm font-medium">No logs matched your criteria.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Laravel Controller-Driven Pagination Controls Bar -->
+            <div class="flex items-center justify-between pt-2">
+                <span class="text-xs font-semibold text-cyan-900/70">
+                    Showing page {{ paginationMeta.current_page }} of {{ paginationMeta.last_page || 1 }} (Total: {{ paginationMeta.total || 0 }} entries)
+                </span>
+
+                <div class="flex items-center gap-1.5">
+                    <button
+                        @click="fetchLogs(paginationMeta.current_page - 1)"
+                        :disabled="!paginationMeta.prev_page_url"
+                        class="px-3 py-1.5 text-xs font-bold text-cyan-800 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition"
+                    >
+                        Previous
+                    </button>
+                    <button
+                        @click="fetchLogs(paginationMeta.current_page + 1)"
+                        :disabled="!paginationMeta.next_page_url"
+                        class="px-3 py-1.5 text-xs font-bold text-cyan-800 bg-white border border-cyan-200 rounded-lg hover:bg-cyan-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div v-if="showSelectionPanel" class="flex flex-col items-center justify-start min-h-screen pt-12 pb-16 px-6 mx-auto space-y-10 bg-gradient-to-b from-cyan-50/50 via-teal-50/20 to-gray-100/50">
 
             <!-- Header -->
@@ -171,13 +308,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="vt_newRecord.model_name"
-                        type="text"
-                        @input="vt_newRecord.model_name = vt_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. VT-MODEL-X"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -272,13 +414,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="cpkihc_newRecord.model_name"
-                        type="text"
-                        @input="cpkihc_newRecord.model_name = cpkihc_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. CPKIHC-MODEL-X"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -375,13 +522,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="gx_newRecord.model_name"
-                        type="text"
-                        @input="gx_newRecord.model_name = gx_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. GX-MODEL-X"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -476,13 +628,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="ttmwc_newRecord.model_name"
-                        type="text"
-                        @input="ttmwc_newRecord.model_name = ttmwc_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. 1X1X1-WC-MODEL"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -577,13 +734,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="ttmnc_newRecord.model_name"
-                        type="text"
-                        @input="ttmnc_newRecord.model_name = ttmnc_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. 1X1X1-NC-MODEL"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -678,13 +840,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="bh_newRecord.model_name"
-                        type="text"
-                        @input="bh_newRecord.model_name = bh_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. BH-MODEL-X"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -779,13 +946,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="cpkbr_newRecord.model_name"
-                        type="text"
-                        @input="cpkbr_newRecord.model_name = cpkbr_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. CPKBR-MODEL-X"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -880,13 +1052,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
             <div class="grid grid-cols-1 max-w-md">
                 <div>
                     <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                    <input
+                    <select
                         v-model="his_newRecord.model_name"
-                        type="text"
-                        @input="his_newRecord.model_name = his_newRecord.model_name.toUpperCase()"
-                        placeholder="e.g. HIS-MODEL-X"
-                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                    />
+                        class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                    >
+                        <!-- Placeholder Option -->
+                        <option value="" disabled selected>Select model...</option>
+
+                        <!-- Dynamic Options -->
+                        <option v-for="item in model_names" :key="item" :value="item">
+                            {{ item }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -998,13 +1175,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
                     <div class="grid grid-cols-1 max-w-md">
                         <div>
                             <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                            <input
+                            <select
                                 v-model="rob_newRecord.model_name"
-                                type="text"
-                                @input="rob_newRecord.model_name = rob_newRecord.model_name.toUpperCase()"
-                                placeholder="e.g. TIC0755G"
-                                class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                            />
+                                class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                            >
+                                <!-- Placeholder Option -->
+                                <option value="" disabled selected>Select model...</option>
+
+                                <!-- Dynamic Options -->
+                                <option v-for="item in model_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1180,13 +1362,18 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
                     <div class="grid grid-cols-1 max-w-md">
                         <div>
                             <label class="block mb-1.5 text-xs font-semibold text-cyan-900/80">Model Name</label>
-                            <input
+                            <select
                                 v-model="robaj_newRecord.model_name"
-                                type="text"
-                                @input="robaj_newRecord.model_name = robaj_newRecord.model_name.toUpperCase()"
-                                placeholder="e.g. TIC0755G"
-                                class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 placeholder-cyan-900/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
-                            />
+                                class="w-full px-3.5 py-2.5 text-sm border border-cyan-200 rounded-xl bg-cyan-50/30 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition shadow-sm"
+                            >
+                                <!-- Placeholder Option -->
+                                <option value="" disabled selected>Select model...</option>
+
+                                <!-- Dynamic Options -->
+                                <option v-for="item in model_names" :key="item" :value="item">
+                                    {{ item }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1472,7 +1659,7 @@ class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backd
 <script setup>
 import Frontend from '@/Layouts/FrontendLayout.vue';
 import { router } from '@inertiajs/vue3'
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import DotsLoader from '@/Components/DotsLoader.vue';
 import Papa from 'papaparse';
 import axios from 'axios';
@@ -1561,6 +1748,8 @@ const models = [
 // PANEL NAVIGATION
 const openPanel = (panelName) => {
     showSelectionPanel.value = false;
+    showMiniLogsPanel.value = true;
+    showFullLogsPanel.value = false;
 
     // reset all panels
     showVTPanel.value = false;
@@ -1574,7 +1763,7 @@ const openPanel = (panelName) => {
     showCPKBRPanel.value = false;
     showHISPanel.value = false;
 
-    // activate selected panel
+    // activate selected panelf
     if (panelName === 'showVTPanel') showVTPanel.value = true;
     if (panelName === 'showCPKIHCPanel') showCPKIHCPanel.value = true;
     if (panelName === 'showGXPanel') showGXPanel.value = true;
@@ -1598,6 +1787,88 @@ const closeImage = () => {
     activeImage.value = null;
 }
 
+const systemLogs = ref([]);
+const showMiniLogsPanel = ref(true);
+const showFullLogsPanel = ref(false);
+const paginationMeta = ref({})
+// Filter states
+const searchQuery = ref('');
+const startDate = ref('');
+const endDate = ref('');
+
+// Fast Backend Controller Pagination & Filter Fetcher
+const fetchLogs = async (page = 1, perPage = 10) => {
+    try {
+        // Build query parameters dynamically
+        const params = new URLSearchParams({
+            page: page,
+            per_page: perPage,
+        });
+
+        if (searchQuery.value) params.append('search', searchQuery.value);
+        if (startDate.value) params.append('start_date', startDate.value);
+        if (endDate.value) params.append('end_date', endDate.value);
+
+        const response = await axios.get(`/api/userlogs/instructions?${params.toString()}`);
+
+        systemLogs.value = Array.isArray(response.data.data) ? response.data.data : [];
+
+        paginationMeta.value = {
+            current_page: response.data.current_page || 1,
+            last_page: response.data.last_page || 1,
+            prev_page_url: response.data.prev_page_url || null,
+            next_page_url: response.data.next_page_url || null,
+            total: response.data.total || 0
+        };
+    } catch (error) {
+        systemLogs.value = [];
+        console.error('Failed to load paginated system logs:', error);
+    }
+}
+
+// Watch filters so they automatically trigger backend queries in real time with pagination reset to page 1
+watch([searchQuery, startDate, endDate], () => {
+    fetchLogs(1, 10);
+});
+
+// Miniature top 5 subset feed
+const miniLogs = computed(() => {
+    return Array.isArray(systemLogs.value) ? systemLogs.value.slice(0, 5) : [];
+});
+
+// Since the backend already handles filtering, paginatedLogs just directly outputs systemLogs safely
+const paginatedLogs = computed(() => {
+    return Array.isArray(systemLogs.value) ? systemLogs.value : [];
+});
+
+const isAdded = (eventText) => {
+    return eventText && eventText.toLowerCase().includes('added');
+}
+
+const formatDateTime = (timestamp) => {
+    if (!timestamp) return '-';
+    return new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+const formatShortDate = (timestamp) => {
+    if (!timestamp) return '-';
+    return new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+const resetFilters = () => {
+    searchQuery.value = '';
+    startDate.value = '';
+    endDate.value = '';
+    // Watcher will automatically fire fetchLogs(1, 10)
+}
+
+const openFullLogsModal = () => {
+    showFullLogsPanel.value = true;
+    showMiniLogsPanel.value = false;
+    fetchLogs(1, 10);
+}
+
+const model_names = ref([]);
 const vtModels = ref([]); // all fetched records
 const cpkihcModels = ref([]);
 const gxModels = ref([]);
@@ -1959,6 +2230,10 @@ const robaj_executeAdd = async () => {
 
 const loadData = async () => {
   try {
+
+    await getAllSpecialInstructionLogs();
+    await fetchLogs(1, 10);
+
     const responseGetVTData = await axios.get('/api/vt-models');
     vtModels.value = responseGetVTData.data;
     const responseGetCPKIHCData = await axios.get('/api/cpk-ihc-models');
@@ -1984,8 +2259,45 @@ const loadData = async () => {
   }
 };
 
+const getModelLists = async () => {
+    try{
+        const response = await axios.get('/api/inspectiondata/');
+        const inspectionDataList = response.data.data;
+        model_names.value = inspectionDataList.map(item => item.model);
+        //console.log('Model lists: ',model_names.value);
+    }catch(error){
+        console.error('Error fetching model names', error);
+        toast.error('Failed to get the model names.');
+        await userErrorLogging(
+            {
+                message: error.message,
+                code: error.code ?? null,
+                response: error.response?.data ?? null,
+                payload: error.response?.data ?? null,
+            },
+            "getModelLists",
+            "Failed to get the model names"
+        );
+    }
+}
+
+const getAllSpecialInstructionLogs = async () => {
+    try {
+        // Updated to hit your new custom endpoint
+        const response = await axios.get("/api/userlogs/instructions");
+        systemLogs.value = response.data;
+        console.log('Instruction Logs: ', systemLogs.value);
+    } catch (error) {
+        console.error('Failed to fetch system logs: ', error);
+    }
+}
+
+
 onMounted(async () => {
   await loadData();
   await checkAuthentication();
+  await getModelLists();
+  await getAllSpecialInstructionLogs();
+  await fetchLogs(1, 10);
 });
 </script>

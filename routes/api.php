@@ -169,6 +169,8 @@ Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
+Route::get('userlogs/instructions', [UserLogController::class, 'instructions']);
+
 Route::apiResource('userlogs', UserLogController::class);
 
 
