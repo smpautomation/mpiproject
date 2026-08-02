@@ -35,10 +35,10 @@
                             {{ isAdded(log.event) ? 'Add' : 'Del' }}
                         </span>
 
-                        <!-- User & Event Single Line Truncated -->
+                        <!-- User & Trimmed Event Single Line Truncated -->
                         <div class="truncate text-[11px]">
                             <span class="font-bold text-gray-900">{{ log.user }}</span>
-                            <span class="text-gray-600 ml-1 font-normal">{{ log.event }}</span>
+                            <span class="text-gray-600 ml-1 font-normal">{{ trimEvent(log.event) }}</span>
                         </div>
                     </div>
 
@@ -1867,6 +1867,16 @@ const openFullLogsModal = () => {
     showMiniLogsPanel.value = false;
     fetchLogs(1, 10);
 }
+
+// Heavily trims the event string to remove boilerplate text
+const trimEvent = (eventText) => {
+    if (!eventText) return '';
+    return eventText
+        .replace(/has successfully /gi, '')
+        .replace(/to the data list instructions of/gi, '')
+        .replace(/from the data list instructions of/gi, '')
+        .trim();
+};
 
 const model_names = ref([]);
 const vtModels = ref([]); // all fetched records
