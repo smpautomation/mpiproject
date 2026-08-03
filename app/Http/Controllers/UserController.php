@@ -49,7 +49,9 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'access_type' => 'nullable|string|max:255',
             'change_judgement_access' => 'nullable|string|max:255',
-            'is_editing_allowed' => 'nullable|boolean'
+            'is_editing_allowed' => 'nullable|boolean',
+            'allow_mpi_delete' => 'nullable|boolean',
+            'is_authorized_admin' => 'nullable|boolean',
         ]);
 
         $user = User::create([
@@ -62,7 +64,9 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'access_type' => $validated['access_type'] ?? null,
             'change_judgement_access' => $validated['change_judgement_access'] ?? null,
-            'is_editing_allowed' => $validated['is_editing_allowed'] ?? null
+            'is_editing_allowed' => $validated['is_editing_allowed'] ?? null,
+            'allow_mpi_delete' => $validated['allow_mpi_delete'] ?? null,
+            'is_authorized_admin' => $validated['is_authorized_admin'] ?? null,
         ]);
 
         return response()->json([
@@ -94,9 +98,11 @@ class UserController extends Controller
             'access_type' => 'sometimes|required|string|max:255',
             'change_judgement_access' => 'sometimes|in:yes,no',
             'is_editing_allowed' => 'sometimes|boolean',
+            'allow_mpi_delete' => 'sometimes|boolean',
+            'is_authorized_admin' => 'sometimes|boolean',
         ]);
 
-        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type','change_judgement_access', 'is_editing_allowed'] as $field) {
+        foreach (['firstName', 'surname', 'username', 'email', 'plant', 'employee_id', 'access_type','change_judgement_access', 'is_editing_allowed', 'allow_mpi_delete', 'is_authorized_admin'] as $field) {
             if (isset($validated[$field])) {
                 $user->$field = $validated[$field];
             }
@@ -105,6 +111,14 @@ class UserController extends Controller
         // special handling (boolean cast)
         if (array_key_exists('is_editing_allowed', $validated)) {
             $user->is_editing_allowed = (bool) $validated['is_editing_allowed'];
+        }
+
+        if (array_key_exists('allow_mpi_delete', $validated)) {
+            $user->allow_mpi_delete = (bool) $validated['allow_mpi_delete'];
+        }
+
+        if (array_key_exists('is_authorized_admin', $validated)) {
+            $user->is_authorized_admin = (bool) $validated['is_authorized_admin'];
         }
 
 

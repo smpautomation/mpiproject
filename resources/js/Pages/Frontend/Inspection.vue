@@ -516,6 +516,7 @@ const submitData = async () => {
     }
 };
 
+
 // Fetch all inspection data records
 const showInspectionData = async () => {
   try {

@@ -321,38 +321,47 @@
                                         View Report
                                     </button>
 
-                                    <!-- DELETE -->
-                                    <template
+
+                                    <div
                                         v-if="
-                                            confirmDeleteFor === item.serial_no
+                                            state.user &&
+                                            state.user.allow_mpi_delete == 1
                                         "
                                     >
-                                        <button
-                                            @click="deleteRow(item.serial_no)"
-                                            class="w-[40px] bg-green-600 text-white rounded-sm"
-                                        >
-                                            Yes
-                                        </button>
-
-                                        <button
-                                            @click="confirmDeleteFor = null"
-                                            class="w-[60px] bg-gray-300 text-gray-800 rounded-sm"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </template>
-
-                                    <template v-else>
-                                        <button
-                                            @click="
-                                                confirmDeleteFor =
-                                                    item.serial_no
+                                        <!-- DELETE -->
+                                        <template
+                                            v-if="
+                                                confirmDeleteFor === item.serial_no
                                             "
-                                            class="w-[110px] bg-red-700 text-white rounded-md font-medium text-sm"
                                         >
-                                            Delete
-                                        </button>
-                                    </template>
+                                            <button
+                                                @click="deleteRow(item.serial_no)"
+                                                class="w-[40px] bg-green-600 text-white rounded-sm"
+                                            >
+                                                Yes
+                                            </button>
+
+                                            <button
+                                                @click="confirmDeleteFor = null"
+                                                class="w-[60px] bg-gray-300 text-gray-800 rounded-sm"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </template>
+
+                                        <template v-else>
+                                            <button
+                                                @click="
+                                                    confirmDeleteFor =
+                                                        item.serial_no
+                                                "
+                                                class="w-[110px] bg-red-700 text-white rounded-md font-medium text-sm"
+                                            >
+                                                Delete
+                                            </button>
+                                        </template>
+                                    </div>
+
                                 </div>
                             </td>
                         </tr>

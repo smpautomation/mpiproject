@@ -49,310 +49,227 @@
                             <div
                                 class="overflow-auto border border-gray-700 rounded-lg max-h-64"
                             >
-                                <table
-                                    class="w-full text-sm text-left text-gray-300 border-collapse"
+                            <table
+                                class="w-full text-sm text-left text-gray-300 border-collapse"
+                            >
+                                <thead
+                                    class="sticky top-0 z-10 text-center text-gray-400 uppercase bg-gray-700"
                                 >
-                                    <thead
-                                        class="sticky top-0 z-10 text-center text-gray-400 uppercase bg-gray-700"
-                                    >
-                                        <tr class="text-xs">
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                First&nbsp;Name
-                                            </th>
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                Last&nbsp;Name
-                                            </th>
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                Username
-                                            </th>
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                Employee&nbsp;ID
-                                            </th>
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                Plant
-                                            </th>
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                Access&nbsp;Type
-                                            </th>
-                                            <th
-                                                class="px-1 py-3 whitespace-nowrap"
-                                            >
-                                                Role
-                                            </th>
-                                            <th
-                                                v-if="
-                                                    state.user &&
-                                                    state.user?.access_type ===
-                                                        'Automation'
-                                                "
-                                                class="px-1 py-3 text-center whitespace-nowrap"
-                                            >
-                                                Change&nbsp;Judgement
-                                            </th>
-                                            <th
-                                                v-if="
-                                                    state.user &&
-                                                    state.user?.access_type ===
-                                                        'Automation'
-                                                "
-                                                class="px-1 py-3 text-center whitespace-nowrap"
-                                            >
-                                                HT&nbsp;Admin&nbsp;Access
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody class="divide-y divide-gray-700">
-                                        <tr
-                                            v-for="user in filteredUsers"
-                                            :key="user.employee_id"
-                                            class="text-xs text-center transition-colors duration-150 hover:bg-gray-700/40"
+                                    <tr class="text-xs">
+                                        <th class="px-1 py-3 whitespace-nowrap">
+                                            Employee&nbsp;ID
+                                        </th>
+                                        <th class="px-1 py-3 whitespace-nowrap">
+                                            Last&nbsp;Name
+                                        </th>
+                                        <th class="px-1 py-3 whitespace-nowrap">
+                                            Actions
+                                        </th>
+                                        <th
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type ===
+                                                    'Automation' || state.user?.is_authorized_admin == 1
+                                            "
+                                            class="px-1 py-3 text-center whitespace-nowrap"
                                         >
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
-                                                {{ user.firstName }}
-                                            </td>
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
-                                                {{ user.surname }}
-                                            </td>
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
-                                                {{ user.username }}
-                                            </td>
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
-                                                {{ user.employee_id }}
-                                            </td>
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
-                                                {{ user.plant }}
-                                            </td>
+                                            Change&nbsp;Judgement
+                                        </th>
+                                        <th
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type ===
+                                                    'Automation'
+                                            "
+                                            class="px-1 py-3 text-center whitespace-nowrap"
+                                        >
+                                            HT&nbsp;Admin&nbsp;Access
+                                        </th>
+                                        <th
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type ===
+                                                    'Automation' || state.user?.is_authorized_admin == 1
+                                            "
+                                            class="px-1 py-3 text-center whitespace-nowrap"
+                                        >
+                                            MPI&nbsp;Delete&nbsp;Access
+                                        </th>
+                                        <th
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type ===
+                                                    'Automation'
+                                            "
+                                            class="px-1 py-3 text-center whitespace-nowrap"
+                                        >
+                                            Authorized&nbsp;Admin
+                                        </th>
+                                    </tr>
+                                </thead>
 
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
-                                                <span
-                                                    v-if="
-                                                        editingUser !==
-                                                        user.employee_id
-                                                    "
-                                                >
-                                                    {{ user.access_type }}
-                                                </span>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr
+                                        v-for="user in filteredUsers"
+                                        :key="user.employee_id"
+                                        class="text-xs text-center transition-colors duration-150 hover:bg-gray-700/40"
+                                    >
+                                        <td class="px-1 py-2 whitespace-nowrap">
+                                            {{ user.employee_id }}
+                                        </td>
+                                        <td class="px-1 py-2 whitespace-nowrap">
+                                            {{ user.surname }}
+                                        </td>
 
-                                                <select
-                                                    v-else
-                                                    v-model="tempRole"
-                                                    class="w-full px-3 py-1 text-sm text-gray-800 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                >
-                                                    <option value="Basic User">
-                                                        Basic User
-                                                    </option>
-                                                    <option
-                                                        value="PrepCheck Approver"
-                                                    >
-                                                        PrepCheck Approver
-                                                    </option>
-                                                    <option
-                                                        value="Checking Approver"
-                                                    >
-                                                        Checking Approver
-                                                    </option>
-                                                    <option
-                                                        value="Preparation Approver"
-                                                    >
-                                                        Preparation Approver
-                                                    </option>
-                                                    <option
-                                                        value="Proxy Approver"
-                                                    >
-                                                        Proxy Approver
-                                                    </option>
-                                                    <option value="Coating">
-                                                        Coating
-                                                    </option>
-                                                    <option
-                                                        value="Heat Treatment"
-                                                    >
-                                                        Heat Treatment
-                                                    </option>
-                                                </select>
-                                            </td>
-
-                                            <td
-                                                class="px-1 py-2 whitespace-nowrap"
-                                            >
+                                        <td
+                                            class="px-2 py-2 whitespace-nowrap"
+                                        >
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <!-- View Details Button -->
                                                 <button
-                                                    v-if="
-                                                        editingUser !==
-                                                        user.employee_id
-                                                    "
-                                                    @click="startEditing(user)"
-                                                    :class="[
-                                                        'px-3 py-1 text-xs font-medium rounded-md transition',
-                                                        user.access_type ===
-                                                            'Automation' ||
-                                                        user.access_type ===
-                                                            'Final Approver'
-                                                            ? 'bg-yellow-500 text-white opacity-60 cursor-not-allowed'
-                                                            : 'bg-blue-500 text-white hover:bg-blue-600',
-                                                    ]"
-                                                    :disabled="
-                                                        user.access_type ===
-                                                            'Automation' ||
-                                                        user.access_type ===
-                                                            'Final Approver'
-                                                    "
+                                                    @click="openDetailsModal(user)"
+                                                    title="View Details"
+                                                    class="p-1.5 text-gray-300 transition-all duration-200 bg-gray-800 rounded-lg hover:bg-gray-700 hover:text-white border border-gray-700 shadow-sm"
                                                 >
-                                                    {{
-                                                        user.access_type ===
-                                                            "Automation" ||
-                                                        user.access_type ===
-                                                            "Final Approver"
-                                                            ? "Restricted"
-                                                            : "Change Role"
-                                                    }}
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
                                                 </button>
 
-                                                <div v-else class="flex gap-2">
-                                                    <button
-                                                        @click="saveRole(user)"
-                                                        class="px-3 py-1 text-sm font-medium text-white transition bg-green-600 rounded-md hover:bg-green-700"
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        @click="cancelEditing"
-                                                        class="px-3 py-1 text-sm font-medium text-white transition bg-red-600 rounded-md hover:bg-red-700"
-                                                    >
-                                                        Cancel
-                                                    </button>
+                                                <div
+                                                    v-if="state.user?.access_type === 'Automation' || state.user?.is_authorized_admin == 1"
+                                                >
+                                                    <!-- Edit / Change Role Toggle -->
+                                                    <template v-if="editingUser !== user.employee_id">
+                                                        <button
+                                                            @click="startEditing(user)"
+                                                            :disabled="user.access_type === 'Automation' || user.access_type === 'Final Approver'"
+                                                            :class="[
+                                                                'px-2.5 py-1 text-xs font-medium rounded-lg transition-all duration-200 shadow-sm border',
+                                                                user.access_type === 'Automation' || user.access_type === 'Final Approver'
+                                                                    ? 'bg-gray-800/50 text-gray-500 border-gray-800 cursor-not-allowed'
+                                                                    : 'bg-blue-600/20 text-blue-400 border-blue-500/30 hover:bg-blue-600/30 hover:text-blue-300'
+                                                            ]"
+                                                        >
+                                                            {{ user.access_type === "Automation" || user.access_type === "Final Approver" ? "Locked" : "Edit Role" }}
+                                                        </button>
+                                                    </template>
+
+                                                    <!-- Save / Cancel Inline Actions with Role Select -->
+                                                    <template v-else>
+                                                        <div class="flex items-center gap-1.5">
+                                                            <select
+                                                                v-model="tempRole"
+                                                                class="px-2 py-1 text-xs text-gray-200 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            >
+                                                                <option value="Basic User">Basic User</option>
+                                                                <option value="PrepCheck Approver">PrepCheck Approver</option>
+                                                                <option value="Checking Approver">Checking Approver</option>
+                                                                <option value="Preparation Approver">Preparation Approver</option>
+                                                                <option value="Proxy Approver">Proxy Approver</option>
+                                                                <option value="Coating">Coating</option>
+                                                                <option value="Heat Treatment">Heat Treatment</option>
+                                                            </select>
+
+                                                            <button
+                                                                @click="saveRole(user)"
+                                                                title="Save"
+                                                                class="p-1.5 text-green-400 transition-all duration-200 bg-green-600/20 rounded-lg hover:bg-green-600/30 border border-green-500/30"
+                                                            >
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </button>
+                                                            <button
+                                                                @click="cancelEditing"
+                                                                title="Cancel"
+                                                                class="p-1.5 text-red-400 transition-all duration-200 bg-red-600/20 rounded-lg hover:bg-red-600/30 border border-red-500/30"
+                                                            >
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </template>
                                                 </div>
-                                            </td>
+                                            </div>
+                                        </td>
 
-                                            <td
-                                                v-if="
-                                                    state.user &&
-                                                    state.user?.access_type ===
-                                                        'Automation'
-                                                "
-                                                class="flex justify-center gap-1 px-1 py-2 text-center whitespace-nowrap"
-                                            >
-                                                <!-- Allow button -->
-                                                <button
-                                                    @click="
-                                                        allowChangeJudgement(
-                                                            user,
-                                                        )
-                                                    "
-                                                    :class="[
-                                                        'px-3 py-1 text-xs font-semibold rounded-md transition focus:outline-none focus:ring-2',
-                                                        user.change_judgement_access ===
-                                                        'yes'
-                                                            ? 'bg-gray-500 text-white cursor-not-allowed focus:ring-gray-400'
-                                                            : 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-400',
-                                                    ]"
-                                                    :disabled="
-                                                        user.change_judgement_access ===
-                                                        'yes'
-                                                    "
+                                        <td
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type === 'Automation' || state.user?.is_authorized_admin == 1
+                                            "
+                                            class="px-2 py-2 text-center whitespace-nowrap"
+                                        >
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="user.change_judgement_access === 'yes'"
+                                                    @change="user.change_judgement_access === 'yes' ? revokeChangeJudgement(user) : allowChangeJudgement(user)"
+                                                    class="sr-only peer"
                                                 >
-                                                    {{
-                                                        user.change_judgement_access ===
-                                                        "yes"
-                                                            ? "Access Granted"
-                                                            : "Allow Access"
-                                                    }}
-                                                </button>
+                                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                                            </label>
+                                        </td>
 
-                                                <!-- Revoke button -->
-                                                <button
-                                                    v-if="
-                                                        user.change_judgement_access ===
-                                                        'yes'
-                                                    "
-                                                    @click="
-                                                        revokeChangeJudgement(
-                                                            user,
-                                                        )
-                                                    "
-                                                    class="px-3 py-1 text-xs font-semibold text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                                    :disabled="
-                                                        user.change_judgement_access !==
-                                                        'yes'
-                                                    "
+                                        <td
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type === 'Automation'
+                                            "
+                                            class="px-2 py-2 text-center whitespace-nowrap"
+                                        >
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="user.is_editing_allowed == 1"
+                                                    @change="user.is_editing_allowed == 1 ? revokeAdminEditor(user) : allowAdminEditor(user)"
+                                                    class="sr-only peer"
                                                 >
-                                                    Revoke
-                                                </button>
-                                            </td>
-                                            <td
-                                                v-if="
-                                                    state.user &&
-                                                    state.user?.access_type ===
-                                                        'Automation'
-                                                "
-                                                class="gap-1 px-1 py-2 text-center whitespace-nowrap"
-                                            >
-                                                <!-- Allow button -->
-                                                <button
-                                                    @click="
-                                                        allowAdminEditor(user)
-                                                    "
-                                                    :class="[
-                                                        'px-3 py-1 text-xs font-semibold rounded-md transition focus:outline-none focus:ring-2',
-                                                        user.is_editing_allowed ==
-                                                        1
-                                                            ? 'bg-gray-500 text-white cursor-not-allowed focus:ring-gray-400'
-                                                            : 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-400',
-                                                    ]"
-                                                    :disabled="
-                                                        user.is_editing_allowed ==
-                                                        1
-                                                    "
-                                                >
-                                                    {{
-                                                        user.is_editing_allowed ==
-                                                        1
-                                                            ? "Admin Granted"
-                                                            : "Allow Access"
-                                                    }}
-                                                </button>
+                                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                                            </label>
+                                        </td>
 
-                                                <!-- Revoke button -->
-                                                <button
-                                                    v-if="
-                                                        user.is_editing_allowed ==
-                                                        1
-                                                    "
-                                                    @click="
-                                                        revokeAdminEditor(user)
-                                                    "
-                                                    class="px-3 py-1 ml-1 text-xs font-semibold text-white transition bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                        <td
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type === 'Automation' || state.user?.is_authorized_admin == 1
+                                            "
+                                            class="px-2 py-2 text-center whitespace-nowrap"
+                                        >
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="user.allow_mpi_delete == 1"
+                                                    @change="user.allow_mpi_delete == 1 ? revokeMpiDelete(user) : allowMpiDelete(user)"
+                                                    class="sr-only peer"
                                                 >
-                                                    Revoke
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                                            </label>
+                                        </td>
+
+                                        <td
+                                            v-if="
+                                                state.user &&
+                                                state.user?.access_type === 'Automation'
+                                            "
+                                            class="px-2 py-2 text-center whitespace-nowrap"
+                                        >
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="user.is_authorized_admin == 1"
+                                                    @change="user.is_authorized_admin == 1 ? revokeAuthorizeAdmin(user) : allowAuthorizeAdmin(user)"
+                                                    class="sr-only peer"
+                                                >
+                                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             </div>
                             <!-- Role Instructions Panel -->
                             <div
@@ -539,7 +456,62 @@
                     </div>
                 </div>
             </div>
-        
+
+
+
+
+            <!-- View Details Modal -->
+            <div v-if="isDetailsModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                <div class="w-full max-w-lg p-6 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl text-gray-200">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-700">
+                        <h3 class="text-lg font-semibold text-white">User Details</h3>
+                        <button @click="closeDetailsModal" class="text-gray-400 hover:text-white">&times;</button>
+                    </div>
+
+                    <div v-if="selectedUser" class="grid grid-cols-2 gap-4 py-4 text-sm">
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">First Name</span>
+                            <span class="font-medium text-white">{{ selectedUser.firstName || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Last Name</span>
+                            <span class="font-medium text-white">{{ selectedUser.surname || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Username</span>
+                            <span class="font-medium text-white">{{ selectedUser.username || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Employee ID</span>
+                            <span class="font-medium text-white">{{ selectedUser.employee_id || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Plant</span>
+                            <span class="font-medium text-white">{{ selectedUser.plant || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Access Type</span>
+                            <span class="font-medium text-white">{{ selectedUser.access_type || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Email</span>
+                            <span class="font-medium text-white">{{ selectedUser.email || 'N/A' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs uppercase text-gray-400">Created At</span>
+                            <span class="font-medium text-white">{{ selectedUser.created_at ? new Date(selectedUser.created_at).toLocaleDateString() : 'N/A' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-4 border-t border-gray-700">
+                        <button @click="closeDetailsModal" class="px-4 py-2 text-xs font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </Frontend>
 </template>
@@ -615,6 +587,18 @@ const uniqueUsers = ref([]);
 const uniqueSections = ref([]);
 const startDate = ref(null);
 const endDate = ref(null);
+
+const isDetailsModalOpen = ref(false);
+
+const openDetailsModal = (user) => {
+    selectedUser.value = user;
+    isDetailsModalOpen.value = true;
+};
+
+const closeDetailsModal = () => {
+    isDetailsModalOpen.value = false;
+    selectedUser.value = null;
+};
 
 // Set default: yesterday → tomorrow
 const today = new Date();
@@ -732,6 +716,46 @@ const allowAdminEditor = async (user) => {
     }
 };
 
+const allowMpiDelete = async (user) => {
+    try {
+        const response = await axios.put(`/api/users/${user.id}`, {
+            allow_mpi_delete: 1,
+        });
+
+        // Update local state immediately
+        user.allow_mpi_delete = 1;
+
+        await userAdminLogging(
+            `Granted admin editor access to ${user.firstName} ${user.surname}`,
+        );
+    } catch (error) {
+        console.error(
+            `Error granting admin editor access for ${user.username}:`,
+            error,
+        );
+    }
+};
+
+const allowAuthorizeAdmin = async (user) => {
+    try {
+        const response = await axios.put(`/api/users/${user.id}`, {
+            is_authorized_admin: 1,
+        });
+
+        // Update local state immediately
+        user.is_authorized_admin = 1;
+
+        await userAdminLogging(
+            `Granted admin editor access to ${user.firstName} ${user.surname}`,
+        );
+    } catch (error) {
+        console.error(
+            `Error granting admin editor access for ${user.username}:`,
+            error,
+        );
+    }
+};
+
 const revokeChangeJudgement = async (user) => {
     try {
         await axios.put(`/api/users/${user.id}`, {
@@ -773,6 +797,49 @@ const revokeAdminEditor = async (user) => {
     }
 };
 
+const revokeMpiDelete = async (user) => {
+    //console.log("clicked revoke", user.id);
+    try {
+        await axios.put(`/api/users/${user.id}`, {
+            allow_mpi_delete: 0,
+        });
+
+        // Update local state immediately
+        user.allow_mpi_delete = 0;
+
+        await userAdminLogging(
+            `Revoked admin editor access for ${user.firstName} ${user.surname}`,
+        );
+    } catch (error) {
+        console.error(
+            `Error revoking admin editor access for ${user.username}:`,
+            error,
+        );
+    }
+};
+
+const revokeAuthorizeAdmin = async (user) => {
+    //console.log("clicked revoke", user.id);
+    try {
+        await axios.put(`/api/users/${user.id}`, {
+            is_authorized_admin: 0,
+        });
+
+        // Update local state immediately
+        user.is_authorized_admin = 0;
+
+        await userAdminLogging(
+            `Revoked admin editor access for ${user.firstName} ${user.surname}`,
+        );
+    } catch (error) {
+        console.error(
+            `Error revoking admin editor access for ${user.username}:`,
+            error,
+        );
+    }
+};
+
+
 const formatTime = (date) => {
     if (!date) return "";
     return new Date(date).toLocaleTimeString([], {
@@ -786,7 +853,7 @@ const fetchAllUsers = async () => {
         const response = await axios.get("/api/users");
         //console.log('Fetched users:', response.data);
         users.value = response.data.data; // Assign the array to users
-        //console.log('Fetched users in my users array:', users.value);
+        console.log('Fetched users in my users array:', users.value);
     } catch (error) {
         console.error("Error fetching users:", error);
     }

@@ -549,7 +549,7 @@ const navItems = [
     {
         label: "Admin",
         route: "admin",
-        access: ["Final Approver", "Proxy Approver", "Automation"],
+        access: ["Final Approver", "Proxy Approver", "Automation", "Checking Approver"],
     },
 ];
 
