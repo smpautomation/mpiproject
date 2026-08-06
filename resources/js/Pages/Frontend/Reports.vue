@@ -477,12 +477,12 @@
                                     :disabled="isRegeneratingGraph"
                                     class="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-700 hover:text-cyan-900 transition-colors duration-150 focus:outline-none group disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <svg 
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        fill="none" 
-                                        viewBox="0 0 24 24" 
-                                        stroke-width="2.5" 
-                                        stroke="currentColor" 
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2.5"
+                                        stroke="currentColor"
                                         class="w-3.5 h-3.5 text-cyan-600 group-hover:rotate-180 transition-transform duration-300"
                                         :class="{ 'animate-spin': isRegeneratingGraph }"
                                     >
@@ -504,12 +504,12 @@
                                         :disabled="isRegeneratingSecGraph || isRegeneratingGraph"
                                         class="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 transition-colors duration-150 focus:outline-none group disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <svg 
-                                            xmlns="http://www.w3.org/2000/svg" 
-                                            fill="none" 
-                                            viewBox="0 0 24 24" 
-                                            stroke-width="2.5" 
-                                            stroke="currentColor" 
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="2.5"
+                                            stroke="currentColor"
                                             class="w-3.5 h-3.5 text-teal-600 group-hover:rotate-180 transition-transform duration-300"
                                             :class="{ 'animate-spin': isRegeneratingSecGraph }"
                                         >
@@ -521,7 +521,7 @@
                                     </button>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -1497,7 +1497,7 @@
                                             <th
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                Br @ VT (180°C)
+                                                Br @ VT (120°C)
                                             </th>
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
@@ -1558,7 +1558,7 @@
                                             <th
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                HD5 (180°C)
+                                                HD5 (120°C)
                                             </th>
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
@@ -1619,7 +1619,7 @@
                                             <th
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
                                             >
-                                                JD5 (180°C)
+                                                JD5 (120°C)
                                             </th>
                                             <td
                                                 class="px-4 py-2 text-blue-600 border-4 border-white"
@@ -10183,7 +10183,7 @@ const regenerateGraph = async () => {
 
 
 const regenerateSecAdditionalGraph = async () => {
-    
+
 }
 
 // ============================================================ REGENERATE GRAPH ==================================================================== //

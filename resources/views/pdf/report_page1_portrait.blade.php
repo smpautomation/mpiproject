@@ -826,7 +826,7 @@
 
                             {{-- Br @ VT --}}
                             <tr>
-                                <th style="background-color: #f0f0f0;">Br @ VT (180°C)</th>
+                                <th style="background-color: #f0f0f0;">Br @ VT (120°C)</th>
                                 <td>{{ $rob['brVTStandard'] ?? 'NA' }} min T</td>
                                 <td>{{ $rob['brVT_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['brVT_brMax'] ?? 'NA' }}</td>
@@ -837,7 +837,7 @@
 
                             {{-- HD5 --}}
                             <tr>
-                                <th style="background-color: #f0f0f0;">HD5 (180°C)</th>
+                                <th style="background-color: #f0f0f0;">HD5 (120°C)</th>
                                 <td>{{ $rob['hd5Standard'] ?? 'NA' }} min kA/m</td>
                                 <td>{{ $rob['HD5_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['HD5_brMax'] ?? 'NA' }}</td>
@@ -848,7 +848,7 @@
 
                             {{-- JD5 --}}
                             <tr>
-                                <th style="background-color: #f0f0f0;">JD5 (180°C)</th>
+                                <th style="background-color: #f0f0f0;">JD5 (120°C)</th>
                                 <td>{{ $rob['jd5Standard'] ?? 'NA' }} min T</td>
                                 <td>{{ $rob['JD5_brMin'] ?? 'NA' }}</td>
                                 <td>{{ $rob['JD5_brMax'] ?? 'NA' }}</td>
