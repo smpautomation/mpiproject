@@ -654,15 +654,15 @@ class TxtExportService
         $hasFilmPaste = BreaklotFilmpasting::where('furnace', $normalizedFurnace)
             ->where('mass_prod', $massPro)
             ->exists();
-        
+
         if(!$hasFilmPaste){
             $hasFilmPaste = FilmPastingData::where('furnace', $normalizedFurnace)
             ->where('mass_prod', $massPro)
             ->exists();
 
-            dump("Has Film Paste flag normal: ", $hasFilmPaste);
+            //dump("Has Film Paste flag normal: ", $hasFilmPaste);
         }
-        
+
         //dump($has2ndgbdp);
 
         if (!$massProd) {
@@ -863,7 +863,7 @@ class TxtExportService
         }
 
         $outputRows = [];
-                        
+
         foreach ($layerKeys as $layerKey) {
             $pairs = $layerKeyPairs[$layerKey] ?? [];
 
@@ -984,16 +984,59 @@ class TxtExportService
 
                 $coating1stGbdp = null;
                 $heatTreatment1stGbdp = null;
+                $coating1stAverages = [];
+                $coating2ndAverages = [];
+
+                // Helper function definition
+                $getModuleAverages = function($coatingData) {
+                    $sums = [];
+                    $counts = [];
+
+                    $concentrationRows = $coatingData['Concentration Data'] ?? [];
+                    foreach ($concentrationRows as $row) {
+                        foreach ($row['modules'] ?? [] as $mod) {
+                            $name = $mod['module'] ?? null;
+                            $value = $mod['value'] ?? null;
+
+                            if ($name && $value !== null && is_numeric($value)) {
+                                $sums[$name] = ($sums[$name] ?? 0) + (float)$value;
+                                $counts[$name] = ($counts[$name] ?? 0) + 1;
+                            }
+                        }
+                    }
+
+                    $averages = [];
+                    for ($i = 1; $i <= 6; $i++) {
+                        $moduleKey = 'M-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                        $averages[$moduleKey] = (isset($counts[$moduleKey]) && $counts[$moduleKey] > 0)
+                            ? $sums[$moduleKey] / $counts[$moduleKey]
+                            : 0;
+                    }
+
+                    return $averages;
+                };
 
                 if ($isSecondGbdp) {
-                    $coating1stGbdp = $coating['coating_info_1stgbdp'];
-                    $coating = $coating['coating_info_2ndgbdp'];
+                    $coating1stGbdp = [
+                        'info' => $coating['coating_info_1stgbdp'] ?? [],
+                        'data' => $coating['coating_data_1stgbdp'] ?? [],
+                    ];
+
+                    $coating = [
+                        'info' => $coating['coating_info_2ndgbdp'] ?? [],
+                        'data' => $coating['coating_data_2ndgbdp'] ?? [],
+                    ];
+
+                    // Now you can compute them right after your condition block:
+                    $coating1stAverages = $getModuleAverages($coating1stGbdp['data']);
+                    $coating2ndAverages = $getModuleAverages($coating['data']);
+
 
                     $secondHeatTreatment = GbdpSecondHeatTreatment::where('furnace', $normalizedFurnace)
                         ->where('mass_prod', $massPro)
                         ->where('layer', (string)$coatingLookupLayerNo)
                         ->first();
-                
+
                     if ($secondHeatTreatment) {
                         $heatTreatment1stGbdp = is_array($secondHeatTreatment->gbdp_1st)
                             ? $secondHeatTreatment->gbdp_1st
@@ -1053,7 +1096,7 @@ class TxtExportService
                         ->where('model', $sfpModel)
                         ->where('lot_no', $sfpLotNo)
                         ->first();
-                    
+
                     if(!$filmPasting){
                         $filmPasting = FilmPastingData::where('furnace', $sfpFurnace)
                             ->where('mass_prod', $sfpMassProd)
@@ -1089,26 +1132,33 @@ class TxtExportService
                         $tpmRow->code_no ?? '',
                         $tpmRow->raw_material_code ?? $rawMaterialCode,
                         $totalQty,
-                        $coating1stGbdp['date'] ?? '',
-                        $coating1stGbdp['machine_no'] ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating1stGbdp['machine_no'])) : '',
-                        $coating1stGbdp['min_tb_content'] ?? 0,
-                        $coating1stGbdp['total_magnet_weight'] ?? 0,
-                        substr($coating1stGbdp['time_start'] ?? '', 0, 5),
-                        substr($coating1stGbdp['time_finish'] ?? '', 0, 5),
-                        $coating['date'] ?? $coating?->date ?? '',
-                        $coating['machine_no'] ?? $coating?->machine_no
-                            ? str_replace('-', '0', preg_replace('/^FP/i', 'F', $coating['machine_no'] ?? $coating?->machine_no))
-                            : '',
-                        $coating['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
-                        $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
-                        substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
-                        substr($coating['time_finish'] ?? $coating?->time_finished ?? '', 0, 5),
-                        $coating1stGbdp['maximum'] ?? 0,
-                        $coating1stGbdp['minimum'] ?? 0,
-                        $coating1stGbdp['average'] ?? 0,
-                        $coating['maximum'] ?? $coating?->maximum ?? 0,
-                        $coating['minimum'] ?? $coating?->minimum ?? 0,
-                        $coating['average'] ?? $coating?->average ?? 0,
+                        $coating1stGbdp['info']['date'] ?? '',
+                        $coating1stGbdp['info']['machine_no'] ?? '',
+                        $coating1stGbdp['info']['min_tb_content'] ?? 0,
+                        $coating1stGbdp['info']['total_magnet_weight'] ?? 0,
+                        substr($coating1stGbdp['info']['time_start'] ?? '', 0, 5),
+                        substr($coating1stGbdp['info']['time_finish'] ?? '', 0, 5),
+                        $coating1stGbdp['info']['maximum'] ?? 0,
+                        $coating1stGbdp['info']['minimum'] ?? 0,
+                        $coating1stGbdp['info']['average'] ?? 0,
+                        'coating_std',
+                        $coating1stAverages['M-01'] ?? 0,
+                        $coating1stAverages['M-02'] ?? 0,
+                        $coating1stAverages['M-03'] ?? 0,
+                        $coating1stAverages['M-04'] ?? 0,
+                        $coating1stAverages['M-05'] ?? 0,
+                        $coating1stAverages['M-06'] ?? 0,
+                        'film_type',
+                        'film_class',
+                        $coating['info']['date'] ?? $coating?->date ?? '',
+                        $coating['info']['machine_no'] ?? $coating?->machine_no ?? '',
+                        $coating['info']['min_tb_content'] ?? $coating?->min_tb_content ?? 0,
+                        $coating['info']['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
+                        substr($coating['info']['time_start'] ?? $coating?->time_start ?? '', 0, 5),
+                        substr($coating['info']['time_finish'] ?? $coating?->time_finished ?? '', 0, 5),
+                        $coating['info']['maximum'] ?? $coating?->maximum ?? 0,
+                        $coating['info']['minimum'] ?? $coating?->minimum ?? 0,
+                        $coating['info']['average'] ?? $coating?->average ?? 0,
                         $heatTreatment1stGbdp['furnace_machine'] ? str_replace('-', '0', $heatTreatment1stGbdp['furnace_machine']) : '',
                         $heatTreatment1stGbdp['cycle_no']
                             ? ltrim(substr($heatTreatment1stGbdp['cycle_no'], strpos($heatTreatment1stGbdp['cycle_no'], '-') + 1), ' ')
@@ -1192,7 +1242,7 @@ class TxtExportService
                         $coating['total_magnet_weight'] ?? $coating?->total_magnet_weight ?? 0,
                         substr($coating['time_start'] ?? $coating?->time_start ?? '', 0, 5),
                         substr($coating['time_finish'] ?? $coating?->time_finish ?? '', 0, 5),
-                        
+
                         $firstFilmPaste?->film_type ?? '',
                         $firstFilmPaste?->film_class ?? '',
 
@@ -1283,8 +1333,10 @@ class TxtExportService
         $header2ndgbdp = [
             'LAYER','MODEL_CODE','RAW_MATERIAL_CODE','TOTAL_QUANTITY',
             'COATING_DATE','COATING_MC_NO','MIN_TB_CONTENT','TOTAL_MAGNET_WEIGHT','COATING_DATE_START','COATING_DATE_FINISH',
+            'COATING_MAX','COATING_MIN','COATING_AVE', 'COATING_STD',
+            'CONC AVE M1', 'CONC AVE M2', 'CONC AVE M3', 'CONC AVE M4', 'CONC AVE M5', 'CONC AVE M6',
+            'FILM_TYPE', 'FILM_CLASS',
             'COATING_DATE2','COATING_MC_NO2','MIN_TB_CONTENT2','TOTAL_MAGNET_WEIGHT2','COATING_DATE_START2','COATING_DATE_FINISH2',
-            'COATING_MAX','COATING_MIN','COATING_AVE',
             'COATING_MAX2','COATING_MIN2','COATING_AVE2',
             'FURNACE_MC_NO','CYCLE_NO','BATCH_CYCLE_NO','PATTERN','DATE_START','DATE_FINISH',
             'FURNACE_MC_NO2','CYCLE_NO2','BATCH_CYCLE_NO2','PATTERN2','DATE_START2','DATE_FINISH2',
@@ -1458,7 +1510,7 @@ class TxtExportService
             if($filmPasting){
                 return $filmPasting;
             }
-            
+
         }
 
         // -------------------------
