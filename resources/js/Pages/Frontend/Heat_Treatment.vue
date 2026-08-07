@@ -4459,9 +4459,20 @@ const getExcessDataRange = (boxes) => {
  * and strips out any pattern numbers that are restricted.
  */
 const validatePatternRules = async () => {
-    console.log("ENTERED");
-    console.log("Heat Treatment detected: ", heatTreatmentInformationDetected.value);
     try {
+        if (heatTreatmentInformationDetected.value) {
+            try {
+                const response = await axios.get(
+                    `/api/mass-production/${mpcs.selectedFurnace}/${mpcs.selectedMassProd}`
+                );
+                const massprod_data = response.data;
+                hti.patternNo = massprod_data.pattern_no;
+                console.log("Fetched HTI patternNo:", hti.patternNo);
+            } catch (fetchError) {
+                console.error("Failed to fetch mass production pattern:", fetchError);
+            }
+        }
+
         const response = await axios.get('/api/inspection/check-existing', {
             params: {
                 model: mpcs.selectedModel,
@@ -4475,7 +4486,7 @@ const validatePatternRules = async () => {
                 if (hti && hti.patternNo !== undefined && hti.patternNo !== null) {
                     const currentPatternStr = String(hti.patternNo);
 
-                    if (!allowedPatterns.includes(currentPatternStr) && heatTreatmentInformationDetected.value == false) {
+                    if (!allowedPatterns.includes(currentPatternStr)) {
                         msgPatternNotAllowed.value = true;
                         console.log("ITS TRUE", msgPatternNotAllowed.value);
                     } else {
