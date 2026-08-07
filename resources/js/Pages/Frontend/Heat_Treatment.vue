@@ -4460,6 +4460,7 @@ const getExcessDataRange = (boxes) => {
  */
 const validatePatternRules = async () => {
     console.log("ENTERED");
+    console.log("Heat Treatment detected: ", heatTreatmentInformationDetected.value);
     try {
         const response = await axios.get('/api/inspection/check-existing', {
             params: {
