@@ -4480,13 +4480,13 @@ const validatePatternRules = async () => {
         });
 
         if (response.data && response.data.rule_existing) {
-            const allowedPatterns = response.data.data.pattern_list; // e.g., ["1", "2", "3"]
+            const allowedPatterns = response.data.data.pattern_list.map(Number); // e.g., [1, 2, 3]
 
             if (Array.isArray(allowedPatterns)) {
                 if (hti && hti.patternNo !== undefined && hti.patternNo !== null) {
-                    const currentPatternStr = String(hti.patternNo);
+                    const currentPatternNum = Number(hti.patternNo);
 
-                    if (!allowedPatterns.includes(currentPatternStr)) {
+                    if (!allowedPatterns.includes(currentPatternNum)) {
                         msgPatternNotAllowed.value = true;
                         console.log("ITS TRUE", msgPatternNotAllowed.value);
                     } else {
